@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>dxvote.eth</title>
+        <link rel=”shortcut icon” href=”assets/favicon.ico”>
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+        <base href="">
+        <script>
+          (function () {
+            const { pathname, hostname, protocol } = window.location
+      
+            // redirect to https on non-localhost
+            if (protocol === 'http:' && hostname !== 'localhost') {
+              window.location.protocol = 'https'
+              return
+            }
+
+            const ipfsMatch = /.*\/Qm\w{44}/.exec(pathname)
+            changeBaseHref(ipfsMatch)
+            
+            window.IS_IPFS = !!ipfsMatch || hostname.endsWith('.eth.link')
+      
+            function changeBaseHref(match) {
+              const base = document.querySelector('base')
+      
+              if (match && match.length > 0) {
+                let baseHref = match[0]
+                if (!baseHref.endsWith('/')) baseHref += '/'
+        
+                base.href = baseHref
+              }
+            }
+      
+          })();
+        </script>
+    </head>
+    <body>
+        <div id="root"></div>
+    </body>
+</html>
