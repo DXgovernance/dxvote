@@ -32,6 +32,7 @@ if (network != 'development') {
 console.log('Running deploy on', httpProviderUrl)
 const provider = new HDWalletProvider(mnemonic, new Web3.providers.HttpProvider(httpProviderUrl), 0, 10);
 web3 = new Web3(provider)
+const delay = time => new Promise(res=>setTimeout(res,time));
 
 ZWeb3.initialize(web3.currentProvider);
 Contracts.setLocalBuildDir('contracts/build/');
@@ -72,6 +73,7 @@ async function main() {
     for (var i = 0; i < addressesMints.length; i++){
       console.log('Doing mint '+i+' of '+(addressesMints.length-1)+' of initial REP minting...')
       await reputation.methods.mintMultiple(addressesMints[i], amountMints[i]).send();
+      await delay(30000);
     }
   } else {
     await reputation.methods.mint(accounts[0], 100).send();
