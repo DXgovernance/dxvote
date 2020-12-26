@@ -10,6 +10,7 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const IPFS = require('ipfs-core');
 const contentHash = require('content-hash');
 const request = require("request-promise-native");
+const repHolders = require('../.repHolders.json');
 
 // Get network to use from arguments
 let network, mnemonic, httpProviderUrl, web3;
@@ -40,12 +41,8 @@ const DxController = Contracts.getFromLocal("DxController");
 const DxAvatar = Contracts.getFromLocal("DxAvatar");
 const DxReputation = Contracts.getFromLocal("DxReputation");
 const DxToken = Contracts.getFromLocal("DxToken");
-const DaoCreator = Contracts.getFromLocal("DaoCreator");
-const DxControllerCreator = Contracts.getFromLocal("DxControllerCreator");
 const DXDVotingMachine = Contracts.getFromLocal("DXDVotingMachine");
 const ERC20Mock = Contracts.getFromLocal("ERC20Mock");
-const ActionMock = Contracts.getFromLocal("ActionMock");
-const Wallet = Contracts.getFromLocal("Wallet");
 const Multicall = Contracts.getFromLocal("Multicall");
 
 async function main() {
@@ -54,19 +51,49 @@ async function main() {
   const GAS_LIMIT = 9000000;
   const votingMachineToken = (network == 'rinkeby') ? ERC20Mock.at("0x554898A0BF98aB0C03ff86C7DccBE29269cc4d29")
     : await ERC20Mock.new(accounts[0], web3.utils.toWei("1000"));
-  const controllerCreator = await DxControllerCreator.new({gas: GAS_LIMIT});
-  const daoCreator = await DaoCreator.new(
-    controllerCreator.address, {gas: GAS_LIMIT}
-  );
+    
+  const reputation = await DxReputation.new();
+  if (network != 'development') {
+    // Get initial REP holders
+    let founders = [], initialRep = [], initialTokens = [];
+    for (var address in repHolders.addresses) {
+      founders.push(address);
+      initialRep.push(repHolders.addresses[address]);
+      initialTokens.push(0);
+    }
+    
+    // Deploy and mint reputation
+    console.log('Deploying DxReputation...');
+    const addressesMints = [], amountMints = [];  
+    while (founders.length > 0){
+      addressesMints.push(founders.splice(0, 100));
+      amountMints.push(initialRep.splice(0, 100));
+    }
+    for (var i = 0; i < addressesMints.length; i++){
+      console.log('Doing mint '+i+' of '+(addressesMints.length-1)+' of initial REP minting...')
+      await reputation.methods.mintMultiple(addressesMints[i], amountMints[i]).send();
+    }
+  } else {
+    await reputation.methods.mint(accounts[0], 100).send();
+  }
   
-  var tx = await daoCreator.methods.forgeOrg(
-    "DXdao", "UselessToken", "UST", [accounts[0]], [0], [100], 0
-  ).send({gas: GAS_LIMIT});
+  // Deploy empty token
+  console.log('Deploying DxToken...');
+  const token = await DxToken.new("", "", 0, {gas: GAS_LIMIT});
 
-  const avatar = await DxAvatar.at(tx.events.NewOrg.returnValues._avatar);
-  const token = await DxToken.at(await avatar.methods.nativeToken().call());
-  const reputation = await DxReputation.at(await avatar.methods.nativeReputation().call());
-  const controller = await DxController.at(await avatar.methods.owner().call());
+  // Deploy Avatar
+  console.log('Deploying DxAvatar...');
+  const avatar = await DxAvatar.new("DXdao", token.address, reputation.address, {gas: GAS_LIMIT});
+
+  // Deploy controller and transfer avatar to controller
+  console.log('Deploying DxController...');
+  const controller = await DxController.new(avatar.address, {gas: GAS_LIMIT});
+  
+  // Transfer reputation adn avatar to controller
+  await reputation.methods.transferOwnership(controller.address).send();
+  await avatar.methods.transferOwnership(controller.address).send();
+  await token.methods.transferOwnership(controller.address).send();
+
   const dxdVotingMachine = await DXDVotingMachine.new(votingMachineToken.address, {gas: GAS_LIMIT});
   const multicall = await Multicall.new();
   
@@ -134,7 +161,7 @@ async function main() {
     voteOnBehalf: ZERO_ADDRESS
   }
   
-  dxdVotingMachine.methods.setParameters([
+  await dxdVotingMachine.methods.setParameters([
     masterWalletParameters.queuedVoteRequiredPercentage,
     masterWalletParameters.queuedVotePeriodLimit,
     masterWalletParameters.boostedVotePeriodLimit,
@@ -167,6 +194,17 @@ async function main() {
     masterWalletSchemeParamsHash,
     controller.address
   ).send();
+  await controller.methods.registerScheme(
+    masterWalletScheme.address,
+    masterWalletSchemeParamsHash,
+    encodePermission({
+      canGenericCall: true,
+      canUpgrade: true,
+      canChangeConstraints: true,
+      canRegisterSchemes: true
+    }),
+    avatar.address
+  ).send();
   
   const quickWalletSchemeParameters = {
     queuedVoteRequiredPercentage: schemesConfiguration.quick.queuedVoteRequiredPercentage,
@@ -182,32 +220,38 @@ async function main() {
     activationTime: 0,
     voteOnBehalf: ZERO_ADDRESS
   }
-  dxdVotingMachine.methods.setParameters([
-    quickWalletSchemeParameters.queuedVoteRequiredPercentage,
-    quickWalletSchemeParameters.queuedVotePeriodLimit,
-    quickWalletSchemeParameters.boostedVotePeriodLimit,
-    quickWalletSchemeParameters.preBoostedVotePeriodLimit,
-    quickWalletSchemeParameters.thresholdConst,
-    quickWalletSchemeParameters.quietEndingPeriod,
-    quickWalletSchemeParameters.proposingRepReward,
-    quickWalletSchemeParameters.votersReputationLossRatio,
-    quickWalletSchemeParameters.minimumDaoBounty,
-    quickWalletSchemeParameters.daoBountyConst,
-    quickWalletSchemeParameters.activationTime 
-  ], quickWalletSchemeParameters.voteOnBehalf).send();
-  const quickWalletSchemeParamsHash = await dxdVotingMachine.methods.getParametersHash([
-    quickWalletSchemeParameters.queuedVoteRequiredPercentage,
-    quickWalletSchemeParameters.queuedVotePeriodLimit,
-    quickWalletSchemeParameters.boostedVotePeriodLimit,
-    quickWalletSchemeParameters.preBoostedVotePeriodLimit,
-    quickWalletSchemeParameters.thresholdConst,
-    quickWalletSchemeParameters.quietEndingPeriod,
-    quickWalletSchemeParameters.proposingRepReward,
-    quickWalletSchemeParameters.votersReputationLossRatio,
-    quickWalletSchemeParameters.minimumDaoBounty,
-    quickWalletSchemeParameters.daoBountyConst,
-    quickWalletSchemeParameters.activationTime 
-  ], quickWalletSchemeParameters.voteOnBehalf).call();
+  await dxdVotingMachine.methods.setParameters(
+    [
+      quickWalletSchemeParameters.queuedVoteRequiredPercentage,
+      quickWalletSchemeParameters.queuedVotePeriodLimit,
+      quickWalletSchemeParameters.boostedVotePeriodLimit,
+      quickWalletSchemeParameters.preBoostedVotePeriodLimit,
+      quickWalletSchemeParameters.thresholdConst,
+      quickWalletSchemeParameters.quietEndingPeriod,
+      quickWalletSchemeParameters.proposingRepReward,
+      quickWalletSchemeParameters.votersReputationLossRatio,
+      quickWalletSchemeParameters.minimumDaoBounty,
+      quickWalletSchemeParameters.daoBountyConst,
+      quickWalletSchemeParameters.activationTime 
+    ],
+    quickWalletSchemeParameters.voteOnBehalf
+  ).send();
+  const quickWalletSchemeParamsHash = await dxdVotingMachine.methods.getParametersHash(
+    [
+      quickWalletSchemeParameters.queuedVoteRequiredPercentage,
+      quickWalletSchemeParameters.queuedVotePeriodLimit,
+      quickWalletSchemeParameters.boostedVotePeriodLimit,
+      quickWalletSchemeParameters.preBoostedVotePeriodLimit,
+      quickWalletSchemeParameters.thresholdConst,
+      quickWalletSchemeParameters.quietEndingPeriod,
+      quickWalletSchemeParameters.proposingRepReward,
+      quickWalletSchemeParameters.votersReputationLossRatio,
+      quickWalletSchemeParameters.minimumDaoBounty,
+      quickWalletSchemeParameters.daoBountyConst,
+      quickWalletSchemeParameters.activationTime 
+    ],
+    quickWalletSchemeParameters.voteOnBehalf
+  ).call();
   const quickWalletScheme = await WalletScheme.new();
   await quickWalletScheme.methods.initialize(
     avatar.address,
@@ -216,25 +260,19 @@ async function main() {
     ZERO_ADDRESS
   ).send();
   
-  await daoCreator.methods.setSchemes(
-    avatar.address,
-    [ masterWalletScheme.address, quickWalletScheme.address ],
-    [ web3.utils.sha3("masterWalletScheme"), web3.utils.sha3("quickWalletScheme") ],
-    [ encodePermission({
-        canGenericCall: true,
-        canUpgrade: true,
-        canChangeConstraints: true,
-        canRegisterSchemes: true
-      }),
-      encodePermission({
-        canGenericCall: false,
-        canUpgrade: false,
-        canChangeConstraints: false,
-        canRegisterSchemes: false
-      })
-    ],
-    "metaData"
+  await controller.methods.registerScheme(
+    quickWalletScheme.address,
+    quickWalletSchemeParamsHash,
+    encodePermission({
+      canGenericCall: false,
+      canUpgrade: false,
+      canChangeConstraints: false,
+      canRegisterSchemes: false
+    }),
+    avatar.address
   ).send();
+  await controller.methods.metaData("metaData", avatar.address).send();
+  await controller.methods.unregisterScheme(accounts[0], avatar.address).send();
   
   if (network == 'development') {
     console.log('Running deployment with test data..');
@@ -248,7 +286,7 @@ async function main() {
     let titleText = "Mint seed REP test proposal";
     let descriptionText = "Set 10 REP tokens to "+accounts[0]+", 20 REP tokens to "+accounts[1]+", and 70 REP tokens to "+accounts[2]
     let cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
-    
+
     const firstProposalTx = await masterWalletScheme.methods.proposeCalls(
       [controller.address, controller.address, controller.address, controller.address],
       [
@@ -271,7 +309,6 @@ async function main() {
     ).send({ from: accounts[0] });
     const firstProposalId = firstProposalTx.events.NewCallProposal.returnValues[0];
     await dxdVotingMachine.methods.vote(firstProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[0] });
-    
     titleText = "First test proposal";
     descriptionText = "Tranfer 15 ETH and 50 tokens to QuickWalletScheme and mint 20 REP";
     cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
@@ -336,7 +373,6 @@ async function main() {
     await dxdVotingMachine.methods.stake(thirdProposalId, 1, web3.utils.toWei("2").toString())
       .send({ from: accounts[1] });
     await dxdVotingMachine.methods.vote(thirdProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[1] });
-    console.log('yeah')
   
   }
   
