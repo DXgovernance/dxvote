@@ -8,6 +8,7 @@ import { FiThumbsUp, FiThumbsDown, FiPlayCircle, FiFastForward } from "react-ico
 import Slider from '@material-ui/core/Slider';
 import { withStyles } from '@material-ui/core/styles';
 import MDEditor from '@uiw/react-md-editor';
+import { bnum } from '../utils/helpers';
 
 const ProposalInformationWrapper = styled.div`
     width: 100%;
@@ -207,7 +208,7 @@ const ProposalInformation = observer(() => {
       
       const submitVote = function(decision) {
         const repAmount = (userRep * Math.abs(votePercentage)) / 100;
-        daoStore.vote(votePercentage > 0 ? 1 : 2, repAmount, proposalId);
+        daoStore.vote(votePercentage > 0 ? 1 : 2, bnum(repAmount), proposalId);
       };
       
       const submitStake = function(decision) {
