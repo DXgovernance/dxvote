@@ -179,10 +179,9 @@ const ProposalInformation = observer(() => {
       ).minus(library.utils.fromWei(proposalInfo.positiveStakes.toString()))
       .plus(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toString();
       
-      if (votingMachineTokenBalance > stakeToBoost * 2){
-        votingMachineTokenBalance = stakeToBoost * 2;
-      }
-      
+      const stakeToUnBoost = bnum(library.utils.fromWei(proposalInfo.positiveStakes.toString()))
+      .minus(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toString();
+            
       const timeToBoost = proposalInfo && proposalInfo.boostTime > moment().unix() ? 
       moment().to( moment(proposalInfo.boostTime.times(1000).toNumber()) ).toString()
       : "";
@@ -198,12 +197,19 @@ const ProposalInformation = observer(() => {
       
       function onStakeValueChange(newValue) {
         const stakeSlider = document.querySelectorAll("span[aria-labelledby='stake-slider']")[0];
+        console.log((stakeSlider.ariaValueNow - 50) * 2)
         setStakePercentage((stakeSlider.ariaValueNow - 50) * 2)
       }
       function stakeValuetext(value) { return `${value.toFixed(2)}%`; }
-      function stakeValueLabelFormat(value) {
-        const stakeAmount = (votingMachineTokenBalance * Math.abs((value - 50) * 2)) / 100;
-        return `${stakeAmount}`;
+      
+      function stakeAmount() {
+        if (stakePercentage > 0) {
+          return (Math.min(Math.abs(stakeToBoost), votingMachineTokenBalance) * stakePercentage / 100).toFixed(2);
+        } else if (stakePercentage < 0) {
+          return (Math.min(stakeToUnBoost, votingMachineTokenBalance) * Math.abs(stakePercentage) / 100).toFixed(2);
+        } else {
+          return 0;
+        }
       }
       
       const submitVote = function(decision) {
@@ -212,8 +218,7 @@ const ProposalInformation = observer(() => {
       };
       
       const submitStake = function(decision) {
-        const stakeAmount = (votingMachineTokenBalance * Math.abs(stakePercentage)) / 100;
-        daoStore.stake(stakePercentage > 0 ? 1 : 2, library.utils.toWei(stakeAmount.toString()), proposalId);
+        daoStore.stake(stakePercentage > 0 ? 1 : 2, library.utils.toWei(stakeAmount().toString()), proposalId);
       };
       
       const approveDXD = function(decision) {
@@ -304,9 +309,10 @@ const ProposalInformation = observer(() => {
                   <small>Approve DXD to stake</small>
                   <VoteButton color="blue" onClick={() => approveDXD()}>Approve DXD</VoteButton>
                 </SidebarRow>
-                :
+                : (!proposalInfo.shouldBoost && (proposalInfo.stateInVotingMachine == 3 || proposalInfo.stateInVotingMachine == 4)) ?
                   <div>
                     {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(2)} DXD to boost</small> : <span/>}
+                    {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(2)} DXD to unboost</small> : <span/>}
                     <SidebarRow>
                       <AmountSlider
                         defaultValue={stakePercentage}
@@ -316,10 +322,11 @@ const ProposalInformation = observer(() => {
                         marks={stakeMarks}
                         style={{color: stakePercentage > 0 ? 'green' : 'red'}}
                       />
-                      <span>{((votingMachineTokenBalance * Math.abs((stakePercentage - 50) * 2)) / 100).toFixed(2)} DXD </span>
+                      <span>{stakeAmount()} DXD </span>
                       <VoteButton color="blue" onClick={() => submitStake()}>Stake</VoteButton>
                     </SidebarRow>
                   </div>
+                : <div></div>
               }
               
             </InfoSidebar>
