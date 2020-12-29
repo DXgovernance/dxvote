@@ -1,6 +1,4 @@
 name: Node.js & IPFS CI
-
-env: 
   
 on:
   push:
