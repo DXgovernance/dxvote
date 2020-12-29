@@ -309,7 +309,7 @@ const ProposalInformation = observer(() => {
                   <small>Approve DXD to stake</small>
                   <VoteButton color="blue" onClick={() => approveDXD()}>Approve DXD</VoteButton>
                 </SidebarRow>
-                : (!proposalInfo.shouldBoost && (proposalInfo.stateInVotingMachine == 3 || proposalInfo.stateInVotingMachine == 4)) ?
+                : ((proposalInfo.stateInVotingMachine == 3 || (proposalInfo.stateInVotingMachine == 4 && !proposalInfo.shouldBoost))) ?
                   <div>
                     {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(2)} DXD to boost</small> : <span/>}
                     {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(2)} DXD to unboost</small> : <span/>}
