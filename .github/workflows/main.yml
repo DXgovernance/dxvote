@@ -1,5 +1,7 @@
 name: Node.js & IPFS CI
 
+env: 
+  
 on:
   push:
     branches: [ $default-branch ]
@@ -22,7 +24,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: yarn
-      - run: CI=false yarn build
+      - run: CI=false REACT_APP_ETH_NETWORKS=rinkeby NODE_ENV=production REACT_APP_VERSION=$npm_package_version yarn build
       - uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.4
         with:
           pin-name: 'dxvote'
