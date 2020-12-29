@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Node.js - IPFS CI
 
 on:
   push:
@@ -23,4 +23,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn
-    - run: yarn build
+    - run: CI=false yarn build
+    - uses: aquiladev/ipfs-action@v1
+    - name: Upload to IPFS
+      with:
+        path: ./build
+        host: ipfs.komputing.org
+        port: 443
+        protocol: https
+        timeout: 180000
+        verbose: true
