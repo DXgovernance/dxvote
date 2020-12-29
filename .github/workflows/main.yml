@@ -26,8 +26,13 @@ jobs:
       - uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.4
         with:
           pin-name: 'dxvote'
-          path: './build'
+          path: 'build'
           pinata-api-key: 121008788ba8017a9a57
           pinata-secret-api-key: ${{ secrets.PINATA_KEY }}
           verbose: true
-          remove-old: false
+          remove-old: true
+      - uses: ibnesayeed/setup-ipfs@master
+        with:
+          run_daemon: true
+      - run: ipfs add build -r -n
+
