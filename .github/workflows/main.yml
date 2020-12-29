@@ -17,19 +17,17 @@ jobs:
         node-version: [12.13.1]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: yarn
-    - run: CI=false yarn build
-    - uses: aquiladev/ipfs-action@v1
-    - name: Upload to IPFS
-      with:
-        path: ./build
-        host: ipfs.komputing.org
-        port: 443
-        protocol: https
-        timeout: 180000
-        verbose: true
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn
+      - run: CI=false yarn build
+      - uses: aquiladev/ipfs-action@v1
+        with:
+          path: ./build
+          host: ipfs.komputing.org
+          port: 443
+          protocol: https
+          timeout: 180000
+          verbose: true
