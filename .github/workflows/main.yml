@@ -1,4 +1,4 @@
-name: Node.js - IPFS CI
+name: Node.js & IPFS CI
 
 on:
   push:
