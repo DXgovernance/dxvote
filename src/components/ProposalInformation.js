@@ -192,12 +192,12 @@ const ProposalInformation = observer(() => {
       
       function onVoteValueChange(newValue) {
         const voteSlider = document.querySelectorAll("span[aria-labelledby='vote-slider']")[0];
+        console.log((voteSlider.ariaValueNow - 50) * 2)
         setVotePercentage((voteSlider.ariaValueNow - 50) * 2)
       }
       
       function onStakeValueChange(newValue) {
         const stakeSlider = document.querySelectorAll("span[aria-labelledby='stake-slider']")[0];
-        console.log((stakeSlider.ariaValueNow - 50) * 2)
         setStakePercentage((stakeSlider.ariaValueNow - 50) * 2)
       }
       function stakeValuetext(value) { return `${value.toFixed(2)}%`; }
@@ -207,6 +207,16 @@ const ProposalInformation = observer(() => {
           return (Math.min(Math.abs(stakeToBoost), votingMachineTokenBalance) * stakePercentage / 100).toFixed(2);
         } else if (stakePercentage < 0) {
           return (Math.min(stakeToUnBoost, votingMachineTokenBalance) * Math.abs(stakePercentage) / 100).toFixed(2);
+        } else {
+          return 0;
+        }
+      }
+      
+      function voteAmount() {
+        if (votePercentage > 0) {
+          return (userRep * votePercentage / totalRep).toFixed(2);
+        } else if (votePercentage < 0) {
+          return (userRep * Math.abs(votePercentage) / totalRep).toFixed(2);
         } else {
           return 0;
         }
@@ -300,7 +310,7 @@ const ProposalInformation = observer(() => {
                   marks={voteMarks}
                   style={{color: votePercentage > 0 ? 'green' : 'red'}}
                 />
-                <span>{((userRep * Math.abs((votePercentage - 50) * 2)) / totalRep).toFixed(2)} %</span>
+                <span>{voteAmount()} %</span>
                 <VoteButton color="blue" onClick={() => submitVote()}>Vote</VoteButton>
               </SidebarRow>
               <br/>
