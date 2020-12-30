@@ -11,7 +11,7 @@ const NavWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  padding: 50px 0px 40px 0px;
+  padding: 50px 0px 0px 0px;
 `;
 
 const NavSection = styled.div`
