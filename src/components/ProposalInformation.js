@@ -66,6 +66,8 @@ const ProposalInfoSection = styled.div`
   width: 100%;
   padding: 20px;
   overflow-wrap: break-word;
+  overflow: auto;
+
 `
 
 const AmountBadge = styled.span`
