@@ -202,17 +202,29 @@ const ProposalsTable = observer(() => {
       });
       
       const data = calls.map((call, i) => {
+        const parameters = call.callType == "decoded" 
+          ? call.functionName.substring(call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
+          : [];
+        
+        const encodedData = call.callType == "decoded" ? 
+        library.eth.abi.encodeFunctionSignature(call.functionName) + 
+        library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
+        : call.data
+                
         return (scheme == 'masterWalletScheme') ? daoService.encodeControllerGenericCall(
           call.to,
-          call.data,
-          library.utils.toWei(call.value).toString()
-        ) : call.data
+          encodedData,
+          call.callType == "decoded" ? library.utils.toWei(call.value).toString()
+          : call.value
+        ) : encodedData
       });
       
       const value = calls.map((call) => {
-        return (scheme == 'masterWalletScheme') ? "0" : library.utils.toWei(call.value).toString()
+        return (scheme == 'masterWalletScheme') ? "0"
+        : call.callType == "decoded" ? library.utils.toWei(call.value).toString()
+          : call.value
       });
-
+      console.log(to, data, value, titleText, calls)
       daoStore.createProposal( 
         (scheme == 'masterWalletScheme') 
           ? configStore.getMasterWalletSchemeAddress() : configStore.getQuickWalletSchemeAddress(),
@@ -225,9 +237,12 @@ const ProposalsTable = observer(() => {
     const [titleText, setTitleText] = React.useState("");
     const [descriptionText, setDescriptionText] = React.useState("");
     const [calls, setCalls] = React.useState([{
-      to: "",
-      data: "0x0",
-      value: "0"
+      to: "0x554898A0BF98aB0C03ff86C7DccBE29269cc4d29",
+      callType: "decoded",
+      data: "",
+      functionName: "transfer(address,uint256)",
+      functionParams: "0x08EEc580AD41e9994599BaD7d2a74A9874A2852c,666",
+      value: "100"
     }]);
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     
@@ -236,9 +251,12 @@ const ProposalsTable = observer(() => {
 
     function addCall() {
       calls.push({
+        callType: "decoded",
         to: "",
-        data: "0x0",
-        value: "0"
+        data: "",
+        functionName: "",
+        functionParams: "",
+        value: ""
       })
       setCalls(calls);
       forceUpdate()
@@ -246,6 +264,19 @@ const ProposalsTable = observer(() => {
     
     function removeCall(proposalIndex) {
       calls.splice(proposalIndex, 1);
+      setCalls(calls)
+      forceUpdate();
+    };
+    
+    function changeCallType(proposalIndex) {
+      calls[proposalIndex] = {
+        callType: calls[proposalIndex].callType == "encoded" ? "decoded" : "encoded",
+        to: "",
+        data: "",
+        functionName: "",
+        functionParams: "",
+        value: ""
+      }
       setCalls(calls)
       forceUpdate();
     };
@@ -322,11 +353,60 @@ const ProposalsTable = observer(() => {
           {calls.map((call, i) => 
             <CallRow>
               <span>Call #{i} </span>
-              <input type="text" proposalIndex={i} proposalField="to" onChange={onCallValueChange} value={calls[i].to} style={{width: "20%"}}></input>
-              <input type="text" proposalIndex={i} proposalField="data" onChange={onCallValueChange} value={calls[i].data} style={{width: "40%"}}></input>
-              <input type="text" proposalIndex={i} proposalField="value" onChange={onCallValueChange} value={calls[i].value} style={{width: "10%"}}></input>
+              <input
+                type="text"
+                proposalIndex={i}
+                proposalField="to"
+                onChange={onCallValueChange}
+                value={calls[i].to}
+                style={{width: "20%"}}
+                placeholder="0x..."
+              ></input>
+              { calls[i].callType == "encoded" ?
+                <input 
+                  type="text"
+                  proposalIndex={i}
+                  proposalField="data"
+                  onChange={onCallValueChange}
+                  value={calls[i].data}
+                  placeholder="0x..."
+                  style={{width: "40%"}}
+                ></input>
+                : <input 
+                  type="text"
+                  proposalIndex={i}
+                  proposalField="functionName"
+                  onChange={onCallValueChange}
+                  value={calls[i].functionName}
+                  placeholder="functionName(string,bool,uint256[])"
+                  style={{width: "20%"}}
+                >
+                </input>
+              }
+              { calls[i].callType == "decoded" ?
+                <input 
+                  type="text"
+                  proposalIndex={i}
+                  proposalField="functionParams"
+                  onChange={onCallValueChange}
+                  value={calls[i].functionParams}
+                  placeholder="functions values separated with commas"
+                  style={{width: "20%"}}
+                ></input>
+                : <div/>
+              }
+              <input
+                type="text"
+                proposalIndex={i}
+                proposalField="value"
+                onChange={onCallValueChange}
+                value={calls[i].value}
+                style={{width: "10%"}}
+                placeholder={calls[i].callType == "decoded" ? "ETH" : "WEI"}
+              ></input>
               {i > 0 ? <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton> : <div/>}
               {i == calls.length - 1 ? <AddButton onClick={addCall}>+</AddButton> : <div/>}
+              <RemoveButton onClick={() => {changeCallType(i)}}> {calls[i].callType == "decoded" ? "Advanced" : "Simple"} </RemoveButton>
             </CallRow>
           )}
           <ActiveButton onClick={createProposal}>Submit Proposal</ActiveButton>
