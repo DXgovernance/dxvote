@@ -26,6 +26,7 @@ export interface ProposalInfo {
   stateInVotingMachine: VotingMachineProposalState;
   descriptionHash: String;
   creationBlock: BigNumber;
+  repAtCreation: BigNumber;
   winningVote: Number;
   proposer: string;
   currentBoostedVotePeriodLimit: BigNumber;
@@ -106,7 +107,6 @@ export default class DaoStore {
   rootStore: RootStore;
 
   constructor(rootStore) {
-    console.log('reloadddd')
     this.rootStore = rootStore;
     this.daoInfo = {} as DaoInfo;
     this.schemes = {};
@@ -377,11 +377,18 @@ export default class DaoStore {
       params:[proposalId]
     });
     
-    const creationBlock = this.rootStore.blockchainStore.getCachedValue({
+    const proposalCallbackInformation = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.WalletScheme,
       address: schemeAddress,
       method: 'proposalsInfo',
       params:[configStore.getVotingMachineAddress(), proposalId]
+    });
+    
+    const repAtCreation = this.rootStore.blockchainStore.getCachedValue({
+      contractType: ContractType.Reputation,
+      address: configStore.getReputationAddress(),
+      method: 'totalSupplyAt',
+      params: [proposalCallbackInformation ? proposalCallbackInformation.split(",")[0] : 0]
     });
 
     let proposalSchemeInfo = undefined;
@@ -416,7 +423,8 @@ export default class DaoStore {
         stateInScheme: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 3],
         title: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 2],
         descriptionHash: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 1],
-        creationBlock: creationBlock.split(",")[0],
+        creationBlock: proposalCallbackInformation.split(",")[0],
+        repAtCreation: repAtCreation,
         stateInVotingMachine: votingMachineDataDivided[2],
         winningVote: votingMachineDataDivided[3],
         proposer: votingMachineDataDivided[4],

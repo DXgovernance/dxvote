@@ -45,7 +45,7 @@ export default class DaoService {
     }
   }
   
-  async getProposalEvents(proposalId: string, creationBlock: string){
+  async getProposalEvents(proposalId: string, creationBlock: number){
     const { configStore, providerStore } = this.rootStore;
     
     const votingMachine = providerStore.getContract(
@@ -54,19 +54,22 @@ export default class DaoService {
       configStore.getVotingMachineAddress()
     )
     
+    // Get events at maximum a 30days time of proposal
+    const toBlock = Math.min(creationBlock + 190000, providerStore.getCurrentBlockNumber());
+    
     const stakes = await votingMachine.getPastEvents(
     "Stake",
     {
       filter: { _proposalId: proposalId },
       fromBlock: creationBlock,
-      toBlock: "latest"
+      toBlock: toBlock
     });
     const votes = await votingMachine.getPastEvents(
     "VoteProposal",
     {
       filter: { _proposalId: proposalId },
       fromBlock: creationBlock,
-      toBlock: "latest"
+      toBlock: toBlock
     })
     
     return {stakes, votes};

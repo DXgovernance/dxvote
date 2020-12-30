@@ -111,7 +111,6 @@ const ProposalsTable = observer(() => {
 
     const masterWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getMasterWalletSchemeAddress());
     const quickWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getQuickWalletSchemeAddress());
-    const { totalRep } = daoStore.getDaoInfo(); 
     let allProposals = [];
     allProposals = allProposals.concat(masterWalletSchemeInfo.proposals).concat(quickWalletSchemeInfo.proposals)
     console.log("MasterWalletScheme info", masterWalletSchemeInfo);
@@ -168,8 +167,8 @@ const ProposalsTable = observer(() => {
                   const positiveStake = Number(library.utils.fromWei(proposal.positiveStakes.toString())).toFixed(2);
                   const negativeStake = Number(library.utils.fromWei(proposal.negativeStakes.toString())).toFixed(2);
                   const timeNow = (new Date()).getTime() / 1000;
-                  const positiveVotesPercentage = proposal.positiveVotes.div( totalRep ).times("100").toNumber().toFixed(2);
-                  const negativeVotesPercentage =  proposal.negativeVotes.div( totalRep ).times("100").toNumber().toFixed(2);
+                  const positiveVotesPercentage = proposal.positiveVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
+                  const negativeVotesPercentage =  proposal.negativeVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
                   const timeToBoost = proposal.boostTime > moment().unix() ? 
                     moment().to( moment(proposal.boostTime.times(1000).toNumber()) ).toString()
                     : "";

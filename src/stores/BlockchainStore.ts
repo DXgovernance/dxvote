@@ -391,6 +391,19 @@ export default class BlockchainStore {
                 });
                 if (proposalInformation && proposalInformation.split(",").length > 0)
                   ipfsService.call(proposalInformation.split(",")[proposalInformation.split(",").length -1]);
+                  
+                const proposalCallBackInformation = this.getCachedValue({
+                    contractType: ContractType.WalletScheme,
+                    address: configStore.getMasterWalletSchemeAddress(),
+                    method: 'proposalsInfo',
+                    params: [configStore.getVotingMachineAddress(), masterWalletSchemeProposalIds[pIndex]]
+                });
+                multicallService.addCalls([{
+                  contractType: ContractType.Reputation,
+                  address: configStore.getReputationAddress(),
+                  method: 'totalSupplyAt',
+                  params: [proposalCallBackInformation.split(',')[0]]
+                }])
               }
               for (let pIndex = 0; pIndex < quickWalletSchemeTotalProposalIds.length; pIndex++) {
                 const proposalInformation = this.getCachedValue({
@@ -401,13 +414,39 @@ export default class BlockchainStore {
                 });
                 if (proposalInformation && proposalInformation.split(",").length > 0)
                   ipfsService.call(proposalInformation.split(",")[proposalInformation.split(",").length -1]);
+                  
+                const proposalCallBackInformation = this.getCachedValue({
+                    contractType: ContractType.WalletScheme,
+                    address: configStore.getQuickWalletSchemeAddress(),
+                    method: 'proposalsInfo',
+                    params: [configStore.getVotingMachineAddress(), quickWalletSchemeTotalProposalIds[pIndex]]
+                });
+                multicallService.addCalls([{
+                  contractType: ContractType.Reputation,
+                  address: configStore.getReputationAddress(),
+                  method: 'totalSupplyAt',
+                  params: [proposalCallBackInformation.split(',')[0]]
+                }])
               }
-              
-              if (!this.initialLoadComplete) {
-                this.initialLoadComplete = true;
-              }
-              providerStore.setCurrentBlockNumber(blockNumber);
-              multicallService.resetActiveCalls();
+              multicallService.executeCalls(
+                multicallService.activeCalls,
+                multicallService.activeCallsRaw
+              ).then(async (response) => {
+                
+                const { calls, results, blockNumber } = response;
+                const updates = this.reduceMulticall(calls, results, blockNumber);
+                this.updateStore(updates, blockNumber);
+
+                if (!this.initialLoadComplete) {
+                  this.initialLoadComplete = true;
+                }
+                providerStore.setCurrentBlockNumber(blockNumber);
+                multicallService.resetActiveCalls();
+              })
+              .catch((e) => {
+                // TODO: Retry on failure, unless stale.
+                console.error(e);
+              });
               
             })
             .catch((e) => {

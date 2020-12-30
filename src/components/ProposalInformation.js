@@ -68,6 +68,15 @@ const ProposalInfoSection = styled.div`
   overflow-wrap: break-word;
 `
 
+const AmountBadge = styled.span`
+    background-color: ${(props) => props.color || 'inherit'};
+    border-radius: 50%;
+    color: white;
+    padding: 2px 6px;
+    text-align: center;
+    margin: 5px;
+`;
+
 const VoteButton = styled.div`
     background-color: ${(props) => props.color || '#536DFE'};
     border-radius: 4px;
@@ -146,13 +155,31 @@ const ProposalInformation = observer(() => {
       })
     }
     
-    let votedAmount = 0
+    let votedAmount = 0, positiveVotesCount = 0, negativeVotesCount = 0;
     if (proposalEvents.votes)
-      for (var i = 0; i < proposalEvents.votes.length; i++)
-        if (proposalEvents.votes[i].returnValues._voter == account)
-          votedAmount = proposalEvents.votes[i].returnValues._vote == 2 ?
+      for (var i = 0; i < proposalEvents.votes.length; i++){
+        if (proposalEvents.votes[i].returnValues._voter === account)
+          votedAmount = proposalEvents.votes[i].returnValues._vote === "2" ?
             Math.neg(proposalEvents.votes[i].returnValues._reputation)
             : proposalEvents.votes[i].returnValues._reputation;
+        if (proposalEvents.votes[i].returnValues._vote === "1")
+          positiveVotesCount ++;
+        else 
+          negativeVotesCount ++;
+      }
+      
+    let stakedAmount = 0, positiveStakesCount = 0, negativeStakesCount = 0;
+    if (proposalEvents.stakes)
+      for (var i = 0; i < proposalEvents.stakes.length; i++){
+        if (proposalEvents.stakes[i].returnValues._staker === account)
+          votedAmount = proposalEvents.stakes[i].returnValues._vote === "2" ?
+            Math.neg(proposalEvents.stakes[i].returnValues._amount)
+            : proposalEvents.stakes[i].returnValues._amount;
+        if (proposalEvents.stakes[i].returnValues._vote === "1")
+          positiveStakesCount ++;
+        else 
+          negativeStakesCount ++;
+      }
     
     console.log("Proposal info", proposalInfo);
     
@@ -314,9 +341,15 @@ const ProposalInformation = observer(() => {
                 borderBottom: "1px solid gray",
                 margin: "0px 10px",
               }}>
-                <span style={{width: "40%", textAlign:"center", color: "green"}}>{Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD </span>
+                <span style={{width: "40%", textAlign:"center", color: "green"}}>
+                  <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
+                  {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD
+                </span>
                 <span> - </span>
-                <span style={{width: "40%", textAlign:"center", color: "red"}}> {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD</span>
+                <span style={{width: "40%", textAlign:"center", color: "red"}}>
+                  {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD
+                  <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
+                </span>
               </SidebarRow>
               <SidebarRow>
                 <span> Votes </span>
@@ -325,9 +358,15 @@ const ProposalInformation = observer(() => {
                 borderBottom: "1px solid gray",
                 margin: "0px 10px",
               }}> 
-                <span style={{width: "40%", textAlign:"center", color: "green"}}>{proposalInfo.positiveVotes.div(totalRep).times("100").toNumber().toFixed(2)} % </span>
+                <span style={{width: "40%", textAlign:"center", color: "green"}}>
+                  <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
+                  {proposalInfo.positiveVotes.div(totalRep).times("100").toNumber().toFixed(2)} % 
+                </span>
                 <span> - </span>
-                <span style={{width: "40%", textAlign:"center", color: "red"}}> {proposalInfo.negativeVotes.div(totalRep).times("100").toNumber().toFixed(2)} %</span>
+                <span style={{width: "40%", textAlign:"center", color: "red"}}>
+                  {proposalInfo.negativeVotes.div(totalRep).times("100").toNumber().toFixed(2)} %
+                  <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
+                </span>
               </SidebarRow>
               {votedAmount == 0 ?
                 <SidebarRow>
