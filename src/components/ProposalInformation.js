@@ -118,22 +118,49 @@ const ProposalInformation = observer(() => {
     daoStore.getShortchemeInfo(schemeAddress)
     const proposalInfo = daoStore.proposals[proposalId];
     const shortchemeInfo = daoStore.schemes[schemeAddress];
+    const { userVotingMachineTokenBalance, userVotingMachineTokenApproved } = daoStore.getDaoInfo(); 
     const {content: proposalDescription} = proposalInfo ? ipfsService.get(proposalInfo.descriptionHash)
     : "";
+    const { active, account, library } = providerStore.getActiveWeb3React();
     
-    const { totalRep, userRep, userVotingMachineTokenBalance, userVotingMachineTokenApproved } = daoStore.getDaoInfo(); 
+    const [proposalEvents, setProposalEvents] = React.useState({});
+    const [userRep, setUserRep] = React.useState(undefined);
+    const [totalRep, setTotalRep] = React.useState(undefined);
+    const [votePercentage, setVotePercentage] = React.useState(100);
+    const [stakePercentage, setStakePercentage] = React.useState(100);
+    
+    if (proposalInfo){
+      daoService.getProposalEvents(proposalId, proposalInfo.creationBlock).then((pEvents) => {
+        if (!proposalEvents.stakes && !proposalEvents.votes){
+          console.log(pEvents)
+          setProposalEvents(pEvents);
+        }
+      })
+
+      daoService.getRepAt(proposalInfo.creationBlock).then((repAtCreation) => {
+        if (!userRep && !totalRep) {
+          console.log(repAtCreation);
+          setUserRep(repAtCreation.userRep);
+          setTotalRep(repAtCreation.totalSupply);
+        }
+      })
+    }
+    
+    let votedAmount = 0
+    if (proposalEvents.votes)
+      for (var i = 0; i < proposalEvents.votes.length; i++)
+        if (proposalEvents.votes[i].returnValues._voter == account)
+          votedAmount = proposalEvents.votes[i].returnValues._vote == 2 ?
+            Math.neg(proposalEvents.votes[i].returnValues._reputation)
+            : proposalEvents.votes[i].returnValues._reputation;
+    
     console.log("Proposal info", proposalInfo);
     
-    const { active, library } = providerStore.getActiveWeb3React();
-    
+  
     let votingMachineTokenBalance = userVotingMachineTokenBalance ?
       library.utils.fromWei(userVotingMachineTokenBalance.toString())
       : 0;
     
-    const [votePercentage, setVotePercentage] = React.useState(100);
-    const [stakePercentage, setStakePercentage] = React.useState(100);
-
-    let stakeToBoost = 0;
     
     const loading = (!shortchemeInfo || !proposalInfo || !totalRep || !userRep || !userVotingMachineTokenBalance || !userVotingMachineTokenApproved) ;
     
@@ -173,6 +200,7 @@ const ProposalInformation = observer(() => {
         
       const proposalStakeScore = proposalInfo.positiveStakes.div(proposalInfo.negativeStakes);
 
+      let stakeToBoost = 0;
       stakeToBoost = shortchemeInfo.parameters.thresholdConst.pow(
         (shortchemeInfo.boostedProposals > shortchemeInfo.parameters.limitExponentValue)
           ? shortchemeInfo.parameters.limitExponentValue : shortchemeInfo.boostedProposals
@@ -301,18 +329,23 @@ const ProposalInformation = observer(() => {
                 <span> - </span>
                 <span style={{width: "40%", textAlign:"center", color: "red"}}> {proposalInfo.negativeVotes.div(totalRep).times("100").toNumber().toFixed(2)} %</span>
               </SidebarRow>
-              <SidebarRow>
-                <AmountSlider
-                  defaultValue={votePercentage}
-                  aria-labelledby="vote-slider"
-                  step={0.1}
-                  onChangeCommitted={onVoteValueChange}
-                  marks={voteMarks}
-                  style={{color: votePercentage > 0 ? 'green' : 'red'}}
-                />
-                <span>{voteAmount()} %</span>
-                <VoteButton color="blue" onClick={() => submitVote()}>Vote</VoteButton>
-              </SidebarRow>
+              {votedAmount == 0 ?
+                <SidebarRow>
+                  <AmountSlider
+                    defaultValue={votePercentage}
+                    aria-labelledby="vote-slider"
+                    step={0.1}
+                    onChangeCommitted={onVoteValueChange}
+                    marks={voteMarks}
+                    style={{color: votePercentage > 0 ? 'green' : 'red'}}
+                  />
+                  <span>{voteAmount} %</span>
+                  <VoteButton color="blue" onClick={() => submitVote()}>Vote</VoteButton>
+                </SidebarRow>
+                : <SidebarRow>
+                  Already voted {(votedAmount > 0) ? "for" : "against"} with { (votedAmount / totalRep * 100).toFixed(2)} % REP
+                </SidebarRow>
+              }
               <br/>
               {userVotingMachineTokenApproved == 0 ?
                 <SidebarRow>

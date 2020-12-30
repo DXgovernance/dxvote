@@ -25,6 +25,7 @@ export interface ProposalInfo {
   stateInScheme: SchemeProposalState;
   stateInVotingMachine: VotingMachineProposalState;
   descriptionHash: String;
+  creationBlock: BigNumber;
   winningVote: Number;
   proposer: string;
   currentBoostedVotePeriodLimit: BigNumber;
@@ -375,6 +376,13 @@ export default class DaoStore {
       method: 'shouldBoost',
       params:[proposalId]
     });
+    
+    const creationBlock = this.rootStore.blockchainStore.getCachedValue({
+      contractType: ContractType.WalletScheme,
+      address: schemeAddress,
+      method: 'proposalsInfo',
+      params:[configStore.getVotingMachineAddress(), proposalId]
+    });
 
     let proposalSchemeInfo = undefined;
     if (
@@ -408,6 +416,7 @@ export default class DaoStore {
         stateInScheme: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 3],
         title: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 2],
         descriptionHash: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 1],
+        creationBlock: creationBlock.split(",")[0],
         stateInVotingMachine: votingMachineDataDivided[2],
         winningVote: votingMachineDataDivided[3],
         proposer: votingMachineDataDivided[4],

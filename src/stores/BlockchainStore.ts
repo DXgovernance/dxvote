@@ -279,6 +279,11 @@ export default class BlockchainStore {
                     method: 'getOrganizationProposal',
                     params:[masterWalletSchemeProposalIds[pIndex]]
                   },{
+                    contractType: ContractType.WalletScheme,
+                    address: configStore.getMasterWalletSchemeAddress(),
+                    method: 'proposalsInfo',
+                    params:[configStore.getVotingMachineAddress(), masterWalletSchemeProposalIds[pIndex]]
+                  },{
                     contractType: ContractType.VotingMachine,
                     address: configStore.getVotingMachineAddress(),
                     method: 'proposals',
@@ -313,6 +318,11 @@ export default class BlockchainStore {
                   address: configStore.getQuickWalletSchemeAddress(),
                   method: 'getOrganizationProposal',
                   params:[quickWalletSchemeTotalProposalIds[pIndex]]
+                },{
+                  contractType: ContractType.WalletScheme,
+                  address: configStore.getQuickWalletSchemeAddress(),
+                  method: 'proposalsInfo',
+                  params:[configStore.getVotingMachineAddress(), quickWalletSchemeTotalProposalIds[pIndex]]
                 },{
                   contractType: ContractType.VotingMachine,
                   address: configStore.getVotingMachineAddress(),

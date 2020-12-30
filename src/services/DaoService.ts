@@ -44,4 +44,46 @@ export default class DaoService {
         };
     }
   }
+  
+  async getProposalEvents(proposalId: string, creationBlock: string){
+    const { configStore, providerStore } = this.rootStore;
+    
+    const votingMachine = providerStore.getContract(
+      providerStore.getActiveWeb3React(),
+      ContractType.VotingMachine,
+      configStore.getVotingMachineAddress()
+    )
+    
+    const stakes = await votingMachine.getPastEvents(
+    "Stake",
+    {
+      filter: { _proposalId: proposalId },
+      fromBlock: creationBlock,
+      toBlock: "latest"
+    });
+    const votes = await votingMachine.getPastEvents(
+    "VoteProposal",
+    {
+      filter: { _proposalId: proposalId },
+      fromBlock: creationBlock,
+      toBlock: "latest"
+    })
+    
+    return {stakes, votes};
+  }
+  
+  async getRepAt(atBlock: string){
+    const { configStore, providerStore } = this.rootStore;
+    
+    const reputation = providerStore.getContract(
+      providerStore.getActiveWeb3React(),
+      ContractType.Reputation,
+      configStore.getReputationAddress()
+    )
+      
+    return {
+      userRep: await reputation.methods.balanceOfAt(providerStore.getActiveWeb3React().account, atBlock).call(),
+      totalSupply: await reputation.methods.totalSupplyAt(atBlock).call()
+    };
+  }
 }
