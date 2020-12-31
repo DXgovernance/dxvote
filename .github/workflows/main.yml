@@ -17,20 +17,21 @@ jobs:
         node-version: [12.13.1]
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Set up Node.js
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
           
       - name: Install Dependencies
-      - run: yarn
+        run: yarn
       
       - name: Build
-      - run: CI=false REACT_APP_ETH_NETWORKS=rinkeby NODE_ENV=production REACT_APP_VERSION=$npm_package_version yarn build
+        run: CI=false REACT_APP_ETH_NETWORKS=rinkeby NODE_ENV=production REACT_APP_VERSION=$npm_package_version yarn build
       
       - name: Deploy to ipfs
-      - uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.4
+        uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.4
         with:
           pin-name: 'dxvote'
           path: 'build'
