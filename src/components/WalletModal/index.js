@@ -284,7 +284,7 @@ const WalletModal = observer(
                         <ContentWrapper>
                             {connectionErrorMessage.toString().indexOf('UnsupportedChainIdError') >= 0 ? (
                                 <h5>
-                                    Please connect to the main Ethereum network.
+                                    Please connect to Rinkeby ethereum network.
                                 </h5>
                             ) : (
                                 'Error connecting. Try refreshing the page.'
@@ -306,7 +306,7 @@ const WalletModal = observer(
                         <HeaderRow>{'Wrong Network'}</HeaderRow>
                         <ContentWrapper>
                             <h5>
-                                Please connect to the main Ethereum network.
+                                Please connect to Rinkeby ethereum network.
                             </h5>
                         </ContentWrapper>
                     </UpperSection>

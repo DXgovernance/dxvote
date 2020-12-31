@@ -19,27 +19,27 @@ export default class ConfigStore {
       return getConfig(this.getActiveChainName());
     }
     getAvatarAddress() {
-      return getConfig(this.getActiveChainName()).avatar;
+      return getConfig(this.getActiveChainName()).avatar || "0x0000000000000000000000000000000000000000";
     }
     getControllerAddress() {
-      return getConfig(this.getActiveChainName()).controller;
+      return getConfig(this.getActiveChainName()).controller || "0x0000000000000000000000000000000000000000";
     }
     getReputationAddress() {
-      return getConfig(this.getActiveChainName()).reputation;
+      return getConfig(this.getActiveChainName()).reputation || "0x0000000000000000000000000000000000000000";
     }
     getVotingMachineAddress() {
-      return getConfig(this.getActiveChainName()).votingMachine;
+      return getConfig(this.getActiveChainName()).votingMachine || "0x0000000000000000000000000000000000000000";
     }
     getVotingMachineTokenAddress() {
-      return getConfig(this.getActiveChainName()).votingMachineToken;
+      return getConfig(this.getActiveChainName()).votingMachineToken || "0x0000000000000000000000000000000000000000";
     }
     getMasterWalletSchemeAddress() {
-      return getConfig(this.getActiveChainName()).masterWalletScheme;
+      return getConfig(this.getActiveChainName()).masterWalletScheme || "0x0000000000000000000000000000000000000000";
     }
     getQuickWalletSchemeAddress() {
-      return getConfig(this.getActiveChainName()).quickWalletScheme;
+      return getConfig(this.getActiveChainName()).quickWalletScheme || "0x0000000000000000000000000000000000000000";
     }
     getMulticallAddress() {
-      return getConfig(this.getActiveChainName()).multicall;
+      return getConfig(this.getActiveChainName()).multicall || "0x0000000000000000000000000000000000000000";
     }
 }

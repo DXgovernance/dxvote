@@ -3,6 +3,7 @@ import { BigNumber } from '../utils/bignumber';
 import { decodePermission } from '../utils/permissions';
 import { ContractType } from './ETHProvider';
 import { action } from 'mobx';
+import Web3 from 'web3';
 import { bnum } from '../utils/helpers';
 import { ethers, utils } from 'ethers';
 import { decodeStatus } from '../utils/proposals';
@@ -161,7 +162,6 @@ export default class DaoStore {
   
   getSchemeInfo(schemeAddress): SchemeInfo {
     const { configStore, providerStore } = this.rootStore;
-    const { library } = providerStore.getActiveWeb3React();
     const toAddress = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.WalletScheme,
       address: schemeAddress,
@@ -191,7 +191,7 @@ export default class DaoStore {
       contractType: ContractType.VotingMachine,
       address: configStore.getVotingMachineAddress(),
       method: 'orgBoostedProposalsCnt',
-      params: [library.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
+      params: [Web3.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
     })
     
     const encodedPermissions = this.rootStore.blockchainStore.getCachedValue({
@@ -240,7 +240,6 @@ export default class DaoStore {
   
   getShortchemeInfo(schemeAddress): SchemeInfo {
     const { configStore, providerStore } = this.rootStore;
-    const { library } = providerStore.getActiveWeb3React();
     const toAddress = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.WalletScheme,
       address: schemeAddress,
@@ -270,7 +269,7 @@ export default class DaoStore {
       contractType: ContractType.VotingMachine,
       address: configStore.getVotingMachineAddress(),
       method: 'orgBoostedProposalsCnt',
-      params: [library.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
+      params: [Web3.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
     })
     
     const encodedPermissions = this.rootStore.blockchainStore.getCachedValue({
