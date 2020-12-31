@@ -186,7 +186,7 @@ const ProposalsTable = observer(() => {
                         </TableCell>
                         <TableCell width="15%" align="center">
                           {proposal.status} <br/>
-                          {(proposal.boostTime > moment().unix()) ? <small>Boost {timeToBoost} </small> : <span></span>}
+                          {(proposal.boostTime > moment().unix()) ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
                           {(proposal.finishTime > moment().unix()) ? <small>Finish {timeToFinish} </small> : <span></span>}
                         </TableCell>
                         <TableCell width="17.5%" align="center"> 
