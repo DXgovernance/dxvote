@@ -37,21 +37,10 @@ const DaiInformation = observer(() => {
     const {
         root: { providerStore, daoStore, configStore, blockchainStore },
     } = useStores();
-    daoStore.getDaoInfo();
-    daoStore.getShortchemeInfo(configStore.getQuickWalletSchemeAddress());
-    const daoInfo = daoStore.daoInfo;
-    const quickWalletScheme = daoStore.schemes[configStore.getQuickWalletSchemeAddress()];
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
 
     const loading = (
       !blockchainStore.initialLoadComplete
-      || !daoInfo.ethBalance
-      || !daoInfo.address
-      || !daoInfo.totalRep
-      || !daoInfo.blockNumber
-      || daoInfo.blockNumber < 0
-      || !quickWalletScheme.address
-      || !quickWalletScheme.ethBalance
     );
   
     if (!providerActive) {
@@ -75,6 +64,8 @@ const DaiInformation = observer(() => {
           </DaoInformationWrapper>
       )
     } else {
+      const daoInfo = daoStore.daoInfo;
+      const quickWalletScheme = daoStore.schemes[configStore.getQuickWalletSchemeAddress()];
       return (
         <DaoInformationWrapper>
           <h3>Total Rep: {library.utils.fromWei(daoInfo.totalRep.toString())}</h3>

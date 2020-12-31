@@ -121,8 +121,8 @@ export default class DaoStore {
     const totalRep = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Reputation,
       address: configStore.getReputationAddress(),
-      method: 'totalSupplyAt',
-      params: [blockNumber]
+      method: 'totalSupply',
+      params: []
     });
     const userRep = account ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Reputation,

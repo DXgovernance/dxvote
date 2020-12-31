@@ -202,8 +202,8 @@ export default class BlockchainStore {
             multicallService.addCalls([{
               contractType: ContractType.Reputation,
               address: configStore.getReputationAddress(),
-              method: 'totalSupplyAt',
-              params: [blockNumber],
+              method: 'totalSupply',
+              params: [],
             },{
               contractType: ContractType.Multicall,
               address: configStore.getMulticallAddress(),

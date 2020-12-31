@@ -26,7 +26,7 @@ export interface TotalSupply {
 export const EtherKey = 'ether';
 
 export default class TokenStore {
-    @observable symbols = {};
+    symbols = {};
     rootStore: RootStore;
 
     constructor(rootStore) {
