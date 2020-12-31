@@ -169,12 +169,11 @@ const ProposalInformation = observer(() => {
         else 
           negativeVotesCount ++;
       }
-      
     let stakedAmount = 0, positiveStakesCount = 0, negativeStakesCount = 0;
     if (proposalEvents.stakes)
       for (var i = 0; i < proposalEvents.stakes.length; i++){
         if (proposalEvents.stakes[i].returnValues._staker === account)
-          votedAmount = proposalEvents.stakes[i].returnValues._vote === "2" ?
+          stakedAmount = proposalEvents.stakes[i].returnValues._vote === "2" ?
             Math.neg(proposalEvents.stakes[i].returnValues._amount)
             : proposalEvents.stakes[i].returnValues._amount;
         if (proposalEvents.stakes[i].returnValues._vote === "1")
@@ -393,7 +392,7 @@ const ProposalInformation = observer(() => {
                   <small>Approve DXD to stake</small>
                   <VoteButton color="blue" onClick={() => approveDXD()}>Approve DXD</VoteButton>
                 </SidebarRow>
-                : ((proposalInfo.stateInVotingMachine == 3 || (proposalInfo.stateInVotingMachine == 4 && !proposalInfo.shouldBoost))) ?
+                : ((proposalInfo.stateInVotingMachine == 3 || proposalInfo.stateInVotingMachine == 4)) ?
                   <div>
                     {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(2)} DXD to boost</small> : <span/>}
                     {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(2)} DXD to unboost</small> : <span/>}
@@ -410,6 +409,12 @@ const ProposalInformation = observer(() => {
                       <VoteButton color="blue" onClick={() => submitStake()}>Stake</VoteButton>
                     </SidebarRow>
                   </div>
+                : <div></div>
+              }
+              {stakedAmount > 0
+                ? <SidebarRow>
+                  Already staked {(stakedAmount > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount)).toFixed(2)} DXD
+                </SidebarRow>
                 : <div></div>
               }
               
