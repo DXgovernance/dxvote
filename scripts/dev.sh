@@ -64,5 +64,4 @@ REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachineToken .developmentAddre
 REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
 REACT_APP_MASTER_WALLET_SCHEME_ADDRESS=`jq .masterWalletScheme .developmentAddresses.json` \
 REACT_APP_QUICK_WALLET_SCHEME_ADDRESS=`jq .quickWalletScheme .developmentAddresses.json` \
-REACT_APP_ETH_NETWORKS="rinkeby,development" \
 SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-app-rewired start | cat
