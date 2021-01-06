@@ -48,7 +48,7 @@ export const decodeStatus = function(
       if (moment().unix() > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
         return { 
           status: "Expired in Queue",
-          statusPriority: 3,
+          statusPriority: 1,
           boostTime: 0,
           finishTime: submittedTime.plus(queuedVotePeriodLimit)
         };

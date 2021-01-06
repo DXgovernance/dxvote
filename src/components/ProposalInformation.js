@@ -369,22 +369,24 @@ const ProposalInformation = observer(() => {
                   <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
                 </span>
               </SidebarRow>
-              {votedAmount == 0 ?
+              {votedAmount == 0 && proposalInfo.statusPriority >=3 && proposalInfo.statusPriority <= 5  ?
                 <SidebarRow>
                   <AmountSlider
-                    defaultValue={votePercentage}
-                    aria-labelledby="vote-slider"
-                    step={0.1}
-                    onChangeCommitted={onVoteValueChange}
-                    marks={voteMarks}
-                    style={{color: votePercentage > 0 ? 'green' : 'red'}}
+                  defaultValue={votePercentage}
+                  aria-labelledby="vote-slider"
+                  step={0.1}
+                  onChangeCommitted={onVoteValueChange}
+                  marks={voteMarks}
+                  style={{color: votePercentage > 0 ? 'green' : 'red'}}
                   />
                   <span>{voteAmount} %</span>
                   <VoteButton color="blue" onClick={() => submitVote()}>Vote</VoteButton>
                 </SidebarRow>
-                : <SidebarRow>
+              : votedAmount > 0 ?
+                <SidebarRow>
                   Already voted {(votedAmount > 0) ? "for" : "against"} with { (votedAmount / totalRep * 100).toFixed(2)} % REP
                 </SidebarRow>
+              : <div/>
               }
               <br/>
               {userVotingMachineTokenApproved == 0 ?
@@ -392,7 +394,7 @@ const ProposalInformation = observer(() => {
                   <small>Approve DXD to stake</small>
                   <VoteButton color="blue" onClick={() => approveDXD()}>Approve DXD</VoteButton>
                 </SidebarRow>
-                : ((proposalInfo.stateInVotingMachine == 3 || proposalInfo.stateInVotingMachine == 4)) ?
+                : (proposalInfo.statusPriority == 3 || proposalInfo.statusPriority== 4)  ?
                   <div>
                     {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(2)} DXD to boost</small> : <span/>}
                     {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(2)} DXD to unboost</small> : <span/>}
