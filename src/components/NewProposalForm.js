@@ -202,14 +202,19 @@ const ProposalsTable = observer(() => {
       });
       
       const data = calls.map((call, i) => {
-        const parameters = call.callType == "decoded" 
-          ? call.functionName.substring(call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
-          : [];
+        let encodedData = "0x0";
         
-        const encodedData = call.callType == "decoded" ? 
-        library.eth.abi.encodeFunctionSignature(call.functionName) + 
-        library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
-        : call.data
+        if (call.functionName.length > 0 && call.functionParams > 0) {
+          const parameters = call.callType == "decoded" 
+            ? call.functionName.substring(
+              call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
+            : [];
+          
+          encodedData = call.callType == "decoded" ? 
+            library.eth.abi.encodeFunctionSignature(call.functionName) + 
+            library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
+          : call.data
+        }
                 
         return (scheme == 'masterWalletScheme') ? daoService.encodeControllerGenericCall(
           call.to,
@@ -237,12 +242,12 @@ const ProposalsTable = observer(() => {
     const [titleText, setTitleText] = React.useState("");
     const [descriptionText, setDescriptionText] = React.useState("");
     const [calls, setCalls] = React.useState([{
-      to: "0x554898A0BF98aB0C03ff86C7DccBE29269cc4d29",
+      to: "",
       callType: "decoded",
       data: "",
-      functionName: "transfer(address,uint256)",
-      functionParams: "0x08EEc580AD41e9994599BaD7d2a74A9874A2852c,666",
-      value: "100"
+      functionName: "",
+      functionParams: "",
+      value: ""
     }]);
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     
