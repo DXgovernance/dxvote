@@ -1,10 +1,10 @@
-name: Build and Deploy
+name: deploy to ipfs
   
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ master ]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -39,12 +39,3 @@ jobs:
           pinata-secret-api-key: ${{ secrets.PINATA_KEY }}
           verbose: true
           remove-old: true
-        
-      - name: Deploy to gh-pages
-        uses: JamesIves/github-pages-deploy-action@3.7.1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: build # The folder the action should deploy.
-          CLEAN: true # Automatically remove deleted files from the deploy branch
-
