@@ -248,8 +248,9 @@ const ProposalInformation = observer(() => {
       
       function onVoteValueChange(newValue) {
         const voteSlider = document.querySelectorAll("span[aria-labelledby='vote-slider']")[0];
-        console.log((voteSlider.ariaValueNow - 50) * 2)
+        console.log(voteSlider)
         setVotePercentage((voteSlider.ariaValueNow - 50) * 2)
+        voteSlider.ariaValueNow = votePercentage;
       }
       
       function onStakeValueChange(newValue) {
@@ -372,14 +373,14 @@ const ProposalInformation = observer(() => {
               {votedAmount == 0 && proposalInfo.statusPriority >=3 && proposalInfo.statusPriority <= 5  ?
                 <SidebarRow>
                   <AmountSlider
-                  defaultValue={votePercentage}
+                  defaultValue={100}
                   aria-labelledby="vote-slider"
                   step={0.1}
                   onChangeCommitted={onVoteValueChange}
                   marks={voteMarks}
                   style={{color: votePercentage > 0 ? 'green' : 'red'}}
                   />
-                  <span>{voteAmount} %</span>
+                  <span style={{color: votePercentage > 0 ? 'green' : 'red'}}>{voteAmount()} %</span>
                   <VoteButton color="blue" onClick={() => submitVote()}>Vote</VoteButton>
                 </SidebarRow>
               : votedAmount > 0 ?
@@ -389,7 +390,7 @@ const ProposalInformation = observer(() => {
               : <div/>
               }
               <br/>
-              {userVotingMachineTokenApproved == 0 ?
+              {(proposalInfo.statusPriority == 3 || proposalInfo.statusPriority== 4) && userVotingMachineTokenApproved == 0 ?
                 <SidebarRow>
                   <small>Approve DXD to stake</small>
                   <VoteButton color="blue" onClick={() => approveDXD()}>Approve DXD</VoteButton>
