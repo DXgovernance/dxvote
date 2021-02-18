@@ -185,7 +185,7 @@ const source = `
 > todo: React component preview markdown text.
 `;
 
-const ProposalsTable = observer(() => {
+const NewProposalForm = observer(() => {
     const {
         root: { providerStore, daoStore, configStore, daoService, ipfsService },
     } = useStores();
@@ -420,4 +420,4 @@ const ProposalsTable = observer(() => {
     }
 });
 
-export default ProposalsTable;
+export default NewProposalForm;
