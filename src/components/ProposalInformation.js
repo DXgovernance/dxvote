@@ -143,14 +143,12 @@ const ProposalInformation = observer(() => {
     if (proposalInfo){
       daoService.getProposalEvents(proposalId, proposalInfo.creationBlock).then((pEvents) => {
         if (!proposalEvents.stakes && !proposalEvents.votes){
-          console.log(pEvents)
           setProposalEvents(pEvents);
         }
       })
 
       daoService.getRepAt(proposalInfo.creationBlock).then((repAtCreation) => {
         if (!userRep && !totalRep) {
-          console.log(repAtCreation);
           setUserRep(repAtCreation.userRep);
           setTotalRep(repAtCreation.totalSupply);
         }
@@ -162,7 +160,7 @@ const ProposalInformation = observer(() => {
       for (var i = 0; i < proposalEvents.votes.length; i++){
         if (proposalEvents.votes[i].returnValues._voter === account)
           votedAmount = proposalEvents.votes[i].returnValues._vote === "2" ?
-            Math.neg(proposalEvents.votes[i].returnValues._reputation)
+            - proposalEvents.votes[i].returnValues._reputation
             : proposalEvents.votes[i].returnValues._reputation;
         if (proposalEvents.votes[i].returnValues._vote === "1")
           positiveVotesCount ++;
@@ -174,7 +172,7 @@ const ProposalInformation = observer(() => {
       for (var i = 0; i < proposalEvents.stakes.length; i++){
         if (proposalEvents.stakes[i].returnValues._staker === account)
           stakedAmount = proposalEvents.stakes[i].returnValues._vote === "2" ?
-            Math.neg(proposalEvents.stakes[i].returnValues._amount)
+            - proposalEvents.stakes[i].returnValues._amount
             : proposalEvents.stakes[i].returnValues._amount;
         if (proposalEvents.stakes[i].returnValues._vote === "1")
           positiveStakesCount ++;
@@ -222,7 +220,6 @@ const ProposalInformation = observer(() => {
           proposalInfo.to[p] = decodedGenericCall.to;
           proposalInfo.callData[p] = decodedGenericCall.data;
           proposalInfo.values[p] = decodedGenericCall.value;
-          console.log(proposalInfo.proposalCallText[p])
         }
       }
         
@@ -244,11 +241,9 @@ const ProposalInformation = observer(() => {
       const timeToFinish = proposalInfo && proposalInfo.finishTime > moment().unix() ?
       moment().to( moment(proposalInfo.finishTime.times(1000).toNumber()) ).toString()
       : "";
-
       
       function onVoteValueChange(newValue) {
         const voteSlider = document.querySelectorAll("span[aria-labelledby='vote-slider']")[0];
-        console.log(voteSlider)
         setVotePercentage((voteSlider.ariaValueNow - 50) * 2)
         voteSlider.ariaValueNow = votePercentage;
       }
@@ -383,7 +378,7 @@ const ProposalInformation = observer(() => {
                   <span style={{color: votePercentage > 0 ? 'green' : 'red'}}>{voteAmount()} %</span>
                   <VoteButton color="blue" onClick={() => submitVote()}>Vote</VoteButton>
                 </SidebarRow>
-              : votedAmount > 0 ?
+              : votedAmount != 0 ?
                 <SidebarRow>
                   Already voted {(votedAmount > 0) ? "for" : "against"} with { (votedAmount / totalRep * 100).toFixed(2)} % REP
                 </SidebarRow>
