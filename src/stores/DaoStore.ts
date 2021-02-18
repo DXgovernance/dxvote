@@ -410,6 +410,7 @@ export default class DaoStore {
         bnum(votingMachineTimesDivided[2]),
         parameters.queuedVotePeriodLimit,
         parameters.boostedVotePeriodLimit,
+        parameters.quietEndingPeriod,
         parameters.preBoostedVotePeriodLimit,
         proposalShouldBoost
       );

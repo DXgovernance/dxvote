@@ -315,21 +315,32 @@ const ProposalInformation = observer(() => {
               })}
             </ProposalInfoSection>
             <InfoSidebar>
-              <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{proposalInfo.status}</h2>
+              <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{
+                (proposalInfo.status == "Quiet Ending Period" && timeToFinish == "") ?
+                  "Pending Execution" : proposalInfo.status
+                }</h2>
               <SidebarRow style={{
                 borderBottom: "1px solid gray",
                 margin: "0px 10px",
+                flexDirection: "column"
               }}>
-              {(proposalInfo.boostTime > moment().unix()) ? <span className="timeText">Boost {timeToBoost} </span> : <span></span>}
-              {(proposalInfo.finishTime > moment().unix()) ?
-                <span className="timeText">Finish {timeToFinish} {proposalInfo.status == "Pending Boost" ? " after boost": ""} </span>
-                : <span></span>}
-              {proposalInfo.status == "Pending Boost" ? 
-                <VoteButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </VoteButton>
-                : proposalInfo.status == "Pending Execution" ?
-                <VoteButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </VoteButton>
-                : <div/>
-              } 
+                {(proposalInfo.boostTime > moment().unix()) ?
+                  <span className="timeText"> Boost {timeToBoost} </span> 
+                  : <span></span>
+                }
+                
+                {(proposalInfo.finishTime > moment().unix()) ?
+                  <span className="timeText">
+                    Finish {timeToFinish} {proposalInfo.status == "Pending Boost" || proposalInfo.status == "Pre Boosted" ? " after boost": ""} </span>
+                  : <span></span>}
+                {proposalInfo.status == "Pending Boost" ? 
+                  <VoteButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </VoteButton>
+                  : proposalInfo.status == "Quiet Ending Period" && timeToFinish == "" ?
+                  <VoteButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </VoteButton>
+                  : proposalInfo.status == "Pending Execution" ?
+                  <VoteButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </VoteButton>
+                  : <div/>
+                } 
               </SidebarRow>
               <SidebarRow>
                 <span> Staked </span>
@@ -365,7 +376,7 @@ const ProposalInformation = observer(() => {
                   <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
                 </span>
               </SidebarRow>
-              {votedAmount == 0 && proposalInfo.statusPriority >=3 && proposalInfo.statusPriority <= 5  ?
+              {votedAmount == 0 && proposalInfo.statusPriority >=3 && proposalInfo.statusPriority <= 6  ?
                 <SidebarRow>
                   <AmountSlider
                   defaultValue={100}

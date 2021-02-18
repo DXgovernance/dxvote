@@ -106,6 +106,7 @@ async function main() {
       boostedVotePeriodLimit: moment.duration(2, 'days').asSeconds(),
       preBoostedVotePeriodLimit: moment.duration(0.5, 'days').asSeconds(),
       thresholdConst: 1500,
+      quietEndingPeriod: moment.duration(3, 'hours').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.02"),
       votersReputationLossRatio: 2,
       minimumDaoBounty: web3.utils.toWei("1"),
@@ -117,6 +118,7 @@ async function main() {
       boostedVotePeriodLimit: moment.duration(1, 'days').asSeconds(),
       preBoostedVotePeriodLimit: moment.duration(0.5, 'days').asSeconds(),
       thresholdConst: 1050,
+      quietEndingPeriod: moment.duration(1, 'hours').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.002"),
       votersReputationLossRatio: 4,
       minimumDaoBounty: web3.utils.toWei("0.25"),
@@ -125,10 +127,11 @@ async function main() {
   } : {
     master: {
       queuedVoteRequiredPercentage: 50,
-      queuedVotePeriodLimit: moment.duration(60, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(20, 'minutes').asSeconds(),
+      queuedVotePeriodLimit: moment.duration(20, 'minutes').asSeconds(),
+      boostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
       preBoostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
       thresholdConst: 1500,
+      quietEndingPeriod: moment.duration(2.5, 'minutes').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.02"),
       votersReputationLossRatio: 2,
       minimumDaoBounty: web3.utils.toWei("1"),
@@ -136,10 +139,11 @@ async function main() {
     },
     quick: {
       queuedVoteRequiredPercentage: 60,
-      queuedVotePeriodLimit: moment.duration(30, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
+      queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
+      boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
+      preBoostedVotePeriodLimit: moment.duration(2.5, 'minutes').asSeconds(),
       thresholdConst: 1050,
+      quietEndingPeriod: moment.duration(1, 'minutes').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.002"),
       votersReputationLossRatio: 4,
       minimumDaoBounty: web3.utils.toWei("0.25"),
@@ -154,7 +158,7 @@ async function main() {
     boostedVotePeriodLimit: schemesConfiguration.master.boostedVotePeriodLimit,
     preBoostedVotePeriodLimit: schemesConfiguration.master.preBoostedVotePeriodLimit,
     thresholdConst: schemesConfiguration.master.thresholdConst,
-    quietEndingPeriod: 0,
+    quietEndingPeriod: schemesConfiguration.master.quietEndingPeriod,
     proposingRepReward: schemesConfiguration.master.proposingRepReward,
     votersReputationLossRatio: schemesConfiguration.master.votersReputationLossRatio,
     minimumDaoBounty: schemesConfiguration.master.minimumDaoBounty,
@@ -214,7 +218,7 @@ async function main() {
     boostedVotePeriodLimit: schemesConfiguration.quick.boostedVotePeriodLimit,
     preBoostedVotePeriodLimit: schemesConfiguration.quick.preBoostedVotePeriodLimit,
     thresholdConst: schemesConfiguration.quick.thresholdConst,
-    quietEndingPeriod: 0,
+    quietEndingPeriod: schemesConfiguration.quick.quietEndingPeriod,
     proposingRepReward: schemesConfiguration.quick.proposingRepReward,
     votersReputationLossRatio: schemesConfiguration.quick.votersReputationLossRatio,
     minimumDaoBounty: schemesConfiguration.quick.minimumDaoBounty,
@@ -289,7 +293,7 @@ async function main() {
     let descriptionText = "Set 10 REP tokens to "+accounts[0]+", 20 REP tokens to "+accounts[1]+", and 70 REP tokens to "+accounts[2]
     let cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
 
-    const firstProposalTx = await masterWalletScheme.methods.proposeCalls(
+    const seedProposalTx = await masterWalletScheme.methods.proposeCalls(
       [controller.address, controller.address, controller.address, controller.address],
       [
         controller.methods.mintReputation(
@@ -309,13 +313,13 @@ async function main() {
       titleText,
       contentHash.fromIpfs(cid)
     ).send({ from: accounts[0] });
-    const firstProposalId = firstProposalTx.events.NewCallProposal.returnValues[0];
-    await dxdVotingMachine.methods.vote(firstProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[0] });
+    const seedProposalId = seedProposalTx.events.NewCallProposal.returnValues[0];
+    await dxdVotingMachine.methods.vote(seedProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[0] });
     titleText = "First test proposal";
     descriptionText = "Tranfer 15 ETH and 50 tokens to QuickWalletScheme and mint 20 REP";
     cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
     
-    const secondProposalTx = await masterWalletScheme.methods.proposeCalls(
+    const fisrtProposalTx = await masterWalletScheme.methods.proposeCalls(
       [controller.address, controller.address, controller.address],
       [
         controller.methods.mintReputation(
@@ -337,12 +341,12 @@ async function main() {
       titleText,
       contentHash.fromIpfs(cid)
     ).send({ from: accounts[0] });
-    const secondProposalId = secondProposalTx.events.NewCallProposal.returnValues[0];
+    const firstProposalId = fisrtProposalTx.events.NewCallProposal.returnValues[0];
     titleText = "Second test proposal";
     descriptionText = "Tranfer 10 ETH to " + accounts[1];
     cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
 
-    const thirdProposalTx = await masterWalletScheme.methods.proposeCalls(
+    const secondProposalTx = await masterWalletScheme.methods.proposeCalls(
       [controller.address],
       [
         controller.methods.genericCall(
@@ -353,7 +357,7 @@ async function main() {
       titleText,
       contentHash.fromIpfs(cid)
     ).send({ from: accounts[0] });
-    const thirdProposalId = thirdProposalTx.events.NewCallProposal.returnValues[0];
+    const secondProposalId = secondProposalTx.events.NewCallProposal.returnValues[0];
     
     titleText = "Third test proposal";
     descriptionText = "Tranfer 3 ETH to " + accounts[2];
@@ -367,14 +371,16 @@ async function main() {
       contentHash.fromIpfs(cid)
     ).send({ from: accounts[0] });
     
-    await dxdVotingMachine.methods.vote(secondProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[2] });
+    await dxdVotingMachine.methods.vote(firstProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[2] });
 
     await votingMachineToken.methods.approve(
       dxdVotingMachine.address, await votingMachineToken.methods.balanceOf(accounts[1]).call()
     ).send({from: accounts[1]});
-    await dxdVotingMachine.methods.stake(thirdProposalId, 1, web3.utils.toWei("2").toString())
+    await dxdVotingMachine.methods.stake(secondProposalId, 1, web3.utils.toWei("2").toString())
       .send({ from: accounts[1] });
-    await dxdVotingMachine.methods.vote(thirdProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[1] });
+    await dxdVotingMachine.methods.vote(secondProposalId, 1, web3.utils.toWei("5"), ZERO_ADDRESS).send({ 
+      from: accounts[1]
+    });
   
   }
   
