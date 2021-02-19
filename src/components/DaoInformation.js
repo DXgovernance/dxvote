@@ -33,7 +33,7 @@ const DaoInformationWrapper = styled.div`
 `;
 
 
-const DaoInformationBox = styled.div`
+const DaoInformationBox = styled.a`
   background: white;
   border: 1px solid var(--medium-gray);
   margin: auto;
@@ -44,6 +44,8 @@ const DaoInformationBox = styled.div`
   flex-direction: column;
   text-align: center;
   width: fit-content;
+  text-decoration: none;
+  color: inherit;
   
   h3 {
     margin: 5px 0px;
@@ -101,14 +103,14 @@ const DaiInformation = observer(() => {
             <h3>Total Rep: {Number(library.utils.fromWei(daoInfo.totalRep.toString())).toFixed(2)}</h3>
           </DaoInformationBox>
           <Row>
-            <DaoInformationBox>
+            <DaoInformationBox href={"/#/scheme/"+configStore.getMasterWalletSchemeAddress()}>
               <h3>Master Scheme</h3>
               <h3><small>{daoInfo.address}</small></h3>
               <h3>Master Scheme ETH Balance: {masterWalletBalance} ETH</h3>
               <h3><small>Slow & Safe</small></h3>
               <h3><small>Make calls from DXdao Avatar</small></h3>
             </DaoInformationBox>
-            <DaoInformationBox>
+            <DaoInformationBox href={"/#/scheme/"+configStore.getQuickWalletSchemeAddress()}>
               <h3>Quick Scheme</h3>
               <h3><small>{quickWalletScheme.address}</small></h3>
               <h3>Quick Scheme ETH Balance: {quickWalletBalance} ETH</h3>
