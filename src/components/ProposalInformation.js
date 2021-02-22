@@ -125,10 +125,8 @@ const ProposalInformation = observer(() => {
     } = useStores();
     const schemeAddress = useLocation().pathname.split("/")[2];
     const proposalId = useLocation().pathname.split("/")[4];
-    daoStore.getProposalInfo(schemeAddress, proposalId)
-    daoStore.getShortchemeInfo(schemeAddress)
-    const proposalInfo = daoStore.proposals[proposalId];
-    const shortchemeInfo = daoStore.schemes[schemeAddress];
+    const shortchemeInfo = daoStore.getSchemeInfo(schemeAddress);
+    const proposalInfo = daoStore.getProposalInfo(schemeAddress, proposalId, shortchemeInfo.parameters);
     const { userVotingMachineTokenBalance, userVotingMachineTokenApproved } = daoStore.getDaoInfo(); 
     const {content: proposalDescription} = proposalInfo ? ipfsService.get(proposalInfo.descriptionHash)
     : "";

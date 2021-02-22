@@ -111,8 +111,10 @@ const ProposalsTable = observer(() => {
 
     const masterWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getMasterWalletSchemeAddress());
     const quickWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getQuickWalletSchemeAddress());
+    const masterWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getMasterWalletSchemeAddress());
+    const quickWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getQuickWalletSchemeAddress());
     let allProposals = [];
-    allProposals = allProposals.concat(masterWalletSchemeInfo.proposals).concat(quickWalletSchemeInfo.proposals)
+    allProposals = allProposals.concat(masterWalletSchemeProposals).concat(quickWalletSchemeProposals)
     console.log("MasterWalletScheme info", masterWalletSchemeInfo);
     console.log("QuickWalletScheme info", quickWalletSchemeInfo);
     

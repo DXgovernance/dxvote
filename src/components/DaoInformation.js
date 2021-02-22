@@ -91,7 +91,7 @@ const DaiInformation = observer(() => {
       )
     } else {
       const daoInfo = daoStore.getDaoInfo();
-      const quickWalletScheme = daoStore.getShortchemeInfo(configStore.getQuickWalletSchemeAddress());
+      const quickWalletScheme = daoStore.getSchemeInfo(configStore.getQuickWalletSchemeAddress());
       const masterWalletBalance = Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(2);
       const quickWalletBalance = Number(library.utils.fromWei(quickWalletScheme.ethBalance.toString())).toFixed(2);
       return (

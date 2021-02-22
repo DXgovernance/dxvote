@@ -160,24 +160,9 @@ export default class DaoStore {
     return this.daoInfo;
   }
   
-  getSchemeInfo(schemeAddress): SchemeInfo {
-    const { configStore, providerStore } = this.rootStore;
-    const toAddress = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'toAddress',
-    });
-    const ethBalance = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Multicall,
-      address: configStore.getMulticallAddress(),
-      method: 'getEthBalance',
-      params: [schemeAddress]
-    });
-    const parametersHash = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'voteParams',
-    });
+  getSchemeProposals(schemeAddress): ProposalInfo[] {
+    const { configStore } = this.rootStore;
+    
     const proposalIds = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.WalletScheme,
       address: schemeAddress,
@@ -187,22 +172,12 @@ export default class DaoStore {
       address: schemeAddress,
       method: 'getOrganizationProposals'
     }).split(",") : undefined;
-    const boostedProposals = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
-      method: 'orgBoostedProposalsCnt',
-      params: [Web3.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
-    })
-    
-    const encodedPermissions = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Controller,
-      address: configStore.getControllerAddress(),
-      method: 'getSchemePermissions',
-      params: [schemeAddress, configStore.getAvatarAddress()]
-    });
-    
-    const permissions = encodedPermissions ? decodePermission(encodedPermissions) : undefined;
 
+    const parametersHash = this.rootStore.blockchainStore.getCachedValue({
+      contractType: ContractType.WalletScheme,
+      address: schemeAddress,
+      method: 'voteParams',
+    });
     const rawParameters = (parametersHash) ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.VotingMachine,
       address: configStore.getVotingMachineAddress(),
@@ -210,7 +185,6 @@ export default class DaoStore {
       params: [parametersHash]
     }) : undefined;
     
-    const blockNumber = providerStore.getCurrentBlockNumber();
     const parameters = (rawParameters && rawParameters.length > 0) ?
       {
         queuedVoteRequiredPercentage: bnum(rawParameters.split(",")[0]),
@@ -233,12 +207,11 @@ export default class DaoStore {
           proposals.push(this.getProposalInfo(schemeAddress, proposalIds[proposalIndex], parameters));
         }
       }
-    const schemeInfo = {address: schemeAddress, toAddress, parametersHash, ethBalance, parameters, permissions, proposalIds, boostedProposals, proposals, blockNumber};
-    this.schemes[schemeAddress] = schemeInfo;
-    return this.schemes[schemeAddress];
+    this.schemes[schemeAddress].proposals = proposals;
+    return this.schemes[schemeAddress].proposals;
   }
   
-  getShortchemeInfo(schemeAddress): SchemeInfo {
+  getSchemeInfo(schemeAddress): SchemeInfo {
     const { configStore, providerStore } = this.rootStore;
     const toAddress = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.WalletScheme,
