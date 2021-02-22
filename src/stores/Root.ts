@@ -1,9 +1,8 @@
 // Stores
 import ProviderStore from './ETHProvider';
 import TransactionStore from './Transaction';
-import AppSettingsStore from './AppSettings';
 import ModalStore from './Modal';
-import ConfigStore from './config';
+import ConfigStore from './ConfigStore';
 import DaoStore from './DaoStore';
 import BlockchainStore from './BlockchainStore';
 import ABIService from '../services/ABIService';
@@ -14,7 +13,6 @@ import IPFSService from '../services/IPFSService';
 export default class RootStore {
   providerStore: ProviderStore;
   transactionStore: TransactionStore;
-  appSettingsStore: AppSettingsStore;
   modalStore: ModalStore;
   configStore: ConfigStore;
   daoStore: DaoStore;
@@ -32,7 +30,6 @@ export default class RootStore {
     this.ipfsService = new IPFSService(this);
     this.providerStore = new ProviderStore(this);
     this.transactionStore = new TransactionStore(this);
-    this.appSettingsStore = new AppSettingsStore(this);
     this.modalStore = new ModalStore(this);
     this.configStore = new ConfigStore(this);
     this.daoStore = new DaoStore(this);

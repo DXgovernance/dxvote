@@ -1,12 +1,15 @@
+import { action, observable } from 'mobx';
 import RootStore from 'stores/Root';
 import { getConfig } from '../config/contracts';
 import { CHAIN_NAME_BY_ID, DEFAULT_ETH_CHAIN_ID } from '../provider/connectors';
 
 export default class ConfigStore {
+    @observable darkMode: boolean;
     rootStore: RootStore;
 
     constructor(rootStore) {
       this.rootStore = rootStore;
+      this.darkMode = false;
     }
     
     getActiveChainName() {
@@ -14,8 +17,30 @@ export default class ConfigStore {
       return CHAIN_NAME_BY_ID[(activeWeb3 && activeWeb3.chainId) ? activeWeb3.chainId : DEFAULT_ETH_CHAIN_ID];
     }
     
+    getApiKeys() {
+      return {
+        etherscan: localStorage.getItem('dxvote-etherscan'),
+        tenderly: localStorage.getItem('dxvote-tenderly')
+      }
+    }
+    
+    getApiKey(service) {
+      localStorage.getItem('dxvote-'+service);
+    }
+    
+    setApiKey(service, key) {
+      localStorage.setItem('dxvote-'+service, key);
+    }
+    
+    @action toggleDarkMode() {
+        this.darkMode = !this.darkMode;
+    }
+
+    @action setDarkMode(visible: boolean) {
+        this.darkMode = visible;
+    }
+    
     getNetworkConfig() {
-      console.log(this.getActiveChainName(), DEFAULT_ETH_CHAIN_ID)
       return getConfig(this.getActiveChainName());
     }
     getAvatarAddress() {

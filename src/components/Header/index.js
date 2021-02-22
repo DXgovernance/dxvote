@@ -4,6 +4,8 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import Web3ConnectStatus from '../Web3ConnectStatus';
 import { useStores } from '../../contexts/storesContext';
+import { FiSettings } from "react-icons/fi";
+
 import Web3 from 'web3';
 
 const NavWrapper = styled.div`
@@ -85,6 +87,7 @@ const Header = observer(() => {
         <BalanceItem> {dxdBalance} DXD </BalanceItem>
         <BalanceItem> {repBalance} REP </BalanceItem>
         <Web3ConnectStatus text="Connect Wallet" />
+        <a href={"/#/config"}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
       </NavSection>
     </NavWrapper>
   );

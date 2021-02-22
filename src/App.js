@@ -9,6 +9,7 @@ import NewProposalPage from './pages/NewProposal';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
 import SchemePage from './pages/Scheme';
+import ConfigPage from './pages/Configuration';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Header />
           <Route exact path="/"> <ProposalsPage /> </Route>
           <Route exact path="/new"> <NewProposalPage /> </Route>
+          <Route exact path="/config"> <ConfigPage /> </Route>
           <Route exact path="/user/:address"> <UserPage /> </Route>
           <Route exact path="/scheme/:schemAddress"> <SchemePage /> </Route>
           <Route exact path="/scheme/:schemAddress/proposal/:proposalId"> <ProposalPage /> </Route>

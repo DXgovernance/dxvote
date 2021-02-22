@@ -37,10 +37,10 @@ const black = '#000000';
 
 export default function ThemeProvider({ children }) {
     const {
-        root: { appSettingsStore },
+        root: { configStore },
     } = useStores();
 
-    const darkMode = appSettingsStore.darkMode;
+    const darkMode = configStore.darkMode;
 
     const themeURL = checkSupportedTheme(
         getQueryParam(window.location, 'theme')
@@ -54,8 +54,8 @@ export default function ThemeProvider({ children }) {
         : darkMode;
 
     useEffect(() => {
-        appSettingsStore.setDarkMode(themeToRender);
-    }, [appSettingsStore, themeToRender]);
+        configStore.setDarkMode(themeToRender);
+    }, [configStore, themeToRender]);
     return (
         <StyledComponentsThemeProvider theme={theme(themeToRender)}>
             {children}
