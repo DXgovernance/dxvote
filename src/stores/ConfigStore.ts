@@ -58,13 +58,10 @@ export default class ConfigStore {
     getVotingMachineTokenAddress() {
       return getConfig(this.getActiveChainName()).votingMachineToken || "0x0000000000000000000000000000000000000000";
     }
-    getMasterWalletSchemeAddress() {
-      return getConfig(this.getActiveChainName()).masterWalletScheme || "0x0000000000000000000000000000000000000000";
-    }
-    getQuickWalletSchemeAddress() {
-      return getConfig(this.getActiveChainName()).quickWalletScheme || "0x0000000000000000000000000000000000000000";
-    }
     getMulticallAddress() {
       return getConfig(this.getActiveChainName()).multicall || "0x0000000000000000000000000000000000000000";
+    }
+    getSchemeAddress(schemeName) {
+      return getConfig(this.getActiveChainName()).schemes[schemeName] || "0x0000000000000000000000000000000000000000";
     }
 }

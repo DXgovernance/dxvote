@@ -55,21 +55,20 @@ export default class DaoService {
     )
     
     // Get events at maximum a 30days time of proposal
-    const toBlock = Math.min(creationBlock + 190000, providerStore.getCurrentBlockNumber());
-    
+    const toBlock = Math.min(creationBlock + 190000, await providerStore.getCurrentBlockNumber());
     const stakes = await votingMachine.getPastEvents(
     "Stake",
     {
       filter: { _proposalId: proposalId },
       fromBlock: creationBlock,
-      toBlock: toBlock
+      toBlock: toBlock > 0 ? toBlock : 0
     });
     const votes = await votingMachine.getPastEvents(
     "VoteProposal",
     {
       filter: { _proposalId: proposalId },
       fromBlock: creationBlock,
-      toBlock: toBlock
+      toBlock: toBlock > 0 ? toBlock : 0
     })
     
     return {stakes, votes};

@@ -8,8 +8,10 @@ export const getConfig = function(network) {
       reputation: process.env.REACT_APP_REPUTATION_ADDRESS.replace(/["']/g, ""),
       votingMachine: process.env.REACT_APP_VOTING_MACHINE_ADDRESS.replace(/["']/g, ""),
       votingMachineToken: process.env.REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS.replace(/["']/g, ""),
-      masterWalletScheme: process.env.REACT_APP_MASTER_WALLET_SCHEME_ADDRESS.replace(/["']/g, ""),
-      quickWalletScheme: process.env.REACT_APP_QUICK_WALLET_SCHEME_ADDRESS.replace(/["']/g, ""),
+      schemes: {
+        masterWallet: process.env.REACT_APP_MASTER_WALLET_SCHEME_ADDRESS.replace(/["']/g, ""),
+        quickWallet: process.env.REACT_APP_QUICK_WALLET_SCHEME_ADDRESS.replace(/["']/g, "")
+      },
       multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, "")
     }
   } else if (network === 'rinkeby') {
@@ -18,9 +20,11 @@ export const getConfig = function(network) {
       controller: RINKEBY_CONFIG.controller, 
       reputation: RINKEBY_CONFIG.reputation, 
       votingMachine: RINKEBY_CONFIG.votingMachine, 
-      votingMachineToken: RINKEBY_CONFIG.votingMachineToken, 
-      masterWalletScheme: RINKEBY_CONFIG.masterWalletScheme, 
-      quickWalletScheme: RINKEBY_CONFIG.quickWalletScheme, 
+      votingMachineToken: RINKEBY_CONFIG.votingMachineToken,
+      schemes: {
+        masterWallet: RINKEBY_CONFIG.masterWalletScheme, 
+        quickWallet: RINKEBY_CONFIG.quickWalletScheme
+      },
       multicall: RINKEBY_CONFIG.multicall,
     }
   } else {

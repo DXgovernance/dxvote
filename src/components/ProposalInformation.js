@@ -139,7 +139,8 @@ const ProposalInformation = observer(() => {
     const [stakePercentage, setStakePercentage] = React.useState(100);
     
     if (proposalInfo){
-      daoService.getProposalEvents(proposalId, proposalInfo.creationBlock).then((pEvents) => {
+      console.log(proposalInfo)
+      daoService.getProposalEvents(proposalId, Number(proposalInfo.creationBlock)).then((pEvents) => {
         if (!proposalEvents.stakes && !proposalEvents.votes){
           setProposalEvents(pEvents);
         }

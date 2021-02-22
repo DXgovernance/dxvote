@@ -91,7 +91,7 @@ const DaiInformation = observer(() => {
       )
     } else {
       const daoInfo = daoStore.getDaoInfo();
-      const quickWalletScheme = daoStore.getSchemeInfo(configStore.getQuickWalletSchemeAddress());
+      const quickWalletScheme = daoStore.getSchemeInfo(configStore.getSchemeAddress('quickWallet'));
       const masterWalletBalance = Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(2);
       const quickWalletBalance = Number(library.utils.fromWei(quickWalletScheme.ethBalance.toString())).toFixed(2);
       return (
@@ -103,14 +103,14 @@ const DaiInformation = observer(() => {
             <h3>Total Rep: {Number(library.utils.fromWei(daoInfo.totalRep.toString())).toFixed(2)}</h3>
           </DaoInformationBox>
           <Row>
-            <DaoInformationBox href={"/#/scheme/"+configStore.getMasterWalletSchemeAddress()}>
+            <DaoInformationBox href={"/#/scheme/"+configStore.getSchemeAddress('masterWallet')}>
               <h3>Master Scheme</h3>
               <h3><small>{daoInfo.address}</small></h3>
               <h3>Master Scheme ETH Balance: {masterWalletBalance} ETH</h3>
               <h3><small>Slow & Safe</small></h3>
               <h3><small>Make calls from DXdao Avatar</small></h3>
             </DaoInformationBox>
-            <DaoInformationBox href={"/#/scheme/"+configStore.getQuickWalletSchemeAddress()}>
+            <DaoInformationBox href={"/#/scheme/"+configStore.getSchemeAddress('quickWallet')}>
               <h3>Quick Scheme</h3>
               <h3><small>{quickWalletScheme.address}</small></h3>
               <h3>Quick Scheme ETH Balance: {quickWalletBalance} ETH</h3>

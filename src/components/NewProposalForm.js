@@ -198,7 +198,7 @@ const NewProposalForm = observer(() => {
       const { library } = providerStore.getActiveWeb3React();
       
       const to = calls.map((call) => {
-        return (scheme == 'masterWalletScheme') ? configStore.getControllerAddress() : call.to
+        return (scheme == 'masterWallet') ? configStore.getControllerAddress() : call.to
       });
       
       const data = calls.map((call, i) => {
@@ -216,7 +216,7 @@ const NewProposalForm = observer(() => {
           : call.data
         }
                 
-        return (scheme == 'masterWalletScheme') ? daoService.encodeControllerGenericCall(
+        return (scheme == 'masterWallet') ? daoService.encodeControllerGenericCall(
           call.to,
           encodedData,
           call.callType == "decoded" ? library.utils.toWei(call.value).toString()
@@ -225,20 +225,20 @@ const NewProposalForm = observer(() => {
       });
       
       const value = calls.map((call) => {
-        return (scheme == 'masterWalletScheme') ? "0"
+        return (scheme == 'masterWallet') ? "0"
         : call.callType == "decoded" ? library.utils.toWei(call.value).toString()
           : call.value
       });
       console.log(to, data, value, titleText, calls)
       daoStore.createProposal( 
-        (scheme == 'masterWalletScheme') 
-          ? configStore.getMasterWalletSchemeAddress() : configStore.getQuickWalletSchemeAddress(),
+        (scheme == 'masterWallet') 
+          ? configStore.getSchemeAddress('masterWallet') : configStore.getSchemeAddress('quickWallet'),
         to, data, value, titleText, descriptionHash
       );
       
     }
 
-    const [scheme, setScheme] = React.useState("masterWalletScheme");
+    const [scheme, setScheme] = React.useState("masterWallet");
     const [titleText, setTitleText] = React.useState("");
     const [descriptionText, setDescriptionText] = React.useState("");
     const [calls, setCalls] = React.useState([{
@@ -310,8 +310,8 @@ const NewProposalForm = observer(() => {
           <SchemeInput>
             <label for="scheme">Choose a Scheme:</label>
             <select name="scheme" id="schemeSelector" onChange={setScheme}>
-              <option value="masterWalletScheme">Master Wallet Scheme</option>
-              <option value="quickWalletScheme">Quick Wallet Scheme</option>
+              <option value="masterWallet">Master Wallet Scheme</option>
+              <option value="quickWallet">Quick Wallet Scheme</option>
             </select>
           </SchemeInput>
           <TitleInput>

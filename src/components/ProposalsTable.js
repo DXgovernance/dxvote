@@ -109,10 +109,10 @@ const ProposalsTable = observer(() => {
         root: { providerStore, daoStore, configStore, ipfsService },
     } = useStores();
 
-    const masterWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getMasterWalletSchemeAddress());
-    const quickWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getQuickWalletSchemeAddress());
-    const masterWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getMasterWalletSchemeAddress());
-    const quickWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getQuickWalletSchemeAddress());
+    const masterWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getSchemeAddress('masterWallet'));
+    const quickWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getSchemeAddress('quickWallet'));
+    const masterWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('masterWallet'));
+    const quickWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('quickWallet'));
     let allProposals = [];
     allProposals = allProposals.concat(masterWalletSchemeProposals).concat(quickWalletSchemeProposals)
     console.log("MasterWalletScheme info", masterWalletSchemeInfo);
@@ -184,7 +184,7 @@ const ProposalsTable = observer(() => {
                           {proposal.title}
                         </TableCell>
                         <TableCell width="10%" align="center">
-                          {proposal.scheme == configStore.getMasterWalletSchemeAddress() ? 'Master' : 'Quick'}
+                          {proposal.scheme == configStore.getSchemeAddress('masterWallet') ? 'Master' : 'Quick'}
                         </TableCell>
                         <TableCell width="15%" align="center">
                           {proposal.status} <br/>

@@ -23,7 +23,7 @@ export default class MulticallService {
   }
 
   // Add call additions and removals
-  async executeCalls(calls: Call[], rawCalls: any[]) {
+  async executeCalls(calls?: Call[], rawCalls?: any[]) {
     const { providerStore, configStore } = this.root;
 
     const multi = providerStore.getContract(
@@ -32,9 +32,9 @@ export default class MulticallService {
       configStore.getMulticallAddress()
     );
 
-    const response = await multi.methods.aggregate(rawCalls).call();
+    const response = await multi.methods.aggregate(rawCalls || this.activeCallsRaw).call();
     return {
-      calls: calls,
+      calls: calls || this.activeCalls,
       results: response.returnData,
       blockNumber: response.blockNumber,
     };
