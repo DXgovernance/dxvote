@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import Web3ConnectStatus from '../Web3ConnectStatus';
 import { useStores } from '../../contexts/storesContext';
-import { FiSettings } from "react-icons/fi";
+import { FiSettings, FiUser } from "react-icons/fi";
 
 import Web3 from 'web3';
 
@@ -65,15 +65,16 @@ const Header = observer(() => {
   );
   
   const {
-      root: { daoStore },
+      root: { daoStore, providerStore },
   } = useStores();
-  daoStore.getDaoInfo();
+  const daoInfo = daoStore.getDaoInfo();
+  const { active, account } = providerStore.getActiveWeb3React();
 
-  const dxdBalance = daoStore.daoInfo.userVotingMachineTokenBalance ?
-    parseFloat(Number(Web3.utils.fromWei(daoStore.daoInfo.userVotingMachineTokenBalance.toString())).toFixed(4))
+  const dxdBalance = daoInfo.userVotingMachineTokenBalance ?
+    parseFloat(Number(Web3.utils.fromWei(daoInfo.userVotingMachineTokenBalance.toString())).toFixed(4))
     : 0;
-  const repBalance = daoStore.daoInfo.userRep ?
-    parseFloat(Number(Web3.utils.fromWei(daoStore.daoInfo.userRep.toString())).toFixed(4))
+  const repBalance = daoInfo.userRep ?
+    parseFloat(Number(Web3.utils.fromWei(daoInfo.userRep.toString())).toFixed(4))
     : 0
     
   return (
@@ -88,6 +89,10 @@ const Header = observer(() => {
         <BalanceItem> {repBalance} REP </BalanceItem>
         <Web3ConnectStatus text="Connect Wallet" />
         <a href={"/#/config"}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
+        {active ?
+          <a href={"/#/user/"+account}><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
+          : <div/>
+        }
       </NavSection>
     </NavWrapper>
   );

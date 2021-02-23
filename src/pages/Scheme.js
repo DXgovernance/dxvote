@@ -58,7 +58,7 @@ const Row = styled.div`
   padding-top: 15px;
   justify-content: space-around;
 `
-const DaiInformation = observer(() => {
+const SchemePage = observer(() => {
     const {
         root: { providerStore, daoStore, configStore, blockchainStore },
     } = useStores();
@@ -130,4 +130,4 @@ const DaiInformation = observer(() => {
     }
 });
 
-export default DaiInformation;
+export default SchemePage;

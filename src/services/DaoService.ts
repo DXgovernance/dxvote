@@ -74,6 +74,43 @@ export default class DaoService {
     return {stakes, votes};
   }
   
+  async getUserEvents(userAddress: string){
+    const { configStore, providerStore } = this.rootStore;
+    
+    const votingMachine = providerStore.getContract(
+      providerStore.getActiveWeb3React(),
+      ContractType.VotingMachine,
+      configStore.getVotingMachineAddress()
+    )
+    
+    // Get events at maximum a 30days time of proposal
+    const toBlock = await providerStore.getCurrentBlockNumber();
+    const stakes = await votingMachine.getPastEvents(
+    "Stake",
+    {
+      filter: { _staker: userAddress },
+      fromBlock: 0,
+      toBlock: toBlock
+    });
+    const votes = await votingMachine.getPastEvents(
+    "VoteProposal",
+    {
+      filter: { _voter: userAddress },
+      fromBlock: 0,
+      toBlock: toBlock
+    })
+    
+    const proposals = await votingMachine.getPastEvents(
+    "NewProposal",
+    {
+      filter: { _proposer: userAddress },
+      fromBlock: 0,
+      toBlock: toBlock
+    })
+    
+    return {stakes, votes, proposals};
+  }
+  
   async getRepAt(atBlock: string){
     const { configStore, providerStore } = this.rootStore;
     
@@ -86,6 +123,27 @@ export default class DaoService {
     return {
       userRep: await reputation.methods.balanceOfAt(providerStore.getActiveWeb3React().account, atBlock).call(),
       totalSupply: await reputation.methods.totalSupplyAt(atBlock).call()
+    };
+  }
+  
+  async getUserBalances(userAddress: string){
+    const { configStore, providerStore } = this.rootStore;
+    
+    const reputation = providerStore.getContract(
+      providerStore.getActiveWeb3React(),
+      ContractType.Reputation,
+      configStore.getReputationAddress()
+    )
+    
+    const dxd = providerStore.getContract(
+      providerStore.getActiveWeb3React(),
+      ContractType.ERC20,
+      configStore.getVotingMachineTokenAddress()
+    )
+      
+    return {
+      rep: await reputation.methods.balanceOf(userAddress).call(),
+      dxd: await dxd.methods.balanceOf(userAddress).call()
     };
   }
 }
