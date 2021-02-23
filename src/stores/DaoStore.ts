@@ -78,6 +78,7 @@ export interface SchemePermissions {
 
 export interface SchemeInfo {
   address: String;
+  name: String,
   parametersHash: string;
   toAddress: string;
   ethBalance: BigNumber;
@@ -278,7 +279,19 @@ export default class DaoStore {
         activationTime: bnum(rawParameters.split(",")[11])
       } : undefined;
       
-    const schemeInfo = {address: schemeAddress, toAddress, parametersHash, ethBalance, parameters, permissions, proposalIds, proposals: [], boostedProposals, blockNumber};
+    const schemeInfo = {
+      name: configStore.getSchemeName(schemeAddress),
+      address: schemeAddress,
+      toAddress,
+      parametersHash,
+      ethBalance,
+      parameters,
+      permissions,
+      proposalIds,
+      proposals: [],
+      boostedProposals,
+      blockNumber
+    };
     this.schemes[schemeAddress] = schemeInfo;
     return this.schemes[schemeAddress];
   }
