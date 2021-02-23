@@ -1,10 +1,10 @@
-name: deploy to ipfs
+name: deploy gh-pages
   
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ develop ]
   workflow_dispatch:
 
 jobs:
@@ -29,13 +29,11 @@ jobs:
       
       - name: Build
         run: CI=false REACT_APP_ETH_NETWORKS=rinkeby NODE_ENV=production REACT_APP_VERSION=$npm_package_version yarn build
-      
-      - name: Deploy to ipfs
-        uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.4
+        
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
-          pin-name: 'dxvote'
-          path: 'build'
-          pinata-api-key: 121008788ba8017a9a57
-          pinata-secret-api-key: ${{ secrets.PINATA_KEY }}
-          verbose: true
-          remove-old: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: build # The folder the action should deploy.
+          CLEAN: true # Automatically remove deleted files from the deploy branch
