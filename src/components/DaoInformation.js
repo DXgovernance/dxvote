@@ -6,7 +6,7 @@ import ActiveButton from '../components/common/ActiveButton';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
-const SchemesTableWrapper = styled.div`
+const DaoInfoWrapper = styled.div`
     width: 100%;
     background: white;
     padding: 10px 0px;
@@ -32,9 +32,15 @@ const SchemesTableWrapper = styled.div`
         margin-bottom: 10px;
       }
     }
+    
+    h3 {
+      color: var(--dark-text-gray);
+      margin: 5px 10px;
+      font-size: 18px;
+    }
 `;
 
-const ProposalTableHeaderActions = styled.div`
+const AssetsTableHeaderActions = styled.div`
     padding: 0px 10px 10px 10px;
     color: var(--dark-text-gray);
     border-bottom: 1px solid var(--line-gray);
@@ -51,7 +57,7 @@ const ProposalTableHeaderActions = styled.div`
     }
 `;
 
-const ProposalTableHeaderWrapper = styled.div`
+const AssetsTableHeaderWrapper = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -102,7 +108,7 @@ const TableCell = styled.div`
     text-overflow: ${(props) => props.wrapText ? 'ellipsis' : 'inherit'};
 `;
 
-const DaiInformation = observer(() => {
+const DaoInformation = observer(() => {
     const {
         root: { providerStore, daoStore, configStore, blockchainStore },
     } = useStores();
@@ -114,102 +120,65 @@ const DaiInformation = observer(() => {
   
     if (!providerActive) {
       return (
-          <SchemesTableWrapper>
+          <DaoInfoWrapper>
             <div className="loader">
             <img alt="bolt" src={require('assets/images/bolt.svg')} />
                 <br/>
-                Connect to view proposals
+                Connect to view dao information
             </div>
-          </SchemesTableWrapper>
+          </DaoInfoWrapper>
       )
     } else if (loading) {
       return (
-          <SchemesTableWrapper>
+          <DaoInfoWrapper>
             <div className="loader">
             <img alt="bolt" src={require('assets/images/bolt.svg')} />
                 <br/>
                 Getting DAO information
             </div>
-          </SchemesTableWrapper>
+          </DaoInfoWrapper>
       )
     } else {
       const daoInfo = daoStore.getDaoInfo();
-      const schemes = [
-        Object.assign(
-          daoStore.getSchemeInfo(configStore.getSchemeAddress('masterWallet')),
-          daoStore.getSchemeProposals(configStore.getSchemeAddress('masterWallet'))
-        ),
-        Object.assign(
-          daoStore.getSchemeInfo(configStore.getSchemeAddress('quickWallet')),
-          daoStore.getSchemeProposals(configStore.getSchemeAddress('quickWallet'))
-        )
-      ];
-      console.log(schemes)
+      const assets = [{
+        name: "ETH", amount: parseFloat(Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(4)), usdValue: "..."
+      }];
       return (    
-        <SchemesTableWrapper>
-          <ProposalTableHeaderActions>
-            <span>Schemes</span>
-          </ProposalTableHeaderActions>
-          <ProposalTableHeaderWrapper>
-              <TableHeader width="15%" align="left"> Name </TableHeader>
-              <TableHeader width="25%" align="center"> Times </TableHeader>
-              <TableHeader width="15%" align="center"> Permissions </TableHeader>
-              <TableHeader width="15%" align="center"> Boosted Proposals </TableHeader>
-              <TableHeader width="15%" align="center"> Active Proposals </TableHeader>
-              <TableHeader width="15%" align="center"> Total proposals  </TableHeader>
-          </ProposalTableHeaderWrapper>
+        <DaoInfoWrapper>
+          <h3>Address: {daoInfo.address}</h3>
+          <h3>Total REP: {parseFloat(Number(library.utils.fromWei(daoInfo.totalRep.toString())).toFixed(4))}</h3>
+          <AssetsTableHeaderActions>
+            <span>Dao Funds</span>
+          </AssetsTableHeaderActions>
+          <AssetsTableHeaderWrapper>
+              <TableHeader width="40%" align="left"> Asset </TableHeader>
+              <TableHeader width="30%" align="center"> Amount </TableHeader>
+              <TableHeader width="30%" align="center"> USD Value </TableHeader>
+          </AssetsTableHeaderWrapper>
           <TableRowsWrapper>
-          {schemes.map((scheme, i) => {
-            if (scheme) {
-            
+          {assets.map((asset, i) => {
+            if (asset) {
               return (
-                <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
-                  <TableRow>
-                    <TableCell width="15%" align="left" weight='500' wrapText="true">
-                      {scheme.name}
-                    </TableCell>
-                    <TableCell width="25%" align="center">
-                      <small>Queued Proposal Period: {
-                        moment.duration(scheme.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
-                      }</small><br/>
-                      <small>Boosted Proposal Period: {
-                        moment.duration(scheme.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
-                      }</small><br/>
-                      <small>PreBoosted Proposal Period: {
-                        moment.duration(scheme.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
-                      }</small><br/>
-                      <small>Quiet Ending Period: {
-                        moment.duration(scheme.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
-                      }</small>
-                    </TableCell>
-                    <TableCell width="15%" align="center">
-                      <small>{scheme.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
-                      <small>{scheme.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
-                      <small>{scheme.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
-                      <small>{scheme.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
-                    </TableCell>
-                    <TableCell width="15%" align="center"> 
-                      {scheme.boostedProposals}
-                    </TableCell>
-                    <TableCell width="15%" align="center"> 
-                      {scheme.proposals.filter((proposal) => {
-                        return (proposal.statusPriority >=3 && proposal.statusPriority <= 6 )
-                      }).length}
-                    </TableCell>
-                    <TableCell width="15%" align="center"> 
-                      {scheme.proposalIds.length}
-                    </TableCell>
-                  </TableRow>
-                </Link>);
+                <TableRow>
+                  <TableCell width="40%" align="left" weight='500' wrapText="true">
+                    {asset.name}
+                  </TableCell>
+                  <TableCell width="30%" align="center"> 
+                    {asset.amount}
+                  </TableCell>
+                  <TableCell width="30%" align="center"> 
+                    {asset.usdValue}
+                  </TableCell>
+                </TableRow>);
               } else {
                 return <div/>
               }
             }
           )}
           </TableRowsWrapper>
-        </SchemesTableWrapper>
+        </DaoInfoWrapper>
       );
     }
 });
 
-export default DaiInformation;
+export default DaoInformation;

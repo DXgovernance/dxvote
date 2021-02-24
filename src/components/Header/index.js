@@ -82,7 +82,7 @@ const Header = observer(() => {
   return (
     <NavWrapper>
       <NavSection>
-        <NavItem route="/">
+        <NavItem route="/?">
           <img alt="dxdao" src={require("assets/images/DXdao.svg")}/>
         </NavItem>
       </NavSection>

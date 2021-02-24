@@ -4,7 +4,7 @@ import './App.css';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import ProposalsPage from './pages/Proposals';
+import HomePage from './pages/Home';
 import NewProposalPage from './pages/NewProposal';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
@@ -18,7 +18,7 @@ const App = () => {
         <Web3ReactManager>
         <div className="Container">
           <Header />
-          <Route exact path="/"> <ProposalsPage /> </Route>
+          <Route exact path="/"> <HomePage /> </Route>
           <Route exact path="/new"> <NewProposalPage /> </Route>
           <Route exact path="/config"> <ConfigPage /> </Route>
           <Route exact path="/user/:address"> <UserPage /> </Route>

@@ -154,7 +154,15 @@ const ProposalsTable = observer(() => {
           <ProposalsTableWrapper>
               <ProposalTableHeaderActions>
                 <span>Proposals</span>
-                <ActiveButton route="/new">+ New Proposal</ActiveButton>
+                <div style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between"
+                }}>
+                  <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
+                  <ActiveButton route="/?view=dao">DAO</ActiveButton>
+                  <ActiveButton route="/new">+ New Proposal</ActiveButton>
+                </div>
               </ProposalTableHeaderActions>
               <ProposalTableHeaderWrapper>
                   <TableHeader width="40%" align="left"> Title </TableHeader>
