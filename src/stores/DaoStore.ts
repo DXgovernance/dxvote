@@ -94,6 +94,7 @@ export interface DaoInfo {
   address: String;
   totalRep: BigNumber;
   ethBalance: BigNumber;
+  userEthBalance: BigNumber;
   blockNumber: Number;
   userRep: BigNumber;
   userVotingMachineTokenBalance: BigNumber;
@@ -137,6 +138,12 @@ export default class DaoStore {
       method: 'getEthBalance',
       params: [configStore.getAvatarAddress()]
     });
+    const userEthBalance = this.rootStore.blockchainStore.getCachedValue({
+      contractType: ContractType.Multicall,
+      address: configStore.getMulticallAddress(),
+      method: 'getEthBalance',
+      params: [account]
+    });
     const userVotingMachineTokenBalance = account ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.ERC20,
       address: configStore.getVotingMachineTokenAddress(),
@@ -153,6 +160,7 @@ export default class DaoStore {
       address: configStore.getAvatarAddress(),
       totalRep,
       ethBalance,
+      userEthBalance,
       blockNumber,
       userRep,
       userVotingMachineTokenBalance,

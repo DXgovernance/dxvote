@@ -69,7 +69,9 @@ const Header = observer(() => {
   } = useStores();
   const daoInfo = daoStore.getDaoInfo();
   const { active, account } = providerStore.getActiveWeb3React();
-
+  const ethBalance = daoInfo.userEthBalance ?
+    parseFloat(Number(Web3.utils.fromWei(daoInfo.userEthBalance.toString())).toFixed(4))
+    : 0;
   const dxdBalance = daoInfo.userVotingMachineTokenBalance ?
     parseFloat(Number(Web3.utils.fromWei(daoInfo.userVotingMachineTokenBalance.toString())).toFixed(4))
     : 0;
@@ -85,6 +87,7 @@ const Header = observer(() => {
         </NavItem>
       </NavSection>
       <NavSection>
+        <BalanceItem> {ethBalance} ETH </BalanceItem>
         <BalanceItem> {dxdBalance} DXD </BalanceItem>
         <BalanceItem> {repBalance} REP </BalanceItem>
         <Web3ConnectStatus text="Connect Wallet" />
