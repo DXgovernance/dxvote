@@ -252,12 +252,13 @@ export default class BlockchainStore {
             method: 'proposalsInfo',
             params: [configStore.getVotingMachineAddress(), schemeProposalIds[pIndex]]
         });
-        multicallService.addCalls([{
-          contractType: ContractType.Reputation,
-          address: configStore.getReputationAddress(),
-          method: 'totalSupplyAt',
-          params: [proposalCallBackInformation.split(',')[0]]
-        }])
+        if (proposalCallBackInformation)
+          multicallService.addCalls([{
+            contractType: ContractType.Reputation,
+            address: configStore.getReputationAddress(),
+            method: 'totalSupplyAt',
+            params: [proposalCallBackInformation.split(',')[0]]
+          }])
       }
       await this.executeAndUpdateMulticall(multicallService);
     }

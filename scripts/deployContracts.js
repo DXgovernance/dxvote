@@ -50,7 +50,7 @@ async function main() {
     
   const accounts = await web3.eth.getAccounts();
   const GAS_LIMIT = 9000000;
-  const votingMachineToken = (network == 'rinkeby') ? ERC20Mock.at("0x554898A0BF98aB0C03ff86C7DccBE29269cc4d29")
+  const votingMachineToken = (network == 'rinkeby') ? ERC20Mock.at("0xa700BdAba48A3D96219247111B0b708Dc0b51033")
     : await ERC20Mock.new(accounts[0], web3.utils.toWei("1000"));
     
   const reputation = await DxReputation.new();
@@ -102,11 +102,11 @@ async function main() {
   const schemesConfiguration = (network == 'rinkeby') ? {
     master: {
       queuedVoteRequiredPercentage: 50,
-      queuedVotePeriodLimit: moment.duration(6, 'days').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(2, 'days').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(0.5, 'days').asSeconds(),
+      queuedVotePeriodLimit: moment.duration(90, 'minutes').asSeconds(),
+      boostedVotePeriodLimit: moment.duration(30, 'minutes').asSeconds(),
+      preBoostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
       thresholdConst: 1500,
-      quietEndingPeriod: moment.duration(3, 'hours').asSeconds(),
+      quietEndingPeriod: moment.duration(3, 'minutes').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.02"),
       votersReputationLossRatio: 2,
       minimumDaoBounty: web3.utils.toWei("1"),
@@ -114,11 +114,11 @@ async function main() {
     },
     quick: {
       queuedVoteRequiredPercentage: 60,
-      queuedVotePeriodLimit: moment.duration(3, 'days').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(1, 'days').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(0.5, 'days').asSeconds(),
+      queuedVotePeriodLimit: moment.duration(30, 'minutes').asSeconds(),
+      boostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
+      preBoostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
       thresholdConst: 1050,
-      quietEndingPeriod: moment.duration(1, 'hours').asSeconds(),
+      quietEndingPeriod: moment.duration(2, 'minutes').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.002"),
       votersReputationLossRatio: 4,
       minimumDaoBounty: web3.utils.toWei("0.25"),
@@ -131,7 +131,7 @@ async function main() {
       boostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
       preBoostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
       thresholdConst: 1500,
-      quietEndingPeriod: moment.duration(2.5, 'minutes').asSeconds(),
+      quietEndingPeriod: moment.duration(2, 'minutes').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.02"),
       votersReputationLossRatio: 2,
       minimumDaoBounty: web3.utils.toWei("1"),
@@ -141,7 +141,7 @@ async function main() {
       queuedVoteRequiredPercentage: 60,
       queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
       boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(2.5, 'minutes').asSeconds(),
+      preBoostedVotePeriodLimit: moment.duration(2, 'minutes').asSeconds(),
       thresholdConst: 1050,
       quietEndingPeriod: moment.duration(1, 'minutes').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.002"),

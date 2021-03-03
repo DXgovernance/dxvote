@@ -55,7 +55,7 @@ async function main() {
     ) {
       const signaledAddress = dxRepMappingEvents[i].returnValues.value;
       const fromAddress = dxRepMappingEvents[i].returnValues.source;
-      console.log(fromAddress, signaledAddress)
+      console.log('Rep mapped from', fromAddress, 'to', signaledAddress);
       if (addresses[signaledAddress]) {
         addresses[signaledAddress] = addresses[signaledAddress].add(addresses[fromAddress]);
       } else {
@@ -78,7 +78,8 @@ async function main() {
     totalRep: totalRep.toString(),
     totalRepHolders: Object.keys(addresses).length
   }
-  console.log('REP Holders:', repHolders.totalRep, repHolders.totalRepHolders)
+  console.log('REP Holders:', repHolders.totalRepHolders)
+  console.log('Total REP:', web3.utils.fromWei(repHolders.totalRep.toString()));
   fs.writeFileSync('.repHolders.json', JSON.stringify(repHolders));
 } 
 

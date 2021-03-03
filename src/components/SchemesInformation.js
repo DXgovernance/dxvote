@@ -196,7 +196,7 @@ const SchemesInformation = observer(() => {
                       }).length}
                     </TableCell>
                     <TableCell width="15%" align="center"> 
-                      {scheme.proposalIds.length}
+                      {scheme.proposalIds ? scheme.proposalIds.length : 0}
                     </TableCell>
                   </TableRow>
                 </Link>);

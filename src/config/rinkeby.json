@@ -1,10 +1,10 @@
 {
-  "avatar": "0x69EbBF5C56d00b90F613df43E62a0e978D2F031D",
-  "controller": "0x9B3A056E45391d5F8Dde99B7FeF8df7cEb96b119",
-  "reputation": "0xAb9CF4368B7444194a25975121ef4AD5da4CdeA6",
-  "votingMachine": "0x4A4A8775aE9d3aa341D31588fbf5f45345776bAf",
-  "votingMachineToken": "0x554898A0BF98aB0C03ff86C7DccBE29269cc4d29",
-  "masterWalletScheme": "0xe3b13319f78ECe658E0fF6e5Fd309F08D1de2651",
-  "quickWalletScheme": "0x9A92d4c81b1Dfa4a6f963716d732b3b1135eAE11",
-  "multicall": "0x23e80279Caf5ba17ae512b4366F7e583af60f760"
+  "avatar": "0xc339BC89eda253E4871110C0366b4004B0009C15",
+  "controller": "0x4f73ACE6A05eBf45fFbd33f8f55E4CC9188f109C",
+  "reputation": "0xfbaDf2b0151991527161Bf0674464Af681f7A8db",
+  "votingMachine": "0xe45bA47BCe32bbe8746F47638e34C595DF1f2668",
+  "votingMachineToken": "0xa700BdAba48A3D96219247111B0b708Dc0b51033",
+  "masterWalletScheme": "0x01DD430f1C4f4aA1300309Bcc0C5C66Ab59259bA",
+  "quickWalletScheme": "0x01aB1846E26e93d310ccbC2E0c989a0c51e7E3Af",
+  "multicall": "0xa1b0a36c7aE04A84EBF493e03dF0aC295eE90747"
 }
