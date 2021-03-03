@@ -132,17 +132,52 @@ const ProposalInformation = observer(() => {
     : "";
     const { active, account, library } = providerStore.getActiveWeb3React();
     
-    const [proposalEvents, setProposalEvents] = React.useState({});
+    const [proposalVotes, setProposalVotes] = React.useState({
+      votedAmount: 0,
+      positiveVotesCount: 0,
+      negativeVotesCount: 0,
+      loaded: false
+    });
+    const [proposalStakes, setProposalStakes] = React.useState({
+      stakedAmount: 0,
+      positiveStakesCount: 0,
+      negativeStakesCount: 0,
+      loaded : false
+    });
     const [userRep, setUserRep] = React.useState(undefined);
     const [totalRep, setTotalRep] = React.useState(undefined);
     const [votePercentage, setVotePercentage] = React.useState(100);
     const [stakePercentage, setStakePercentage] = React.useState(100);
     
     if (proposalInfo){
-      console.log(proposalInfo)
       daoService.getProposalEvents(proposalId, Number(proposalInfo.creationBlock)).then((pEvents) => {
-        if (!proposalEvents.stakes && !proposalEvents.votes){
-          setProposalEvents(pEvents);
+        if (pEvents.votes && !proposalVotes.loaded) {
+          for (var i = 0; i < pEvents.votes.length; i++){
+            if (pEvents.votes[i].returnValues._voter === account)
+              proposalVotes.votedAmount = pEvents.votes[i].returnValues._vote === "2" ?
+                - pEvents.votes[i].returnValues._reputation
+                : pEvents.votes[i].returnValues._reputation;
+            if (pEvents.votes[i].returnValues._vote === "1")
+              proposalVotes.positiveVotesCount ++;
+            else 
+              proposalVotes.negativeVotesCount ++;
+          }
+          proposalVotes.loaded = true;
+          setProposalVotes(proposalVotes);
+        }
+        if (pEvents.stakes && !proposalStakes.loaded){
+          for (var i = 0; i < pEvents.stakes.length; i++){
+            if (pEvents.stakes[i].returnValues._staker === account)
+              proposalStakes.takedAmount = pEvents.stakes[i].returnValues._vote === "2" ?
+                - pEvents.stakes[i].returnValues._amount
+                : pEvents.stakes[i].returnValues._amount;
+            if (pEvents.stakes[i].returnValues._vote === "1")
+              proposalStakes.positiveStakesCount ++;
+            else 
+              proposalStakes.negativeStakesCount ++;
+          }
+          proposalStakes.loaded = true;
+          setProposalStakes(proposalStakes);
         }
       })
 
@@ -154,38 +189,11 @@ const ProposalInformation = observer(() => {
       })
     }
     
-    let votedAmount = 0, positiveVotesCount = 0, negativeVotesCount = 0;
-    if (proposalEvents.votes)
-      for (var i = 0; i < proposalEvents.votes.length; i++){
-        if (proposalEvents.votes[i].returnValues._voter === account)
-          votedAmount = proposalEvents.votes[i].returnValues._vote === "2" ?
-            - proposalEvents.votes[i].returnValues._reputation
-            : proposalEvents.votes[i].returnValues._reputation;
-        if (proposalEvents.votes[i].returnValues._vote === "1")
-          positiveVotesCount ++;
-        else 
-          negativeVotesCount ++;
-      }
-    let stakedAmount = 0, positiveStakesCount = 0, negativeStakesCount = 0;
-    if (proposalEvents.stakes)
-      for (var i = 0; i < proposalEvents.stakes.length; i++){
-        if (proposalEvents.stakes[i].returnValues._staker === account)
-          stakedAmount = proposalEvents.stakes[i].returnValues._vote === "2" ?
-            - proposalEvents.stakes[i].returnValues._amount
-            : proposalEvents.stakes[i].returnValues._amount;
-        if (proposalEvents.stakes[i].returnValues._vote === "1")
-          positiveStakesCount ++;
-        else 
-          negativeStakesCount ++;
-      }
-    
     console.log("Proposal info", proposalInfo);
     
-  
     let votingMachineTokenBalance = userVotingMachineTokenBalance ?
       library.utils.fromWei(userVotingMachineTokenBalance.toString())
       : 0;
-    
     
     const loading = (!shortchemeInfo || !proposalInfo || !totalRep || !userRep || !userVotingMachineTokenBalance || !userVotingMachineTokenApproved) ;
     
@@ -349,13 +357,13 @@ const ProposalInformation = observer(() => {
                 margin: "0px 10px",
               }}>
                 <span style={{width: "40%", textAlign:"center", color: "green"}}>
-                  <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
+                  <AmountBadge color="green">{proposalStakes.positiveStakesCount}</AmountBadge>
                   {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD
                 </span>
                 <span> - </span>
                 <span style={{width: "40%", textAlign:"center", color: "red"}}>
                   {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD
-                  <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
+                  <AmountBadge color="red">{proposalStakes.negativeStakesCount}</AmountBadge>
                 </span>
               </SidebarRow>
               <SidebarRow>
@@ -366,16 +374,16 @@ const ProposalInformation = observer(() => {
                 margin: "0px 10px",
               }}> 
                 <span style={{width: "40%", textAlign:"center", color: "green"}}>
-                  <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
+                  <AmountBadge color="green">{proposalVotes.positiveVotesCount}</AmountBadge>
                   {proposalInfo.positiveVotes.div(totalRep).times("100").toNumber().toFixed(2)} % 
                 </span>
                 <span> - </span>
                 <span style={{width: "40%", textAlign:"center", color: "red"}}>
                   {proposalInfo.negativeVotes.div(totalRep).times("100").toNumber().toFixed(2)} %
-                  <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
+                  <AmountBadge color="red">{proposalVotes.negativeVotesCount}</AmountBadge>
                 </span>
               </SidebarRow>
-              {votedAmount == 0 && proposalInfo.statusPriority >=3 && proposalInfo.statusPriority <= 6  ?
+              {proposalVotes.votedAmount == 0 && proposalInfo.statusPriority >=3 && proposalInfo.statusPriority <= 6  ?
                 <SidebarRow>
                   <AmountSlider
                   defaultValue={100}
@@ -388,9 +396,9 @@ const ProposalInformation = observer(() => {
                   <span style={{color: votePercentage > 0 ? 'green' : 'red'}}>{voteAmount()} %</span>
                   <VoteButton color="blue" onClick={() => submitVote()}>Vote</VoteButton>
                 </SidebarRow>
-              : votedAmount != 0 ?
+              : proposalVotes.votedAmount != 0 ?
                 <SidebarRow>
-                  Already voted {(votedAmount > 0) ? "for" : "against"} with { (votedAmount / totalRep * 100).toFixed(2)} % REP
+                  Already voted {(proposalVotes.votedAmount > 0) ? "for" : "against"} with { (proposalVotes.votedAmount / totalRep * 100).toFixed(2)} % REP
                 </SidebarRow>
               : <div/>
               }
@@ -419,9 +427,9 @@ const ProposalInformation = observer(() => {
                   </div>
                 : <div></div>
               }
-              {stakedAmount > 0
+              {proposalStakes.stakedAmount > 0
                 ? <SidebarRow>
-                  Already staked {(stakedAmount > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount)).toFixed(2)} DXD
+                  Already staked {(proposalStakes.stakedAmount > 0) ? "for" : "against"} with {Number(library.utils.fromWei(proposalStakes.stakedAmount)).toFixed(2)} DXD
                 </SidebarRow>
                 : <div></div>
               }
