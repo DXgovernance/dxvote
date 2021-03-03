@@ -202,19 +202,16 @@ const NewProposalForm = observer(() => {
       });
       
       const data = calls.map((call, i) => {
-        let encodedData = "0x0";
+      
+        const parameters = (call.callType == "decoded" && (call.functionName.length > 0 && call.functionParams > 0))
+          ? call.functionName.substring(
+            call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
+          : [];  
         
-        if (call.functionName.length > 0 && call.functionParams > 0) {
-          const parameters = call.callType == "decoded" 
-            ? call.functionName.substring(
-              call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
-            : [];
-          
-          encodedData = call.callType == "decoded" ? 
-            library.eth.abi.encodeFunctionSignature(call.functionName) + 
-            library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
-          : call.data
-        }
+        const encodedData = call.callType == "decoded" ? 
+        library.eth.abi.encodeFunctionSignature(call.functionName) + 
+        library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
+        : call.data
                 
         return (scheme == 'masterWallet') ? daoService.encodeControllerGenericCall(
           call.to,
