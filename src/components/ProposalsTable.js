@@ -36,6 +36,23 @@ const ProposalsTableWrapper = styled.div`
     }
 `;
 
+const ProposalsFilter = styled.select`
+  background-color: ${(props) => props.color || '#536DFE'};
+  border-radius: 4px;
+  color: white;
+  height: 34px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  line-height: 34px;
+  text-align: center;
+  cursor: pointer;
+  width: max-content;
+  padding: 0px 10px;
+  margin: 5px;
+  font-family: var(--roboto);
+  border: 0px;
+`;
+
 const ProposalTableHeaderActions = styled.div`
     padding: 0px 10px 10px 10px;
     color: var(--dark-text-gray);
@@ -114,9 +131,13 @@ const ProposalsTable = observer(() => {
     const masterWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('masterWallet'));
     const quickWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('quickWallet'));
     let allProposals = [];
+    const [stateFilter, setStateFilter] = React.useState("All");
     allProposals = allProposals.concat(masterWalletSchemeProposals).concat(quickWalletSchemeProposals)
     console.log("MasterWalletScheme info", masterWalletSchemeInfo);
     console.log("QuickWalletScheme info", quickWalletSchemeInfo);
+    
+    function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
+
     
     const { library } = providerStore.getActiveWeb3React();
     const providerActive = providerStore.getActiveWeb3React().active;
@@ -126,54 +147,67 @@ const ProposalsTable = observer(() => {
     console.log("All Proposals", allProposals, allProposals.length, daoStore);
     if (!providerActive) {
       return (
-          <ProposalsTableWrapper>
-            <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
-                <br/>
-                Connect to view proposals
-            </div>
-          </ProposalsTableWrapper>
-      )
-    } else if (allProposals.length === 0) {
-      return (
-          <ProposalsTableWrapper>
-              <ProposalTableHeaderActions>
-                <span></span>
-                <ActiveButton route="/new">+ New Proposal</ActiveButton>
-              </ProposalTableHeaderActions>
-
-              <div className="loader">
-              <img alt="bolt" src={require('assets/images/bolt.svg')} />
-                  <br/>
-                  Searching for proposals..
-              </div>
-          </ProposalsTableWrapper>
+        <ProposalsTableWrapper>
+          <div className="loader">
+          <img alt="bolt" src={require('assets/images/bolt.svg')} />
+              <br/>
+              Connect to view proposals
+          </div>
+        </ProposalsTableWrapper>
       )
     } else {
       return (
-          <ProposalsTableWrapper>
-              <ProposalTableHeaderActions>
-                <span>Proposals</span>
-                <div style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between"
-                }}>
-                  <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
-                  <ActiveButton route="/?view=dao">DAO</ActiveButton>
-                  <ActiveButton route="/new">+ New Proposal</ActiveButton>
-                </div>
-              </ProposalTableHeaderActions>
-              <ProposalTableHeaderWrapper>
-                  <TableHeader width="40%" align="left"> Title </TableHeader>
-                  <TableHeader width="10%" align="center"> Scheme </TableHeader>
-                  <TableHeader width="15%" align="center"> Status </TableHeader>
-                  <TableHeader width="17.5%" align="center"> Staked </TableHeader>
-                  <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
-              </ProposalTableHeaderWrapper>
-              <TableRowsWrapper>
-              {allProposals.map((proposal, i) => {
-                if (proposal) {
+        <ProposalsTableWrapper>
+          <ProposalTableHeaderActions>
+            <div style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between"
+            }}>
+              <span>Proposals</span>
+              <ProposalsFilter name="stateFilter" id="stateSelector" onChange={onStateFilterChange}>
+                <option value="All">All</option>
+                <option value="Pending Boost">Pending Boost</option>
+                <option value="Pre Boosted">Pre Boosted</option>
+                <option value="Boosted">Boosted</option>
+                <option value="In Queue">Queue</option>
+                <option value="Quiet Ending Period">Quiet Ending Period</option>
+                <option value="Passed">Passed</option>
+                <option value="Pending Execution">Pending Execution</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Executed">Executed</option>
+                <option value="Expired in Queue">Expired</option>
+              </ProposalsFilter>
+            </div>
+
+            <div style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between"
+            }}>
+              <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
+              <ActiveButton route="/?view=dao">DAO</ActiveButton>
+              <ActiveButton route="/new">+ New Proposal</ActiveButton>
+            </div>
+          </ProposalTableHeaderActions>
+          <ProposalTableHeaderWrapper>
+              <TableHeader width="40%" align="left"> Title </TableHeader>
+              <TableHeader width="10%" align="center"> Scheme </TableHeader>
+              <TableHeader width="15%" align="center"> Status </TableHeader>
+              <TableHeader width="17.5%" align="center"> Staked </TableHeader>
+              <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
+          </ProposalTableHeaderWrapper>
+          { (allProposals.length === 0) ?
+            <TableRowsWrapper>
+              <div className="loader">
+              <img alt="bolt" src={require('assets/images/bolt.svg')} />
+                <br/>Searching for proposals..
+              </div>
+            </TableRowsWrapper>
+            :
+            <TableRowsWrapper>
+              { allProposals.map((proposal, i) => {
+                if (proposal && ((stateFilter == 'All') || (stateFilter != 'All' && proposal.status == stateFilter))) {
                   const positiveStake = Number(library.utils.fromWei(proposal.positiveStakes.toString())).toFixed(2);
                   const negativeStake = Number(library.utils.fromWei(proposal.negativeStakes.toString())).toFixed(2);
                   const timeNow = (new Date()).getTime() / 1000;
@@ -216,8 +250,9 @@ const ProposalsTable = observer(() => {
                   }
                 }
               )}
-              </TableRowsWrapper>
-          </ProposalsTableWrapper>
+            </TableRowsWrapper>
+          }
+        </ProposalsTableWrapper>
       );
     }
 });
