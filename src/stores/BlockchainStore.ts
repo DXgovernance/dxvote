@@ -1,18 +1,11 @@
-import RootStore from 'stores/Root';
+import RootStore from 'stores';
 import { Call } from '../services/MulticallService';
 import { action, observable } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './ETHProvider';
 
-export interface StoreEntry {
-  contractType: string;
-  address: string;
-  method: string;
-  params?: any[];
-}
-
-export interface Entry {
+export interface CallEntry {
   contractType: string;
   address: string;
   method: string;
@@ -21,18 +14,28 @@ export interface Entry {
   lastFetched: number;
 }
 
+export interface EventStore {
+  eventName: string;
+  eventABI: object;
+  emitions: any[];
+  fromBlock: number;
+  toBlock: number;
+}
+
 export default class BlockchainStore {
   @observable activeFetchLoop: boolean = false;
   @observable initialLoadComplete: boolean;
   @observable store: object;
   rootStore: RootStore;
+  
+  eventStore: {[address: string]: {[eventName: string]: EventStore} } = {};
 
   constructor(rootStore) {
     this.rootStore = rootStore;
     this.store = {};
   }
 
-  reduceMulticall(calls: Call[], results: any, blockNumber: number): Entry[] {
+  reduceMulticall(calls: Call[], results: any, blockNumber: number): CallEntry[] {
     const { multicallService } = this.rootStore;
     return calls.map((call, index) => {
       const value = multicallService.decodeCall(call, results[index]);
@@ -58,7 +61,7 @@ export default class BlockchainStore {
     multicallService.resetActiveCalls();
   }
 
-  has(entry: StoreEntry): boolean {
+  has(entry: Call): boolean {
     const params = entry.params ? entry.params : [];
     return (
       !!this.store[entry.contractType] &&
@@ -70,15 +73,22 @@ export default class BlockchainStore {
     );
   }
 
-  getCachedValue(entry: StoreEntry) {
+  getCachedValue(entry: Call) {
     if (this.has(entry)) {
       return this.get(entry).value.toString();
     } else {
       return undefined;
     }
   }
+  
+  getCachedEvents(address: string, eventName: string) {
+    if (this.eventStore[address] && this.eventStore[address][eventName])
+      return this.eventStore[address][eventName].emitions;
+    else
+      return [];
+  }
 
-  get(entry: StoreEntry): Entry | undefined {
+  get(entry: Call): CallEntry | undefined {
     if (this.has(entry)) {
       const params = entry.params ? entry.params : [];
       return this.store[entry.contractType][entry.address][entry.method][
@@ -89,7 +99,7 @@ export default class BlockchainStore {
     }
   }
 
-  @action updateStore(entries: Entry[], blockNumber: number) {
+  @action updateStore(entries: CallEntry[], blockNumber: number) {
     entries.forEach((entry) => {
       const params = entry.params ? entry.params : [];
       if (!this.store[entry.contractType]) {
@@ -263,6 +273,71 @@ export default class BlockchainStore {
       await this.executeAndUpdateMulticall(multicallService);
     }
   }
+  
+  async fetchVotingMachineData(web3React: Web3ReactContextInterface) {
+    const { library } = web3React;
+    const { eventsService, configStore } = this.rootStore;
+    if (!this.eventStore[configStore.getVotingMachineAddress()])
+      this.eventStore[configStore.getVotingMachineAddress()] = {
+        'Stake': {
+          eventName: 'Stake',
+          eventABI: {},
+          emitions: [],
+          fromBlock: configStore.getStartBlock(),
+          toBlock: configStore.getStartBlock()
+        },
+        'VoteProposal': {
+          eventName: 'VoteProposal',
+          eventABI: {},
+          emitions: [],
+          fromBlock: configStore.getStartBlock(),
+          toBlock: configStore.getStartBlock()
+        },
+        'Redeem': {
+          eventName: 'Redeem',
+          eventABI: {},
+          emitions: [],
+          fromBlock: configStore.getStartBlock(),
+          toBlock: configStore.getStartBlock()
+        }
+      };
+    const toBlock = await library.eth.getBlockNumber();
+    const stakeEvents = await eventsService.getEvents(
+      ContractType.VotingMachine, configStore.getVotingMachineAddress(), "Stake", 
+      this.eventStore[configStore.getVotingMachineAddress()]['Stake'].toBlock, toBlock
+    );
+    const voteEvents = await eventsService.getEvents(
+      ContractType.VotingMachine, configStore.getVotingMachineAddress(), "VoteProposal", 
+      this.eventStore[configStore.getVotingMachineAddress()]['VoteProposal'].toBlock, toBlock
+    );
+    const redeemEvents = await eventsService.getEvents(
+      ContractType.VotingMachine, configStore.getVotingMachineAddress(), "Redeem", 
+      this.eventStore[configStore.getVotingMachineAddress()]['Redeem'].toBlock, toBlock
+    );
+
+    this.eventStore[configStore.getVotingMachineAddress()]['Stake'] = {
+      eventName: 'Stake',
+      eventABI: {},
+      emitions: stakeEvents,
+      fromBlock: configStore.getStartBlock(),
+      toBlock: toBlock
+    }
+    this.eventStore[configStore.getVotingMachineAddress()]['VoteProposal'] = {
+      eventName: 'VoteProposal',
+      eventABI: {},
+      emitions: voteEvents,
+      fromBlock: configStore.getStartBlock(),
+      toBlock: toBlock
+    }
+    this.eventStore[configStore.getVotingMachineAddress()]['Redeem'] = {
+      eventName: 'Redeem',
+      eventABI: {},
+      emitions: redeemEvents,
+      fromBlock: configStore.getStartBlock(),
+      toBlock: toBlock
+    }
+    return;
+  }
     
   @action async fetchData(web3React: Web3ReactContextInterface) {
     if (!this.activeFetchLoop && web3React && web3React.active && isChainIdSupported(web3React.chainId)) {
@@ -275,7 +350,7 @@ export default class BlockchainStore {
         transactionStore
       } = this.rootStore;
 
-      const blockNumber = library.eth.getBlockNumber();
+      const blockNumber = await library.eth.getBlockNumber();
       const lastCheckedBlockNumber = providerStore.getCurrentBlockNumber();
 
       if (blockNumber !== lastCheckedBlockNumber) {
@@ -283,6 +358,7 @@ export default class BlockchainStore {
         
         await this.fetchSchemeData('WalletScheme', 'masterWallet', web3React);
         await this.fetchSchemeData('WalletScheme', 'quickWallet', web3React);
+        await this.fetchVotingMachineData(web3React);
         
         // Get user-specific blockchain data
         if (account) {

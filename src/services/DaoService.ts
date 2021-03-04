@@ -1,4 +1,4 @@
-import RootStore from '../stores/Root';
+import RootStore from '../stores';
 import { ContractType } from '../stores/ETHProvider';
 import { BigNumber } from '../utils/bignumber';
 
@@ -43,72 +43,6 @@ export default class DaoService {
           text: "Generic Call to "+callDecoded.args[0]+" with data of "+callDecoded.args[1]+" uinsg value of "+library.utils.fromWei(callDecoded.args[3])
         };
     }
-  }
-  
-  async getProposalEvents(proposalId: string, creationBlock: number){
-    const { configStore, providerStore } = this.rootStore;
-    
-    const votingMachine = providerStore.getContract(
-      providerStore.getActiveWeb3React(),
-      ContractType.VotingMachine,
-      configStore.getVotingMachineAddress()
-    )
-    
-    // Get events at maximum a 30days time of proposal
-    const toBlock = Math.min(creationBlock + 190000, await providerStore.getCurrentBlockNumber());
-    const stakes = await votingMachine.getPastEvents(
-    "Stake",
-    {
-      filter: { _proposalId: proposalId },
-      fromBlock: creationBlock,
-      toBlock: toBlock > 0 ? toBlock : 0
-    });
-    const votes = await votingMachine.getPastEvents(
-    "VoteProposal",
-    {
-      filter: { _proposalId: proposalId },
-      fromBlock: creationBlock,
-      toBlock: toBlock > 0 ? toBlock : 0
-    })
-    
-    return {stakes, votes};
-  }
-  
-  async getUserEvents(userAddress: string){
-    const { configStore, providerStore } = this.rootStore;
-    
-    const votingMachine = providerStore.getContract(
-      providerStore.getActiveWeb3React(),
-      ContractType.VotingMachine,
-      configStore.getVotingMachineAddress()
-    )
-    
-    // Get events at maximum a 30days time of proposal
-    const toBlock = await providerStore.getCurrentBlockNumber();
-    const stakes = await votingMachine.getPastEvents(
-    "Stake",
-    {
-      filter: { _staker: userAddress },
-      fromBlock: 0,
-      toBlock: toBlock
-    });
-    const votes = await votingMachine.getPastEvents(
-    "VoteProposal",
-    {
-      filter: { _voter: userAddress },
-      fromBlock: 0,
-      toBlock: toBlock
-    })
-    
-    const proposals = await votingMachine.getPastEvents(
-    "NewProposal",
-    {
-      filter: { _proposer: userAddress },
-      fromBlock: 0,
-      toBlock: toBlock
-    })
-    
-    return {stakes, votes, proposals};
   }
   
   async getRepAt(atBlock: string){

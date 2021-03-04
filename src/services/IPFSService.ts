@@ -1,4 +1,4 @@
-import RootStore from '../stores/Root';
+import RootStore from '../stores';
 import IPFS from 'ipfs-core';
 import contentHash from 'content-hash';
 import * as request from "request-promise-native";

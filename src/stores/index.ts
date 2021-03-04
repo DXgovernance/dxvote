@@ -8,6 +8,7 @@ import BlockchainStore from './BlockchainStore';
 import ABIService from '../services/ABIService';
 import MulticallService from '../services/MulticallService';
 import DaoService from '../services/DaoService';
+import EventsService from '../services/EventsService';
 import IPFSService from '../services/IPFSService';
 
 export default class RootStore {
@@ -21,11 +22,13 @@ export default class RootStore {
   abiService: ABIService;
   multicallService: MulticallService;
   daoService: DaoService;
+  eventsService: EventsService;
   ipfsService: IPFSService;
 
   constructor() {
     this.abiService = new ABIService(this);
     this.multicallService = new MulticallService(this);
+    this.eventsService = new EventsService(this);
     this.daoService = new DaoService(this);
     this.ipfsService = new IPFSService(this);
     this.providerStore = new ProviderStore(this);

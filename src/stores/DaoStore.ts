@@ -1,4 +1,4 @@
-import RootStore from 'stores/Root';
+import RootStore from 'stores';
 import { BigNumber } from '../utils/bignumber';
 import { decodePermission } from '../utils/permissions';
 import { ContractType } from './ETHProvider';
@@ -17,6 +17,25 @@ export interface BlockchainValue {
 export enum SchemeProposalState { Submitted, Passed, Failed, Executed }
 export enum VotingMachineProposalState { None, ExpiredInQueue, Executed, Queued, PreBoosted, Boosted, QuietEndingPeriod}
 
+export interface Vote {
+  voter: string;
+  vote: Number;
+  amount: BigNumber;
+  proposalId: string;
+  preBoosted: boolean;
+  block: BigNumber;
+  tx: string;
+}
+
+export interface Stake {
+  staker: string;
+  amount: BigNumber;
+  vote: Number;
+  proposalId: string;
+  amount4Bounty: BigNumber;
+  block: BigNumber;
+  tx: string;
+}
 export interface ProposalInfo {
   id: string,
   scheme: string,
@@ -106,7 +125,8 @@ export default class DaoStore {
   schemes: {[address: string]: SchemeInfo};
   proposals: {[id: string]: ProposalInfo};
   blockNumber: Number;
-  
+  votes: Vote[];
+  stakes: Stake[];
   rootStore: RootStore;
 
   constructor(rootStore) {
@@ -114,6 +134,8 @@ export default class DaoStore {
     this.daoInfo = {} as DaoInfo;
     this.schemes = {};
     this.proposals = {};
+    this.votes = [];
+    this.stakes = [];
   }
 
   getDaoInfo(): DaoInfo {
@@ -450,6 +472,49 @@ export default class DaoStore {
     } else {
       return undefined;
     }
+  }
+  
+  getVotes(proposalId: string): Vote[]{
+    const { blockchainStore, configStore } = this.rootStore;
+
+    let voteEvents = blockchainStore.getCachedEvents(
+      configStore.getVotingMachineAddress(), 'VoteProposal'
+    );
+    voteEvents = voteEvents.filter((vote) => {return (proposalId == vote.returnValues._proposalId)});
+    this.votes = voteEvents.map((vote) => {
+      return {
+        voter: vote.returnValues._voter,
+        vote: vote.returnValues._vote,
+        amount: vote.returnValues._reputation,
+        proposalId: vote.returnValues._proposalId,
+        preBoosted: false,
+        block: vote.blockNumber,
+        tx: vote.transactionHash,
+      }
+    });
+    return this.votes;
+  }
+  
+  getStakes(proposalId: string): Stake[]{
+    const { blockchainStore, configStore } = this.rootStore;
+
+    let stakeEvents = blockchainStore.getCachedEvents(
+      configStore.getVotingMachineAddress(), 'Stake'
+    );
+    stakeEvents = stakeEvents.filter((vote) => {return (proposalId == vote.returnValues._proposalId)});
+
+    this.stakes = stakeEvents.map((stake) => {
+      return {
+        staker: stake.returnValues._staker,
+        vote: stake.returnValues._vote,
+        amount: stake.returnValues._reputation,
+        proposalId: stake.returnValues._proposalId,
+        amount4Bounty: bnum(0),
+        block: stake.blockNumber,
+        tx: stake.transactionHash,
+      }
+    });
+    return this.stakes;
   }
 
   @action createProposal(

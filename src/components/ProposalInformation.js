@@ -135,14 +135,12 @@ const ProposalInformation = observer(() => {
     const [proposalVotes, setProposalVotes] = React.useState({
       votedAmount: 0,
       positiveVotesCount: 0,
-      negativeVotesCount: 0,
-      loaded: false
+      negativeVotesCount: 0
     });
     const [proposalStakes, setProposalStakes] = React.useState({
       stakedAmount: 0,
       positiveStakesCount: 0,
-      negativeStakesCount: 0,
-      loaded : false
+      negativeStakesCount: 0
     });
     const [userRep, setUserRep] = React.useState(undefined);
     const [totalRep, setTotalRep] = React.useState(undefined);
@@ -150,36 +148,55 @@ const ProposalInformation = observer(() => {
     const [stakePercentage, setStakePercentage] = React.useState(100);
     
     if (proposalInfo){
-      daoService.getProposalEvents(proposalId, Number(proposalInfo.creationBlock)).then((pEvents) => {
-        if (pEvents.votes && !proposalVotes.loaded) {
-          for (var i = 0; i < pEvents.votes.length; i++){
-            if (pEvents.votes[i].returnValues._voter === account)
-              proposalVotes.votedAmount = pEvents.votes[i].returnValues._vote === "2" ?
-                - pEvents.votes[i].returnValues._reputation
-                : pEvents.votes[i].returnValues._reputation;
-            if (pEvents.votes[i].returnValues._vote === "1")
-              proposalVotes.positiveVotesCount ++;
-            else 
-              proposalVotes.negativeVotesCount ++;
-          }
-          proposalVotes.loaded = true;
-          setProposalVotes(proposalVotes);
-        }
-        if (pEvents.stakes && !proposalStakes.loaded){
-          for (var i = 0; i < pEvents.stakes.length; i++){
-            if (pEvents.stakes[i].returnValues._staker === account)
-              proposalStakes.takedAmount = pEvents.stakes[i].returnValues._vote === "2" ?
-                - pEvents.stakes[i].returnValues._amount
-                : pEvents.stakes[i].returnValues._amount;
-            if (pEvents.stakes[i].returnValues._vote === "1")
-              proposalStakes.positiveStakesCount ++;
-            else 
-              proposalStakes.negativeStakesCount ++;
-          }
-          proposalStakes.loaded = true;
-          setProposalStakes(proposalStakes);
-        }
-      })
+      const pEvents = {
+        votes: daoStore.getVotes(proposalId),
+        stakes: daoStore.getStakes(proposalId)
+      }
+
+      console.log(pEvents)
+      const newProposalVotes = {
+        votedAmount: 0,
+        positiveVotesCount: 0,
+        negativeVotesCount: 0
+      }
+      for (var i = 0; i < pEvents.votes.length; i++){
+        if (pEvents.votes[i].voter === account)
+          newProposalVotes.votedAmount = pEvents.votes[i].vote === "2" ?
+            - pEvents.votes[i].amount
+            : pEvents.votes[i].amount;
+        if (pEvents.votes[i].vote === "1")
+          newProposalVotes.positiveVotesCount ++;
+        else 
+          newProposalVotes.negativeVotesCount ++;
+      }
+      if (
+        proposalVotes.votedAmount != newProposalVotes.votedAmount
+        || proposalVotes.positiveVotesCount != newProposalVotes.positiveVotesCount
+        || proposalVotes.negativeVotesCount != newProposalVotes.negativeVotesCount
+      )
+        setProposalVotes(newProposalVotes);
+  
+      const newProposalStakes = {
+        stakedAmount: 0,
+        positiveStakesCount: 0,
+        negativeStakesCount: 0
+      }
+      for (var i = 0; i < pEvents.stakes.length; i++){
+        if (pEvents.stakes[i].staker === account)
+          newProposalStakes.takedAmount = pEvents.stakes[i].vote === "2" ?
+            - pEvents.stakes[i].amount
+            : pEvents.stakes[i].amount;
+        if (pEvents.stakes[i].vote === "1")
+          newProposalStakes.positiveStakesCount ++;
+        else 
+          newProposalStakes.negativeStakesCount ++;
+      }
+      if (
+        proposalStakes.stakedAmount != newProposalStakes.stakedAmount
+        || proposalStakes.positiveStakesCount != newProposalStakes.positiveStakesCount
+        || proposalStakes.negativeStakesCount != newProposalStakes.negativeStakesCount
+      )
+      setProposalStakes(newProposalStakes);
 
       daoService.getRepAt(proposalInfo.creationBlock).then((repAtCreation) => {
         if (!userRep && !totalRep) {

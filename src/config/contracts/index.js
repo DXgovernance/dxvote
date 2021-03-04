@@ -12,7 +12,8 @@ export const getConfig = function(network) {
         masterWallet: process.env.REACT_APP_MASTER_WALLET_SCHEME_ADDRESS.replace(/["']/g, ""),
         quickWallet: process.env.REACT_APP_QUICK_WALLET_SCHEME_ADDRESS.replace(/["']/g, "")
       },
-      multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, "")
+      multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ""),
+      fromBlock: 0
     }
   } else if (network === 'rinkeby') {
     return {
@@ -26,6 +27,7 @@ export const getConfig = function(network) {
         quickWallet: RINKEBY_CONFIG.quickWalletScheme
       },
       multicall: RINKEBY_CONFIG.multicall,
+      fromBlock: RINKEBY_CONFIG.fromBlock,
     }
   } else {
     return {};

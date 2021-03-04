@@ -1,5 +1,5 @@
 import { action, observable } from 'mobx';
-import RootStore from 'stores/Root';
+import RootStore from 'stores';
 import { ContractType } from 'stores/Provider';
 import * as helpers from 'utils/helpers';
 import { bnum } from 'utils/helpers';

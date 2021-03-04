@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/utils';
-import RootStore from '../stores/Root';
+import RootStore from '../stores';
 
 export const schema = {
   Avatar: require('../contracts/DxAvatar').abi,

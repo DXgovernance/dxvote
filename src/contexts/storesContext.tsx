@@ -1,6 +1,6 @@
 // src/contexts/index.tsx
 import React from 'react';
-import RootStore from 'stores/Root';
+import RootStore from 'stores';
 
 export const storesContext = React.createContext({
     root: new RootStore(),

@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/utils';
-import RootStore from '../stores/Root';
+import RootStore from '../stores';
 import { ContractType } from '../stores/ETHProvider';
 
 export interface Call {

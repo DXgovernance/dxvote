@@ -1,5 +1,5 @@
 import { action, observable } from 'mobx';
-import RootStore from 'stores/Root';
+import RootStore from 'stores';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { TransactionReceipt } from 'web3-core';
 

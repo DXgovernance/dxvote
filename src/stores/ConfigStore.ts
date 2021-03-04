@@ -1,5 +1,5 @@
 import { action, observable } from 'mobx';
-import RootStore from 'stores/Root';
+import RootStore from 'stores';
 import { getConfig } from '../config/contracts';
 import { _ } from 'lodash';
 import { CHAIN_NAME_BY_ID, DEFAULT_ETH_CHAIN_ID } from '../provider/connectors';
@@ -75,6 +75,9 @@ export default class ConfigStore {
       }
       const schemeName = swap(getConfig(this.getActiveChainName()).schemes)[schemeAddress];
       return (schemeName.charAt(0).toUpperCase() + schemeName.slice(1)).replace(/([A-Z])/g, ' $1').trim()
-
+    }
+    
+    getStartBlock() {
+      return getConfig(this.getActiveChainName()).fromBlock;
     }
 }
