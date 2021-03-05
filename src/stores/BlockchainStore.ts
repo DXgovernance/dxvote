@@ -299,6 +299,20 @@ export default class BlockchainStore {
           emitions: [],
           fromBlock: configStore.getStartBlock(),
           toBlock: configStore.getStartBlock()
+        },
+        'StateChange': {
+          eventName: 'StateChange',
+          eventABI: {},
+          emitions: [],
+          fromBlock: configStore.getStartBlock(),
+          toBlock: configStore.getStartBlock()
+        },
+        'RedeemReputation': {
+          eventName: 'RedeemReputation',
+          eventABI: {},
+          emitions: [],
+          fromBlock: configStore.getStartBlock(),
+          toBlock: configStore.getStartBlock()
         }
       };
     const toBlock = await library.eth.getBlockNumber();
@@ -314,29 +328,55 @@ export default class BlockchainStore {
       ContractType.VotingMachine, configStore.getVotingMachineAddress(), "Redeem", 
       this.eventStore[configStore.getVotingMachineAddress()]['Redeem'].toBlock, toBlock
     );
+    const stateChangesEvents = await eventsService.getEvents(
+      ContractType.VotingMachine, configStore.getVotingMachineAddress(), "StateChange", 
+      this.eventStore[configStore.getVotingMachineAddress()]['StateChange'].toBlock, toBlock
+    );
+    const redeemRepEvents = await eventsService.getEvents(
+      ContractType.VotingMachine, configStore.getVotingMachineAddress(), "RedeemReputation", 
+      this.eventStore[configStore.getVotingMachineAddress()]['RedeemReputation'].toBlock, toBlock
+    );
 
     this.eventStore[configStore.getVotingMachineAddress()]['Stake'] = {
       eventName: 'Stake',
       eventABI: {},
-      emitions: stakeEvents,
+      emitions: this.eventStore[configStore.getVotingMachineAddress()]['Stake'].emitions
+        .concat(stakeEvents),
       fromBlock: configStore.getStartBlock(),
       toBlock: toBlock
     }
     this.eventStore[configStore.getVotingMachineAddress()]['VoteProposal'] = {
       eventName: 'VoteProposal',
       eventABI: {},
-      emitions: voteEvents,
+      emitions: this.eventStore[configStore.getVotingMachineAddress()]['VoteProposal'].emitions
+        .concat(voteEvents),
       fromBlock: configStore.getStartBlock(),
       toBlock: toBlock
     }
     this.eventStore[configStore.getVotingMachineAddress()]['Redeem'] = {
       eventName: 'Redeem',
       eventABI: {},
-      emitions: redeemEvents,
+      emitions: this.eventStore[configStore.getVotingMachineAddress()]['Redeem'].emitions
+        .concat(redeemEvents),
       fromBlock: configStore.getStartBlock(),
       toBlock: toBlock
     }
-    return;
+    this.eventStore[configStore.getVotingMachineAddress()]['StateChange'] = {
+      eventName: 'StateChange',
+      eventABI: {},
+      emitions: this.eventStore[configStore.getVotingMachineAddress()]['StateChange'].emitions
+        .concat(stateChangesEvents),
+      fromBlock: configStore.getStartBlock(),
+      toBlock: toBlock
+    }
+    this.eventStore[configStore.getVotingMachineAddress()]['RedeemReputation'] = {
+      eventName: 'RedeemReputation',
+      eventABI: {},
+      emitions: this.eventStore[configStore.getVotingMachineAddress()]['RedeemReputation'].emitions
+        .concat(redeemRepEvents),
+      fromBlock: configStore.getStartBlock(),
+      toBlock: toBlock
+    }
   }
     
   @action async fetchData(web3React: Web3ReactContextInterface) {
