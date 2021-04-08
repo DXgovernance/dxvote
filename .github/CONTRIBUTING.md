@@ -20,3 +20,10 @@ A dxvote tester can do two things:
 To submit a change you will need to create a [pull request template](https://github.com/AugustoL/dxvote/blob/master/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md) and fill all the necessary sections in the pull request description.
 
 Always write a clear log message for your commits, one-line messages are fine for small changes, try to keep pull requests small and fix one issue at the time, please try to avoid huge commits.
+
+## Techical Requirements
+
+- The application should not have any dependency on a centralized service, network or server besides the ethereum network provider.
+- The DXdao should have total control over the source code and the smart contracts used in the application.
+- The source code of the dapp should be always available and under AGPL 3.0 License.
+- Each release should provide the source code alongside verification instructions to check the integrity of the compiled source code.
