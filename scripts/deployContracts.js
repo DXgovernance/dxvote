@@ -38,6 +38,7 @@ ZWeb3.initialize(web3.currentProvider);
 Contracts.setLocalBuildDir('contracts/build/');
 
 const WalletScheme = Contracts.getFromLocal("WalletScheme");
+const PermissonRegistry = Contracts.getFromLocal("PermissonRegistry");
 const DxController = Contracts.getFromLocal("DxController");
 const DxAvatar = Contracts.getFromLocal("DxAvatar");
 const DxReputation = Contracts.getFromLocal("DxReputation");

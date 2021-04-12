@@ -125,7 +125,7 @@ export interface SchemeInfo {
   address: String;
   name: String,
   parametersHash: string;
-  toAddress: string;
+  controllerAddress: string;
   ethBalance: BigNumber;
   parameters: SchemeParameters;
   permissions: SchemePermissions;
@@ -276,10 +276,10 @@ export default class DaoStore {
   
   getSchemeInfo(schemeAddress): SchemeInfo {
     const { configStore, providerStore } = this.rootStore;
-    const toAddress = this.rootStore.blockchainStore.getCachedValue({
+    const controllerAddress = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.WalletScheme,
       address: schemeAddress,
-      method: 'toAddress',
+      method: 'controllerAddress',
     });
     const ethBalance = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Multicall,
@@ -344,7 +344,7 @@ export default class DaoStore {
     const schemeInfo = {
       name: configStore.getSchemeName(schemeAddress),
       address: schemeAddress,
-      toAddress,
+      controllerAddress,
       parametersHash,
       ethBalance,
       parameters,
