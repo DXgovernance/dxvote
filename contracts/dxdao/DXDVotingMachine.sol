@@ -1,6 +1,6 @@
 pragma solidity ^0.5.11;
 
-import "../daostack/votingMachines/GenesisProtocol.sol";
+import "@daostack/infra/contracts/votingMachines/GenesisProtocol.sol";
 
 /**
  * @title GenesisProtocol implementation designed for DXdao
