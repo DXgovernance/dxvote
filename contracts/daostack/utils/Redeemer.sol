@@ -1,7 +1,9 @@
 pragma solidity 0.5.17;
 
-import "../schemes/ContributionReward.sol";
+import "../universalSchemes/ContributionReward.sol";
 
+// THIS IS NOT THE ORIGINAL REEDEMER FROM https://github.com/daostack/arc/blob/6edcc0e3ea4e49ec5181626dcfc7eae58df4f31b/contracts/utils/Redeemer.sol
+// IS AN UPDATED VERSION
 
 contract Redeemer {
     using SafeMath for uint;

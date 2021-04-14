@@ -6,11 +6,15 @@ const moment = require('moment');
 const { encodePermission } = require('./permissions');
 const args = process.argv;
 require('dotenv').config();
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const IPFS = require('ipfs-core');
 const contentHash = require('content-hash');
 const request = require("request-promise-native");
 const repHolders = require('../.repHolders.json');
+
+const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
+const MAX_UINT_256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+const ANY_ADDRESS = "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa";
+const ANY_FUNC_SIGNATURE = "0xaaaaaaaa";
 
 // Get network to use from arguments
 let network, mnemonic, httpProviderUrl, web3;
@@ -38,6 +42,7 @@ ZWeb3.initialize(web3.currentProvider);
 Contracts.setLocalBuildDir('contracts/build/');
 
 const WalletScheme = Contracts.getFromLocal("WalletScheme");
+const PermissionRegistry = Contracts.getFromLocal("PermissionRegistry");
 const DxController = Contracts.getFromLocal("DxController");
 const DxAvatar = Contracts.getFromLocal("DxAvatar");
 const DxReputation = Contracts.getFromLocal("DxReputation");
@@ -98,6 +103,10 @@ async function main() {
 
   const dxdVotingMachine = await DXDVotingMachine.new(votingMachineToken.address, {gas: GAS_LIMIT});
   const multicall = await Multicall.new();
+  
+  var permissionRegistry = await PermissionRegistry.new(
+    accounts[0], moment.duration(1, 'hours').asSeconds(), { gas: 1000000 }
+  );
   
   const schemesConfiguration = (network == 'rinkeby') ? {
     master: {
@@ -164,7 +173,7 @@ async function main() {
     minimumDaoBounty: schemesConfiguration.master.minimumDaoBounty,
     daoBountyConst: schemesConfiguration.master.daoBountyConst,
     activationTime: 0,
-    voteOnBehalf: ZERO_ADDRESS
+    voteOnBehalf: NULL_ADDRESS
   }
   
   await dxdVotingMachine.methods.setParameters([
@@ -198,7 +207,8 @@ async function main() {
     avatar.address,
     dxdVotingMachine.address,
     masterWalletSchemeParamsHash,
-    controller.address
+    controller.address,
+    permissionRegistry.address
   ).send();
   await controller.methods.registerScheme(
     masterWalletScheme.address,
@@ -224,7 +234,7 @@ async function main() {
     minimumDaoBounty: schemesConfiguration.quick.minimumDaoBounty,
     daoBountyConst: schemesConfiguration.quick.daoBountyConst,
     activationTime: 0,
-    voteOnBehalf: ZERO_ADDRESS
+    voteOnBehalf: NULL_ADDRESS
   }
   await dxdVotingMachine.methods.setParameters(
     [
@@ -263,7 +273,8 @@ async function main() {
     avatar.address,
     dxdVotingMachine.address,
     quickWalletSchemeParamsHash,
-    ZERO_ADDRESS
+    NULL_ADDRESS,
+    permissionRegistry.address
   ).send();
   
   await controller.methods.registerScheme(
@@ -279,6 +290,35 @@ async function main() {
   ).send();
   await controller.methods.metaData("metaData", avatar.address).send();
   await controller.methods.unregisterScheme(accounts[0], avatar.address).send();
+  
+  // Set permissions to avatar and quickwallet scheme to do anything
+  await permissionRegistry.methods.setAdminPermission(
+    NULL_ADDRESS, 
+    avatar.address, 
+    ANY_ADDRESS, 
+    ANY_FUNC_SIGNATURE,
+    MAX_UINT_256,
+    true
+  ).send();
+  await permissionRegistry.methods.setAdminPermission(
+    NULL_ADDRESS, 
+    quickWalletScheme.address, 
+    ANY_ADDRESS, 
+    ANY_FUNC_SIGNATURE,
+    MAX_UINT_256,
+    true
+  ).send();
+  
+  // Increase one hour that is the time delay for a permission to became enabled
+  await web3.currentProvider.send({
+    jsonrpc: '2.0',
+    method: 'evm_increaseTime',
+    params: [moment.duration(1, 'hours').asSeconds()],
+    id: 0,
+  }, () => {});
+
+  // Transfer permission registry control to avatar
+  await permissionRegistry.methods.transferOwnership(avatar.address).send();
   
   if (network == 'development') {
     console.log('Running deployment with test data..');
@@ -314,7 +354,7 @@ async function main() {
       contentHash.fromIpfs(cid)
     ).send({ from: accounts[0] });
     const seedProposalId = seedProposalTx.events.NewCallProposal.returnValues[0];
-    await dxdVotingMachine.methods.vote(seedProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[0] });
+    await dxdVotingMachine.methods.vote(seedProposalId, 1, 0, NULL_ADDRESS).send({ from: accounts[0] });
     titleText = "First test proposal";
     descriptionText = "Tranfer 15 ETH and 50 tokens to QuickWalletScheme and mint 20 REP";
     cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
@@ -370,15 +410,13 @@ async function main() {
       titleText,
       contentHash.fromIpfs(cid)
     ).send({ from: accounts[0] });
-    
-    await dxdVotingMachine.methods.vote(firstProposalId, 1, 0, ZERO_ADDRESS).send({ from: accounts[2] });
-
+    await dxdVotingMachine.methods.vote(firstProposalId, 1, 0, NULL_ADDRESS).send({ from: accounts[2] });
     await votingMachineToken.methods.approve(
       dxdVotingMachine.address, await votingMachineToken.methods.balanceOf(accounts[1]).call()
     ).send({from: accounts[1]});
     await dxdVotingMachine.methods.stake(secondProposalId, 1, web3.utils.toWei("2").toString())
       .send({ from: accounts[1] });
-    await dxdVotingMachine.methods.vote(secondProposalId, 1, web3.utils.toWei("5"), ZERO_ADDRESS).send({ 
+    await dxdVotingMachine.methods.vote(secondProposalId, 1, web3.utils.toWei("5"), NULL_ADDRESS).send({ 
       from: accounts[1]
     });
   

@@ -178,7 +178,7 @@ export default class BlockchainStore {
       },{
         contractType: schemeContract,
         address: schemeAddress,
-        method: 'toAddress',
+        method: 'controllerAddress',
         params: []
       },{
         contractType: ContractType.VotingMachine,
