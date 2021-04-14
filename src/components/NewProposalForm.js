@@ -208,11 +208,11 @@ const NewProposalForm = observer(() => {
             call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
           : [];  
         
-        const encodedData = call.callType == "decoded" ? 
+        const encodedData = call.callType == "decoded" && call.functionName.length > 0 ? 
         library.eth.abi.encodeFunctionSignature(call.functionName) + 
         library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
-        : call.data
-                
+        : "0x0"
+        
         return (scheme == 'masterWallet') ? daoService.encodeControllerGenericCall(
           call.to,
           encodedData,
@@ -220,7 +220,7 @@ const NewProposalForm = observer(() => {
           : call.value
         ) : encodedData
       });
-      
+
       const value = calls.map((call) => {
         return (scheme == 'masterWallet') ? "0"
         : call.callType == "decoded" ? library.utils.toWei(call.value).toString()
@@ -244,7 +244,7 @@ const NewProposalForm = observer(() => {
       data: "",
       functionName: "",
       functionParams: "",
-      value: ""
+      value: "0"
     }]);
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     
@@ -351,6 +351,10 @@ const NewProposalForm = observer(() => {
             <span style={{paddingBottom: "0px", width: "20%"}}>To</span>
             <span style={{paddingBottom: "0px", width: "40%"}}>Data</span>
             <span style={{paddingBottom: "0px", width: "10%"}}>Value</span>
+            <div style={{paddingBottom: "0px", width: "30%", textAlign: "-webkit-right"}}>
+              <AddButton onClick={addCall}>Add Call</AddButton>
+            </div>
+            
           </CallRow>
           {calls.map((call, i) => 
             <CallRow>
@@ -406,8 +410,7 @@ const NewProposalForm = observer(() => {
                 style={{width: "10%"}}
                 placeholder={calls[i].callType == "decoded" ? "ETH" : "WEI"}
               ></input>
-              {i > 0 ? <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton> : <div/>}
-              {i == calls.length - 1 ? <AddButton onClick={addCall}>+</AddButton> : <div/>}
+              <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>
               <RemoveButton onClick={() => {changeCallType(i)}}> {calls[i].callType == "decoded" ? "Advanced" : "Simple"} </RemoveButton>
             </CallRow>
           )}
