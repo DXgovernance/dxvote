@@ -226,7 +226,7 @@ const NewProposalForm = observer(() => {
         : call.callType == "decoded" ? library.utils.toWei(call.value).toString()
           : call.value
       });
-      console.log(to, data, value, titleText, calls)
+
       daoStore.createProposal( 
         (scheme == 'masterWallet') 
           ? configStore.getSchemeAddress('masterWallet') : configStore.getSchemeAddress('quickWallet'),

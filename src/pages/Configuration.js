@@ -64,7 +64,7 @@ const DaiInformation = observer(() => {
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
     const loading = !blockchainStore.initialLoadComplete;
-    console.log(configStore.getApiKeys())
+
     const [apiKeys, setAapiKeys] = React.useState(configStore.getApiKeys() || {});
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     

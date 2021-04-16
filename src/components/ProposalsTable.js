@@ -133,8 +133,6 @@ const ProposalsTable = observer(() => {
     let allProposals = [];
     const [stateFilter, setStateFilter] = React.useState("All");
     allProposals = allProposals.concat(masterWalletSchemeProposals).concat(quickWalletSchemeProposals)
-    console.log("MasterWalletScheme info", masterWalletSchemeInfo);
-    console.log("QuickWalletScheme info", quickWalletSchemeInfo);
     
     function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
 
@@ -144,7 +142,7 @@ const ProposalsTable = observer(() => {
 
     allProposals.sort(function(a, b) { return b.statusPriority - a.statusPriority; });
 
-    console.log("All Proposals", allProposals, allProposals.length, daoStore);
+    // console.log("All Proposals", allProposals, allProposals.length, daoStore);
     if (!providerActive) {
       return (
         <ProposalsTableWrapper>

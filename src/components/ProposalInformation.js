@@ -228,7 +228,7 @@ const ProposalInformation = observer(() => {
     
     }
     
-    console.log("Proposal info", proposalInfo);
+    // console.log("Proposal info", proposalInfo);
     
     let votingMachineTokenBalance = userVotingMachineTokenBalance ?
       library.utils.fromWei(userVotingMachineTokenBalance.toString())
