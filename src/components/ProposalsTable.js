@@ -244,7 +244,7 @@ const ProposalsTable = observer(() => {
                       </TableRow>
                     </Link>);
                   } else {
-                    return <div/>
+                    return null;
                   }
                 }
               )}
