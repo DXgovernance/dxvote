@@ -9,6 +9,8 @@ import Slider from '@material-ui/core/Slider';
 import { withStyles } from '@material-ui/core/styles';
 import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
+import { shortenAddress } from 'utils/address';
+
 
 const ProposalInformationWrapper = styled.div`
     width: 100%;
@@ -47,11 +49,16 @@ const InfoSidebar = styled.div`
   flex-direction: column;
 `;
 
+const SidebarDivider = styled.div`
+  border-bottom: 1px solid gray;
+  margin: 5px 10px;
+`;
+
 const SidebarRow = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  padding: 10px;
+  padding: 5px 0px;
 
   .timeText {
     font-size: 20;
@@ -158,6 +165,8 @@ const ProposalInformation = observer(() => {
         redeemsRep: daoStore.getRedeemsRep(proposalId),
         stateChanges: daoStore.getStateChanges(proposalId)
       }
+      
+      proposalInfo.events = pEvents;
       
       const newProposalVotes = {
         votedAmount: 0,
@@ -288,6 +297,7 @@ const ProposalInformation = observer(() => {
       function onStakeValueChange(newValue) {
         const stakeSlider = document.querySelectorAll("span[aria-labelledby='stake-slider']")[0];
         setStakePercentage((stakeSlider.ariaValueNow - 50) * 2)
+        stakeSlider.ariaValueNow = stakePercentage;
       }
       function stakeValuetext(value) { return `${value.toFixed(2)}%`; }
       
@@ -361,7 +371,6 @@ const ProposalInformation = observer(() => {
                   "Pending Execution" : proposalInfo.status
                 }</h2>
               <SidebarRow style={{
-                borderBottom: "1px solid gray",
                 margin: "0px 10px",
                 flexDirection: "column"
               }}>
@@ -381,42 +390,45 @@ const ProposalInformation = observer(() => {
                   : proposalInfo.status == "Pending Execution" ?
                   <VoteButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </VoteButton>
                   : <div/>
-                } 
+                }
               </SidebarRow>
-              <SidebarRow>
-                <span> Staked </span>
-              </SidebarRow>
+              
+              <SidebarDivider/> 
+
               <SidebarRow style={{
-                borderBottom: "1px solid gray",
                 margin: "0px 10px",
+                padding: "10px 0px"
               }}>
-                <span style={{width: "40%", textAlign:"center", color: "green"}}>
-                  <AmountBadge color="green">{proposalStakes.positiveStakesCount}</AmountBadge>
-                  {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD
-                </span>
-                <span> - </span>
-                <span style={{width: "40%", textAlign:"center", color: "red"}}>
-                  {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD
-                  <AmountBadge color="red">{proposalStakes.negativeStakesCount}</AmountBadge>
-                </span>
+                <span> <strong>Proposer</strong> {shortenAddress(proposalInfo.proposer)} </span>
               </SidebarRow>
+              
+              <SidebarDivider/> 
+            
               <SidebarRow>
-                <span> Votes </span>
+                <span> <strong>Votes</strong> </span>
               </SidebarRow>
-              <SidebarRow style={{
-                borderBottom: "1px solid gray",
-                margin: "0px 10px",
-              }}> 
+              <SidebarRow style={{ margin: "0px 10px" }}> 
                 <span style={{width: "40%", textAlign:"center", color: "green"}}>
                   <AmountBadge color="green">{proposalVotes.positiveVotesCount}</AmountBadge>
-                  {proposalInfo.positiveVotes.div(totalRep).times("100").toNumber().toFixed(2)} % 
+                  {proposalInfo.positiveVotes.div(totalRep).times("100").toNumber().toFixed(2)} %
+                  <br/> 
+                  {proposalInfo.events && proposalInfo.events.votes.map(function(voteEvent, i){
+                    if (voteEvent.vote == 1)
+                      return <small color="green">{voteEvent.voter.substring(0,6)}... - {bnum(voteEvent.amount).div(totalRep).times("100").toNumber().toFixed(2)} %</small>
+                  })}
                 </span>
                 <span> - </span>
                 <span style={{width: "40%", textAlign:"center", color: "red"}}>
                   {proposalInfo.negativeVotes.div(totalRep).times("100").toNumber().toFixed(2)} %
                   <AmountBadge color="red">{proposalVotes.negativeVotesCount}</AmountBadge>
+                  <br/> 
+                  {proposalInfo.events && proposalInfo.events.votes.map(function(voteEvent, i){
+                    if (voteEvent.vote == 2)
+                      return <small color="red">{voteEvent.voter.substring(0,6)}... - {bnum(voteEvent.amount).div(totalRep).times("100").toNumber().toFixed(2)} %</small>
+                  })}
                 </span>
               </SidebarRow>
+              
               {proposalVotes.votedAmount == 0 && proposalInfo.statusPriority >=3 && proposalInfo.statusPriority <= 6  ?
                 <SidebarRow>
                   <AmountSlider
@@ -436,13 +448,47 @@ const ProposalInformation = observer(() => {
                 </SidebarRow>
               : <div/>
               }
-              <br/>
-              {(proposalInfo.statusPriority == 3 || proposalInfo.statusPriority== 4) && userVotingMachineTokenApproved == 0 ?
+              
+              <SidebarDivider/> 
+              
+              <SidebarRow>
+                <span> <strong>Staked</strong> </span>
+              </SidebarRow>
+              <SidebarRow style={{ margin: "0px 10px" }}>
+                <span style={{width: "40%", textAlign:"center", color: "green"}}>
+                  <AmountBadge color="green">{proposalStakes.positiveStakesCount}</AmountBadge>
+                  {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD
+                  <br/> 
+                  {proposalInfo.events && proposalInfo.events.stakes.map(function(stakeEvent, i){
+                    if (stakeEvent.vote == 1)
+                      return <small color="green">{stakeEvent.staker.substring(0,6)}... - {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)}</small>
+                  })}
+                </span>
+                <span> - </span>
+                <span style={{width: "40%", textAlign:"center", color: "red"}}>
+                  {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD
+                  <AmountBadge color="red">{proposalStakes.negativeStakesCount}</AmountBadge>
+                  <br/> 
+                  {proposalInfo.events && proposalInfo.events.stakes.map(function(stakeEvent, i){
+                    if (stakeEvent.vote == 2)
+                      return <small color="red">{stakeEvent.staker.substring(0,6)}... - {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)}</small>
+                  })}
+                </span>
+              </SidebarRow>
+              
+              {proposalStakes.stakedAmount > 0
+                ? <SidebarRow>
+                Already staked {(proposalStakes.stakedAmount > 0) ? "for" : "against"} with {Number(library.utils.fromWei(proposalStakes.stakedAmount)).toFixed(2)} DXD
+                </SidebarRow>
+                : <div></div>
+              }
+
+              {(proposalInfo.statusPriority == 3 || proposalInfo.statusPriority == 4) && userVotingMachineTokenApproved == 0 ?
                 <SidebarRow>
                   <small>Approve DXD to stake</small>
                   <VoteButton color="blue" onClick={() => approveDXD()}>Approve DXD</VoteButton>
                 </SidebarRow>
-                : (proposalInfo.statusPriority == 3 || proposalInfo.statusPriority== 4)  ?
+                : (proposalInfo.statusPriority == 3 || proposalInfo.statusPriority == 4)  ?
                   <div>
                     {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(2)} DXD to boost</small> : <span/>}
                     {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(2)} DXD to unboost</small> : <span/>}
@@ -461,15 +507,9 @@ const ProposalInformation = observer(() => {
                   </div>
                 : <div></div>
               }
-              {proposalStakes.stakedAmount > 0
-                ? <SidebarRow>
-                  Already staked {(proposalStakes.stakedAmount > 0) ? "for" : "against"} with {Number(library.utils.fromWei(proposalStakes.stakedAmount)).toFixed(2)} DXD
-                </SidebarRow>
-                : <div></div>
-              }
               
-              {canRedeem > 0
-                ? <SidebarRow>
+              {proposalInfo.statusPriority < 3 && canRedeem > 0
+                ? <SidebarRow style={{ borderTop: "1px solid gray",  margin: "0px 10px" }}>
                   <VoteButton color="blue" onClick={() => redeem()}>Redeem</VoteButton>
                 </SidebarRow>
                 : <div></div>
