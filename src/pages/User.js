@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { useLocation } from 'react-router-dom';
+import Address from '../components/common/Address';
 
 const UserPage = () => {
     const {
@@ -47,7 +48,7 @@ const UserPage = () => {
 
     return (
       <div>
-        <h2>User {userAddress}</h2>
+        <h2>User <Address size="long" address={userAddress}/></h2>
         <hr></hr>
         {loading ?
           <center>

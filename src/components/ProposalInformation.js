@@ -9,8 +9,7 @@ import Slider from '@material-ui/core/Slider';
 import { withStyles } from '@material-ui/core/styles';
 import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
-import { shortenAddress } from 'utils/address';
-
+import Address from '../components/common/Address';
 
 const ProposalInformationWrapper = styled.div`
     width: 100%;
@@ -399,7 +398,7 @@ const ProposalInformation = observer(() => {
                 margin: "0px 10px",
                 padding: "10px 0px"
               }}>
-                <span> <strong>Proposer</strong> {shortenAddress(proposalInfo.proposer)} </span>
+                <span> <strong>Proposer</strong> <Address type="user" address={proposalInfo.proposer}/> </span>
               </SidebarRow>
               
               <SidebarDivider/> 
@@ -414,7 +413,7 @@ const ProposalInformation = observer(() => {
                   <br/> 
                   {proposalInfo.events && proposalInfo.events.votes.map(function(voteEvent, i){
                     if (voteEvent.vote == 1)
-                      return <small color="green">{voteEvent.voter.substring(0,6)}... - {bnum(voteEvent.amount).div(totalRep).times("100").toNumber().toFixed(2)} %</small>
+                      return <small color="green"><Address size="short" type="user" address={proposalInfo.proposer}/> {bnum(voteEvent.amount).div(totalRep).times("100").toNumber().toFixed(2)} %</small>
                   })}
                 </span>
                 <span> - </span>
@@ -461,7 +460,7 @@ const ProposalInformation = observer(() => {
                   <br/> 
                   {proposalInfo.events && proposalInfo.events.stakes.map(function(stakeEvent, i){
                     if (stakeEvent.vote == 1)
-                      return <small color="green">{stakeEvent.staker.substring(0,6)}... - {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)}</small>
+                      return <small color="green"><Address size="short" type="user" address={proposalInfo.proposer}/> - {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)}</small>
                   })}
                 </span>
                 <span> - </span>
