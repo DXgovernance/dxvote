@@ -65,8 +65,9 @@ const Header = observer(() => {
   );
   
   const {
-      root: { daoStore, providerStore },
+      root: { daoStore, providerStore, ipfsService },
   } = useStores();
+  ipfsService.start();
   const daoInfo = daoStore.getDaoInfo();
   const { active, account } = providerStore.getActiveWeb3React();
   const ethBalance = daoInfo.userEthBalance ?
