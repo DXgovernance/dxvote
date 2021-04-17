@@ -1,11 +1,8 @@
-const fs = require('fs');
-const Web3 = require('web3');
-const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
-const HDWalletProvider = require('truffle-hdwallet-provider');
-const moment = require('moment');
-const { encodePermission } = require('./permissions');
-const args = process.argv;
-require('dotenv').config();
+const hre = require("hardhat");
+const fs = require("fs");
+const web3 = hre.web3;
+var moment = require("moment");
+const { encodePermission } = require('./helpers/permissions');
 const IPFS = require('ipfs-core');
 const contentHash = require('content-hash');
 const request = require("request-promise-native");
@@ -16,73 +13,28 @@ const MAX_UINT_256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 const ANY_ADDRESS = "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa";
 const ANY_FUNC_SIGNATURE = "0xaaaaaaaa";
 
-// Get network to use from arguments
-let network, mnemonic, httpProviderUrl, web3;
-for (var i = 0; i < args.length; i++) {
-  if (args[i] == '--network')
-    network = args[i+1];
-}
-if (!network) throw('Not network selected, --network parameter missing');
-
-mnemonic = process.env.REACT_APP_KEY_MNEMONIC;
-httpProviderUrl = 'http://localhost:8545';
-
-// Get development keys
-if (network != 'development') {
-  infuraApiKey = process.env.REACT_APP_KEY_INFURA_API_KEY;
-  httpProviderUrl = `https://${network}.infura.io/v3/${infuraApiKey }`
-} 
-
-console.log('Running deploy on', httpProviderUrl)
-const provider = new HDWalletProvider(mnemonic, new Web3.providers.HttpProvider(httpProviderUrl), 0, 10);
-web3 = new Web3(provider)
 const delay = time => new Promise(res=>setTimeout(res,time));
 
-ZWeb3.initialize(web3.currentProvider);
-Contracts.setLocalBuildDir('contracts/build/');
-
-const WalletScheme = Contracts.getFromLocal("WalletScheme");
-const PermissionRegistry = Contracts.getFromLocal("PermissionRegistry");
-const DxController = Contracts.getFromLocal("DxController");
-const DxAvatar = Contracts.getFromLocal("DxAvatar");
-const DxReputation = Contracts.getFromLocal("DxReputation");
-const DxToken = Contracts.getFromLocal("DxToken");
-const DXDVotingMachine = Contracts.getFromLocal("DXDVotingMachine");
-const ERC20Mock = Contracts.getFromLocal("ERC20Mock");
-const Multicall = Contracts.getFromLocal("Multicall");
+const WalletScheme = artifacts.require("WalletScheme");
+const PermissionRegistry = artifacts.require("PermissionRegistry");
+const DxController = artifacts.require("DxController");
+const DxAvatar = artifacts.require("DxAvatar");
+const DxReputation = artifacts.require("DxReputation");
+const DxToken = artifacts.require("DxToken");
+const DXDVotingMachine = artifacts.require("DXDVotingMachine");
+const ERC20Mock = artifacts.require("ERC20Mock");
+const Multicall = artifacts.require("Multicall");
 
 async function main() {
     
   const accounts = await web3.eth.getAccounts();
+  console.log(accounts)
   const GAS_LIMIT = 9000000;
-  const votingMachineToken = (network == 'rinkeby') ? ERC20Mock.at("0xa700BdAba48A3D96219247111B0b708Dc0b51033")
-    : await ERC20Mock.new(accounts[0], web3.utils.toWei("1000"));
-    
+  const votingMachineToken = await ERC20Mock.new(accounts[0], web3.utils.toWei("1000"));
+  
+  // Deploy Reputation
   const reputation = await DxReputation.new();
-  if (network != 'development') {
-    // Get initial REP holders
-    let founders = [], initialRep = [], initialTokens = [];
-    for (var address in repHolders.addresses) {
-      founders.push(address);
-      initialRep.push(repHolders.addresses[address]);
-      initialTokens.push(0);
-    }
-    
-    // Deploy and mint reputation
-    console.log('Deploying DxReputation...');
-    const addressesMints = [], amountMints = [];  
-    while (founders.length > 0){
-      addressesMints.push(founders.splice(0, 100));
-      amountMints.push(initialRep.splice(0, 100));
-    }
-    for (var i = 0; i < addressesMints.length; i++){
-      console.log('Doing mint '+i+' of '+(addressesMints.length-1)+' of initial REP minting...')
-      await reputation.methods.mintMultiple(addressesMints[i], amountMints[i]).send();
-      await delay(30000);
-    }
-  } else {
-    await reputation.methods.mint(accounts[0], 100).send();
-  }
+  await reputation.mint(accounts[0], 100);
   
   // Deploy empty token
   console.log('Deploying DxToken...');
@@ -97,9 +49,9 @@ async function main() {
   const controller = await DxController.new(avatar.address, {gas: GAS_LIMIT});
   
   // Transfer reputation adn avatar to controller
-  await reputation.methods.transferOwnership(controller.address).send();
-  await avatar.methods.transferOwnership(controller.address).send();
-  await token.methods.transferOwnership(controller.address).send();
+  await reputation.transferOwnership(controller.address);
+  await avatar.transferOwnership(controller.address);
+  await token.transferOwnership(controller.address);
 
   const dxdVotingMachine = await DXDVotingMachine.new(votingMachineToken.address, {gas: GAS_LIMIT});
   const multicall = await Multicall.new();
@@ -176,7 +128,7 @@ async function main() {
     voteOnBehalf: NULL_ADDRESS
   }
   
-  await dxdVotingMachine.methods.setParameters([
+  await dxdVotingMachine.setParameters([
     masterWalletParameters.queuedVoteRequiredPercentage,
     masterWalletParameters.queuedVotePeriodLimit,
     masterWalletParameters.boostedVotePeriodLimit,
@@ -188,8 +140,8 @@ async function main() {
     masterWalletParameters.minimumDaoBounty,
     masterWalletParameters.daoBountyConst,
     masterWalletParameters.activationTime 
-  ], masterWalletParameters.voteOnBehalf).send();
-  const masterWalletSchemeParamsHash = await dxdVotingMachine.methods.getParametersHash([
+  ], masterWalletParameters.voteOnBehalf);
+  const masterWalletSchemeParamsHash = await dxdVotingMachine.getParametersHash([
     masterWalletParameters.queuedVoteRequiredPercentage,
     masterWalletParameters.queuedVotePeriodLimit,
     masterWalletParameters.boostedVotePeriodLimit,
@@ -201,16 +153,16 @@ async function main() {
     masterWalletParameters.minimumDaoBounty,
     masterWalletParameters.daoBountyConst,
     masterWalletParameters.activationTime 
-  ], masterWalletParameters.voteOnBehalf).call();
+  ], masterWalletParameters.voteOnBehalf);
   const masterWalletScheme = await WalletScheme.new();
-  await masterWalletScheme.methods.initialize(
+  await masterWalletScheme.initialize(
     avatar.address,
     dxdVotingMachine.address,
     masterWalletSchemeParamsHash,
     controller.address,
     permissionRegistry.address
-  ).send();
-  await controller.methods.registerScheme(
+  );
+  await controller.registerScheme(
     masterWalletScheme.address,
     masterWalletSchemeParamsHash,
     encodePermission({
@@ -220,7 +172,7 @@ async function main() {
       canRegisterSchemes: true
     }),
     avatar.address
-  ).send();
+  );
   
   const quickWalletSchemeParameters = {
     queuedVoteRequiredPercentage: schemesConfiguration.quick.queuedVoteRequiredPercentage,
@@ -236,7 +188,7 @@ async function main() {
     activationTime: 0,
     voteOnBehalf: NULL_ADDRESS
   }
-  await dxdVotingMachine.methods.setParameters(
+  await dxdVotingMachine.setParameters(
     [
       quickWalletSchemeParameters.queuedVoteRequiredPercentage,
       quickWalletSchemeParameters.queuedVotePeriodLimit,
@@ -251,8 +203,8 @@ async function main() {
       quickWalletSchemeParameters.activationTime 
     ],
     quickWalletSchemeParameters.voteOnBehalf
-  ).send();
-  const quickWalletSchemeParamsHash = await dxdVotingMachine.methods.getParametersHash(
+  );
+  const quickWalletSchemeParamsHash = await dxdVotingMachine.getParametersHash(
     [
       quickWalletSchemeParameters.queuedVoteRequiredPercentage,
       quickWalletSchemeParameters.queuedVotePeriodLimit,
@@ -267,17 +219,17 @@ async function main() {
       quickWalletSchemeParameters.activationTime 
     ],
     quickWalletSchemeParameters.voteOnBehalf
-  ).call();
+  );
   const quickWalletScheme = await WalletScheme.new();
-  await quickWalletScheme.methods.initialize(
+  await quickWalletScheme.initialize(
     avatar.address,
     dxdVotingMachine.address,
     quickWalletSchemeParamsHash,
     NULL_ADDRESS,
     permissionRegistry.address
-  ).send();
+  );
   
-  await controller.methods.registerScheme(
+  await controller.registerScheme(
     quickWalletScheme.address,
     quickWalletSchemeParamsHash,
     encodePermission({
@@ -287,27 +239,27 @@ async function main() {
       canRegisterSchemes: false
     }),
     avatar.address
-  ).send();
-  await controller.methods.metaData("metaData", avatar.address).send();
-  await controller.methods.unregisterScheme(accounts[0], avatar.address).send();
+  );
+  await controller.metaData("metaData", avatar.address);
+  await controller.unregisterScheme(accounts[0], avatar.address);
   
   // Set permissions to avatar and quickwallet scheme to do anything
-  await permissionRegistry.methods.setAdminPermission(
+  await permissionRegistry.setAdminPermission(
     NULL_ADDRESS, 
     avatar.address, 
     ANY_ADDRESS, 
     ANY_FUNC_SIGNATURE,
     MAX_UINT_256,
     true
-  ).send();
-  await permissionRegistry.methods.setAdminPermission(
+  );
+  await permissionRegistry.setAdminPermission(
     NULL_ADDRESS, 
     quickWalletScheme.address, 
     ANY_ADDRESS, 
     ANY_FUNC_SIGNATURE,
     MAX_UINT_256,
     true
-  ).send();
+  );
   
   // Increase one hour that is the time delay for a permission to became enabled
   await web3.currentProvider.send({
@@ -318,110 +270,126 @@ async function main() {
   }, () => {});
 
   // Transfer permission registry control to avatar
-  await permissionRegistry.methods.transferOwnership(avatar.address).send();
+  await permissionRegistry.transferOwnership(avatar.address);
   
-  if (network == 'development') {
-    console.log('Running deployment with test data..');
-    
-    await web3.eth.sendTransaction({to: avatar.address, value: web3.utils.toWei("150"), from: accounts[0]});
-    await votingMachineToken.methods.transfer(avatar.address, web3.utils.toWei("100")).send({from: accounts[0]});
-    await votingMachineToken.methods.transfer(accounts[1], web3.utils.toWei("50")).send({from: accounts[0]});
-    await votingMachineToken.methods.transfer(accounts[2], web3.utils.toWei("30")).send({from: accounts[0]});
-    
-    const ipfs = await IPFS.create();
-    let titleText = "Mint seed REP test proposal";
-    let descriptionText = "Set 10 REP tokens to "+accounts[0]+", 20 REP tokens to "+accounts[1]+", and 70 REP tokens to "+accounts[2]
-    let cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
-
-    const seedProposalTx = await masterWalletScheme.methods.proposeCalls(
-      [controller.address, controller.address, controller.address, controller.address],
-      [
-        controller.methods.mintReputation(
-          web3.utils.toWei("10"), accounts[0], avatar.address
-        ).encodeABI(),
-        controller.methods.mintReputation(
-          web3.utils.toWei("20"), accounts[1], avatar.address
-        ).encodeABI(),
-        controller.methods.mintReputation(
-          web3.utils.toWei("70"), accounts[2], avatar.address
-        ).encodeABI(),
-        controller.methods.burnReputation(
-          "100", accounts[0], avatar.address
-        ).encodeABI(),
-      ],
-      [0, 0, 0, 0],
-      titleText,
-      contentHash.fromIpfs(cid)
-    ).send({ from: accounts[0] });
-    const seedProposalId = seedProposalTx.events.NewCallProposal.returnValues[0];
-    await dxdVotingMachine.methods.vote(seedProposalId, 1, 0, NULL_ADDRESS).send({ from: accounts[0] });
-    titleText = "First test proposal";
-    descriptionText = "Tranfer 15 ETH and 50 tokens to QuickWalletScheme and mint 20 REP";
-    cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
-    
-    const fisrtProposalTx = await masterWalletScheme.methods.proposeCalls(
-      [controller.address, controller.address, controller.address],
-      [
-        controller.methods.mintReputation(
-          web3.utils.toWei("20"), accounts[1], avatar.address
-        ).encodeABI(),
-        controller.methods.genericCall(
-          quickWalletScheme.address, "0x0", avatar.address, web3.utils.toWei("15")
-        ).encodeABI(),
-        controller.methods.genericCall(
-          votingMachineToken.address,
-          votingMachineToken.methods.transfer(
-            quickWalletScheme.address, web3.utils.toWei("50")
-          ).encodeABI(),
-          avatar.address,
-          0
-        ).encodeABI(),
-      ],
-      [0, 0, 0],
-      titleText,
-      contentHash.fromIpfs(cid)
-    ).send({ from: accounts[0] });
-    const firstProposalId = fisrtProposalTx.events.NewCallProposal.returnValues[0];
-    titleText = "Second test proposal";
-    descriptionText = "Tranfer 10 ETH to " + accounts[1];
-    cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
-
-    const secondProposalTx = await masterWalletScheme.methods.proposeCalls(
-      [controller.address],
-      [
-        controller.methods.genericCall(
-          accounts[1], "0x0", avatar.address, web3.utils.toWei("5")
-        ).encodeABI(),
-      ],
-      [0],
-      titleText,
-      contentHash.fromIpfs(cid)
-    ).send({ from: accounts[0] });
-    const secondProposalId = secondProposalTx.events.NewCallProposal.returnValues[0];
-    
-    titleText = "Third test proposal";
-    descriptionText = "Tranfer 3 ETH to " + accounts[2];
-    cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
-
-    await quickWalletScheme.methods.proposeCalls(
-      [accounts[2]],
-      ["0x0"],
-      [web3.utils.toWei("5").toString()],
-      titleText,
-      contentHash.fromIpfs(cid)
-    ).send({ from: accounts[0] });
-    await dxdVotingMachine.methods.vote(firstProposalId, 1, 0, NULL_ADDRESS).send({ from: accounts[2] });
-    await votingMachineToken.methods.approve(
-      dxdVotingMachine.address, await votingMachineToken.methods.balanceOf(accounts[1]).call()
-    ).send({from: accounts[1]});
-    await dxdVotingMachine.methods.stake(secondProposalId, 1, web3.utils.toWei("2").toString())
-      .send({ from: accounts[1] });
-    await dxdVotingMachine.methods.vote(secondProposalId, 1, web3.utils.toWei("5"), NULL_ADDRESS).send({ 
-      from: accounts[1]
-    });
+  console.log('Running deployment with test data..');
   
+  await web3.eth.sendTransaction({to: avatar.address, value: web3.utils.toWei("150"), from: accounts[0]});
+  await votingMachineToken.transfer(avatar.address, web3.utils.toWei("100"), {from: accounts[0]});
+  await votingMachineToken.transfer(accounts[1], web3.utils.toWei("50"), {from: accounts[0]});
+  await votingMachineToken.transfer(accounts[2], web3.utils.toWei("30"), {from: accounts[0]});
+  
+  const ipfs = await IPFS.create();
+  let titleText = "Mint seed REP test proposal";
+  let descriptionText = "Set 10 REP tokens to "+accounts[0]+", 20 REP tokens to "+accounts[1]+", and 70 REP tokens to "+accounts[2]
+  let cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
+
+  const mintReputationABI = {
+      name: 'mintReputation',
+      type: 'function',
+      inputs: [
+        { type: 'uint256', name: '_amount' },
+        { type: 'address', name: '_to' },
+        { type: 'address', name: '_avatar' }
+      ]
+  };
+  const burnReputationABI = {
+      name: 'burnReputation',
+      type: 'function',
+      inputs: [
+        { type: 'uint256', name: '_amount' },
+        { type: 'address', name: '_to' },
+        { type: 'address', name: '_avatar' }
+      ]
+  };
+  const generiCallABI = {
+    name: 'genericCall',
+    type: 'function',
+    inputs: [
+      { name: '_contract', type: 'address' },
+      { name: '_data', type: 'bytes' },
+      { name: '_avatar', type: 'address' },
+      { name: '_value', type: 'uint256' }
+    ],
+  };
+  const ERC20TransferABI = {
+    name: 'transfer',
+    type: 'function',
+    inputs: [
+      { name: 'recipient', type: 'address' },
+      { name: 'amount', type: 'uint256' }
+    ],
   }
+  const seedProposalTx = await masterWalletScheme.proposeCalls(
+    [controller.address, controller.address, controller.address, controller.address],
+    [
+      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("10"), accounts[0], avatar.address]),
+      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("20"), accounts[1], avatar.address]),
+      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("70"), accounts[2], avatar.address]),
+      web3.eth.abi.encodeFunctionCall(burnReputationABI, ["100", accounts[0], avatar.address]),
+    ],
+    [0, 0, 0, 0],
+    titleText,
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  const seedProposalId = seedProposalTx.logs[0].args[0];
+  await dxdVotingMachine.vote(seedProposalId, 1, 0, NULL_ADDRESS, { from: accounts[0] });
+  titleText = "First test proposal";
+  descriptionText = "Tranfer 15 ETH and 50 tokens to QuickWalletScheme and mint 20 REP";
+  cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
   
+  const fisrtProposalTx = await masterWalletScheme.proposeCalls(
+    [controller.address, controller.address, controller.address],
+    [
+      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("20"), accounts[1], avatar.address]),
+      web3.eth.abi.encodeFunctionCall(generiCallABI, [quickWalletScheme.address, "0x0", avatar.address, web3.utils.toWei("15")]),
+      web3.eth.abi.encodeFunctionCall(generiCallABI, [
+        votingMachineToken.address,
+        web3.eth.abi.encodeFunctionCall(ERC20TransferABI, [quickWalletScheme.address, web3.utils.toWei("50")]),
+        avatar.address,
+        0
+      ]),
+    ],
+    [0, 0, 0],
+    titleText,
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  const firstProposalId = fisrtProposalTx.logs[0].args[0];
+  titleText = "Second test proposal";
+  descriptionText = "Tranfer 10 ETH to " + accounts[1];
+  cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
+
+  const secondProposalTx = await masterWalletScheme.proposeCalls(
+    [controller.address],
+    [
+      web3.eth.abi.encodeFunctionCall(generiCallABI, [accounts[1], "0x0", avatar.address, web3.utils.toWei("5")])
+    ],
+    [0],
+    titleText,
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  const secondProposalId = secondProposalTx.logs[0].args[0];
+  
+  titleText = "Third test proposal";
+  descriptionText = "Tranfer 3 ETH to " + accounts[2];
+  cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
+
+  await quickWalletScheme.proposeCalls(
+    [accounts[2]],
+    ["0x0"],
+    [web3.utils.toWei("5").toString()],
+    titleText,
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  await dxdVotingMachine.vote(firstProposalId, 1, 0, NULL_ADDRESS, { from: accounts[2] });
+  await votingMachineToken.approve( 
+    dxdVotingMachine.address, await votingMachineToken.balanceOf(accounts[1]) , {from: accounts[1]}
+  );
+  await dxdVotingMachine.stake(secondProposalId, 1, web3.utils.toWei("2").toString() , { from: accounts[1] });
+  await dxdVotingMachine.vote(secondProposalId, 1, web3.utils.toWei("5"), NULL_ADDRESS, { 
+    from: accounts[1]
+  });
+    
   const contractsDeployed = {
     avatar: avatar.address,
     controller: controller.address,
@@ -434,20 +402,11 @@ async function main() {
   };
   console.log("Contracts Deployed:", contractsDeployed);
 
-  if (network == 'development') {
-    fs.writeFileSync(
-      '.developmentAddresses.json',
-      JSON.stringify(contractsDeployed, null, 2),
-      { encoding:'utf8', flag:'w' }
-    )
-  } else {
-    fs.writeFileSync(
-      'src/config/'+network+'.json',
-      JSON.stringify(contractsDeployed, null, 2),
-      { encoding:'utf8', flag:'w' }
-    )
-  }
-  
+  fs.writeFileSync(
+    '.developmentAddresses.json',
+    JSON.stringify(contractsDeployed, null, 2),
+    { encoding:'utf8', flag:'w' }
+  )
 } 
 
 Promise.all([main()]).then(process.exit);
