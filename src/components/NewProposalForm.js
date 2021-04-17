@@ -6,6 +6,7 @@ import ActiveButton from '../components/common/ActiveButton';
 import { Link } from 'react-router-dom';
 import { bnum } from '../utils/helpers';
 import MDEditor, { commands } from '@uiw/react-md-editor';
+import { useHistory } from "react-router-dom";
 
 const NewProposalFormWrapper = styled.div`
   width: cacl(100% -40px);
@@ -179,13 +180,9 @@ const AddButton = styled.div`
     margin: 5px;
 `;
 
-const source = `
-## MarkdownPreview
-
-> todo: React component preview markdown text.
-`;
-
 const NewProposalForm = observer(() => {
+    let history = useHistory();
+
     const {
         root: { providerStore, daoStore, configStore, daoService, ipfsService },
     } = useStores();
@@ -232,6 +229,8 @@ const NewProposalForm = observer(() => {
           ? configStore.getSchemeAddress('masterWallet') : configStore.getSchemeAddress('quickWallet'),
         to, data, value, titleText, descriptionHash
       );
+      
+      history.push("/");
       
     }
 
