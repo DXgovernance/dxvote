@@ -53,6 +53,23 @@ const ProposalsFilter = styled.select`
   border: 0px;
 `;
 
+const ProposalsNameFilter = styled.input`
+  background-color: white;
+  border: 1px solid #536DFE;
+  border-radius: 4px;
+  color: #536DFE;
+  height: 34px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  line-height: 32px;
+  text-align: left;
+  cursor: pointer;
+  width: max-content;
+  padding: 0px 10px;
+  margin: 5px;
+  font-family: var(--roboto);
+`;
+
 const ProposalTableHeaderActions = styled.div`
     padding: 0px 10px 10px 10px;
     color: var(--dark-text-gray);
@@ -132,9 +149,12 @@ const ProposalsTable = observer(() => {
     const quickWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('quickWallet'));
     let allProposals = [];
     const [stateFilter, setStateFilter] = React.useState("All");
+    const [titleFilter, setTitleFilter] = React.useState("");
+
     allProposals = allProposals.concat(masterWalletSchemeProposals).concat(quickWalletSchemeProposals)
     
     function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
+    function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
 
     
     const { library } = providerStore.getActiveWeb3React();
@@ -162,7 +182,13 @@ const ProposalsTable = observer(() => {
               flexDirection: "row",
               justifyContent: "space-between"
             }}>
-              <span>Proposals</span>
+              <ProposalsNameFilter
+                type="text"
+                placeholder="Search by proposal title"
+                name="titleFilter"
+                id="titleFilter"
+                onChange={onTitleFilterChange}
+              ></ProposalsNameFilter>
               <ProposalsFilter name="stateFilter" id="stateSelector" onChange={onStateFilterChange}>
                 <option value="All">All</option>
                 <option value="Pending Boost">Pending Boost</option>
@@ -205,7 +231,11 @@ const ProposalsTable = observer(() => {
             :
             <TableRowsWrapper>
               { allProposals.map((proposal, i) => {
-                if (proposal && ((stateFilter == 'All') || (stateFilter != 'All' && proposal.status == stateFilter))) {
+                if (
+                  proposal 
+                  && ((stateFilter == 'All') || (stateFilter != 'All' && proposal.status == stateFilter))
+                  && (titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0))
+                ) {
                   const positiveStake = Number(library.utils.fromWei(proposal.positiveStakes.toString())).toFixed(2);
                   const negativeStake = Number(library.utils.fromWei(proposal.negativeStakes.toString())).toFixed(2);
                   const timeNow = (new Date()).getTime() / 1000;
