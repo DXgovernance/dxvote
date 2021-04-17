@@ -23,8 +23,7 @@ time=date
 
 start_ganache() {
 
-  # Using 9000000 as gas limit and 10Gwei as gas price
-  npx ganache-cli --gasLimit 0x895440 --gasPrice 0x2540BE400 -d -m "$mnemonic" -e 5000 --time `date +"%F"T"%T"` > /dev/null &
+  npx ganache-cli --gasLimit 9000000 --gasPrice 10000000000 -d -m "$mnemonic" -e 5000 > /dev/null &
 
   ganache_pid=$!
 
@@ -44,16 +43,16 @@ else
   start_ganache
 fi
 
-npx truffle version
-npx truffle compile --network development
-cp contracts/build/DxAvatar.json src/contracts/DxAvatar.json
-cp contracts/build/DxReputation.json src/contracts/DxReputation.json
-cp contracts/build/DxController.json src/contracts/DxController.json
-cp contracts/build/DXDVotingMachine.json src/contracts/DXDVotingMachine.json
-cp contracts/build/Multicall.json src/contracts/Multicall.json
-cp contracts/build/ERC20.json src/contracts/ERC20.json
-cp contracts/build/WalletScheme.json src/contracts/WalletScheme.json
-node scripts/deployContracts.js -- --network development
+yarn hardhat compile
+cp artifacts/dxdao-contracts/contracts/dxdao/DxAvatar.sol/DxAvatar.json src/contracts/DxAvatar.json
+cp artifacts/dxdao-contracts/contracts/dxdao/DxReputation.sol/DxReputation.json src/contracts/DxReputation.json
+cp artifacts/dxdao-contracts/contracts/dxdao/DxController.sol/DxController.json src/contracts/DxController.json
+cp artifacts/dxdao-contracts/contracts/dxdao/DXDVotingMachine.sol/DXDVotingMachine.json src/contracts/DXDVotingMachine.json
+cp artifacts/dxdao-contracts/contracts/utils/Multicall.sol/Multicall.json src/contracts/Multicall.json
+cp artifacts/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol/ERC20.json src/contracts/ERC20.json
+cp artifacts/dxdao-contracts/contracts/schemes/WalletScheme.sol/WalletScheme.json src/contracts/WalletScheme.json
+cp artifacts/dxdao-contracts/contracts/schemes/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
+yarn hardhat run --network localhost scripts/deployLocalContracts.js
 sleep 1
 FORCE_COLOR=true \
 REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
