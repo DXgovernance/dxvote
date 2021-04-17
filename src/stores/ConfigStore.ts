@@ -21,7 +21,7 @@ export default class ConfigStore {
     getApiKeys() {
       return {
         etherscan: localStorage.getItem('dxvote-etherscan'),
-        tenderly: localStorage.getItem('dxvote-tenderly')
+        pinata: localStorage.getItem('dxvote-pinata')
       }
     }
     
