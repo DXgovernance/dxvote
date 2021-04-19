@@ -1,4 +1,4 @@
-import { action, observable } from 'mobx';
+import { action } from 'mobx';
 import RootStore from 'stores';
 import { ContractType } from 'stores/Provider';
 import * as helpers from 'utils/helpers';
