@@ -65,8 +65,9 @@ const Header = observer(() => {
   );
   
   const {
-      root: { daoStore, providerStore },
+      root: { daoStore, providerStore, ipfsService },
   } = useStores();
+  ipfsService.start();
   const daoInfo = daoStore.getDaoInfo();
   const { active, account } = providerStore.getActiveWeb3React();
   const ethBalance = daoInfo.userEthBalance ?
@@ -91,9 +92,9 @@ const Header = observer(() => {
         <BalanceItem> {dxdBalance} DXD </BalanceItem>
         <BalanceItem> {repBalance} REP </BalanceItem>
         <Web3ConnectStatus text="Connect Wallet" />
-        <a href={"/#/config"}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
+        <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
         {active ?
-          <a href={"/#/user/"+account}><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
+          <a href={`${window.location.pathname}#/user/${account}`}><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
           : <div/>
         }
       </NavSection>

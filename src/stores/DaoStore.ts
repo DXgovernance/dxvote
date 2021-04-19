@@ -470,7 +470,7 @@ export default class DaoStore {
         redeemsRep: this.getRedeemsRep(proposalId),
         stateChanges: this.getStateChanges(proposalId)
       }
-      console.log(pEvents)
+
       let preBoostedVoteBlock = 999999999999;
       for (var i = 0; i < pEvents.stateChanges.length; i++) {
         if (

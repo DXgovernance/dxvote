@@ -6,6 +6,7 @@ import ActiveButton from '../components/common/ActiveButton';
 import { Link } from 'react-router-dom';
 import { bnum } from '../utils/helpers';
 import MDEditor, { commands } from '@uiw/react-md-editor';
+import { useHistory } from "react-router-dom";
 
 const NewProposalFormWrapper = styled.div`
   width: cacl(100% -40px);
@@ -179,13 +180,9 @@ const AddButton = styled.div`
     margin: 5px;
 `;
 
-const source = `
-## MarkdownPreview
-
-> todo: React component preview markdown text.
-`;
-
 const NewProposalForm = observer(() => {
+    let history = useHistory();
+
     const {
         root: { providerStore, daoStore, configStore, daoService, ipfsService },
     } = useStores();
@@ -226,12 +223,14 @@ const NewProposalForm = observer(() => {
         : call.callType == "decoded" ? library.utils.toWei(call.value).toString()
           : call.value
       });
-      console.log(to, data, value, titleText, calls)
+
       daoStore.createProposal( 
         (scheme == 'masterWallet') 
           ? configStore.getSchemeAddress('masterWallet') : configStore.getSchemeAddress('quickWallet'),
         to, data, value, titleText, descriptionHash
       );
+      
+      history.push("/");
       
     }
 
@@ -284,9 +283,9 @@ const NewProposalForm = observer(() => {
     };
     
     function onCallValueChange(event) {
-      const proposalIndex = event.target.attributes.proposalIndex.value;
-      const proposalField = event.target.attributes.proposalField.value;
-      calls[proposalIndex][proposalField] = event.target.value;
+      const proposalindex = event.target.attributes.proposalindex.value;
+      const proposalfield = event.target.attributes.proposalfield.value;
+      calls[proposalindex][proposalfield] = event.target.value;
       setCalls(calls)
       forceUpdate();
     }
@@ -305,7 +304,7 @@ const NewProposalForm = observer(() => {
       return (
         <NewProposalFormWrapper>
           <SchemeInput>
-            <label for="scheme">Choose a Scheme:</label>
+            <label htmlFor="scheme">Choose a Scheme:</label>
             <select name="scheme" id="schemeSelector" onChange={setScheme}>
               <option value="masterWallet">Master Wallet Scheme</option>
               <option value="quickWallet">Quick Wallet Scheme</option>
@@ -321,8 +320,8 @@ const NewProposalForm = observer(() => {
             onChange={setDescriptionText}
             preview="edit"
             height="300"
-            minHeights="300"
-            maxHeights="1000"
+            minheights="300"
+            maxheights="1000"
             commands={[
               commands.bold,
               commands.italic,
@@ -357,12 +356,12 @@ const NewProposalForm = observer(() => {
             
           </CallRow>
           {calls.map((call, i) => 
-            <CallRow>
+            <CallRow key={"call"+i}>
               <span>Call #{i} </span>
               <input
                 type="text"
-                proposalIndex={i}
-                proposalField="to"
+                proposalindex={i}
+                proposalfield="to"
                 onChange={onCallValueChange}
                 value={calls[i].to}
                 style={{width: "20%"}}
@@ -371,8 +370,8 @@ const NewProposalForm = observer(() => {
               { calls[i].callType == "encoded" ?
                 <input 
                   type="text"
-                  proposalIndex={i}
-                  proposalField="data"
+                  proposalindex={i}
+                  proposalfield="data"
                   onChange={onCallValueChange}
                   value={calls[i].data}
                   placeholder="0x..."
@@ -380,8 +379,8 @@ const NewProposalForm = observer(() => {
                 ></input>
                 : <input 
                   type="text"
-                  proposalIndex={i}
-                  proposalField="functionName"
+                  proposalindex={i}
+                  proposalfield="functionName"
                   onChange={onCallValueChange}
                   value={calls[i].functionName}
                   placeholder="functionName(string,bool,uint256[])"
@@ -392,8 +391,8 @@ const NewProposalForm = observer(() => {
               { calls[i].callType == "decoded" ?
                 <input 
                   type="text"
-                  proposalIndex={i}
-                  proposalField="functionParams"
+                  proposalindex={i}
+                  proposalfield="functionParams"
                   onChange={onCallValueChange}
                   value={calls[i].functionParams}
                   placeholder="functions values separated with commas"
@@ -403,8 +402,8 @@ const NewProposalForm = observer(() => {
               }
               <input
                 type="text"
-                proposalIndex={i}
-                proposalField="value"
+                proposalindex={i}
+                proposalfield="value"
                 onChange={onCallValueChange}
                 value={calls[i].value}
                 style={{width: "10%"}}

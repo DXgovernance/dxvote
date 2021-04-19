@@ -9,17 +9,25 @@ export default class IPFSService {
     time: Number,
     content: String,
     fetched: Boolean
-  }} = {}
+  }} = {};
+  ipfs: any = null;
+  started: Boolean = false;
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+  }
+  
+  async start(){
+    if (!this.ipfs && !this.started) {
+      this.started = true;
+      this.ipfs = await IPFS.create();
+    }
   }
 
   async add(
     content: String
   ){
-    const ipfs = await IPFS.create()
-    const { cid } = await ipfs.add({content})
+    const { cid } = await this.ipfs.add({content})
     return contentHash.fromIpfs(cid);
   }
 
