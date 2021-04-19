@@ -3,7 +3,7 @@ import { Call } from '../services/MulticallService';
 import { action, observable } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
-import { ContractType } from './ETHProvider';
+import { ContractType } from './Provider';
 
 export interface CallEntry {
   contractType: string;

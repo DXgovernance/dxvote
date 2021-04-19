@@ -1,5 +1,5 @@
 import RootStore from '../stores';
-import { ContractType } from '../stores/ETHProvider';
+import { ContractType } from '../stores/Provider';
 import { BigNumber } from '../utils/bignumber';
 
 export default class DaoService {

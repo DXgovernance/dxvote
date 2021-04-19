@@ -1,5 +1,5 @@
 // Stores
-import ProviderStore from './ETHProvider';
+import ProviderStore from './Provider';
 import TransactionStore from './Transaction';
 import ModalStore from './Modal';
 import ConfigStore from './ConfigStore';
