@@ -39,7 +39,7 @@ export interface Stake {
   tx: string;
 }
 
-export interface StateChange {
+export interface ProposalStateChange {
   state: string;
   proposalId: string;
   block: number;
@@ -140,7 +140,6 @@ export interface SchemeInfo {
   proposals: ProposalInfo[];
   proposalIds: String[];
   boostedProposals: Number;
-  blockNumber: Number;
 }
 
 export interface DaoInfo {
@@ -148,8 +147,19 @@ export interface DaoInfo {
   totalRep: BigNumber;
   ethBalance: BigNumber;
   userEthBalance: BigNumber;
-  blockNumber: Number;
   userRep: BigNumber;
   userVotingMachineTokenBalance: BigNumber;
   userVotingMachineTokenApproved: BigNumber;
+}
+
+export interface DaoCache {
+  daoInfo: DaoInfo
+  schemes: {[address: string]: SchemeInfo};
+  proposals: {[id: string]: ProposalInfo};
+  blockNumber: Number;
+  votes: Vote[];
+  stakes: Stake[];
+  redeems: Redeem[];
+  redeemsRep: RedeemRep[];
+  proposalStateChanges: ProposalStateChange[];
 }

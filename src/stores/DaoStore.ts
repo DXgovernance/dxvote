@@ -11,42 +11,38 @@ import PromiEvent from 'promievent';
 import { 
   Vote,
   Stake,
-  StateChange,
+  ProposalStateChange,
   Redeem,
   RedeemRep,
   ProposalInfo,
   SchemeInfo,
-  DaoInfo
+  DaoInfo,
+  DaoCache
 } from '../types';
 
 export default class DaoStore {
-  daoInfo: DaoInfo
-  schemes: {[address: string]: SchemeInfo};
-  proposals: {[id: string]: ProposalInfo};
-  blockNumber: Number;
-  votes: Vote[];
-  stakes: Stake[];
-  redeems: Redeem[];
-  redeemsRep: RedeemRep[];
-  stateChanges: StateChange[];
+  cache: DaoCache;
   rootStore: RootStore;
 
   constructor(rootStore) {
     this.rootStore = rootStore;
-    this.daoInfo = {} as DaoInfo;
-    this.schemes = {};
-    this.proposals = {};
-    this.votes = [];
-    this.stakes = [];
-    this.redeems = [];
-    this.redeemsRep = [];
-    this.stateChanges = [];
+    const { configStore } = this.rootStore;
+    this.cache = {
+      daoInfo: {} as DaoInfo,
+      schemes: {},
+      proposals: {},
+      blockNumber: configStore.getStartBlock(),
+      votes: [],
+      stakes: [],
+      redeems: [],
+      redeemsRep: [],
+      proposalStateChanges: [],
+    };
   }
 
   getDaoInfo(): DaoInfo {
     const { configStore, providerStore } = this.rootStore;
     const { account } = providerStore.getActiveWeb3React();
-    const blockNumber = providerStore.getCurrentBlockNumber();
     const totalRep = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Reputation,
       address: configStore.getReputationAddress(),
@@ -83,17 +79,16 @@ export default class DaoStore {
       method: 'allowance',
       params: [account, configStore.getVotingMachineAddress()]
     }) : 0;
-    this.daoInfo = {
+    this.cache.daoInfo = {
       address: configStore.getAvatarAddress(),
       totalRep,
       ethBalance,
       userEthBalance,
-      blockNumber,
       userRep,
       userVotingMachineTokenBalance,
       userVotingMachineTokenApproved
     };
-    return this.daoInfo;
+    return this.cache.daoInfo;
   }
   
   getSchemeProposals(schemeAddress): ProposalInfo[] {
@@ -143,12 +138,12 @@ export default class DaoStore {
           proposals.push(this.getProposalInfo(schemeAddress, proposalIds[proposalIndex], parameters));
         }
       }
-    this.schemes[schemeAddress].proposals = proposals;
-    return this.schemes[schemeAddress].proposals;
+    this.cache.schemes[schemeAddress].proposals = proposals;
+    return this.cache.schemes[schemeAddress].proposals;
   }
   
   getSchemeInfo(schemeAddress): SchemeInfo {
-    const { configStore, providerStore } = this.rootStore;
+    const { configStore } = this.rootStore;
     const controllerAddress = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.WalletScheme,
       address: schemeAddress,
@@ -197,7 +192,6 @@ export default class DaoStore {
       params: [parametersHash]
     }) : undefined;
     
-    const blockNumber = providerStore.getCurrentBlockNumber();
     const parameters = (rawParameters && rawParameters.length > 0) ?
       {
         queuedVoteRequiredPercentage: bnum(rawParameters.split(",")[0]),
@@ -215,6 +209,7 @@ export default class DaoStore {
       } : undefined;
       
     const schemeInfo = {
+      registered: true,
       name: configStore.getSchemeName(schemeAddress),
       address: schemeAddress,
       controllerAddress,
@@ -224,11 +219,10 @@ export default class DaoStore {
       permissions,
       proposalIds,
       proposals: [],
-      boostedProposals,
-      blockNumber
+      boostedProposals
     };
-    this.schemes[schemeAddress] = schemeInfo;
-    return this.schemes[schemeAddress];
+    this.cache.schemes[schemeAddress] = schemeInfo;
+    return this.cache.schemes[schemeAddress];
   }
   
   getProposalInfo(schemeAddress, proposalId, parameters): ProposalInfo {
@@ -323,7 +317,7 @@ export default class DaoStore {
       const proposalSchemeInfoDivided = proposalSchemeInfoRaw.split(",")
       const votingMachineDataDivided = proposalVotingMachineInfoRaw.split(",")
       const votingMachineTimesDivided = proposalVotingMachineTimesRaw.split(",")
-      const { status, statusPriority, boostTime, finishTime } = decodeStatus(
+      const { status, priority, boostTime, finishTime } = decodeStatus(
         votingMachineDataDivided[2],
         proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 3],
         bnum(votingMachineTimesDivided[0]),
@@ -341,17 +335,17 @@ export default class DaoStore {
         stakes: this.getStakes(proposalId),
         redeems: this.getRedeems(proposalId),
         redeemsRep: this.getRedeemsRep(proposalId),
-        stateChanges: this.getStateChanges(proposalId)
+        proposalStateChanges: this.getStateChanges(proposalId)
       }
       console.log(pEvents)
       let preBoostedVoteBlock = 999999999999;
-      for (var i = 0; i < pEvents.stateChanges.length; i++) {
+      for (var i = 0; i < pEvents.proposalStateChanges.length; i++) {
         if (
-          pEvents.stateChanges[i].state == "1"
-          || pEvents.stateChanges[i].state == "2"
-          || pEvents.stateChanges[i].state == "5"
+          pEvents.proposalStateChanges[i].state == "1"
+          || pEvents.proposalStateChanges[i].state == "2"
+          || pEvents.proposalStateChanges[i].state == "5"
         ){
-          preBoostedVoteBlock = pEvents.stateChanges[i].block;
+          preBoostedVoteBlock = pEvents.proposalStateChanges[i].block;
           break;
         }
       }
@@ -408,7 +402,7 @@ export default class DaoStore {
         boostedPhaseTime: bnum(votingMachineTimesDivided[1]),
         preBoostedPhaseTime: bnum(votingMachineTimesDivided[2]),
         status: status,
-        statusPriority: statusPriority,
+        priority: priority,
         boostTime: boostTime,
         finishTime: finishTime,
         shouldBoost: proposalShouldBoost,
@@ -421,8 +415,8 @@ export default class DaoStore {
         tokenRewards: tokenRewards,
         repRewards: repRewards
       };
-      this.proposals[proposalId] = proposalSchemeInfo;
-      return this.proposals[proposalId];
+      this.cache.proposals[proposalId] = proposalSchemeInfo;
+      return this.cache.proposals[proposalId];
     } else {
       return undefined;
     }
@@ -435,7 +429,7 @@ export default class DaoStore {
       configStore.getVotingMachineAddress(), 'VoteProposal'
     );
     voteEvents = voteEvents.filter((vote) => {return (proposalId == vote.returnValues._proposalId)});
-    this.votes = voteEvents.map((vote) => {
+    this.cache.votes = voteEvents.map((vote) => {
       return {
         voter: vote.returnValues._voter,
         vote: vote.returnValues._vote,
@@ -446,7 +440,7 @@ export default class DaoStore {
         tx: vote.transactionHash,
       }
     });
-    return this.votes;
+    return this.cache.votes;
   }
   
   getStakes(proposalId: string): Stake[]{
@@ -457,7 +451,7 @@ export default class DaoStore {
     );
     stakeEvents = stakeEvents.filter((stake) => {return (proposalId == stake.returnValues._proposalId)});
 
-    this.stakes = stakeEvents.map((stake) => {
+    this.cache.stakes = stakeEvents.map((stake) => {
       return {
         staker: stake.returnValues._staker,
         vote: stake.returnValues._vote,
@@ -468,7 +462,7 @@ export default class DaoStore {
         tx: stake.transactionHash,
       }
     });
-    return this.stakes;
+    return this.cache.stakes;
   }
   
   getRedeems(proposalId: string): Redeem[]{
@@ -479,7 +473,7 @@ export default class DaoStore {
     );
     redeemEvents = redeemEvents.filter((redeem) => {return (proposalId == redeem.returnValues._proposalId)});
 
-    this.redeems = redeemEvents.map((stake) => {
+    this.cache.redeems = redeemEvents.map((stake) => {
       return {
         beneficiary: stake.returnValues._beneficiary,
         amount: stake.returnValues._amount,
@@ -488,7 +482,7 @@ export default class DaoStore {
         tx: stake.transactionHash,
       }
     });
-    return this.redeems;
+    return this.cache.redeems;
   }
   
   getRedeemsRep(proposalId: string): RedeemRep[]{
@@ -499,7 +493,7 @@ export default class DaoStore {
     );
     redeemRepEvents = redeemRepEvents.filter((redeemRep) => {return (proposalId == redeemRep.returnValues._proposalId)});
 
-    this.redeemsRep = redeemRepEvents.map((redeemRep) => {
+    this.cache.redeemsRep = redeemRepEvents.map((redeemRep) => {
       return {
         beneficiary: redeemRep.returnValues._beneficiary,
         amount: redeemRep.returnValues._amount,
@@ -508,28 +502,28 @@ export default class DaoStore {
         tx: redeemRep.transactionHash,
       }
     });
-    return this.redeemsRep;
+    return this.cache.redeemsRep;
   }
   
-  getStateChanges(proposalId: string): StateChange[]{
+  getStateChanges(proposalId: string): ProposalStateChange[]{
     const { blockchainStore, configStore } = this.rootStore;
 
-    let stateChangesEvents = blockchainStore.getCachedEvents(
+    let proposalStateChangesEvents = blockchainStore.getCachedEvents(
       configStore.getVotingMachineAddress(), 'StateChange'
     );
-    stateChangesEvents = stateChangesEvents.filter((stateChange) => {
-      return (proposalId == stateChange.returnValues._proposalId)
+    proposalStateChangesEvents = proposalStateChangesEvents.filter((proposalStateChange) => {
+      return (proposalId == proposalStateChange.returnValues._proposalId)
     });
 
-    this.stateChanges = stateChangesEvents.map((stateChange) => {
+    this.cache.proposalStateChanges = proposalStateChangesEvents.map((proposalStateChange) => {
       return {
-        state: stateChange.returnValues._proposalState,
-        proposalId: stateChange.returnValues._proposalId,
-        block: stateChange.blockNumber,
-        tx: stateChange.transactionHash,
+        state: proposalStateChange.returnValues._proposalState,
+        proposalId: proposalStateChange.returnValues._proposalId,
+        block: proposalStateChange.blockNumber,
+        tx: proposalStateChange.transactionHash,
       }
     });
-    return this.stateChanges;
+    return this.cache.proposalStateChanges;
   }
 
   @action createProposal(
