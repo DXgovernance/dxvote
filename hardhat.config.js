@@ -3,6 +3,7 @@ require('@nomiclabs/hardhat-truffle5');
 require('hardhat-dependency-compiler');
 
 const MNEMONIC = process.env.REACT_APP_KEY_MNEMONIC;
+const INFURA_PROJECT_ID = process.env.REACT_APP_KEY_INFURA_API_KEY;
 
 module.exports = {
   paths: {
@@ -44,6 +45,12 @@ module.exports = {
       gasLimit: 9000000,
       gasPrice: 10000000000, // 10 gwei
       timeout: 60000
-    }  
+    },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
+      accounts: { mnemonic: MNEMONIC },
+      gasLimit: 9000000,
+      gasPrice: 1000000000 // 1 gwei
+    },
   }
 };
