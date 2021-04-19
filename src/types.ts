@@ -16,12 +16,12 @@ export enum TXEvents {
 
 export interface BlockchainValue {
   value: any;
-  blockNumber: Number;
+  blockNumber: number;
 }
 
 export interface Vote {
   voter: string;
-  vote: Number;
+  vote: number;
   amount: BigNumber;
   proposalId: string;
   preBoosted: boolean;
@@ -32,7 +32,7 @@ export interface Vote {
 export interface Stake {
   staker: string;
   amount: BigNumber;
-  vote: Number;
+  vote: number;
   proposalId: string;
   amount4Bounty: BigNumber;
   block: number;
@@ -71,15 +71,15 @@ export enum VotingMachineProposalState {
 export interface ProposalInfo {
   id: string;
   scheme: string;
-  to: String[];
-  callData: String[];
+  to: string[];
+  callData: string[];
   values: BigNumber[];
   stateInScheme: SchemeProposalState;
   stateInVotingMachine: VotingMachineProposalState;
-  descriptionHash: String;
+  descriptionHash: string;
   creationBlock: BigNumber;
   repAtCreation: BigNumber;
-  winningVote: Number;
+  winningVote: number;
   proposer: string;
   currentBoostedVotePeriodLimit: BigNumber;
   paramsHash: string;
@@ -93,9 +93,9 @@ export interface ProposalInfo {
   preBoostedPhaseTime: BigNumber;
   daoRedeemItsWinnings: boolean;
   status: string;
-  statusPriority: Number;
-  boostTime: Number;
-  finishTime: Number;
+  statusPriority: number;
+  boostTime: number;
+  finishTime: number;
   shouldBoost: boolean,
   positiveVotes: BigNumber;
   negativeVotes: BigNumber;
@@ -130,20 +130,20 @@ export interface SchemePermissions {
 }
 
 export interface SchemeInfo {
-  address: String;
-  name: String,
+  address: string;
+  name: string,
   parametersHash: string;
   controllerAddress: string;
   ethBalance: BigNumber;
   parameters: SchemeParameters;
   permissions: SchemePermissions;
   proposals: ProposalInfo[];
-  proposalIds: String[];
-  boostedProposals: Number;
+  proposalIds: string[];
+  boostedProposals: number;
 }
 
 export interface DaoInfo {
-  address: String;
+  address: string;
   totalRep: BigNumber;
   ethBalance: BigNumber;
   userEthBalance: BigNumber;
@@ -156,7 +156,7 @@ export interface DaoCache {
   daoInfo: DaoInfo
   schemes: {[address: string]: SchemeInfo};
   proposals: {[id: string]: ProposalInfo};
-  blockNumber: Number;
+  blockNumber: number;
   votes: Vote[];
   stakes: Stake[];
   redeems: Redeem[];
