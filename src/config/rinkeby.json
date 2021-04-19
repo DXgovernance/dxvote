@@ -6,6 +6,7 @@
   "votingMachineToken": "0xa700BdAba48A3D96219247111B0b708Dc0b51033",
   "masterWalletScheme": "0x200188373f1346c615089b8a880E64de2C0854eC",
   "quickWalletScheme": "0x7cF7Ea17855EeD397A76548D90886d165737C2D8",
+  "permissionRegistry": "0x80b5aCD6d3Bb4386908fAa198b7317dC6233BAEe",
   "multicall": "0xa1b0a36c7aE04A84EBF493e03dF0aC295eE90747",
   "fromBlock": 8389437
 }
