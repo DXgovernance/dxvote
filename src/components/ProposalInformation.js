@@ -156,7 +156,7 @@ const ProposalInformation = observer(() => {
         stakes: daoStore.getStakes(proposalId),
         redeems: daoStore.getRedeems(proposalId),
         redeemsRep: daoStore.getRedeemsRep(proposalId),
-        stateChanges: daoStore.getStateChanges(proposalId)
+        stateChanges: daoStore.getProposalStateChanges(proposalId)
       }
       
       const newProposalVotes = {

@@ -19,47 +19,39 @@ export interface BlockchainValue {
   blockNumber: number;
 }
 
-export interface Vote {
+export interface VotingMachineEvent {
+  proposalId: string;
+  block: number;
+  tx: string;
+  logIndex: number;
+}
+
+export interface Vote extends VotingMachineEvent {
   voter: string;
   vote: number;
   amount: BigNumber;
-  proposalId: string;
   preBoosted: boolean;
-  block: number;
-  tx: string;
 }
 
-export interface Stake {
+export interface Stake extends VotingMachineEvent {
   staker: string;
   amount: BigNumber;
   vote: number;
-  proposalId: string;
   amount4Bounty: BigNumber;
-  block: number;
-  tx: string;
 }
 
-export interface ProposalStateChange {
+export interface ProposalStateChange extends VotingMachineEvent {
   state: string;
-  proposalId: string;
-  block: number;
-  tx: string;
 }
 
-export interface Redeem {
+export interface Redeem extends VotingMachineEvent {
   beneficiary: string;
   amount: BigNumber;
-  proposalId: string;
-  block: number;
-  tx: string;
 }
 
-export interface RedeemRep {
+export interface RedeemRep extends VotingMachineEvent {
   beneficiary: string;
   amount: BigNumber;
-  proposalId: string;
-  block: number;
-  tx: string;
 }
 
 export enum SchemeProposalState { Submitted, Passed, Failed, Executed }
@@ -130,6 +122,7 @@ export interface SchemePermissions {
 }
 
 export interface SchemeInfo {
+  registered: boolean;
   address: string;
   name: string,
   parametersHash: string;

@@ -335,7 +335,7 @@ export default class DaoStore {
         stakes: this.getStakes(proposalId),
         redeems: this.getRedeems(proposalId),
         redeemsRep: this.getRedeemsRep(proposalId),
-        proposalStateChanges: this.getStateChanges(proposalId)
+        proposalStateChanges: this.getProposalStateChanges(proposalId)
       }
       console.log(pEvents)
       let preBoostedVoteBlock = 999999999999;
@@ -434,10 +434,11 @@ export default class DaoStore {
         voter: vote.returnValues._voter,
         vote: vote.returnValues._vote,
         amount: vote.returnValues._reputation,
-        proposalId: vote.returnValues._proposalId,
         preBoosted: false,
+        proposalId: vote.returnValues._proposalId,
         block: vote.blockNumber,
         tx: vote.transactionHash,
+        logIndex: vote.logIndex
       }
     });
     return this.cache.votes;
@@ -456,10 +457,11 @@ export default class DaoStore {
         staker: stake.returnValues._staker,
         vote: stake.returnValues._vote,
         amount: stake.returnValues._amount,
-        proposalId: stake.returnValues._proposalId,
         amount4Bounty: bnum(0),
+        proposalId: stake.returnValues._proposalId,
         block: stake.blockNumber,
         tx: stake.transactionHash,
+        logIndex: stake.logIndex
       }
     });
     return this.cache.stakes;
@@ -473,13 +475,14 @@ export default class DaoStore {
     );
     redeemEvents = redeemEvents.filter((redeem) => {return (proposalId == redeem.returnValues._proposalId)});
 
-    this.cache.redeems = redeemEvents.map((stake) => {
+    this.cache.redeems = redeemEvents.map((redeem) => {
       return {
-        beneficiary: stake.returnValues._beneficiary,
-        amount: stake.returnValues._amount,
-        proposalId: stake.returnValues._proposalId,
-        block: stake.blockNumber,
-        tx: stake.transactionHash,
+        beneficiary: redeem.returnValues._beneficiary,
+        amount: redeem.returnValues._amount,
+        proposalId: redeem.returnValues._proposalId,
+        block: redeem.blockNumber,
+        tx: redeem.transactionHash,
+        logIndex: redeem.logIndex
       }
     });
     return this.cache.redeems;
@@ -500,12 +503,13 @@ export default class DaoStore {
         proposalId: redeemRep.returnValues._proposalId,
         block: redeemRep.blockNumber,
         tx: redeemRep.transactionHash,
+        logIndex: redeemRep.logIndex
       }
     });
     return this.cache.redeemsRep;
   }
   
-  getStateChanges(proposalId: string): ProposalStateChange[]{
+  getProposalStateChanges(proposalId: string): ProposalStateChange[]{
     const { blockchainStore, configStore } = this.rootStore;
 
     let proposalStateChangesEvents = blockchainStore.getCachedEvents(
@@ -521,6 +525,7 @@ export default class DaoStore {
         proposalId: proposalStateChange.returnValues._proposalId,
         block: proposalStateChange.blockNumber,
         tx: proposalStateChange.transactionHash,
+        logIndex: proposalStateChange.logIndex
       }
     });
     return this.cache.proposalStateChanges;
