@@ -4,7 +4,7 @@
     "noImplicitAny": false,
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "es2018",
     "jsx": "react",
     "baseUrl": "src",
     "esModuleInterop": true,
@@ -21,13 +21,13 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
     "noEmit": true,
     "declaration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "isolatedModules": true
   },
   "include": [
     "src",
