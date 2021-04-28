@@ -43,6 +43,7 @@ else
   start_ganache
 fi
 
+# Compile your contracts and copy the compiled code into the src
 yarn hardhat compile
 cp artifacts/dxdao-contracts/contracts/dxdao/DxAvatar.sol/DxAvatar.json src/contracts/DxAvatar.json
 cp artifacts/dxdao-contracts/contracts/dxdao/DxReputation.sol/DxReputation.json src/contracts/DxReputation.json
@@ -53,14 +54,31 @@ cp artifacts/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol/ERC20.json sr
 cp artifacts/dxdao-contracts/contracts/schemes/WalletScheme.sol/WalletScheme.json src/contracts/WalletScheme.json
 cp artifacts/dxdao-contracts/contracts/schemes/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
 yarn hardhat run --network localhost scripts/deployLocalContracts.js
+
+# Disable isolatedModules in tsconfig
+contents="$(jq '.compilerOptions.isolatedModules = false' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+
+# Run build cache
+REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
+REACT_APP_CONTROLLER_ADDRESS=`jq .controller .developmentAddresses.json` \
+REACT_APP_REPUTATION_ADDRESS=`jq .reputation .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachine .developmentAddresses.json` \
+REACT_APP_PERMISSION_REGISTRY_ADDRESS=`jq .permissionRegistry .developmentAddresses.json` \
+REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
+yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
+
+# Enable isolatedModules in tsconfig
+contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+
+# Run dapp with localhost contracts
 FORCE_COLOR=true \
 REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
 REACT_APP_CONTROLLER_ADDRESS=`jq .controller .developmentAddresses.json` \
 REACT_APP_REPUTATION_ADDRESS=`jq .reputation .developmentAddresses.json` \
 REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachine .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachineToken .developmentAddresses.json` \
+REACT_APP_PERMISSION_REGISTRY_ADDRESS=`jq .permissionRegistry .developmentAddresses.json` \
 REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
-REACT_APP_MASTER_WALLET_SCHEME_ADDRESS=`jq .masterWalletScheme .developmentAddresses.json` \
-REACT_APP_QUICK_WALLET_SCHEME_ADDRESS=`jq .quickWalletScheme .developmentAddresses.json` \
 SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-app-rewired start | cat

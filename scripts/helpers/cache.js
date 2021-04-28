@@ -11,6 +11,27 @@ BigNumber.config({
 
 const MAX_BLOCKS_PER_EVENTS_FETCH = process.env.MAX_BLOCKS_PER_EVENTS_FETCH || 100000;
 
+const RINKEBY_CONFIG = require('../../src/config/rinkeby.json');
+
+const getConfig = function(network) {
+  if (network === 'localhost') {
+    return {
+      avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ""),
+      controller: process.env.REACT_APP_CONTROLLER_ADDRESS.replace(/["']/g, ""),
+      reputation: process.env.REACT_APP_REPUTATION_ADDRESS.replace(/["']/g, ""),
+      votingMachine: process.env.REACT_APP_VOTING_MACHINE_ADDRESS.replace(/["']/g, ""),
+      permissionRegistry: process.env.REACT_APP_PERMISSION_REGISTRY_ADDRESS.replace(/["']/g, ""),
+      multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ""),
+      fromBlock: 0
+    }
+  } else if (network === 'rinkeby') {
+    return RINKEBY_CONFIG;
+  } else {
+    return {};
+  }
+}
+
+
 const getEventsBetweenBlocks = async function(contract, from, to) {
   let events = [];
 
@@ -29,7 +50,7 @@ const getEventsBetweenBlocks = async function(contract, from, to) {
 };
 
 const sortEvents = function(events) {
-  return _.orderBy( _.uniqBy(events, "id") , ["logIndex", "transactionIndex", "blockNumber"], ["desc","desc","desc"]);
+  return _.orderBy( _.uniqBy(events, "id") , ["blockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc"]);
 };
 
 const decodeSchemeParameters = function(rawParameters) {
@@ -78,14 +99,14 @@ const decodeStatus = function(
     case "2":
       if (stateInScheme == "3")
         return { 
-          status: "Executed", 
+          status: "Execution Failed", 
           priority: 2,
           boostTime: 0,
           finishTime: 0
         };
       else if (stateInScheme == "2")
         return { 
-          status: "Rejected", 
+          status: "Execution Succeded", 
           priority: 2,
           boostTime: 0,
           finishTime: 0
@@ -122,7 +143,7 @@ const decodeStatus = function(
           boostTime: boostedPhaseTime,
           finishTime: bnum(moment().unix()).plus(boostedVotePeriodLimit)
         };
-      } else if (moment().unix() > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber() && shouldBoost) {
+      } else if (moment().unix() > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber()) {
         return { 
           status: "Expired in Queue", 
           priority: 1,
@@ -174,4 +195,11 @@ const decodeStatus = function(
 }
 
 
-module.exports = { getEventsBetweenBlocks, sortEvents, decodeSchemeParameters, getBlockTimeStamp, decodeStatus };
+module.exports = {
+  getEventsBetweenBlocks,
+  sortEvents,
+  decodeSchemeParameters,
+  getBlockTimeStamp,
+  decodeStatus,
+  getConfig
+};

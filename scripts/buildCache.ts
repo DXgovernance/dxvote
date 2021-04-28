@@ -1,12 +1,22 @@
+const fs = require("fs");
 const hre = require("hardhat");
 const { BigNumber } = require('bignumber.js');
 const web3 = hre.web3;
-const rinkebyContracts = require('../src/config/rinkeby');
 const { decodePermission } = require('./helpers/permissions');
-const { getEventsBetweenBlocks, sortEvents, decodeSchemeParameters, decodeStatus } = require('./helpers/cache');
+const { getEventsBetweenBlocks, sortEvents, decodeSchemeParameters, decodeStatus, getConfig } = require('./helpers/cache');
 
 // The only way I found to import the types from the source folder into here was by copy/pasting
 // TO DO: Use the interfaces imported the source folder
+
+interface RepEvent {
+  type: string;
+  account: string;
+  amount: typeof BigNumber;
+  tx: string;
+  block: number;
+  transactionIndex: number;
+  logIndex: number;
+}
 
 interface VotingMachineEvent {
   proposalId: string;
@@ -77,8 +87,8 @@ interface ProposalInfo {
   daoRedeemItsWinnings: boolean;
   status: string;
   priority: number;
-  boostTime: number;
-  finishTime: number;
+  boostTime: typeof BigNumber;
+  finishTime: typeof BigNumber;
   shouldBoost: boolean,
   positiveVotes: typeof BigNumber;
   negativeVotes: typeof BigNumber;
@@ -128,29 +138,32 @@ interface SchemeInfo {
   parameters: SchemeParameters;
   permissions: SchemePermissions;
   proposalIds: string[];
-  callPermissions: SchemeCallPermission[];
+  boostedProposals: number;
 }
 
 interface DaoInfo {
   address: string;
   totalRep: typeof BigNumber;
   repHolders: {[id: string]: typeof BigNumber};
+  repEvents: RepEvent[];
   ethBalance: typeof BigNumber;
   dxdBalance: typeof BigNumber;
-  boostedProposals: number;
 }
 
 interface DaoCache {
-  blockNumber: number;
-  daoInfo: DaoInfo
-  schemes: {[address: string]: SchemeInfo};
-  proposals: {[id: string]: ProposalInfo};
-  votingMachineEvents: {
-    votes: Vote[];
-    stakes: Stake[];
-    redeems: Redeem[];
-    redeemsRep: RedeemRep[];
-    proposalStateChanges: ProposalStateChange[];
+  [network: string]: {
+    blockNumber: number;
+    daoInfo: DaoInfo
+    schemes: {[address: string]: SchemeInfo};
+    proposals: {[id: string]: ProposalInfo};
+    callPermissions: { [from: string]: SchemeCallPermission[] };
+    votingMachineEvents: {
+      votes: Vote[];
+      stakes: Stake[];
+      redeems: Redeem[];
+      redeemsRep: RedeemRep[];
+      proposalStateChanges: ProposalStateChange[];
+    }
   }
 }
 
@@ -164,40 +177,81 @@ const DXDVotingMachine = hre.artifacts.require("DXDVotingMachine");
 const ERC20 = hre.artifacts.require("ERC20");
 
 async function main() {
-  // Set block range for the script to run
-  const fromBlock = rinkebyContracts.fromBlock;
-  const toBlock = await web3.eth.getBlockNumber();
   
-  console.log('Runnig build cche script from block', fromBlock, ' to block', toBlock);
+  // Initializing cache based on stored cache file and network used, if used localhost the cache is always restarted
+  const networkName = hre.network.name;
+  const contractsConfig = getConfig(networkName);
+  
+  let cacheFile: DaoCache = fs.existsSync('src/cache.json')
+    ? JSON.parse(fs.readFileSync('src/cache.json', 'utf-8'))
+    : {
+      [networkName] : {
+        blockNumber: contractsConfig.fromBlock,
+        daoInfo: {} as DaoInfo,
+        schemes: {},
+        proposals: {},
+        callPermissions: {},
+        votingMachineEvents: {
+          votes: [],
+          stakes: [],
+          redeems: [],
+          redeemsRep: [],
+          proposalStateChanges: []
+        }
+      }
+    };
+    
+  const cache = (!cacheFile[networkName])
+    ? {
+      blockNumber: networkName != 'localhost' ? contractsConfig.fromBlock : 1,
+      daoInfo: {} as DaoInfo,
+      schemes: {},
+      proposals: {},
+      callPermissions: {},
+      votingMachineEvents: {
+        votes: [],
+        stakes: [],
+        redeems: [],
+        redeemsRep: [],
+        proposalStateChanges: []
+      }
+    } : (networkName == 'localhost') ?
+    {
+      blockNumber: 1,
+      daoInfo: {} as DaoInfo,
+      schemes: {},
+      proposals: {},
+      callPermissions: {},
+      votingMachineEvents: {
+        votes: [],
+        stakes: [],
+        redeems: [],
+        redeemsRep: [],
+        proposalStateChanges: []
+      }
+    } : cacheFile[networkName];
+  
+  // Set block range for the script to run
+  const fromBlock = cache.blockNumber;
+  const toBlock = await web3.eth.getBlockNumber();
+  cache.blockNumber = toBlock;
+  
+  console.log('Runing cache script from block', fromBlock, 'to block', toBlock, 'in network', networkName);
   
   // Instantiate the contracts
-  const votingMachine = await DXDVotingMachine.at(rinkebyContracts.votingMachine);
-  const avatar = await DxAvatar.at(rinkebyContracts.avatar);
-  const controller = await DxController.at(rinkebyContracts.controller);
-  const reputation = await DxReputation.at(rinkebyContracts.reputation);
-  const permissionRegistry = await PermissionRegistry.at(rinkebyContracts.permissionRegistry);
-  const dxd = await ERC20.at(rinkebyContracts.votingMachineToken);
-  
-  let cache: DaoCache = {
-    blockNumber: toBlock,
-    daoInfo: {} as DaoInfo,
-    schemes: {},
-    proposals: {},
-    votingMachineEvents: {
-      votes: [],
-      stakes: [],
-      redeems: [],
-      redeemsRep: [],
-      proposalStateChanges: []
-    }
-  };
+  const votingMachine = await DXDVotingMachine.at(contractsConfig.votingMachine);
+  const avatar = await DxAvatar.at(contractsConfig.avatar);
+  const controller = await DxController.at(contractsConfig.controller);
+  const reputation = await DxReputation.at(contractsConfig.reputation);
+  const permissionRegistry = await PermissionRegistry.at(contractsConfig.permissionRegistry);
+  const dxd = await ERC20.at(await votingMachine.stakingToken.call());
   
   // Update DaoInfo
-  cache.daoInfo.address = rinkebyContracts.avatar;
-  cache.daoInfo.totalRep = await reputation.totalSupply.call();
-  cache.daoInfo.ethBalance = new BigNumber(await web3.eth.getBalance(rinkebyContracts.avatar));
-  cache.daoInfo.dxdBalance = await dxd.balanceOf.call(rinkebyContracts.avatar);
-  cache.daoInfo.boostedProposals = await votingMachine.orgBoostedProposalsCnt.call(rinkebyContracts.avatar);
+  cache.daoInfo.address = contractsConfig.avatar;
+  cache.daoInfo.totalRep = new BigNumber(await reputation.totalSupply.call());
+  cache.daoInfo.repEvents = !cache.daoInfo.repEvents ? [] : cache.daoInfo.repEvents;
+  cache.daoInfo.ethBalance = new BigNumber(await web3.eth.getBalance(contractsConfig.avatar));
+  cache.daoInfo.dxdBalance = new BigNumber(await dxd.balanceOf.call(contractsConfig.avatar));
   cache.daoInfo.repHolders = !cache.daoInfo.repHolders ? {} : cache.daoInfo.repHolders;
 
   // Get events from contracts
@@ -207,16 +261,14 @@ async function main() {
   let reputationEvents = sortEvents( await getEventsBetweenBlocks(reputation, fromBlock, toBlock));
 
   // Get all call permissions (up to date) to later be added in schemes
-  let allCallPermissions: {[from: string]: SchemeCallPermission[]} = {};
-
-  await Promise.all(permissionRegistryEvents.map(async (permissionRegistryEvent) => {
+  permissionRegistryEvents.map((permissionRegistryEvent) => {
     const eventValues = permissionRegistryEvent.returnValues;
     
-    if (!allCallPermissions[eventValues.from])
-      allCallPermissions[eventValues.from] = [];
+    if (!cache.callPermissions[eventValues.from])
+      cache.callPermissions[eventValues.from] = [];
     
     if (eventValues.value != 0 && eventValues.fromTime != 0) {
-      allCallPermissions[eventValues.from].push({
+      cache.callPermissions[eventValues.from].push({
         asset: eventValues.asset,
         to: eventValues.to,
         functionSignature: eventValues.functionSignature,
@@ -224,11 +276,11 @@ async function main() {
         fromTime: eventValues.fromTime
       })
     } else {
-      const permissionIndex = allCallPermissions[eventValues.from].findIndex(i => i.asset === eventValues.asset && i.to === eventValues.to);
-      allCallPermissions[eventValues.from].splice(permissionIndex, 1);
+      const permissionIndex = cache.callPermissions[eventValues.from].findIndex(i => i.asset === eventValues.asset && i.to === eventValues.to);
+      cache.callPermissions[eventValues.from].splice(permissionIndex, 1);
     }
     
-  }));
+  });
     
   // Get all schemes and their information in registerScheme events in controller
   await Promise.all(controllerEvents.map(async (controllerEvent) => {
@@ -238,15 +290,11 @@ async function main() {
       const schemeContract = await WalletScheme.at(controllerEvent.returnValues._scheme);
       const paramsHash = await schemeContract.voteParams.call();
       const controllerAddress = await schemeContract.controllerAddress.call();
-      
-      // If controller address is set the permissions are taken using avatar address as sender
-      let callPermissions: SchemeCallPermission[] = (controllerAddress == controller.address)
-        ? allCallPermissions[avatar.address] : allCallPermissions[schemeContract.address];
-      
+            
       cache.schemes[schemeContract.address] = {
         registered: true,
         address: schemeContract.address,
-        name: schemeContract.address == rinkebyContracts.masterWalletScheme ? "MasterWalletScheme" : "QuickWalletScheme",
+        name: await schemeContract.schemeName.call(),
         paramsHash: paramsHash,
         controllerAddress: controllerAddress,
         ethBalance: await web3.eth.getBalance(schemeContract.address),
@@ -262,7 +310,9 @@ async function main() {
         ),
         
         proposalIds: [],
-        callPermissions: callPermissions
+        boostedProposals: await votingMachine.orgBoostedProposalsCnt.call(
+          web3.utils.soliditySha3(schemeContract.address, avatar.address)
+        )
       };
     
     // Mark scheme as not registered but save all previous data
@@ -294,8 +344,8 @@ async function main() {
         const proposalStatusWithVotes = await votingMachine.proposalStatusWithVotes.call(proposalId);
         const proposalTimes = await votingMachine.getProposalTimes.call(proposalId);
         const proposalShouldBoost = await votingMachine.shouldBoost.call(proposalId);
-        
-        // Decode teh status texy and pririty that will be given in the dapp
+
+        // Decode the status texy and pririty that will be given in the dapp
         const { status, priority, boostTime, finishTime } = decodeStatus(
           votingMachineProposalInfo.state.toString(),
           schemeProposalInfo.state.toString(),
@@ -315,48 +365,61 @@ async function main() {
           to: schemeProposalInfo.to,
           title: schemeProposalInfo.title,
           callData: schemeProposalInfo.callData,
-          values: schemeProposalInfo.value,
+          values: schemeProposalInfo.value.map((value) => new BigNumber(value)),
           stateInScheme: schemeProposalInfo.state,
           stateInVotingMachine: votingMachineProposalInfo.state,
           descriptionHash: schemeProposalInfo.descriptionHash,
           creationBlock: schemeEvent.blockNumber,
-          repAtCreation: await reputation.totalSupplyAt.call(schemeEvent.blockNumber),
+          repAtCreation: new BigNumber(await reputation.totalSupplyAt.call(schemeEvent.blockNumber)),
           winningVote: votingMachineProposalInfo.winningVote,
           proposer: votingMachineProposalInfo.proposer,
           currentBoostedVotePeriodLimit: votingMachineProposalInfo.currentBoostedVotePeriodLimit,
           paramsHash: cache.schemes[schemeContract.address].paramsHash,
-          daoBountyRemain: votingMachineProposalInfo.daoBountyRemain,
-          daoBounty: votingMachineProposalInfo.daoBounty,
-          totalStakes: votingMachineProposalInfo.totalStakes,
+          daoBountyRemain: new BigNumber(votingMachineProposalInfo.daoBountyRemain),
+          daoBounty: new BigNumber(votingMachineProposalInfo.daoBounty),
+          totalStakes: new BigNumber(votingMachineProposalInfo.totalStakes),
           confidenceThreshold: votingMachineProposalInfo.confidenceThreshold,
           secondsFromTimeOutTillExecuteBoosted: votingMachineProposalInfo.secondsFromTimeOutTillExecuteBoosted,
-          submittedTime: new BigNumber(proposalTimes[0].toString()),
-          boostedPhaseTime: new BigNumber(proposalTimes[1].toString()),
-          preBoostedPhaseTime: new BigNumber(proposalTimes[2].toString()),
+          submittedTime: new BigNumber(proposalTimes[0]),
+          boostedPhaseTime: new BigNumber(proposalTimes[1]),
+          preBoostedPhaseTime: new BigNumber(proposalTimes[2]),
           daoRedeemItsWinnings: votingMachineProposalInfo.daoRedeemItsWinnings,
           status: status,
           priority: priority,
-          boostTime: boostTime,
-          finishTime: finishTime,
+          boostTime: new BigNumber(boostTime),
+          finishTime: new BigNumber(finishTime),
           shouldBoost: proposalShouldBoost,
-          positiveVotes: proposalStatusWithVotes[0],
-          negativeVotes: proposalStatusWithVotes[1],
-          preBoostedPositiveVotes: proposalStatusWithVotes[2],
-          preBoostedNegativeVotes: proposalStatusWithVotes[3],
-          positiveStakes: proposalStatusWithVotes[4],
-          negativeStakes: proposalStatusWithVotes[5]
+          positiveVotes: new BigNumber(proposalStatusWithVotes[0]),
+          negativeVotes: new BigNumber(proposalStatusWithVotes[1]),
+          preBoostedPositiveVotes: new BigNumber(proposalStatusWithVotes[2]),
+          preBoostedNegativeVotes: new BigNumber(proposalStatusWithVotes[3]),
+          positiveStakes: new BigNumber(proposalStatusWithVotes[4]),
+          negativeStakes: new BigNumber(proposalStatusWithVotes[5])
         };
+        cache.schemes[schemeContract.address].proposalIds.push(proposalId);
       }
     }));
     
   }));
   
   // Get all votes, stakes, redeems and redeems rep form voting machine events
-  votingMachineEvents.map(async (votingMachineEvent) => {
+  votingMachineEvents.map((votingMachineEvent) => {
     switch (votingMachineEvent.event) {
-      case "Vote":
-        const preBoosted = await web3.eth.getBlock(votingMachineEvent.blockNumber).timestamp <
-          cache.proposals[votingMachineEvent.returnValues._proposalId].boostTime;
+      case "StateChange":
+        cache.votingMachineEvents.proposalStateChanges.push({
+          state: votingMachineEvent.returnValues._proposalState,
+          proposalId: votingMachineEvent.returnValues._proposalId,
+          tx: votingMachineEvent.transactionHash,
+          block: votingMachineEvent.blockNumber,
+          transactionIndex: votingMachineEvent.transactionIndex,
+          logIndex: votingMachineEvent.logIndex
+        });
+      break;
+      case "VoteProposal":
+        
+        const preBoosted = cache.votingMachineEvents.proposalStateChanges
+          .findIndex(i => i.state === "5") >= 0;
+
         cache.votingMachineEvents.votes.push({
           voter: votingMachineEvent.returnValues._voter,
           vote: votingMachineEvent.returnValues._vote,
@@ -411,18 +474,41 @@ async function main() {
   reputationEvents.map((reputationEvent) => {
     switch (reputationEvent.event) {
       case "Mint":
+        cache.daoInfo.repEvents.push({
+          type: "Mint",
+          account: reputationEvent.returnValues._to,
+          amount: new BigNumber(reputationEvent.returnValues._amount),
+          tx: reputationEvent.transactionHash,
+          block: reputationEvent.blockNumber,
+          transactionIndex: reputationEvent.transactionIndex,
+          logIndex: reputationEvent.logIndex
+        });
         cache.daoInfo.repHolders[reputationEvent.returnValues._to] = 
-          !cache.daoInfo.repHolders[reputationEvent.returnValues._to] ? reputationEvent.returnValues._amount
-          : cache.daoInfo.repHolders[reputationEvent.returnValues._to].plus(reputationEvent.returnValues._amount)
+          !cache.daoInfo.repHolders[reputationEvent.returnValues._to]
+            ? new BigNumber(reputationEvent.returnValues._amount)
+            : new BigNumber(cache.daoInfo.repHolders[reputationEvent.returnValues._to])
+              .plus(reputationEvent.returnValues._amount)
       break;
       case "Burn":
-        cache.daoInfo.repHolders[reputationEvent.returnValues._to] =
-          cache.daoInfo.repHolders[reputationEvent.returnValues._to].plus(reputationEvent.returnValues._amount)
+        cache.daoInfo.repEvents.push({
+          type: "Burn",
+          account: reputationEvent.returnValues._from,
+          amount: new BigNumber(reputationEvent.returnValues._amount),
+          tx: reputationEvent.transactionHash,
+          block: reputationEvent.blockNumber,
+          transactionIndex: reputationEvent.transactionIndex,
+          logIndex: reputationEvent.logIndex
+        });
+        cache.daoInfo.repHolders[reputationEvent.returnValues._from] =
+          new BigNumber(cache.daoInfo.repHolders[reputationEvent.returnValues._from])
+            .minus(reputationEvent.returnValues._amount)
       break;
     }
   })
   
-  console.log(cache)
+  cacheFile[networkName] = cache;
+  fs.writeFileSync("src/cache.json", JSON.stringify(cacheFile, null, 2), { encoding: "utf8", flag: "w" });
+
 } 
 
 main()
