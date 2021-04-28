@@ -8,6 +8,7 @@ export const schema = {
   Reputation: require('../contracts/DxReputation').abi,
   WalletScheme: require('../contracts/WalletScheme').abi,
   ERC20: require('../contracts/ERC20').abi,
+  PermissionRegistry: require('../contracts/PermissionRegistry').abi,
   Multicall: require('../contracts/Multicall').abi,
 };
 

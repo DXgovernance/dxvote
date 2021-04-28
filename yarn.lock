@@ -8079,7 +8079,7 @@ duplexify@^3.4.2, duplexify@^3.6.0:
 
 "dxdao-contracts@git://github.com/AugustoL/dxdao-contracts.git#dxdao-contracts":
   version "0.0.1"
-  resolved "git://github.com/AugustoL/dxdao-contracts.git#afe45bf75ddaca4594d4a3c4f85d353f4e6aa22d"
+  resolved "git://github.com/AugustoL/dxdao-contracts.git#512a856442fcf00d83d4b8edba56f694dd7cd246"
   dependencies:
     "@daostack/infra" "0.0.1-rc.19"
     "@maticnetwork/eth-decoder" "0.0.2"
