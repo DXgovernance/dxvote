@@ -12,7 +12,7 @@ import { bnum } from '../utils/helpers';
 export default class BlockchainStore {
   @observable activeFetchLoop: boolean = false;
   @observable initialLoadComplete: boolean;
-  @observable contractStorage: ContractStorage = {};
+  contractStorage: ContractStorage = {};
   eventsStorage: EventStorage = {};
   rootStore: RootStore;
 
@@ -459,7 +459,7 @@ export default class BlockchainStore {
       permissionRegistryEvents,
       reputationEvents
     ] = await eventsService.executeActiveEventCalls();
-    
+    eventsService.resetActiveEventCalls()
     // Get all call permissions (up to date) to later be added in schemes
     permissionRegistryEvents.map((permissionRegistryEvent) => {
       const eventValues = permissionRegistryEvent.returnValues;
@@ -763,7 +763,6 @@ export default class BlockchainStore {
         }]);
         
         await this.executeAndUpdateMulticall(multicallService);
-        this.initialLoadComplete = true;
         
         newCache.daoInfo.totalRep = this.rootStore.blockchainStore.getCachedValue({
           contractType: ContractType.Reputation,
@@ -782,8 +781,10 @@ export default class BlockchainStore {
         newCache.daoInfo.dxdBalance = bnum("0");
         
         newCache.blockNumber = blockNumber;
-        daoStore.updateCache(newCache);
         providerStore.setCurrentBlockNumber(blockNumber);
+        daoStore.updateCache(newCache);
+        
+        this.initialLoadComplete = true;
         
       }
       this.activeFetchLoop = false;

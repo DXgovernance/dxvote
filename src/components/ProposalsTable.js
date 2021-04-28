@@ -140,7 +140,7 @@ const TableCell = styled.div`
 
 const ProposalsTable = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore, ipfsService },
+        root: { providerStore, daoStore, configStore, ipfsService, blockchainStore },
     } = useStores();
 
     const { library, active } = providerStore.getActiveWeb3React();
@@ -214,7 +214,7 @@ const ProposalsTable = observer(() => {
               <TableHeader width="17.5%" align="center"> Staked </TableHeader>
               <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
           </ProposalTableHeaderWrapper>
-          { (allProposals.length === 0) ?
+          { (!blockchainStore.initialLoadComplete || (allProposals.length === 0)) ?
             <TableRowsWrapper>
               <div className="loader">
               <img alt="bolt" src={require('assets/images/bolt.svg')} />
