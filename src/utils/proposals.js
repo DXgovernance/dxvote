@@ -13,12 +13,11 @@ export const decodeStatus = function(
   preBoostedVotePeriodLimit,
   shouldBoost
 ) {
-  
   switch (stateInVotingMachine) {
     case "1":
       return { 
         status: "Expired in Queue", 
-        statusPriority: 1, 
+        priority: 1, 
         boostTime: 0, 
         finishTime: 0
       };
@@ -26,21 +25,21 @@ export const decodeStatus = function(
     case "2":
       if (stateInScheme == "3")
         return { 
-          status: "Executed", 
-          statusPriority: 2,
+          status: "Execution Failed", 
+          priority: 2,
           boostTime: 0,
           finishTime: 0
         };
       else if (stateInScheme == "2")
         return { 
-          status: "Rejected", 
-          statusPriority: 2,
+          status: "Execution Succeded", 
+          priority: 2,
           boostTime: 0,
           finishTime: 0
         };
       else return { 
         status: "Passed", 
-        statusPriority: 2,
+        priority: 2,
         boostTime: 0,
         finishTime: 0
       };
@@ -49,14 +48,14 @@ export const decodeStatus = function(
       if (moment().unix() > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
         return { 
           status: "Expired in Queue",
-          statusPriority: 1,
+          priority: 1,
           boostTime: 0,
           finishTime: submittedTime.plus(queuedVotePeriodLimit)
         };
       } else {
         return { 
           status: "In Queue", 
-          statusPriority: 3,
+          priority: 3,
           boostTime: 0,
           finishTime: submittedTime.plus(queuedVotePeriodLimit)
         };
@@ -66,21 +65,21 @@ export const decodeStatus = function(
       if (moment().unix() > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() && shouldBoost) {
         return { 
           status: "Pending Boost", 
-          statusPriority: 5,
+          priority: 5,
           boostTime: boostedPhaseTime,
           finishTime: bnum(moment().unix()).plus(boostedVotePeriodLimit)
         };
       } else if (moment().unix() > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber() && shouldBoost) {
         return { 
           status: "Expired in Queue", 
-          statusPriority: 1,
+          priority: 1,
           boostTime: boostedPhaseTime,
           finishTime: bnum(moment().unix()).plus(boostedVotePeriodLimit)
         };
       } else {
         return { 
           status: "Pre Boosted", 
-          statusPriority: 4,
+          priority: 4,
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
           finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit), 
         };
@@ -90,14 +89,14 @@ export const decodeStatus = function(
       if (moment().unix() > boostedPhaseTime.plus(boostedVotePeriodLimit).toNumber()) {
         return { 
           status: "Pending Execution", 
-          statusPriority: 6,
+          priority: 6,
           boostTime: 0,
           finishTime: 0
         };
       } else {
         return { 
           status: "Boosted", 
-          statusPriority: 5,
+          priority: 5,
           boostTime: 0,
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit)
         };
@@ -106,7 +105,7 @@ export const decodeStatus = function(
     case "6":
       return { 
         status: "Quiet Ending Period", 
-        statusPriority: 6,
+        priority: 6,
         boostTime: 0,
         finishTime: boostedPhaseTime.plus(quietEndingPeriod)
       };
@@ -114,7 +113,7 @@ export const decodeStatus = function(
     default:
     return { 
       status: "", 
-      statusPriority: 0,
+      priority: 0,
       boostTime: 0,
       finishTime: 0
     };

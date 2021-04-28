@@ -9,7 +9,7 @@ export const CHAIN_NAME_BY_ID = {
   '3': 'ropsten',
   '4': 'rinkeby',
   '42': 'kovan',
-  '1337': 'development',
+  '1337': 'localhost',
 };
 
 export const CHAIN_ID_BY_NAME = {
@@ -17,7 +17,7 @@ export const CHAIN_ID_BY_NAME = {
   'ropsten': 3,
   'rinkeby': 4,
   'kovan': 42,
-  'development': 1337,
+  'localhost': 1337,
 };
 
 export const DEFAULT_ETH_NETWORK = ETH_NETWORKS[0];

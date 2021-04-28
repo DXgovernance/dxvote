@@ -28,7 +28,6 @@ const Multicall = artifacts.require("Multicall");
 async function main() {
     
   const accounts = await web3.eth.getAccounts();
-  console.log(accounts)
   const GAS_LIMIT = 9000000;
   const votingMachineToken = await ERC20Mock.new(accounts[0], web3.utils.toWei("1000"));
   
@@ -160,7 +159,8 @@ async function main() {
     dxdVotingMachine.address,
     masterWalletSchemeParamsHash,
     controller.address,
-    permissionRegistry.address
+    permissionRegistry.address,
+    "Master Wallet"
   );
   await controller.registerScheme(
     masterWalletScheme.address,
@@ -226,7 +226,8 @@ async function main() {
     dxdVotingMachine.address,
     quickWalletSchemeParamsHash,
     NULL_ADDRESS,
-    permissionRegistry.address
+    permissionRegistry.address,
+    "Quick Wallet"
   );
   
   await controller.registerScheme(
@@ -395,10 +396,9 @@ async function main() {
     controller: controller.address,
     reputation: reputation.address,
     votingMachine: dxdVotingMachine.address,
-    votingMachineToken: votingMachineToken.address,
-    masterWalletScheme: masterWalletScheme.address,
-    quickWalletScheme: quickWalletScheme.address,
-    multicall: multicall.address
+    permissionRegistry: permissionRegistry.address,
+    multicall: multicall.address,
+    fromBlock: 1
   };
   console.log("Contracts Deployed:", contractsDeployed);
 

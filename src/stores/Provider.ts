@@ -12,9 +12,11 @@ import { schema } from '../services/ABIService';
 
 export enum ContractType {
     ERC20 = 'ERC20',
+    DecentralizedAutonomousTrust = 'ERC20',
     Avatar = 'Avatar',
     Controller = 'Controller',
     Reputation = 'Reputation',
+    PermissionRegistry = 'PermissionRegistry',
     VotingMachine = 'VotingMachine',
     WalletScheme = 'WalletScheme',
     Multicall = 'Multicall'

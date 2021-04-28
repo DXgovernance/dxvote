@@ -1,9 +1,10 @@
 // Stores
-import ProviderStore from './ETHProvider';
+import ProviderStore from './Provider';
 import TransactionStore from './Transaction';
 import ModalStore from './Modal';
 import ConfigStore from './ConfigStore';
 import DaoStore from './DaoStore';
+import UserStore from './UserStore';
 import BlockchainStore from './BlockchainStore';
 import ABIService from '../services/ABIService';
 import MulticallService from '../services/MulticallService';
@@ -17,6 +18,7 @@ export default class RootStore {
   modalStore: ModalStore;
   configStore: ConfigStore;
   daoStore: DaoStore;
+  userStore: UserStore;
   blockchainStore: BlockchainStore;
 
   abiService: ABIService;
@@ -36,6 +38,7 @@ export default class RootStore {
     this.modalStore = new ModalStore(this);
     this.configStore = new ConfigStore(this);
     this.daoStore = new DaoStore(this);
+    this.userStore = new UserStore(this);
     this.blockchainStore = new BlockchainStore(this);
   }
 }

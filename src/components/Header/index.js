@@ -65,19 +65,19 @@ const Header = observer(() => {
   );
   
   const {
-      root: { daoStore, providerStore, ipfsService },
+      root: { userStore, providerStore, ipfsService },
   } = useStores();
   ipfsService.start();
-  const daoInfo = daoStore.getDaoInfo();
+  const userInfo = userStore.getUserInfo();
   const { active, account } = providerStore.getActiveWeb3React();
-  const ethBalance = daoInfo.userEthBalance ?
-    parseFloat(Number(Web3.utils.fromWei(daoInfo.userEthBalance.toString())).toFixed(4))
+  const ethBalance = userInfo.ethBalance ?
+    parseFloat(Number(Web3.utils.fromWei(userInfo.ethBalance.toString())).toFixed(4))
     : 0;
-  const dxdBalance = daoInfo.userVotingMachineTokenBalance ?
-    parseFloat(Number(Web3.utils.fromWei(daoInfo.userVotingMachineTokenBalance.toString())).toFixed(4))
+  const dxdBalance = userInfo.dxdBalance ?
+    parseFloat(Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(4))
     : 0;
-  const repBalance = daoInfo.userRep ?
-    parseFloat(Number(Web3.utils.fromWei(daoInfo.userRep.toString())).toFixed(4))
+  const repBalance = userInfo.repBalance ?
+    parseFloat(Number(Web3.utils.fromWei(userInfo.repBalance.toString())).toFixed(4))
     : 0
     
   return (

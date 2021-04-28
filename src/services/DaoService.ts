@@ -1,6 +1,7 @@
 import RootStore from '../stores';
-import { ContractType } from '../stores/ETHProvider';
+import { ContractType } from '../stores/Provider';
 import { BigNumber } from '../utils/bignumber';
+import { bnum } from '../utils/helpers';
 
 export default class DaoService {
   rootStore: RootStore;
@@ -28,36 +29,47 @@ export default class DaoService {
     const { abiService, providerStore } = this.rootStore;
     const { library } = providerStore.getActiveWeb3React();
     const callDecoded = abiService.decodeCall(ContractType.Controller, callData);
-    
-    switch (callDecoded.function.name) {
-      case "mintReputation":
-        return {
-          text: "Mint "+callDecoded.args[0]+" REP to "+callDecoded.args[1]
-        };
-      case "burnReputation":
-        return {
-          text: "Burn "+callDecoded.args[0]+" REP of "+callDecoded.args[1]
-        };
-      default:
-        return {
-          text: "Generic Call to "+callDecoded.args[0]+" with data of "+callDecoded.args[1]+" uinsg value of "+library.utils.fromWei(callDecoded.args[3])
-        };
+    if (!callDecoded) {
+      return "Couldnt decode call";
+    } else {
+      switch (callDecoded.function.name) {
+        case "mintReputation":
+          return "Mint "+callDecoded.args[0]+" REP to "+callDecoded.args[1];
+        case "burnReputation":
+          return "Burn "+callDecoded.args[0]+" REP of "+callDecoded.args[1];
+        default:
+          return "Generic Call to "+callDecoded.args[0]+" with data of "+callDecoded.args[1]+" using a value of "+library.utils.fromWei(callDecoded.args[3]);
+      }
     }
   }
   
-  async getRepAt(atBlock: string){
-    const { configStore, providerStore } = this.rootStore;
+  getRepAt(atBlock: number): {
+    userRep: BigNumber,
+    totalSupply: BigNumber
+  } {
+    const { daoStore, providerStore } = this.rootStore;
+    const { account } = providerStore.getActiveWeb3React();
+    const repEvents = daoStore.cache.daoInfo.repEvents;
+    let userRep = bnum(0), totalSupply = bnum(0);
     
-    const reputation = providerStore.getContract(
-      providerStore.getActiveWeb3React(),
-      ContractType.Reputation,
-      configStore.getReputationAddress()
-    )
-      
-    return {
-      userRep: await reputation.methods.balanceOfAt(providerStore.getActiveWeb3React().account, atBlock).call(),
-      totalSupply: await reputation.methods.totalSupplyAt(atBlock).call()
-    };
+    for (let i = 0; i < repEvents.length; i++) {
+      if (repEvents[i].block <= atBlock) {
+        if (repEvents[i].type === 'Mint') {
+          totalSupply = totalSupply.plus(repEvents[i].amount)
+          if (repEvents[i].account == account)
+            userRep = userRep.plus(repEvents[i].amount)
+        } else {
+          totalSupply = totalSupply.minus(repEvents[i].amount)
+          if (repEvents[i].account == account)
+            userRep = userRep.minus(repEvents[i].amount)
+        }
+      } else {
+        break;
+      }      
+    }
+    
+    
+    return { userRep, totalSupply };
   }
   
   async getUserBalances(userAddress: string){
@@ -69,10 +81,16 @@ export default class DaoService {
       configStore.getReputationAddress()
     )
     
+    const votingMachine = providerStore.getContract(
+      providerStore.getActiveWeb3React(),
+      ContractType.VotingMachine,
+      configStore.getVotingMachineAddress()
+    )
+    
     const dxd = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.ERC20,
-      configStore.getVotingMachineTokenAddress()
+      await votingMachine.methods.stakingToken().call()
     )
       
     return {

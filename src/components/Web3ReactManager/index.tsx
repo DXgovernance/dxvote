@@ -10,7 +10,7 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
     const {
-        root: { providerStore, blockchainStore },
+        root: { providerStore, blockchainStore, daoStore },
     } = useStores();
 
     const web3ContextInjected = useWeb3React(web3ContextNames.injected);
@@ -36,8 +36,7 @@ const Web3ReactManager = ({ children }) => {
 
     // Fetch user blockchain data on an interval using current params
     useInterval(
-        () => blockchainStore.fetchData(web3React),
-        BLOKCHAIN_FETCH_INTERVAL
+        () => blockchainStore.fetchData(web3React), BLOKCHAIN_FETCH_INTERVAL
     );
     // Fetch when account or web3Provider changes
     useEffect(() => {
@@ -101,6 +100,7 @@ const Web3ReactManager = ({ children }) => {
         console.debug('[Web3ReactManager] Render: No active network');
         return children;
     } else {
+      daoStore.getCache();
       console.debug( '[Web3ReactManager] Render: Active network, render children', { networkActive } );
       return children;
     }

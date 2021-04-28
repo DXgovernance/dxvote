@@ -188,53 +188,10 @@ const NewProposalForm = observer(() => {
     } = useStores();
     
     const providerActive = providerStore.getActiveWeb3React().active;
-        
-    const createProposal = async function() {
-      const descriptionHash = await ipfsService.add(`# ${titleText} \n ${descriptionText}`)
-      
-      const { library } = providerStore.getActiveWeb3React();
-      
-      const to = calls.map((call) => {
-        return (scheme == 'masterWallet') ? configStore.getControllerAddress() : call.to
-      });
-      
-      const data = calls.map((call, i) => {
-      
-        const parameters = (call.callType == "decoded" && (call.functionName.length > 0 && call.functionParams > 0))
-          ? call.functionName.substring(
-            call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
-          : [];  
-        
-        const encodedData = call.callType == "decoded" && call.functionName.length > 0 ? 
-        library.eth.abi.encodeFunctionSignature(call.functionName) + 
-        library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
-        : "0x0"
-        
-        return (scheme == 'masterWallet') ? daoService.encodeControllerGenericCall(
-          call.to,
-          encodedData,
-          call.callType == "decoded" ? library.utils.toWei(call.value).toString()
-          : call.value
-        ) : encodedData
-      });
+    
+    const schemes = daoStore.getAllSchemes();
 
-      const value = calls.map((call) => {
-        return (scheme == 'masterWallet') ? "0"
-        : call.callType == "decoded" ? library.utils.toWei(call.value).toString()
-          : call.value
-      });
-
-      daoStore.createProposal( 
-        (scheme == 'masterWallet') 
-          ? configStore.getSchemeAddress('masterWallet') : configStore.getSchemeAddress('quickWallet'),
-        to, data, value, titleText, descriptionHash
-      );
-      
-      history.push("/");
-      
-    }
-
-    const [scheme, setScheme] = React.useState("masterWallet");
+    const [schemeAddress, setSchemeAddress] = React.useState(schemes[0].address);
     const [titleText, setTitleText] = React.useState("");
     const [descriptionText, setDescriptionText] = React.useState("");
     const [calls, setCalls] = React.useState([{
@@ -246,6 +203,47 @@ const NewProposalForm = observer(() => {
       value: "0"
     }]);
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+    
+    const createProposal = async function() {
+      const descriptionHash = await ipfsService.add(`# ${titleText} \n ${descriptionText}`)
+      
+      const { library } = providerStore.getActiveWeb3React();
+      
+      const callToController = (daoStore.getScheme(schemeAddress).controllerAddress == configStore.getControllerAddress());
+      const to = calls.map((call) => {
+        return callToController ? configStore.getControllerAddress() : call.to;
+      });
+      
+      const data = calls.map((call, i) => {
+      
+        const parameters = (call.callType === "decoded" && (call.functionName.length > 0 && call.functionParams > 0))
+          ? call.functionName.substring(
+            call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
+          : [];  
+        
+        const encodedData = call.callType === "decoded" && call.functionName.length > 0 ? 
+        library.eth.abi.encodeFunctionSignature(call.functionName) + 
+        library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
+        : "0x0"
+        
+        return callToController ? daoService.encodeControllerGenericCall(
+          call.to,
+          encodedData,
+          call.callType === "decoded" ? library.utils.toWei(call.value).toString()
+          : call.value
+        ) : encodedData
+      });
+
+      const value = calls.map((call) => {
+        return callToController ? "0"
+        : call.callType === "decoded" ? library.utils.toWei(call.value).toString()
+          : call.value
+      });
+      daoStore.createProposal(schemeAddress, to, data, value, titleText, descriptionHash);
+      
+      history.push("/");
+      
+    }
     
     function onTitleChange(newValue) { setTitleText(newValue.target.value) }
     function onDescriptionChange(newValue) { setDescriptionText(newValue.target.value) }
@@ -271,7 +269,7 @@ const NewProposalForm = observer(() => {
     
     function changeCallType(proposalIndex) {
       calls[proposalIndex] = {
-        callType: calls[proposalIndex].callType == "encoded" ? "decoded" : "encoded",
+        callType: calls[proposalIndex].callType === "encoded" ? "decoded" : "encoded",
         to: "",
         data: "",
         functionName: "",
@@ -289,6 +287,10 @@ const NewProposalForm = observer(() => {
       setCalls(calls)
       forceUpdate();
     }
+    
+    function onSchemeChange(event) {
+      setSchemeAddress(event.target.value)
+    }
 
     if (!providerActive) {
       return (
@@ -304,10 +306,11 @@ const NewProposalForm = observer(() => {
       return (
         <NewProposalFormWrapper>
           <SchemeInput>
-            <label htmlFor="scheme">Choose a Scheme:</label>
-            <select name="scheme" id="schemeSelector" onChange={setScheme}>
-              <option value="masterWallet">Master Wallet Scheme</option>
-              <option value="quickWallet">Quick Wallet Scheme</option>
+            <label for="schemeAddress">Choose a Scheme:</label>
+            <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
+            {schemes.map((scheme, i) =>{
+              return <option key={scheme.address} value={scheme.address}>{scheme.name}</option>
+            })}
             </select>
           </SchemeInput>
           <TitleInput>
@@ -367,7 +370,7 @@ const NewProposalForm = observer(() => {
                 style={{width: "20%"}}
                 placeholder="0x..."
               ></input>
-              { calls[i].callType == "encoded" ?
+              { calls[i].callType === "encoded" ?
                 <input 
                   type="text"
                   proposalindex={i}
@@ -388,7 +391,7 @@ const NewProposalForm = observer(() => {
                 >
                 </input>
               }
-              { calls[i].callType == "decoded" ?
+              { calls[i].callType === "decoded" ?
                 <input 
                   type="text"
                   proposalindex={i}
@@ -407,10 +410,10 @@ const NewProposalForm = observer(() => {
                 onChange={onCallValueChange}
                 value={calls[i].value}
                 style={{width: "10%"}}
-                placeholder={calls[i].callType == "decoded" ? "ETH" : "WEI"}
+                placeholder={calls[i].callType === "decoded" ? "ETH" : "WEI"}
               ></input>
               <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>
-              <RemoveButton onClick={() => {changeCallType(i)}}> {calls[i].callType == "decoded" ? "Advanced" : "Simple"} </RemoveButton>
+              <RemoveButton onClick={() => {changeCallType(i)}}> {calls[i].callType === "decoded" ? "Advanced" : "Simple"} </RemoveButton>
             </CallRow>
           )}
           <ActiveButton onClick={createProposal}>Submit Proposal</ActiveButton>

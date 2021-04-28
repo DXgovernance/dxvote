@@ -140,30 +140,18 @@ const TableCell = styled.div`
 
 const ProposalsTable = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore, ipfsService },
+        root: { providerStore, daoStore, configStore, ipfsService, blockchainStore },
     } = useStores();
 
-    const masterWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getSchemeAddress('masterWallet'));
-    const quickWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getSchemeAddress('quickWallet'));
-    const masterWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('masterWallet'));
-    const quickWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('quickWallet'));
-    let allProposals = [];
+    const { library, active } = providerStore.getActiveWeb3React();
     const [stateFilter, setStateFilter] = React.useState("All");
     const [titleFilter, setTitleFilter] = React.useState("");
-
-    allProposals = allProposals.concat(masterWalletSchemeProposals).concat(quickWalletSchemeProposals)
     
     function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
     function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
-
     
-    const { library } = providerStore.getActiveWeb3React();
-    const providerActive = providerStore.getActiveWeb3React().active;
+    if (!active) {
 
-    allProposals.sort(function(a, b) { return b.statusPriority - a.statusPriority; });
-
-    // console.log("All Proposals", allProposals, allProposals.length, daoStore);
-    if (!providerActive) {
       return (
         <ProposalsTableWrapper>
           <div className="loader">
@@ -174,6 +162,11 @@ const ProposalsTable = observer(() => {
         </ProposalsTableWrapper>
       )
     } else {
+      
+      const allProposals = daoStore.getAllProposals().sort(function(a, b) { return b.priority - a.priority; });
+      function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
+      console.log("All Proposals", allProposals, allProposals.length, daoStore);
+      
       return (
         <ProposalsTableWrapper>
           <ProposalTableHeaderActions>
@@ -221,7 +214,7 @@ const ProposalsTable = observer(() => {
               <TableHeader width="17.5%" align="center"> Staked </TableHeader>
               <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
           </ProposalTableHeaderWrapper>
-          { (allProposals.length === 0) ?
+          { (!blockchainStore.initialLoadComplete || (allProposals.length === 0)) ?
             <TableRowsWrapper>
               <div className="loader">
               <img alt="bolt" src={require('assets/images/bolt.svg')} />
@@ -254,7 +247,7 @@ const ProposalsTable = observer(() => {
                           {proposal.title}
                         </TableCell>
                         <TableCell width="10%" align="center">
-                          {proposal.scheme == configStore.getSchemeAddress('masterWallet') ? 'Master' : 'Quick'}
+                          {daoStore.cache.schemes[proposal.scheme].name}
                         </TableCell>
                         <TableCell width="15%" align="center">
                           {proposal.status} <br/>

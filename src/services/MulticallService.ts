@@ -1,15 +1,8 @@
 import { Interface } from 'ethers/utils';
 import RootStore from '../stores';
-import { ContractType } from '../stores/ETHProvider';
+import { ContractType } from '../stores/Provider';
+import { Call } from '../types';
 
-export interface Call {
-  contractType: string;
-  address: string;
-  method: string;
-  params?: any[];
-}
-
-// contractType-address-function(a,b)-[params]
 
 export default class MulticallService {
   root: RootStore;
