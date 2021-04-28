@@ -58,25 +58,42 @@ const Row = styled.div`
   padding-top: 15px;
   justify-content: space-around;
 `
+
+const InputBox = styled.input`
+  background-color: white;
+  border: 1px solid #536DFE;
+  border-radius: 4px;
+  color: #536DFE;
+  height: 34px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  line-height: 32px;
+  text-align: left;
+  cursor: pointer;
+  width: max-content;
+  padding: 0px 10px;
+  margin: 5px;
+  font-family: var(--roboto);
+`;
 const DaiInformation = observer(() => {
     const {
         root: { providerStore, configStore, blockchainStore },
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
     const loading = !blockchainStore.initialLoadComplete;
-    const [apiKeys, setAapiKeys] = React.useState(configStore.getApiKeys() || {});
+
+    const [apiKeys, setApiKeys] = React.useState(configStore.getApiKeys() || {});
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     
-    function onApiKeyValueChange(event) {
-      const serviceName = event.target.attributes.serviceName.value;
-      apiKeys[serviceName] = event.target.value;
-      setAapiKeys(apiKeys)
+    function onApiKeyValueChange(event, key) {
+      apiKeys[key] = event.target.value;
+      setApiKeys(apiKeys)
       forceUpdate();
     }
     
     function saveApiKeys() {
       configStore.setApiKey('etherscan', apiKeys.etherscan);
-      configStore.setApiKey('tenderly', apiKeys.tenderly);
+      configStore.setApiKey('pinata', apiKeys.pinata);
     }
   
     if (!providerActive) {
@@ -104,24 +121,24 @@ const DaiInformation = observer(() => {
         <ConfigWrapper>
           <h2>API Keys</h2>
           <Row style={{maxWidth: "300px"}}>
-            <span>Etherscan:</span>
-            <input
+            <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Etherscan:</span>
+            <InputBox
               type="text"
               serviceName="etherscan"
-              onChange={onApiKeyValueChange}
+              onChange={(event) => onApiKeyValueChange(event, "etherscan")}
               value={apiKeys.etherscan}
               style={{width: "50%"}}
-            ></input>
+            ></InputBox>
           </Row>
           <Row style={{maxWidth: "300px"}}>
-            <span>Tenderly:</span>
-            <input
+            <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Pinata:</span>
+            <InputBox
               type="text"
-              serviceName="tenderly"
-              onChange={onApiKeyValueChange}
-              value={apiKeys.tenderly}
+              serviceName="pinata"
+              onChange={(event) => onApiKeyValueChange(event, "pinata")}
+              value={apiKeys.pinata}
               style={{width: "50%"}}
-            ></input>
+            ></InputBox>
           </Row>
           <Row style={{maxWidth: "300px"}}>
             <ActiveButton onClick={saveApiKeys}>Save</ActiveButton>

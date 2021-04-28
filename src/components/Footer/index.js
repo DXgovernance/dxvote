@@ -62,36 +62,23 @@ const Footer = () => {
     root: {providerStore, configStore},
   } = useStores();
 
-  let chainId = providerStore.getActiveWeb3React().chainId;
-  let proxyContract = configStore.getNetworkConfig().DAT;
-  let contract = configStore.getNetworkConfig().implementationAddress;
   return (
     <FooterWrapper>
       <LeftFooter>
         <FooterItem>
-          <a
-            href={
-              'https://github.com/augustol/dxvote/tree/v'+process.env.REACT_APP_VERSION
-            }
-            target="#"
-          >
-            Version {process.env.REACT_APP_VERSION}
-          </a>
+          <a href="https://dxvote.eth.link" target="#" > Stable Version </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a href="https://daotalk.org/c/daos/dx-dao" target="#">
-            Forum
-          </a>
+          <a href="https://augustol.github.io/dxvote/" target="#" > Developer Version </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a
-            href="https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a"
-            target="#"
-          >
-            Alchemy
-          </a>
+          <a href="https://daotalk.org/c/daos/dx-dao" target="#"> Forum </a>
+        </FooterItem>
+        <FooterDivider></FooterDivider>
+        <FooterItem>
+        <a href="https://github.com/AugustoL/dxvote" target="#" > Source Code </a>
         </FooterItem>
     </LeftFooter>
     <RighFooter>

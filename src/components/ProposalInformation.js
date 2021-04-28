@@ -9,6 +9,7 @@ import Slider from '@material-ui/core/Slider';
 import { withStyles } from '@material-ui/core/styles';
 import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
+import Address from '../components/common/Address';
 
 const ProposalInformationWrapper = styled.div`
     width: 100%;
@@ -47,11 +48,16 @@ const InfoSidebar = styled.div`
   flex-direction: column;
 `;
 
+const SidebarDivider = styled.div`
+  border-bottom: 1px solid gray;
+  margin: 5px 10px;
+`;
+
 const SidebarRow = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  padding: 10px;
+  padding: 5px 0px;
 
   .timeText {
     font-size: 20;
@@ -131,6 +137,16 @@ const ProposalInformation = observer(() => {
     const {content: proposalDescription} = proposalInfo ? ipfsService.get(proposalInfo.descriptionHash) : "";
     const { active, account, library } = providerStore.getActiveWeb3React();
     
+    const [proposalVotes, setProposalVotes] = React.useState({
+      votedAmount: 0,
+      positiveVotesCount: 0,
+      negativeVotesCount: 0
+    });
+    const [proposalStakes, setProposalStakes] = React.useState({
+      stakedAmount: 0,
+      positiveStakesCount: 0,
+      negativeStakesCount: 0
+    });
     const [votePercentage, setVotePercentage] = React.useState(100);
     const [stakePercentage, setStakePercentage] = React.useState(100);
     const [canRedeem, setCanRedeem] = React.useState(false);
@@ -164,6 +180,12 @@ const ProposalInformation = observer(() => {
           negativeVotesCount --;
         }
       });
+      if (
+        proposalVotes.votedAmount < votedAmount
+        || proposalVotes.positiveVotesCount < positiveVotesCount
+        || proposalVotes.negativeVotesCount < negativeVotesCount
+      )
+        setProposalVotes({votedAmount, positiveVotesCount, negativeVotesCount});
       
       pEvents.stakes.map((stake) => {
         if (stake.voter === account) {
@@ -177,6 +199,13 @@ const ProposalInformation = observer(() => {
         }
       });
       
+      if (
+         proposalStakes.stakedAmount < stakedAmount
+         || proposalStakes.positiveStakesCount < positiveStakesCount
+         || proposalStakes.negativeStakesCount < negativeStakesCount
+       )
+        setProposalStakes({stakedAmount, positiveStakesCount, negativeStakesCount});
+
       if ((pEvents.redeems.indexOf((redeem) => redeem.beneficiary === account) === -1) 
         && (stakedAmount > 0 || votedAmount > 0) && !canRedeem)
         setCanRedeem(true);
@@ -252,6 +281,7 @@ const ProposalInformation = observer(() => {
       function onStakeValueChange(newValue) {
         const stakeSlider = document.querySelectorAll("span[aria-labelledby='stake-slider']")[0];
         setStakePercentage((stakeSlider.ariaValueNow - 50) * 2)
+        stakeSlider.ariaValueNow = stakePercentage;
       }
       function stakeValuetext(value) { return `${value.toFixed(2)}%`; }
       
@@ -318,7 +348,6 @@ const ProposalInformation = observer(() => {
                   "Pending Execution" : proposalInfo.status
                 }</h2>
               <SidebarRow style={{
-                borderBottom: "1px solid gray",
                 margin: "0px 10px",
                 flexDirection: "column"
               }}>
@@ -338,43 +367,46 @@ const ProposalInformation = observer(() => {
                   : proposalInfo.status === "Pending Execution" ?
                   <VoteButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </VoteButton>
                   : <div/>
-                } 
+                }
               </SidebarRow>
-              <SidebarRow>
-                <span> Staked </span>
-              </SidebarRow>
+              
+              <SidebarDivider/> 
+
               <SidebarRow style={{
-                borderBottom: "1px solid gray",
                 margin: "0px 10px",
+                padding: "10px 0px"
               }}>
-                <span style={{width: "40%", textAlign:"center", color: "green"}}>
-                  <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
-                  {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD
-                </span>
-                <span> - </span>
-                <span style={{width: "40%", textAlign:"center", color: "red"}}>
-                  {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD
-                  <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
-                </span>
+                <span> <strong>Proposer</strong> <Address type="user" address={proposalInfo.proposer}/> </span>
               </SidebarRow>
+              
+              <SidebarDivider/> 
+            
               <SidebarRow>
-                <span> Votes </span>
+                <span> <strong>Votes</strong> </span>
               </SidebarRow>
-              <SidebarRow style={{
-                borderBottom: "1px solid gray",
-                margin: "0px 10px",
-              }}> 
+              <SidebarRow style={{ margin: "0px 10px" }}> 
                 <span style={{width: "40%", textAlign:"center", color: "green"}}>
-                  <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
-                  {proposalInfo.positiveVotes.div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} % 
+                  <AmountBadge color="green">{proposalVotes.positiveVotesCount}</AmountBadge>
+                  {proposalInfo.positiveVotes.div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %
+                  <br/> 
+                  {proposalInfo.events && proposalInfo.events.votes.map(function(voteEvent, i){
+                    if (voteEvent.vote === 1)
+                      return <small color="green"><Address size="short" type="user" address={proposalInfo.proposer}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %</small>
+                  })}
                 </span>
                 <span> - </span>
                 <span style={{width: "40%", textAlign:"center", color: "red"}}>
                   {proposalInfo.negativeVotes.div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %
-                  <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
+                  <AmountBadge color="red">{proposalVotes.negativeVotesCount}</AmountBadge>
+                  <br/> 
+                  {proposalInfo.events && proposalInfo.events.votes.map(function(voteEvent, i){
+                    if (voteEvent.vote === 2)
+                      return <small color="red">{voteEvent.voter.substring(0,6)}... - {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %</small>
+                  })}
                 </span>
               </SidebarRow>
-              {votedAmount === 0 && proposalInfo.priority >=3 && proposalInfo.priority <= 6  ?
+              
+              {proposalVotes.votedAmount === 0 && proposalInfo.statusPriority >=3 && proposalInfo.statusPriority <= 6  ?
                 <SidebarRow>
                   <AmountSlider
                   defaultValue={100}
@@ -393,13 +425,47 @@ const ProposalInformation = observer(() => {
                 </SidebarRow>
               : <div/>
               }
-              <br/>
-              {(proposalInfo.priority === 3 || proposalInfo.priority== 4) && dxdApproved === "0" ?
+              
+              <SidebarDivider/> 
+              
+              <SidebarRow>
+                <span> <strong>Staked</strong> </span>
+              </SidebarRow>
+              <SidebarRow style={{ margin: "0px 10px" }}>
+                <span style={{width: "40%", textAlign:"center", color: "green"}}>
+                  <AmountBadge color="green">{proposalStakes.positiveStakesCount}</AmountBadge>
+                  {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD
+                  <br/> 
+                  {proposalInfo.events && proposalInfo.events.stakes.map(function(stakeEvent, i){
+                    if (stakeEvent.vote === 1)
+                      return <small color="green"><Address size="short" type="user" address={proposalInfo.proposer}/> - {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)}</small>
+                  })}
+                </span>
+                <span> - </span>
+                <span style={{width: "40%", textAlign:"center", color: "red"}}>
+                  {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD
+                  <AmountBadge color="red">{proposalStakes.negativeStakesCount}</AmountBadge>
+                  <br/> 
+                  {proposalInfo.events && proposalInfo.events.stakes.map(function(stakeEvent, i){
+                    if (stakeEvent.vote === 2)
+                      return <small color="red">{stakeEvent.staker.substring(0,6)}... - {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)}</small>
+                  })}
+                </span>
+              </SidebarRow>
+              
+              {proposalStakes.stakedAmount > 0
+                ? <SidebarRow>
+                Already staked {(proposalStakes.stakedAmount > 0) ? "for" : "against"} with {Number(library.utils.fromWei(proposalStakes.stakedAmount)).toFixed(2)} DXD
+                </SidebarRow>
+                : <div></div>
+              }
+
+              {(proposalInfo.statusPriority === 3 || proposalInfo.statusPriority === 4) && dxdApproved === 0 ?
                 <SidebarRow>
                   <small>Approve DXD to stake</small>
                   <VoteButton color="blue" onClick={() => approveDXD()}>Approve DXD</VoteButton>
                 </SidebarRow>
-                : (proposalInfo.priority === 3 || proposalInfo.priority== 4)  ?
+                : (proposalInfo.statusPriority === 3 || proposalInfo.statusPriority === 4)  ?
                   <div>
                     {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(2)} DXD to boost</small> : <span/>}
                     {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(2)} DXD to unboost</small> : <span/>}
@@ -418,15 +484,9 @@ const ProposalInformation = observer(() => {
                   </div>
                 : <div></div>
               }
-              {stakedAmount > 0
-                ? <SidebarRow>
-                  Already staked {(stakedAmount > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount)).toFixed(2)} DXD
-                </SidebarRow>
-                : <div></div>
-              }
               
-              {canRedeem > 0
-                ? <SidebarRow>
+              {proposalInfo.statusPriority < 3 && canRedeem > 0
+                ? <SidebarRow style={{ borderTop: "1px solid gray",  margin: "0px 10px" }}>
                   <VoteButton color="blue" onClick={() => redeem()}>Redeem</VoteButton>
                 </SidebarRow>
                 : <div></div>
