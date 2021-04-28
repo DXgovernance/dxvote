@@ -65,8 +65,9 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore },
+      root: { userStore, providerStore, ipfsService },
   } = useStores();
+  ipfsService.start();
   const userInfo = userStore.getUserInfo();
   const { active, account } = providerStore.getActiveWeb3React();
   const ethBalance = userInfo.ethBalance ?
