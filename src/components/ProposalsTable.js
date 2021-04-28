@@ -126,26 +126,9 @@ const ProposalsTable = observer(() => {
         root: { providerStore, daoStore, configStore, ipfsService },
     } = useStores();
 
-    const masterWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getSchemeAddress('masterWallet'));
-    const quickWalletSchemeInfo = daoStore.getSchemeInfo(configStore.getSchemeAddress('quickWallet'));
-    const masterWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('masterWallet'));
-    const quickWalletSchemeProposals = daoStore.getSchemeProposals(configStore.getSchemeAddress('quickWallet'));
-    let allProposals = [];
+    const { library, active } = providerStore.getActiveWeb3React();
     const [stateFilter, setStateFilter] = React.useState("All");
-    allProposals = allProposals.concat(masterWalletSchemeProposals).concat(quickWalletSchemeProposals)
-    console.log("MasterWalletScheme info", masterWalletSchemeInfo);
-    console.log("QuickWalletScheme info", quickWalletSchemeInfo);
-    
-    function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
-
-    
-    const { library } = providerStore.getActiveWeb3React();
-    const providerActive = providerStore.getActiveWeb3React().active;
-
-    allProposals.sort(function(a, b) { return b.statusPriority - a.statusPriority; });
-
-    console.log("All Proposals", allProposals, allProposals.length, daoStore);
-    if (!providerActive) {
+    if (!active) {
       return (
         <ProposalsTableWrapper>
           <div className="loader">
@@ -156,6 +139,11 @@ const ProposalsTable = observer(() => {
         </ProposalsTableWrapper>
       )
     } else {
+      
+      const allProposals = daoStore.getAllProposals().sort(function(a, b) { return b.priority - a.priority; });
+      function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
+      console.log("All Proposals", allProposals, allProposals.length, daoStore);
+      
       return (
         <ProposalsTableWrapper>
           <ProposalTableHeaderActions>
@@ -207,7 +195,7 @@ const ProposalsTable = observer(() => {
             :
             <TableRowsWrapper>
               { allProposals.map((proposal, i) => {
-                if (proposal && ((stateFilter == 'All') || (stateFilter != 'All' && proposal.status == stateFilter))) {
+                if (proposal && ((stateFilter === 'All') || (stateFilter !== 'All' && proposal.status === stateFilter))) {
                   const positiveStake = Number(library.utils.fromWei(proposal.positiveStakes.toString())).toFixed(2);
                   const negativeStake = Number(library.utils.fromWei(proposal.negativeStakes.toString())).toFixed(2);
                   const timeNow = (new Date()).getTime() / 1000;
@@ -226,7 +214,7 @@ const ProposalsTable = observer(() => {
                           {proposal.title}
                         </TableCell>
                         <TableCell width="10%" align="center">
-                          {proposal.scheme == configStore.getSchemeAddress('masterWallet') ? 'Master' : 'Quick'}
+                          {daoStore.cache.schemes[proposal.scheme].name}
                         </TableCell>
                         <TableCell width="15%" align="center">
                           {proposal.status} <br/>

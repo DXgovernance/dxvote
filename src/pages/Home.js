@@ -9,9 +9,9 @@ const ProposalsPage = () => {
     const searchPath = useLocation().search;
     return (
       <div>
-        { searchPath == "?view=dao" ?
+        { searchPath === "?view=dao" ?
           <DaoInformation/>
-        : searchPath == "?view=schemes" ?
+        : searchPath === "?view=schemes" ?
           <SchemesInformation/>
         : <ProposalsTable/>
         }

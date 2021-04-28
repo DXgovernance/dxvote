@@ -1,12 +1,9 @@
 import RootStore from 'stores';
 import { BigNumber } from '../utils/bignumber';
-import { decodePermission } from '../utils/permissions';
 import { ContractType } from './Provider';
 import { action } from 'mobx';
-import Web3 from 'web3';
 import { bnum } from '../utils/helpers';
 import { ethers, utils } from 'ethers';
-import { decodeStatus } from '../utils/proposals';
 import PromiEvent from 'promievent';
 import { 
   Vote,
@@ -14,521 +11,230 @@ import {
   ProposalStateChange,
   Redeem,
   RedeemRep,
-  ProposalInfo,
-  SchemeInfo,
+  Proposal,
+  Scheme,
   DaoInfo,
-  DaoCache
+  DaoNetworkCache
 } from '../types';
 
+const CACHE = require('../cache.json');
+
 export default class DaoStore {
-  cache: DaoCache;
+  cache: DaoNetworkCache;
   rootStore: RootStore;
 
   constructor(rootStore) {
     this.rootStore = rootStore;
-    const { configStore } = this.rootStore;
-    this.cache = {
-      daoInfo: {} as DaoInfo,
-      schemes: {},
-      proposals: {},
-      blockNumber: configStore.getStartBlock(),
-      votes: [],
-      stakes: [],
-      redeems: [],
-      redeemsRep: [],
-      proposalStateChanges: [],
-    };
+    if (this.rootStore.configStore.getActiveChainName() !== 'none')
+      this.cache = this.getLocalCache(this.rootStore.configStore.getActiveChainName());
+  }
+  
+  getLatestCacheBlock() {
+    return this.cache.blockNumber;
+  }
+  
+  // Get the local cache file and parse the bignumbers
+  getLocalCache(networkName: string): DaoNetworkCache {
+    const localCache : DaoNetworkCache = CACHE[networkName];
+    localCache.daoInfo.totalRep = bnum(localCache.daoInfo.totalRep);
+    localCache.daoInfo.ethBalance = bnum(localCache.daoInfo.ethBalance);
+    localCache.daoInfo.dxdBalance = bnum(localCache.daoInfo.dxdBalance);
+    Object.keys(localCache.daoInfo.repHolders).map((repHolder) => {
+      localCache.daoInfo.repHolders[repHolder] = bnum(localCache.daoInfo.repHolders[repHolder])
+    })
+    localCache.daoInfo.repEvents.map((repEvent, i) => {
+      localCache.daoInfo.repEvents[i].amount = bnum(repEvent.amount)
+    })
+    Object.keys(localCache.schemes).map((schemeAddress) => {
+      localCache.schemes[schemeAddress].ethBalance = bnum(localCache.schemes[schemeAddress].ethBalance)
+      localCache.schemes[schemeAddress].parameters = {
+        queuedVoteRequiredPercentage: bnum(localCache.schemes[schemeAddress].parameters.queuedVoteRequiredPercentage),
+        queuedVotePeriodLimit: bnum(localCache.schemes[schemeAddress].parameters.queuedVotePeriodLimit),
+        boostedVotePeriodLimit: bnum(localCache.schemes[schemeAddress].parameters.boostedVotePeriodLimit),
+        preBoostedVotePeriodLimit: bnum(localCache.schemes[schemeAddress].parameters.preBoostedVotePeriodLimit),
+        thresholdConst: bnum(localCache.schemes[schemeAddress].parameters.thresholdConst),
+        limitExponentValue: bnum(localCache.schemes[schemeAddress].parameters.limitExponentValue),
+        quietEndingPeriod: bnum(localCache.schemes[schemeAddress].parameters.quietEndingPeriod),
+        proposingRepReward: bnum(localCache.schemes[schemeAddress].parameters.proposingRepReward),
+        votersReputationLossRatio: bnum(localCache.schemes[schemeAddress].parameters.votersReputationLossRatio),
+        minimumDaoBounty: bnum(localCache.schemes[schemeAddress].parameters.minimumDaoBounty),
+        daoBountyConst: bnum(localCache.schemes[schemeAddress].parameters.daoBountyConst),
+        activationTime: bnum(localCache.schemes[schemeAddress].parameters.activationTime)
+      }
+    })
+    Object.keys(localCache.callPermissions).map((callPermissionFrom) => {
+      localCache.callPermissions[callPermissionFrom].map((callPermission, i) => {
+        localCache.callPermissions[callPermissionFrom][i].fromTime = bnum(callPermission.fromTime)
+        localCache.callPermissions[callPermissionFrom][i].value = bnum(callPermission.value)
+        
+      })
+    })
+    Object.keys(localCache.proposals).map((proposalId) => {
+      localCache.proposals[proposalId].values = localCache.proposals[proposalId].values.map((value) => {
+        return bnum(value);
+      })
+      localCache.proposals[proposalId].creationBlock = bnum(localCache.proposals[proposalId].creationBlock);
+      localCache.proposals[proposalId].repAtCreation = bnum(localCache.proposals[proposalId].repAtCreation);
+      localCache.proposals[proposalId].currentBoostedVotePeriodLimit = bnum(localCache.proposals[proposalId].currentBoostedVotePeriodLimit);
+      localCache.proposals[proposalId].daoBountyRemain = bnum(localCache.proposals[proposalId].daoBountyRemain);
+      localCache.proposals[proposalId].daoBounty = bnum(localCache.proposals[proposalId].daoBounty);
+      localCache.proposals[proposalId].totalStakes = bnum(localCache.proposals[proposalId].totalStakes);
+      localCache.proposals[proposalId].confidenceThreshold = bnum(localCache.proposals[proposalId].confidenceThreshold);
+      localCache.proposals[proposalId].secondsFromTimeOutTillExecuteBoosted = bnum(localCache.proposals[proposalId].secondsFromTimeOutTillExecuteBoosted);
+      localCache.proposals[proposalId].submittedTime = bnum(localCache.proposals[proposalId].submittedTime);
+      localCache.proposals[proposalId].boostedPhaseTime = bnum(localCache.proposals[proposalId].boostedPhaseTime);
+      localCache.proposals[proposalId].boostTime = bnum(localCache.proposals[proposalId].boostTime);
+      localCache.proposals[proposalId].finishTime = bnum(localCache.proposals[proposalId].finishTime);
+      localCache.proposals[proposalId].positiveVotes = bnum(localCache.proposals[proposalId].positiveVotes);
+      localCache.proposals[proposalId].negativeVotes = bnum(localCache.proposals[proposalId].negativeVotes);
+      localCache.proposals[proposalId].preBoostedPositiveVotes = bnum(localCache.proposals[proposalId].preBoostedPositiveVotes);
+      localCache.proposals[proposalId].preBoostedNegativeVotes = bnum(localCache.proposals[proposalId].preBoostedNegativeVotes);
+      localCache.proposals[proposalId].positiveStakes = bnum(localCache.proposals[proposalId].positiveStakes);
+      localCache.proposals[proposalId].negativeStakes = bnum(localCache.proposals[proposalId].negativeStakes);
+    })
+    return localCache;
+  }
+  
+  getCache(): DaoNetworkCache {
+    if (!this.cache)
+      this.cache = this.getLocalCache(this.rootStore.configStore.getActiveChainName());
+    return this.cache;
+  }
+  
+  updateCache(newCache: DaoNetworkCache) {
+    this.cache = newCache;;
   }
 
   getDaoInfo(): DaoInfo {
-    const { configStore, providerStore } = this.rootStore;
-    const { account } = providerStore.getActiveWeb3React();
+    const { configStore } = this.rootStore;
+
     const totalRep = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Reputation,
       address: configStore.getReputationAddress(),
       method: 'totalSupply',
       params: []
     });
-    const userRep = account ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Reputation,
-      address: configStore.getReputationAddress(),
-      method: 'balanceOf',
-      params: [account]
-    }) : 0;
+    
     const ethBalance = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Multicall,
       address: configStore.getMulticallAddress(),
       method: 'getEthBalance',
       params: [configStore.getAvatarAddress()]
     });
-    const userEthBalance = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Multicall,
-      address: configStore.getMulticallAddress(),
-      method: 'getEthBalance',
-      params: [account]
-    });
-    const userVotingMachineTokenBalance = account ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.ERC20,
-      address: configStore.getVotingMachineTokenAddress(),
-      method: 'balanceOf',
-      params: [account]
-    }) : 0;
-    const  userVotingMachineTokenApproved = account ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.ERC20,
-      address: configStore.getVotingMachineTokenAddress(),
-      method: 'allowance',
-      params: [account, configStore.getVotingMachineAddress()]
-    }) : 0;
-    this.cache.daoInfo = {
-      address: configStore.getAvatarAddress(),
-      totalRep,
-      ethBalance,
-      userEthBalance,
-      userRep,
-      userVotingMachineTokenBalance,
-      userVotingMachineTokenApproved
-    };
+  
+    this.cache.daoInfo.address = configStore.getAvatarAddress();
+    this.cache.daoInfo.totalRep = totalRep;
+    this.cache.daoInfo.ethBalance = ethBalance;
     return this.cache.daoInfo;
   }
   
-  getSchemeProposals(schemeAddress): ProposalInfo[] {
-    const { configStore } = this.rootStore;
-    
-    const proposalIds = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'getOrganizationProposals'
-    }) ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'getOrganizationProposals'
-    }).split(",") : undefined;
-
-    const parametersHash = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'voteParams',
-    });
-    const rawParameters = (parametersHash) ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
-      method: 'parameters',
-      params: [parametersHash]
-    }) : undefined;
-    
-    const parameters = (rawParameters && rawParameters.length > 0) ?
-      {
-        queuedVoteRequiredPercentage: bnum(rawParameters.split(",")[0]),
-        queuedVotePeriodLimit: bnum(rawParameters.split(",")[1]),
-        boostedVotePeriodLimit: bnum(rawParameters.split(",")[2]),
-        preBoostedVotePeriodLimit: bnum(rawParameters.split(",")[3]),
-        thresholdConst: bnum(rawParameters.split(",")[4]),
-        limitExponentValue: bnum(rawParameters.split(",")[5]),
-        quietEndingPeriod: bnum(rawParameters.split(",")[6]),
-        proposingRepReward: bnum(rawParameters.split(",")[7]),
-        votersReputationLossRatio: bnum(rawParameters.split(",")[8]),
-        minimumDaoBounty: bnum(rawParameters.split(",")[9]),
-        daoBountyConst: bnum(rawParameters.split(",")[10]),
-        activationTime: bnum(rawParameters.split(",")[11])
-      } : undefined;
-      
-      let proposals = [];
-      if (proposalIds && proposalIds.length > 0){
-        for (let proposalIndex = proposalIds.length - 1; proposalIndex >= 0; proposalIndex --) {
-          proposals.push(this.getProposalInfo(schemeAddress, proposalIds[proposalIndex], parameters));
-        }
+  getSchemeProposalsByName(_schemeName: string): Proposal[] {
+    let schemeAddress;
+    for (const _schemeAddress in this.cache.schemes) {
+      if (this.cache.schemes[_schemeAddress].name === _schemeName) {
+        schemeAddress = _schemeAddress;
       }
-    this.cache.schemes[schemeAddress].proposals = proposals;
-    return this.cache.schemes[schemeAddress].proposals;
+    }
+    let proposals = [];
+    for (const proposalId in this.cache.proposals) {
+      if (this.cache.proposals[proposalId].scheme === schemeAddress) {
+        proposals.push(this.getProposal(proposalId));
+      }
+    }
+    return proposals;
   }
   
-  getSchemeInfo(schemeAddress): SchemeInfo {
-    const { configStore } = this.rootStore;
-    const controllerAddress = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'controllerAddress',
-    });
-    const ethBalance = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Multicall,
-      address: configStore.getMulticallAddress(),
-      method: 'getEthBalance',
-      params: [schemeAddress]
-    });
-    const parametersHash = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'voteParams',
-    });
-    const proposalIds = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'getOrganizationProposals'
-    }) ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'getOrganizationProposals'
-    }).split(",") : undefined;
-    const boostedProposals = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
-      method: 'orgBoostedProposalsCnt',
-      params: [Web3.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
-    })
-    
-    const encodedPermissions = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Controller,
-      address: configStore.getControllerAddress(),
-      method: 'getSchemePermissions',
-      params: [schemeAddress, configStore.getAvatarAddress()]
-    });
-    
-    const permissions = encodedPermissions ? decodePermission(encodedPermissions) : undefined;
-
-    const rawParameters = (parametersHash) ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
-      method: 'parameters',
-      params: [parametersHash]
-    }) : undefined;
-    
-    const parameters = (rawParameters && rawParameters.length > 0) ?
-      {
-        queuedVoteRequiredPercentage: bnum(rawParameters.split(",")[0]),
-        queuedVotePeriodLimit: bnum(rawParameters.split(",")[1]),
-        boostedVotePeriodLimit: bnum(rawParameters.split(",")[2]),
-        preBoostedVotePeriodLimit: bnum(rawParameters.split(",")[3]),
-        thresholdConst: bnum(rawParameters.split(",")[4]),
-        limitExponentValue: bnum(rawParameters.split(",")[5]),
-        quietEndingPeriod: bnum(rawParameters.split(",")[6]),
-        proposingRepReward: bnum(rawParameters.split(",")[7]),
-        votersReputationLossRatio: bnum(rawParameters.split(",")[8]),
-        minimumDaoBounty: bnum(rawParameters.split(",")[9]),
-        daoBountyConst: bnum(rawParameters.split(",")[10]),
-        activationTime: bnum(rawParameters.split(",")[11])
-      } : undefined;
-      
-    const schemeInfo = {
-      registered: true,
-      name: configStore.getSchemeName(schemeAddress),
-      address: schemeAddress,
-      controllerAddress,
-      parametersHash,
-      ethBalance,
-      parameters,
-      permissions,
-      proposalIds,
-      proposals: [],
-      boostedProposals
-    };
-    this.cache.schemes[schemeAddress] = schemeInfo;
+  getSchemeByName(_schemeName: string): Scheme {
+    let schemeAddress;
+    for (const _schemeAddress in this.cache.schemes) {
+      if (this.cache.schemes[_schemeAddress].name === _schemeName) {
+        schemeAddress = _schemeAddress;
+      }
+    }
+    let schemeInfo;
+    for (const _schemeAddress in this.cache.schemes) {
+      if (this.cache.schemes[_schemeAddress].name === _schemeName) {
+        schemeInfo = this.cache.schemes[schemeAddress];
+        break;
+      }
+    }
+    return schemeInfo;
+  }
+  
+  getSchemeProposals(_schemeName: string): Proposal[] {
+    let schemeAddress;
+    for (const _schemeAddress in this.cache.schemes) {
+      if (this.cache.schemes[_schemeAddress].name === _schemeName) {
+        schemeAddress = _schemeAddress;
+      }
+    }
+    let proposals = [];
+    for (const proposalId in this.cache.proposals) {
+      if (this.cache.proposals[proposalId].scheme === schemeAddress) {
+        proposals.push(this.getProposal(proposalId));
+      }
+    }
+    return proposals;
+  }
+  
+  getAllProposals(): Proposal[] {
+    const proposalsIds = Object.keys(this.cache.proposals);
+    return proposalsIds.map( (proposalId) => {return this.cache.proposals[proposalId] } );
+  }
+  
+  getAllSchemes(): Scheme[] {
+    const schemeAddresses = Object.keys(this.cache.schemes);
+    return schemeAddresses.map( (schemeAddress) => {return this.cache.schemes[schemeAddress] } );
+  }
+  
+  getProposal(proposalId): Proposal{
+    return this.cache.proposals[proposalId];
+  }
+  
+  getScheme(schemeAddress): Scheme{
     return this.cache.schemes[schemeAddress];
   }
   
-  getProposalInfo(schemeAddress, proposalId, parameters): ProposalInfo {
-    const { configStore } = this.rootStore;
-    
-    if (!parameters) {
-      const parametersHash = this.rootStore.blockchainStore.getCachedValue({
-        contractType: ContractType.WalletScheme,
-        address: schemeAddress,
-        method: 'voteParams',
-      });
-      const rawParameters = (parametersHash) ? this.rootStore.blockchainStore.getCachedValue({
-        contractType: ContractType.VotingMachine,
-        address: configStore.getVotingMachineAddress(),
-        method: 'parameters',
-        params: [parametersHash]
-      }) : undefined;
-      parameters = (rawParameters && rawParameters.length > 0) ?
-        {
-          queuedVoteRequiredPercentage: bnum(rawParameters.split(",")[0]),
-          queuedVotePeriodLimit: bnum(rawParameters.split(",")[1]),
-          boostedVotePeriodLimit: bnum(rawParameters.split(",")[2]),
-          preBoostedVotePeriodLimit: bnum(rawParameters.split(",")[3]),
-          thresholdConst: bnum(rawParameters.split(",")[4]),
-          quietEndingPeriod: bnum(rawParameters.split(",")[5]),
-          proposingRepReward: bnum(rawParameters.split(",")[6]),
-          votersReputationLossRatio: bnum(rawParameters.split(",")[7]),
-          minimumDaoBounty: bnum(rawParameters.split(",")[8]),
-          daoBountyConst: bnum(rawParameters.split(",")[9]),
-          activationTime: bnum(rawParameters.split(",")[10])
-        } : undefined;
-    }
-
-    const proposalSchemeInfoRaw = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'getOrganizationProposal',
-      params:[proposalId]
-    });
-    
-    const proposalVotingMachineInfoRaw = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
-      method: 'proposals',
-      params:[proposalId]
-    });
-    
-    const proposalVotingMachineTimesRaw = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
-      method: 'getProposalTimes',
-      params:[proposalId]
-    });
-    
-    const proposalStatusVotingMachine = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
-      method: 'proposalStatusWithVotes',
-      params:[proposalId]
-    });
-    
-    const proposalShouldBoost = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
-      method: 'shouldBoost',
-      params:[proposalId]
-    });
-    
-    const proposalCallbackInformation = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.WalletScheme,
-      address: schemeAddress,
-      method: 'proposalsInfo',
-      params:[configStore.getVotingMachineAddress(), proposalId]
-    });
-    
-    const repAtCreation = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Reputation,
-      address: configStore.getReputationAddress(),
-      method: 'totalSupplyAt',
-      params: [proposalCallbackInformation ? proposalCallbackInformation.split(",")[0] : 0]
-    });
-
-    let proposalSchemeInfo = undefined;
-    if (
-      proposalSchemeInfoRaw && proposalSchemeInfoRaw.length > 0
-      && proposalVotingMachineInfoRaw && proposalVotingMachineInfoRaw.length > 0
-      && proposalStatusVotingMachine && proposalStatusVotingMachine.length > 0
-      && proposalShouldBoost && proposalShouldBoost.length > 0
-
-    ) {
-      
-      const proposalSchemeInfoDivided = proposalSchemeInfoRaw.split(",")
-      const votingMachineDataDivided = proposalVotingMachineInfoRaw.split(",")
-      const votingMachineTimesDivided = proposalVotingMachineTimesRaw.split(",")
-      const { status, priority, boostTime, finishTime } = decodeStatus(
-        votingMachineDataDivided[2],
-        proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 3],
-        bnum(votingMachineTimesDivided[0]),
-        bnum(votingMachineTimesDivided[1]),
-        bnum(votingMachineTimesDivided[2]),
-        parameters.queuedVotePeriodLimit,
-        parameters.boostedVotePeriodLimit,
-        parameters.quietEndingPeriod,
-        parameters.preBoostedVotePeriodLimit,
-        proposalShouldBoost
-      );
-        
-      const pEvents = {
-        votes: this.getVotes(proposalId),
-        stakes: this.getStakes(proposalId),
-        redeems: this.getRedeems(proposalId),
-        redeemsRep: this.getRedeemsRep(proposalId),
-        proposalStateChanges: this.getProposalStateChanges(proposalId)
-      }
-
-      let preBoostedVoteBlock = 999999999999;
-      for (var i = 0; i < pEvents.proposalStateChanges.length; i++) {
-        if (
-          pEvents.proposalStateChanges[i].state == "1"
-          || pEvents.proposalStateChanges[i].state == "2"
-          || pEvents.proposalStateChanges[i].state == "5"
-        ){
-          preBoostedVoteBlock = pEvents.proposalStateChanges[i].block;
-          break;
-        }
-      }
-
-      let tokenRewards = {};
-      let repRewards = [];
-      
-      if ((status == "ExpiredInQueue" || status == "Executed") && parameters.proposingRepReward > 0 ) {
-        tokenRewards[votingMachineDataDivided[4]] = false;
-      }
-      
-      for (var i = 0; i < pEvents.votes.length; i++){
-        if (pEvents.votes[i].block < preBoostedVoteBlock) 
-          tokenRewards[pEvents.votes[i].voter] = false;
-      }
-    
-      for (var i = 0; i < pEvents.stakes.length; i++){
-        if ((status == "ExpiredInQueue")
-          || (status == "Executed") && (votingMachineDataDivided[3] == pEvents.stakes[i].vote))
-          tokenRewards[pEvents.stakes[i].staker] = false;
-      }
-      
-      for (var i = 0; i < pEvents.redeems.length; i++) {
-        tokenRewards[pEvents.redeems[i].beneficiary] = true;
-      }
-      
-      for (var i = 0; i < pEvents.redeemsRep.length; i++) {
-        repRewards[pEvents.redeemsRep[i].beneficiary] = true;
-      }
-      
-      proposalSchemeInfo = {
-        id: proposalId,
-        scheme: schemeAddress,
-        to: proposalSchemeInfoDivided.slice(0, (proposalSchemeInfoDivided.length - 3) / 3),
-        callData: proposalSchemeInfoDivided.slice((proposalSchemeInfoDivided.length - 3) / 3, (proposalSchemeInfoDivided.length - 3) / 3 * 2),
-        values: proposalSchemeInfoDivided.slice((proposalSchemeInfoDivided.length - 3) / 3 * 2, proposalSchemeInfoDivided.length - 3),
-        stateInScheme: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 3],
-        title: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 2],
-        descriptionHash: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 1],
-        creationBlock: proposalCallbackInformation.split(",")[0],
-        repAtCreation: repAtCreation,
-        stateInVotingMachine: votingMachineDataDivided[2],
-        winningVote: votingMachineDataDivided[3],
-        proposer: votingMachineDataDivided[4],
-        currentBoostedVotePeriodLimit: bnum(votingMachineDataDivided[5]),
-        paramsHash: votingMachineDataDivided[6],
-        daoBountyRemain: bnum(votingMachineDataDivided[7]),
-        daoBounty: bnum(votingMachineDataDivided[8]),
-        totalStakes: bnum(votingMachineDataDivided[9]),
-        confidenceThreshold: bnum(votingMachineDataDivided[10]),
-        secondsFromTimeOutTillExecuteBoosted: bnum(votingMachineDataDivided[11]),
-        daoRedeemItsWinnings: votingMachineDataDivided[12],
-        submittedTime: bnum(votingMachineTimesDivided[0]),
-        boostedPhaseTime: bnum(votingMachineTimesDivided[1]),
-        preBoostedPhaseTime: bnum(votingMachineTimesDivided[2]),
-        status: status,
-        priority: priority,
-        boostTime: boostTime,
-        finishTime: finishTime,
-        shouldBoost: proposalShouldBoost,
-        positiveVotes: bnum(proposalStatusVotingMachine.split(",")[0]),
-        negativeVotes: bnum(proposalStatusVotingMachine.split(",")[1]),
-        preBoostedPositiveVotes: bnum(proposalStatusVotingMachine.split(",")[2]),
-        preBoostedNegativeVotes: bnum(proposalStatusVotingMachine.split(",")[3]),
-        positiveStakes: bnum(proposalStatusVotingMachine.split(",")[4]),
-        negativeStakes: bnum(proposalStatusVotingMachine.split(",")[5]),
-        tokenRewards: tokenRewards,
-        repRewards: repRewards
-      };
-      this.cache.proposals[proposalId] = proposalSchemeInfo;
-      return this.cache.proposals[proposalId];
-    } else {
-      return undefined;
+  getProposalEvents(proposalId): {
+    votes: Vote[]
+    stakes: Stake[]
+    redeems: Redeem[]
+    redeemsRep: RedeemRep[]
+    stateChanges: ProposalStateChange[]
+  }{
+    return {
+      votes: this.getVotesOfProposal(proposalId),
+      stakes: this.getStakesOfProposal(proposalId),
+      redeems: this.getRedeemsOfProposal(proposalId),
+      redeemsRep: this.getRedeemsRepOfProposal(proposalId),
+      stateChanges: this.getProposalStateChanges(proposalId)
     }
   }
   
-  getVotes(proposalId: string): Vote[]{
-    const { blockchainStore, configStore } = this.rootStore;
-
-    let voteEvents = blockchainStore.getCachedEvents(
-      configStore.getVotingMachineAddress(), 'VoteProposal'
-    );
-    voteEvents = voteEvents.filter((vote) => {return (proposalId == vote.returnValues._proposalId)});
-    this.cache.votes = voteEvents.map((vote) => {
-      return {
-        voter: vote.returnValues._voter,
-        vote: vote.returnValues._vote,
-        amount: vote.returnValues._reputation,
-        preBoosted: false,
-        proposalId: vote.returnValues._proposalId,
-        block: vote.blockNumber,
-        tx: vote.transactionHash,
-        logIndex: vote.logIndex
-      }
-    });
-    return this.cache.votes;
+  getVotesOfProposal(proposalId: string): Vote[]{
+    return this.cache.votingMachineEvents.votes
+      .filter((vote) => {return (proposalId === vote.proposalId)});
   }
   
-  getStakes(proposalId: string): Stake[]{
-    const { blockchainStore, configStore } = this.rootStore;
+  getStakesOfProposal(proposalId: string): Stake[]{
+    return this.cache.votingMachineEvents.stakes
+      .filter((stake) => {return (proposalId === stake.proposalId)});
 
-    let stakeEvents = blockchainStore.getCachedEvents(
-      configStore.getVotingMachineAddress(), 'Stake'
-    );
-    stakeEvents = stakeEvents.filter((stake) => {return (proposalId == stake.returnValues._proposalId)});
-
-    this.cache.stakes = stakeEvents.map((stake) => {
-      return {
-        staker: stake.returnValues._staker,
-        vote: stake.returnValues._vote,
-        amount: stake.returnValues._amount,
-        amount4Bounty: bnum(0),
-        proposalId: stake.returnValues._proposalId,
-        block: stake.blockNumber,
-        tx: stake.transactionHash,
-        logIndex: stake.logIndex
-      }
-    });
-    return this.cache.stakes;
   }
   
-  getRedeems(proposalId: string): Redeem[]{
-    const { blockchainStore, configStore } = this.rootStore;
-
-    let redeemEvents = blockchainStore.getCachedEvents(
-      configStore.getVotingMachineAddress(), 'Redeem'
-    );
-    redeemEvents = redeemEvents.filter((redeem) => {return (proposalId == redeem.returnValues._proposalId)});
-
-    this.cache.redeems = redeemEvents.map((redeem) => {
-      return {
-        beneficiary: redeem.returnValues._beneficiary,
-        amount: redeem.returnValues._amount,
-        proposalId: redeem.returnValues._proposalId,
-        block: redeem.blockNumber,
-        tx: redeem.transactionHash,
-        logIndex: redeem.logIndex
-      }
-    });
-    return this.cache.redeems;
+  getRedeemsOfProposal(proposalId: string): Redeem[]{
+    return this.cache.votingMachineEvents.redeems
+      .filter((redeem) => {return (proposalId === redeem.proposalId)});
   }
   
-  getRedeemsRep(proposalId: string): RedeemRep[]{
-    const { blockchainStore, configStore } = this.rootStore;
-
-    let redeemRepEvents = blockchainStore.getCachedEvents(
-      configStore.getVotingMachineAddress(), 'RedeemRep'
-    );
-    redeemRepEvents = redeemRepEvents.filter((redeemRep) => {return (proposalId == redeemRep.returnValues._proposalId)});
-
-    this.cache.redeemsRep = redeemRepEvents.map((redeemRep) => {
-      return {
-        beneficiary: redeemRep.returnValues._beneficiary,
-        amount: redeemRep.returnValues._amount,
-        proposalId: redeemRep.returnValues._proposalId,
-        block: redeemRep.blockNumber,
-        tx: redeemRep.transactionHash,
-        logIndex: redeemRep.logIndex
-      }
-    });
-    return this.cache.redeemsRep;
+  getRedeemsRepOfProposal(proposalId: string): RedeemRep[]{
+    return this.cache.votingMachineEvents.redeemsRep
+      .filter((redeemRep) => {return (proposalId === redeemRep.proposalId)});
   }
   
   getProposalStateChanges(proposalId: string): ProposalStateChange[]{
-    const { blockchainStore, configStore } = this.rootStore;
-
-    let proposalStateChangesEvents = blockchainStore.getCachedEvents(
-      configStore.getVotingMachineAddress(), 'StateChange'
-    );
-    proposalStateChangesEvents = proposalStateChangesEvents.filter((proposalStateChange) => {
-      return (proposalId == proposalStateChange.returnValues._proposalId)
-    });
-
-    this.cache.proposalStateChanges = proposalStateChangesEvents.map((proposalStateChange) => {
-      return {
-        state: proposalStateChange.returnValues._proposalState,
-        proposalId: proposalStateChange.returnValues._proposalId,
-        block: proposalStateChange.blockNumber,
-        tx: proposalStateChange.transactionHash,
-        logIndex: proposalStateChange.logIndex
-      }
-    });
-    return this.cache.proposalStateChanges;
+    return this.cache.votingMachineEvents.proposalStateChanges
+      .filter((proposalStateChange) => {return (proposalId === proposalStateChange.proposalId)});
   }
 
   @action createProposal(
@@ -569,11 +275,16 @@ export default class DaoStore {
   
   @action approveVotingMachineToken(
   ): PromiEvent<any> {
-    const { providerStore, configStore } = this.rootStore;
+    const { providerStore, configStore, blockchainStore } = this.rootStore;
+    const votingMachineToken = blockchainStore.getCachedValue({
+        contractType: ContractType.VotingMachine,
+        address: configStore.getVotingMachineAddress(),
+        method: 'stakingToken',
+    })
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.ERC20,
-      configStore.getVotingMachineTokenAddress(),
+      votingMachineToken,
       'approve',
       [configStore.getVotingMachineAddress(), utils.bigNumberify(ethers.constants.MaxUint256)],
       {}

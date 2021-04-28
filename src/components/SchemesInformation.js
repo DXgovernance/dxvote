@@ -134,17 +134,8 @@ const SchemesInformation = observer(() => {
       )
     } else {
       const daoInfo = daoStore.getDaoInfo();
-      const schemes = [
-        Object.assign(
-          daoStore.getSchemeInfo(configStore.getSchemeAddress('masterWallet')),
-          daoStore.getSchemeProposals(configStore.getSchemeAddress('masterWallet'))
-        ),
-        Object.assign(
-          daoStore.getSchemeInfo(configStore.getSchemeAddress('quickWallet')),
-          daoStore.getSchemeProposals(configStore.getSchemeAddress('quickWallet'))
-        )
-      ];
-      return (    
+      const schemes = daoStore.getAllSchemes();
+      return (
         <SchemesTableWrapper>
           <ProposalTableHeaderActions>
             <span>Schemes</span>
@@ -159,50 +150,46 @@ const SchemesInformation = observer(() => {
           </ProposalTableHeaderWrapper>
           <TableRowsWrapper>
           {schemes.map((scheme, i) => {
-            if (scheme) {
-            
-              return (
-                <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
-                  <TableRow>
-                    <TableCell width="15%" align="left" weight='500' wrapText="true">
-                      {scheme.name}
-                    </TableCell>
-                    <TableCell width="25%" align="center">
-                      <small>Queued Proposal Period: {
-                        moment.duration(scheme.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
-                      }</small><br/>
-                      <small>Boosted Proposal Period: {
-                        moment.duration(scheme.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
-                      }</small><br/>
-                      <small>PreBoosted Proposal Period: {
-                        moment.duration(scheme.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
-                      }</small><br/>
-                      <small>Quiet Ending Period: {
-                        moment.duration(scheme.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
-                      }</small>
-                    </TableCell>
-                    <TableCell width="15%" align="center">
-                      <small>{scheme.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
-                      <small>{scheme.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
-                      <small>{scheme.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
-                      <small>{scheme.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
-                    </TableCell>
-                    <TableCell width="15%" align="center"> 
-                      {scheme.boostedProposals}
-                    </TableCell>
-                    <TableCell width="15%" align="center"> 
-                      {scheme.proposals.filter((proposal) => {
-                        return (proposal.statusPriority >=3 && proposal.statusPriority <= 6 )
-                      }).length}
-                    </TableCell>
-                    <TableCell width="15%" align="center"> 
-                      {scheme.proposalIds ? scheme.proposalIds.length : 0}
-                    </TableCell>
-                  </TableRow>
-                </Link>);
-              } else {
-                return <div/>
-              }
+            const schemeProposals = daoStore.getSchemeProposals(scheme.address);
+            return (
+              <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
+                <TableRow>
+                  <TableCell width="15%" align="left" weight='500' wrapText="true">
+                    {scheme.name}
+                  </TableCell>
+                  <TableCell width="25%" align="center">
+                    <small>Queued Proposal Period: {
+                      moment.duration(scheme.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
+                    }</small><br/>
+                    <small>Boosted Proposal Period: {
+                      moment.duration(scheme.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
+                    }</small><br/>
+                    <small>PreBoosted Proposal Period: {
+                      moment.duration(scheme.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
+                    }</small><br/>
+                    <small>Quiet Ending Period: {
+                      moment.duration(scheme.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
+                    }</small>
+                  </TableCell>
+                  <TableCell width="15%" align="center">
+                    <small>{scheme.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
+                    <small>{scheme.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
+                    <small>{scheme.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
+                    <small>{scheme.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
+                  </TableCell>
+                  <TableCell width="15%" align="center"> 
+                    {scheme.boostedProposals}
+                  </TableCell>
+                  <TableCell width="15%" align="center"> 
+                    {schemeProposals.filter((proposal) => {
+                      return (proposal.priority >=3 && proposal.priority <= 6 )
+                    }).length}
+                  </TableCell>
+                  <TableCell width="15%" align="center"> 
+                    {scheme.proposalIds ? scheme.proposalIds.length : 0}
+                  </TableCell>
+                </TableRow>
+              </Link>);
             }
           )}
           </TableRowsWrapper>

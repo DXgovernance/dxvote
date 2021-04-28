@@ -13,7 +13,6 @@ export const decodeStatus = function(
   preBoostedVotePeriodLimit,
   shouldBoost
 ) {
-  
   switch (stateInVotingMachine) {
     case "1":
       return { 
@@ -26,14 +25,14 @@ export const decodeStatus = function(
     case "2":
       if (stateInScheme == "3")
         return { 
-          status: "Executed", 
+          status: "Execution Failed", 
           priority: 2,
           boostTime: 0,
           finishTime: 0
         };
       else if (stateInScheme == "2")
         return { 
-          status: "Rejected", 
+          status: "Execution Succeded", 
           priority: 2,
           boostTime: 0,
           finishTime: 0

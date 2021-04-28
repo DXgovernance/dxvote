@@ -16,6 +16,7 @@ export enum ContractType {
     Avatar = 'Avatar',
     Controller = 'Controller',
     Reputation = 'Reputation',
+    PermissionRegistry = 'PermissionRegistry',
     VotingMachine = 'VotingMachine',
     WalletScheme = 'WalletScheme',
     Multicall = 'Multicall'

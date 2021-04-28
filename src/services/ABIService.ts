@@ -31,7 +31,7 @@ export default class ABIService {
     const contractInterface = new Interface(this.getAbi(contractType));
     const functionSignature = data.substring(0,10);
     for (const functionName in contractInterface.functions) {
-      if (contractInterface.functions[functionName].sighash == functionSignature){
+      if (contractInterface.functions[functionName].sighash === functionSignature){
         return {
           function: contractInterface.functions[functionName],
           args: library.eth.abi.decodeParameters(

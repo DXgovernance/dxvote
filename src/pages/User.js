@@ -23,14 +23,14 @@ const UserPage = () => {
           newUserActions.push({
             blockNumber: userEvents.stakes[i].blockNumber,
             proposalId: userEvents.stakes[i].returnValues._proposalId,
-            text: "Stake "+library.utils.fromWei(userEvents.stakes[i].returnValues._amount)+" DXD for "+ (userEvents.stakes[i].returnValues._vote == 1 ? 'YES' : 'NO') +" on proposal "+userEvents.stakes[i].returnValues._proposalId
+            text: "Stake "+library.utils.fromWei(userEvents.stakes[i].returnValues._amount)+" DXD for "+ (userEvents.stakes[i].returnValues._vote === 1 ? 'YES' : 'NO') +" on proposal "+userEvents.stakes[i].returnValues._proposalId
           })
         }
         for (var i = 0; i < userEvents.votes.length; i++) {
           newUserActions.push({
             blockNumber: userEvents.votes[i].blockNumber,
             proposalId: userEvents.votes[i].returnValues._proposalId,
-            text: "Vote "+library.utils.fromWei(userEvents.stakes[i].returnValues._amount)+" REP for "+ (userEvents.stakes[i].returnValues._vote == 1 ? 'YES' : 'NO') +" on proposal "+userEvents.stakes[i].returnValues._proposalId
+            text: "Vote "+library.utils.fromWei(userEvents.stakes[i].returnValues._amount)+" REP for "+ (userEvents.stakes[i].returnValues._vote === 1 ? 'YES' : 'NO') +" on proposal "+userEvents.stakes[i].returnValues._proposalId
           })
         }
         for (var i = 0; i < userEvents.proposals.length; i++) {

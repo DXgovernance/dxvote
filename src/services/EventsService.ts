@@ -1,4 +1,5 @@
 import RootStore from '../stores';
+import _ from 'lodash';
 import { ContractType } from '../stores/Provider';
 
 export interface EventCall {
@@ -30,7 +31,10 @@ export default class EventsService {
     const { providerStore } = this.rootStore;
     const contract = providerStore.getContract(providerStore.getActiveWeb3React(), contractType, address);
     console.log('Getting event',eventName, fromBlock, toBlock);
-    return await contract.getPastEvents(eventName, {fromBlock: fromBlock, toBlock: toBlock });
+    return _.orderBy( 
+      await contract.getPastEvents(eventName, {fromBlock: fromBlock, toBlock: toBlock })
+      , ["blockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc"]
+    );
   }
   
   async executeActiveEventCalls() {

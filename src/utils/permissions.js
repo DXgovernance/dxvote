@@ -61,7 +61,7 @@ const hexToBinary = function(hexString) {
 
   var ret = "";
   for (var i = 0, len = hexString.length; i < len; i++) {
-    if (hexString[ i ] != "0")
+    if (hexString[ i ] !== "0")
       ret += lookup[ hexString[ i ] ];
   }
   return ret;
@@ -84,9 +84,9 @@ export const encodePermission = function(permissions) {
 export const decodePermission = function(permission) {
   permission = hexToBinary(permission);
   return {
-    canGenericCall: permission[ 3 ] == "1",
-    canUpgrade: permission[ 4 ] == "1",
-    canChangeConstraints: permission[ 5 ] == "1",
-    canRegisterSchemes: permission[ 6 ] == "1"
+    canGenericCall: permission[ 3 ] === "1",
+    canUpgrade: permission[ 4 ] === "1",
+    canChangeConstraints: permission[ 5 ] === "1",
+    canRegisterSchemes: permission[ 6 ] === "1"
   };
 }
