@@ -363,7 +363,7 @@ const ProposalInformation = observer(() => {
                   <br/> 
                   {pEvents.votes && pEvents.votes.map(function(voteEvent, i){
                     if (voteEvent.vote === "1")
-                      return <small color="green"><Address size="short" type="user" address={voteEvent.voter}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %<br/></small>
+                      return <small color="green" key={`voteUp${i}`}><Address size="short" type="user" address={voteEvent.voter}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %<br/></small>
                   })}
                 </span>
                 <span style={{width: "50%", textAlign:"center", color: "red"}}>
@@ -372,7 +372,7 @@ const ProposalInformation = observer(() => {
                   <br/> 
                   {pEvents && pEvents.votes.map(function(voteEvent, i){
                     if (voteEvent.vote === "2")
-                      return <small color="red"><Address size="short" type="user" address={voteEvent.voter}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %<br/></small>
+                      return <small color="red" key={`voteDown${i}`}><Address size="short" type="user" address={voteEvent.voter}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %<br/></small>
                   })}
                 </span>
               </SidebarRow>
@@ -409,7 +409,7 @@ const ProposalInformation = observer(() => {
                   <br/> 
                   {pEvents && pEvents.stakes.map(function(stakeEvent, i){
                     if (stakeEvent.vote === "1")
-                      return <small color="green"><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD<br/> </small>
+                      return <small color="green" key={`stakeUp${i}`}><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD<br/> </small>
                   })}
                 </span>
                 <span style={{width: "50%", textAlign:"center", color: "red"}}>
@@ -418,7 +418,7 @@ const ProposalInformation = observer(() => {
                   <br/> 
                   {pEvents && pEvents.stakes.map(function(stakeEvent, i){
                     if (stakeEvent.vote === "2")
-                      return <small color="red"><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD<br/> </small>
+                      return <small color="red" key={`stakeDown${i}`}><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD<br/> </small>
                   })}
                 </span>
               </SidebarRow>
