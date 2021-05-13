@@ -89,7 +89,7 @@ const SchemePage = observer(() => {
           </SchemeInformationWrapper>
       )
     } else {
-      const schemeInfo = daoStore.getSchemeInfo(schemeAddress);
+      const schemeInfo = daoStore.getScheme(schemeAddress);
       return (
         <SchemeInformationWrapper>
           <h2>Address: {schemeInfo.address}</h2>
