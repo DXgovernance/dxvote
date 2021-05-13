@@ -160,7 +160,8 @@ async function main() {
     masterWalletSchemeParamsHash,
     controller.address,
     permissionRegistry.address,
-    "Master Wallet"
+    "Master Wallet",
+    86400
   );
   await controller.registerScheme(
     masterWalletScheme.address,
@@ -227,7 +228,8 @@ async function main() {
     quickWalletSchemeParamsHash,
     NULL_ADDRESS,
     permissionRegistry.address,
-    "Quick Wallet"
+    "Quick Wallet",
+    86400
   );
   
   await controller.registerScheme(
@@ -396,6 +398,7 @@ async function main() {
     controller: controller.address,
     reputation: reputation.address,
     votingMachine: dxdVotingMachine.address,
+    votingMachineToken: votingMachineToken.address,
     permissionRegistry: permissionRegistry.address,
     multicall: multicall.address,
     fromBlock: 1
