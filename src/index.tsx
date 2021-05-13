@@ -7,6 +7,16 @@ import * as serviceWorker from './serviceWorker';
 import { web3ContextNames } from 'provider/connectors';
 import ThemeProvider, { GlobalStyle } from './theme';
 import Web3 from 'web3';
+import moment from 'moment';
+
+moment.updateLocale('en', {
+  relativeTime : {
+    s: "1 second",
+    m: "1 minute",
+    h: "1 hour",
+    d:  "1 day",
+  }
+});
 
 const Web3ProviderInjected = createWeb3ReactRoot(web3ContextNames.injected);
 
