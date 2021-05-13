@@ -186,6 +186,11 @@ export default class BlockchainStore {
       address: configStore.getVotingMachineAddress(),
       method: 'orgBoostedProposalsCnt',
       params: [library.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
+    },{
+      contractType: ContractType.WalletScheme,
+      address: schemeAddress,
+      method: 'maxSecondsForExecution',
+      params: []
     }]);
     await this.executeAndUpdateMulticall(multicallService);
     
@@ -256,7 +261,7 @@ export default class BlockchainStore {
           params: schemeProposalIds[pIndex]
       });
       if (proposalInformation && proposalInformation.split(",").length > 0)
-        ipfsService.call(proposalInformation.split(",")[proposalInformation.split(",").length -1]);
+        ipfsService.call(proposalInformation.split(",")[proposalInformation.split(",").length -2]);
         
       const proposalCallBackInformation = this.getCachedValue({
           contractType: schemeContract,
@@ -305,9 +310,17 @@ export default class BlockchainStore {
       params: [library.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
     })
     
+    const maxSecondsForExecution = this.rootStore.blockchainStore.getCachedValue({
+      contractType: ContractType.WalletScheme,
+      address: schemeAddress,
+      method: 'maxSecondsForExecution',
+      params: []
+    })
+    
     cacheToUpdate.schemes[schemeAddress].ethBalance = ethBalance;
     cacheToUpdate.schemes[schemeAddress].proposalIds = proposalIds;
     cacheToUpdate.schemes[schemeAddress].boostedProposals = boostedProposals;
+    cacheToUpdate.schemes[schemeAddress].maxSecondsForExecution = maxSecondsForExecution;
     
     return cacheToUpdate;
   }
@@ -386,15 +399,16 @@ export default class BlockchainStore {
         proposalShouldBoost
       );
       let proposalValues = proposalSchemeInfoDivided.slice((proposalSchemeInfoDivided.length - 3) / 3 * 2, proposalSchemeInfoDivided.length - 3);
+
       const proposalSchemeInfo = {
         id: proposalId,
         scheme: schemeAddress,
-        to: proposalSchemeInfoDivided.slice(0, (proposalSchemeInfoDivided.length - 3) / 3),
-        callData: proposalSchemeInfoDivided.slice((proposalSchemeInfoDivided.length - 3) / 3, (proposalSchemeInfoDivided.length - 3) / 3 * 2),
+        to: proposalSchemeInfoDivided.slice(0, (proposalSchemeInfoDivided.length - 4) / 3),
+        callData: proposalSchemeInfoDivided.slice((proposalSchemeInfoDivided.length - 4) / 3, (proposalSchemeInfoDivided.length - 4) / 3 * 2),
         values: proposalValues.map((value) => {return bnum(value)}),
-        stateInScheme: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 3],
-        title: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 2],
-        descriptionHash: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 1],
+        stateInScheme: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 4],
+        title: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 3],
+        descriptionHash: proposalSchemeInfoDivided[proposalSchemeInfoDivided.length - 2],
         creationBlock: proposalCallbackInformation.split(",")[0],
         repAtCreation: bnum(repAtCreation),
         stateInVotingMachine: votingMachineDataDivided[2],
@@ -534,7 +548,8 @@ export default class BlockchainStore {
           proposalIds: [],
           boostedProposals: await votingMachine.orgBoostedProposalsCnt.call(
             library.utils.soliditySha3(schemeContract.address, configStore.getAvatarAddress())
-          )
+          ),
+          maxSecondsForExecution: await schemeContract.maxSecondsForExecution.call()
         };
       
       // If scheme parameters and permissions are updated

@@ -139,6 +139,7 @@ interface SchemeInfo {
   permissions: SchemePermissions;
   proposalIds: string[];
   boostedProposals: number;
+  maxSecondsForExecution: typeof BigNumber;
 }
 
 interface DaoInfo {
@@ -312,7 +313,8 @@ async function main() {
         proposalIds: [],
         boostedProposals: await votingMachine.orgBoostedProposalsCnt.call(
           web3.utils.soliditySha3(schemeContract.address, avatar.address)
-        )
+        ),
+        maxSecondsForExecution: await schemeContract.maxSecondsForExecution.call()
       };
     
     // Mark scheme as not registered but save all previous data

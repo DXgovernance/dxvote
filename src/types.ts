@@ -54,7 +54,6 @@ export interface ContractStorage {
   }
 };
 
-
 // DaoStore types
 
 export interface UserInfo {
@@ -200,6 +199,7 @@ export interface Scheme {
   permissions: SchemePermissions;
   proposalIds: string[];
   boostedProposals: number;
+  maxSecondsForExecution: BigNumber;
 }
 
 export interface DaoInfo {

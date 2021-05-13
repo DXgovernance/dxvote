@@ -74,7 +74,6 @@ export default class UserStore {
       dxdBalance,
       dxdApproved
     };
-    return this.userInfo;
   }
   
 }
