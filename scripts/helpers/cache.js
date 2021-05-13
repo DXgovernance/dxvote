@@ -9,9 +9,9 @@ BigNumber.config({
   DECIMAL_PLACES: 18,
 });
 
-const MAX_BLOCKS_PER_EVENTS_FETCH = process.env.MAX_BLOCKS_PER_EVENTS_FETCH || 100000;
+const contractsFile = require('../../src/config/contracts.json');
 
-const RINKEBY_CONFIG = require('../../src/config/rinkeby.json');
+const MAX_BLOCKS_PER_EVENTS_FETCH = process.env.MAX_BLOCKS_PER_EVENTS_FETCH || 100000;
 
 const getConfig = function(network) {
   if (network === 'localhost') {
@@ -24,10 +24,8 @@ const getConfig = function(network) {
       multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ""),
       fromBlock: 0
     }
-  } else if (network === 'rinkeby') {
-    return RINKEBY_CONFIG;
   } else {
-    return {};
+    return contractsFile[network];
   }
 }
 

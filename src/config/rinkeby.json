@@ -1,9 +1,0 @@
-{
-  "avatar": "0xb4F966467C67F5A2676f8FafBc4E9A0940b8e87B",
-  "controller": "0x6076adBa18948b1cb37004a9C6Caec4Efda622D1",
-  "reputation": "0xA683750a9FCCAdcaA63367623B014321073B0155",
-  "permissionRegistry": "0xe3c2241c5bAA2F421EDBBc0734B098597BBF1439",
-  "votingMachine": "0x2467c2f5E07A122EF65fAEfb78B2ad1D3f3aCDC8",
-  "multicall": "0xa1b0a36c7aE04A84EBF493e03dF0aC295eE90747",
-  "fromBlock": 8452678
-}
