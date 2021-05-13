@@ -1,4 +1,4 @@
-import { action, observable } from 'mobx';
+import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
 import { ethers } from 'ethers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
@@ -35,22 +35,33 @@ enum ERRORS {
 }
 
 export default class ProviderStore {
-    @observable provider: any;
-    @observable accounts: string[];
-    @observable defaultAccount: string | null;
-    @observable web3Contexts: object;
-    @observable blocknumber: number;
-    @observable supportedNetworks: number[];
-    @observable chainData: ChainData;
-    @observable activeChainId: number;
-    @observable activeFetchLoop: any;
-    @observable activeAccount: string;
+    provider: any;
+    accounts: string[];
+    defaultAccount: string | null;
+    web3Contexts: object;
+    supportedNetworks: number[];
+    chainData: ChainData;
+    activeChainId: number;
+    activeFetchLoop: any;
+    activeAccount: string;
     rootStore: RootStore;
 
     constructor(rootStore) {
-        this.rootStore = rootStore;
-        this.web3Contexts = {};
-        this.chainData = { currentBlockNumber: -1 } as ChainData;
+      this.rootStore = rootStore;
+      this.web3Contexts = {};
+      this.chainData = { currentBlockNumber: -1 } as ChainData;
+      makeObservable(this, {
+          provider: observable,
+          accounts: observable,
+          chainData: observable, 
+          activeChainId: observable, 
+          activeFetchLoop: observable, 
+          activeAccount: observable,
+          setCurrentBlockNumber: action,
+          setActiveAccount: action,
+          fetchUserBlockchainData: action
+        }
+      );
     }
 
     isFresh(blocknumber: number): boolean {
@@ -69,15 +80,15 @@ export default class ProviderStore {
         return this.chainData.currentBlockNumber;
     }
 
-    @action setCurrentBlockNumber(blocknumber): void {
+    setCurrentBlockNumber(blocknumber): void {
         this.chainData.currentBlockNumber = blocknumber;
     }
 
-    @action setActiveAccount(account: string) {
+    setActiveAccount(account: string) {
         this.activeAccount = account;
     }
 
-    @action fetchUserBlockchainData = async (
+    fetchUserBlockchainData = async (
         web3React: Web3ReactContextInterface,
         account: string
     ) => {

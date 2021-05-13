@@ -1,16 +1,21 @@
-import { action, observable } from 'mobx';
+import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
 import { getConfig } from '../config';
 import { _ } from 'lodash';
 import { CHAIN_NAME_BY_ID } from '../provider/connectors';
 
 export default class ConfigStore {
-    @observable darkMode: boolean;
+    darkMode: boolean;
     rootStore: RootStore;
 
     constructor(rootStore) {
       this.rootStore = rootStore;
       this.darkMode = false;
+      makeObservable(this, {
+          darkMode: observable,
+          toggleDarkMode: action
+        }
+      );
     }
     
     getActiveChainName() {
@@ -33,7 +38,7 @@ export default class ConfigStore {
       localStorage.setItem('dxvote-'+service, key);
     }
     
-    @action toggleDarkMode() {
+    toggleDarkMode() {
         this.darkMode = !this.darkMode;
     }
 

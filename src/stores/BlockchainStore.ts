@@ -1,5 +1,5 @@
 import RootStore from 'stores';
-import { action, observable } from 'mobx';
+import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
@@ -10,14 +10,21 @@ import { decodeStatus } from '../utils/proposals';
 import { bnum } from '../utils/helpers';
 
 export default class BlockchainStore {
-  @observable activeFetchLoop: boolean = false;
-  @observable initialLoadComplete: boolean;
+  activeFetchLoop: boolean = false;
+  initialLoadComplete: boolean;
   contractStorage: ContractStorage = {};
   eventsStorage: EventStorage = {};
   rootStore: RootStore;
 
   constructor(rootStore) {
     this.rootStore = rootStore;
+    makeObservable(this, {
+        activeFetchLoop: observable,
+        initialLoadComplete: observable,
+        updateStore: action,
+        fetchData: action
+      }
+    );
   }
 
   reduceMulticall(calls: Call[], results: any, blockNumber: number): CallEntry[] {
@@ -86,7 +93,7 @@ export default class BlockchainStore {
     }
   }
 
-  @action updateStore(entries: CallEntry[], blockNumber: number) {
+  updateStore(entries: CallEntry[], blockNumber: number) {
     entries.forEach((entry) => {
       const params = entry.params ? entry.params : [];
       if (!this.contractStorage[entry.contractType]) {
@@ -684,7 +691,7 @@ export default class BlockchainStore {
     return cache;
   }
     
-  @action async fetchData(web3React: Web3ReactContextInterface) {
+  async fetchData(web3React: Web3ReactContextInterface) {
     if (!this.activeFetchLoop && web3React && web3React.active && isChainIdSupported(web3React.chainId)) {
       this.activeFetchLoop = true;
       const { library, account, chainId } = web3React;
@@ -693,7 +700,8 @@ export default class BlockchainStore {
         configStore,
         multicallService,
         transactionStore,
-        daoStore
+        daoStore,
+        userStore
       } = this.rootStore;
 
       const blockNumber = await library.eth.getBlockNumber();
@@ -763,7 +771,8 @@ export default class BlockchainStore {
         }]);
         
         await this.executeAndUpdateMulticall(multicallService);
-        
+        userStore.update();
+
         newCache.daoInfo.totalRep = this.rootStore.blockchainStore.getCachedValue({
           contractType: ContractType.Reputation,
           address: configStore.getReputationAddress(),

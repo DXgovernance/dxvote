@@ -27,7 +27,8 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "allowUnreachableCode": false,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "useDefineForClassFields": true
   },
   "include": [
     "src",

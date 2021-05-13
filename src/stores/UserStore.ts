@@ -1,3 +1,4 @@
+import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
 import { ContractType } from './Provider';
 import { bnum } from '../utils/helpers';
@@ -10,9 +11,25 @@ export default class UserStore {
 
   constructor(rootStore) {
     this.rootStore = rootStore;
+    this.userInfo = {
+      address: rootStore.providerStore.getActiveWeb3React(),
+      ethBalance: bnum(0),
+      repBalance: bnum(0),
+      dxdBalance: bnum(0),
+      dxdApproved: bnum(0)
+    };
+    makeObservable(this, {
+        userInfo: observable,
+        update: action
+      }
+    );
+  }
+  
+  getUserInfo() {
+    return this.userInfo;
   }
 
-  getUserInfo(): UserInfo {
+  update() {
     const { configStore, providerStore, blockchainStore } = this.rootStore;
     const { account } = providerStore.getActiveWeb3React();
     

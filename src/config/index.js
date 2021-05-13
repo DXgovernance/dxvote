@@ -13,7 +13,6 @@ export const getConfig = function(network) {
       fromBlock: 1
     }
   } else {
-    console.log(contractsFile,network)
     return contractsFile[network];
   };
 }
