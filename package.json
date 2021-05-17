@@ -91,6 +91,7 @@
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/cli": "^2.8.2",
     "@openzeppelin/upgrades": "^2.8.0",
+    "arb-ethers-web3-bridge": "^0.7.3",
     "ganache-cli": "^6.9.1",
     "hardhat": "^2.2.0",
     "hardhat-dependency-compiler": "^1.1.1",

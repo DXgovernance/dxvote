@@ -53,13 +53,12 @@ module.exports = {
       gasLimit: 9000000,
       gasPrice: 1000000000 // 1 gwei
     },
-    arbitrum: {
-      url: 'https://kovan4.arbitrum.io/rpc',
+    "arbitrum-testnet-v5": {
+      url: 'https://kovan5.arbitrum.io/rpc',
       accounts: { mnemonic: MNEMONIC },
       gasPrice: 0,
-      chainId: 212984383488152,
-      timeout: 60000,
-      networkCheckTimeout: 1000000
-    },
+      chainId: 144545313136048,
+      timeout: 60000
+    }
   }
 };

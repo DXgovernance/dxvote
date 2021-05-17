@@ -9,5 +9,16 @@
     "votingMachine": "0x6a0c5980630B6ff3a0a2144A7A263ddaDc6B6c68",
     "votingMachineToken": "0xD0FD02F03a6Ba88E57A9823f9945ea3272EC00Ae",
     "permissionRegistry": "0xC8eAF08547B71d0b9a01c1BdC2173C90AC1271a0"
+  },
+  "arbitrum-testnet-v5": {
+    "multicall": "0x302760626AB835466626D3676D62903eD1FBDFdB",
+    "fromBlock": 4642,
+    "reputation": "0xDEd01041163211f3D707FD83465935F2F3bAd352",
+    "token": "0x813396B95E972EE01384efd9Ba9696B00C62290A",
+    "avatar": "0x20b1bc5503134BdE10D64E30D6dd7Bb65431D572",
+    "controller": "0x9656ad93A2E2D2F800F4f9E74613B01a5afbaDD0",
+    "votingMachine": "0x2B122a56c4305386124816e5A8ff63E0186Dd3e9",
+    "votingMachineToken": "0x3172eDDa6ff8B2b2Fa7FeD40EE1fD92F1F4dd424",
+    "permissionRegistry": "0x8D82E9985f6a6D5114A702b40bc53FfdcB7F07eC"
   }
 }
