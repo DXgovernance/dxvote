@@ -55,6 +55,9 @@ cp artifacts/dxdao-contracts/contracts/schemes/WalletScheme.sol/WalletScheme.jso
 cp artifacts/dxdao-contracts/contracts/schemes/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
 yarn hardhat run --network localhost scripts/deployLocalContracts.js
 
+# Copy dxdao contracts addresses in live networks
+cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
+
 # Disable isolatedModules in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = false' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json

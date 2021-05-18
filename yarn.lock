@@ -8191,9 +8191,9 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-"dxdao-contracts@git://github.com/AugustoL/dxdao-contracts.git#arbitrum-deployment":
+"dxdao-contracts@git://github.com/AugustoL/dxdao-contracts.git#04557b52199040d61d9324131a9789d149ce17b9":
   version "0.0.1"
-  resolved "git://github.com/AugustoL/dxdao-contracts.git#0824a5f2e03b6af5afc07b422b57fd61f657c4b0"
+  resolved "git://github.com/AugustoL/dxdao-contracts.git#04557b52199040d61d9324131a9789d149ce17b9"
   dependencies:
     "@daostack/infra" "0.0.1-rc.19"
     "@maticnetwork/eth-decoder" "0.0.2"

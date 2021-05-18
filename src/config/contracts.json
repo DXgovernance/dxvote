@@ -1,24 +1,32 @@
 {
   "rinkeby": {
-    "multicall": "0x9A08D99D3c41043CD8F38664B11aEa25154EA05B",
-    "fromBlock": 8574267,
-    "reputation": "0x6dBB0d6224175ED87c51A7603638Dbb298CBb414",
-    "token": "0x76cD5Fffa3552380Bb2D734836D24e0f15b09d22",
-    "avatar": "0xBaaa34778f23A9982364Cfd5679A3F8589E9a734",
-    "controller": "0xf2ffF257c2D34e91A555af98d3E57BD41734A1d5",
-    "votingMachine": "0x6a0c5980630B6ff3a0a2144A7A263ddaDc6B6c68",
-    "votingMachineToken": "0xD0FD02F03a6Ba88E57A9823f9945ea3272EC00Ae",
-    "permissionRegistry": "0xC8eAF08547B71d0b9a01c1BdC2173C90AC1271a0"
+    "schemes": {
+      "masterWallet": "0xAe1288f5352BD64De87358e32816EED521C149A2",
+      "quickWallet": "0xf3B71f79bB0FE187fe0cC223a8B90e1d5fc3e5c0"
+    },
+    "multicall": "0xE91E339E2c91a3Aa45Edb35f89B62eE633832307",
+    "fromBlock": 8608362,
+    "reputation": "0x4e2a8FCdaBE455098F2D9D1feC7D3937DAcE41C1",
+    "token": "0x68a5aFf26FfA82f535d1FaBc9272EECAEcE07d8D",
+    "avatar": "0xeF2144995fF10da8916591343D988a7160596a7C",
+    "controller": "0xCe7175eE461d1Ce20B34f156A6605CBaecB40874",
+    "votingMachine": "0x1e7E6E0d39B4A25a657a4891884baa715594C2AE",
+    "votingMachineToken": "0x5053f7AeFF832b713e9b9c29793997507BeDbd8a",
+    "permissionRegistry": "0x2C33E92b54a1B5e01032cb7709132De48BA80a4a"
   },
   "arbitrum-testnet-v5": {
-    "multicall": "0x302760626AB835466626D3676D62903eD1FBDFdB",
-    "fromBlock": 4642,
-    "reputation": "0xDEd01041163211f3D707FD83465935F2F3bAd352",
-    "token": "0x813396B95E972EE01384efd9Ba9696B00C62290A",
-    "avatar": "0x20b1bc5503134BdE10D64E30D6dd7Bb65431D572",
-    "controller": "0x9656ad93A2E2D2F800F4f9E74613B01a5afbaDD0",
-    "votingMachine": "0x2B122a56c4305386124816e5A8ff63E0186Dd3e9",
-    "votingMachineToken": "0x3172eDDa6ff8B2b2Fa7FeD40EE1fD92F1F4dd424",
-    "permissionRegistry": "0x8D82E9985f6a6D5114A702b40bc53FfdcB7F07eC"
+    "schemes": {
+      "masterWallet": "0x05a28eE1EeeE05A5ab66E18c08C417860a607d81",
+      "quickWallet": "0x3B9C22dd8e947790d9Fec5b147658839ceCBEf26"
+    },
+    "multicall": "0x74E5874B6f1ac04aD644F1898913683b25728015",
+    "fromBlock": 26225,
+    "reputation": "0xaa6EC1504F00DD66B8E943EfE188711a73677748",
+    "token": "0x9C0Ce622D4EFe9b4B10bB81409B8d6AFD88d8B9d",
+    "avatar": "0xA4e0B135d4b6F72041776255Cf8EA6539c1e369B",
+    "controller": "0xe3A46a74188160780f8723c686f490363045FF72",
+    "votingMachine": "0x2bD961624a2ba72af2de46A0d886237C5e19AC19",
+    "votingMachineToken": "0xAaafce0cfB6f420eED55717B75E8205c4f7744a3",
+    "permissionRegistry": "0x2E9d91b196e8Ce1707A45B2903e55201EB1D6f87"
   }
 }
