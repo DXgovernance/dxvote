@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
+import Address from '../components/common/Address';
 import { Link, useLocation } from 'react-router-dom';
 import moment from 'moment';
 
@@ -45,10 +46,7 @@ const SchemeInformationBox = styled.div`
   flex-direction: column;
   text-align: center;
   width: fit-content;
-  
-  h3 {
-    margin: 5px 0px;
-  }
+  padding: 5px 0px;
 `;
 
 const Row = styled.div`
@@ -92,15 +90,17 @@ const SchemePage = observer(() => {
       const schemeInfo = daoStore.getScheme(schemeAddress);
       return (
         <SchemeInformationWrapper>
-          <h2>Address: {schemeInfo.address}</h2>
+          <h2>Address: <Address size="long" address={schemeInfo.address}/></h2>
           <h3>Scheme ETH Balance: {Number(library.utils.fromWei(schemeInfo.ethBalance.toString())).toFixed(2)} ETH</h3>
+          <hr width="100%"/>
           <h3>Permissions</h3>
           <h4>Generic Call from Avatar: {schemeInfo.permissions.canGenericCall.toString()}</h4>
           <h4>Upgrade Controller: {schemeInfo.permissions.canUpgrade.toString()}</h4>
           <h4>Change Constraints: {schemeInfo.permissions.canChangeConstraints.toString()}</h4>
           <h4>Add/Remove Schemes: {schemeInfo.permissions.canRegisterSchemes.toString()}</h4>
+          <hr width="100%"/>
           <h3>Voting Machine Configuration</h3>
-          <h4>Voting Machine Configuration Parameters Hash: {schemeInfo.parametersHash}</h4>
+          <h4>Voting Machine Configuration Parameters Hash: {schemeInfo.paramsHash}</h4>
           <h4>Required Percentage for approval: {schemeInfo.parameters.queuedVoteRequiredPercentage.toString()} %</h4>
           <h4>Queued Proposal Period: {
             moment.duration(schemeInfo.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
