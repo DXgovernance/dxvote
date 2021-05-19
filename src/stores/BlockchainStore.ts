@@ -779,6 +779,11 @@ export default class BlockchainStore {
           method: 'getEthBalance',
           params: [configStore.getAvatarAddress()],
         },{
+          contractType: ContractType.ERC20,
+          address: votingMachineToken,
+          method: 'balanceOf',
+          params: [configStore.getAvatarAddress()],
+        },{
           contractType: ContractType.Multicall,
           address: configStore.getMulticallAddress(),
           method: 'getEthBalance',
@@ -802,7 +807,12 @@ export default class BlockchainStore {
           params: [configStore.getAvatarAddress()]
         })
         
-        newCache.daoInfo.dxdBalance = bnum("0");
+        newCache.daoInfo.dxdBalance = this.rootStore.blockchainStore.getCachedValue({
+          contractType: ContractType.ERC20,
+          address: votingMachineToken,
+          method: 'balanceOf',
+          params: [configStore.getAvatarAddress()]
+        });
         
         newCache.blockNumber = blockNumber;
         providerStore.setCurrentBlockNumber(blockNumber);
