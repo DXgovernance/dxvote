@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
+import Address from '../components/common/Address';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 const DaoInfoWrapper = styled.div`
     width: 100%;
     background: white;
-    padding: 10px 0px;
+    padding: 10px 10px;
     border: 1px solid var(--medium-gray);
     margin-top: 24px;
     font-weight: 400;
@@ -17,7 +18,8 @@ const DaoInfoWrapper = styled.div`
     display: flex;
     justify-content: center;
     flex-direction: column;
-    
+    color: var(--dark-text-gray);
+
     .loader {
       text-align: center;
       font-family: Roboto;
@@ -31,12 +33,6 @@ const DaoInfoWrapper = styled.div`
       img {
         margin-bottom: 10px;
       }
-    }
-    
-    h3 {
-      color: var(--dark-text-gray);
-      margin: 5px 10px;
-      font-size: 18px;
     }
 `;
 
@@ -74,7 +70,6 @@ const TableHeader = styled.div`
 
 const TableRowsWrapper = styled.div`
     overflow-y: scroll;
-    /* height: 260px; */
 `;
 
 const TableRow = styled.div`
@@ -141,33 +136,31 @@ const DaoInformation = observer(() => {
     } else {
       const daoInfo = daoStore.getDaoInfo();
       const assets = [{
-        name: "ETH", amount: parseFloat(Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(4)), usdValue: "..."
+        name: "ETH", amount: parseFloat(Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(4))
+      },{
+        name: "DXD", amount: parseFloat(Number(library.utils.fromWei(daoInfo.dxdBalance.toString())).toFixed(4))
       }];
-      return (    
+      return (
         <DaoInfoWrapper>
-          <h3>Address: {daoInfo.address}</h3>
+          <h2>Address: <Address size="long" address={daoInfo.address}/></h2>
           <h3>Total REP: {parseFloat(Number(library.utils.fromWei(daoInfo.totalRep.toString())).toFixed(4))}</h3>
           <AssetsTableHeaderActions>
             <span>Dao Funds</span>
           </AssetsTableHeaderActions>
           <AssetsTableHeaderWrapper>
-              <TableHeader width="40%" align="left"> Asset </TableHeader>
-              <TableHeader width="30%" align="center"> Amount </TableHeader>
-              <TableHeader width="30%" align="center"> USD Value </TableHeader>
+              <TableHeader width="50%" align="center"> Asset </TableHeader>
+              <TableHeader width="50%" align="center"> Amount </TableHeader>
           </AssetsTableHeaderWrapper>
           <TableRowsWrapper>
           {assets.map((asset, i) => {
             if (asset) {
               return (
                 <TableRow>
-                  <TableCell width="40%" align="left" weight='500' wrapText="true">
+                  <TableCell width="50%" align="center" weight='500' wrapText="true">
                     {asset.name}
                   </TableCell>
-                  <TableCell width="30%" align="center"> 
+                  <TableCell width="50%" align="center"> 
                     {asset.amount}
-                  </TableCell>
-                  <TableCell width="30%" align="center"> 
-                    {asset.usdValue}
                   </TableCell>
                 </TableRow>);
               } else {
