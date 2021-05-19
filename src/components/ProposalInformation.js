@@ -153,7 +153,6 @@ const ProposalInformation = observer(() => {
     const { dxdBalance, dxdApproved } = userStore.getUserInfo(); 
     const {content: proposalDescription} = proposalInfo ? ipfsService.get(proposalInfo.descriptionHash) : "";
     const { active, account, library } = providerStore.getActiveWeb3React();
-    console.log(dxdApproved)
     const [votePercentage, setVotePercentage] = React.useState(100);
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [canRedeem, setCanRedeem] = React.useState(false);
@@ -295,9 +294,12 @@ const ProposalInformation = observer(() => {
         daoStore.execute(proposalId);
       };
       
+      const proposalHistory = daoStore.getProposalHistory(proposalId);
+
       return (
           <ProposalInformationWrapper>
             <ProposalInfoSection>
+              <h1> {proposalInfo.title} </h1>
               <MDEditor.Markdown source={
                 proposalDescription.length === 0
                   ? "## Getting proposal description from IPFS..."
@@ -305,12 +307,22 @@ const ProposalInformation = observer(() => {
                 } style={{
                 padding: "20px 10px"
               }} />
-              <h2> Actions </h2>
+              <hr/>
+              <h2> Calls </h2>
               {proposalInfo.to.map((to, i) => {
                 return(
                 <div key={"proposalCall"+i}>
                   <span> {proposalInfo.proposalCallText[i]} </span> 
                   {i < proposalInfo.to.length - 1 ? <hr/> : <div/>}
+                </div>);
+              })}
+              <hr/>
+              <h2> History </h2>
+              {proposalHistory.map((historyEvent, i) => {
+                return(
+                <div key={"proposalHistoryEvent"+i}>
+                  <span> {historyEvent.text} </span> 
+                  {i < proposalHistory.length - 1 ? <hr/> : <div/>}
                 </div>);
               })}
             </ProposalInfoSection>
@@ -344,11 +356,15 @@ const ProposalInformation = observer(() => {
               
               <SidebarDivider/> 
 
-              <SidebarRow style={{
-                margin: "0px 10px",
-                padding: "10px 0px"
-              }}>
+              <SidebarRow style={{ margin: "0px 10px", padding: "10px 0px", flexDirection: "column" }}>
                 <span> <strong>Proposer</strong> <Address type="user" address={proposalInfo.proposer}/> </span>
+                <span> <strong>Submitted Time</strong> <small>{moment.unix(proposalInfo.submittedTime.toString()).format("MMMM Do YYYY, h:mm:ss")}</small> </span>
+                <span> <strong>Boosted Time</strong> <small>{
+                  proposalInfo.boostedPhaseTime > 0 ?
+                    moment.unix(proposalInfo.boostedPhaseTime.toString()).format("MMMM Do YYYY, h:mm:ss")
+                  : "-"
+                }</small> </span>
+                <span> <strong>Finish Time</strong> <small>{moment.unix(proposalInfo.finishTime.toString()).format("MMMM Do YYYY, h:mm:ss")}</small> </span>
               </SidebarRow>
               
               <SidebarDivider/> 

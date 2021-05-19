@@ -2,6 +2,7 @@ import RootStore from 'stores';
 import { BigNumber } from '../utils/bignumber';
 import { ContractType } from './Provider';
 import { action } from 'mobx';
+import _ from 'lodash';
 import { bnum } from '../utils/helpers';
 import { ethers, utils } from 'ethers';
 import PromiEvent from 'promievent';
@@ -14,7 +15,8 @@ import {
   Proposal,
   Scheme,
   DaoInfo,
-  DaoNetworkCache
+  DaoNetworkCache,
+  VotingMachineEvent
 } from '../types';
 
 const CACHE = require('../cache.json');
@@ -209,6 +211,79 @@ export default class DaoStore {
       redeemsRep: this.getRedeemsRepOfProposal(proposalId),
       stateChanges: this.getProposalStateChanges(proposalId)
     }
+  }
+  
+  getProposalHistory(proposalId): {
+    text: string,
+    event: VotingMachineEvent
+  }[] {
+    const proposalEvents = this.getProposalEvents(proposalId);
+    let allEvents : {
+      text: string,
+      event: VotingMachineEvent
+    }[] = proposalEvents.votes.map((event) => {
+      return {
+        text: `Vote from ${event.voter} on decision ${event.vote}`,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    }).concat(proposalEvents.stakes.map((event) => {
+      return {
+        text: `Stake from ${event.staker} on decision ${event.vote}`,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    })).concat(proposalEvents.redeems.map((event) => {
+      return {
+        text: `DXD Redeem from ${event.beneficiary} of ${event.amount}`,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    })).concat(proposalEvents.redeemsRep.map((event) => {
+      return {
+        text: `REP Redeem from ${event.beneficiary} of ${event.amount}`,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    })).concat(proposalEvents.stateChanges.map((event) => {
+      return {
+        text: `Proposal change to state ${event.state}`,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    }))
+    allEvents = _.orderBy(
+      allEvents,
+      ["event.blockNumber", "event.transactionIndex", "event.logIndex"],
+      ["asc","asc","asc"]
+    );
+
+    return _.reverse(allEvents);
   }
   
   getVotesOfProposal(proposalId: string): Vote[]{
