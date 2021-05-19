@@ -45,7 +45,10 @@ const UserAddress = ({ address, size, type }) => {
             return `${window.location.pathname}#/user/${address}`;
           break;
           default:
-            return `https://${networkName}.etherscan.io/address/${address}`
+            if (networkName == 'arbitrum-testnet-v5')
+              return `https://explorer5.arbitrum.io/#/address/${address}`
+            else
+              return `https://${networkName}.etherscan.io/address/${address}`
         }
     }
 
