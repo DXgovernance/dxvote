@@ -22,7 +22,7 @@ export default class MulticallService {
     const multi = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.Multicall,
-      configStore.getMulticallAddress()
+      configStore.getNetworkConfig().multicall
     );
 
     const response = await multi.methods.aggregate(rawCalls || this.activeCallsRaw).call();

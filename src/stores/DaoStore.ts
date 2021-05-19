@@ -110,19 +110,19 @@ export default class DaoStore {
 
     const totalRep = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Reputation,
-      address: configStore.getReputationAddress(),
+      address: configStore.getNetworkConfig().reputation,
       method: 'totalSupply',
       params: []
     });
     
     const ethBalance = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Multicall,
-      address: configStore.getMulticallAddress(),
+      address: configStore.getNetworkConfig().multicall,
       method: 'getEthBalance',
-      params: [configStore.getAvatarAddress()]
+      params: [configStore.getNetworkConfig().avatar]
     });
   
-    this.cache.daoInfo.address = configStore.getAvatarAddress();
+    this.cache.daoInfo.address = configStore.getNetworkConfig().avatar;
     this.cache.daoInfo.totalRep = totalRep;
     this.cache.daoInfo.ethBalance = ethBalance;
     return this.cache.daoInfo;
@@ -266,7 +266,7 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getVotingMachineAddress(),
+      configStore.getNetworkConfig().votingMachine,
       'vote',
       [proposalId, decision, amount.toString(), account],
       {}
@@ -278,7 +278,7 @@ export default class DaoStore {
     const { providerStore, configStore, blockchainStore } = this.rootStore;
     const votingMachineToken = blockchainStore.getCachedValue({
         contractType: ContractType.VotingMachine,
-        address: configStore.getVotingMachineAddress(),
+        address: configStore.getNetworkConfig().votingMachine,
         method: 'stakingToken',
     })
     return providerStore.sendTransaction(
@@ -286,7 +286,7 @@ export default class DaoStore {
       ContractType.ERC20,
       votingMachineToken,
       'approve',
-      [configStore.getVotingMachineAddress(), utils.bigNumberify(ethers.constants.MaxUint256)],
+      [configStore.getNetworkConfig().votingMachine, utils.bigNumberify(ethers.constants.MaxUint256)],
       {}
     );
   }
@@ -300,7 +300,7 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getVotingMachineAddress(),
+      configStore.getNetworkConfig().votingMachine,
       'stake',
       [proposalId, decision, amount.toString()],
       {}
@@ -314,7 +314,7 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getVotingMachineAddress(),
+      configStore.getNetworkConfig().votingMachine,
       'execute',
       [proposalId],
       {}
@@ -328,7 +328,7 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getVotingMachineAddress(),
+      configStore.getNetworkConfig().votingMachine,
       'redeem',
       [proposalId, account],
       {}

@@ -158,14 +158,14 @@ export default class BlockchainStore {
       method: 'getOrganizationProposals'
     },{
       contractType: ContractType.Multicall,
-      address: configStore.getMulticallAddress(),
+      address: configStore.getNetworkConfig().multicall,
       method: 'getEthBalance',
       params: [schemeAddress],
     },{
       contractType: ContractType.Controller,
-      address: configStore.getControllerAddress(),
+      address: configStore.getNetworkConfig().controller,
       method: 'getSchemePermissions',
-      params: [schemeAddress, configStore.getAvatarAddress()],
+      params: [schemeAddress, configStore.getNetworkConfig().avatar],
     },{
       contractType: schemeContract,
       address: schemeAddress,
@@ -183,9 +183,9 @@ export default class BlockchainStore {
       params: []
     },{
       contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
+      address: configStore.getNetworkConfig().votingMachine,
       method: 'orgBoostedProposalsCnt',
-      params: [library.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
+      params: [library.utils.soliditySha3(schemeAddress, configStore.getNetworkConfig().avatar)]
     },{
       contractType: ContractType.WalletScheme,
       address: schemeAddress,
@@ -212,25 +212,25 @@ export default class BlockchainStore {
           contractType: schemeContract,
           address: schemeAddress,
           method: 'proposalsInfo',
-          params:[configStore.getVotingMachineAddress(), schemeProposalIds[pIndex]]
+          params:[configStore.getNetworkConfig().votingMachine, schemeProposalIds[pIndex]]
         },{
           contractType: ContractType.VotingMachine,
-          address: configStore.getVotingMachineAddress(),
+          address: configStore.getNetworkConfig().votingMachine,
           method: 'proposals',
           params:[schemeProposalIds[pIndex]]
         },{
           contractType: ContractType.VotingMachine,
-          address: configStore.getVotingMachineAddress(),
+          address: configStore.getNetworkConfig().votingMachine,
           method: 'getProposalTimes',
           params:[schemeProposalIds[pIndex]]
         },{
           contractType: ContractType.VotingMachine,
-          address: configStore.getVotingMachineAddress(),
+          address: configStore.getNetworkConfig().votingMachine,
           method: 'proposalStatusWithVotes',
           params:[schemeProposalIds[pIndex]]
         },{
           contractType: ContractType.VotingMachine,
-          address: configStore.getVotingMachineAddress(),
+          address: configStore.getNetworkConfig().votingMachine,
           method: 'shouldBoost',
           params:[schemeProposalIds[pIndex]]
         }]);
@@ -245,7 +245,7 @@ export default class BlockchainStore {
     if (schemeParamHash) {
       multicallService.addCalls([{
         contractType: ContractType.VotingMachine,
-        address: configStore.getVotingMachineAddress(),
+        address: configStore.getNetworkConfig().votingMachine,
         method: 'parameters',
         params: [schemeParamHash]
       }])
@@ -267,12 +267,12 @@ export default class BlockchainStore {
           contractType: schemeContract,
           address: schemeAddress,
           method: 'proposalsInfo',
-          params: [configStore.getVotingMachineAddress(), schemeProposalIds[pIndex]]
+          params: [configStore.getNetworkConfig().votingMachine, schemeProposalIds[pIndex]]
       });
       if (proposalCallBackInformation)
         multicallService.addCalls([{
           contractType: ContractType.Reputation,
-          address: configStore.getReputationAddress(),
+          address: configStore.getNetworkConfig().reputation,
           method: 'totalSupplyAt',
           params: [proposalCallBackInformation.split(',')[0]]
         }])
@@ -286,7 +286,7 @@ export default class BlockchainStore {
     
     const ethBalance = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Multicall,
-      address: configStore.getMulticallAddress(),
+      address: configStore.getNetworkConfig().multicall,
       method: 'getEthBalance',
       params: [schemeAddress]
     });
@@ -305,9 +305,9 @@ export default class BlockchainStore {
       
     const boostedProposals = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
+      address: configStore.getNetworkConfig().votingMachine,
       method: 'orgBoostedProposalsCnt',
-      params: [library.utils.soliditySha3(schemeAddress, configStore.getAvatarAddress())]
+      params: [library.utils.soliditySha3(schemeAddress, configStore.getNetworkConfig().avatar)]
     })
     
     const maxSecondsForExecution = this.rootStore.blockchainStore.getCachedValue({
@@ -336,28 +336,28 @@ export default class BlockchainStore {
     
     const proposalVotingMachineInfoRaw = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
+      address: configStore.getNetworkConfig().votingMachine,
       method: 'proposals',
       params:[proposalId]
     });
     
     const proposalVotingMachineTimesRaw = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
+      address: configStore.getNetworkConfig().votingMachine,
       method: 'getProposalTimes',
       params:[proposalId]
     });
     
     const proposalStatusVotingMachine = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
+      address: configStore.getNetworkConfig().votingMachine,
       method: 'proposalStatusWithVotes',
       params:[proposalId]
     });
     
     const proposalShouldBoost = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.VotingMachine,
-      address: configStore.getVotingMachineAddress(),
+      address: configStore.getNetworkConfig().votingMachine,
       method: 'shouldBoost',
       params:[proposalId]
     });
@@ -366,12 +366,12 @@ export default class BlockchainStore {
       contractType: ContractType.WalletScheme,
       address: schemeAddress,
       method: 'proposalsInfo',
-      params:[configStore.getVotingMachineAddress(), proposalId]
+      params:[configStore.getNetworkConfig().votingMachine, proposalId]
     });
     
     const repAtCreation = this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Reputation,
-      address: configStore.getReputationAddress(),
+      address: configStore.getNetworkConfig().reputation,
       method: 'totalSupplyAt',
       params: [proposalCallbackInformation ? proposalCallbackInformation.split(",")[0] : 0]
     });
@@ -449,25 +449,25 @@ export default class BlockchainStore {
     const fromBlock = cache.blockNumber;
     eventsService.addEventsCalls([
       { contractType: ContractType.Controller,
-        address: configStore.getControllerAddress(),
+        address: configStore.getNetworkConfig().controller,
         eventName: "allEvents",
         fromBlock: fromBlock,
         toBlock: toBlock 
       },
       { contractType: ContractType.VotingMachine,
-        address: configStore.getVotingMachineAddress(),
+        address: configStore.getNetworkConfig().votingMachine,
         eventName: "allEvents",
         fromBlock: fromBlock,
         toBlock: toBlock 
       },
       { contractType: ContractType.PermissionRegistry,
-        address: configStore.getPermissionRegistryAddress(),
+        address: configStore.getNetworkConfig().permissionRegistry,
         eventName: "allEvents",
         fromBlock: fromBlock,
         toBlock: toBlock 
       },
       { contractType: ContractType.Reputation,
-        address: configStore.getReputationAddress(),
+        address: configStore.getNetworkConfig().reputation,
         eventName: "allEvents",
         fromBlock: fromBlock,
         toBlock: toBlock 
@@ -517,12 +517,12 @@ export default class BlockchainStore {
         const votingMachine = providerStore.getContract(
           providerStore.getActiveWeb3React(),
           ContractType.VotingMachine,
-          configStore.getVotingMachineAddress()
+          configStore.getNetworkConfig().votingMachine
         )
         const controller = providerStore.getContract(
           providerStore.getActiveWeb3React(),
           ContractType.Controller,
-          configStore.getControllerAddress()
+          configStore.getNetworkConfig().controller
         )
         const paramsHash = await schemeContract.voteParams.call();
         const controllerAddress = await schemeContract.controllerAddress.call();
@@ -542,12 +542,12 @@ export default class BlockchainStore {
           
           // Get and decode the permissions
           permissions: decodePermission(
-            await controller.getSchemePermissions.call(controllerEvent.returnValues._scheme, configStore.getAvatarAddress())
+            await controller.getSchemePermissions.call(controllerEvent.returnValues._scheme, configStore.getNetworkConfig().avatar)
           ),
           
           proposalIds: [],
           boostedProposals: await votingMachine.orgBoostedProposalsCnt.call(
-            library.utils.soliditySha3(schemeContract.address, configStore.getAvatarAddress())
+            library.utils.soliditySha3(schemeContract.address, configStore.getNetworkConfig().avatar)
           ),
           maxSecondsForExecution: await schemeContract.maxSecondsForExecution.call()
         };
@@ -562,12 +562,12 @@ export default class BlockchainStore {
         const votingMachine = providerStore.getContract(
           providerStore.getActiveWeb3React(),
           ContractType.VotingMachine,
-          configStore.getVotingMachineAddress()
+          configStore.getNetworkConfig().votingMachine
         )
         const controller = providerStore.getContract(
           providerStore.getActiveWeb3React(),
           ContractType.Controller,
-          configStore.getControllerAddress()
+          configStore.getNetworkConfig().controller
         )
         const paramsHash = await schemeContract.voteParams.call();
         cache.schemes[schemeContract.address].paramsHash = paramsHash;
@@ -575,7 +575,7 @@ export default class BlockchainStore {
           await votingMachine.parameters.call(paramsHash)
         );
         cache.schemes[schemeContract.address].permissions = decodePermission(
-          await controller.getSchemePermissions.call(controllerEvent.returnValues._scheme, configStore.getAvatarAddress())
+          await controller.getSchemePermissions.call(controllerEvent.returnValues._scheme, configStore.getNetworkConfig().avatar)
         );
       // Mark scheme as not registered but save all previous data
       } else if (
@@ -729,7 +729,7 @@ export default class BlockchainStore {
         
         multicallService.addCalls([{
           contractType: ContractType.VotingMachine,
-          address: configStore.getVotingMachineAddress(),
+          address: configStore.getNetworkConfig().votingMachine,
           method: 'stakingToken',
           params: [],
         }])
@@ -738,7 +738,7 @@ export default class BlockchainStore {
         
         const votingMachineToken = this.getCachedValue({
             contractType: ContractType.VotingMachine,
-            address: configStore.getVotingMachineAddress(),
+            address: configStore.getNetworkConfig().votingMachine,
             method: 'stakingToken',
         })
         
@@ -747,12 +747,12 @@ export default class BlockchainStore {
           transactionStore.checkPendingTransactions(web3React, account);
           multicallService.addCalls([{
             contractType: ContractType.Multicall,
-            address: configStore.getMulticallAddress(),
+            address: configStore.getNetworkConfig().multicall,
             method: 'getEthBalance',
             params: [account],
           },{
             contractType: ContractType.Reputation,
-            address: configStore.getReputationAddress(),
+            address: configStore.getNetworkConfig().reputation,
             method: 'balanceOf',
             params: [account],
           },{
@@ -764,30 +764,30 @@ export default class BlockchainStore {
             contractType: ContractType.ERC20,
             address: votingMachineToken,
             method: 'allowance',
-            params: [account, configStore.getVotingMachineAddress()],
+            params: [account, configStore.getNetworkConfig().votingMachine],
           }]);
         }
 
         multicallService.addCalls([{
           contractType: ContractType.Reputation,
-          address: configStore.getReputationAddress(),
+          address: configStore.getNetworkConfig().reputation,
           method: 'totalSupply',
           params: [],
         },{
           contractType: ContractType.Multicall,
-          address: configStore.getMulticallAddress(),
+          address: configStore.getNetworkConfig().multicall,
           method: 'getEthBalance',
-          params: [configStore.getAvatarAddress()],
+          params: [configStore.getNetworkConfig().avatar],
         },{
           contractType: ContractType.ERC20,
           address: votingMachineToken,
           method: 'balanceOf',
-          params: [configStore.getAvatarAddress()],
+          params: [configStore.getNetworkConfig().avatar],
         },{
           contractType: ContractType.Multicall,
-          address: configStore.getMulticallAddress(),
+          address: configStore.getNetworkConfig().multicall,
           method: 'getEthBalance',
-          params: [configStore.getVotingMachineAddress()],
+          params: [configStore.getNetworkConfig().votingMachine],
         }]);
         
         await this.executeAndUpdateMulticall(multicallService);
@@ -795,23 +795,23 @@ export default class BlockchainStore {
 
         newCache.daoInfo.totalRep = this.rootStore.blockchainStore.getCachedValue({
           contractType: ContractType.Reputation,
-          address: configStore.getReputationAddress(),
+          address: configStore.getNetworkConfig().reputation,
           method: 'totalSupply',
           params: []
         })
         
         newCache.daoInfo.ethBalance = this.rootStore.blockchainStore.getCachedValue({
           contractType: ContractType.Reputation,
-          address: configStore.getMulticallAddress(),
+          address: configStore.getNetworkConfig().multicall,
           method: 'getEthBalance',
-          params: [configStore.getAvatarAddress()]
+          params: [configStore.getNetworkConfig().avatar]
         })
         
         newCache.daoInfo.dxdBalance = this.rootStore.blockchainStore.getCachedValue({
           contractType: ContractType.ERC20,
           address: votingMachineToken,
           method: 'balanceOf',
-          params: [configStore.getAvatarAddress()]
+          params: [configStore.getNetworkConfig().avatar]
         });
         
         newCache.blockNumber = blockNumber;

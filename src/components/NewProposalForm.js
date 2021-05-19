@@ -209,9 +209,9 @@ const NewProposalForm = observer(() => {
       
       const { library } = providerStore.getActiveWeb3React();
       
-      const callToController = (daoStore.getScheme(schemeAddress).controllerAddress == configStore.getControllerAddress());
+      const callToController = (daoStore.getScheme(schemeAddress).controllerAddress == configStore.getNetworkConfig().controller);
       const to = calls.map((call) => {
-        return callToController ? configStore.getControllerAddress() : call.to;
+        return callToController ? configStore.getNetworkConfig().controller : call.to;
       });
       
       const data = calls.map((call, i) => {

@@ -49,25 +49,4 @@ export default class ConfigStore {
     getNetworkConfig() {
       return getConfig(this.getActiveChainName());
     }
-    getAvatarAddress() {
-      return getConfig(this.getActiveChainName()).avatar || "0x0000000000000000000000000000000000000000";
-    }
-    getControllerAddress() {
-      return getConfig(this.getActiveChainName()).controller || "0x0000000000000000000000000000000000000000";
-    }
-    getReputationAddress() {
-      return getConfig(this.getActiveChainName()).reputation || "0x0000000000000000000000000000000000000000";
-    }
-    getVotingMachineAddress() {
-      return getConfig(this.getActiveChainName()).votingMachine || "0x0000000000000000000000000000000000000000";
-    }
-    getPermissionRegistryAddress() {
-      return getConfig(this.getActiveChainName()).permissionRegistry || "0x0000000000000000000000000000000000000000";
-    }
-    getMulticallAddress() {
-      return getConfig(this.getActiveChainName()).multicall || "0x0000000000000000000000000000000000000000";
-    }
-    getStartBlock() {
-      return getConfig(this.getActiveChainName()).fromBlock;
-    }
 }

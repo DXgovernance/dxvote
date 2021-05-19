@@ -224,7 +224,7 @@ const ProposalInformation = observer(() => {
       
       proposalInfo.proposalCallText = new Array(proposalInfo.to.length);
       for (var p = 0; p < proposalInfo.to.length; p++) {
-        if (schemeInfo.controllerAddress === configStore.getControllerAddress()) {
+        if (schemeInfo.controllerAddress === configStore.getNetworkConfig().controller) {
           const decodedGenericCall = daoService.decodeControllerCall(proposalInfo.callData[p]);
           proposalInfo.proposalCallText[p] = decodedGenericCall;
         } else {

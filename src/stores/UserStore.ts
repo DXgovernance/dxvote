@@ -35,20 +35,20 @@ export default class UserStore {
     
     const votingMachineToken = blockchainStore.getCachedValue({
         contractType: ContractType.VotingMachine,
-        address: configStore.getVotingMachineAddress(),
+        address: configStore.getNetworkConfig().votingMachine,
         method: 'stakingToken',
     })
     
     const repBalance = account ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Reputation,
-      address: configStore.getReputationAddress(),
+      address: configStore.getNetworkConfig().reputation,
       method: 'balanceOf',
       params: [account]
     }) : bnum(0);
     
     const ethBalance = account ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Multicall,
-      address: configStore.getMulticallAddress(),
+      address: configStore.getNetworkConfig().multicall,
       method: 'getEthBalance',
       params: [account]
     }) : bnum(0);
@@ -64,7 +64,7 @@ export default class UserStore {
       contractType: ContractType.ERC20,
       address: votingMachineToken,
       method: 'allowance',
-      params: [account, configStore.getVotingMachineAddress()]
+      params: [account, configStore.getNetworkConfig().votingMachine]
     }) : bnum(0);
     
     this.userInfo = {

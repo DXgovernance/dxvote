@@ -19,9 +19,9 @@ export default class DaoService {
     const controller = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.Controller,
-      configStore.getControllerAddress()
+      configStore.getNetworkConfig().controller
     )
-    const avatarAddress = configStore.getAvatarAddress();
+    const avatarAddress = configStore.getNetworkConfig().avatar;
     return controller.methods.genericCall(to, callData, avatarAddress, value).encodeABI();
   }
   
@@ -78,13 +78,13 @@ export default class DaoService {
     const reputation = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.Reputation,
-      configStore.getReputationAddress()
+      configStore.getNetworkConfig().reputation
     )
     
     const votingMachine = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getVotingMachineAddress()
+      configStore.getNetworkConfig().votingMachine
     )
     
     const dxd = providerStore.getContract(
