@@ -6,10 +6,8 @@ import { useStores } from '../../contexts/storesContext';
 const AddressLink = styled.a`
     padding: 2px 5px;
     font-family: var(--roboto);
-    font-size: 13px;
     line-height: 17px;
     letter-spacing: 0.2px;
-    color: var(--dark-text-gray);
     text-decoration: none;
     color: inherit;
 `;

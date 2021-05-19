@@ -150,7 +150,7 @@ const SchemesInformation = observer(() => {
           </ProposalTableHeaderWrapper>
           <TableRowsWrapper>
           {schemes.map((scheme, i) => {
-            const schemeProposals = daoStore.getSchemeProposals(scheme.address);
+            const schemeProposals = daoStore.getSchemeProposals(scheme.name);
             return (
               <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
                 <TableRow>
