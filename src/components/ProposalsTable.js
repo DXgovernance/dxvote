@@ -104,7 +104,7 @@ const TableHeader = styled.div`
 
 const TableRowsWrapper = styled.div`
     overflow-y: scroll;
-    height: 260px;
+    height: 350px;
 `;
 
 const TableRow = styled.div`
