@@ -291,6 +291,101 @@ export default class DaoStore {
     }
   }
   
+  getUserRep(userAddress): {
+    amount: BigNumber,
+    percentage: Number
+  } {
+    const daoInfo = this.cache.daoInfo;
+    return {
+      amount: daoInfo.repHolders[userAddress] || bnum(0),
+      percentage: daoInfo.repHolders[userAddress] ? daoInfo.repHolders[userAddress].div(daoInfo.totalRep).times('100').toNumber() : 0
+    }
+  }
+  
+  getUserEvents(userAddress): {
+    votes: Vote[]
+    stakes: Stake[]
+    redeems: Redeem[]
+    redeemsRep: RedeemRep[]
+    history: {
+      text: string,
+      event: VotingMachineEvent
+    }[]
+  }{
+    const proposalEvents = {
+      votes: this.cache.votingMachineEvents.votes
+        .filter((vote) => {return (userAddress === vote.voter)}),
+      stakes: this.cache.votingMachineEvents.stakes
+        .filter((stake) => {return (userAddress === stake.staker)}),
+      redeems: this.cache.votingMachineEvents.redeems
+        .filter((redeem) => {return (userAddress === redeem.beneficiary)}),
+      redeemsRep: this.cache.votingMachineEvents.redeemsRep
+        .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)})
+    }
+    
+    let history : {
+      text: string,
+      event: VotingMachineEvent
+    }[] = proposalEvents.votes.map((event) => {
+      return {
+        text: `Voted with ${event.amount} REP for decision ${event.vote} on proposal ${event.proposalId}`,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    }).concat(proposalEvents.stakes.map((event) => {
+      return {
+        text: `Staked ${event.amount} DXD for decision ${event.vote} on proposal ${event.proposalId}`,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    })).concat(proposalEvents.redeems.map((event) => {
+      return {
+        text: `DXD amount of ${event.amount} redeemed from proposal ${event.proposalId} `,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    })).concat(proposalEvents.redeemsRep.map((event) => {
+      return {
+        text: `REP amount of ${event.amount} redeemed from proposal ${event.proposalId} `,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.block,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex
+        }
+      }
+    }))
+    history = _.orderBy(
+      history,
+      ["event.blockNumber", "event.transactionIndex", "event.logIndex"],
+      ["asc","asc","asc"]
+    );
+    
+    return {
+      votes: proposalEvents.votes,
+      stakes: proposalEvents.stakes,
+      redeems: proposalEvents.redeems,
+      redeemsRep: proposalEvents.redeemsRep,
+      history: _.reverse(history)
+    }
+  }
+  
   getVotesOfProposal(proposalId: string): Vote[]{
     return this.cache.votingMachineEvents.votes
       .filter((vote) => {return (proposalId === vote.proposalId)});

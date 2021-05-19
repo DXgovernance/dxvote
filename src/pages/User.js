@@ -5,51 +5,48 @@ import { useStores } from '../contexts/storesContext';
 import { useLocation } from 'react-router-dom';
 import Address from '../components/common/Address';
 
+const UserInfoWrapper = styled.div`
+    width: 100%;
+    background: white;
+    padding: 20px 20px;
+    border: 1px solid var(--medium-gray);
+    margin-top: 24px;
+    font-weight: 400;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    
+    .loader {
+      text-align: center;
+      font-family: Roboto;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 18px;
+      color: #BDBDBD;
+      padding: 44px 0px;
+      
+      img {
+        margin-bottom: 10px;
+      }
+    }
+    
+`;
+
 const UserPage = () => {
     const {
-        root: { daoService, providerStore },
+        root: { daoStore, blockchainStore },
     } = useStores();
-    const { library } = providerStore.getActiveWeb3React();
     const userAddress = useLocation().pathname.split("/")[2];
-    const [userActions, setUserActions] = React.useState('loading');
-    const [userBalances, setUserBalances] = React.useState('loading');
-    
-    daoService.getUserBalances(userAddress).then((balances) => {
-      setUserBalances(balances)
-    });
-    // if (userActions === 'loading')
-    //   daoService.getUserEvents(userAddress).then((userEvents) => {
-    //     let newUserActions = [];
-    //     for (var i = 0; i < userEvents.stakes.length; i++) {
-    //       newUserActions.push({
-    //         blockNumber: userEvents.stakes[i].blockNumber,
-    //         proposalId: userEvents.stakes[i].returnValues._proposalId,
-    //         text: "Stake "+library.utils.fromWei(userEvents.stakes[i].returnValues._amount)+" DXD for "+ (userEvents.stakes[i].returnValues._vote == 1 ? 'YES' : 'NO') +" on proposal "+userEvents.stakes[i].returnValues._proposalId
-    //       })
-    //     }
-    //     for (var i = 0; i < userEvents.votes.length; i++) {
-    //       newUserActions.push({
-    //         blockNumber: userEvents.votes[i].blockNumber,
-    //         proposalId: userEvents.votes[i].returnValues._proposalId,
-    //         text: "Vote "+library.utils.fromWei(userEvents.stakes[i].returnValues._amount)+" REP for "+ (userEvents.stakes[i].returnValues._vote == 1 ? 'YES' : 'NO') +" on proposal "+userEvents.stakes[i].returnValues._proposalId
-    //       })
-    //     }
-    //     for (var i = 0; i < userEvents.proposals.length; i++) {
-    //       newUserActions.push({
-    //         blockNumber: userEvents.proposals[i].blockNumber,
-    //         proposalId: userEvents.proposals[i].returnValues._proposalId,
-    //         text: "Proposal created "+userEvents.proposals[i].returnValues._proposalId
-    //       })
-    //     }
-    //     setUserActions(newUserActions)
-    //   });
-    
-    const loading = (userActions === 'loading') || !userBalances.rep || !userBalances.dxd;
+    const userEvents = daoStore.getUserEvents(userAddress);
+    const userRep = daoStore.getUserRep(userAddress);
+    const loading = false;
 
     return (
-      <div>
+      <UserInfoWrapper>
         <h2>User <Address size="long" address={userAddress}/></h2>
-        <hr></hr>
+        <h3>REP: {userRep.percentage.toFixed(2)} %</h3>
         {loading ?
           <center>
             <div className="loader">
@@ -59,15 +56,18 @@ const UserPage = () => {
             </div>
           </center>
         : <div>
-            <h3>{library.utils.fromWei(userBalances.rep.toString())} REP | {library.utils.fromWei(userBalances.dxd.toString())} DXD</h3>
-            <hr></hr>
-            {userActions.map((userAction, i) => {
-              return <h3 key={"userAction"+i}>{userAction.text}</h3>
-            })}
+          <h2> History </h2>
+          {userEvents.history.map((historyEvent, i) => {
+            return(
+            <div key={"userHistoryEvent"+i}>
+              <span> {historyEvent.text} </span> 
+              {i < userEvents.history.length - 1 ? <hr/> : <div/>}
+            </div>);
+          })}
           </div>
         }
         
-      </div>
+      </UserInfoWrapper>
     );
 };
 
