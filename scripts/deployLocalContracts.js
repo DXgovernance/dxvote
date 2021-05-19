@@ -59,14 +59,14 @@ async function main() {
     accounts[0], moment.duration(1, 'hours').asSeconds(), { gas: 1000000 }
   );
   
-  const schemesConfiguration = (network == 'rinkeby') ? {
+  const schemesConfiguration = {
     master: {
       queuedVoteRequiredPercentage: 50,
-      queuedVotePeriodLimit: moment.duration(90, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(30, 'minutes').asSeconds(),
+      queuedVotePeriodLimit: moment.duration(40, 'minutes').asSeconds(),
+      boostedVotePeriodLimit: moment.duration(20, 'minutes').asSeconds(),
       preBoostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
       thresholdConst: 1500,
-      quietEndingPeriod: moment.duration(3, 'minutes').asSeconds(),
+      quietEndingPeriod: moment.duration(4, 'minutes').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.02"),
       votersReputationLossRatio: 2,
       minimumDaoBounty: web3.utils.toWei("1"),
@@ -74,36 +74,11 @@ async function main() {
     },
     quick: {
       queuedVoteRequiredPercentage: 60,
-      queuedVotePeriodLimit: moment.duration(30, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-      thresholdConst: 1050,
-      quietEndingPeriod: moment.duration(2, 'minutes').asSeconds(),
-      proposingRepReward: web3.utils.toWei("0.002"),
-      votersReputationLossRatio: 4,
-      minimumDaoBounty: web3.utils.toWei("0.25"),
-      daoBountyConst: 10,
-    }
-  } : {
-    master: {
-      queuedVoteRequiredPercentage: 50,
       queuedVotePeriodLimit: moment.duration(20, 'minutes').asSeconds(),
       boostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
       preBoostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-      thresholdConst: 1500,
-      quietEndingPeriod: moment.duration(2, 'minutes').asSeconds(),
-      proposingRepReward: web3.utils.toWei("0.02"),
-      votersReputationLossRatio: 2,
-      minimumDaoBounty: web3.utils.toWei("1"),
-      daoBountyConst: 20,
-    },
-    quick: {
-      queuedVoteRequiredPercentage: 60,
-      queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(2, 'minutes').asSeconds(),
       thresholdConst: 1050,
-      quietEndingPeriod: moment.duration(1, 'minutes').asSeconds(),
+      quietEndingPeriod: moment.duration(2, 'minutes').asSeconds(),
       proposingRepReward: web3.utils.toWei("0.002"),
       votersReputationLossRatio: 4,
       minimumDaoBounty: web3.utils.toWei("0.25"),
@@ -112,47 +87,34 @@ async function main() {
   };
   console.log('Schemes configuration:', schemesConfiguration);
   
-  const masterWalletParameters = {
-    queuedVoteRequiredPercentage: schemesConfiguration.master.queuedVoteRequiredPercentage,
-    queuedVotePeriodLimit: schemesConfiguration.master.queuedVotePeriodLimit,
-    boostedVotePeriodLimit: schemesConfiguration.master.boostedVotePeriodLimit,
-    preBoostedVotePeriodLimit: schemesConfiguration.master.preBoostedVotePeriodLimit,
-    thresholdConst: schemesConfiguration.master.thresholdConst,
-    quietEndingPeriod: schemesConfiguration.master.quietEndingPeriod,
-    proposingRepReward: schemesConfiguration.master.proposingRepReward,
-    votersReputationLossRatio: schemesConfiguration.master.votersReputationLossRatio,
-    minimumDaoBounty: schemesConfiguration.master.minimumDaoBounty,
-    daoBountyConst: schemesConfiguration.master.daoBountyConst,
-    activationTime: 0,
-    voteOnBehalf: NULL_ADDRESS
-  }
-  
   await dxdVotingMachine.setParameters([
-    masterWalletParameters.queuedVoteRequiredPercentage,
-    masterWalletParameters.queuedVotePeriodLimit,
-    masterWalletParameters.boostedVotePeriodLimit,
-    masterWalletParameters.preBoostedVotePeriodLimit,
-    masterWalletParameters.thresholdConst,
-    masterWalletParameters.quietEndingPeriod,
-    masterWalletParameters.proposingRepReward,
-    masterWalletParameters.votersReputationLossRatio,
-    masterWalletParameters.minimumDaoBounty,
-    masterWalletParameters.daoBountyConst,
-    masterWalletParameters.activationTime 
-  ], masterWalletParameters.voteOnBehalf);
+      schemesConfiguration.master.queuedVoteRequiredPercentage,
+      schemesConfiguration.master.queuedVotePeriodLimit,
+      schemesConfiguration.master.boostedVotePeriodLimit,
+      schemesConfiguration.master.preBoostedVotePeriodLimit,
+      schemesConfiguration.master.thresholdConst,
+      schemesConfiguration.master.quietEndingPeriod,
+      schemesConfiguration.master.proposingRepReward,
+      schemesConfiguration.master.votersReputationLossRatio,
+      schemesConfiguration.master.minimumDaoBounty,
+      schemesConfiguration.master.daoBountyConst,
+      0 
+    ], NULL_ADDRESS
+  );
   const masterWalletSchemeParamsHash = await dxdVotingMachine.getParametersHash([
-    masterWalletParameters.queuedVoteRequiredPercentage,
-    masterWalletParameters.queuedVotePeriodLimit,
-    masterWalletParameters.boostedVotePeriodLimit,
-    masterWalletParameters.preBoostedVotePeriodLimit,
-    masterWalletParameters.thresholdConst,
-    masterWalletParameters.quietEndingPeriod,
-    masterWalletParameters.proposingRepReward,
-    masterWalletParameters.votersReputationLossRatio,
-    masterWalletParameters.minimumDaoBounty,
-    masterWalletParameters.daoBountyConst,
-    masterWalletParameters.activationTime 
-  ], masterWalletParameters.voteOnBehalf);
+      schemesConfiguration.master.queuedVoteRequiredPercentage,
+      schemesConfiguration.master.queuedVotePeriodLimit,
+      schemesConfiguration.master.boostedVotePeriodLimit,
+      schemesConfiguration.master.preBoostedVotePeriodLimit,
+      schemesConfiguration.master.thresholdConst,
+      schemesConfiguration.master.quietEndingPeriod,
+      schemesConfiguration.master.proposingRepReward,
+      schemesConfiguration.master.votersReputationLossRatio,
+      schemesConfiguration.master.minimumDaoBounty,
+      schemesConfiguration.master.daoBountyConst,
+      0 
+    ], NULL_ADDRESS
+  );
   const masterWalletScheme = await WalletScheme.new();
   await masterWalletScheme.initialize(
     avatar.address,
@@ -175,51 +137,37 @@ async function main() {
     avatar.address
   );
   
-  const quickWalletSchemeParameters = {
-    queuedVoteRequiredPercentage: schemesConfiguration.quick.queuedVoteRequiredPercentage,
-    queuedVotePeriodLimit: schemesConfiguration.quick.queuedVotePeriodLimit,
-    boostedVotePeriodLimit: schemesConfiguration.quick.boostedVotePeriodLimit,
-    preBoostedVotePeriodLimit: schemesConfiguration.quick.preBoostedVotePeriodLimit,
-    thresholdConst: schemesConfiguration.quick.thresholdConst,
-    quietEndingPeriod: schemesConfiguration.quick.quietEndingPeriod,
-    proposingRepReward: schemesConfiguration.quick.proposingRepReward,
-    votersReputationLossRatio: schemesConfiguration.quick.votersReputationLossRatio,
-    minimumDaoBounty: schemesConfiguration.quick.minimumDaoBounty,
-    daoBountyConst: schemesConfiguration.quick.daoBountyConst,
-    activationTime: 0,
-    voteOnBehalf: NULL_ADDRESS
-  }
   await dxdVotingMachine.setParameters(
     [
-      quickWalletSchemeParameters.queuedVoteRequiredPercentage,
-      quickWalletSchemeParameters.queuedVotePeriodLimit,
-      quickWalletSchemeParameters.boostedVotePeriodLimit,
-      quickWalletSchemeParameters.preBoostedVotePeriodLimit,
-      quickWalletSchemeParameters.thresholdConst,
-      quickWalletSchemeParameters.quietEndingPeriod,
-      quickWalletSchemeParameters.proposingRepReward,
-      quickWalletSchemeParameters.votersReputationLossRatio,
-      quickWalletSchemeParameters.minimumDaoBounty,
-      quickWalletSchemeParameters.daoBountyConst,
-      quickWalletSchemeParameters.activationTime 
+      schemesConfiguration.quick.queuedVoteRequiredPercentage,
+      schemesConfiguration.quick.queuedVotePeriodLimit,
+      schemesConfiguration.quick.boostedVotePeriodLimit,
+      schemesConfiguration.quick.preBoostedVotePeriodLimit,
+      schemesConfiguration.quick.thresholdConst,
+      schemesConfiguration.quick.quietEndingPeriod,
+      schemesConfiguration.quick.proposingRepReward,
+      schemesConfiguration.quick.votersReputationLossRatio,
+      schemesConfiguration.quick.minimumDaoBounty,
+      schemesConfiguration.quick.daoBountyConst,
+      0 
     ],
-    quickWalletSchemeParameters.voteOnBehalf
+    NULL_ADDRESS
   );
   const quickWalletSchemeParamsHash = await dxdVotingMachine.getParametersHash(
     [
-      quickWalletSchemeParameters.queuedVoteRequiredPercentage,
-      quickWalletSchemeParameters.queuedVotePeriodLimit,
-      quickWalletSchemeParameters.boostedVotePeriodLimit,
-      quickWalletSchemeParameters.preBoostedVotePeriodLimit,
-      quickWalletSchemeParameters.thresholdConst,
-      quickWalletSchemeParameters.quietEndingPeriod,
-      quickWalletSchemeParameters.proposingRepReward,
-      quickWalletSchemeParameters.votersReputationLossRatio,
-      quickWalletSchemeParameters.minimumDaoBounty,
-      quickWalletSchemeParameters.daoBountyConst,
-      quickWalletSchemeParameters.activationTime 
+      schemesConfiguration.quick.queuedVoteRequiredPercentage,
+      schemesConfiguration.quick.queuedVotePeriodLimit,
+      schemesConfiguration.quick.boostedVotePeriodLimit,
+      schemesConfiguration.quick.preBoostedVotePeriodLimit,
+      schemesConfiguration.quick.thresholdConst,
+      schemesConfiguration.quick.quietEndingPeriod,
+      schemesConfiguration.quick.proposingRepReward,
+      schemesConfiguration.quick.votersReputationLossRatio,
+      schemesConfiguration.quick.minimumDaoBounty,
+      schemesConfiguration.quick.daoBountyConst,
+      0
     ],
-    quickWalletSchemeParameters.voteOnBehalf
+    NULL_ADDRESS
   );
   const quickWalletScheme = await WalletScheme.new();
   await quickWalletScheme.initialize(
@@ -283,9 +231,12 @@ async function main() {
   await votingMachineToken.transfer(accounts[2], web3.utils.toWei("30"), {from: accounts[0]});
   
   const ipfs = await IPFS.create();
-  let titleText = "Mint seed REP test proposal";
-  let descriptionText = "Set 10 REP tokens to "+accounts[0]+", 20 REP tokens to "+accounts[1]+", and 70 REP tokens to "+accounts[2]
-  let cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
+  
+  async function getContentHash(descriptionText) {
+    return contentHash.fromIpfs(
+      (await ipfs.add({content: descriptionText})).cid
+    );
+  }
 
   const mintReputationABI = {
       name: 'mintReputation',
@@ -325,8 +276,7 @@ async function main() {
   }
   
   // Create test proposal 0 to mint multiple REP
-  descriptionText = "Tranfer 15 ETH and 50 tokens to QuickWalletScheme and mint 20 REP";
-  ipfsHash = (await ipfs.add({content: descriptionText})).cid;
+  let descriptionText = "Set 10 REP tokens to "+accounts[0]+", 20 REP tokens to "+accounts[1]+", and 70 REP tokens to "+accounts[2]
   const testProposal0 = ( await masterWalletScheme.proposeCalls(
     [controller.address, controller.address, controller.address, controller.address],
     [
@@ -337,14 +287,15 @@ async function main() {
     ],
     [0, 0, 0, 0],
     "Test Proposal #0 (Seed rep mint)",
-    contentHash.fromIpfs(ipfsHash)
-  , { from: accounts[0] }) ).logs[0].args[0];
+    await getContentHash(descriptionText),
+    { from: accounts[0] }
+  ) ).logs[0].args[0];
 
   // Pass test proposal 0 with majority vote
   await dxdVotingMachine.vote(testProposal0, 1, 0, NULL_ADDRESS, { from: accounts[0] });
   
   // Create test proposal 1
-  descriptionText = "Tranfer 10 ETH to " + accounts[1];
+  descriptionText = "Mint 20 REP, tranfer 15 ETH and 50 tokens to QuickWalletScheme.";
   ipfsHash = (await ipfs.add({content: descriptionText})).cid;
   const testProposal1 = ( await masterWalletScheme.proposeCalls(
     [controller.address, controller.address, controller.address],
@@ -360,13 +311,14 @@ async function main() {
     ],
     [0, 0, 0],
     "Test Proposal #1",
-    contentHash.fromIpfs(ipfsHash)
-  , { from: accounts[0] }) ).logs[0].args[0];
+    await getContentHash(descriptionText),
+    { from: accounts[0] }
+  ) ).logs[0].args[0];
   
   // Pass proposal1 with majority vote
   await dxdVotingMachine.vote(testProposal1, 1, 0, NULL_ADDRESS, { from: accounts[2] });
 
-  descriptionText = "Tranfer 3 ETH to " + accounts[2];
+  descriptionText = "Tranfer 5 ETH to " + accounts[1];
   ipfsHash = (await ipfs.add({content: descriptionText})).cid;
   const testProposal2 = (await masterWalletScheme.proposeCalls(
     [controller.address],
@@ -375,8 +327,9 @@ async function main() {
     ],
     [0],
     "Test Proposal #2",
-    contentHash.fromIpfs(ipfsHash)
-  , { from: accounts[0] }) ).logs[0].args[0];
+    await getContentHash(descriptionText),
+    { from: accounts[0] }
+  ) ).logs[0].args[0];
   
   // Stake and vote a bit in test proposal 2
   await votingMachineToken.approve( 
@@ -388,85 +341,97 @@ async function main() {
   });
 
   // Create test proposal 3 in quick wallet scheme
+  descriptionText = "Tranfer 5 ETH to " + accounts[2];
+  ipfsHash = (await ipfs.add({content: descriptionText})).cid;
   await quickWalletScheme.proposeCalls(
     [accounts[2]],
     ["0x0"],
     [web3.utils.toWei("5").toString()],
     "Test Proposal #3",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash(descriptionText),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #4",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #5",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #6",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #7",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #8",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #9",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #10",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #11",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
   
   await quickWalletScheme.proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #12",
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
     
   const contractsDeployed = {
     avatar: avatar.address,
@@ -478,6 +443,7 @@ async function main() {
     multicall: multicall.address,
     fromBlock: 1
   };
+  
   console.log("Contracts Deployed:", contractsDeployed);
 
   fs.writeFileSync(
