@@ -149,7 +149,7 @@ const ProposalInformation = observer(() => {
     const proposalId = useLocation().pathname.split("/")[4];
     const schemeInfo = daoStore.getScheme(schemeAddress);
     const proposalInfo = daoStore.getProposal(proposalId);
-    const pEvents = daoStore.getProposalEvents(proposalId);
+    const proposalEvents = daoStore.getProposalEvents(proposalId);
     const { dxdBalance, dxdApproved } = userStore.getUserInfo(); 
     const {content: proposalDescription} = proposalInfo ? ipfsService.get(proposalInfo.descriptionHash) : "";
     const { active, account, library } = providerStore.getActiveWeb3React();
@@ -159,11 +159,11 @@ const ProposalInformation = observer(() => {
 
     let votedAmount = 0;
     let votedDecision = 0;
-    let positiveVotesCount = pEvents.votes.filter((vote) => vote.vote === "1").length;
-    let negativeVotesCount = pEvents.votes.filter((vote) => vote.vote === "2").length;
+    let positiveVotesCount = proposalEvents.votes.filter((vote) => vote.vote === "1").length;
+    let negativeVotesCount = proposalEvents.votes.filter((vote) => vote.vote === "2").length;
     let stakedAmount = 0;
-    let positiveStakesCount = pEvents.stakes.filter((stake) => stake.vote === "1").length;
-    let negativeStakesCount = pEvents.stakes.filter((stake) => stake.vote === "2").length;
+    let positiveStakesCount = proposalEvents.stakes.filter((stake) => stake.vote === "1").length;
+    let negativeStakesCount = proposalEvents.stakes.filter((stake) => stake.vote === "2").length;
     let userRepAtProposalCreation = 0;
     let totalRepAtProposalCreation = 0;
     
@@ -173,14 +173,14 @@ const ProposalInformation = observer(() => {
       userRepAtProposalCreation = repAtCreation.userRep;
       totalRepAtProposalCreation = repAtCreation.totalSupply;
       
-      pEvents.votes.map((vote) => {
+      proposalEvents.votes.map((vote) => {
         if (vote.voter === account) {
           votedAmount = vote.amount;
           votedDecision = vote.vote;
         };
       });
         
-      pEvents.stakes.map((stake) => {
+      proposalEvents.stakes.map((stake) => {
         if (stake.voter === account && stake.vote == "1") {
           stakedAmount = stakedAmount + stake.amount;
         } else if (stake.voter === account && stake.vote == "2") {
@@ -188,7 +188,7 @@ const ProposalInformation = observer(() => {
         }
       });
       
-      if ((pEvents.redeems.indexOf((redeem) => redeem.beneficiary === account) === -1) 
+      if ((proposalEvents.redeems.indexOf((redeem) => redeem.beneficiary === account) === -1) 
         && (stakedAmount > 0 || votedAmount > 0) && !canRedeem)
         setCanRedeem(true);
       
@@ -294,8 +294,6 @@ const ProposalInformation = observer(() => {
         daoStore.execute(proposalId);
       };
       
-      const proposalHistory = daoStore.getProposalHistory(proposalId);
-
       return (
           <ProposalInformationWrapper>
             <ProposalInfoSection>
@@ -318,11 +316,11 @@ const ProposalInformation = observer(() => {
               })}
               <hr/>
               <h2> History </h2>
-              {proposalHistory.map((historyEvent, i) => {
+              {proposalEvents.history.map((historyEvent, i) => {
                 return(
                 <div key={"proposalHistoryEvent"+i}>
                   <span> {historyEvent.text} </span> 
-                  {i < proposalHistory.length - 1 ? <hr/> : <div/>}
+                  {i < proposalEvents.history.length - 1 ? <hr/> : <div/>}
                 </div>);
               })}
             </ProposalInfoSection>
@@ -377,7 +375,7 @@ const ProposalInformation = observer(() => {
                   <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
                   {proposalInfo.positiveVotes.div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %
                   <br/> 
-                  {pEvents.votes && pEvents.votes.map(function(voteEvent, i){
+                  {proposalEvents.votes && proposalEvents.votes.map(function(voteEvent, i){
                     if (voteEvent.vote === "1")
                       return <small color="green" key={`voteUp${i}`}><Address size="short" type="user" address={voteEvent.voter}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %<br/></small>
                   })}
@@ -386,7 +384,7 @@ const ProposalInformation = observer(() => {
                   {proposalInfo.negativeVotes.div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %
                   <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
                   <br/> 
-                  {pEvents && pEvents.votes.map(function(voteEvent, i){
+                  {proposalEvents && proposalEvents.votes.map(function(voteEvent, i){
                     if (voteEvent.vote === "2")
                       return <small color="red" key={`voteDown${i}`}><Address size="short" type="user" address={voteEvent.voter}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %<br/></small>
                   })}
@@ -423,7 +421,7 @@ const ProposalInformation = observer(() => {
                   <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
                   {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD
                   <br/> 
-                  {pEvents && pEvents.stakes.map(function(stakeEvent, i){
+                  {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
                     if (stakeEvent.vote === "1")
                       return <small color="green" key={`stakeUp${i}`}><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD<br/> </small>
                   })}
@@ -432,7 +430,7 @@ const ProposalInformation = observer(() => {
                   {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD
                   <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
                   <br/> 
-                  {pEvents && pEvents.stakes.map(function(stakeEvent, i){
+                  {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
                     if (stakeEvent.vote === "2")
                       return <small color="red" key={`stakeDown${i}`}><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD<br/> </small>
                   })}

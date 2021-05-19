@@ -202,23 +202,21 @@ export default class DaoStore {
     stakes: Stake[]
     redeems: Redeem[]
     redeemsRep: RedeemRep[]
-    stateChanges: ProposalStateChange[]
+    stateChanges: ProposalStateChange[],
+    history: {
+      text: string,
+      event: VotingMachineEvent
+    }[]
   }{
-    return {
+    const proposalEvents = {
       votes: this.getVotesOfProposal(proposalId),
       stakes: this.getStakesOfProposal(proposalId),
       redeems: this.getRedeemsOfProposal(proposalId),
       redeemsRep: this.getRedeemsRepOfProposal(proposalId),
       stateChanges: this.getProposalStateChanges(proposalId)
     }
-  }
-  
-  getProposalHistory(proposalId): {
-    text: string,
-    event: VotingMachineEvent
-  }[] {
-    const proposalEvents = this.getProposalEvents(proposalId);
-    let allEvents : {
+    
+    let history : {
       text: string,
       event: VotingMachineEvent
     }[] = proposalEvents.votes.map((event) => {
@@ -277,13 +275,20 @@ export default class DaoStore {
         }
       }
     }))
-    allEvents = _.orderBy(
-      allEvents,
+    history = _.orderBy(
+      history,
       ["event.blockNumber", "event.transactionIndex", "event.logIndex"],
       ["asc","asc","asc"]
     );
-
-    return _.reverse(allEvents);
+    
+    return {
+      votes: proposalEvents.votes,
+      stakes: proposalEvents.stakes,
+      redeems: proposalEvents.redeems,
+      redeemsRep: proposalEvents.redeemsRep,
+      stateChanges: proposalEvents.stateChanges,
+      history: _.reverse(history)
+    }
   }
   
   getVotesOfProposal(proposalId: string): Vote[]{
