@@ -53,6 +53,8 @@ export default class ProviderStore {
       makeObservable(this, {
           provider: observable,
           accounts: observable,
+          defaultAccount: observable,
+          web3Contexts: observable,
           chainData: observable, 
           activeChainId: observable, 
           activeFetchLoop: observable, 
