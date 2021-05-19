@@ -323,7 +323,11 @@ async function main() {
       { name: 'amount', type: 'uint256' }
     ],
   }
-  const seedProposalTx = await masterWalletScheme.proposeCalls(
+  
+  // Create test proposal 0 to mint multiple REP
+  descriptionText = "Tranfer 15 ETH and 50 tokens to QuickWalletScheme and mint 20 REP";
+  ipfsHash = (await ipfs.add({content: descriptionText})).cid;
+  const testProposal0 = ( await masterWalletScheme.proposeCalls(
     [controller.address, controller.address, controller.address, controller.address],
     [
       web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("10"), accounts[0], avatar.address]),
@@ -332,16 +336,17 @@ async function main() {
       web3.eth.abi.encodeFunctionCall(burnReputationABI, ["100", accounts[0], avatar.address]),
     ],
     [0, 0, 0, 0],
-    titleText,
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
-  const seedProposalId = seedProposalTx.logs[0].args[0];
-  await dxdVotingMachine.vote(seedProposalId, 1, 0, NULL_ADDRESS, { from: accounts[0] });
-  titleText = "First test proposal";
-  descriptionText = "Tranfer 15 ETH and 50 tokens to QuickWalletScheme and mint 20 REP";
-  cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
+    "Test Proposal #0 (Seed rep mint)",
+    contentHash.fromIpfs(ipfsHash)
+  , { from: accounts[0] }) ).logs[0].args[0];
+
+  // Pass test proposal 0 with majority vote
+  await dxdVotingMachine.vote(testProposal0, 1, 0, NULL_ADDRESS, { from: accounts[0] });
   
-  const fisrtProposalTx = await masterWalletScheme.proposeCalls(
+  // Create test proposal 1
+  descriptionText = "Tranfer 10 ETH to " + accounts[1];
+  ipfsHash = (await ipfs.add({content: descriptionText})).cid;
+  const testProposal1 = ( await masterWalletScheme.proposeCalls(
     [controller.address, controller.address, controller.address],
     [
       web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("20"), accounts[1], avatar.address]),
@@ -354,44 +359,114 @@ async function main() {
       ]),
     ],
     [0, 0, 0],
-    titleText,
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
-  const firstProposalId = fisrtProposalTx.logs[0].args[0];
-  titleText = "Second test proposal";
-  descriptionText = "Tranfer 10 ETH to " + accounts[1];
-  cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
+    "Test Proposal #1",
+    contentHash.fromIpfs(ipfsHash)
+  , { from: accounts[0] }) ).logs[0].args[0];
+  
+  // Pass proposal1 with majority vote
+  await dxdVotingMachine.vote(testProposal1, 1, 0, NULL_ADDRESS, { from: accounts[2] });
 
-  const secondProposalTx = await masterWalletScheme.proposeCalls(
+  descriptionText = "Tranfer 3 ETH to " + accounts[2];
+  ipfsHash = (await ipfs.add({content: descriptionText})).cid;
+  const testProposal2 = (await masterWalletScheme.proposeCalls(
     [controller.address],
     [
       web3.eth.abi.encodeFunctionCall(generiCallABI, [accounts[1], "0x0", avatar.address, web3.utils.toWei("5")])
     ],
     [0],
-    titleText,
-    contentHash.fromIpfs(cid)
-  , { from: accounts[0] });
-  const secondProposalId = secondProposalTx.logs[0].args[0];
+    "Test Proposal #2",
+    contentHash.fromIpfs(ipfsHash)
+  , { from: accounts[0] }) ).logs[0].args[0];
   
-  titleText = "Third test proposal";
-  descriptionText = "Tranfer 3 ETH to " + accounts[2];
-  cid = (await ipfs.add({content: `# ${titleText} \n ${descriptionText}`})).cid;
+  // Stake and vote a bit in test proposal 2
+  await votingMachineToken.approve( 
+    dxdVotingMachine.address, await votingMachineToken.balanceOf(accounts[1]) , {from: accounts[1]}
+  );
+  await dxdVotingMachine.stake(testProposal2, 1, web3.utils.toWei("2").toString() , { from: accounts[1] });
+  await dxdVotingMachine.vote(testProposal2, 1, web3.utils.toWei("5"), NULL_ADDRESS, { 
+    from: accounts[1]
+  });
 
+  // Create test proposal 3 in quick wallet scheme
   await quickWalletScheme.proposeCalls(
     [accounts[2]],
     ["0x0"],
     [web3.utils.toWei("5").toString()],
-    titleText,
+    "Test Proposal #3",
     contentHash.fromIpfs(cid)
   , { from: accounts[0] });
-  await dxdVotingMachine.vote(firstProposalId, 1, 0, NULL_ADDRESS, { from: accounts[2] });
-  await votingMachineToken.approve( 
-    dxdVotingMachine.address, await votingMachineToken.balanceOf(accounts[1]) , {from: accounts[1]}
-  );
-  await dxdVotingMachine.stake(secondProposalId, 1, web3.utils.toWei("2").toString() , { from: accounts[1] });
-  await dxdVotingMachine.vote(secondProposalId, 1, web3.utils.toWei("5"), NULL_ADDRESS, { 
-    from: accounts[1]
-  });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #4",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #5",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #6",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #7",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #8",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #9",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #10",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #11",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #12",
+    contentHash.fromIpfs(cid)
+  , { from: accounts[0] });
     
   const contractsDeployed = {
     avatar: avatar.address,
