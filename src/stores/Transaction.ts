@@ -32,7 +32,7 @@ export default class TransactionStore {
 
     constructor(rootStore) {
         this.rootStore = rootStore;
-        this.txRecords = {} as TransactionRecordMap;
+        this.txRecords = {};
         makeObservable(this, {
             txRecords: observable,
             checkPendingTransactions: action,
@@ -50,7 +50,7 @@ export default class TransactionStore {
             });
         }
 
-        return [] as TransactionRecord[];
+        return [];
     }
 
     getConfirmedTransactions(account: string): TransactionRecord[] {
@@ -61,7 +61,7 @@ export default class TransactionStore {
             });
         }
 
-        return [] as TransactionRecord[];
+        return [];
     }
 
     async checkPendingTransactions(
@@ -120,16 +120,16 @@ export default class TransactionStore {
             }
             this.txRecords[account].push(record);
         } else {
-            this.txRecords[account] = [] as TransactionRecord[];
+            this.txRecords[account] = [];
             this.txRecords[account].push(record);
         }
     }
 
-    private isTxPending(txRecord: TransactionRecord): boolean {
+    isTxPending(txRecord: TransactionRecord): boolean {
         return !txRecord.receipt;
     }
 
-    private isStale(txRecord: TransactionRecord, currentBlock: number) {
+    isStale(txRecord: TransactionRecord, currentBlock: number) {
         return txRecord.blockNumberChecked < currentBlock;
     }
 }

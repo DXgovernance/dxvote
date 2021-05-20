@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Web3ConnectStatus from '../Web3ConnectStatus';
 import { useStores } from '../../contexts/storesContext';
 import { FiSettings, FiUser } from "react-icons/fi";
-
+import dxdaoIcon from "assets/images/DXdao.svg"
 import Web3 from 'web3';
 
 const NavWrapper = styled.div`
@@ -84,7 +84,7 @@ const Header = observer(() => {
     <NavWrapper>
       <NavSection>
         <NavItem route="/?">
-          <img alt="dxdao" src={require("assets/images/DXdao.svg")}/>
+          <img alt="dxdao" src={dxdaoIcon}/>
         </NavItem>
       </NavSection>
       <NavSection>

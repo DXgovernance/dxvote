@@ -49,7 +49,7 @@ export default class ProviderStore {
     constructor(rootStore) {
       this.rootStore = rootStore;
       this.web3Contexts = {};
-      this.chainData = { currentBlockNumber: -1 } as ChainData;
+      this.chainData = { currentBlockNumber: -1 };
       makeObservable(this, {
           provider: observable,
           accounts: observable,

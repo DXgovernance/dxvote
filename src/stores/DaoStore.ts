@@ -198,10 +198,10 @@ export default class DaoStore {
   }
   
   getProposalEvents(proposalId): {
-    votes: Vote[]
-    stakes: Stake[]
-    redeems: Redeem[]
-    redeemsRep: RedeemRep[]
+    votes: Vote[],
+    stakes: Stake[],
+    redeems: Redeem[],
+    redeemsRep: RedeemRep[],
     stateChanges: ProposalStateChange[],
     history: {
       text: string,
@@ -303,10 +303,10 @@ export default class DaoStore {
   }
   
   getUserEvents(userAddress): {
-    votes: Vote[]
-    stakes: Stake[]
-    redeems: Redeem[]
-    redeemsRep: RedeemRep[]
+    votes: Vote[],
+    stakes: Stake[],
+    redeems: Redeem[],
+    redeemsRep: RedeemRep[],
     history: {
       text: string,
       event: VotingMachineEvent

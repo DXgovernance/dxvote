@@ -213,7 +213,7 @@ export interface DaoInfo {
 
 export interface DaoNetworkCache {
   blockNumber: number;
-  daoInfo: DaoInfo
+  daoInfo: DaoInfo;
   schemes: {[address: string]: Scheme};
   proposals: {[id: string]: Proposal};
   callPermissions: { [from: string]: SchemeCallPermission[] };

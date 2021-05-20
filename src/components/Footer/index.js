@@ -80,24 +80,7 @@ const Footer = () => {
         <FooterItem>
         <a href="https://github.com/AugustoL/dxvote" target="#" > Source Code </a>
         </FooterItem>
-    </LeftFooter>
-    <RighFooter>
-        <LogoWrapper>
-          <a href="https://twitter.com/dxdao_" target="#">
-            <FooterLogo src={require('assets/images/twitter.svg')}></FooterLogo>
-          </a>
-        </LogoWrapper>
-        <LogoWrapper>
-          <a href="https://www.reddit.com/r/dxdao/" target="#">
-            <FooterLogo src={require('assets/images/reddit.svg')}></FooterLogo>
-          </a>
-        </LogoWrapper>
-        <LogoWrapper>
-          <a href="https://t.me/dxDAO" target="#">
-            <FooterLogo src={require('assets/images/telegram.svg')}></FooterLogo>
-          </a>
-        </LogoWrapper>
-      </RighFooter>
+      </LeftFooter>
     </FooterWrapper>
 
   );
