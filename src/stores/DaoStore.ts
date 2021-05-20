@@ -2,6 +2,7 @@ import RootStore from 'stores';
 import { BigNumber } from '../utils/bignumber';
 import { ContractType } from './Provider';
 import { action } from 'mobx';
+import web3 from 'web3';
 import _ from 'lodash';
 import { bnum } from '../utils/helpers';
 import { ethers, utils } from 'ethers';
@@ -216,12 +217,14 @@ export default class DaoStore {
       stateChanges: this.getProposalStateChanges(proposalId)
     }
     
+    const proposal = this.getProposal(proposalId);
+    
     let history : {
       text: string,
       event: VotingMachineEvent
     }[] = proposalEvents.votes.map((event) => {
       return {
-        text: `Vote from ${event.voter} on decision ${event.vote}`,
+        text: `Vote from ${event.voter} of ${(bnum(event.amount)).div(proposal.repAtCreation).times('100').toFixed(4)} REP on decision ${event.vote}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -232,7 +235,7 @@ export default class DaoStore {
       }
     }).concat(proposalEvents.stakes.map((event) => {
       return {
-        text: `Stake from ${event.staker} on decision ${event.vote}`,
+        text: `Stake from ${event.staker} of ${web3.utils.fromWei(event.amount).toString()} DXD on decision ${event.vote}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,

@@ -7,6 +7,7 @@ import { useStores } from '../../contexts/storesContext';
 import { FiSettings, FiUser } from "react-icons/fi";
 import dxdaoIcon from "assets/images/DXdao.svg"
 import Web3 from 'web3';
+import { bnum } from '../../utils/helpers';
 
 const NavWrapper = styled.div`
   display: flex;
@@ -65,7 +66,7 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, ipfsService },
+      root: { userStore, providerStore, ipfsService, daoStore },
   } = useStores();
   ipfsService.start();
   const userInfo = userStore.getUserInfo();
@@ -78,8 +79,12 @@ const Header = observer(() => {
     : 0;
   const repBalance = userInfo.repBalance ?
     parseFloat(Number(Web3.utils.fromWei(userInfo.repBalance.toString())).toFixed(4))
-    : 0
+    : 0;
     
+  const repPercentage = daoStore.getDaoInfo().totalRep
+    ? bnum(userInfo.repBalance).div(bnum(daoStore.getDaoInfo().totalRep)).times(100)
+    : bnum(0);
+
   return (
     <NavWrapper>
       <NavSection>
@@ -90,7 +95,7 @@ const Header = observer(() => {
       <NavSection>
         <BalanceItem> {ethBalance} ETH </BalanceItem>
         <BalanceItem> {dxdBalance} DXD </BalanceItem>
-        <BalanceItem> {repBalance} REP </BalanceItem>
+        <BalanceItem> {repBalance} REP - {repPercentage.toFixed(2)} % </BalanceItem>
         <Web3ConnectStatus text="Connect Wallet" />
         <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
         {active ?

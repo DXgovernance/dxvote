@@ -10,6 +10,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
 import Address from '../components/common/Address';
 import boltIcon from "assets/images/bolt.svg"
+import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 
 const ProposalInformationWrapper = styled.div`
     width: 100%;
@@ -67,7 +68,7 @@ const SidebarRow = styled.div`
   }
 `;
 
-const StakeAmountInput = styled.input`
+const AmountInput = styled.input`
   background-color: white;
   border: 1px solid gray;
   border-radius: 4px;
@@ -77,7 +78,7 @@ const StakeAmountInput = styled.input`
   line-height: 32px;
   text-align: left;
   cursor: pointer;
-  width: max-content;
+  width: 60px;
   padding: 0px 10px;
   margin: 5px;
   font-family: var(--roboto);
@@ -146,8 +147,8 @@ const ProposalInformation = observer(() => {
     const proposalEvents = daoStore.getProposalEvents(proposalId);
     const { dxdApproved } = userStore.getUserInfo(); 
     const { active, account, library } = providerStore.getActiveWeb3React();
-    const [votePercentage, setVotePercentage] = React.useState(100);
     const [stakeAmount, setStakeAmount] = React.useState(100);
+    const [votePercentage, setVotePercentage] = React.useState(0);
     const [canRedeem, setCanRedeem] = React.useState(false);
 
     let votedAmount = bnum(0);
@@ -160,18 +161,19 @@ const ProposalInformation = observer(() => {
     let totalRepAtProposalCreation = bnum(0);
     
     let proposalDescription: string = ""
+
     if (proposalInfo){
       
+      const repAtCreation = daoService.getRepAt(proposalInfo.creationBlock);
+      userRepAtProposalCreation = bnum(repAtCreation.userRep);
+      totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
+        
       // @ts-ignore
       proposalDescription = ipfsService.get(proposalInfo.descriptionHash).content;
       
-      const repAtCreation = daoService.getRepAt(proposalInfo.creationBlock.toNumber());
-      userRepAtProposalCreation = bnum(repAtCreation.userRep);
-      totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
-      
       proposalEvents.votes.map((vote) => {
         if (vote.voter === account) {
-          votedAmount = vote.amount;
+          votedAmount = bnum(vote.amount);
         };
       });
         
@@ -248,32 +250,27 @@ const ProposalInformation = observer(() => {
       moment().to( moment(proposalInfo.finishTime.times(1000).toNumber()) ).toString()
       : "";
       
-      function onVoteValueChange() {
-        const voteSlider = document.querySelectorAll("span[aria-labelledby='vote-slider']")[0];
-        // @ts-ignore
-        setVotePercentage((voteSlider.ariaValueNow - 50) * 2)
-        // @ts-ignore
-        voteSlider.ariaValueNow = votePercentage;
-      }
+      const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
       
       function onStakeAmountChange(event) {
-        setStakeAmount(event.target.value)
+        setStakeAmount(event.target.value);
       }
       
-      function voteAmount() {
-        if (userRepAtProposalCreation)
-          return (userRepAtProposalCreation.times(Math.abs(votePercentage)).div(totalRepAtProposalCreation)).toFixed(2);
-        else
-          return 0;
+      function onVoteValueChange(event) {
+        setVotePercentage(event.target.value < repPercentageAtCreation ? event.target.value : repPercentageAtCreation);
       }
       
-      const submitVote = function() {
-        const repAmount = (userRepAtProposalCreation.times(Math.abs(votePercentage))).div(100);
-        daoStore.vote(votePercentage > 0 ? 1 : 2, Number(repAmount), proposalId);
+      if (repPercentageAtCreation > 0 && votePercentage === 0) {
+        setVotePercentage(repPercentageAtCreation);
+      }
+      
+      const submitVote = function(decision) {
+        const repAmount = (totalRepAtProposalCreation.times(bnum(votePercentage))).div('100');
+        daoStore.vote(decision, repAmount.toNumber(), proposalId);
       };
       
-      const submitStake = function() {
-        daoStore.stake(stakeAmount > 0 ? 1 : 2, library.utils.toWei(stakeAmount.toString()), proposalId);
+      const submitStake = function(decision) {
+        daoStore.stake(decision, library.utils.toWei(stakeAmount.toString()), proposalId);
       };
       
       const redeem = function() {
@@ -305,7 +302,6 @@ const ProposalInformation = observer(() => {
                 return(
                 <div key={"proposalCallText"+i}>
                   <span> {proposalCallText} </span> 
-                  {i < proposalCallText.length - 1 ? <hr/> : <div/>}
                 </div>);
               })}
               <hr/>
@@ -371,16 +367,22 @@ const ProposalInformation = observer(() => {
               <SidebarRow style={{ margin: "0px 10px" }}> 
                 <span style={{width: "50%", textAlign:"center", color: "green"}}>
                   <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
-                  {proposalInfo.positiveVotes.div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %
+                  {proposalInfo.positiveVotes.div(totalRepAtProposalCreation).times("100").toFixed(2)} %
                   <br/> 
                   {proposalEvents.votes && proposalEvents.votes.map(function(voteEvent, i){
                     if (voteEvent.vote.toString() === "1")
-                      return <small color="green" key={`voteUp${i}`}><Address size="short" type="user" address={voteEvent.voter}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %<br/></small>
+                      return (
+                        <small color="green" key={`voteUp${i}`}>
+                          <Address size="short" type="user" address={voteEvent.voter}/>
+                            {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toFixed(2)} %
+                            <br/>
+                        </small>
+                      );
                     else return undefined;
                   })}
                 </span>
                 <span style={{width: "50%", textAlign:"center", color: "red"}}>
-                  {proposalInfo.negativeVotes.div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %
+                  {proposalInfo.negativeVotes.div(totalRepAtProposalCreation).times("100").toFixed(2)} %
                   <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
                   <br/> 
                   {proposalEvents && proposalEvents.votes.map(function(voteEvent, i){
@@ -391,18 +393,26 @@ const ProposalInformation = observer(() => {
                 </span>
               </SidebarRow>
               
+              <small>{repPercentageAtCreation} % REP at proposal creation</small>
+              
               {votedAmount.toNumber() === 0 && proposalInfo.priority >=3 && proposalInfo.priority <= 6  ?
                 <SidebarRow>
-                  <AmountSlider
-                  defaultValue={100}
-                  aria-labelledby="vote-slider"
-                  step={0.1}
-                  onChangeCommitted={onVoteValueChange}
-                  marks={voteMarks}
-                  style={{color: votePercentage > 0 ? 'green' : 'red'}}
+                  
+                  <AmountInput
+                    type="number"
+                    placeholder="REP"
+                    name="votePercentage"
+                    max={votePercentage}
+                    value={votePercentage}
+                    min="0"
+                    step={votePercentage > 10 ? "1" : votePercentage > 1 ? "0.01" : votePercentage > 0.1 ? "0.001" : "0.00001"}
+                    id="votePercentage"
+                    onChange={onVoteValueChange}
+                    style={{flex: 2}}
                   />
-                  <span style={{color: votePercentage > 0 ? 'green' : 'red'}}>{voteAmount()} %</span>
-                  <VoteButton color="blue" onClick={() => submitVote()}>Vote</VoteButton>
+                  <VoteButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="green" onClick={() => submitVote(1)}><FiThumbsUp /></VoteButton>
+                  <VoteButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="red" onClick={() => submitVote(2)}><FiThumbsDown /></VoteButton>
+                  
                 </SidebarRow>
               : votedAmount.toNumber() !== 0 ?
                 <SidebarRow>
@@ -423,7 +433,13 @@ const ProposalInformation = observer(() => {
                   <br/> 
                   {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
                     if (stakeEvent.vote.toString() === "1")
-                      return <small color="green" key={`stakeUp${i}`}><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD<br/> </small>
+                      return (
+                        <small color="green" key={`stakeUp${i}`}>
+                          <Address size="short" type="user" address={stakeEvent.staker}/>
+                            {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD
+                            <br/>
+                        </small>
+                      )
                     else return undefined;
                   })}
                 </span>
@@ -456,14 +472,18 @@ const ProposalInformation = observer(() => {
                     {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(2)} DXD to boost</small> : <span/>}
                     {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(2)} DXD to unboost</small> : <span/>}
                     <SidebarRow>
-                      <StakeAmountInput
+                      <AmountInput
                         type="number"
                         placeholder="DXD"
                         name="stakeAmount"
                         id="stakeAmount"
+                        step="0.01"
+                        min="0"
                         onChange={onStakeAmountChange}
+                        style={{flex: 2}}
                       />
-                      <VoteButton color="blue" onClick={() => submitStake()}>Stake</VoteButton>
+                      <VoteButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="green" onClick={() => submitStake(1)}><FiThumbsUp /></VoteButton>
+                      <VoteButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="red" onClick={() => submitStake(2)}><FiThumbsDown /></VoteButton>
                     </SidebarRow>
                   </div>
                 : <div></div>
