@@ -42,23 +42,12 @@ export default function ThemeProvider({ children }) {
 
     const darkMode = configStore.darkMode;
 
-    const themeURL = checkSupportedTheme(
-        getQueryParam(window.location, 'theme')
-    );
-    const themeToRender = themeURL
-        ? themeURL.toUpperCase() === SUPPORTED_THEMES.DARK
-            ? true
-            : themeURL.toUpperCase() === SUPPORTED_THEMES.LIGHT
-            ? false
-            : darkMode
-        : darkMode;
-
     useEffect(() => {
-        configStore.setDarkMode(themeToRender);
-    }, [configStore, themeToRender]);
+        configStore.setDarkMode(darkMode);
+    }, [configStore, darkMode]);
     return (
-        <StyledComponentsThemeProvider theme={theme(themeToRender)}>
-            {children}
+        <StyledComponentsThemeProvider theme={theme(darkMode)}>
+          {children}
         </StyledComponentsThemeProvider>
     );
 }

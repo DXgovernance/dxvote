@@ -21,18 +21,18 @@ moment.updateLocale('en', {
 const Web3ProviderInjected = createWeb3ReactRoot(web3ContextNames.injected);
 
 function getLibrary(provider) {
-    return new Web3(provider);
+  return new Web3(provider);
 }
 
 const Root = (
-      <Web3ProviderInjected getLibrary={getLibrary}>
-          <ThemeProvider>
-              <>
-                  <GlobalStyle />
-                  <App />
-              </>
-          </ThemeProvider>
-      </Web3ProviderInjected>
+  <Web3ProviderInjected getLibrary={getLibrary}>
+    <ThemeProvider>
+      <>
+        <GlobalStyle />
+        <App />
+      </>
+    </ThemeProvider>
+  </Web3ProviderInjected>
 );
 ReactDOM.render(Root, document.getElementById('root'));
 
