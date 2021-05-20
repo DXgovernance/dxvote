@@ -2,171 +2,13 @@ const fs = require("fs");
 const hre = require("hardhat");
 const { BigNumber } = require('bignumber.js');
 const web3 = hre.web3;
-const { decodePermission } = require('./helpers/permissions');
-const { getEventsBetweenBlocks, sortEvents, decodeSchemeParameters, decodeStatus, getConfig } = require('./helpers/cache');
+const { getConfig } = require('../src/config');
+const { decodePermission } = require('../src/utils/permissions');
+const { getEventsBetweenBlocks, sortEvents } = require('../src/utils/cache');
+const { decodeSchemeParameters } = require('../src/utils/scheme');
+const { decodeStatus } = require('../src/utils/proposals');
 
-// The only way I found to import the types from the source folder into here was by copy/pasting
-// TO DO: Use the interfaces imported the source folder
-
-interface RepEvent {
-  type: string;
-  account: string;
-  amount: typeof BigNumber;
-  tx: string;
-  block: number;
-  transactionIndex: number;
-  logIndex: number;
-}
-
-interface VotingMachineEvent {
-  proposalId: string;
-  tx: string;
-  block: number;
-  transactionIndex: number;
-  logIndex: number;
-}
-
-interface Vote extends VotingMachineEvent {
-  voter: string;
-  vote: number;
-  amount: typeof BigNumber;
-  preBoosted: boolean;
-}
-
-interface Stake extends VotingMachineEvent {
-  staker: string;
-  amount: typeof BigNumber;
-  vote: number;
-  amount4Bounty: typeof BigNumber;
-}
-
-interface ProposalStateChange extends VotingMachineEvent {
-  state: string;
-}
-
-interface Redeem extends VotingMachineEvent {
-  beneficiary: string;
-  amount: typeof BigNumber;
-}
-
-interface RedeemRep extends VotingMachineEvent {
-  beneficiary: string;
-  amount: typeof BigNumber;
-}
-
-enum SchemeProposalState { Submitted, Passed, Failed, Executed }
-
-enum VotingMachineProposalState { 
-  None, ExpiredInQueue, Executed, Queued, PreBoosted, Boosted, QuietEndingPeriod
-}
-
-interface ProposalInfo {
-  id: string;
-  scheme: string;
-  title: string;
-  to: string[];
-  callData: string[];
-  values: typeof BigNumber[];
-  stateInScheme: SchemeProposalState;
-  stateInVotingMachine: VotingMachineProposalState;
-  descriptionHash: string;
-  creationBlock: typeof BigNumber;
-  repAtCreation: typeof BigNumber;
-  winningVote: number;
-  proposer: string;
-  currentBoostedVotePeriodLimit: typeof BigNumber;
-  paramsHash: string;
-  daoBountyRemain: typeof BigNumber;
-  daoBounty: typeof BigNumber;
-  totalStakes: typeof BigNumber;
-  confidenceThreshold: typeof BigNumber;
-  secondsFromTimeOutTillExecuteBoosted: typeof BigNumber;
-  submittedTime: typeof BigNumber;
-  boostedPhaseTime: typeof BigNumber;
-  preBoostedPhaseTime: typeof BigNumber;
-  daoRedeemItsWinnings: boolean;
-  status: string;
-  priority: number;
-  boostTime: typeof BigNumber;
-  finishTime: typeof BigNumber;
-  shouldBoost: boolean,
-  positiveVotes: typeof BigNumber;
-  negativeVotes: typeof BigNumber;
-  preBoostedPositiveVotes: typeof BigNumber;
-  preBoostedNegativeVotes: typeof BigNumber;
-  positiveStakes: typeof BigNumber;
-  negativeStakes: typeof BigNumber;
-}
-
-interface SchemeParameters {
-  queuedVoteRequiredPercentage: typeof BigNumber;
-  queuedVotePeriodLimit: typeof BigNumber;
-  boostedVotePeriodLimit: typeof BigNumber;
-  preBoostedVotePeriodLimit: typeof BigNumber;
-  thresholdConst: typeof BigNumber;
-  limitExponentValue: typeof BigNumber;
-  quietEndingPeriod: typeof BigNumber;
-  proposingRepReward: typeof BigNumber;
-  votersReputationLossRatio: typeof BigNumber;
-  minimumDaoBounty: typeof BigNumber;
-  daoBountyConst: typeof BigNumber;
-  activationTime: typeof BigNumber;
-}
-
-interface SchemePermissions {
-  canGenericCall: boolean;
-  canUpgrade: boolean;
-  canChangeConstraints: boolean;
-  canRegisterSchemes: boolean;
-}
-
-interface SchemeCallPermission {
-  asset: string;
-  to: string;
-  functionSignature: string;
-  fromTime: typeof BigNumber;
-  value: typeof BigNumber;
-}
-
-interface SchemeInfo {
-  registered: boolean;
-  address: string;
-  name: string,
-  paramsHash: string;
-  controllerAddress: string;
-  ethBalance: typeof BigNumber;
-  parameters: SchemeParameters;
-  permissions: SchemePermissions;
-  proposalIds: string[];
-  boostedProposals: number;
-  maxSecondsForExecution: typeof BigNumber;
-}
-
-interface DaoInfo {
-  address: string;
-  totalRep: typeof BigNumber;
-  repHolders: {[id: string]: typeof BigNumber};
-  repEvents: RepEvent[];
-  ethBalance: typeof BigNumber;
-  dxdBalance: typeof BigNumber;
-}
-
-interface DaoCache {
-  [network: string]: {
-    blockNumber: number;
-    daoInfo: DaoInfo
-    schemes: {[address: string]: SchemeInfo};
-    proposals: {[id: string]: ProposalInfo};
-    callPermissions: { [from: string]: SchemeCallPermission[] };
-    votingMachineEvents: {
-      votes: Vote[];
-      stakes: Stake[];
-      redeems: Redeem[];
-      redeemsRep: RedeemRep[];
-      proposalStateChanges: ProposalStateChange[];
-    }
-  }
-}
+import { DaoCache, DaoInfo } from '../src/types';
 
 // Require the artifacts contracts
 const WalletScheme = hre.artifacts.require("WalletScheme");
@@ -183,8 +25,8 @@ async function main() {
   const networkName = hre.network.name;
   const contractsConfig = getConfig(networkName);
   
-  let cacheFile: DaoCache = fs.existsSync('src/cache.json')
-    ? JSON.parse(fs.readFileSync('src/cache.json', 'utf-8'))
+  let cacheFile: DaoCache = fs.existsSync('./src/cache.json')
+    ? JSON.parse(fs.readFileSync('./src/cache.json', 'utf-8'))
     : {
       [networkName] : {
         blockNumber: contractsConfig.fromBlock,
@@ -509,7 +351,7 @@ async function main() {
   })
   
   cacheFile[networkName] = cache;
-  fs.writeFileSync("src/cache.json", JSON.stringify(cacheFile, null, 2), { encoding: "utf8", flag: "w" });
+  fs.writeFileSync("./src/cache.json", JSON.stringify(cacheFile, null, 2), { encoding: "utf8", flag: "w" });
 
 } 
 

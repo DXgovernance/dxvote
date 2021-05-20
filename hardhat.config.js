@@ -57,8 +57,7 @@ module.exports = {
       url: 'https://kovan5.arbitrum.io/rpc',
       accounts: { mnemonic: MNEMONIC },
       gasPrice: 0,
-      chainId: 144545313136048,
-      timeout: 60000
+      chainId: 144545313136048
     }
   }
 };

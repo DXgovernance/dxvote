@@ -2,7 +2,7 @@ const hre = require("hardhat");
 const fs = require("fs");
 const web3 = hre.web3;
 var moment = require("moment");
-const { encodePermission } = require('./helpers/permissions');
+const { encodePermission, decodePermission } = require('../src/utils/permissions');
 const IPFS = require('ipfs-core');
 const contentHash = require('content-hash');
 const request = require("request-promise-native");
@@ -15,15 +15,15 @@ const ANY_FUNC_SIGNATURE = "0xaaaaaaaa";
 
 const delay = time => new Promise(res=>setTimeout(res,time));
 
-const WalletScheme = artifacts.require("WalletScheme");
-const PermissionRegistry = artifacts.require("PermissionRegistry");
-const DxController = artifacts.require("DxController");
-const DxAvatar = artifacts.require("DxAvatar");
-const DxReputation = artifacts.require("DxReputation");
-const DxToken = artifacts.require("DxToken");
-const DXDVotingMachine = artifacts.require("DXDVotingMachine");
-const ERC20Mock = artifacts.require("ERC20Mock");
-const Multicall = artifacts.require("Multicall");
+const WalletScheme = hre.artifacts.require("WalletScheme");
+const PermissionRegistry = hre.artifacts.require("PermissionRegistry");
+const DxController = hre.artifacts.require("DxController");
+const DxAvatar = hre.artifacts.require("DxAvatar");
+const DxReputation = hre.artifacts.require("DxReputation");
+const DxToken = hre.artifacts.require("DxToken");
+const DXDVotingMachine = hre.artifacts.require("DXDVotingMachine");
+const ERC20Mock = hre.artifacts.require("ERC20Mock");
+const Multicall = hre.artifacts.require("Multicall");
 
 async function main() {
     
@@ -296,7 +296,6 @@ async function main() {
   
   // Create test proposal 1
   descriptionText = "Mint 20 REP, tranfer 15 ETH and 50 tokens to QuickWalletScheme.";
-  ipfsHash = (await ipfs.add({content: descriptionText})).cid;
   const testProposal1 = ( await masterWalletScheme.proposeCalls(
     [controller.address, controller.address, controller.address],
     [
@@ -319,7 +318,6 @@ async function main() {
   await dxdVotingMachine.vote(testProposal1, 1, 0, NULL_ADDRESS, { from: accounts[2] });
 
   descriptionText = "Tranfer 5 ETH to " + accounts[1];
-  ipfsHash = (await ipfs.add({content: descriptionText})).cid;
   const testProposal2 = (await masterWalletScheme.proposeCalls(
     [controller.address],
     [
@@ -342,7 +340,6 @@ async function main() {
 
   // Create test proposal 3 in quick wallet scheme
   descriptionText = "Tranfer 5 ETH to " + accounts[2];
-  ipfsHash = (await ipfs.add({content: descriptionText})).cid;
   await quickWalletScheme.proposeCalls(
     [accounts[2]],
     ["0x0"],
@@ -453,4 +450,9 @@ async function main() {
   )
 } 
 
-Promise.all([main()]).then(process.exit);
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

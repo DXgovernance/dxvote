@@ -53,14 +53,19 @@ cp artifacts/dxdao-contracts/contracts/utils/Multicall.sol/Multicall.json src/co
 cp artifacts/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol/ERC20.json src/contracts/ERC20.json
 cp artifacts/dxdao-contracts/contracts/schemes/WalletScheme.sol/WalletScheme.json src/contracts/WalletScheme.json
 cp artifacts/dxdao-contracts/contracts/schemes/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
-yarn hardhat run --network localhost scripts/deployLocalContracts.js
+
+# Disable isolatedModules and use commonjs in tsconfig
+contents="$(jq '.compilerOptions.isolatedModules = false' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+
+# Deploy local contracts
+yarn hardhat run --network localhost scripts/deployLocalContracts.ts
 
 # Copy dxdao contracts addresses in live networks
 cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
 
-# Disable isolatedModules in tsconfig
-contents="$(jq '.compilerOptions.isolatedModules = false' tsconfig.json)" && \
-echo "${contents}" > tsconfig.json
 
 # Run build cache
 REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
@@ -73,8 +78,10 @@ REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
 yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
 
-# Enable isolatedModules in tsconfig
+# Enable isolatedModules and use esnext as module in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+contents="$(jq '.compilerOptions.module = "esnext"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
 # Run dapp with localhost contracts

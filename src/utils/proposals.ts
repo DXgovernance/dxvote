@@ -21,7 +21,6 @@ export const decodeStatus = function(
         boostTime: 0, 
         finishTime: 0
       };
-    break;
     case "2":
       if (stateInScheme == "3")
         return { 
@@ -43,7 +42,6 @@ export const decodeStatus = function(
         boostTime: 0,
         finishTime: 0
       };
-    break;
     case "3":
       if (moment().unix() > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
         return { 
@@ -60,7 +58,6 @@ export const decodeStatus = function(
           finishTime: submittedTime.plus(queuedVotePeriodLimit)
         };
       }
-    break;
     case "4":
       if (moment().unix() > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() && shouldBoost) {
         return { 
@@ -84,7 +81,6 @@ export const decodeStatus = function(
           finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit), 
         };
       }
-    break;
     case "5":
       if (moment().unix() > boostedPhaseTime.plus(boostedVotePeriodLimit).toNumber()) {
         return { 
@@ -101,7 +97,6 @@ export const decodeStatus = function(
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit)
         };
       }
-    break;
     case "6":
       return { 
         status: "Quiet Ending Period", 
@@ -109,7 +104,6 @@ export const decodeStatus = function(
         boostTime: 0,
         finishTime: boostedPhaseTime.plus(quietEndingPeriod)
       };
-    break;
     default:
     return { 
       status: "", 

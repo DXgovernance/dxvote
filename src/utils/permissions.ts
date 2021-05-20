@@ -16,13 +16,7 @@ const binaryToHex = function(binaryString) {
     "1100": "c",
     "1101": "d",
     "1110": "e",
-    "1111": "f",
-    "1010": "A",
-    "1011": "B",
-    "1100": "C",
-    "1101": "D",
-    "1110": "E",
-    "1111": "F"
+    "1111": "f"
   };
   var ret = "";
   binaryString = binaryString.split(" ");

@@ -1,8 +1,6 @@
 // Libraries
-import jazzicon from 'jazzicon';
 import { ethers, utils } from 'ethers';
-import { BigNumber } from 'utils/bignumber';
-import { SUPPORTED_THEMES } from '../theme';
+import { BigNumber } from './bignumber';
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
@@ -62,13 +60,6 @@ export function getQueryParam(windowLocation, name) {
     return q && q[1];
 }
 
-export function checkSupportedTheme(themeName) {
-    if (themeName && themeName.toUpperCase() in SUPPORTED_THEMES) {
-        return themeName.toUpperCase();
-    }
-    return null;
-}
-
 export const copyToClipboard = (e) => {
     const value = e.target.title.replace(',', '');
     var aux = document.createElement('input');
@@ -78,8 +69,4 @@ export const copyToClipboard = (e) => {
     document.execCommand('copy');
     document.body.removeChild(aux);
     alert(`Value: "${value}" copied to clipboard`);
-};
-
-export const generateIcon = (address) => {
-    return jazzicon(28, address.substr(0, 10));
 };
