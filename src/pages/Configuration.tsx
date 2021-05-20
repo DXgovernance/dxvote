@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
-import { Link, useLocation } from 'react-router-dom';
-import moment from 'moment';
 
 const ConfigWrapper = styled.div`
   background: white;
@@ -30,24 +28,6 @@ const ConfigWrapper = styled.div`
     img {
       margin-bottom: 10px;
     }
-  }
-`;
-
-
-const ConfigBox = styled.div`
-  background: white;
-  border: 1px solid var(--medium-gray);
-  margin: auto;
-  padding: 5px 10px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  width: fit-content;
-  
-  h3 {
-    margin: 5px 0px;
   }
 `;
 
@@ -79,10 +59,10 @@ const DaiInformation = observer(() => {
     const {
         root: { providerStore, configStore, blockchainStore },
     } = useStores();
-    const { active: providerActive, library } = providerStore.getActiveWeb3React();
+    const { active: providerActive } = providerStore.getActiveWeb3React();
     const loading = !blockchainStore.initialLoadComplete;
 
-    const [apiKeys, setApiKeys] = React.useState(configStore.getApiKeys() || {});
+    const [apiKeys, setApiKeys] = React.useState(configStore.getApiKeys());
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     
     function onApiKeyValueChange(event, key) {

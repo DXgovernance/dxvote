@@ -5,8 +5,7 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import IPFS from 'ipfs-core';
-import contentHash from 'content-hash';
+import boltIcon from "assets/images/bolt.svg"
 
 const ProposalsTableWrapper = styled.div`
     width: 100%;
@@ -140,22 +139,20 @@ const TableCell = styled.div`
 
 const ProposalsTable = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore, ipfsService, blockchainStore },
+        root: { providerStore, daoStore, blockchainStore },
     } = useStores();
 
     const { library, active } = providerStore.getActiveWeb3React();
     const [stateFilter, setStateFilter] = React.useState("All");
     const [titleFilter, setTitleFilter] = React.useState("");
     
-    function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
-    function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
     
     if (!active) {
 
       return (
         <ProposalsTableWrapper>
           <div className="loader">
-          <img alt="bolt" src={require('assets/images/bolt.svg')} />
+          <img alt="bolt" src={boltIcon} />
               <br/>
               Connect to view proposals
           </div>
@@ -165,6 +162,7 @@ const ProposalsTable = observer(() => {
       
       const allProposals = daoStore.getAllProposals().sort(function(a, b) { return b.priority - a.priority; });
       function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
+      function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
       console.log("All Proposals", allProposals, allProposals.length, daoStore);
       
       return (
@@ -217,7 +215,7 @@ const ProposalsTable = observer(() => {
           { (!blockchainStore.initialLoadComplete || (allProposals.length === 0)) ?
             <TableRowsWrapper>
               <div className="loader">
-              <img alt="bolt" src={require('assets/images/bolt.svg')} />
+              <img alt="bolt" src={boltIcon} />
                 <br/>Searching for proposals..
               </div>
             </TableRowsWrapper>
@@ -231,13 +229,12 @@ const ProposalsTable = observer(() => {
                 ) {
                   const positiveStake = Number(library.utils.fromWei(proposal.positiveStakes.toString())).toFixed(2);
                   const negativeStake = Number(library.utils.fromWei(proposal.negativeStakes.toString())).toFixed(2);
-                  const timeNow = (new Date()).getTime() / 1000;
                   const positiveVotesPercentage = proposal.positiveVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
                   const negativeVotesPercentage =  proposal.negativeVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
-                  const timeToBoost = proposal.boostTime > moment().unix() ? 
+                  const timeToBoost = proposal.boostTime.toNumber() > moment().unix() ? 
                     moment().to( moment(proposal.boostTime.times(1000).toNumber()) ).toString()
                     : "";
-                  const timeToFinish = proposal.finishTime > moment().unix() ?
+                  const timeToFinish = proposal.finishTime.toNumber() > moment().unix() ?
                     moment().to( moment(proposal.finishTime.times(1000).toNumber()) ).toString()
                     : "";
                   return (
@@ -251,8 +248,8 @@ const ProposalsTable = observer(() => {
                         </TableCell>
                         <TableCell width="15%" align="center">
                           {proposal.status} <br/>
-                          {(proposal.boostTime > moment().unix()) ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
-                          {(proposal.finishTime > moment().unix()) ? <small>Finish {timeToFinish} </small> : <span></span>}
+                          {(proposal.boostTime.toNumber() > moment().unix()) ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
+                          {(proposal.finishTime.toNumber() > moment().unix()) ? <small>Finish {timeToFinish} </small> : <span></span>}
                         </TableCell>
                         <TableCell width="17.5%" align="center"> 
                           <span style={{color: "green"}}>{positiveStake} DXD </span>

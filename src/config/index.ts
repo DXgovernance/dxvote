@@ -1,4 +1,5 @@
 const contractsFile = require('./contracts.json');
+const assetsFile = require('./assets.json');
 
 export const getConfig = function(network) {
   if (network === 'localhost') {
@@ -15,4 +16,8 @@ export const getConfig = function(network) {
   } else {
     return contractsFile[network];
   };
+}
+
+export const getAssets = function(network) {
+  return assetsFile[network];
 }

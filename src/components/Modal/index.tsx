@@ -1,12 +1,12 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { animated, useSpring, useTransition } from 'react-spring';
+import { animated, useTransition } from 'react-spring';
 import { Spring } from 'react-spring/renderprops';
 
 import { DialogContent, DialogOverlay } from '@reach/dialog';
 import { isMobile } from 'react-device-detect';
 import '@reach/dialog/styles.css';
-import { useGesture } from 'react-use-gesture';
+// import { useGesture } from 'react-use-gesture';
 
 const AnimatedDialogOverlay = animated(DialogOverlay);
 const WrappedDialogOverlay = ({
@@ -22,7 +22,7 @@ const StyledDialogOverlay = styled(WrappedDialogOverlay).attrs({
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: ${({ theme }) => 'transparent'};
+        background-color: transparent;
 
         ${({ mobile }) =>
             mobile &&
@@ -78,7 +78,7 @@ const StyledDialogContent = styled(FilteredDialogContent)`
       max-height: 65vh;
       margin: 0;
     `}
-        ${({ theme, mobile, isOpen }) => theme.mediaWidth.upToSmall`
+        ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
       width:  85vw;
       max-height: 66vh;
       ${
@@ -117,25 +117,25 @@ export default function Modal({
         leave: { opacity: 0 },
     });
 
-    const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }));
-    const bind = useGesture({
-        onDrag: (state) => {
-            let velocity = state.velocity;
-            if (velocity < 1) {
-                velocity = 1;
-            }
-            if (velocity > 8) {
-                velocity = 8;
-            }
-            set({
-                xy: state.down ? state.movement : [0, 0],
-                config: { mass: 1, tension: 210, friction: 20 },
-            });
-            if (velocity > 3 && state.direction[1] > 0) {
-                onDismiss();
-            }
-        },
-    });
+    // const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }));
+    // const bind = useGesture({
+    //     onDrag: (state) => {
+    //         let velocity = state.velocity;
+    //         if (velocity < 1) {
+    //             velocity = 1;
+    //         }
+    //         if (velocity > 8) {
+    //             velocity = 8;
+    //         }
+    //         set({
+    //             xy: state.down ? state.movement : [0, 0],
+    //             config: { mass: 1, tension: 210, friction: 20 },
+    //         });
+    //         if (velocity > 3 && state.direction[1] > 0) {
+    //             onDismiss();
+    //         }
+    //     },
+    // });
 
     if (isMobile) {
         return transitions.map(
@@ -162,15 +162,10 @@ export default function Modal({
                         >
                             {(props) => (
                                 <animated.div
-                                    {...bind()}
-                                    style={{
-                                        transform: xy.interpolate(
-                                            (x, y) =>
-                                                `translate3d(${0}px,${
-                                                    y > 0 ? y : 0
-                                                }px,0)`
-                                        ),
-                                    }}
+                                    // {...bind()}
+                                    // style={{
+                                    //     transform: `translate3d(${0}px,${ y > 0 ? y : 0 }px,0)`,
+                                    // }}
                                 >
                                     <StyledDialogContent
                                         style={props}

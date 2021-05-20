@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { etherscanAddress, etherscanToken } from 'utils/etherscan';
-import { useStores } from '../../contexts/storesContext';
 
 const FooterWrapper = styled.div`
   display: flex;
@@ -14,12 +12,6 @@ const FooterWrapper = styled.div`
 `;
 
 const LeftFooter = styled.div`
-margin-top: auto;
-  display: flex;
-  flex-direction: row;
-`;
-
-const RighFooter = styled.div`
 margin-top: auto;
   display: flex;
   flex-direction: row;
@@ -45,23 +37,7 @@ const FooterDivider = styled.div`
   margin: 7px;
 `;
 
-const LogoWrapper = styled.div`
-  width: 20px;
-  padding-left: 8px;
-`;
-
-const FooterLogo = styled.img`
-  :hover {
-    filter: invert(48%) sepia(13%) saturate(281%) hue-rotate(154deg)
-      brightness(97%) contrast(86%);
-  }
-`;
-
 const Footer = () => {
-  const {
-    root: {providerStore, configStore},
-  } = useStores();
-
   return (
     <FooterWrapper>
       <LeftFooter>

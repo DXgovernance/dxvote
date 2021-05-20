@@ -1,6 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import Jazzicon from 'jazzicon';
 import { useStores } from '../../contexts/storesContext';
 
 const AddressLink = styled.a`
@@ -12,7 +11,7 @@ const AddressLink = styled.a`
     color: inherit;
 `;
 
-const UserAddress = ({ address, size, type }) => {
+const UserAddress = ({ address, size = 'default', type = 'default' }) => {
   
     const {
         root: { configStore },
@@ -27,23 +26,17 @@ const UserAddress = ({ address, size, type }) => {
         switch (size) {
           case "short":
             return `${start}..`;
-          break;
           case "long":
             return address;
-          break;
           default:
             return `${start}...${end}`;
         }
     }
     
     function href() {
-        const start = address.slice(0, 6);
-        const end = address.slice(-4);
-
         switch (type) {
           case "user":
             return `${window.location.pathname}#/user/${address}`;
-          break;
           default:
             if (networkName == 'arbitrum-testnet-v5')
               return `https://explorer5.arbitrum.io/#/address/${address}`

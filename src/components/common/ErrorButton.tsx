@@ -42,7 +42,7 @@ const Text = styled.div`
     margin-left: 30px;
 `;
 
-export default function ErrorButton(props) {
+export default function ErrorButton() {
     return (
         <Button>
             <Text>Wrong Network</Text>

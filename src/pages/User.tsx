@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { useLocation } from 'react-router-dom';
 import Address from '../components/common/Address';
@@ -36,7 +35,7 @@ const UserInfoWrapper = styled.div`
 
 const UserPage = () => {
     const {
-        root: { daoStore, blockchainStore },
+        root: { daoStore },
     } = useStores();
     const userAddress = useLocation().pathname.split("/")[2];
     const userEvents = daoStore.getUserEvents(userAddress);
@@ -48,13 +47,13 @@ const UserPage = () => {
         <h2>User <Address size="long" address={userAddress}/></h2>
         <h3>REP: {userRep.percentage.toFixed(2)} %</h3>
         {loading ?
-          <center>
+          <div style={{textAlign: "center"}}>
             <div className="loader">
             <img alt="bolt" src={require('assets/images/bolt.svg')} />
                 <br/>
                 Fetching user information...
             </div>
-          </center>
+          </div>
         : <div>
           <h2> History </h2>
           {userEvents.history.map((historyEvent, i) => {

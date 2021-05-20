@@ -51,7 +51,7 @@ const BalanceItem = styled.div`
 
 const Header = observer(() => {
   const NavItem = withRouter(
-    ({ option, route, history, location, children }) => {
+    ({ route, history, children }) => {
       return (
         <MenuItem
           onClick={() => {

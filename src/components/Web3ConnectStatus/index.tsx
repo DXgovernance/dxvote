@@ -3,11 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { shortenAddress } from 'utils/address';
 import WalletModal from 'components/WalletModal';
-import {
-    injected,
-    isChainIdSupported,
-    walletconnect
-} from 'provider/connectors';
+import { isChainIdSupported } from 'provider/connectors';
 import { useStores } from '../../contexts/storesContext';
 
 const WrongNetworkButton = styled.button`
@@ -100,7 +96,6 @@ const Web3ConnectStatus = observer((props) => {
     const {
         chainId,
         account,
-        connector,
         error,
     } = providerStore.getActiveWeb3React();
     

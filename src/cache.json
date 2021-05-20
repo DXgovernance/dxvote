@@ -4673,7 +4673,51 @@
         "boostedProposals": "0"
       }
     },
-    "proposals": {},
+    "proposals": {
+      "0xd3c1a1ccc2eed9c7beff852a2f1a8f83982309ffe469422bb6f120f1b825880c": {
+        "id": "0xd3c1a1ccc2eed9c7beff852a2f1a8f83982309ffe469422bb6f120f1b825880c",
+        "scheme": "0x05a28eE1EeeE05A5ab66E18c08C417860a607d81",
+        "to": [
+          "0xe3A46a74188160780f8723c686f490363045FF72"
+        ],
+        "title": "Transfer 0.5 ARBI ETH to Augusto",
+        "callData": [
+          "0xd1b7089a000000000000000000000000c4b60a931929d3ed0ac423f9ea80e5962726da730000000000000000000000000000000000000000000000000000000000000080000000000000000000000000a4e0b135d4b6f72041776255cf8ea6539c1e369b00000000000000000000000000000000000000000000000006f05b59d3b2000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        "values": [
+          "0"
+        ],
+        "stateInScheme": "0",
+        "stateInVotingMachine": "4",
+        "descriptionHash": "e301017012207a4c9ca38a8022dfdb8a426572917a128c07ca3c21559e8a38216b6d8f86f465",
+        "creationBlock": 43004,
+        "repAtCreation": "0",
+        "winningVote": "2",
+        "proposer": "0xC4B60a931929d3ed0AC423F9Ea80e5962726dA73",
+        "currentBoostedVotePeriodLimit": "7e90",
+        "paramsHash": "0xae2e341d3476bbac9bdef63d0c388b6a99dec30b8568af8e4d16541bca795916",
+        "daoBountyRemain": "100000000000000000",
+        "daoBounty": "0",
+        "totalStakes": "1000000000000000000",
+        "confidenceThreshold": "10000000000",
+        "secondsFromTimeOutTillExecuteBoosted": "0",
+        "submittedTime": "1621436676",
+        "boostedPhaseTime": "0",
+        "preBoostedPhaseTime": "1621436760",
+        "daoRedeemItsWinnings": false,
+        "status": "Pending Boost",
+        "priority": 5,
+        "boostTime": "0",
+        "finishTime": "1621503700",
+        "shouldBoost": true,
+        "positiveVotes": "0",
+        "negativeVotes": "0",
+        "preBoostedPositiveVotes": "0",
+        "preBoostedNegativeVotes": "0",
+        "positiveStakes": "1000000000000000000",
+        "negativeStakes": "100000000000000000"
+      }
+    },
     "callPermissions": {
       "0xBaaa34778f23A9982364Cfd5679A3F8589E9a734": [
         {
@@ -4703,14 +4747,35 @@
     },
     "votingMachineEvents": {
       "votes": [],
-      "stakes": [],
+      "stakes": [
+        {
+          "staker": "0xC4B60a931929d3ed0AC423F9Ea80e5962726dA73",
+          "vote": "1",
+          "amount": "1000000000000000000",
+          "amount4Bounty": "0",
+          "proposalId": "0xd3c1a1ccc2eed9c7beff852a2f1a8f83982309ffe469422bb6f120f1b825880c",
+          "tx": "0x8da39f7fb18fd8113193899251f31368d417f563be6d091bf4ee7a5ef0dcb4c7",
+          "block": 43027,
+          "transactionIndex": 0,
+          "logIndex": 2
+        }
+      ],
       "redeems": [],
       "redeemsRep": [],
-      "proposalStateChanges": []
+      "proposalStateChanges": [
+        {
+          "state": "4",
+          "proposalId": "0xd3c1a1ccc2eed9c7beff852a2f1a8f83982309ffe469422bb6f120f1b825880c",
+          "tx": "0x8da39f7fb18fd8113193899251f31368d417f563be6d091bf4ee7a5ef0dcb4c7",
+          "block": 43027,
+          "transactionIndex": 0,
+          "logIndex": 3
+        }
+      ]
     }
   },
   "localhost": {
-    "blockNumber": 38,
+    "blockNumber": 47,
     "daoInfo": {
       "address": "0x7FBf8804Ced476a3eb9F7e8E916ab35Cc8dA8f0C",
       "totalRep": "118499999999999999998",
@@ -4810,17 +4875,17 @@
         "registered": true,
         "address": "0x3134DF2a702a9EF2cDe7441c1540674935f4e54A",
         "name": "Master Wallet",
-        "paramsHash": "0xbda99185656ea595c13c865e02ba4ea9dcbecc7704509fdbfa2d93fee48415c0",
+        "paramsHash": "0x8f0bea292642f418235c7e51a9b4574a187cfaeaec2d95e8b6618547952ec16c",
         "controllerAddress": "0x7961396e0D65310e92C11405d946A79e25Ab4b2C",
         "ethBalance": "0",
         "parameters": {
           "queuedVoteRequiredPercentage": "50",
-          "queuedVotePeriodLimit": "1200",
-          "boostedVotePeriodLimit": "600",
-          "preBoostedVotePeriodLimit": "300",
+          "queuedVotePeriodLimit": "2400",
+          "boostedVotePeriodLimit": "1200",
+          "preBoostedVotePeriodLimit": "600",
           "thresholdConst": "1649267441664",
           "limitExponentValue": "172",
-          "quietEndingPeriod": "120",
+          "quietEndingPeriod": "240",
           "proposingRepReward": "20000000000000000",
           "votersReputationLossRatio": "2",
           "minimumDaoBounty": "1000000000000000000",
@@ -4844,17 +4909,17 @@
         "registered": true,
         "address": "0x80eed876fF840AB9490706C4150e33AE5a372BBd",
         "name": "Quick Wallet",
-        "paramsHash": "0xd347fd2cfed5976e017a840bf76ad38bee0706b4de9c9619138232f369897c39",
+        "paramsHash": "0xf458fd079cf39d1ecd5b0799a24d491f79e43b31a4dad723616c9f9965dd73cf",
         "controllerAddress": "0x0000000000000000000000000000000000000000",
         "ethBalance": "15000000000000000000",
         "parameters": {
           "queuedVoteRequiredPercentage": "60",
-          "queuedVotePeriodLimit": "600",
-          "boostedVotePeriodLimit": "300",
-          "preBoostedVotePeriodLimit": "120",
+          "queuedVotePeriodLimit": "1200",
+          "boostedVotePeriodLimit": "600",
+          "preBoostedVotePeriodLimit": "300",
           "thresholdConst": "1154487209164",
           "limitExponentValue": "172",
-          "quietEndingPeriod": "60",
+          "quietEndingPeriod": "120",
           "proposingRepReward": "2000000000000000",
           "votersReputationLossRatio": "4",
           "minimumDaoBounty": "250000000000000000",
@@ -4868,7 +4933,16 @@
           "canRegisterSchemes": false
         },
         "proposalIds": [
-          "0x4d09a9bca71c91a53cff0935eb1b289164a60966bcb688bfef0470ada92855b7"
+          "0x4d09a9bca71c91a53cff0935eb1b289164a60966bcb688bfef0470ada92855b7",
+          "0x5e53df4298176319bebefcf33d271553d86c3e07627407a208d4e37a76a4b6ca",
+          "0x8ec9d4364066561c097dd2ee9a3e53726219a90cde4f6cad4f9e9ccd7abf945f",
+          "0x257d89deff63fb644280043906d96b7362a4215996a6032dd2ea78b01bec0f8b",
+          "0x6e2902d4ff7c35b8549659e556ed49370bb9dfcef77e4fdeb988298cc8802995",
+          "0x571532fbca3e250a16d9f0fdaf748170e98b3fa571fc9345f78eb83fbc7387d4",
+          "0x98c13aed20bec9cb37b7932f7e6267d80f541e838db880218bc3c7e48ca8039d",
+          "0xe5f0c9c463abcb0f1df87b7f5a28caad9c2111565b93defa5302ba0cf0f90361",
+          "0xbe944bcc5be910e3dec24578c71fba36df89329691faafe28fc6e3279a635c76",
+          "0xd2c7616d804f8c5ece0096ff7aa076b9bf3832297d669830e9e03351d8c89183"
         ],
         "boostedProposals": "0"
       }
@@ -4883,7 +4957,7 @@
           "0x7961396e0D65310e92C11405d946A79e25Ab4b2C",
           "0x7961396e0D65310e92C11405d946A79e25Ab4b2C"
         ],
-        "title": "Mint seed REP test proposal",
+        "title": "Test Proposal #0 (Seed rep mint)",
         "callData": [
           "0xeaf994b20000000000000000000000000000000000000000000000008ac7230489e800000000000000000000000000009e6f088d983692c7be6625a1219eac972672a72c0000000000000000000000007fbf8804ced476a3eb9f7e8e916ab35cc8da8f0c",
           "0xeaf994b2000000000000000000000000000000000000000000000001158e460913d00000000000000000000000000000920f9db0ad6d5bc49af68642c6a70489e45e596c0000000000000000000000007fbf8804ced476a3eb9f7e8e916ab35cc8da8f0c",
@@ -4898,13 +4972,13 @@
         ],
         "stateInScheme": "2",
         "stateInVotingMachine": "2",
-        "descriptionHash": "e30101701220f51d171210d6d8b51a97e75c0d2af0d6d33253060c5dbcf91e66066e24ffa774",
+        "descriptionHash": "e301017012202c77bf2aea398a26afef16323070b9be1598be16a669931c02a1bd44cf89d798",
         "creationBlock": 30,
         "repAtCreation": "100",
         "winningVote": "1",
         "proposer": "0x9E6f088d983692c7bE6625A1219eAc972672A72c",
-        "currentBoostedVotePeriodLimit": "258",
-        "paramsHash": "0xbda99185656ea595c13c865e02ba4ea9dcbecc7704509fdbfa2d93fee48415c0",
+        "currentBoostedVotePeriodLimit": "4b0",
+        "paramsHash": "0x8f0bea292642f418235c7e51a9b4574a187cfaeaec2d95e8b6618547952ec16c",
         "daoBountyRemain": "1000000000000000000",
         "daoBounty": "1000000000000000000",
         "totalStakes": "0",
@@ -4934,7 +5008,7 @@
           "0x7961396e0D65310e92C11405d946A79e25Ab4b2C",
           "0x7961396e0D65310e92C11405d946A79e25Ab4b2C"
         ],
-        "title": "First test proposal",
+        "title": "Test Proposal #1",
         "callData": [
           "0xeaf994b2000000000000000000000000000000000000000000000001158e460913d00000000000000000000000000000920f9db0ad6d5bc49af68642c6a70489e45e596c0000000000000000000000007fbf8804ced476a3eb9f7e8e916ab35cc8da8f0c",
           "0xd1b7089a00000000000000000000000080eed876ff840ab9490706c4150e33ae5a372bbd00000000000000000000000000000000000000000000000000000000000000800000000000000000000000007fbf8804ced476a3eb9f7e8e916ab35cc8da8f0c000000000000000000000000000000000000000000000000d02ab486cedc000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",
@@ -4947,13 +5021,13 @@
         ],
         "stateInScheme": "2",
         "stateInVotingMachine": "2",
-        "descriptionHash": "e3010170122073f1c557bfaaecd322bf296ee8a1b6a580a6c47b6877064a8be02823269dcdcf",
+        "descriptionHash": "e30101701220ea0894b1757b9cd60188779701139f53113f8f1ef6b2763e1ddc3d06efae7ed2",
         "creationBlock": 32,
         "repAtCreation": "99999999999999999998",
         "winningVote": "1",
         "proposer": "0x9E6f088d983692c7bE6625A1219eAc972672A72c",
-        "currentBoostedVotePeriodLimit": "258",
-        "paramsHash": "0xbda99185656ea595c13c865e02ba4ea9dcbecc7704509fdbfa2d93fee48415c0",
+        "currentBoostedVotePeriodLimit": "4b0",
+        "paramsHash": "0x8f0bea292642f418235c7e51a9b4574a187cfaeaec2d95e8b6618547952ec16c",
         "daoBountyRemain": "1000000000000000000",
         "daoBounty": "1000000000000000000",
         "totalStakes": "0",
@@ -4981,7 +5055,7 @@
         "to": [
           "0x7961396e0D65310e92C11405d946A79e25Ab4b2C"
         ],
-        "title": "Second test proposal",
+        "title": "Test Proposal #2",
         "callData": [
           "0xd1b7089a000000000000000000000000920f9db0ad6d5bc49af68642c6a70489e45e596c00000000000000000000000000000000000000000000000000000000000000800000000000000000000000007fbf8804ced476a3eb9f7e8e916ab35cc8da8f0c0000000000000000000000000000000000000000000000004563918244f4000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000"
         ],
@@ -4990,13 +5064,13 @@
         ],
         "stateInScheme": "0",
         "stateInVotingMachine": "4",
-        "descriptionHash": "e301017012204615c2febad061045f27a0acb03ed9d64436e0c384445ce5663fc7991d4dbfde",
-        "creationBlock": 33,
-        "repAtCreation": "99999999999999999998",
+        "descriptionHash": "e30101701220c80efd83e641ee8918c0e7125b2351e4fff6d2f1e04e6e17c9a6d829e6760a5f",
+        "creationBlock": 34,
+        "repAtCreation": "118599999999999999998",
         "winningVote": "1",
         "proposer": "0x9E6f088d983692c7bE6625A1219eAc972672A72c",
-        "currentBoostedVotePeriodLimit": "258",
-        "paramsHash": "0xbda99185656ea595c13c865e02ba4ea9dcbecc7704509fdbfa2d93fee48415c0",
+        "currentBoostedVotePeriodLimit": "4b0",
+        "paramsHash": "0x8f0bea292642f418235c7e51a9b4574a187cfaeaec2d95e8b6618547952ec16c",
         "daoBountyRemain": "1000000000000000000",
         "daoBounty": "0",
         "totalStakes": "2000000000000000000",
@@ -5024,7 +5098,7 @@
         "to": [
           "0xbf7454c656BDB7C439E8d759c18Ac240398FdE35"
         ],
-        "title": "Third test proposal",
+        "title": "Test Proposal #3",
         "callData": [
           "0x00"
         ],
@@ -5033,13 +5107,99 @@
         ],
         "stateInScheme": "0",
         "stateInVotingMachine": "3",
-        "descriptionHash": "e30101701220298963e0cf23f58b851e0bac095bc865d61f1203d742a2503129a60ff02cc348",
-        "creationBlock": 34,
-        "repAtCreation": "99999999999999999998",
+        "descriptionHash": "e30101701220f65ebe03bab3466b4e6abb859c0b926ebf983f54c42b9200d8cbc28f25f688f0",
+        "creationBlock": 38,
+        "repAtCreation": "118499999999999999998",
         "winningVote": "2",
         "proposer": "0x9E6f088d983692c7bE6625A1219eAc972672A72c",
-        "currentBoostedVotePeriodLimit": "12c",
-        "paramsHash": "0xd347fd2cfed5976e017a840bf76ad38bee0706b4de9c9619138232f369897c39",
+        "currentBoostedVotePeriodLimit": "258",
+        "paramsHash": "0xf458fd079cf39d1ecd5b0799a24d491f79e43b31a4dad723616c9f9965dd73cf",
+        "daoBountyRemain": "250000000000000000",
+        "daoBounty": "0",
+        "totalStakes": "0",
+        "confidenceThreshold": "0",
+        "secondsFromTimeOutTillExecuteBoosted": "0",
+        "submittedTime": "1621474927",
+        "boostedPhaseTime": "0",
+        "preBoostedPhaseTime": "0",
+        "daoRedeemItsWinnings": false,
+        "status": "In Queue",
+        "priority": 3,
+        "boostTime": "0",
+        "finishTime": "1621476127",
+        "shouldBoost": false,
+        "positiveVotes": "0",
+        "negativeVotes": "0",
+        "preBoostedPositiveVotes": "0",
+        "preBoostedNegativeVotes": "0",
+        "positiveStakes": "0",
+        "negativeStakes": "250000000000000000"
+      },
+      "0x5e53df4298176319bebefcf33d271553d86c3e07627407a208d4e37a76a4b6ca": {
+        "id": "0x5e53df4298176319bebefcf33d271553d86c3e07627407a208d4e37a76a4b6ca",
+        "scheme": "0x80eed876fF840AB9490706C4150e33AE5a372BBd",
+        "to": [
+          "0x920f9Db0Ad6D5bc49af68642c6a70489E45e596c"
+        ],
+        "title": "Test Proposal #4",
+        "callData": [
+          "0x00"
+        ],
+        "values": [
+          "666000000000000000000"
+        ],
+        "stateInScheme": "0",
+        "stateInVotingMachine": "3",
+        "descriptionHash": "e30101701220500abce7841555d75353bab0850d5d4cfa1e6a0fc000dcd773b5b11bbd3049de",
+        "creationBlock": 39,
+        "repAtCreation": "118499999999999999998",
+        "winningVote": "2",
+        "proposer": "0x9E6f088d983692c7bE6625A1219eAc972672A72c",
+        "currentBoostedVotePeriodLimit": "258",
+        "paramsHash": "0xf458fd079cf39d1ecd5b0799a24d491f79e43b31a4dad723616c9f9965dd73cf",
+        "daoBountyRemain": "250000000000000000",
+        "daoBounty": "0",
+        "totalStakes": "0",
+        "confidenceThreshold": "0",
+        "secondsFromTimeOutTillExecuteBoosted": "0",
+        "submittedTime": "1621474927",
+        "boostedPhaseTime": "0",
+        "preBoostedPhaseTime": "0",
+        "daoRedeemItsWinnings": false,
+        "status": "In Queue",
+        "priority": 3,
+        "boostTime": "0",
+        "finishTime": "1621476127",
+        "shouldBoost": false,
+        "positiveVotes": "0",
+        "negativeVotes": "0",
+        "preBoostedPositiveVotes": "0",
+        "preBoostedNegativeVotes": "0",
+        "positiveStakes": "0",
+        "negativeStakes": "250000000000000000"
+      },
+      "0x8ec9d4364066561c097dd2ee9a3e53726219a90cde4f6cad4f9e9ccd7abf945f": {
+        "id": "0x8ec9d4364066561c097dd2ee9a3e53726219a90cde4f6cad4f9e9ccd7abf945f",
+        "scheme": "0x80eed876fF840AB9490706C4150e33AE5a372BBd",
+        "to": [
+          "0x920f9Db0Ad6D5bc49af68642c6a70489E45e596c"
+        ],
+        "title": "Test Proposal #5",
+        "callData": [
+          "0x00"
+        ],
+        "values": [
+          "666000000000000000000"
+        ],
+        "stateInScheme": "0",
+        "stateInVotingMachine": "3",
+        "descriptionHash": "e30101701220500abce7841555d75353bab0850d5d4cfa1e6a0fc000dcd773b5b11bbd3049de",
+        "creationBlock": 40,
+        "repAtCreation": "118499999999999999998",
+        "winningVote": "2",
+        "proposer": "0x9E6f088d983692c7bE6625A1219eAc972672A72c",
+        "currentBoostedVotePeriodLimit": "258",
+        "paramsHash": "0xf458fd079cf39d1ecd5b0799a24d491f79e43b31a4dad723616c9f9965dd73cf",
         "daoBountyRemain": "250000000000000000",
         "daoBounty": "0",
         "totalStakes": "0",

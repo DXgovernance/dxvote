@@ -121,9 +121,9 @@ const WalletModal = observer(
         } = useStores();
         const { active, connector, error, activate, account, chainId } = useActiveWeb3React();
         const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
-        const [pendingWallet, setPendingWallet] = useState();
-        const [pendingError, setPendingError] = useState();
-        const [connectionErrorMessage, setConnectionErrorMessage] = useState();
+        const [pendingWallet, setPendingWallet] = useState(false);
+        const [pendingError, setPendingError] = useState(false);
+        const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);
 
         const walletModalOpen = modalStore.walletModalVisible;
 

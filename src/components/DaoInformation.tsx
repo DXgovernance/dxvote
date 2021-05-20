@@ -2,10 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import ActiveButton from '../components/common/ActiveButton';
 import Address from '../components/common/Address';
-import { Link } from 'react-router-dom';
-import moment from 'moment';
+import boltIcon from "assets/images/bolt.svg"
 
 const DaoInfoWrapper = styled.div`
     width: 100%;
@@ -105,7 +103,7 @@ const TableCell = styled.div`
 
 const DaoInformation = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore, blockchainStore },
+        root: { providerStore, daoStore, blockchainStore },
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
 
@@ -117,7 +115,7 @@ const DaoInformation = observer(() => {
       return (
           <DaoInfoWrapper>
             <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
+            <img alt="bolt" src={boltIcon} />
                 <br/>
                 Connect to view dao information
             </div>
@@ -127,7 +125,7 @@ const DaoInformation = observer(() => {
       return (
           <DaoInfoWrapper>
             <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
+            <img alt="bolt" src={boltIcon} />
                 <br/>
                 Getting DAO information
             </div>
@@ -152,7 +150,7 @@ const DaoInformation = observer(() => {
               <TableHeader width="50%" align="center"> Amount </TableHeader>
           </AssetsTableHeaderWrapper>
           <TableRowsWrapper>
-          {assets.map((asset, i) => {
+          {assets.map((asset) => {
             if (asset) {
               return (
                 <TableRow>

@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import ActiveButton from '../components/common/ActiveButton';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
+import boltIcon from "assets/images/bolt.svg"
 
 const SchemesTableWrapper = styled.div`
     width: 100%;
@@ -104,9 +104,9 @@ const TableCell = styled.div`
 
 const SchemesInformation = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore, blockchainStore },
+        root: { providerStore, daoStore, blockchainStore },
     } = useStores();
-    const { active: providerActive, library } = providerStore.getActiveWeb3React();
+    const { active: providerActive } = providerStore.getActiveWeb3React();
 
     const loading = (
       !blockchainStore.initialLoadComplete
@@ -116,7 +116,7 @@ const SchemesInformation = observer(() => {
       return (
           <SchemesTableWrapper>
             <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
+            <img alt="bolt" src={boltIcon} />
                 <br/>
                 Connect to view schemes information
             </div>
@@ -126,14 +126,13 @@ const SchemesInformation = observer(() => {
       return (
           <SchemesTableWrapper>
             <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
+            <img alt="bolt" src={boltIcon} />
                 <br/>
                 Getting schemes information
             </div>
           </SchemesTableWrapper>
       )
     } else {
-      const daoInfo = daoStore.getDaoInfo();
       const schemes = daoStore.getAllSchemes();
       return (
         <SchemesTableWrapper>

@@ -4,7 +4,6 @@ import {
     css,
     ThemeProvider as StyledComponentsThemeProvider,
 } from 'styled-components';
-import { checkSupportedTheme, getQueryParam } from 'utils/helpers';
 import { useStores } from '../contexts/storesContext';
 
 export * from './components';
@@ -104,7 +103,7 @@ const theme = (darkMode) => ({
     metaMaskOrange: '#E8831D',
 
     //specific
-    textHover: darkMode ? theme.bodyText : theme.doveGray,
+    textHover: darkMode ? '#90a4ae' : '#C4C4C4',
 
     // connect button when loggedout
     buttonFaded: darkMode ? '#DC6BE5' : '#737373',

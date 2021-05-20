@@ -3,10 +3,9 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
-import { Link } from 'react-router-dom';
-import { bnum } from '../utils/helpers';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
+import boltIcon from "assets/images/bolt.svg"
 
 const NewProposalFormWrapper = styled.div`
   width: cacl(100% -40px);
@@ -88,34 +87,6 @@ const TitleInput = styled.div`
       height: 25px;
       margin-top: 5px;
       border-radius: 3px;
-      border: 1px solid gray;
-    }
-`;
-
-const DescriptionInput = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: left;
-    flex-direction: row;
-    margin-bottom: 10px;
-    
-    span {
-      text-align: center;
-      font-family: Roboto;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 20px;
-      line-height: 18px;
-      padding: 10px 10px;
-    }
-    
-    textarea {
-      max-height: 150px;
-      width: 100%;
-      height: 150px;
-      max-height: 800px;
-      margin-top: 5px;
-      border-radius: 5px;
       border: 1px solid gray;
     }
 `;
@@ -214,9 +185,9 @@ const NewProposalForm = observer(() => {
         return callToController ? configStore.getNetworkConfig().controller : call.to;
       });
       
-      const data = calls.map((call, i) => {
+      const data = calls.map((call) => {
       
-        const parameters = (call.callType === "decoded" && (call.functionName.length > 0 && call.functionParams > 0))
+        const parameters = (call.callType === "decoded" && (call.functionName.length > 0 && call.functionParams.length > 0))
           ? call.functionName.substring(
             call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
           : [];  
@@ -246,7 +217,6 @@ const NewProposalForm = observer(() => {
     }
     
     function onTitleChange(newValue) { setTitleText(newValue.target.value) }
-    function onDescriptionChange(newValue) { setDescriptionText(newValue.target.value) }
 
     function addCall() {
       calls.push({
@@ -296,7 +266,7 @@ const NewProposalForm = observer(() => {
       return (
           <NewProposalFormWrapper>
             <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
+            <img alt="bolt" src={boltIcon} />
                 <br/>
                 Connect to submit a proposal
             </div>
@@ -306,9 +276,9 @@ const NewProposalForm = observer(() => {
       return (
         <NewProposalFormWrapper>
           <SchemeInput>
-            <label for="schemeAddress">Choose a Scheme:</label>
+            <label>Choose a Scheme:</label>
             <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
-            {schemes.map((scheme, i) =>{
+            {schemes.map((scheme) =>{
               return <option key={scheme.address} value={scheme.address}>{scheme.name}</option>
             })}
             </select>
@@ -323,8 +293,8 @@ const NewProposalForm = observer(() => {
             onChange={setDescriptionText}
             preview="edit"
             height="300"
-            minheights="300"
-            maxheights="1000"
+            // minheights="300"
+            // maxheights="1000"
             commands={[
               commands.bold,
               commands.italic,
@@ -353,7 +323,7 @@ const NewProposalForm = observer(() => {
             <span style={{paddingBottom: "0px", width: "20%"}}>To</span>
             <span style={{paddingBottom: "0px", width: "40%"}}>Data</span>
             <span style={{paddingBottom: "0px", width: "10%"}}>Value</span>
-            <div style={{paddingBottom: "0px", width: "30%", textAlign: "-webkit-right"}}>
+            <div style={{paddingBottom: "0px", width: "30%", textAlign: "right"}}>
               <AddButton onClick={addCall}>Add Call</AddButton>
             </div>
             
@@ -363,27 +333,27 @@ const NewProposalForm = observer(() => {
               <span>Call #{i} </span>
               <input
                 type="text"
-                proposalindex={i}
-                proposalfield="to"
+                data-proposalindex={i}
+                data-proposalfield="to"
                 onChange={onCallValueChange}
-                value={calls[i].to}
+                value={call.to}
                 style={{width: "20%"}}
                 placeholder="0x..."
               ></input>
-              { calls[i].callType === "encoded" ?
+              { call.callType === "encoded" ?
                 <input 
                   type="text"
-                  proposalindex={i}
-                  proposalfield="data"
+                  data-proposalindex={i}
+                  data-proposalfield="data"
                   onChange={onCallValueChange}
-                  value={calls[i].data}
+                  value={call.data}
                   placeholder="0x..."
                   style={{width: "40%"}}
                 ></input>
                 : <input 
                   type="text"
-                  proposalindex={i}
-                  proposalfield="functionName"
+                  data-proposalindex={i}
+                  data-proposalfield="functionName"
                   onChange={onCallValueChange}
                   value={calls[i].functionName}
                   placeholder="functionName(string,bool,uint256[])"
@@ -394,8 +364,8 @@ const NewProposalForm = observer(() => {
               { calls[i].callType === "decoded" ?
                 <input 
                   type="text"
-                  proposalindex={i}
-                  proposalfield="functionParams"
+                  data-proposalindex={i}
+                  data-proposalfield="functionParams"
                   onChange={onCallValueChange}
                   value={calls[i].functionParams}
                   placeholder="functions values separated with commas"
@@ -405,8 +375,8 @@ const NewProposalForm = observer(() => {
               }
               <input
                 type="text"
-                proposalindex={i}
-                proposalfield="value"
+                data-proposalindex={i}
+                data-proposalfield="value"
                 onChange={onCallValueChange}
                 value={calls[i].value}
                 style={{width: "10%"}}

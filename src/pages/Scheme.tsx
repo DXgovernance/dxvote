@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import ActiveButton from '../components/common/ActiveButton';
 import Address from '../components/common/Address';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import moment from 'moment';
 
 const SchemeInformationWrapper = styled.div`
@@ -34,31 +33,9 @@ const SchemeInformationWrapper = styled.div`
   }
 `;
 
-
-const SchemeInformationBox = styled.div`
-  background: white;
-  border: 1px solid var(--medium-gray);
-  margin: auto;
-  padding: 5px 10px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  width: fit-content;
-  padding: 5px 0px;
-`;
-
-const Row = styled.div`
-  flex-direction: row;
-  flex: auto;
-  display: flex;
-  padding-top: 15px;
-  justify-content: space-around;
-`
 const SchemePage = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore, blockchainStore },
+        root: { providerStore, daoStore, blockchainStore },
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
     const schemeAddress = useLocation().pathname.split("/")[2];
@@ -92,13 +69,13 @@ const SchemePage = observer(() => {
         <SchemeInformationWrapper>
           <h2>Address: <Address size="long" address={schemeInfo.address}/></h2>
           <h3>Scheme ETH Balance: {Number(library.utils.fromWei(schemeInfo.ethBalance.toString())).toFixed(2)} ETH</h3>
-          <hr width="100%"/>
+          <hr style={{width:"100%"}}/>
           <h3>Permissions</h3>
           <h4>Generic Call from Avatar: {schemeInfo.permissions.canGenericCall.toString()}</h4>
           <h4>Upgrade Controller: {schemeInfo.permissions.canUpgrade.toString()}</h4>
           <h4>Change Constraints: {schemeInfo.permissions.canChangeConstraints.toString()}</h4>
           <h4>Add/Remove Schemes: {schemeInfo.permissions.canRegisterSchemes.toString()}</h4>
-          <hr width="100%"/>
+          <hr style={{width:"100%"}}/>
           <h3>Voting Machine Configuration</h3>
           <h4>Voting Machine Configuration Parameters Hash: {schemeInfo.paramsHash}</h4>
           <h4>Required Percentage for approval: {schemeInfo.parameters.queuedVoteRequiredPercentage.toString()} %</h4>
