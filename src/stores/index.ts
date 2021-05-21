@@ -11,6 +11,8 @@ import MulticallService from '../services/MulticallService';
 import DaoService from '../services/DaoService';
 import EventsService from '../services/EventsService';
 import IPFSService from '../services/IPFSService';
+import PinataService from '../services/PinataService';
+import EtherscanService from '../services/EtherscanService';
 
 export default class RootStore {
   providerStore: ProviderStore;
@@ -26,6 +28,8 @@ export default class RootStore {
   daoService: DaoService;
   eventsService: EventsService;
   ipfsService: IPFSService;
+  pinataService: PinataService;
+  etherscanService: EtherscanService;
 
   constructor() {
     this.abiService = new ABIService(this);
@@ -33,6 +37,8 @@ export default class RootStore {
     this.eventsService = new EventsService(this);
     this.daoService = new DaoService(this);
     this.ipfsService = new IPFSService(this);
+    this.pinataService = new PinataService(this);
+    this.etherscanService = new EtherscanService(this);
     this.providerStore = new ProviderStore(this);
     this.transactionStore = new TransactionStore(this);
     this.modalStore = new ModalStore(this);

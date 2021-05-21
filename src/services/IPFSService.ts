@@ -1,7 +1,7 @@
 import RootStore from '../stores';
 import IPFS from 'ipfs-core';
 import contentHash from 'content-hash';
-import * as request from "request-promise-native";
+import axios from "axios";
 
 export default class IPFSService {
   rootStore: RootStore;
@@ -24,11 +24,9 @@ export default class IPFSService {
     }
   }
 
-  async add(
-    content: String
-  ){
+  async add(content: String){
     const { cid } = await this.ipfs.add({content})
-    return contentHash.fromIpfs(cid);
+    return cid;
   }
 
   call(
@@ -40,23 +38,21 @@ export default class IPFSService {
         content: "",
         fetched: false
       };
-      request.get({uri: `https://ipfs.io/ipfs/${contentHash.decode(hash)}`}).then((content) => {
+      axios.get(`https://ipfs.io/ipfs/${contentHash.decode(hash)}`).then((content) => {
         this.calls[contentHash.decode(hash)] = {
           time: new Date().getTime() / 1000,
-          content: content,
+          content: content.data,
           fetched: true
         };
       })
     }
   }
   
-  get(
-    hash: String
-  ){
+  get(hash: String){
     return !this.calls[contentHash.decode(hash)] ? {
       time: 0,
       content: "",
       fetched: false,
     } : this.calls[contentHash.decode(hash)];
-  }  
+  }
 }

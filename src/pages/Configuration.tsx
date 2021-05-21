@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
+import boltIcon from "assets/images/bolt.svg"
+import { FiCheckCircle, FiX } from "react-icons/fi";
 
 const ConfigWrapper = styled.div`
   background: white;
@@ -57,10 +59,13 @@ const InputBox = styled.input`
 `;
 const DaiInformation = observer(() => {
     const {
-        root: { providerStore, configStore, blockchainStore },
+        root: { providerStore, configStore, blockchainStore, pinataService, etherscanService },
     } = useStores();
     const { active: providerActive } = providerStore.getActiveWeb3React();
     const loading = !blockchainStore.initialLoadComplete;
+    
+    const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(etherscanService.auth);
+    const [pinataKeyStatus, setPinataKeyStatus] = React.useState(pinataService.auth);
 
     const [apiKeys, setApiKeys] = React.useState(configStore.getApiKeys());
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
@@ -75,12 +80,19 @@ const DaiInformation = observer(() => {
       configStore.setApiKey('etherscan', apiKeys.etherscan);
       configStore.setApiKey('pinata', apiKeys.pinata);
     }
+    
+    async function testApis() {
+      await pinataService.isAuthenticated();
+      await etherscanService.isAuthenticated();
+      setPinataKeyStatus(pinataService.auth);  
+      setEtherscanApiStatus(etherscanService.auth);
+    }
   
     if (!providerActive) {
       return (
           <ConfigWrapper>
             <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
+            <img alt="bolt" src={boltIcon} />
                 <br/>
                 Connect to view scheme information
             </div>
@@ -90,7 +102,7 @@ const DaiInformation = observer(() => {
       return (
           <ConfigWrapper>
             <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
+            <img alt="bolt" src={boltIcon} />
                 <br/>
                 Getting Config information
             </div>
@@ -109,6 +121,9 @@ const DaiInformation = observer(() => {
               value={apiKeys.etherscan}
               style={{width: "50%"}}
             ></InputBox>
+            <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>
+              {etherscanApiStatus ? <FiCheckCircle/> : <FiX/>}
+            </span>
           </Row>
           <Row style={{maxWidth: "300px"}}>
             <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Pinata:</span>
@@ -119,9 +134,13 @@ const DaiInformation = observer(() => {
               value={apiKeys.pinata}
               style={{width: "50%"}}
             ></InputBox>
+            <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>
+              {pinataKeyStatus ? <FiCheckCircle/> : <FiX/>}
+            </span>
           </Row>
           <Row style={{maxWidth: "300px"}}>
             <ActiveButton onClick={saveApiKeys}>Save</ActiveButton>
+            <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
           </Row>
         </ConfigWrapper>
       );

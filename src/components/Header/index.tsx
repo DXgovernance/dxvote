@@ -66,9 +66,14 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, ipfsService, daoStore },
+      root: { userStore, providerStore, ipfsService, etherscanService, pinataService, daoStore },
   } = useStores();
+  
+  // Start or auth services
   ipfsService.start();
+  etherscanService.isAuthenticated();
+  pinataService.isAuthenticated();
+  
   const userInfo = userStore.getUserInfo();
   const { active, account } = providerStore.getActiveWeb3React();
   const ethBalance = userInfo.ethBalance ?
