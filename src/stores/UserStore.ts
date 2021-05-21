@@ -2,8 +2,6 @@ import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
 import { ContractType } from './Provider';
 import { bnum } from '../utils/helpers';
-import { UserInfo } from '../types';
-
 
 export default class UserStore {
   userInfo: UserInfo;

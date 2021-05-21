@@ -1,4 +1,4 @@
-import { Web3Errors } from '../../types';
+import { Web3Errors } from '../../enums';
 
 const errorCodeMapping = {
     '4001': Web3Errors.SIGNATURE_REJECTED,

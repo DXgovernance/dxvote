@@ -3,7 +3,6 @@ import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
-import { Call, CallValue, CallEntry, EventStorage, ContractStorage, DaoNetworkCache } from '../types';
 import { decodeSchemeParameters } from '../utils/scheme';
 import { decodePermission } from '../utils/permissions';
 import { decodeStatus } from '../utils/proposals';

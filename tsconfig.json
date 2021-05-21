@@ -29,7 +29,10 @@
     "allowUnreachableCode": false,
     "isolatedModules": true,
     "useDefineForClassFields": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": [
+      "./src/types"
+    ]
   },
   "include": [
     "src",

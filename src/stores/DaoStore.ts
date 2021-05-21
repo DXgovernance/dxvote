@@ -10,17 +10,7 @@ import PromiEvent from 'promievent';
 import {
   VotingMachineProposalState,
   VoteDecision,
-  Vote,
-  Stake,
-  ProposalStateChange,
-  Redeem,
-  RedeemRep,
-  Proposal,
-  Scheme,
-  DaoInfo,
-  DaoNetworkCache,
-  VotingMachineEvent
-} from '../types';
+} from '../enums';
 
 const CACHE = require('../cache.json');
 

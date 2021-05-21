@@ -1,18 +1,5 @@
 import BigNumber from 'bignumber.js';
-
-export enum Web3Errors {
-  UNKNOWN_ERROR,
-  SIGNATURE_REJECTED,
-}
-
-export enum TXEvents {
-  TX_HASH = 'txhash',
-  RECEIPT = 'receipt',
-  CONFIRMATION = 'confirmation',
-  TX_ERROR = 'txerror',
-  FINALLY = 'finally',
-  INVARIANT = 'invariant',
-}
+import { WalletSchemeProposalState, VotingMachineProposalState } from './enums';
 
 // Multicall Types 
 
@@ -55,29 +42,6 @@ export interface ContractStorage {
 };
 
 // DaoStore types
-
-export enum WalletSchemeProposalState { 
-  Submitted,
-  Rejected,
-  ExecutionSucceded,
-  ExecutionTimeout
-}
-
-export enum VotingMachineProposalState {
-  None,
-  ExpiredInQueue,
-  Executed,
-  Queued,
-  PreBoosted,
-  Boosted,
-  QuietEndingPeriod
-}
-
-export enum VoteDecision {
-  None,
-  YES,
-  NO
-}
 
 export interface UserInfo {
   address: string,
@@ -138,12 +102,6 @@ export interface RedeemRep extends VotingMachineEvent {
   amount: BigNumber;
 }
 
-enum SchemeProposalState { Submitted, Passed, Failed, Executed }
-
-enum VotingMachineProposalState { 
-  None, ExpiredInQueue, Executed, Queued, PreBoosted, Boosted, QuietEndingPeriod
-}
-
 export interface Proposal{
   id: string;
   scheme: string;
@@ -151,7 +109,7 @@ export interface Proposal{
   to: string[];
   callData: string[];
   values: BigNumber[];
-  stateInScheme: SchemeProposalState;
+  stateInScheme: WalletSchemeProposalState;
   stateInVotingMachine: VotingMachineProposalState;
   descriptionHash: string;
   creationBlock: BigNumber;
