@@ -331,7 +331,7 @@ const NewProposalForm = observer(() => {
             ]}
           />
           <h2>Description Preview:</h2>
-          <MDEditor.Markdown source={`# ${titleText} \n ${descriptionText}`} style={{
+          <MDEditor.Markdown source={descriptionText} style={{
             backgroundColor: "white",
             borderRadius: "5px",
             border: "1px solid gray",
