@@ -457,7 +457,7 @@ const ProposalInformation = observer(() => {
               
               {stakedAmount.toNumber() > 0
                 ? <SidebarRow>
-                Already staked {(stakedAmount.toNumber() > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount)).toFixed(2)} DXD
+                Already staked {(stakedAmount.toNumber() > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount.toString())).toFixed(2)} DXD
                 </SidebarRow>
                 : <div></div>
               }
