@@ -1,11 +1,10 @@
 const hre = require("hardhat");
 const fs = require("fs");
 const web3 = hre.web3;
-var moment = require("moment");
+const moment = require("moment");
 const { encodePermission, decodePermission } = require('../src/utils/permissions');
 const IPFS = require('ipfs-core');
 const contentHash = require('content-hash');
-const request = require("request-promise-native");
 const repHolders = require('../.repHolders.json');
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
