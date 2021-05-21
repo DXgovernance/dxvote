@@ -56,6 +56,29 @@ export interface ContractStorage {
 
 // DaoStore types
 
+export enum WalletSchemeProposalState { 
+  Submitted,
+  Rejected,
+  ExecutionSucceded,
+  ExecutionTimeout
+}
+
+export enum VotingMachineProposalState {
+  None,
+  ExpiredInQueue,
+  Executed,
+  Queued,
+  PreBoosted,
+  Boosted,
+  QuietEndingPeriod
+}
+
+export enum VoteDecision {
+  None,
+  YES,
+  NO
+}
+
 export interface UserInfo {
   address: string,
   ethBalance: BigNumber;

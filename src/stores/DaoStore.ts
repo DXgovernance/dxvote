@@ -7,7 +7,9 @@ import _ from 'lodash';
 import { bnum } from '../utils/helpers';
 import { ethers, utils } from 'ethers';
 import PromiEvent from 'promievent';
-import { 
+import {
+  VotingMachineProposalState,
+  VoteDecision,
   Vote,
   Stake,
   ProposalStateChange,
@@ -224,7 +226,7 @@ export default class DaoStore {
       event: VotingMachineEvent
     }[] = proposalEvents.votes.map((event) => {
       return {
-        text: `Vote from ${event.voter} of ${(bnum(event.amount)).div(proposal.repAtCreation).times('100').toFixed(4)} REP on decision ${event.vote}`,
+        text: `Vote from ${event.voter} of ${(bnum(event.amount)).div(proposal.repAtCreation).times('100').toFixed(4)} REP on decision ${VoteDecision[event.vote]}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -235,7 +237,7 @@ export default class DaoStore {
       }
     }).concat(proposalEvents.stakes.map((event) => {
       return {
-        text: `Stake from ${event.staker} of ${web3.utils.fromWei(event.amount).toString()} DXD on decision ${event.vote}`,
+        text: `Stake from ${event.staker} of ${web3.utils.fromWei(event.amount).toString()} DXD on decision ${VoteDecision[event.vote]}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -268,7 +270,7 @@ export default class DaoStore {
       }
     })).concat(proposalEvents.stateChanges.map((event) => {
       return {
-        text: `Proposal change to state ${event.state}`,
+        text: `Proposal change to state ${VotingMachineProposalState[event.state]}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -331,7 +333,7 @@ export default class DaoStore {
       event: VotingMachineEvent
     }[] = proposalEvents.votes.map((event) => {
       return {
-        text: `Voted with ${event.amount} REP for decision ${event.vote} on proposal ${event.proposalId}`,
+        text: `Voted with ${event.amount} REP for decision ${VoteDecision[event.vote]} on proposal ${event.proposalId}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -342,7 +344,7 @@ export default class DaoStore {
       }
     }).concat(proposalEvents.stakes.map((event) => {
       return {
-        text: `Staked ${event.amount} DXD for decision ${event.vote} on proposal ${event.proposalId}`,
+        text: `Staked ${event.amount} DXD for decision ${VoteDecision[event.vote]} on proposal ${event.proposalId}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
