@@ -270,8 +270,8 @@ const NewProposalForm = observer(() => {
     };
     
     function onCallValueChange(event) {
-      const proposalindex = event.target.attributes.proposalindex.value;
-      const proposalfield = event.target.attributes.proposalfield.value;
+      const proposalindex = event.target.attributes["data-proposalindex"].value;
+      const proposalfield = event.target.attributes["data-proposalfield"].value;
       calls[proposalindex][proposalfield] = event.target.value;
       setCalls(calls)
       forceUpdate();
