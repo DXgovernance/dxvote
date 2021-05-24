@@ -43,61 +43,54 @@ export interface ContractStorage {
 
 // DaoStore types
 
-export interface UserInfo {
-  address: string,
-  ethBalance: BigNumber;
-  repBalance: BigNumber;
-  dxdBalance: BigNumber;
-  dxdApproved: BigNumber;
-}
-
 export interface BlockchainValue {
   value: any;
   blockNumber: number;
 }
 
-export interface RepEvent {
-  type: string;
-  account: string;
-  amount: BigNumber;
-  tx: string;
-  block: number;
-  transactionIndex: number;
-  logIndex: number;
-};
-
-export interface VotingMachineEvent {
-  proposalId: string;
+export interface BlockchainEvent {
+  event: string;
+  signature: string;
+  address: string;
   tx: string;
   block: number;
   transactionIndex: number;
   logIndex: number;
 }
 
-export interface Vote extends VotingMachineEvent {
+export interface RepEvent extends BlockchainEvent{
+  account: string;
+  amount: BigNumber;
+};
+
+export interface ProposalEvent extends BlockchainEvent {
+  proposalId: string;
+}
+
+export interface Vote extends ProposalEvent {
   voter: string;
   vote: number;
   amount: BigNumber;
   preBoosted: boolean;
 }
 
-export interface Stake extends VotingMachineEvent {
+export interface Stake extends ProposalEvent {
   staker: string;
   amount: BigNumber;
   vote: number;
   amount4Bounty: BigNumber;
 }
 
-export interface ProposalStateChange extends VotingMachineEvent {
+export interface ProposalStateChange extends ProposalEvent {
   state: string;
 }
 
-export interface Redeem extends VotingMachineEvent {
+export interface Redeem extends ProposalEvent {
   beneficiary: string;
   amount: BigNumber;
 }
 
-export interface RedeemRep extends VotingMachineEvent {
+export interface RedeemRep extends ProposalEvent {
   beneficiary: string;
   amount: BigNumber;
 }
@@ -112,11 +105,12 @@ export interface Proposal{
   stateInScheme: WalletSchemeProposalState;
   stateInVotingMachine: VotingMachineProposalState;
   descriptionHash: string;
-  creationBlock: BigNumber;
+  creationEvent: BlockchainEvent;
   repAtCreation: BigNumber;
   winningVote: number;
   proposer: string;
   currentBoostedVotePeriodLimit: BigNumber;
+  paramsHash: string,
   daoBountyRemain: BigNumber;
   daoBounty: BigNumber;
   totalStakes: BigNumber;
@@ -170,23 +164,32 @@ export interface SchemeCallPermission {
 }
 
 export interface Scheme {
-  registered: boolean;
   address: string;
+  registered: boolean;
   name: string,
-  paramsHash: string;
   controllerAddress: string;
   ethBalance: BigNumber;
-  parameters: SchemeParameters;
-  permissions: SchemePermissions;
+  configurations: {
+    paramsHash: string;
+    parameters: SchemeParameters;
+    permissions: SchemePermissions;
+    toBlock: number
+  }[];
   proposalIds: string[];
   boostedProposals: number;
   maxSecondsForExecution: BigNumber;
+  newProposalEvents: ProposalEvent[]
+}
+
+export interface User {
+  repBalance: BigNumber;
+  dxdBalance: BigNumber;
+  proposalsCreated: string[]
 }
 
 export interface DaoInfo {
   address: string;
   totalRep: BigNumber;
-  repHolders: {[address: string]: BigNumber};
   repEvents: RepEvent[];
   ethBalance: BigNumber;
   dxdBalance: BigNumber;
@@ -197,6 +200,7 @@ export interface DaoNetworkCache {
   daoInfo: DaoInfo;
   schemes: {[address: string]: Scheme};
   proposals: {[id: string]: Proposal};
+  users: {[address: string]: User};
   callPermissions: { [from: string]: SchemeCallPermission[] };
   votingMachineEvents: {
     votes: Vote[];

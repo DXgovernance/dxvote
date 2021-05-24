@@ -1,7 +1,7 @@
 const contractsFile = require('./contracts.json');
 const assetsFile = require('./assets.json');
 
-export const getConfig = function(network) {
+export const getNetworkConfig = function(network) {
   if (network === 'localhost') {
     return {
       avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ""),

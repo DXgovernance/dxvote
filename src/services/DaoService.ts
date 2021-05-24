@@ -49,12 +49,12 @@ export default class DaoService {
   } {
     const { daoStore, providerStore } = this.rootStore;
     const { account } = providerStore.getActiveWeb3React();
-    const repEvents = daoStore.cache.daoInfo.repEvents;
+    const repEvents = daoStore.getCache().daoInfo.repEvents;
     let userRep = bnum(0), totalSupply = bnum(0);
-    
+
     for (let i = 0; i < repEvents.length; i++) {
       if (repEvents[i].block <= atBlock) {
-        if (repEvents[i].type === 'Mint') {
+        if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount)
           if (repEvents[i].account == account)
             userRep = userRep.plus(repEvents[i].amount)
@@ -65,7 +65,7 @@ export default class DaoService {
         }
       } else {
         break;
-      }      
+      }
     }
     
     

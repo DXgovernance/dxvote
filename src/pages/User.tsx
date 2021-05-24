@@ -39,13 +39,13 @@ const UserPage = () => {
     } = useStores();
     const userAddress = useLocation().pathname.split("/")[2];
     const userEvents = daoStore.getUserEvents(userAddress);
-    const userRep = daoStore.getUserRep(userAddress);
+    const userInfo = daoStore.getUser(userAddress);
     const loading = false;
 
     return (
       <UserInfoWrapper>
         <h2>User <Address size="long" address={userAddress}/></h2>
-        <h3>REP: {userRep.percentage.toFixed(2)} %</h3>
+        <h3>REP: {userInfo.repPercentage.toFixed(2)} %</h3>
         {loading ?
           <div style={{textAlign: "center"}}>
             <div className="loader">

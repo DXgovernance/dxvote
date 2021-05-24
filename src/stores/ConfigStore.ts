@@ -1,6 +1,6 @@
 import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
-import { getConfig } from '../config';
+import { getNetworkConfig } from '../config';
 import { _ } from 'lodash';
 import { CHAIN_NAME_BY_ID } from '../provider/connectors';
 
@@ -47,6 +47,6 @@ export default class ConfigStore {
     }
     
     getNetworkConfig() {
-      return getConfig(this.getActiveChainName());
+      return getNetworkConfig(this.getActiveChainName());
     }
 }

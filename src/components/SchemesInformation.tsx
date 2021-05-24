@@ -150,6 +150,7 @@ const SchemesInformation = observer(() => {
           <TableRowsWrapper>
           {schemes.map((scheme, i) => {
             const schemeProposals = daoStore.getSchemeProposals(scheme.name);
+            const schemeConfiguration = scheme.configurations[ scheme.configurations.length - 1];
             return (
               <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
                 <TableRow>
@@ -158,23 +159,23 @@ const SchemesInformation = observer(() => {
                   </TableCell>
                   <TableCell width="25%" align="center">
                     <small>Queued Proposal Period: {
-                      moment.duration(scheme.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
+                      moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
                     }</small><br/>
                     <small>Boosted Proposal Period: {
-                      moment.duration(scheme.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
+                      moment.duration(schemeConfiguration.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
                     }</small><br/>
                     <small>PreBoosted Proposal Period: {
-                      moment.duration(scheme.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
+                      moment.duration(schemeConfiguration.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
                     }</small><br/>
                     <small>Quiet Ending Period: {
-                      moment.duration(scheme.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
+                      moment.duration(schemeConfiguration.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
                     }</small>
                   </TableCell>
                   <TableCell width="15%" align="center">
-                    <small>{scheme.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
-                    <small>{scheme.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
-                    <small>{scheme.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
-                    <small>{scheme.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
+                    <small>{schemeConfiguration.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
+                    <small>{schemeConfiguration.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
+                    <small>{schemeConfiguration.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
+                    <small>{schemeConfiguration.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
                   </TableCell>
                   <TableCell width="15%" align="center"> 
                     {scheme.boostedProposals}

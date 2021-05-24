@@ -164,7 +164,7 @@ const ProposalInformation = observer(() => {
 
     if (proposalInfo){
       
-      const repAtCreation = daoService.getRepAt(proposalInfo.creationBlock);
+      const repAtCreation = daoService.getRepAt(proposalInfo.creationEvent.block);
       userRepAtProposalCreation = bnum(repAtCreation.userRep);
       totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
         
@@ -189,10 +189,11 @@ const ProposalInformation = observer(() => {
         && (stakedAmount.gt('0') || votedAmount.gt('0') && !canRedeem))
         setCanRedeem(true);
       
-      console.log("Proposal info", proposalInfo);
+        console.debug("[Proposal info]", proposalInfo);
+        console.debug("[Proposal events]", proposalEvents);
     }
     
-    console.log("Scheme info", schemeInfo);
+    console.debug("[Scheme info]", schemeInfo);
     
     if (!active) {
       return (
@@ -232,9 +233,9 @@ const ProposalInformation = observer(() => {
       
       let stakeToBoost = 0;
       stakeToBoost = library.utils.fromWei(
-        schemeInfo.parameters.thresholdConst.pow(
-          (schemeInfo.boostedProposals > schemeInfo.parameters.limitExponentValue.toNumber())
-            ? schemeInfo.parameters.limitExponentValue : schemeInfo.boostedProposals
+        schemeInfo.configurations[ schemeInfo.configurations.length - 1].parameters.thresholdConst.pow(
+          (schemeInfo.boostedProposals > schemeInfo.configurations[ schemeInfo.configurations.length - 1].parameters.limitExponentValue.toNumber())
+            ? schemeInfo.configurations[ schemeInfo.configurations.length - 1].parameters.limitExponentValue : schemeInfo.boostedProposals
         ).minus(proposalInfo.positiveStakes)
         .plus(proposalInfo.negativeStakes).toString()
       ).toString();

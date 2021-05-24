@@ -6,6 +6,7 @@ import { BigNumber } from './bignumber';
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
 export const MAX_UINT = utils.bigNumberify(ethers.constants.MaxUint256);
 export const DEFAULT_TOKEN_DECIMALS = 18;
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export function bnum(
     val: string | number | utils.BigNumber | BigNumber

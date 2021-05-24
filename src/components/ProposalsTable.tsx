@@ -244,7 +244,7 @@ const ProposalsTable = observer(() => {
                           {proposal.title}
                         </TableCell>
                         <TableCell width="10%" align="center">
-                          {daoStore.cache.schemes[proposal.scheme].name}
+                          {daoStore.getCache().schemes[proposal.scheme].name}
                         </TableCell>
                         <TableCell width="15%" align="center">
                           {proposal.status} <br/>
