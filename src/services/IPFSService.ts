@@ -28,31 +28,8 @@ export default class IPFSService {
     const { cid } = await this.ipfs.add({content})
     return cid;
   }
-
-  call(
-    hash: String
-  ){
-    if (!this.calls[contentHash.decode(hash)]) {
-      this.calls[contentHash.decode(hash)] = {
-        time: new Date().getTime() / 1000,
-        content: "",
-        fetched: false
-      };
-      axios.get(`https://ipfs.io/ipfs/${contentHash.decode(hash)}`).then((content) => {
-        this.calls[contentHash.decode(hash)] = {
-          time: new Date().getTime() / 1000,
-          content: content.data,
-          fetched: true
-        };
-      })
-    }
-  }
   
-  get(hash: String){
-    return !this.calls[contentHash.decode(hash)] ? {
-      time: 0,
-      content: "",
-      fetched: false,
-    } : this.calls[contentHash.decode(hash)];
+  async get(hash: String){
+    return axios.get(`https://gateway.pinata.cloud/ipfs/${contentHash.decode(hash)}`);
   }
 }

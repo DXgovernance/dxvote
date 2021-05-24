@@ -20,6 +20,7 @@ async function main() {
         daoInfo: {} as DaoInfo,
         schemes: {},
         proposals: {},
+        users: {},
         callPermissions: {},
         votingMachineEvents: {
           votes: [],

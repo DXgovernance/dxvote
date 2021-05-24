@@ -144,32 +144,58 @@ const ProposalInformation = observer(() => {
     const proposalId = useLocation().pathname.split("/")[4];
     const schemeInfo = daoStore.getScheme(schemeAddress);
     const proposalInfo = daoStore.getProposal(proposalId);
-    const proposalEvents = daoStore.getProposalEvents(proposalId);
     const { dxdApproved } = userStore.getUserInfo(); 
     const { active, account, library } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
     const [canRedeem, setCanRedeem] = React.useState(false);
-
-    let votedAmount = bnum(0);
-    let positiveVotesCount = proposalEvents.votes.filter((vote) => vote.vote.toString() === "1").length;
-    let negativeVotesCount = proposalEvents.votes.filter((vote) => vote.vote.toString() === "2").length;
-    let stakedAmount = bnum(0);
-    let positiveStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "1").length;
-    let negativeStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "2").length;
-    let userRepAtProposalCreation = bnum(0);
-    let totalRepAtProposalCreation = bnum(0);
+    const [proposalDescription, setProposalDescription] = React.useState("## Getting proposal description from IPFS...");
     
-    let proposalDescription: string = ""
-
-    if (proposalInfo){
+    console.debug("[Scheme info]", schemeInfo);
+    
+    if (!active) {
+      return (
+          <ProposalInformationWrapper>
+            <div className="loader">
+            <img alt="bolt" src={boltIcon} />
+                <br/>
+                Connect to view proposal
+            </div>
+          </ProposalInformationWrapper>
+      )
+    } else if (!blockchainStore.initialLoadComplete || !proposalInfo) {
+      
+      return (
+          <ProposalInformationWrapper>
+            <div className="loader">
+            <img alt="bolt" src={boltIcon} />
+                <br/>
+                Searching for proposal..
+            </div>
+          </ProposalInformationWrapper>
+      )
+      
+    } else {
+      
+      const proposalEvents = daoStore.getProposalEvents(proposalId);
+      
+      let votedAmount = bnum(0);
+      let positiveVotesCount = proposalEvents.votes.filter((vote) => vote.vote.toString() === "1").length;
+      let negativeVotesCount = proposalEvents.votes.filter((vote) => vote.vote.toString() === "2").length;
+      let stakedAmount = bnum(0);
+      let positiveStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "1").length;
+      let negativeStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "2").length;
+      let userRepAtProposalCreation = bnum(0);
+      let totalRepAtProposalCreation = bnum(0);
       
       const repAtCreation = daoService.getRepAt(proposalInfo.creationEvent.block);
       userRepAtProposalCreation = bnum(repAtCreation.userRep);
       totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
         
       // @ts-ignore
-      proposalDescription = ipfsService.get(proposalInfo.descriptionHash).content;
+      ipfsService.get(proposalInfo.descriptionHash).then((response) => {
+        setProposalDescription(response.data);
+      });
       
       proposalEvents.votes.map((vote) => {
         if (vote.voter === account) {
@@ -191,33 +217,6 @@ const ProposalInformation = observer(() => {
       
         console.debug("[Proposal info]", proposalInfo);
         console.debug("[Proposal events]", proposalEvents);
-    }
-    
-    console.debug("[Scheme info]", schemeInfo);
-    
-    if (!active) {
-      return (
-          <ProposalInformationWrapper>
-            <div className="loader">
-            <img alt="bolt" src={boltIcon} />
-                <br/>
-                Connect to view proposal
-            </div>
-          </ProposalInformationWrapper>
-      )
-    } else if (!blockchainStore.initialLoadComplete) {
-      
-      return (
-          <ProposalInformationWrapper>
-            <div className="loader">
-            <img alt="bolt" src={boltIcon} />
-                <br/>
-                Searching for proposal..
-            </div>
-          </ProposalInformationWrapper>
-      )
-      
-    } else {
       
       let proposalCallTexts = new Array(proposalInfo.to.length);
       for (var p = 0; p < proposalInfo.to.length; p++) {
@@ -290,11 +289,7 @@ const ProposalInformation = observer(() => {
           <ProposalInformationWrapper>
             <ProposalInfoSection>
               <h1> {proposalInfo.title} </h1>
-              <MDEditor.Markdown source={
-                proposalDescription.length === 0
-                  ? "## Getting proposal description from IPFS..."
-                  : proposalDescription
-                } style={{
+              <MDEditor.Markdown source={ proposalDescription } style={{
                 padding: "20px 10px"
               }} />
               <hr/>
