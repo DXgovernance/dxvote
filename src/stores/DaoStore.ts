@@ -437,15 +437,10 @@ export default class DaoStore {
   @action approveVotingMachineToken(
   ): PromiEvent<any> {
     const { providerStore, configStore, blockchainStore } = this.rootStore;
-    const votingMachineToken = blockchainStore.getCachedValue({
-        contractType: ContractType.VotingMachine,
-        address: configStore.getNetworkConfig().votingMachine,
-        method: 'stakingToken',
-    })
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.ERC20,
-      votingMachineToken,
+      configStore.getNetworkConfig().votingMachineToken,
       'approve',
       [configStore.getNetworkConfig().votingMachine, utils.bigNumberify(ethers.constants.MaxUint256)],
       {}

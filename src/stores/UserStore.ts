@@ -31,12 +31,6 @@ export default class UserStore {
     const { configStore, providerStore, blockchainStore } = this.rootStore;
     const { account } = providerStore.getActiveWeb3React();
     
-    const votingMachineToken = blockchainStore.getCachedValue({
-        contractType: ContractType.VotingMachine,
-        address: configStore.getNetworkConfig().votingMachine,
-        method: 'stakingToken',
-    })
-    
     const repBalance = account ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Reputation,
       address: configStore.getNetworkConfig().reputation,
@@ -51,16 +45,16 @@ export default class UserStore {
       params: [account]
     }) : bnum(0);
     
-    const dxdBalance = account && votingMachineToken ? this.rootStore.blockchainStore.getCachedValue({
+    const dxdBalance = account ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.ERC20,
-      address: votingMachineToken,
+      address: configStore.getNetworkConfig().votingMachineToken,
       method: 'balanceOf',
       params: [account]
     }) : bnum(0);
     
-    const dxdApproved = account && votingMachineToken ? this.rootStore.blockchainStore.getCachedValue({
+    const dxdApproved = account ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.ERC20,
-      address: votingMachineToken,
+      address: configStore.getNetworkConfig().votingMachineToken,
       method: 'allowance',
       params: [account, configStore.getNetworkConfig().votingMachine]
     }) : bnum(0);
