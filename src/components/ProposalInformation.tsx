@@ -266,7 +266,7 @@ const ProposalInformation = observer(() => {
       
       const submitVote = function(decision) {
         const repAmount = (totalRepAtProposalCreation.times(bnum(votePercentage))).div('100');
-        daoStore.vote(decision, repAmount.toNumber(), proposalId);
+        daoStore.vote(decision, repAmount.toFixed(0), proposalId);
       };
       
       const submitStake = function(decision) {
