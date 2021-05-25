@@ -40,9 +40,6 @@ const SchemePage = observer(() => {
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
     const schemeAddress = useLocation().pathname.split("/")[2];
-    const loading = (
-      !blockchainStore.initialLoadComplete
-    );
   
     if (!providerActive) {
       return (
@@ -54,7 +51,7 @@ const SchemePage = observer(() => {
             </div>
           </SchemeInformationWrapper>
       )
-    } else if (loading) {
+    } else if (!blockchainStore.initialLoadComplete) {
       return (
           <SchemeInformationWrapper>
             <div className="loader">

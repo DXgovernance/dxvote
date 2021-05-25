@@ -271,9 +271,9 @@ export default class DaoStore {
     const user = this.getCache().users[userAddress];
 
     return {
-      dxdBalance: bnum(user.dxdBalance),
-      repBalance: bnum(user.repBalance),
-      repPercentage: user.repBalance ? bnum(user.repBalance).div(this.getCache().daoInfo.totalRep).times('100').toNumber() : 0
+      dxdBalance: user ? bnum(user.dxdBalance) : bnum(0),
+      repBalance: user ? bnum(user.repBalance) : bnum(0),
+      repPercentage: user && user.repBalance ? bnum(user.repBalance).div(this.getCache().daoInfo.totalRep).times('100').toNumber() : 0
     }
   }
   
@@ -294,23 +294,35 @@ export default class DaoStore {
       event: ProposalEvent
     } = [];
     
+    const cache = this.getCache();
+    
     const proposalEvents = {
-      votes: this.getCache().votingMachineEvents.votes
+      votes: cache.votingMachineEvents.votes
         .filter((vote) => {return (userAddress === vote.voter)}),
-      stakes: this.getCache().votingMachineEvents.stakes
+      stakes: cache.votingMachineEvents.stakes
         .filter((stake) => {return (userAddress === stake.staker)}),
-      redeems: this.getCache().votingMachineEvents.redeems
+      redeems: cache.votingMachineEvents.redeems
         .filter((redeem) => {return (userAddress === redeem.beneficiary)}),
-      redeemsRep: this.getCache().votingMachineEvents.redeemsRep
+      redeemsRep: cache.votingMachineEvents.redeemsRep
         .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)})
     }
     
-    let newProposalEvents = [];
-    if (this.getCache().users[userAddress])
-      newProposalEvents = this.getCache().users[userAddress].proposalsCreated.map((proposalId) => {
-        return this.getCache().proposals[proposalId].creationEvent;
-      });
-    
+    const newProposalEvents = cache.users[userAddress]
+      ? cache.users[userAddress].proposalsCreated.map((proposalId) => {
+        history.push({
+          text: `Proposal ${proposalId} created`,
+          event: {
+            proposalId: cache.proposals[proposalId].creationEvent.proposalId,
+            tx: cache.proposals[proposalId].creationEvent.tx,
+            block: cache.proposals[proposalId].creationEvent.block,
+            transactionIndex: cache.proposals[proposalId].creationEvent.transactionIndex,
+            logIndex: cache.proposals[proposalId].creationEvent.logIndex
+          }
+        })
+        return cache.proposals[proposalId].creationEvent;
+      })
+      : [];
+
     history = history.concat(proposalEvents.votes.map((event) => {
       return {
         text: `Voted with ${event.amount} REP for decision ${VoteDecision[event.vote]} on proposal ${event.proposalId}`,

@@ -568,6 +568,17 @@ export const updateProposals = async function (
       networkCache.proposals[proposalId].positiveStakes = bnum(proposalStatusWithVotes[4]);
       networkCache.proposals[proposalId].negativeStakes = bnum(proposalStatusWithVotes[5]);
       
+      // Save proposal created in users if not saved already
+      if (!networkCache.users[networkCache.proposals[proposalId].proposer]) {
+        networkCache.users[networkCache.proposals[proposalId].proposer] = {
+          repBalance: bnum(0),
+          dxdBalance: bnum(0),
+          proposalsCreated: [proposalId]
+        }
+      } else if (networkCache.users[networkCache.proposals[proposalId].proposer].proposalsCreated.indexOf(proposalId) < 0) {
+        networkCache.users[networkCache.proposals[proposalId].proposer].proposalsCreated.push(proposalId);
+      }
+      
     }
 
   }));

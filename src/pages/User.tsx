@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { useLocation } from 'react-router-dom';
 import Address from '../components/common/Address';
+import boltIcon from "assets/images/bolt.svg"
 
 const UserInfoWrapper = styled.div`
     width: 100%;
@@ -33,41 +35,40 @@ const UserInfoWrapper = styled.div`
     
 `;
 
-const UserPage = () => {
+const UserPage = observer(() => {
     const {
-        root: { daoStore },
+        root: { daoStore, blockchainStore },
     } = useStores();
     const userAddress = useLocation().pathname.split("/")[2];
     const userEvents = daoStore.getUserEvents(userAddress);
     const userInfo = daoStore.getUser(userAddress);
-    const loading = false;
 
     return (
       <UserInfoWrapper>
-        <h2>User <Address size="long" address={userAddress}/></h2>
-        <h3>REP: {userInfo.repPercentage.toFixed(2)} %</h3>
-        {loading ?
+        {!blockchainStore.initialLoadComplete ?
           <div style={{textAlign: "center"}}>
             <div className="loader">
-            <img alt="bolt" src={require('assets/images/bolt.svg')} />
+            <img alt="bolt" src={boltIcon} />
                 <br/>
                 Fetching user information...
             </div>
           </div>
         : <div>
-          <h2> History </h2>
-          {userEvents.history.map((historyEvent, i) => {
-            return(
-            <div key={"userHistoryEvent"+i}>
-              <span> {historyEvent.text} </span> 
-              {i < userEvents.history.length - 1 ? <hr/> : <div/>}
-            </div>);
-          })}
+            <h2>User <Address size="long" address={userAddress}/></h2>
+            <h3>REP: {userInfo.repPercentage.toFixed(2)} %</h3>
+            <h2> History </h2>
+            {userEvents.history.map((historyEvent, i) => {
+              return(
+              <div key={"userHistoryEvent"+i}>
+                <span> {historyEvent.text} </span> 
+                {i < userEvents.history.length - 1 ? <hr/> : <div/>}
+              </div>);
+            })}
           </div>
         }
         
       </UserInfoWrapper>
     );
-};
+});
 
 export default UserPage;
