@@ -122,7 +122,7 @@ async function main() {
     controller.address,
     permissionRegistry.address,
     "Master Wallet",
-    86400
+    Math.max(86400 * 2, schemesConfiguration.master.queuedVotePeriodLimit * 2)
   );
   await controller.registerScheme(
     masterWalletScheme.address,
@@ -176,7 +176,7 @@ async function main() {
     NULL_ADDRESS,
     permissionRegistry.address,
     "Quick Wallet",
-    86400
+    Math.max(86400, schemesConfiguration.quick.queuedVotePeriodLimit * 2)
   );
   
   await controller.registerScheme(
@@ -272,6 +272,16 @@ async function main() {
       { name: 'recipient', type: 'address' },
       { name: 'amount', type: 'uint256' }
     ],
+  };
+  
+  const setBoostedVoteRequiredPercentageABI ={
+    name: 'setBoostedVoteRequiredPercentage',
+    type: 'function',
+    inputs: [
+      { name: '_scheme', type: 'address' },
+      { name: '_paramsHash', type: 'bytes32' },
+      { name: '_boostedVotePeriodLimit', type: 'uint256' }
+    ],
   }
   
   // Create test proposal 0 to mint multiple REP
@@ -293,9 +303,32 @@ async function main() {
   // Pass test proposal 0 with majority vote
   await dxdVotingMachine.vote(testProposal0, 1, 0, NULL_ADDRESS, { from: accounts[0] });
   
-  // Create test proposal 1
-  descriptionText = "Mint 20 REP, tranfer 15 ETH and 50 tokens to QuickWalletScheme.";
+  // Create test proposal #1 to set VoostedVoteRequiredPercentage in Master Wallet
+  descriptionText = "Set required % of votes for boosted proposals to 1% to execute in Master Wallet.";
   const testProposal1 = ( await masterWalletScheme.proposeCalls(
+    [controller.address],
+    [
+      web3.eth.abi.encodeFunctionCall(generiCallABI, [
+        dxdVotingMachine.address,
+        web3.eth.abi.encodeFunctionCall(setBoostedVoteRequiredPercentageABI, [
+          masterWalletScheme.address,
+          masterWalletSchemeParamsHash,
+          1000
+        ]),
+        avatar.address,
+        0
+      ]),
+    ],
+    [0],
+    "Test Proposal #1",
+    await getContentHash(descriptionText),
+    { from: accounts[0] }
+  ) ).logs[0].args[0];
+  await dxdVotingMachine.vote(testProposal1, 1, 0, NULL_ADDRESS, { from: accounts[2] });
+  
+  // Create test proposal 2
+  descriptionText = "Mint 20 REP, tranfer 15 ETH and 50 tokens to QuickWalletScheme.";
+  const testProposal2 = ( await masterWalletScheme.proposeCalls(
     [controller.address, controller.address, controller.address],
     [
       web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("20"), accounts[1], avatar.address]),
@@ -308,32 +341,32 @@ async function main() {
       ]),
     ],
     [0, 0, 0],
-    "Test Proposal #1",
-    await getContentHash(descriptionText),
-    { from: accounts[0] }
-  ) ).logs[0].args[0];
-  
-  // Pass proposal1 with majority vote
-  await dxdVotingMachine.vote(testProposal1, 1, 0, NULL_ADDRESS, { from: accounts[2] });
-
-  descriptionText = "Tranfer 5 ETH to " + accounts[1];
-  const testProposal2 = (await masterWalletScheme.proposeCalls(
-    [controller.address],
-    [
-      web3.eth.abi.encodeFunctionCall(generiCallABI, [accounts[1], "0x0", avatar.address, web3.utils.toWei("5")])
-    ],
-    [0],
     "Test Proposal #2",
     await getContentHash(descriptionText),
     { from: accounts[0] }
   ) ).logs[0].args[0];
   
-  // Stake and vote a bit in test proposal 2
+  // Pass proposal2 with majority vote
+  await dxdVotingMachine.vote(testProposal2, 1, 0, NULL_ADDRESS, { from: accounts[2] });
+
+  descriptionText = "Tranfer 5 ETH to " + accounts[1];
+  const testProposal3 = (await masterWalletScheme.proposeCalls(
+    [controller.address],
+    [
+      web3.eth.abi.encodeFunctionCall(generiCallABI, [accounts[1], "0x0", avatar.address, web3.utils.toWei("5")])
+    ],
+    [0],
+    "Test Proposal #3",
+    await getContentHash(descriptionText),
+    { from: accounts[0] }
+  ) ).logs[0].args[0];
+  
+  // Stake and vote a bit in test proposal 3
   await votingMachineToken.approve( 
     dxdVotingMachine.address, await votingMachineToken.balanceOf(accounts[1]) , {from: accounts[1]}
   );
-  await dxdVotingMachine.stake(testProposal2, 1, web3.utils.toWei("2").toString() , { from: accounts[1] });
-  await dxdVotingMachine.vote(testProposal2, 1, web3.utils.toWei("5"), NULL_ADDRESS, { 
+  await dxdVotingMachine.stake(testProposal3, 1, web3.utils.toWei("2").toString() , { from: accounts[1] });
+  await dxdVotingMachine.vote(testProposal3, 1, web3.utils.toWei("5"), NULL_ADDRESS, { 
     from: accounts[1]
   });
 
@@ -343,17 +376,8 @@ async function main() {
     [accounts[2]],
     ["0x0"],
     [web3.utils.toWei("5").toString()],
-    "Test Proposal #3",
-    await getContentHash(descriptionText),
-    { from: accounts[0] }
-  );
-  
-  await quickWalletScheme.proposeCalls(
-    [accounts[1]],
-    ["0x0"],
-    [web3.utils.toWei("666").toString()],
     "Test Proposal #4",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await getContentHash(descriptionText),
     { from: accounts[0] }
   );
   
@@ -425,6 +449,15 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #12",
+    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    { from: accounts[0] }
+  );
+  
+  await quickWalletScheme.proposeCalls(
+    [accounts[1]],
+    ["0x0"],
+    [web3.utils.toWei("666").toString()],
+    "Test Proposal #13",
     await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
