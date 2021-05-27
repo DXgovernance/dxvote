@@ -21,9 +21,10 @@ ganache_running() {
 
 time=date
 
-start_ganache() {
+start-hardhat_node() {
 
-  npx ganache-cli --gasLimit 9000000 --gasPrice 10000000000 -d -m "$mnemonic" -e 5000 > /dev/null &
+  # npx ganache-cli --gasLimit 9000000 --gasPrice 10000000000 -d -m "$mnemonic" -e 5000 > /dev/null &
+  npx hardhat node > /dev/null &
 
   ganache_pid=$!
 
@@ -33,14 +34,14 @@ start_ganache() {
     sleep 0.1 # wait for 1/10 of the second before check again
   done
 
-  echo "Ganache launched!"
+  echo "Harhat node launched!"
 }
 
 if ganache_running; then
-  echo "Using existing ganache instance"
+  echo "Using existing hardhat node instance"
 else
-  echo "Starting our own ganache instance"
-  start_ganache
+  echo "Starting our own hardhat node instance"
+  start-hardhat_node
 fi
 
 # Compile your contracts and copy the compiled code into the src
