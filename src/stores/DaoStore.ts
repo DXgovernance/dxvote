@@ -8,8 +8,9 @@ import { bnum } from '../utils/helpers';
 import { ethers, utils } from 'ethers';
 import PromiEvent from 'promievent';
 import {
-  VotingMachineProposalState,
   VoteDecision,
+  WalletSchemeProposalState,
+  VotingMachineProposalState
 } from '../enums';
 
 const CACHE = require('../cache');
@@ -33,6 +34,8 @@ export default class DaoStore {
     Object.keys(unparsedCache.schemes).map((schemeAddress) => {
       unparsedCache.schemes[schemeAddress].ethBalance = bnum(unparsedCache.schemes[schemeAddress].ethBalance)
       unparsedCache.schemes[schemeAddress].configurations.map((configuration, i) => {
+        unparsedCache.schemes[schemeAddress].configurations[i].boostedVoteRequiredPercentage =
+          bnum(configuration.boostedVoteRequiredPercentage);
         unparsedCache.schemes[schemeAddress].configurations[i].parameters = {
           queuedVoteRequiredPercentage: bnum(configuration.parameters.queuedVoteRequiredPercentage),
           queuedVotePeriodLimit: bnum(configuration.parameters.queuedVotePeriodLimit),
@@ -60,6 +63,8 @@ export default class DaoStore {
         return bnum(value);
       })
 
+      unparsedCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState[unparsedCache.proposals[proposalId].stateInScheme];
+      unparsedCache.proposals[proposalId].stateInVotingMachine = VotingMachineProposalState[unparsedCache.proposals[proposalId].stateInVotingMachine];
       unparsedCache.proposals[proposalId].repAtCreation = bnum(unparsedCache.proposals[proposalId].repAtCreation);
       unparsedCache.proposals[proposalId].currentBoostedVotePeriodLimit = bnum(unparsedCache.proposals[proposalId].currentBoostedVotePeriodLimit);
       unparsedCache.proposals[proposalId].daoBountyRemain = bnum(unparsedCache.proposals[proposalId].daoBountyRemain);

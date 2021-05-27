@@ -78,6 +78,7 @@ const SchemePage = observer(() => {
           <h3>Voting Machine Configuration</h3>
           <h4>Voting Machine Configuration Parameters Hash: {schemeConfiguration.paramsHash}</h4>
           <h4>Required Percentage for approval: {schemeConfiguration.parameters.queuedVoteRequiredPercentage.toString()} %</h4>
+          <h4>Required Percentage for approval in boosted proposals: {schemeConfiguration.boostedVoteRequiredPercentage.div("1000").toString()} %</h4>
           <h4>Queued Proposal Period: {
             moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
           }</h4>

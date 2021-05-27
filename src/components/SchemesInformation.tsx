@@ -94,7 +94,7 @@ const TableCell = styled.div`
         }
     }
     color: ${(props) => props.color};
-    width: ${(props) => props.width || '25%'}
+    width: ${(props) => props.width || '25%'};
     text-align: ${(props) => props.align};
     font-weight: ${(props) => props.weight};
     white-space: ${(props) => props.wrapText ? 'nowrap' : 'inherit'};
@@ -169,6 +169,9 @@ const SchemesInformation = observer(() => {
                     }</small><br/>
                     <small>Quiet Ending Period: {
                       moment.duration(schemeConfiguration.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
+                    }</small><br/>
+                    <small>Max time for execution: {
+                      moment.duration(scheme.maxSecondsForExecution.toString(), 'seconds').humanize()
                     }</small>
                   </TableCell>
                   <TableCell width="15%" align="center">

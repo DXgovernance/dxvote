@@ -18,7 +18,7 @@ export const decodeStatus = function(
       return { 
         status: "Expired in Queue", 
         priority: 1, 
-        boostTime: 0, 
+        boostTime: boostedPhaseTime, 
         finishTime: 0
       };
     case "2":
@@ -26,20 +26,20 @@ export const decodeStatus = function(
         return { 
           status: "Execution Failed", 
           priority: 2,
-          boostTime: 0,
+          boostTime: boostedPhaseTime,
           finishTime: 0
         };
       else if (stateInScheme == "2")
         return { 
           status: "Execution Succeded", 
           priority: 2,
-          boostTime: 0,
+          boostTime: boostedPhaseTime,
           finishTime: 0
         };
       else return { 
         status: "Passed", 
         priority: 2,
-        boostTime: 0,
+        boostTime: boostedPhaseTime,
         finishTime: 0
       };
     case "3":

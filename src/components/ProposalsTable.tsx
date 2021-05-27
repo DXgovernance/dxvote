@@ -231,12 +231,8 @@ const ProposalsTable = observer(() => {
                   const negativeStake = Number(library.utils.fromWei(proposal.negativeStakes.toString())).toFixed(2);
                   const positiveVotesPercentage = proposal.positiveVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
                   const negativeVotesPercentage =  proposal.negativeVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
-                  const timeToBoost = proposal.boostTime.toNumber() > moment().unix() ? 
-                    moment().to( moment(proposal.boostTime.times(1000).toNumber()) ).toString()
-                    : "";
-                  const timeToFinish = proposal.finishTime.toNumber() > moment().unix() ?
-                    moment().to( moment(proposal.finishTime.times(1000).toNumber()) ).toString()
-                    : "";
+                  const timeToBoost = moment().to( moment.unix(proposal.boostTime.toNumber()) ).toString();
+                  const timeToFinish = moment().to( moment.unix(proposal.finishTime.toNumber()) ).toString();;
                   return (
                     <Link key={"proposal"+i} to={"/scheme/"+proposal.scheme+"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
                       <TableRow>

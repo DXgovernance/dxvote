@@ -313,6 +313,11 @@ export const updateSchemes = async function (
               await allContracts.controller.methods
               .getSchemePermissions(schemeContract._address, allContracts.avatar._address).call()
             ),
+            boostedVoteRequiredPercentage: await allContracts.votingMachine.methods
+              .boostedVoteRequiredPercentage(
+                web3.utils.soliditySha3(schemeContract._address, allContracts.avatar._address),
+                paramsHash
+              ).call(),
             toBlock: Number.MAX_SAFE_INTEGER
           }],
           
@@ -333,6 +338,11 @@ export const updateSchemes = async function (
             await allContracts.controller.methods
             .getSchemePermissions(schemeContract._address, allContracts.avatar._address).call()
           ),
+          boostedVoteRequiredPercentage: await allContracts.votingMachine.methods
+            .boostedVoteRequiredPercentage(
+              web3.utils.soliditySha3(schemeContract._address, allContracts.avatar._address),
+              paramsHash
+            ).call(),
           toBlock: Number.MAX_SAFE_INTEGER
         })
         networkCache.schemes[schemeContract._address].configurations[
@@ -362,15 +372,23 @@ export const updateSchemes = async function (
   
   // Update registered schemes
   await Promise.all(Object.keys(networkCache.schemes).map(async (schemeAddress) => {
-
     if (networkCache.schemes[schemeAddress].registered) {
       const schemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
-    
+      const lastConfiguration = networkCache.schemes[schemeContract._address].configurations[
+        networkCache.schemes[schemeContract._address].configurations.length - 1
+      ];
       networkCache.schemes[schemeContract._address].ethBalance = await web3.eth.getBalance(schemeAddress);
       networkCache.schemes[schemeContract._address].boostedProposals = await allContracts.votingMachine.methods
         .orgBoostedProposalsCnt(web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address)).call()
       networkCache.schemes[schemeContract._address].maxSecondsForExecution = await schemeContract.methods
         .maxSecondsForExecution().call();
+      networkCache.schemes[schemeContract._address].configurations[
+        networkCache.schemes[schemeContract._address].configurations.length - 1
+      ].boostedVoteRequiredPercentage = await allContracts.votingMachine.methods
+        .boostedVoteRequiredPercentage(
+          web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address),
+          lastConfiguration.paramsHash
+        ).call();
     }
 
   }));
