@@ -1,8 +1,8 @@
 import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
-import { getNetworkConfig } from '../config';
+import { getAssets, getNetworkConfig } from '../config';
 import { _ } from 'lodash';
-import { CHAIN_NAME_BY_ID } from '../provider/connectors';
+import { NETWORK_NAMES } from '../provider/connectors';
 
 export default class ConfigStore {
     darkMode: boolean;
@@ -20,7 +20,7 @@ export default class ConfigStore {
     
     getActiveChainName() {
       const activeWeb3 = this.rootStore.providerStore.getActiveWeb3React();
-      return activeWeb3 ? CHAIN_NAME_BY_ID[activeWeb3.chainId] : 'none';
+      return activeWeb3 ? NETWORK_NAMES[activeWeb3.chainId] : 'none';
     }
     
     getApiKeys() {
@@ -48,5 +48,9 @@ export default class ConfigStore {
     
     getNetworkConfig() {
       return getNetworkConfig(this.getActiveChainName());
+    }
+    
+    getAssets() {
+      return getAssets(this.getActiveChainName());
     }
 }

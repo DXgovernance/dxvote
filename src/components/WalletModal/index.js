@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
 import { observer } from 'mobx-react';
-import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 
 import Modal from '../Modal';
 import AccountDetails from '../AccountDetails';
@@ -11,7 +10,7 @@ import Option from './Option';
 import { usePrevious } from 'utils/helperHooks';
 import { Link } from '../../theme';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
-import { injected, walletconnect, SUPPORTED_WALLETS } from 'provider/connectors';
+import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
 import { useStores } from 'contexts/storesContext';
 import { isChainIdSupported } from '../../provider/connectors';
 import { useActiveWeb3React } from 'provider/providerHooks';
@@ -139,20 +138,6 @@ const WalletModal = observer(
                 setWalletView(WALLET_VIEWS.ACCOUNT);
             }
         }, [walletModalOpen]);
-        
-        // set up uri listener for walletconnect
-        const [uri, setUri] = useState()
-        useEffect(() => {
-          const activateWC = uri => {
-            console.debug('uri',uri)
-            setUri(uri)
-            setWalletView(WALLET_VIEWS.PENDING)
-          }
-          walletconnect.on(URI_AVAILABLE, activateWC)
-          return () => {
-            walletconnect.off(URI_AVAILABLE, activateWC)
-          }
-        }, [])
         
         // close modal when a connection is successful
         const activePrevious = usePrevious(active);

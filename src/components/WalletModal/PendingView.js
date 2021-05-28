@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Option from './Option';
-import { injected, walletconnect, SUPPORTED_WALLETS } from 'provider/connectors';
+import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
 import WalletConnectData from './WalletConnectData'
 import { Spinner } from '../../theme';
 import Circle from '../../assets/images/circle.svg';
@@ -74,7 +74,6 @@ export default function PendingView({ uri = '', size, connector, error = false, 
 
   return (
     <PendingSection>
-      {!error && connector === walletconnect && <WalletConnectData size={size} uri={uri} />}
       <LoadingMessage error={error}>
         <LoadingWrapper>
           {!error && <SpinnerWrapper src={Circle} />}
@@ -90,9 +89,7 @@ export default function PendingView({ uri = '', size, connector, error = false, 
                 Try Again
               </ErrorButton>
             </ErrorGroup>
-          ) : connector === walletconnect ? (
-            'Scan QR code with a compatible wallet...'
-          ) : (
+          ) :  (
             'Initializing...'
           )}
         </LoadingWrapper>

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import styled from 'styled-components';
-import { web3ContextNames } from 'provider/connectors';
+import { web3ContextNames, isChainIdSupported } from 'provider/connectors';
 import { useEagerConnect, useInactiveListener } from 'provider/providerHooks';
 import { useStores } from 'contexts/storesContext';
 import { useInterval } from 'utils/helperHooks';
@@ -19,38 +19,39 @@ const Web3ReactManager = ({ children }) => {
         error: networkError
     } = web3ContextInjected;
 
-    providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
-
-    const web3React = providerStore.getActiveWeb3React();
+    if (!providerStore.activeChainId)
+      providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
 
     console.debug('[Web3ReactManager] Start of render', {
         injected: web3ContextInjected,
-        web3React: web3React,
+        web3React: providerStore.getActiveWeb3React(),
     });
 
     // try to eagerly connect to an injected provider, if it exists and has granted access already
     const triedEager = useEagerConnect();
+    
+    ethereum.on('chainChanged', (chainId) => {
+      // Handle the new chain.
+      // Correctly handling chain changes can be complicated.
+      // We recommend reloading the page unless you have good reason not to.
+      // providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
+      // blockchainStore.fetchData(providerStore.getActiveWeb3React(), true);
+      window.location.reload();
+    });
 
+    ethereum.on('accountsChanged', (accounts) => {
+      // Handle the new accounts, or lack thereof.
+      // "accounts" will always be an array, but it can be empty.
+      // blockchainStore.fetchData(web3React, false);
+    });
+    
     // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
     useInactiveListener(!triedEager);
 
     // Fetch user blockchain data on an interval using current params
     useInterval(
-        () => blockchainStore.fetchData(web3React), BLOKCHAIN_FETCH_INTERVAL
+      () => blockchainStore.fetchData(providerStore.getActiveWeb3React(), false), BLOKCHAIN_FETCH_INTERVAL
     );
-    // Fetch when account or web3Provider changes
-    useEffect(() => {
-        if (
-            web3React.account &&
-            web3React.account !== providerStore.activeAccount
-        ) {
-            console.debug('[Fetch Loop] - Extra fetch on account switch', {
-                account: web3React.account,
-                prevAccount: providerStore.activeAccount,
-            });
-            blockchainStore.fetchData(web3React);
-        }
-    }, [web3React, providerStore.activeAccount, blockchainStore]);
 
     const BlurWrapper = styled.div`
         filter: blur(1px);
@@ -97,10 +98,18 @@ const Web3ReactManager = ({ children }) => {
         );
     // If network is not active show blur content
   } else if(!networkActive) {
-        console.debug('[Web3ReactManager] Render: No active network');
-        return children;
+      console.debug('[Web3ReactManager] Render: No active network');
+      return (
+        <div>
+          <OverBlurModal>
+            <div className="connectModalContent">Connect to a valid network</div>
+            </OverBlurModal>
+            <BlurWrapper>
+              
+            </BlurWrapper>
+          </div>
+        );
     } else {
-      daoStore.getCache();
       console.debug( '[Web3ReactManager] Render: Active network, render children', { networkActive } );
       return children;
     }

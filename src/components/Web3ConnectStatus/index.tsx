@@ -53,45 +53,44 @@ const AccountButton = styled.div`
     letter-spacing: 0.2px;
     cursor: pointer;
 
-    width: 150px;
+    padding: 0px 10px;
     height: 40px;
 `;
 
-const Web3ConnectStatus = observer((props) => {
+const ConnectButton = styled.div`
+    height: 38px;
+    width: 154px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    const ConnectButton = styled.div`
-        height: 38px;
-        width: ${props.wide ? "unset" : "154px"}
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 18px;
+    letter-spacing: 1px;
 
-        box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
-        font-size: 0.9rem;
-        font-weight: 500;
-        line-height: 18px;
-        letter-spacing: 1px;
-
+    cursor: pointer;
+    user-select: none;
+    
+    padding: 0.5rem;
+    border-image: initial;
+    background: var(--blue-text);
+    color: var(--white);
+    border: 1px solid var(--active-button-border);
+    box-sizing: border-box;
+    border-radius: 6px;
+    &:hover{
         cursor: pointer;
-        user-select: none;
-        
-        padding: 0.5rem;
-        border-image: initial;
-        background: var(--blue-text);
-        color: var(--white);
-        border: 1px solid var(--active-button-border);
-        box-sizing: border-box;
-        border-radius: 6px;
-        &:hover{
-            cursor: pointer;
-            background: var(--blue-onHover);
-            border: 1px solid var(--blue-onHover-border);
-        }
+        background: var(--blue-onHover);
+        border: 1px solid var(--blue-onHover-border);
+    }
+`;
 
-    `;
+const Web3ConnectStatus = observer((props) => {
     
     const {
-        root: { modalStore, transactionStore, providerStore },
+        root: { modalStore, transactionStore, providerStore, configStore },
     } = useStores();
     const {
         chainId,
@@ -126,9 +125,14 @@ const Web3ConnectStatus = observer((props) => {
             );
         } else if (account) {
             return (
-                <AccountButton onClick={toggleWalletModal}>
-                  {shortenAddress(account)}
-                </AccountButton>
+              <div style={{display: "flex"}}>
+                  <AccountButton onClick={toggleWalletModal}>
+                    {shortenAddress(account)}
+                  </AccountButton>
+                  <AccountButton onClick={toggleWalletModal} style={{marginLeft: "10px", fontSize: "14px"}}>
+                    {configStore.getActiveChainName().replace(/^./, configStore.getActiveChainName()[0].toUpperCase())}
+                  </AccountButton>
+              </div>
             );
         } else if (error) {
             return (
