@@ -44,7 +44,11 @@ module.exports = {
       allowUnlimitedContractSize: true,
       gasLimit: 9000000,
       gasPrice: 10000000000, // 10 gwei
-      timeout: 60000
+      timeout: 60000,
+      
+      // Uses the time now minus one hour in local development, you might need to disable it.
+      // For some reason the EVM date was one hour ahead my local system date.
+      initialDate: new Date((new Date().getTime()) - 3600 * 1000).toString()
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
