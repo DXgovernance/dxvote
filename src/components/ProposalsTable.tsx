@@ -212,11 +212,18 @@ const ProposalsTable = observer(() => {
               <TableHeader width="17.5%" align="center"> Staked </TableHeader>
               <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
           </ProposalTableHeaderWrapper>
-          { (!blockchainStore.initialLoadComplete || (allProposals.length === 0)) ?
+          { (!blockchainStore.initialLoadComplete) ?
             <TableRowsWrapper>
               <div className="loader">
               <img alt="bolt" src={boltIcon} />
                 <br/>Searching for proposals..
+              </div>
+            </TableRowsWrapper>
+            : (allProposals.length === 0) ?
+            <TableRowsWrapper>
+              <div className="loader">
+              <img alt="bolt" src={boltIcon} />
+                <br/>No Proposals Found
               </div>
             </TableRowsWrapper>
             :
