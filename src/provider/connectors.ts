@@ -9,6 +9,7 @@ export const CHAIN_NAME_BY_ID = {
   '3': 'ropsten',
   '4': 'rinkeby',
   '42': 'kovan',
+  '100': 'xdai',
   '144545313136048': 'arbitrum-testnet-v5',
   '1337': 'localhost',
 };
@@ -18,6 +19,7 @@ export const CHAIN_ID_BY_NAME = {
   'ropsten': 3,
   'rinkeby': 4,
   'kovan': 42,
+  'xdai': 100,
   'arbitrum-testnet-v5': 144545313136048,
   'localhost': 1337,
 };
@@ -30,6 +32,7 @@ export const RPC_URLS = {
   '3': process.env.REACT_APP_SUPPORTED_NETWORK_3 || 'https://ropsten.infura.io/v3/'+INFURA_API_KEY,
   '4': process.env.REACT_APP_SUPPORTED_NETWORK_4 || 'https://rinkeby.infura.io/v3/'+INFURA_API_KEY,
   '42': process.env.REACT_APP_SUPPORTED_NETWORK_42 || 'https://kovan.infura.io/v3/'+INFURA_API_KEY,
+  '100': 'https://rpc.xdaichain.com/',
   '144545313136048': 'https://kovan5.arbitrum.io/rpc',
   '66': process.env.REACT_APP_SUPPORTED_NETWORK_66 || 'http://localhost:8545/',
 };

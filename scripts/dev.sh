@@ -65,8 +65,7 @@ echo "${contents}" > tsconfig.json
 yarn hardhat run --network localhost scripts/deployLocalContracts.ts
 
 # Copy dxdao contracts addresses in live networks
-cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
-
+# cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
 
 # Run build cache
 REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \

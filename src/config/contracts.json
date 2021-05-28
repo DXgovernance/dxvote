@@ -1,32 +1,47 @@
 {
-  "arbitrum-testnet-v5": {
-    "schemes": {
-      "masterWallet": "0x05a28eE1EeeE05A5ab66E18c08C417860a607d81",
-      "quickWallet": "0x3B9C22dd8e947790d9Fec5b147658839ceCBEf26"
-    },
-    "multicall": "0x74E5874B6f1ac04aD644F1898913683b25728015",
-    "fromBlock": 26225,
-    "reputation": "0xaa6EC1504F00DD66B8E943EfE188711a73677748",
-    "token": "0x9C0Ce622D4EFe9b4B10bB81409B8d6AFD88d8B9d",
-    "avatar": "0xA4e0B135d4b6F72041776255Cf8EA6539c1e369B",
-    "controller": "0xe3A46a74188160780f8723c686f490363045FF72",
-    "votingMachine": "0x2bD961624a2ba72af2de46A0d886237C5e19AC19",
-    "votingMachineToken": "0xAaafce0cfB6f420eED55717B75E8205c4f7744a3",
-    "permissionRegistry": "0x2E9d91b196e8Ce1707A45B2903e55201EB1D6f87"
-  },
   "rinkeby": {
     "schemes": {
-      "masterWallet": "0x808e9e19f114e0d469B590B51aF736A2534a57Aa",
-      "quickWallet": "0x3B02c56224d821f60B5A537dd6Fd3381b1B77b83"
+      "masterWallet": "0xb38C51b42001Cfc62bBf99DE1c22241090E09B15",
+      "quickWallet": "0xA8e976F0B02162b6Bb22589D89AE73232825c317"
     },
-    "multicall": "0xA998479F67e0dA58C2c3D3308aBFf13f16a6Af26",
-    "fromBlock": 8625817,
-    "reputation": "0x3B14E6bA9057734404fa621410A0667f66359e08",
-    "token": "0xFBD9B2773127Ea0A05509f16FD4AACC84F3b9829",
-    "avatar": "0x26A20D2585fbFb8D33c766a0E19555A666D42128",
-    "controller": "0xE24eA5B08D208CD0d13fbf27f6f67981f77689cd",
-    "votingMachine": "0x7aa12652Cb1575CBDa52E4fFd21E90Aed57bF9fd",
+    "multicall": "0xbf1FD737e86C66af5d566879d4d0fa683d4Fa480",
+    "fromBlock": 8660768,
+    "reputation": "0xE5Ec1E04d6ec5536D94D2BBD729c47129dcA0FA1",
+    "token": "0xE40b8aACD72FBEe540cb9282e8d58661BCf92461",
+    "avatar": "0xD16bebc0d6282e1A9d81B3198C2f6f28852d68F6",
+    "controller": "0x6FBEdB1dE07aE38663d7A1215CB6FC2f01aE3d9A",
+    "votingMachine": "0xa70821056f9883c6422192a02bD44604a4c4d447",
     "votingMachineToken": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
-    "permissionRegistry": "0xD07696cB2567B952Fd9a5A028e110A7bB292c9aa"
+    "permissionRegistry": "0xebaCFc550cADB131FC2BD0c92628F4b64E2E2378"
+  },
+  "xdai": {
+    "schemes": {
+      "masterWallet": "0xc906B8670252326F852D94297C1198F7B39E5522",
+      "quickWallet": "0x742092b501B7B36CbBA3E0516f352925D8c1D4c4"
+    },
+    "multicall": "0xDD032cd0dfCB54050E1FA30Be59056403e292700",
+    "fromBlock": 16274928,
+    "reputation": "0x4f318109dE7Fea673Bff5A628074E839F35658aB",
+    "token": "0x5F709dd0a83Dfb1dd8e43D327Ac035Ad84988F66",
+    "avatar": "0x872e588EcDdfcE41233D9Ca96cd4D18f0B64B1D8",
+    "controller": "0xACDa60EAcD04F8930A174b90801798B8b41C2446",
+    "votingMachine": "0x1aE69bAe9c6c4e78c3Af7c966aeaD7935F0C5939",
+    "votingMachineToken": "0x1a34b416e8A744aFBc66E96414C6A7705e780Fc1",
+    "permissionRegistry": "0x5c34F404aA92997f7342Ec0F89568c71f4f9FaB1"
+  },
+  "arbitrum-testnet-v5": {
+    "schemes": {
+      "masterWallet": "0x1FD1C4d820432C154bD1b48b6cC669b1675F6153",
+      "quickWallet": "0x96f33354CAac9C096AbDD631db25A4a0E22b58bB"
+    },
+    "multicall": "0x18Ebdf0E8542F07Ea1d869Df38Fd1173be2C6142",
+    "fromBlock": 185395,
+    "reputation": "0xf8560B8474C48b187D972ccA565c10F691223262",
+    "token": "0x5AAFf6fDfcfce823E02C53be04Ec60230a57001c",
+    "avatar": "0x4876F67D6aE09a78d722532744955c004d1DDCbE",
+    "controller": "0x4E66A51e4a41E2683f5245cF31207f10c6658Ea5",
+    "votingMachine": "0x0d4035bD16DE204116af1075D8E7603D26EBabF5",
+    "votingMachineToken": "0xbDa121C4bf517FfeA4eac10A59067973D4004a5a",
+    "permissionRegistry": "0xDDb50f60B189a37918d2616e59A231F6a1a4A4ff"
   }
 }

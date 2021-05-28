@@ -57,6 +57,13 @@ module.exports = {
       accounts: { mnemonic: MNEMONIC },
       gasPrice: 0,
       chainId: 144545313136048
-    }
+    },
+    xdai: {
+      url: `https://rpc.xdaichain.com/`,
+      accounts: { mnemonic: MNEMONIC },
+      gasLimit: 17000000,
+      gasPrice: 2000000000, // 2 gwei
+      timeout: 60000
+    },
   }
 };
