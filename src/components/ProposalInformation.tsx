@@ -250,6 +250,9 @@ const ProposalInformation = observer(() => {
       moment().to( moment(proposalInfo.finishTime.times(1000).toNumber()) ).toString()
       : "";
       
+      const boostedVoteRequiredPercentage = schemeInfo.configurations[schemeInfo.configurations.length -1]
+        .boostedVoteRequiredPercentage.div('1000').toNumber();
+        
       const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
       
       function onStakeAmountChange(event) {
@@ -311,10 +314,7 @@ const ProposalInformation = observer(() => {
               })}
             </ProposalInfoSection>
             <InfoSidebar>
-              <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{
-                (proposalInfo.status === "Quiet Ending Period" && timeToFinish === "") ?
-                  "Pending Execution" : proposalInfo.status
-                }</h2>
+              <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{proposalInfo.status}</h2>
               <SidebarRow style={{
                 margin: "0px 10px",
                 flexDirection: "column"
@@ -359,6 +359,10 @@ const ProposalInformation = observer(() => {
                 <span> <strong>Finish Time</strong> <small>{
                   moment.unix(proposalInfo.finishTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
                 }</small> </span>
+                { (boostedVoteRequiredPercentage > 0) ?
+                  <span> <strong> Required Boosted Vote: </strong> <small>{boostedVoteRequiredPercentage}%</small> </span>
+                : <div/>
+                }
               </SidebarRow>
               
               <SidebarDivider/> 
