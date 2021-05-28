@@ -52,7 +52,7 @@ const Root = (
               <Route exact path="/config"> <ConfigPage /> </Route>
               <Route exact path="/user/:address"> <UserPage /> </Route>
               <Route exact path="/scheme/:schemAddress"> <SchemePage /> </Route>
-              <Route exact path="/scheme/:schemAddress/proposal/:proposalId"> <ProposalPage /> </Route>
+              <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
               <Footer />
             </div>
             </Web3ReactManager>

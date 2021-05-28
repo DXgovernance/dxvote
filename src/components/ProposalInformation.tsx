@@ -140,10 +140,9 @@ const ProposalInformation = observer(() => {
     const {
         root: { providerStore, daoStore, configStore, daoService, ipfsService, userStore, blockchainStore },
     } = useStores();
-    const schemeAddress = useLocation().pathname.split("/")[2];
-    const proposalId = useLocation().pathname.split("/")[4];
-    const schemeInfo = daoStore.getScheme(schemeAddress);
+    const proposalId = useLocation().pathname.split("/")[2];
     const proposalInfo = daoStore.getProposal(proposalId);
+    const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
     const { dxdApproved } = userStore.getUserInfo(); 
     const { active, account, library } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);

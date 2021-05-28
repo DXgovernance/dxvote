@@ -241,7 +241,7 @@ const ProposalsTable = observer(() => {
                   const timeToBoost = moment().to( moment.unix(proposal.boostTime.toNumber()) ).toString();
                   const timeToFinish = moment().to( moment.unix(proposal.finishTime.toNumber()) ).toString();;
                   return (
-                    <Link key={"proposal"+i} to={"/scheme/"+proposal.scheme+"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
+                    <Link key={"proposal"+i} to={"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
                       <TableRow>
                         <TableCell width="40%" align="left" weight='500' wrapText="true">
                           {proposal.title}
