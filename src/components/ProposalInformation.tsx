@@ -341,6 +341,7 @@ const ProposalInformation = observer(() => {
 
               <SidebarRow style={{ margin: "0px 10px", padding: "10px 0px", flexDirection: "column" }}>
                 <span> <strong>Proposer</strong> <Address type="user" address={proposalInfo.proposer}/> </span>
+                <span> <strong>Scheme</strong> <small>{schemeInfo.name}</small></span>
                 <span><strong>State in Voting Machine </strong>
                   <small>{proposalInfo.stateInVotingMachine}</small>
                 </span>
