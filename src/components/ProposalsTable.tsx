@@ -129,7 +129,7 @@ const TableCell = styled.div`
         }
     }
     color: ${(props) => props.color};
-    width: ${(props) => props.width || '25%'}
+    width: ${(props) => props.width || '25%'};
     text-align: ${(props) => props.align};
     font-weight: ${(props) => props.weight};
     white-space: ${(props) => props.wrapText ? 'nowrap' : 'inherit'};
