@@ -105,7 +105,7 @@ const Web3ReactManager = ({ children }) => {
             <div className="connectModalContent">Connect to a valid network</div>
             </OverBlurModal>
             <BlurWrapper>
-              
+              {children}
             </BlurWrapper>
           </div>
         );

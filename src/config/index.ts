@@ -1,9 +1,13 @@
 const contractsFile = require('./contracts.json');
-const assetsFile = require('./assets.json');
+const dataFile = require('./data.json');
 
 export const getNetworkConfig = function(network) {
+  const networkData = dataFile[network] || {
+    tokens: {}
+  };
+  
   if (network === 'localhost') {
-    return {
+    return Object.assign(networkData, {
       avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ""),
       controller: process.env.REACT_APP_CONTROLLER_ADDRESS.replace(/["']/g, ""),
       reputation: process.env.REACT_APP_REPUTATION_ADDRESS.replace(/["']/g, ""),
@@ -12,12 +16,8 @@ export const getNetworkConfig = function(network) {
       permissionRegistry: process.env.REACT_APP_PERMISSION_REGISTRY_ADDRESS.replace(/["']/g, ""),
       multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ""),
       fromBlock: 1
-    }
+    })
   } else {
-    return contractsFile[network];
+    return Object.assign(networkData, contractsFile[network]);
   };
-}
-
-export const getAssets = function(network) {
-  return assetsFile[network];
 }

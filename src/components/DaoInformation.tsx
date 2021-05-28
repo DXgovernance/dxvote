@@ -103,7 +103,7 @@ const TableCell = styled.div`
 
 const DaoInformation = observer(() => {
     const {
-        root: { providerStore, daoStore, blockchainStore },
+        root: { providerStore, daoStore, blockchainStore, configStore },
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
 
@@ -133,11 +133,19 @@ const DaoInformation = observer(() => {
       )
     } else {
       const daoInfo = daoStore.getDaoInfo();
-      const assets = [{
+      const networkConfig = configStore.getNetworkConfig();
+      let assets = [{
         name: "ETH", amount: parseFloat(Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(4))
       },{
         name: "DXD", amount: parseFloat(Number(library.utils.fromWei(daoInfo.dxdBalance.toString())).toFixed(4))
       }];
+      Object.keys(daoStore.tokenBalances).map((tokenAddress) => {
+        assets.push({
+          name: networkConfig.tokens[tokenAddress].name,
+          amount: parseFloat(Number(library.utils.fromWei(daoStore.tokenBalances[tokenAddress].toString())).toFixed(4))
+        })
+      })
+      
       return (
         <DaoInfoWrapper>
           <h2>Address: <Address size="long" address={daoInfo.address}/></h2>

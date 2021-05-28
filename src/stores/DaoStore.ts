@@ -17,6 +17,9 @@ const CACHE = require('../cache');
 
 export default class DaoStore {
   daoCache: DaoCache = CACHE;
+  tokenBalances: { 
+    [tokenAddress: string] : BigNumber
+  } = {};
   rootStore: RootStore;
 
   constructor(rootStore) {
@@ -93,6 +96,15 @@ export default class DaoStore {
   updateNetworkCache(newNetworkCache: DaoNetworkCache, networkName: string) {
     this.daoCache[networkName] = this.parseCache(newNetworkCache);
     console.debug('Cache Updated]', this.daoCache[networkName]);
+  }
+  
+  updateTokenBalance(tokenAddress: string) {
+    this.tokenBalances[tokenAddress] = this.rootStore.blockchainStore.getCachedValue({
+      contractType: ContractType.ERC20,
+      address: tokenAddress,
+      method: 'balanceOf',
+      params: [this.rootStore.configStore.getNetworkConfig().avatar]
+    }) || bnum(0);
   }
 
   getDaoInfo(): DaoInfo {
@@ -397,7 +409,6 @@ export default class DaoStore {
   getStakesOfProposal(proposalId: string): Stake[]{
     return this.getCache().votingMachineEvents.stakes
       .filter((stake) => {return (proposalId === stake.proposalId)});
-
   }
   
   getRedeemsOfProposal(proposalId: string): Redeem[]{

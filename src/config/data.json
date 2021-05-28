@@ -1,0 +1,14 @@
+{
+  "rinkeby": {
+    "tokens": {
+      "0xaff4481d10270f50f203e0763e2597776068cbc5": {
+        "name": "WEENUS",
+        "decimals": 18
+      },
+      "0x022E292b44B5a146F2e8ee36Ff44D3dd863C915c": {
+        "name": "XEENUS",
+        "decimals": 18
+      }
+    }
+  }
+}

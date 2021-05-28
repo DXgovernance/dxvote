@@ -45,7 +45,7 @@ export default class BlockchainStore {
   }
   
   async executeAndUpdateMulticall(multicallService){
-    const multicallResponse = await multicallService.executeCalls();  
+    const multicallResponse = await multicallService.executeCalls();
     this.updateStore(
       this.reduceMulticall(
         multicallResponse.calls, multicallResponse.results, multicallResponse.blockNumber
@@ -143,7 +143,6 @@ export default class BlockchainStore {
       && web3React.active
       && isChainIdSupported(web3React.chainId)
     ) {
-      console.log(reset)
       this.initialLoadComplete = (reset) ? false : this.initialLoadComplete;
       this.activeFetchLoop = true;
       const { library, account, chainId } = web3React;
@@ -163,12 +162,29 @@ export default class BlockchainStore {
         console.debug('[Fetch Loop] Fetch Blockchain Data', { blockNumber, account, chainId });
         
         let networkCache = daoStore.getCache();
-        console.log(networkCache)
         const fromBlock = networkCache.blockNumber;
         const toBlock = blockNumber;
         const networkName = configStore.getActiveChainName();
-      
+        const networkConfig = configStore.getNetworkConfig();
         networkCache = await updateNetworkCache(networkCache, networkName, fromBlock, toBlock, library);
+        
+        let tokensBalancesCalls = []
+        Object.keys(networkConfig.tokens).map((tokenAddress) => {
+          if (!daoStore.tokenBalances[tokenAddress])
+            tokensBalancesCalls.push({
+              contractType: ContractType.ERC20,
+              address: tokenAddress,
+              method: 'balanceOf',
+              params: [networkConfig.avatar],
+            });
+        });
+
+        if (tokensBalancesCalls.length > 0)
+          multicallService.addCalls(tokensBalancesCalls);
+        await this.executeAndUpdateMulticall(multicallService);
+        tokensBalancesCalls.map((tokensBalancesCall) => {
+          daoStore.updateTokenBalance(tokensBalancesCall.address)
+        });
         
         // Get user-specific blockchain data
         if (account) {
