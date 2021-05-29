@@ -44,12 +44,12 @@ export const updateNetworkCache = async function (
 
   // Update DXD holders
   networkCache = await updateDXDEvents(networkCache, networkName, fromBlock, toBlock, web3);
-
-  // Update permission registry events
-  networkCache = await updatePermissionRegistryEvents(networkCache, networkName, fromBlock, toBlock, web3);
   
   // Update schemes
   networkCache = await updateSchemes(networkCache, networkName, fromBlock, toBlock, web3);
+  
+  // Update scheme permissions from PermissionRegistry events
+  networkCache = await updatePermissionRegistryEvents(networkCache, networkName, fromBlock, toBlock, web3);
   
   // Update proposals
   networkCache = await updateProposals(networkCache, networkName, fromBlock, toBlock, web3);
@@ -248,29 +248,62 @@ export const updateDXDEvents = async function (
 export const updatePermissionRegistryEvents = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
-  const { permissionRegistry } = await getContracts(networkName, web3);
+  const allContracts = await getContracts(networkName, web3);
 
   let permissionRegistryEvents = sortEvents(
-    await getEventsBetweenBlocks(permissionRegistry, fromBlock, toBlock, 'allEvents')
+    await getEventsBetweenBlocks(allContracts.permissionRegistry, fromBlock, toBlock, 'allEvents')
   );
   permissionRegistryEvents.map((permissionRegistryEvent) => {
     const eventValues = permissionRegistryEvent.returnValues;
     
-    if (!networkCache.callPermissions[eventValues.from])
-      networkCache.callPermissions[eventValues.from] = [];
-    
-    if (eventValues.value != 0 && eventValues.fromTime != 0) {
-      networkCache.callPermissions[eventValues.from].push({
-        asset: eventValues.asset,
-        to: eventValues.to,
-        functionSignature: eventValues.functionSignature,
-        value: eventValues.value,
-        fromTime: eventValues.fromTime
-      })
+    if (eventValues.from == allContracts.avatar._address) {
+      
+      Object.keys(networkCache.schemes).map((schemeAddress) => {
+        if (networkCache.schemes[schemeAddress].controllerAddress == allContracts.controller._address) {
+          
+          if (eventValues.value != 0 && eventValues.fromTime != 0) {
+            networkCache.schemes[schemeAddress].callPermissions.push({
+              asset: eventValues.asset,
+              to: eventValues.to,
+              functionSignature: eventValues.functionSignature,
+              value: eventValues.value,
+              fromTime: eventValues.fromTime
+            })
+          } else {
+            const permissionIndex = networkCache.schemes[schemeAddress].callPermissions
+              .findIndex(i =>
+                i.asset === eventValues.asset
+                && i.to === eventValues.to
+                && i.functionSignature === eventValues.functionSignature
+              );
+            networkCache.schemes[schemeAddress].callPermissions.splice(permissionIndex, 1);
+          }
+          
+        }
+      });
+
+    } else if (networkCache.schemes[eventValues.from]){
+      
+      if (eventValues.value != 0 && eventValues.fromTime != 0) {
+        networkCache.schemes[eventValues.from].callPermissions.push({
+          asset: eventValues.asset,
+          to: eventValues.to,
+          functionSignature: eventValues.functionSignature,
+          value: eventValues.value,
+          fromTime: eventValues.fromTime
+        })
+      } else {
+        const permissionIndex = networkCache.schemes[eventValues.from].callPermissions
+          .findIndex(i =>
+            i.asset === eventValues.asset
+            && i.to === eventValues.to
+            && i.functionSignature === eventValues.functionSignature
+          );
+        networkCache.schemes[eventValues.from].callPermissions.splice(permissionIndex, 1);
+      }
+      
     } else {
-      const permissionIndex = networkCache.callPermissions[eventValues.from]
-        .findIndex(i => i.asset === eventValues.asset && i.to === eventValues.to);
-      networkCache.callPermissions[eventValues.from].splice(permissionIndex, 1);
+      console.error('[Scheme does not exist]', eventValues.from);
     }
     
   });
@@ -320,7 +353,7 @@ export const updateSchemes = async function (
               ).call(),
             toBlock: Number.MAX_SAFE_INTEGER
           }],
-          
+          callPermissions: [],
           proposalIds: [],
           boostedProposals: 0,
           maxSecondsForExecution: await schemeContract.methods.maxSecondsForExecution().call(),

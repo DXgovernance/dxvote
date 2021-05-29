@@ -176,6 +176,7 @@ export interface Scheme {
     boostedVoteRequiredPercentage: BigNumber;
     toBlock: number
   }[];
+  callPermissions: SchemeCallPermission[];
   proposalIds: string[];
   boostedProposals: number;
   maxSecondsForExecution: BigNumber;
@@ -202,7 +203,6 @@ export interface DaoNetworkCache {
   schemes: {[address: string]: Scheme};
   proposals: {[id: string]: Proposal};
   users: {[address: string]: User};
-  callPermissions: { [from: string]: SchemeCallPermission[] };
   votingMachineEvents: {
     votes: Vote[];
     stakes: Stake[];
