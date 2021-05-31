@@ -28,31 +28,51 @@ export const sortEvents = function(events) {
   return _.orderBy( _.uniqBy(events, "id") , ["blockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc"]);
 };
 
+async function executeMulticall(web3, multicall, calls) {
+  
+  const rawCalls = calls.map((call) => {
+    return [call[0]._address, web3.eth.abi.encodeFunctionCall(
+      call[0]._jsonInterface.find(method => method.name == call[1]), call[2]
+    )];
+  });
+  
+  const { returnData, blockNumber } = await multicall.methods.aggregate(rawCalls).call();
+
+  return {
+    blockNumber,
+    returnData,
+    decodedReturnData:returnData.map((callResult, i) => {
+      return web3.eth.abi.decodeParameters(
+        calls[i][0]._jsonInterface.find(method => method.name == calls[i][1]).outputs,
+        callResult
+      )["0"];
+    })
+  };
+}
+
 export const updateNetworkCache = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
   console.debug('[Cache Update]', networkCache, toBlock);
 
-  // Update DaoInfo 
-  networkCache = await updateDaoInfo(networkCache, networkName, web3);
-
-  // Update all Voting Machine action (votes, stakes, redeems and proposal changes)
-  networkCache = await updateVotingMachineEvents(networkCache, networkName, fromBlock, toBlock, web3);
+  const firstPromisesRound = await Promise.all([
+    updateDaoInfo(networkCache, networkName, web3),
+    updateVotingMachineEvents(networkCache, networkName, fromBlock, toBlock, web3),
+    updateReputationEvents(networkCache, networkName, fromBlock, toBlock, web3),
+    updateDXDEvents(networkCache, networkName, fromBlock, toBlock, web3),
+    updateSchemes(networkCache, networkName, fromBlock, toBlock, web3),
+  ]);
   
-  // Update REP holders
-  networkCache = await updateReputationEvents(networkCache, networkName, fromBlock, toBlock, web3);
-
-  // Update DXD holders
-  networkCache = await updateDXDEvents(networkCache, networkName, fromBlock, toBlock, web3);
+  for (let i = 0; i < firstPromisesRound.length; i++)
+    networkCache = firstPromisesRound[i]
+    
+  const secondPromisesRound = await Promise.all([
+    updatePermissionRegistryEvents(networkCache, networkName, fromBlock, toBlock, web3),
+    updateProposals(networkCache, networkName, fromBlock, toBlock, web3)
+  ]);
   
-  // Update schemes
-  networkCache = await updateSchemes(networkCache, networkName, fromBlock, toBlock, web3);
-  
-  // Update scheme permissions from PermissionRegistry events
-  networkCache = await updatePermissionRegistryEvents(networkCache, networkName, fromBlock, toBlock, web3);
-  
-  // Update proposals
-  networkCache = await updateProposals(networkCache, networkName, fromBlock, toBlock, web3);
+  for (let i = 0; i < secondPromisesRound.length; i++)
+    networkCache = secondPromisesRound[i]
   
   networkCache.blockNumber = Number(toBlock);
 
@@ -63,11 +83,18 @@ export const updateDaoInfo = async function (
   networkCache: DaoNetworkCache, networkName: string, web3: any
 ): Promise<DaoNetworkCache> {
   const allContracts = await getContracts(networkName, web3);
+  
+  const calls = await executeMulticall(web3, allContracts.multicall, [
+    [allContracts.reputation, "totalSupply", []],
+    [allContracts.multicall, "getEthBalance", [allContracts.avatar._address]],
+    [allContracts.dxd, "balanceOf", [allContracts.avatar._address]]
+  ]);
+
   networkCache.daoInfo.address = allContracts.avatar._address;
-  networkCache.daoInfo.totalRep = bnum(await allContracts.reputation.methods.totalSupply().call());
   networkCache.daoInfo.repEvents = !networkCache.daoInfo.repEvents ? [] : networkCache.daoInfo.repEvents;
-  networkCache.daoInfo.ethBalance = bnum(await web3.eth.getBalance(allContracts.avatar._address));
-  networkCache.daoInfo.dxdBalance = bnum(await allContracts.dxd.methods.balanceOf(allContracts.avatar._address).call());
+  networkCache.daoInfo.totalRep = bnum(calls.decodedReturnData[0]);
+  networkCache.daoInfo.ethBalance = bnum(calls.decodedReturnData[1]);
+  networkCache.daoInfo.dxdBalance = bnum(calls.decodedReturnData[2]);
   return networkCache;
 }
 
@@ -170,6 +197,9 @@ export const updateReputationEvents = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
   const { reputation } = await getContracts(networkName, web3);
+
+  if (!networkCache.daoInfo.repEvents)
+    networkCache.daoInfo.repEvents = [];
 
   let reputationEvents = sortEvents( await getEventsBetweenBlocks(reputation, fromBlock, toBlock, 'allEvents'));
   reputationEvents.map((reputationEvent) => {
@@ -321,65 +351,82 @@ export const updateSchemes = async function (
   
   await Promise.all(controllerEvents.map(async (controllerEvent) => {
     
+    const schemeAddress = controllerEvent.returnValues._scheme;
+    const schemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
+    
     // Add or update the scheme information, register scheme is used to add and updates scheme parametersHash
     if (controllerEvent.event == "RegisterScheme") {
-      const schemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, controllerEvent.returnValues._scheme);
-      const paramsHash = await schemeContract.methods.voteParams().call();
-      const controllerAddress = await schemeContract.methods.controllerAddress().call();
+      const calls = await executeMulticall(web3, allContracts.multicall, [
+        [schemeContract, "voteParams", []],
+        [schemeContract, "controllerAddress", []],
+        [schemeContract, "schemeName", []],
+        [allContracts.multicall, "getEthBalance", [schemeAddress]],
+        [allContracts.controller, "getSchemePermissions", [schemeAddress, allContracts.avatar._address]],
+        [schemeContract, "maxSecondsForExecution", []],
+      ]);
+      const paramsHash = calls.decodedReturnData[0];
+
+      const calls2 = await executeMulticall(web3, allContracts.multicall, [
+        [allContracts.votingMachine, "parameters", [paramsHash]],
+        [
+          allContracts.votingMachine,
+          "boostedVoteRequiredPercentage",
+          [web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address), paramsHash]
+        ]
+      ]);
+
+      const parameters = web3.eth.abi.decodeParameters(
+        [
+          {type: 'uint256', name: 'queuedVoteRequiredPercentage' },
+          {type: 'uint256', name: 'queuedVotePeriodLimit' },
+          {type: 'uint256', name: 'boostedVotePeriodLimit' },
+          {type: 'uint256', name: 'preBoostedVotePeriodLimit' },
+          {type: 'uint256', name: 'thresholdConst' },
+          {type: 'uint256', name: 'limitExponentValue' },
+          {type: 'uint256', name: 'quietEndingPeriod' },
+          {type: 'uint256', name: 'proposingRepReward' },
+          {type: 'uint256', name: 'votersReputationLossRatio' },
+          {type: 'uint256', name: 'minimumDaoBounty' },
+          {type: 'uint256', name: 'daoBountyConst' },
+          {type: 'uint256', name: 'activationTime' }
+        ], calls2.returnData[0]
+      );
       
-      if (!networkCache.schemes[schemeContract._address]) {
-        networkCache.schemes[schemeContract._address] = {
-          address: schemeContract._address,
+      if (!networkCache.schemes[schemeAddress]) {
+        networkCache.schemes[schemeAddress] = {
+          address: schemeAddress,
           registered: true,
-          name: await schemeContract.methods.schemeName().call(),
-          controllerAddress: controllerAddress,
-          ethBalance: await web3.eth.getBalance(schemeContract._address),
+          controllerAddress: calls.decodedReturnData[1],
+          name: calls.decodedReturnData[2],
+          ethBalance: calls.decodedReturnData[3],
           
           configurations: [{
             paramsHash: paramsHash,
             // Get and decode the full parameters from the voting machine using teh parametersHash
-            parameters: decodeSchemeParameters(
-              await await allContracts.votingMachine.methods.parameters(paramsHash).call()
-            ),
+            parameters: decodeSchemeParameters(parameters),
             // Get and decode the permissions
-            permissions: decodePermission(
-              await allContracts.controller.methods
-              .getSchemePermissions(schemeContract._address, allContracts.avatar._address).call()
-            ),
-            boostedVoteRequiredPercentage: await allContracts.votingMachine.methods
-              .boostedVoteRequiredPercentage(
-                web3.utils.soliditySha3(schemeContract._address, allContracts.avatar._address),
-                paramsHash
-              ).call(),
+            permissions: decodePermission(calls.decodedReturnData[4]),
+            boostedVoteRequiredPercentage: web3.eth.abi.decodeParameters(['uint256'], calls2.returnData[1])['0'],
             toBlock: Number.MAX_SAFE_INTEGER
           }],
           callPermissions: [],
           proposalIds: [],
           boostedProposals: 0,
-          maxSecondsForExecution: await schemeContract.methods.maxSecondsForExecution().call(),
+          maxSecondsForExecution: calls.decodedReturnData[5],
           newProposalEvents: []
         };
       } else {
-        networkCache.schemes[schemeContract._address].configurations.push({
+        networkCache.schemes[schemeAddress].configurations.push({
           paramsHash: paramsHash,
           // Get and decode the full parameters from the voting machine using teh parametersHash
-          parameters: decodeSchemeParameters(
-            await await allContracts.votingMachine.methods.parameters(paramsHash).call()
-          ),
+          parameters: decodeSchemeParameters(parameters),
           // Get and decode the permissions
-          permissions: decodePermission(
-            await allContracts.controller.methods
-            .getSchemePermissions(schemeContract._address, allContracts.avatar._address).call()
-          ),
-          boostedVoteRequiredPercentage: await allContracts.votingMachine.methods
-            .boostedVoteRequiredPercentage(
-              web3.utils.soliditySha3(schemeContract._address, allContracts.avatar._address),
-              paramsHash
-            ).call(),
+          permissions: decodePermission(calls.decodedReturnData[4]),
+          boostedVoteRequiredPercentage: web3.eth.abi.decodeParameters(['uint256'], calls2.returnData[1])['0'],
           toBlock: Number.MAX_SAFE_INTEGER
         })
-        networkCache.schemes[schemeContract._address].configurations[
-          networkCache.schemes[schemeContract._address].configurations.length - 1
+        networkCache.schemes[schemeAddress].configurations[
+          networkCache.schemes[schemeAddress].configurations.length - 1
         ].toBlock = controllerEvent.blockNumber;
       }
     
@@ -389,15 +436,20 @@ export const updateSchemes = async function (
       // This condition is added to skip the first scheme added (that is the dao creator account)
       (controllerEvent.returnValues._sender != controllerEvent.returnValues._scheme)
     ) {
-      const schemeAddress = controllerEvent.returnValues._scheme;
-      const schemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
+      const calls = await executeMulticall(web3, allContracts.multicall, [
+        [allContracts.multicall, "getEthBalance", [schemeAddress]],
+        [
+          allContracts.votingMachine,
+          "orgBoostedProposalsCnt", 
+          [web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address)]
+        ],
+        [schemeContract, "maxSecondsForExecution", []]
+      ]);
       
       // Update the scheme values a last time
-      networkCache.schemes[schemeAddress].ethBalance = await web3.eth.getBalance(schemeAddress);
-      networkCache.schemes[schemeAddress].boostedProposals = allContracts.votingMachine.methods
-        .orgBoostedProposalsCnt(web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address)).call()
-      networkCache.schemes[schemeAddress].maxSecondsForExecution = 
-        await schemeContract.methods.maxSecondsForExecution().call();
+      networkCache.schemes[schemeAddress].ethBalance = calls.decodedReturnData[0];
+      networkCache.schemes[schemeAddress].boostedProposals = calls.decodedReturnData[1];
+      networkCache.schemes[schemeAddress].maxSecondsForExecution = calls.decodedReturnData[2];
       networkCache.schemes[schemeAddress].registered = false;
     }
     
@@ -406,22 +458,33 @@ export const updateSchemes = async function (
   // Update registered schemes
   await Promise.all(Object.keys(networkCache.schemes).map(async (schemeAddress) => {
     if (networkCache.schemes[schemeAddress].registered) {
+      
       const schemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
-      const lastConfiguration = networkCache.schemes[schemeContract._address].configurations[
-        networkCache.schemes[schemeContract._address].configurations.length - 1
+      const lastConfiguration = networkCache.schemes[schemeAddress].configurations[
+        networkCache.schemes[schemeAddress].configurations.length - 1
       ];
-      networkCache.schemes[schemeContract._address].ethBalance = await web3.eth.getBalance(schemeAddress);
-      networkCache.schemes[schemeContract._address].boostedProposals = await allContracts.votingMachine.methods
-        .orgBoostedProposalsCnt(web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address)).call()
-      networkCache.schemes[schemeContract._address].maxSecondsForExecution = await schemeContract.methods
-        .maxSecondsForExecution().call();
-      networkCache.schemes[schemeContract._address].configurations[
-        networkCache.schemes[schemeContract._address].configurations.length - 1
-      ].boostedVoteRequiredPercentage = await allContracts.votingMachine.methods
-        .boostedVoteRequiredPercentage(
-          web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address),
-          lastConfiguration.paramsHash
-        ).call();
+      
+      const calls = await executeMulticall(web3, allContracts.multicall, [
+        [allContracts.multicall, "getEthBalance", [schemeAddress]],
+        [
+          allContracts.votingMachine,
+          "orgBoostedProposalsCnt", 
+          [web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address)]
+        ],
+        [schemeContract, "maxSecondsForExecution", []],
+        [
+          allContracts.votingMachine,
+          "boostedVoteRequiredPercentage",
+          [web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address), lastConfiguration.paramsHash]
+        ]
+      ]);
+      
+      networkCache.schemes[schemeAddress].ethBalance = calls.decodedReturnData[0];
+      networkCache.schemes[schemeAddress].boostedProposals = calls.decodedReturnData[1];
+      networkCache.schemes[schemeAddress].maxSecondsForExecution = calls.decodedReturnData[2];
+      networkCache.schemes[schemeAddress].configurations[
+        networkCache.schemes[schemeAddress].configurations.length - 1
+      ].boostedVoteRequiredPercentage = web3.eth.abi.decodeParameters(['uint256'], calls.returnData[3])['0']
     }
 
   }));
@@ -443,23 +506,56 @@ export const updateProposals = async function (
     await Promise.all(schemeEvents.map(async (schemeEvent) => {
 
       if (schemeEvent.event == "NewCallProposal") {
+        const proposalId = schemeEvent.returnValues._proposalId;
         
         // Get all the proposal information from the scheme and voting machine
-        const proposalId = schemeEvent.returnValues._proposalId;
-        const schemeProposalInfo = await schemeContract.methods.getOrganizationProposal(proposalId).call();
-        const votingMachineProposalInfo = await allContracts.votingMachine
-          .methods.proposals(proposalId).call();
-        const proposalStatusWithVotes = await allContracts.votingMachine
-          .methods.proposalStatusWithVotes(proposalId).call();
-        const proposalTimes = await allContracts.votingMachine
-          .methods.getProposalTimes(proposalId).call();
-        const proposalShouldBoost = await allContracts.votingMachine
-          .methods.shouldBoost(proposalId).call();
+        const calls = await executeMulticall(web3, allContracts.multicall, [
+          [ schemeContract, "getOrganizationProposal", [proposalId] ],
+          [ allContracts.votingMachine, "proposals", [proposalId] ],
+          [ allContracts.votingMachine, "proposalStatusWithVotes", [proposalId] ],
+          [ allContracts.votingMachine, "getProposalTimes", [proposalId] ],
+          [ allContracts.votingMachine, "shouldBoost", [proposalId] ],
+        ]);
+        const schemeProposalInfo = web3.eth.abi.decodeParameters(
+          [ 
+            {type: 'address[]', name: 'to' },
+            {type: 'bytes[]', name: 'callData' },
+            {type: 'uint256[]', name: 'value' },
+            {type: 'uint256', name: 'state' },
+            {type: 'string', name: 'title' },
+            {type: 'string', name: 'descriptionHash' },
+            {type: 'uint256', name: 'submittedTime' }
+          ],
+          calls.returnData[0]
+        );
+        const votingMachineProposalInfo = web3.eth.abi.decodeParameters(
+          [
+            {type: 'bytes32', name: 'organizationId' },
+            {type: 'address', name: 'callbacks' },
+            {type: 'uint256', name: 'state' },
+            {type: 'uint256', name: 'winningVote' },
+            {type: 'address', name: 'proposer' },
+            {type: 'uint256', name: 'currentBoostedVotePeriodLimit' },
+            {type: 'bytes32', name: 'paramsHash' },
+            {type: 'uint256', name: 'daoBountyRemain' },
+            {type: 'uint256', name: 'daoBounty' },
+            {type: 'uint256', name: 'totalStakes' },
+            {type: 'uint256', name: 'confidenceThreshold' },
+            {type: 'uint256', name: 'secondsFromTimeOutTillExecuteBoosted' }
+          ],
+          calls.returnData[1]
+        );
+        const proposalStatusWithVotes = web3.eth.abi.decodeParameters(
+          ['uint256','uint256','uint256','uint256','uint256','uint256'], 
+          calls.returnData[2]
+        );
+        const proposalTimes = calls.decodedReturnData[3];
+        const proposalShouldBoost = calls.decodedReturnData[4];
         
         let schemeConfigurationAtProposalCreation;
-        for (let i = networkCache.schemes[schemeContract._address].configurations.length - 1; i >= 0; i--) {
-          if (schemeEvent.blockNumber < networkCache.schemes[schemeContract._address].configurations[i].toBlock)
-            schemeConfigurationAtProposalCreation = networkCache.schemes[schemeContract._address].configurations[i]
+        for (let i = networkCache.schemes[schemeAddress].configurations.length - 1; i >= 0; i--) {
+          if (schemeEvent.blockNumber < networkCache.schemes[schemeAddress].configurations[i].toBlock)
+            schemeConfigurationAtProposalCreation = networkCache.schemes[schemeAddress].configurations[i]
         }
 
         // Decode the status texy and pririty that will be given in the dapp
@@ -478,7 +574,7 @@ export const updateProposals = async function (
 
         networkCache.proposals[proposalId] = {
           id: proposalId,
-          scheme: schemeContract._address,
+          scheme: schemeAddress,
           to: schemeProposalInfo.to,
           title: schemeProposalInfo.title,
           callData: schemeProposalInfo.callData,
@@ -522,8 +618,8 @@ export const updateProposals = async function (
           negativeStakes: bnum(proposalStatusWithVotes[5])
         };
         
-        networkCache.schemes[schemeContract._address].proposalIds.push(proposalId);
-        networkCache.schemes[schemeContract._address].newProposalEvents.push({
+        networkCache.schemes[schemeAddress].proposalIds.push(proposalId);
+        networkCache.schemes[schemeAddress].newProposalEvents.push({
           proposalId: proposalId,
           event: schemeEvent.event,
           signature: schemeEvent.signature,
@@ -533,7 +629,6 @@ export const updateProposals = async function (
           transactionIndex: schemeEvent.transactionIndex,
           logIndex: schemeEvent.logIndex
         });
-        
         
         // Save proposal created in users
         if (!networkCache.users[votingMachineProposalInfo.proposer]) {
@@ -560,25 +655,57 @@ export const updateProposals = async function (
       &&  networkCache.proposals[proposalId].status !== "Passed"
     ) {
       
-      const schemeContract = await new web3.eth.Contract(
-        WalletSchemeJSON.abi, networkCache.proposals[proposalId].scheme
-      );
-          
+      const schemeAddress = networkCache.proposals[proposalId].scheme;
+      const schemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
+      
       // Get all the proposal information from the scheme and voting machine
-      const schemeProposalInfo = await schemeContract.methods.getOrganizationProposal(proposalId).call();
-      const votingMachineProposalInfo = await allContracts.votingMachine
-        .methods.proposals(proposalId).call();
-      const proposalStatusWithVotes = await allContracts.votingMachine
-        .methods.proposalStatusWithVotes(proposalId).call();
-      const proposalTimes = await allContracts.votingMachine
-        .methods.getProposalTimes(proposalId).call();
-      const proposalShouldBoost = await allContracts.votingMachine
-        .methods.shouldBoost(proposalId).call();
+      const calls = await executeMulticall(web3, allContracts.multicall, [
+        [ schemeContract, "getOrganizationProposal", [proposalId] ],
+        [ allContracts.votingMachine, "proposals", [proposalId] ],
+        [ allContracts.votingMachine, "proposalStatusWithVotes", [proposalId] ],
+        [ allContracts.votingMachine, "getProposalTimes", [proposalId] ],
+        [ allContracts.votingMachine, "shouldBoost", [proposalId] ],
+      ]);
+      const schemeProposalInfo = web3.eth.abi.decodeParameters(
+        [ 
+          {type: 'address[]', name: 'to' },
+          {type: 'bytes[]', name: 'callData' },
+          {type: 'uint256[]', name: 'value' },
+          {type: 'uint256', name: 'state' },
+          {type: 'string', name: 'title' },
+          {type: 'string', name: 'descriptionHash' },
+          {type: 'uint256', name: 'submittedTime' }
+        ],
+        calls.returnData[0]
+      );
+      const votingMachineProposalInfo = web3.eth.abi.decodeParameters(
+        [
+          {type: 'bytes32', name: 'organizationId' },
+          {type: 'address', name: 'callbacks' },
+          {type: 'uint256', name: 'state' },
+          {type: 'uint256', name: 'winningVote' },
+          {type: 'address', name: 'proposer' },
+          {type: 'uint256', name: 'currentBoostedVotePeriodLimit' },
+          {type: 'bytes32', name: 'paramsHash' },
+          {type: 'uint256', name: 'daoBountyRemain' },
+          {type: 'uint256', name: 'daoBounty' },
+          {type: 'uint256', name: 'totalStakes' },
+          {type: 'uint256', name: 'confidenceThreshold' },
+          {type: 'uint256', name: 'secondsFromTimeOutTillExecuteBoosted' }
+        ],
+        calls.returnData[1]
+      );
+      const proposalStatusWithVotes = web3.eth.abi.decodeParameters(
+        ['uint256','uint256','uint256','uint256','uint256','uint256'], 
+        calls.returnData[2]
+      );
+      const proposalTimes = calls.decodedReturnData[3];
+      const proposalShouldBoost = calls.decodedReturnData[4];
       
       let schemeConfigurationAtProposalCreation;
-      for (let i = networkCache.schemes[schemeContract._address].configurations.length - 1; i >= 0; i--) {
-        if (networkCache.proposals[proposalId].paramsHash == networkCache.schemes[schemeContract._address].configurations[i].paramsHash)
-          schemeConfigurationAtProposalCreation = networkCache.schemes[schemeContract._address].configurations[i]
+      for (let i = networkCache.schemes[schemeAddress].configurations.length - 1; i >= 0; i--) {
+        if (networkCache.proposals[proposalId].paramsHash == networkCache.schemes[schemeAddress].configurations[i].paramsHash)
+          schemeConfigurationAtProposalCreation = networkCache.schemes[schemeAddress].configurations[i]
       }
 
       // Decode the status texy and pririty that will be given in the dapp
