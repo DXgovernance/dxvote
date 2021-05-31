@@ -72,6 +72,13 @@ body {
 
 #root{
   height: 100%;
+  width: 95%;
+  max-width: 1168px;
+  margin: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 .green-text {
   color: #54ae6f;
@@ -92,14 +99,4 @@ body {
 .form-vivid-blue {
   color: rgba(48, 79, 254, 0.6);
   width: 100%;
-}
-
-.Container {
-  width: 90%;
-  max-width: 1168px;
-  margin: auto;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
 }

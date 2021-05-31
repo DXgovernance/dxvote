@@ -14,7 +14,7 @@ const NavWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  padding: 50px 0px 0px 0px;
+  padding: 20px 0px 0px 0px;
 `;
 
 const NavSection = styled.div`
@@ -66,13 +66,8 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, ipfsService, etherscanService, pinataService, daoStore },
+      root: { userStore, providerStore, daoStore },
   } = useStores();
-  
-  // Start or auth services
-  ipfsService.start();
-  etherscanService.isAuthenticated();
-  pinataService.isAuthenticated();
   
   const userInfo = userStore.getUserInfo();
   const { active, account } = providerStore.getActiveWeb3React();

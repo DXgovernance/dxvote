@@ -42,27 +42,23 @@ function getLibrary(provider) {
 const Root = (
   <Web3ProviderInjected getLibrary={getLibrary}>
     <ThemeProvider>
-      <>
-        <GlobalStyle />
-        <HashRouter>
-          <Switch>
-            <Web3ReactManager>
-            <div className="Container">
-              <Header />
-              <PageRouter>
-                <Route exact path="/"> <HomePage /> </Route>
-                <Route exact path="/new"> <NewProposalPage /> </Route>
-                <Route exact path="/config"> <ConfigPage /> </Route>
-                <Route exact path="/user/:address"> <UserPage /> </Route>
-                <Route exact path="/scheme/:schemAddress"> <SchemePage /> </Route>
-                <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
-              </PageRouter>
-              <Footer />
-            </div>
-            </Web3ReactManager>
-          </Switch>
-        </HashRouter>
-      </>
+      <GlobalStyle />
+      <HashRouter>
+        <Switch>
+          <Web3ReactManager>
+            <Header />
+            <PageRouter>
+              <Route exact path="/"> <HomePage /> </Route>
+              <Route exact path="/new"> <NewProposalPage /> </Route>
+              <Route exact path="/config"> <ConfigPage /> </Route>
+              <Route exact path="/user/:address"> <UserPage /> </Route>
+              <Route exact path="/scheme/:schemAddress"> <SchemePage /> </Route>
+              <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
+            </PageRouter>
+            <Footer />
+          </Web3ReactManager>
+        </Switch>
+      </HashRouter>
     </ThemeProvider>
   </Web3ProviderInjected>
 );
