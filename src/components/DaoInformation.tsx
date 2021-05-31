@@ -121,10 +121,10 @@ const DaoInformation = observer(() => {
             <TableHeader width="50%" align="center"> Amount </TableHeader>
         </AssetsTableHeaderWrapper>
         <TableRowsWrapper>
-        {assets.map((asset) => {
+        {assets.map((asset, i) => {
           if (asset) {
             return (
-              <TableRow>
+              <TableRow key={`asset${i}`}>
                 <TableCell width="50%" align="center" weight='500' wrapText="true">
                   {asset.name}
                 </TableCell>
