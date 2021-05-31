@@ -37,8 +37,6 @@ export default class DaoStore {
     Object.keys(unparsedCache.schemes).map((schemeAddress) => {
       unparsedCache.schemes[schemeAddress].ethBalance = bnum(unparsedCache.schemes[schemeAddress].ethBalance)
       unparsedCache.schemes[schemeAddress].configurations.map((configuration, i) => {
-        unparsedCache.schemes[schemeAddress].configurations[i].boostedVoteRequiredPercentage =
-          bnum(configuration.boostedVoteRequiredPercentage);
         unparsedCache.schemes[schemeAddress].configurations[i].parameters = {
           queuedVoteRequiredPercentage: bnum(configuration.parameters.queuedVoteRequiredPercentage),
           queuedVotePeriodLimit: bnum(configuration.parameters.queuedVotePeriodLimit),
