@@ -33,8 +33,14 @@ const PageRouterWrapper = styled.div`
 
 const PageRouter = observer(({ children }) => {
     const {
-        root: { providerStore, blockchainStore },
+        root: { providerStore, blockchainStore, ipfsService, etherscanService, pinataService },
     } = useStores();
+    
+    // Start or auth services
+    ipfsService.start();
+    etherscanService.isAuthenticated();
+    pinataService.isAuthenticated();
+
     const { active: providerActive } = providerStore.getActiveWeb3React();
     if (!providerActive)
       return <PageRouterWrapper>
