@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { transparentize } from 'polished';
 import { Link } from '../../theme';
+import metamaskIcon from '../../assets/images/metamask.png';
 
 const InfoCard = styled.button`
   background-color: ${({ theme, active }) =>
@@ -130,7 +131,7 @@ export default function Option({
                 {subheader && <SubHeader>{subheader}</SubHeader>}
             </OptionCardLeft>
             <IconWrapper size={size} active={active}>
-                <img src={icon} alt={'Icon'} />
+                {<img src={metamaskIcon} alt={'Icon'} />}
             </IconWrapper>
         </OptionCardClickable>
     );

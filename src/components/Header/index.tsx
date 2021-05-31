@@ -76,17 +76,17 @@ const Header = observer(() => {
   
   const userInfo = userStore.getUserInfo();
   const { active, account } = providerStore.getActiveWeb3React();
-  const ethBalance = userInfo.ethBalance ?
+  const ethBalance = active && userInfo.ethBalance ?
     parseFloat(Number(Web3.utils.fromWei(userInfo.ethBalance.toString())).toFixed(4))
     : 0;
-  const dxdBalance = userInfo.dxdBalance ?
+  const dxdBalance = active && userInfo.dxdBalance ?
     parseFloat(Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(4))
     : 0;
-  const repBalance = userInfo.repBalance ?
+  const repBalance = active && userInfo.repBalance ?
     parseFloat(Number(Web3.utils.fromWei(userInfo.repBalance.toString())).toFixed(4))
     : 0;
     
-  const repPercentage = daoStore.getDaoInfo().totalRep
+  const repPercentage = active && daoStore.getDaoInfo().totalRep
     ? bnum(userInfo.repBalance).div(bnum(daoStore.getDaoInfo().totalRep)).times(100)
     : bnum(0);
 

@@ -8,36 +8,18 @@ import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE
 import ActiveButton from '../components/common/ActiveButton';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
-import boltIcon from "assets/images/bolt.svg"
 import contentHash from 'content-hash';
 
 const NewProposalFormWrapper = styled.div`
   width: cacl(100% -40px);
   background: white;
   padding: 10px 0px;
-  border: 1px solid var(--medium-gray);
-  margin-top: 24px;
   font-weight: 400;
   border-radius: 4px;
   display: flex;
   justify-content: center;
   flex-direction: column;
   padding: 20px;
-  
-  .loader {
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 15px;
-    line-height: 18px;
-    color: #BDBDBD;
-    padding: 44px 0px;
-    
-    img {
-      margin-bottom: 10px;
-    }
-  }
 `;
 
 const SchemeInput = styled.div`
@@ -423,248 +405,232 @@ const NewProposalForm = observer(() => {
       else
         allowedToCall.push({ value: callPermission.asset, label: `ERC20 ${callPermission.asset}` });
     });
-
-    if (!active) {
-      return (
-        <NewProposalFormWrapper>
-          <div className="loader">
-          <img alt="bolt" src={boltIcon} /> <br/> Connect to submit a proposal </div>
-        </NewProposalFormWrapper>
-      )
-    } else if (!blockchainStore.initialLoadComplete) {
-      return (
-        <NewProposalFormWrapper>
-          <div className="loader">
-          <img alt="bolt" src={boltIcon} /> <br/> Getting schemes information.. </div>
-        </NewProposalFormWrapper>
-      )
-    } else {
-      return (
-        <NewProposalFormWrapper>
-          <SchemeInput>
-            <label>Choose a Scheme:</label>
-            <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
-            {schemes.map((scheme, i) =>{
-              return <option key={scheme.address} value={i}>{scheme.name}</option>
-            })}
-            </select>
-          </SchemeInput>
-          <TitleInput>
-            <span>Title:</span>
-            <input type="text" onChange={onTitleChange} value={titleText}/>
-          </TitleInput>
-          <MDEditor
-            value={descriptionText}
-            onChange={setDescriptionText}
-            preview="edit"
-            height="300"
-            minheights="300"
-            maxheights="1000"
-            commands={[
-              commands.bold,
-              commands.italic,
-              commands.strikethrough,
-              commands.hr,
-              commands.title,
-              commands.divider,
-              commands.link,
-              commands.quote,
-              commands.code,
-              commands.image,
-              commands.unorderedListCommand,
-              commands.orderedListCommand,
-              commands.checkedListCommand,
-            ]}
-          />
-          <h2>Description Preview:</h2>
-          <MDEditor.Markdown source={descriptionText} style={{
-            backgroundColor: "white",
-            borderRadius: "5px",
-            border: "1px solid gray",
-            padding: "20px 10px"
-          }} />
-          {schemeToUse.controllerAddress == networkConfig.controller ?
-            <h2>Calls executed from the avatar:</h2>
-            :<h2>Calls executed from the scheme:</h2>
-          }
-          {calls.map((call, i) => 
-            <CallRow key={"call"+i}>
-              <span>#{i}</span>
-              {callToAny ?
-                <CreatableSelect
-                  id={`toSelector${i}`}
-                  styles={{
-                    option: (provided, state) => ({ ...provided, fontSize: '12px', }),
-                    control: (provided, state) => ({
-                      alignItems: "center",
-                      display: "flex",
-                      position: "relative",
-                      borderRadius: "3px",
-                      border: "1px solid gray"
-                    }),
-                    container: (provided, state) => ({ ...provided, 
-                      width: "20%",
-                      marginRight: "5px"
-                    }),
-                    indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
-                    singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
-                  }}
-                  className="toSelector"
-                  options={allowedToCall}
-                  onChange={(value) => onToSelectChange(i, value)}
-                  onInputChange={(value) => onToSelectChange(i, value)}
-                />
-              : 
-                <Select
-                  id={`toSelector${i}`}
-                  styles={{
-                    option: (provided, state) => ({ ...provided, fontSize: '12px', }),
-                    control: (provided, state) => ({
-                      alignItems: "center",
-                      display: "flex",
-                      position: "relative",
-                      borderRadius: "3px",
-                      border: "1px solid gray"
-                    }),
-                    container: (provided, state) => ({ ...provided, 
-                      width: "20%",
-                      marginRight: "5px"
-                    }),
-                    indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
-                    singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
-                  }}
-                  className="toSelector"
-                  options={allowedToCall}
-                  onChange={(value) => onToSelectChange(i, value)}
-                />
-              }
-              { call.callType === "advanced"
-                ? <CallInput 
-                  type="text"
-                  onChange={(value) => onCallDataChange(i, value)}
-                  value={call.data}
-                  placeholder="0x..."
-                  width="50%"
-                />
-                : <div style={{display: "flex", width: "50%"}}>
-                  {callAnyFunction ?
-                    <CreatableSelect
-                      id={`functionSelector${i}`}
-                      styles={{
-                        option: (provided, state) => ({ ...provided, fontSize: '12px', }),
-                        control: (provided, state) => ({
-                          alignItems: "center",
-                          display: "flex",
-                          position: "relative",
-                          borderRadius: "3px",
-                          border: "1px solid gray"
-                        }),
-                        container: (provided, state) => ({ ...provided, 
-                          width: "40%",
-                          marginRight: "5px"
-                        }),
-                        indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
-                        singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
-                      }}
-                      className="functionSelector"
-                      options={calls[i].allowedFunctions}
-                      onChange={(value, action) => onFunctionSelectChange(i, value, action)}
-                      onInputChange={(value, action) => onFunctionSelectChange(i, value, action)}
-                    />
-                  : <Select
-                      id={`functionSelector${i}`}
-                      styles={{
-                        option: (provided, state) => ({ ...provided, fontSize: '12px', }),
-                        control: (provided, state) => ({
-                          alignItems: "center",
-                          display: "flex",
-                          position: "relative",
-                          borderRadius: "3px",
-                          border: "1px solid gray"
-                        }),
-                        container: (provided, state) => ({ ...provided, 
-                          width: "40%",
-                          marginRight: "5px"
-                        }),
-                        indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
-                        singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
-                      }}
-                      className="functionSelector"
-                      onChange={(value, action) => onFunctionSelectChange(i, value, action)}
-                      onChange={(value) => onFunctionSelectChange(i, value)}
-                    />
-                  }
-                  <CallInput 
-                    type="text"
-                    onChange={(value) => onFunctionParamsChange(i, value)}
-                    value={calls[i].functionParams}
-                    placeholder="functions values separated with commas"
-                    width="60%"
-                  />
-                </div>
-              }
-              
-              <CallInput
-                type="text"
-                onChange={(value) => onValueChange(i, value)}
-                value={calls[i].value}
-                width="10%"
-                placeholder={calls[i].callType === "advanced" ? "WEI" : "ETH"}
+    
+    return (
+      <NewProposalFormWrapper>
+        <SchemeInput>
+          <label>Choose a Scheme:</label>
+          <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
+          {schemes.map((scheme, i) =>{
+            return <option key={scheme.address} value={i}>{scheme.name}</option>
+          })}
+          </select>
+        </SchemeInput>
+        <TitleInput>
+          <span>Title:</span>
+          <input type="text" onChange={onTitleChange} value={titleText}/>
+        </TitleInput>
+        <MDEditor
+          value={descriptionText}
+          onChange={setDescriptionText}
+          preview="edit"
+          height="300"
+          minheights="300"
+          maxheights="1000"
+          commands={[
+            commands.bold,
+            commands.italic,
+            commands.strikethrough,
+            commands.hr,
+            commands.title,
+            commands.divider,
+            commands.link,
+            commands.quote,
+            commands.code,
+            commands.image,
+            commands.unorderedListCommand,
+            commands.orderedListCommand,
+            commands.checkedListCommand,
+          ]}
+        />
+        <h2>Description Preview:</h2>
+        <MDEditor.Markdown source={descriptionText} style={{
+          backgroundColor: "white",
+          borderRadius: "5px",
+          border: "1px solid gray",
+          padding: "20px 10px"
+        }} />
+        {schemeToUse.controllerAddress == networkConfig.controller ?
+          <h2>Calls executed from the avatar:</h2>
+          :<h2>Calls executed from the scheme:</h2>
+        }
+        {calls.map((call, i) => 
+          <CallRow key={"call"+i}>
+            <span>#{i}</span>
+            {callToAny ?
+              <CreatableSelect
+                id={`toSelector${i}`}
+                styles={{
+                  option: (provided, state) => ({ ...provided, fontSize: '12px', }),
+                  control: (provided, state) => ({
+                    alignItems: "center",
+                    display: "flex",
+                    position: "relative",
+                    borderRadius: "3px",
+                    border: "1px solid gray"
+                  }),
+                  container: (provided, state) => ({ ...provided, 
+                    width: "20%",
+                    marginRight: "5px"
+                  }),
+                  indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
+                  singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
+                }}
+                className="toSelector"
+                options={allowedToCall}
+                onChange={(value) => onToSelectChange(i, value)}
+                onInputChange={(value) => onToSelectChange(i, value)}
               />
-              
-              <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>
-              <RemoveButton onClick={() => {changeCallType(i)}}> {calls[i].callType === "advanced" ? "Simple" : "Advanced"} </RemoveButton>
-            </CallRow>
-          )}
-          
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
-            <ActiveButton onClick={addCall}>Add Call</ActiveButton>
-          </div>
-          
-          <TextActions>
-            {ipfsHash.length > 0 ?
-              <span>{`Description Document IPFS Hash: ${ipfsHash}`}</span>
-              : <div/>
+            : 
+              <Select
+                id={`toSelector${i}`}
+                styles={{
+                  option: (provided, state) => ({ ...provided, fontSize: '12px', }),
+                  control: (provided, state) => ({
+                    alignItems: "center",
+                    display: "flex",
+                    position: "relative",
+                    borderRadius: "3px",
+                    border: "1px solid gray"
+                  }),
+                  container: (provided, state) => ({ ...provided, 
+                    width: "20%",
+                    marginRight: "5px"
+                  }),
+                  indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
+                  singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
+                }}
+                className="toSelector"
+                options={allowedToCall}
+                onChange={(value) => onToSelectChange(i, value)}
+              />
             }
-            {ipfsHash.length > 0 && !pinataService.auth ?
-              <span>
-                <strong>It is not recommended to submit a proposal with unpinned description.</strong><br/>
-                Add a Pinata API key in the configuration section or share your IPFS hash to be pinned by the community. 
-                </span>
-              : <div/>
+            { call.callType === "advanced"
+              ? <CallInput 
+                type="text"
+                onChange={(value) => onCallDataChange(i, value)}
+                value={call.data}
+                placeholder="0x..."
+                width="50%"
+              />
+              : <div style={{display: "flex", width: "50%"}}>
+                {callAnyFunction ?
+                  <CreatableSelect
+                    id={`functionSelector${i}`}
+                    styles={{
+                      option: (provided, state) => ({ ...provided, fontSize: '12px', }),
+                      control: (provided, state) => ({
+                        alignItems: "center",
+                        display: "flex",
+                        position: "relative",
+                        borderRadius: "3px",
+                        border: "1px solid gray"
+                      }),
+                      container: (provided, state) => ({ ...provided, 
+                        width: "40%",
+                        marginRight: "5px"
+                      }),
+                      indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
+                      singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
+                    }}
+                    className="functionSelector"
+                    options={calls[i].allowedFunctions}
+                    onChange={(value, action) => onFunctionSelectChange(i, value, action)}
+                    onInputChange={(value, action) => onFunctionSelectChange(i, value, action)}
+                  />
+                : <Select
+                    id={`functionSelector${i}`}
+                    styles={{
+                      option: (provided, state) => ({ ...provided, fontSize: '12px', }),
+                      control: (provided, state) => ({
+                        alignItems: "center",
+                        display: "flex",
+                        position: "relative",
+                        borderRadius: "3px",
+                        border: "1px solid gray"
+                      }),
+                      container: (provided, state) => ({ ...provided, 
+                        width: "40%",
+                        marginRight: "5px"
+                      }),
+                      indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
+                      singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
+                    }}
+                    className="functionSelector"
+                    onChange={(value, action) => onFunctionSelectChange(i, value, action)}
+                    onChange={(value) => onFunctionSelectChange(i, value)}
+                  />
+                }
+                <CallInput 
+                  type="text"
+                  onChange={(value) => onFunctionParamsChange(i, value)}
+                  value={calls[i].functionParams}
+                  placeholder="functions values separated with commas"
+                  width="60%"
+                />
+              </div>
             }
-            {uploadToPinata ?
-              <span>
-                Uploaded to pinata:
-                  <a href={`https://gateway.pinata.cloud/ipfs/${ipfsHash}`} target="_blank">https://gateway.pinata.cloud/ipfs/{ipfsHash}</a>
-                <br/>
-                Check before submitting proposal
+            
+            <CallInput
+              type="text"
+              onChange={(value) => onValueChange(i, value)}
+              value={calls[i].value}
+              width="10%"
+              placeholder={calls[i].callType === "advanced" ? "WEI" : "ETH"}
+            />
+            
+            <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>
+            <RemoveButton onClick={() => {changeCallType(i)}}> {calls[i].callType === "advanced" ? "Simple" : "Advanced"} </RemoveButton>
+          </CallRow>
+        )}
+        
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
+          <ActiveButton onClick={addCall}>Add Call</ActiveButton>
+        </div>
+        
+        <TextActions>
+          {ipfsHash.length > 0 ?
+            <span>{`Description Document IPFS Hash: ${ipfsHash}`}</span>
+            : <div/>
+          }
+          {ipfsHash.length > 0 && !pinataService.auth ?
+            <span>
+              <strong>It is not recommended to submit a proposal with unpinned description.</strong><br/>
+              Add a Pinata API key in the configuration section or share your IPFS hash to be pinned by the community. 
               </span>
-              : <div/>
-            }
-            { (submitionState == 1) ?
-              <span>Proposal Submitted</span>
-              : (submitionState == 2) ?
-              <span>Error when trying to submit proposal</span>
-              : <div/>
-            }
-          </TextActions>
-          
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
-            <ActiveButton onClick={
-              ipfsHash.length === 0 ? uploadToIPFS
-              : (pinataService.auth && !uploadToPinata) ? pinToPinata
-              : createProposal
-            }>{
-              ipfsHash.length === 0 ? "Upload to IPFS"
-              : (pinataService.auth && !uploadToPinata) ? "Pin To Pinata"
-              : "Submit Proposal"
-            }</ActiveButton>
-          </div>
-          
-        </NewProposalFormWrapper>
-      );
-    }
+            : <div/>
+          }
+          {uploadToPinata ?
+            <span>
+              Uploaded to pinata:
+                <a href={`https://gateway.pinata.cloud/ipfs/${ipfsHash}`} target="_blank">https://gateway.pinata.cloud/ipfs/{ipfsHash}</a>
+              <br/>
+              Check before submitting proposal
+            </span>
+            : <div/>
+          }
+          { (submitionState == 1) ?
+            <span>Proposal Submitted</span>
+            : (submitionState == 2) ?
+            <span>Error when trying to submit proposal</span>
+            : <div/>
+          }
+        </TextActions>
+        
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
+          <ActiveButton onClick={
+            ipfsHash.length === 0 ? uploadToIPFS
+            : (pinataService.auth && !uploadToPinata) ? pinToPinata
+            : createProposal
+          }>{
+            ipfsHash.length === 0 ? "Upload to IPFS"
+            : (pinataService.auth && !uploadToPinata) ? "Pin To Pinata"
+            : "Submit Proposal"
+          }</ActiveButton>
+        </div>
+        
+      </NewProposalFormWrapper>
+    );
 });
 
 export default NewProposalForm;

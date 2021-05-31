@@ -50,7 +50,10 @@ const Web3ReactManager = ({ children }) => {
 
     // Fetch user blockchain data on an interval using current params
     useInterval(
-      () => blockchainStore.fetchData(providerStore.getActiveWeb3React(), false), BLOKCHAIN_FETCH_INTERVAL
+      () => {
+        if (networkActive)
+          blockchainStore.fetchData(providerStore.getActiveWeb3React(), false)
+      }, BLOKCHAIN_FETCH_INTERVAL
     );
 
     const BlurWrapper = styled.div`
@@ -99,16 +102,17 @@ const Web3ReactManager = ({ children }) => {
     // If network is not active show blur content
   } else if(!networkActive) {
       console.debug('[Web3ReactManager] Render: No active network');
-      return (
-        <div>
-          <OverBlurModal>
-            <div className="connectModalContent">Connect to a valid network</div>
-            </OverBlurModal>
-            <BlurWrapper>
-              {children}
-            </BlurWrapper>
-          </div>
-        );
+      // return (
+      //   <div>
+      //     <OverBlurModal>
+      //       <div className="connectModalContent">Connect to a valid network</div>
+      //       </OverBlurModal>
+      //       <BlurWrapper>
+      //         {children}
+      //       </BlurWrapper>
+      //     </div>
+      //   );
+      return children;
     } else {
       console.debug( '[Web3ReactManager] Render: Active network, render children', { networkActive } );
       return children;

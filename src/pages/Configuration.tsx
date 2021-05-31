@@ -3,34 +3,16 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
-import boltIcon from "assets/images/bolt.svg"
 import { FiCheckCircle, FiX } from "react-icons/fi";
 
 const ConfigWrapper = styled.div`
   background: white;
-  border: 1px solid var(--medium-gray);
-  margin-top: 24px;
   padding: 15px 20px;
   font-weight: 400;
   border-radius: 4px;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  
-  .loader {
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 15px;
-    line-height: 18px;
-    color: #BDBDBD;
-    padding: 44px 0px;
-    
-    img {
-      margin-bottom: 10px;
-    }
-  }
 `;
 
 const Row = styled.div`
@@ -88,63 +70,41 @@ const DaiInformation = observer(() => {
       setEtherscanApiStatus(etherscanService.auth);
     }
   
-    if (!providerActive) {
-      return (
-          <ConfigWrapper>
-            <div className="loader">
-            <img alt="bolt" src={boltIcon} />
-                <br/>
-                Connect to view scheme information
-            </div>
-          </ConfigWrapper>
-      )
-    } else if (loading) {
-      return (
-          <ConfigWrapper>
-            <div className="loader">
-            <img alt="bolt" src={boltIcon} />
-                <br/>
-                Getting Config information
-            </div>
-          </ConfigWrapper>
-      )
-    } else {
-      return (
-        <ConfigWrapper>
-          <h2>API Keys</h2>
-          <Row style={{maxWidth: "300px"}}>
-            <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Etherscan:</span>
-            <InputBox
-              type="text"
-              serviceName="etherscan"
-              onChange={(event) => onApiKeyValueChange(event, "etherscan")}
-              value={apiKeys.etherscan}
-              style={{width: "50%"}}
-            ></InputBox>
-            <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>
-              {etherscanApiStatus ? <FiCheckCircle/> : <FiX/>}
-            </span>
-          </Row>
-          <Row style={{maxWidth: "300px"}}>
-            <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Pinata:</span>
-            <InputBox
-              type="text"
-              serviceName="pinata"
-              onChange={(event) => onApiKeyValueChange(event, "pinata")}
-              value={apiKeys.pinata}
-              style={{width: "50%"}}
-            ></InputBox>
-            <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>
-              {pinataKeyStatus ? <FiCheckCircle/> : <FiX/>}
-            </span>
-          </Row>
-          <Row style={{maxWidth: "300px"}}>
-            <ActiveButton onClick={saveApiKeys}>Save</ActiveButton>
-            <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
-          </Row>
-        </ConfigWrapper>
-      );
-    }
+    return (
+      <ConfigWrapper>
+        <h2>API Keys</h2>
+        <Row style={{maxWidth: "300px"}}>
+          <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Etherscan:</span>
+          <InputBox
+            type="text"
+            serviceName="etherscan"
+            onChange={(event) => onApiKeyValueChange(event, "etherscan")}
+            value={apiKeys.etherscan}
+            style={{width: "50%"}}
+          ></InputBox>
+          <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>
+            {etherscanApiStatus ? <FiCheckCircle/> : <FiX/>}
+          </span>
+        </Row>
+        <Row style={{maxWidth: "300px"}}>
+          <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Pinata:</span>
+          <InputBox
+            type="text"
+            serviceName="pinata"
+            onChange={(event) => onApiKeyValueChange(event, "pinata")}
+            value={apiKeys.pinata}
+            style={{width: "50%"}}
+          ></InputBox>
+          <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>
+            {pinataKeyStatus ? <FiCheckCircle/> : <FiX/>}
+          </span>
+        </Row>
+        <Row style={{maxWidth: "300px"}}>
+          <ActiveButton onClick={saveApiKeys}>Save</ActiveButton>
+          <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
+        </Row>
+      </ConfigWrapper>
+    );
 });
 
 export default DaiInformation;

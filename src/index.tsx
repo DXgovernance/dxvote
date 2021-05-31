@@ -15,6 +15,8 @@ import { web3ContextNames } from 'provider/connectors';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
+import PageRouter from './PageRouter';
+
 import HomePage from './pages/Home';
 import NewProposalPage from './pages/NewProposal';
 import UserPage from './pages/User';
@@ -47,12 +49,14 @@ const Root = (
             <Web3ReactManager>
             <div className="Container">
               <Header />
-              <Route exact path="/"> <HomePage /> </Route>
-              <Route exact path="/new"> <NewProposalPage /> </Route>
-              <Route exact path="/config"> <ConfigPage /> </Route>
-              <Route exact path="/user/:address"> <UserPage /> </Route>
-              <Route exact path="/scheme/:schemAddress"> <SchemePage /> </Route>
-              <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
+              <PageRouter>
+                <Route exact path="/"> <HomePage /> </Route>
+                <Route exact path="/new"> <NewProposalPage /> </Route>
+                <Route exact path="/config"> <ConfigPage /> </Route>
+                <Route exact path="/user/:address"> <UserPage /> </Route>
+                <Route exact path="/scheme/:schemAddress"> <SchemePage /> </Route>
+                <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
+              </PageRouter>
               <Footer />
             </div>
             </Web3ReactManager>

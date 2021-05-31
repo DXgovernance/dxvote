@@ -3,35 +3,16 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import Address from '../components/common/Address';
-import boltIcon from "assets/images/bolt.svg"
 
 const DaoInfoWrapper = styled.div`
-    width: 100%;
     background: white;
-    padding: 10px 10px;
-    border: 1px solid var(--medium-gray);
-    margin-top: 24px;
+    padding: 0px 10px;
     font-weight: 400;
     border-radius: 4px;
     display: flex;
     justify-content: center;
     flex-direction: column;
     color: var(--dark-text-gray);
-
-    .loader {
-      text-align: center;
-      font-family: Roboto;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 15px;
-      line-height: 18px;
-      color: #BDBDBD;
-      padding: 44px 0px;
-      
-      img {
-        margin-bottom: 10px;
-      }
-    }
 `;
 
 const AssetsTableHeaderActions = styled.div`
@@ -62,7 +43,7 @@ const AssetsTableHeaderWrapper = styled.div`
 `;
 
 const TableHeader = styled.div`
-    width: ${(props) => props.width || '25%'};
+    width: ${(props) => props.width};
     text-align: ${(props) => props.align};
 `;
 
@@ -84,16 +65,8 @@ const TableRow = styled.div`
 `;
 
 const TableCell = styled.div`
-    a {
-        text-decoration: none;
-        width: 100%;
-
-        &:hover{
-            color: var(--turquois-text-onHover);
-        }
-    }
     color: ${(props) => props.color};
-    width: ${(props) => props.width || '25%'}
+    width: ${(props) => props.width};
     text-align: ${(props) => props.align};
     font-weight: ${(props) => props.weight};
     white-space: ${(props) => props.wrapText ? 'nowrap' : 'inherit'};
@@ -111,73 +84,52 @@ const DaoInformation = observer(() => {
       !blockchainStore.initialLoadComplete
     );
   
-    if (!providerActive) {
-      return (
-          <DaoInfoWrapper>
-            <div className="loader">
-            <img alt="bolt" src={boltIcon} />
-                <br/>
-                Connect to view dao information
-            </div>
-          </DaoInfoWrapper>
-      )
-    } else if (loading) {
-      return (
-          <DaoInfoWrapper>
-            <div className="loader">
-            <img alt="bolt" src={boltIcon} />
-                <br/>
-                Getting DAO information
-            </div>
-          </DaoInfoWrapper>
-      )
-    } else {
-      const daoInfo = daoStore.getDaoInfo();
-      const networkConfig = configStore.getNetworkConfig();
-      let assets = [{
-        name: "ETH", amount: parseFloat(Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(4))
-      },{
-        name: "DXD", amount: parseFloat(Number(library.utils.fromWei(daoInfo.dxdBalance.toString())).toFixed(4))
-      }];
-      Object.keys(daoStore.tokenBalances).map((tokenAddress) => {
-        assets.push({
-          name: networkConfig.tokens[tokenAddress].name,
-          amount: parseFloat(Number(library.utils.fromWei(daoStore.tokenBalances[tokenAddress].toString())).toFixed(4))
-        })
+
+    const daoInfo = daoStore.getDaoInfo();
+    const networkConfig = configStore.getNetworkConfig();
+    let assets = [{
+      name: "ETH", amount: parseFloat(Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(4))
+    },{
+      name: "DXD", amount: parseFloat(Number(library.utils.fromWei(daoInfo.dxdBalance.toString())).toFixed(4))
+    }];
+    Object.keys(daoStore.tokenBalances).map((tokenAddress) => {
+      assets.push({
+        name: networkConfig.tokens[tokenAddress].name,
+        amount: parseFloat(Number(library.utils.fromWei(daoStore.tokenBalances[tokenAddress].toString())).toFixed(4))
       })
-      
-      return (
-        <DaoInfoWrapper>
-          <h2>Address: <Address size="long" address={daoInfo.address}/></h2>
-          <h3>Total REP: {parseFloat(Number(library.utils.fromWei(daoInfo.totalRep.toString())).toFixed(4))}</h3>
-          <AssetsTableHeaderActions>
-            <span>Dao Funds</span>
-          </AssetsTableHeaderActions>
-          <AssetsTableHeaderWrapper>
-              <TableHeader width="50%" align="center"> Asset </TableHeader>
-              <TableHeader width="50%" align="center"> Amount </TableHeader>
-          </AssetsTableHeaderWrapper>
-          <TableRowsWrapper>
-          {assets.map((asset) => {
-            if (asset) {
-              return (
-                <TableRow>
-                  <TableCell width="50%" align="center" weight='500' wrapText="true">
-                    {asset.name}
-                  </TableCell>
-                  <TableCell width="50%" align="center"> 
-                    {asset.amount}
-                  </TableCell>
-                </TableRow>);
-              } else {
-                return <div/>
-              }
+    })
+    
+    return (
+      <DaoInfoWrapper>
+        <h2>Address: <Address size="long" address={daoInfo.address}/></h2>
+        <h3>Total REP: {parseFloat(Number(library.utils.fromWei(daoInfo.totalRep.toString())).toFixed(4))}</h3>
+        <AssetsTableHeaderActions>
+          <span>Dao Funds</span>
+        </AssetsTableHeaderActions>
+        <AssetsTableHeaderWrapper>
+            <TableHeader width="50%" align="center"> Asset </TableHeader>
+            <TableHeader width="50%" align="center"> Amount </TableHeader>
+        </AssetsTableHeaderWrapper>
+        <TableRowsWrapper>
+        {assets.map((asset) => {
+          if (asset) {
+            return (
+              <TableRow>
+                <TableCell width="50%" align="center" weight='500' wrapText="true">
+                  {asset.name}
+                </TableCell>
+                <TableCell width="50%" align="center"> 
+                  {asset.amount}
+                </TableCell>
+              </TableRow>);
+            } else {
+              return <div/>
             }
-          )}
-          </TableRowsWrapper>
-        </DaoInfoWrapper>
-      );
-    }
+          }
+        )}
+        </TableRowsWrapper>
+      </DaoInfoWrapper>
+    );
 });
 
 export default DaoInformation;

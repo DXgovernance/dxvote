@@ -14,6 +14,7 @@ import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
 import { useStores } from 'contexts/storesContext';
 import { isChainIdSupported } from '../../provider/connectors';
 import { useActiveWeb3React } from 'provider/providerHooks';
+import metamaskIcon from '../../assets/images/metamask.png';
 
 const CloseIcon = styled.div`
     position: absolute;
@@ -213,7 +214,6 @@ const WalletModal = observer(
                                     header={'Install Metamask'}
                                     subheader={null}
                                     link={'https://metamask.io/'}
-                                    icon={require('assets/images/metamask.png')}
                                 />
                             );
                         } else {
@@ -331,7 +331,6 @@ const WalletModal = observer(
                     <ContentWrapper>
                         {walletView === WALLET_VIEWS.PENDING ? (
                             <PendingView
-                                uri={uri}
                                 size={220}
                                 connector={pendingWallet}
                                 error={pendingError}

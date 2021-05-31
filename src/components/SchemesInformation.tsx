@@ -4,34 +4,15 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import boltIcon from "assets/images/bolt.svg"
 
 const SchemesTableWrapper = styled.div`
     width: 100%;
     background: white;
-    padding: 10px 0px;
-    border: 1px solid var(--medium-gray);
-    margin-top: 24px;
     font-weight: 400;
     border-radius: 4px;
     display: flex;
     justify-content: center;
     flex-direction: column;
-    
-    .loader {
-      text-align: center;
-      font-family: Roboto;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 15px;
-      line-height: 18px;
-      color: #BDBDBD;
-      padding: 44px 0px;
-      
-      img {
-        margin-bottom: 10px;
-      }
-    }
 `;
 
 const ProposalTableHeaderActions = styled.div`
@@ -107,98 +88,76 @@ const SchemesInformation = observer(() => {
         root: { providerStore, daoStore, blockchainStore },
     } = useStores();
     const { active: providerActive } = providerStore.getActiveWeb3React();
-
+    
     const loading = (
       !blockchainStore.initialLoadComplete
     );
-  
-    if (!providerActive) {
-      return (
-          <SchemesTableWrapper>
-            <div className="loader">
-            <img alt="bolt" src={boltIcon} />
-                <br/>
-                Connect to view schemes information
-            </div>
-          </SchemesTableWrapper>
-      )
-    } else if (loading) {
-      return (
-          <SchemesTableWrapper>
-            <div className="loader">
-            <img alt="bolt" src={boltIcon} />
-                <br/>
-                Getting schemes information
-            </div>
-          </SchemesTableWrapper>
-      )
-    } else {
-      const schemes = daoStore.getAllSchemes();
-      return (
-        <SchemesTableWrapper>
-          <ProposalTableHeaderActions>
-            <span>Schemes</span>
-          </ProposalTableHeaderActions>
-          <ProposalTableHeaderWrapper>
-              <TableHeader width="15%" align="left"> Name </TableHeader>
-              <TableHeader width="25%" align="center"> Times </TableHeader>
-              <TableHeader width="15%" align="center"> Permissions </TableHeader>
-              <TableHeader width="15%" align="center"> Boosted Proposals </TableHeader>
-              <TableHeader width="15%" align="center"> Active Proposals </TableHeader>
-              <TableHeader width="15%" align="center"> Total proposals  </TableHeader>
-          </ProposalTableHeaderWrapper>
-          <TableRowsWrapper>
-          {schemes.map((scheme, i) => {
-            const schemeProposals = daoStore.getSchemeProposals(scheme.name);
-            const schemeConfiguration = scheme.configurations[ scheme.configurations.length - 1];
-            return (
-              <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
-                <TableRow>
-                  <TableCell width="15%" align="left" weight='500' wrapText="true">
-                    {scheme.name}
-                  </TableCell>
-                  <TableCell width="25%" align="center">
-                    <small>Queued Proposal Period: {
-                      moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
-                    }</small><br/>
-                    <small>Boosted Proposal Period: {
-                      moment.duration(schemeConfiguration.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
-                    }</small><br/>
-                    <small>PreBoosted Proposal Period: {
-                      moment.duration(schemeConfiguration.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
-                    }</small><br/>
-                    <small>Quiet Ending Period: {
-                      moment.duration(schemeConfiguration.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
-                    }</small><br/>
-                    <small>Max time for execution: {
-                      moment.duration(scheme.maxSecondsForExecution.toString(), 'seconds').humanize()
-                    }</small>
-                  </TableCell>
-                  <TableCell width="15%" align="center">
-                    <small>{schemeConfiguration.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
-                    <small>{schemeConfiguration.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
-                    <small>{schemeConfiguration.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
-                    <small>{schemeConfiguration.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
-                  </TableCell>
-                  <TableCell width="15%" align="center"> 
-                    {scheme.boostedProposals}
-                  </TableCell>
-                  <TableCell width="15%" align="center"> 
-                    {schemeProposals.filter((proposal) => {
-                      return (proposal.priority >=3 && proposal.priority <= 6 )
-                    }).length}
-                  </TableCell>
-                  <TableCell width="15%" align="center"> 
-                    {scheme.proposalIds ? scheme.proposalIds.length : 0}
-                  </TableCell>
-                </TableRow>
-              </Link>);
-            }
-          )}
-          </TableRowsWrapper>
-        </SchemesTableWrapper>
-      );
-    }
+    
+    const schemes = daoStore.getAllSchemes();
+    return (
+      <SchemesTableWrapper>
+        <ProposalTableHeaderActions>
+          <span>Schemes</span>
+        </ProposalTableHeaderActions>
+        <ProposalTableHeaderWrapper>
+            <TableHeader width="15%" align="left"> Name </TableHeader>
+            <TableHeader width="25%" align="center"> Times </TableHeader>
+            <TableHeader width="15%" align="center"> Permissions </TableHeader>
+            <TableHeader width="15%" align="center"> Boosted Proposals </TableHeader>
+            <TableHeader width="15%" align="center"> Active Proposals </TableHeader>
+            <TableHeader width="15%" align="center"> Total proposals  </TableHeader>
+        </ProposalTableHeaderWrapper>
+        <TableRowsWrapper>
+        {schemes.map((scheme, i) => {
+          const schemeProposals = daoStore.getSchemeProposals(scheme.name);
+          const schemeConfiguration = scheme.configurations[ scheme.configurations.length - 1];
+          return (
+            <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
+              <TableRow>
+                <TableCell width="15%" align="left" weight='500' wrapText="true">
+                  {scheme.name}
+                </TableCell>
+                <TableCell width="25%" align="center">
+                  <small>Queued Proposal Period: {
+                    moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
+                  }</small><br/>
+                  <small>Boosted Proposal Period: {
+                    moment.duration(schemeConfiguration.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
+                  }</small><br/>
+                  <small>PreBoosted Proposal Period: {
+                    moment.duration(schemeConfiguration.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
+                  }</small><br/>
+                  <small>Quiet Ending Period: {
+                    moment.duration(schemeConfiguration.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
+                  }</small><br/>
+                  <small>Max time for execution: {
+                    moment.duration(scheme.maxSecondsForExecution.toString(), 'seconds').humanize()
+                  }</small>
+                </TableCell>
+                <TableCell width="15%" align="center">
+                  <small>{schemeConfiguration.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
+                  <small>{schemeConfiguration.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
+                  <small>{schemeConfiguration.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
+                  <small>{schemeConfiguration.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
+                </TableCell>
+                <TableCell width="15%" align="center"> 
+                  {scheme.boostedProposals}
+                </TableCell>
+                <TableCell width="15%" align="center"> 
+                  {schemeProposals.filter((proposal) => {
+                    return (proposal.priority >=3 && proposal.priority <= 6 )
+                  }).length}
+                </TableCell>
+                <TableCell width="15%" align="center"> 
+                  {scheme.proposalIds ? scheme.proposalIds.length : 0}
+                </TableCell>
+              </TableRow>
+            </Link>);
+          }
+        )}
+        </TableRowsWrapper>
+      </SchemesTableWrapper>
+    );
 });
 
 export default SchemesInformation;
