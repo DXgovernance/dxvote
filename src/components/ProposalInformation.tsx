@@ -234,11 +234,11 @@ const ProposalInformation = observer(() => {
           (schemeInfo.boostedProposals > schemeInfo.configurations[ schemeInfo.configurations.length - 1].parameters.limitExponentValue.toNumber())
             ? schemeInfo.configurations[ schemeInfo.configurations.length - 1].parameters.limitExponentValue : schemeInfo.boostedProposals
         ).minus(proposalInfo.positiveStakes)
-        .plus(proposalInfo.negativeStakes).toString()
+        .plus(proposalInfo.negativeStakes).times(110).div(100).toFixed(0)
       ).toString();
       
       const stakeToUnBoost = library.utils.fromWei(
-        proposalInfo.positiveStakes.minus(proposalInfo.negativeStakes).toString()
+        proposalInfo.positiveStakes.minus(proposalInfo.negativeStakes).times(101).div(100).toFixed(0)
       ).toString();
             
       const timeToBoost = proposalInfo && proposalInfo.boostTime.toNumber() > moment().unix() ? 
@@ -434,14 +434,14 @@ const ProposalInformation = observer(() => {
               <SidebarRow style={{ margin: "0px 10px" }}>
                 <span style={{width: "50%", textAlign:"center", color: "green"}}>
                   <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
-                  {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(2)} DXD
+                  {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(4)} DXD
                   <br/> 
                   {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
                     if (stakeEvent.vote.toString() === "1")
                       return (
                         <small color="green" key={`stakeUp${i}`}>
                           <Address size="short" type="user" address={stakeEvent.staker}/>
-                            {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD
+                            {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} DXD
                             <br/>
                         </small>
                       )
@@ -449,12 +449,12 @@ const ProposalInformation = observer(() => {
                   })}
                 </span>
                 <span style={{width: "50%", textAlign:"center", color: "red"}}>
-                  {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(2)} DXD
+                  {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(4)} DXD
                   <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
                   <br/> 
                   {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
                     if (stakeEvent.vote.toString() === "2")
-                      return <small color="red" key={`stakeDown${i}`}><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(2)} DXD<br/> </small>
+                      return <small color="red" key={`stakeDown${i}`}><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} DXD<br/> </small>
                     else return undefined;
                   })}
                 </span>
@@ -462,7 +462,7 @@ const ProposalInformation = observer(() => {
               
               {stakedAmount.toNumber() > 0
                 ? <SidebarRow>
-                Already staked {(stakedAmount.toNumber() > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount.toString())).toFixed(2)} DXD
+                Already staked {(stakedAmount.toNumber() > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount.toString())).toFixed(4)} DXD
                 </SidebarRow>
                 : <div></div>
               }
@@ -474,8 +474,8 @@ const ProposalInformation = observer(() => {
                 </SidebarRow>
                 : (proposalInfo.priority === 3 || proposalInfo.priority === 4)  ?
                   <div>
-                    {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(2)} DXD to boost</small> : <span/>}
-                    {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(2)} DXD to unboost</small> : <span/>}
+                    {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(4)} DXD to boost</small> : <span/>}
+                    {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(4)} DXD to unboost</small> : <span/>}
                     <SidebarRow>
                       <AmountInput
                         type="number"
