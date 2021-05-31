@@ -13,13 +13,12 @@ import contentHash from 'content-hash';
 const NewProposalFormWrapper = styled.div`
   width: cacl(100% -40px);
   background: white;
-  padding: 10px 0px;
+  padding: 0px 10px;
   font-weight: 400;
   border-radius: 4px;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  padding: 20px;
 `;
 
 const SchemeInput = styled.div`
@@ -408,14 +407,29 @@ const NewProposalForm = observer(() => {
     
     return (
       <NewProposalFormWrapper>
-        <SchemeInput>
-          <label>Choose a Scheme:</label>
-          <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
-          {schemes.map((scheme, i) =>{
-            return <option key={scheme.address} value={i}>{scheme.name}</option>
-          })}
-          </select>
-        </SchemeInput>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between"
+        }}>
+          <SchemeInput>
+            <label>Choose a Scheme:</label>
+            <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
+            {schemes.map((scheme, i) =>{
+              return <option key={scheme.address} value={i}>{scheme.name}</option>
+            })}
+            </select>
+          </SchemeInput>
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between"
+          }}>
+          <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
+          <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
+          <ActiveButton route="/?view=dao">DAO</ActiveButton>
+          </div>
+        </div>
         <TitleInput>
           <span>Title:</span>
           <input type="text" onChange={onTitleChange} value={titleText}/>

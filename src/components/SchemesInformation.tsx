@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
+import ActiveButton from '../components/common/ActiveButton';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
@@ -98,6 +99,14 @@ const SchemesInformation = observer(() => {
       <SchemesTableWrapper>
         <ProposalTableHeaderActions>
           <span>Schemes</span>
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between"
+          }}>
+            <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
+            <ActiveButton route="/?view=dao">DAO</ActiveButton>
+          </div>
         </ProposalTableHeaderActions>
         <ProposalTableHeaderWrapper>
             <TableHeader width="15%" align="left"> Name </TableHeader>

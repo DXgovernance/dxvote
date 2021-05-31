@@ -2,13 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
+import ActiveButton from '../components/common/ActiveButton';
 import Address from '../components/common/Address';
+import { bnum } from '../utils/helpers';
 import { useLocation } from 'react-router-dom';
 import moment from 'moment';
 
 const SchemeInformationWrapper = styled.div`
   background: white;
-  padding: 15px 20px;
+  padding: 0px 10px;
   font-weight: 400;
   border-radius: 4px;
   display: flex;
@@ -27,7 +29,22 @@ const SchemePage = observer(() => {
     const schemeConfiguration = schemeInfo.configurations[ schemeInfo.configurations.length -1 ];
     return (
       <SchemeInformationWrapper>
-        <h2>Address: <Address size="long" address={schemeInfo.address}/></h2>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between"
+        }}>
+          <h2>Address: <Address size="long" address={schemeInfo.address}/></h2>
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between"
+          }}>
+          <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
+          <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
+          <ActiveButton route="/?view=dao">DAO</ActiveButton>
+          </div>
+        </div>
         <h3>Scheme ETH Balance: {Number(library.utils.fromWei(schemeInfo.ethBalance.toString())).toFixed(2)} ETH</h3>
         <hr style={{width:"100%"}}/>
         <h3>Permissions</h3>
@@ -39,7 +56,7 @@ const SchemePage = observer(() => {
         <h3>Voting Machine Configuration</h3>
         <h4>Voting Machine Configuration Parameters Hash: {schemeConfiguration.paramsHash}</h4>
         <h4>Required Percentage for approval: {schemeConfiguration.parameters.queuedVoteRequiredPercentage.toString()} %</h4>
-        <h4>Required Percentage for approval in boosted proposals: {schemeConfiguration.boostedVoteRequiredPercentage.div("1000").toString()} %</h4>
+        <h4>Required Percentage for approval in boosted proposals: {bnum(schemeConfiguration.boostedVoteRequiredPercentage).div("1000").toString()} %</h4>
         <h4>Queued Proposal Period: {
           moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
         }</h4>

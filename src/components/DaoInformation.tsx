@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
+import ActiveButton from '../components/common/ActiveButton';
 import Address from '../components/common/Address';
 
 const DaoInfoWrapper = styled.div`
@@ -76,14 +77,9 @@ const TableCell = styled.div`
 
 const DaoInformation = observer(() => {
     const {
-        root: { providerStore, daoStore, blockchainStore, configStore },
+        root: { providerStore, daoStore, configStore },
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
-
-    const loading = (
-      !blockchainStore.initialLoadComplete
-    );
-  
 
     const daoInfo = daoStore.getDaoInfo();
     const networkConfig = configStore.getNetworkConfig();
@@ -101,7 +97,21 @@ const DaoInformation = observer(() => {
     
     return (
       <DaoInfoWrapper>
-        <h2>Address: <Address size="long" address={daoInfo.address}/></h2>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between"
+        }}>
+          <h2>Address: <Address size="long" address={daoInfo.address}/></h2>
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between"
+          }}>
+          <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
+          <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
+          </div>
+        </div>
         <h3>Total REP: {parseFloat(Number(library.utils.fromWei(daoInfo.totalRep.toString())).toFixed(4))}</h3>
         <AssetsTableHeaderActions>
           <span>Dao Funds</span>
