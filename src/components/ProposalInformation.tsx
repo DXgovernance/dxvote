@@ -142,7 +142,6 @@ const ProposalInformation = observer(() => {
     } = useStores();
     const proposalId = useLocation().pathname.split("/")[2];
     const proposalInfo = daoStore.getProposal(proposalId);
-    const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
     const { dxdApproved } = userStore.getUserInfo(); 
     const { active, account, library } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
@@ -150,7 +149,6 @@ const ProposalInformation = observer(() => {
     const [canRedeem, setCanRedeem] = React.useState(false);
     const [proposalDescription, setProposalDescription] = React.useState("## Getting proposal description from IPFS...");
     
-    console.debug("[Scheme info]", schemeInfo);
     
     if (!active) {
       return (
@@ -175,8 +173,9 @@ const ProposalInformation = observer(() => {
       )
       
     } else {
-      
       const proposalEvents = daoStore.getProposalEvents(proposalId);
+      const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
+      console.debug("[Scheme info]", schemeInfo);
       
       let votedAmount = bnum(0);
       let positiveVotesCount = proposalEvents.votes.filter((vote) => vote.vote.toString() === "1").length;
@@ -249,8 +248,8 @@ const ProposalInformation = observer(() => {
       moment().to( moment(proposalInfo.finishTime.times(1000).toNumber()) ).toString()
       : "";
       
-      const boostedVoteRequiredPercentage = schemeInfo.configurations[schemeInfo.configurations.length -1]
-        .boostedVoteRequiredPercentage.div('1000').toNumber();
+      const boostedVoteRequiredPercentage = bnum(schemeInfo.configurations[schemeInfo.configurations.length -1]
+        .boostedVoteRequiredPercentage).div(1000).toNumber();
         
       const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
       
