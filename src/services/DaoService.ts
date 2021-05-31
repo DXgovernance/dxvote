@@ -1,7 +1,7 @@
 import RootStore from '../stores';
 import { ContractType } from '../stores/Provider';
 import { BigNumber } from '../utils/bignumber';
-import { bnum } from '../utils/helpers';
+import { bnum, ERC20_TRANSFER_SIGNATURE } from '../utils/helpers';
 
 export default class DaoService {
   rootStore: RootStore;
@@ -37,65 +37,17 @@ export default class DaoService {
           return "Mint "+callDecoded.args[0]+" REP to "+callDecoded.args[1];
         case "burnReputation":
           return "Burn "+callDecoded.args[0]+" REP of "+callDecoded.args[1];
-        default:
-          return "Generic Call to "+callDecoded.args[0]+" with data of "+callDecoded.args[1]+" using a value of "+library.utils.fromWei(callDecoded.args[3]);
+        case "genericCall":
+          const genericCallData = callDecoded.args[1];
+          
+          // TO DO: Decode more functions here 
+          if (genericCallData.substring(0,10) == ERC20_TRANSFER_SIGNATURE) {
+            const transferParams = library.eth.abi.decodeParameters(['address', 'uint256'], "0x"+genericCallData.substring(10));
+            return "Token "+callDecoded.args[0]+" transfer to "+transferParams[0]+" of "+transferParams[1];
+          } else {
+            return "Generic Call to "+callDecoded.args[0]+" with data of "+genericCallData+" using a value of "+library.utils.fromWei(callDecoded.args[3]);
+          }
       }
     }
-  }
-  
-  getRepAt(atBlock: number): {
-    userRep: BigNumber,
-    totalSupply: BigNumber
-  } {
-    const { daoStore, providerStore } = this.rootStore;
-    const { account } = providerStore.getActiveWeb3React();
-    const repEvents = daoStore.getCache().daoInfo.repEvents;
-    let userRep = bnum(0), totalSupply = bnum(0);
-
-    for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i].block <= atBlock) {
-        if (repEvents[i].event === 'Mint') {
-          totalSupply = totalSupply.plus(repEvents[i].amount)
-          if (repEvents[i].account == account)
-            userRep = userRep.plus(repEvents[i].amount)
-        } else {
-          totalSupply = totalSupply.minus(repEvents[i].amount)
-          if (repEvents[i].account == account)
-            userRep = userRep.minus(repEvents[i].amount)
-        }
-      } else {
-        break;
-      }
-    }
-    
-    
-    return { userRep, totalSupply };
-  }
-  
-  async getUserBalances(userAddress: string){
-    const { configStore, providerStore } = this.rootStore;
-    
-    const reputation = providerStore.getContract(
-      providerStore.getActiveWeb3React(),
-      ContractType.Reputation,
-      configStore.getNetworkConfig().reputation
-    )
-    
-    const votingMachine = providerStore.getContract(
-      providerStore.getActiveWeb3React(),
-      ContractType.VotingMachine,
-      configStore.getNetworkConfig().votingMachine
-    )
-    
-    const dxd = providerStore.getContract(
-      providerStore.getActiveWeb3React(),
-      ContractType.ERC20,
-      await votingMachine.methods.stakingToken().call()
-    )
-      
-    return {
-      rep: await reputation.methods.balanceOf(userAddress).call(),
-      dxd: await dxd.methods.balanceOf(userAddress).call()
-    };
   }
 }
