@@ -5,6 +5,7 @@ const DxAvatar = require("./DxAvatar");
 const DxReputation = require("./DxReputation");
 const DXDVotingMachine = require("./DXDVotingMachine");
 const ERC20 = require("./ERC20");
+const Multicall = require("./Multicall");
 
 export const getContracts = async function(network: string, web3: any) {
   const contractsAddresses = getNetworkConfig(network);
@@ -14,6 +15,7 @@ export const getContracts = async function(network: string, web3: any) {
   const reputation = await new web3.eth.Contract(DxReputation.abi, contractsAddresses.reputation);
   const permissionRegistry = await new web3.eth.Contract(PermissionRegistry.abi, contractsAddresses.permissionRegistry);
   const dxd = await new web3.eth.Contract(ERC20.abi, contractsAddresses.votingMachineToken);
+  const multicall = await new web3.eth.Contract(Multicall.abi, contractsAddresses.multicall);
 
-  return { votingMachine, avatar, controller, reputation, permissionRegistry, dxd };
+  return { votingMachine, avatar, controller, reputation, permissionRegistry, dxd, multicall };
 }
