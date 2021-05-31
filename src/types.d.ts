@@ -173,7 +173,7 @@ export interface Scheme {
     paramsHash: string;
     parameters: SchemeParameters;
     permissions: SchemePermissions;
-    boostedVoteRequiredPercentage: BigNumber;
+    boostedVoteRequiredPercentage: number;
     toBlock: number
   }[];
   callPermissions: SchemeCallPermission[];

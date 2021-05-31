@@ -202,9 +202,10 @@ const ProposalInformation = observer(() => {
     const timeToFinish = proposalInfo && proposalInfo.finishTime.toNumber() > moment().unix() ?
     moment().to( moment(proposalInfo.finishTime.times(1000).toNumber()) ).toString()
     : "";
-    
-    const boostedVoteRequiredPercentage = bnum(schemeInfo.configurations[schemeInfo.configurations.length -1]
-      .boostedVoteRequiredPercentage).div(1000).toNumber();
+    console.log(schemeInfo.configurations[schemeInfo.configurations.length -1]
+      .boostedVoteRequiredPercentage.toString())
+    const boostedVoteRequiredPercentage = schemeInfo.configurations[schemeInfo.configurations.length -1]
+      .boostedVoteRequiredPercentage / 1000;
       
     const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
     
