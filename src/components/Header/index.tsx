@@ -66,7 +66,7 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, daoStore },
+      root: { userStore, providerStore, daoStore, blockchainStore },
   } = useStores();
   
   const userInfo = userStore.getUserInfo();
@@ -92,17 +92,19 @@ const Header = observer(() => {
           <img alt="dxdao" src={dxdaoIcon}/>
         </NavItem>
       </NavSection>
-      <NavSection>
-        <BalanceItem> {ethBalance} ETH </BalanceItem>
-        <BalanceItem> {dxdBalance} DXD </BalanceItem>
-        <BalanceItem> {repBalance} REP - {repPercentage.toFixed(2)} % </BalanceItem>
-        <Web3ConnectStatus text="Connect Wallet" />
-        <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
-        {active ?
+      { active && blockchainStore.initialLoadComplete ?
+        <NavSection>
+          <BalanceItem> {ethBalance} ETH </BalanceItem>
+          <BalanceItem> {dxdBalance} DXD </BalanceItem>
+          <BalanceItem> {repBalance} REP - {repPercentage.toFixed(2)} % </BalanceItem>
+          <Web3ConnectStatus text="Connect Wallet" />
+          <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
           <a href={`${window.location.pathname}#/user/${account}`}><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
-          : <div/>
-        }
-      </NavSection>
+        </NavSection>
+      : <NavSection>
+          <Web3ConnectStatus text="Connect Wallet" />
+        </NavSection>
+      }
     </NavWrapper>
   );
 });
