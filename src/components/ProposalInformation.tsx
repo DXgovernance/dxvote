@@ -259,9 +259,9 @@ const ProposalInformation = observer(() => {
             return(
             <div key={"proposalCallText"+i}>
               <span> {proposalCallText} </span> 
+              {i < proposalCallTexts.length - 1 ? <hr/> : <div/>}
             </div>);
           })}
-          <hr/>
           <h2> History </h2>
           {proposalEvents.history.map((historyEvent, i) => {
             return(
