@@ -64,8 +64,8 @@ export default class DaoStore {
         return bnum(value);
       })
 
-      unparsedCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState[unparsedCache.proposals[proposalId].stateInScheme];
-      unparsedCache.proposals[proposalId].stateInVotingMachine = VotingMachineProposalState[unparsedCache.proposals[proposalId].stateInVotingMachine];
+      unparsedCache.proposals[proposalId].stateInScheme = unparsedCache.proposals[proposalId].stateInScheme;
+      unparsedCache.proposals[proposalId].stateInVotingMachine = unparsedCache.proposals[proposalId].stateInVotingMachine;
       unparsedCache.proposals[proposalId].repAtCreation = bnum(unparsedCache.proposals[proposalId].repAtCreation);
       unparsedCache.proposals[proposalId].currentBoostedVotePeriodLimit = bnum(unparsedCache.proposals[proposalId].currentBoostedVotePeriodLimit);
       unparsedCache.proposals[proposalId].daoBountyRemain = bnum(unparsedCache.proposals[proposalId].daoBountyRemain);

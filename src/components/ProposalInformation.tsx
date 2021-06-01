@@ -10,6 +10,10 @@ import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
 import Address from '../components/common/Address';
 import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
+import {
+  WalletSchemeProposalState,
+  VotingMachineProposalState
+} from '../enums';
 
 const ProposalInformationWrapper = styled.div`
     width: 100%;
@@ -298,10 +302,10 @@ const ProposalInformation = observer(() => {
             <span> <strong>Proposer</strong> <Address type="user" address={proposalInfo.proposer}/> </span>
             <span> <strong>Scheme</strong> <small>{schemeInfo.name}</small></span>
             <span><strong>State in Voting Machine </strong>
-              <small>{proposalInfo.stateInVotingMachine}</small>
+              <small>{VotingMachineProposalState[proposalInfo.stateInVotingMachine]}</small>
             </span>
             <span><strong>State in Scheme </strong>
-              <small>{proposalInfo.stateInScheme}</small>
+              <small>{WalletSchemeProposalState[proposalInfo.stateInScheme]}</small>
             </span>
             <span> <strong>Submitted Time</strong> <small>{
               moment.unix(proposalInfo.submittedTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
