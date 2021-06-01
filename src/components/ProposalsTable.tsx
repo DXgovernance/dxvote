@@ -85,6 +85,12 @@ const TableHeader = styled.div`
 const TableRowsWrapper = styled.div`
     overflow-y: scroll;
     height: 350px;
+    
+    h3 {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--dark-text-gray);
+    }
 `;
 
 const TableRow = styled.div`
