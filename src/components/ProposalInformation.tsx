@@ -25,7 +25,7 @@ const InfoSidebar = styled.div`
   max-width: 400px;
   min-width: 300px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
 `;
 
@@ -280,7 +280,7 @@ const ProposalInformation = observer(() => {
             
             {(proposalInfo.finishTime.toNumber() > moment().unix()) ?
               <span className="timeText">
-                Finish {timeToFinish} {proposalInfo.status === "Pending Boost" || proposalInfo.status === "Pre Boosted" ? " after boost": ""} </span>
+                Finish {timeToFinish} </span>
               : <span></span>}
             {proposalInfo.status === "Pending Boost" ? 
               <VoteButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </VoteButton>
