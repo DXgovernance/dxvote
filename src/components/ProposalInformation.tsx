@@ -8,7 +8,7 @@ import { FiPlayCircle, FiFastForward } from "react-icons/fi";
 import Slider from '@material-ui/core/Slider';
 import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
-import Address from '../components/common/Address';
+import BlockchainLink from '../components/common/BlockchainLink';
 import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 import {
   WalletSchemeProposalState,
@@ -299,7 +299,7 @@ const ProposalInformation = observer(() => {
           <SidebarDivider/> 
 
           <SidebarRow style={{ margin: "0px 10px", padding: "10px 0px", flexDirection: "column" }}>
-            <span> <strong>Proposer</strong> <Address type="user" address={proposalInfo.proposer}/> </span>
+            <span style={{ display: "flex"}}> <strong>Proposer</strong> <BlockchainLink type="user" text={proposalInfo.proposer} toCopy/> </span>
             <span> <strong>Scheme</strong> <small>{schemeInfo.name}</small></span>
             <span><strong>State in Voting Machine </strong>
               <small>{VotingMachineProposalState[proposalInfo.stateInVotingMachine]}</small>
@@ -337,10 +337,9 @@ const ProposalInformation = observer(() => {
               {proposalEvents.votes && proposalEvents.votes.map(function(voteEvent, i){
                 if (voteEvent.vote.toString() === "1")
                   return (
-                    <small color="green" key={`voteUp${i}`}>
-                      <Address size="short" type="user" address={voteEvent.voter}/>
-                        {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toFixed(2)} %
-                        <br/>
+                    <small color="green" key={`voteUp${i}`} style={{ display: "flex", alignItems:"center"}}>
+                      <BlockchainLink size="short" type="user" text={voteEvent.voter}/>
+                      {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toFixed(2)} %
                     </small>
                   );
                 else return undefined;
@@ -352,7 +351,12 @@ const ProposalInformation = observer(() => {
               <br/> 
               {proposalEvents && proposalEvents.votes.map(function(voteEvent, i){
                 if (voteEvent.vote.toString() === "2")
-                  return <small color="red" key={`voteDown${i}`}><Address size="short" type="user" address={voteEvent.voter}/> {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %<br/></small>
+                  return (
+                    <small color="red" key={`voteDown${i}`} style={{ display: "flex", alignItems:"center"}}>
+                      <BlockchainLink size="short" type="user" text={voteEvent.voter}/>
+                      {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %
+                    </small>
+                  )
                 else return undefined;
               })}
             </span>
@@ -399,10 +403,9 @@ const ProposalInformation = observer(() => {
               {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
                 if (stakeEvent.vote.toString() === "1")
                   return (
-                    <small color="green" key={`stakeUp${i}`}>
-                      <Address size="short" type="user" address={stakeEvent.staker}/>
-                        {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} DXD
-                        <br/>
+                    <small color="green" key={`stakeUp${i}`} style={{ display: "flex", alignItems:"center"}}>
+                      <BlockchainLink size="short" type="user" text={stakeEvent.staker}/>
+                      {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} DXD
                     </small>
                   )
                 else return undefined;
@@ -414,7 +417,12 @@ const ProposalInformation = observer(() => {
               <br/> 
               {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
                 if (stakeEvent.vote.toString() === "2")
-                  return <small color="red" key={`stakeDown${i}`}><Address size="short" type="user" address={stakeEvent.staker}/> {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} DXD<br/> </small>
+                  return (
+                    <small color="red" key={`stakeDown${i}`} style={{ display: "flex", alignItems:"center"}}>
+                      <BlockchainLink size="short" type="user" text={stakeEvent.staker}/>
+                      {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} DXD
+                    </small>
+                  )
                 else return undefined;
               })}
             </span>

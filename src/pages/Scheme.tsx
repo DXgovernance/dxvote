@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
-import Address from '../components/common/Address';
+import BlockchainLink from '../components/common/BlockchainLink';
 import { bnum } from '../utils/helpers';
 import { useLocation } from 'react-router-dom';
 import moment from 'moment';
@@ -34,7 +34,7 @@ const SchemePage = observer(() => {
           flexDirection: "row",
           justifyContent: "space-between"
         }}>
-          <h2>Address: <Address size="long" address={schemeInfo.address}/></h2>
+          <h2 style={{ display: "flex"}}>Address: <BlockchainLink size="long" text={schemeInfo.address} toCopy/></h2>
           <div style={{
             display: "flex",
             flexDirection: "row",

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
-import Address from '../components/common/Address';
+import BlockchainLink from '../components/common/BlockchainLink';
 
 const DaoInfoWrapper = styled.div`
     background: white;
@@ -102,7 +102,7 @@ const DaoInformation = observer(() => {
           flexDirection: "row",
           justifyContent: "space-between"
         }}>
-          <h2>Address: <Address size="long" address={daoInfo.address}/></h2>
+          <h2 style={{ display: "flex"}}>Address: <BlockchainLink size="long" text={daoInfo.address} toCopy/></h2>
           <div style={{
             display: "flex",
             flexDirection: "row",

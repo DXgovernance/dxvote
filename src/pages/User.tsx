@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import { useLocation } from 'react-router-dom';
-import Address from '../components/common/Address';
+import BlockchainLink from '../components/common/BlockchainLink';
 
 const UserInfoWrapper = styled.div`
   background: white;
@@ -31,7 +31,9 @@ const UserPage = observer(() => {
           flexDirection: "row",
           justifyContent: "space-between"
         }}>
-          <h2>User: <Address size="long" address={userAddress}/></h2>
+          <h2 style={{ display: "flex", alignItems:"center"}}>
+            User: <BlockchainLink size="long" text={userAddress} toCopy/>
+          </h2>
           <div style={{
             display: "flex",
             flexDirection: "row",

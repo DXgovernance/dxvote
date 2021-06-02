@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Copy from './Copy';
+import Copy from '../common/Copy';
 import { injected } from 'provider/connectors';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { getEtherscanLink } from 'utils/etherscan';
