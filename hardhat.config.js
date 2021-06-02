@@ -69,5 +69,11 @@ module.exports = {
       gasPrice: 2000000000, // 2 gwei
       timeout: 60000
     },
+    arbitrum: {
+      url: `https://arb1.arbitrum.io/rpc`,
+      accounts: { mnemonic: MNEMONIC },
+      chainId: 42161,
+      timeout: 60000
+    },
   }
 };

@@ -40,6 +40,8 @@ const UserAddress = ({ address, size = 'default', type = 'default' }) => {
           default:
             if (networkName == 'arbitrum-testnet-v5')
               return `https://explorer5.arbitrum.io/#/address/${address}`
+            else if (networkName == 'arbitrum')
+              return `https://explorer5.arbitrum.io/#/address/${address}`
             else
               return `https://${networkName}.etherscan.io/address/${address}`
         }
