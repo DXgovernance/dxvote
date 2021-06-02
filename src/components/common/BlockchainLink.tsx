@@ -2,11 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import Copy from './Copy';
 import { useStores } from '../../contexts/storesContext';
+import { FiExternalLink } from "react-icons/fi";
 
 const AddressLink = styled.span`
   display: flex;
   flex-direction: row;
-  width: min-content;
   align-items: center;
   a {
     padding: 2px 5px;
@@ -18,7 +18,7 @@ const AddressLink = styled.span`
   }
 `;
 
-const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy }) => {
+const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy, onlyIcon}) => {
   
     const {
         root: { configStore },
@@ -63,7 +63,7 @@ const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy }) =>
 
     return (
         <AddressLink>
-          <a href={href()}>{formarText(text)}</a>
+          <a href={href()} target="_blank">{ onlyIcon ? <FiExternalLink/> : formarText(text)}</a>
           {toCopy ? <Copy toCopy={text} /> : <div/> }
         </AddressLink>
     );

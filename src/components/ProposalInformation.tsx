@@ -50,6 +50,10 @@ const SidebarRow = styled.div`
     width:100%;
     padding-top: 5px;
   }
+  
+  span {
+    margin-bottom: 5px;
+  }
 `;
 
 const AmountInput = styled.input`
@@ -85,7 +89,7 @@ const AmountBadge = styled.span`
     margin: 5px;
 `;
 
-const VoteButton = styled.div`
+const ActionButton = styled.div`
     background-color: ${(props) => props.color || '#536DFE'};
     border-radius: 4px;
     color: white;
@@ -263,12 +267,18 @@ const ProposalInformation = observer(() => {
             </div>);
           })}
           <h2> History </h2>
+          
           {proposalEvents.history.map((historyEvent, i) => {
             return(
-            <div key={"proposalHistoryEvent"+i}>
-              <span> {historyEvent.text} </span> 
-              {i < proposalEvents.history.length - 1 ? <hr/> : <div/>}
-            </div>);
+              <div key={"proposalHistoryEvent"+i} style={{
+                display: "flex", alignItems:"center", padding:"4px 0px",
+                borderBottom: i < proposalEvents.history.length - 1 ? " 1px --medium-gray": ""
+              }}>
+                <span> {historyEvent.text} </span> 
+                <BlockchainLink type="transaction" size="short" text={historyEvent.event.tx} onlyIcon/>
+                {i < proposalEvents.history.length - 1 ? <hr/> : <div/>}
+              </div>
+            );
           })}
         </ProposalInfoSection>
         <InfoSidebar>
@@ -279,19 +289,20 @@ const ProposalInformation = observer(() => {
           }}>
             {(proposalInfo.boostTime.toNumber() > moment().unix()) ?
               <span className="timeText"> Boost {timeToBoost} </span> 
-              : <span></span>
+              : <div></div>
             }
-            
             {(proposalInfo.finishTime.toNumber() > moment().unix()) ?
               <span className="timeText">
                 Finish {timeToFinish} </span>
-              : <span></span>}
+              : <div></div>}
+          </SidebarRow>
+          <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
             {proposalInfo.status === "Pending Boost" ? 
-              <VoteButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </VoteButton>
+              <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
               : proposalInfo.status === "Quiet Ending Period" && timeToFinish === "" ?
-              <VoteButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </VoteButton>
+              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
               : proposalInfo.status === "Pending Execution" ?
-              <VoteButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </VoteButton>
+              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
               : <div/>
             }
           </SidebarRow>
@@ -299,7 +310,9 @@ const ProposalInformation = observer(() => {
           <SidebarDivider/> 
 
           <SidebarRow style={{ margin: "0px 10px", padding: "10px 0px", flexDirection: "column" }}>
-            <span style={{ display: "flex"}}> <strong>Proposer</strong> <BlockchainLink type="user" text={proposalInfo.proposer} toCopy/> </span>
+            <span style={{ display: "flex", height: "17px "}}>
+              <strong>Proposer</strong> <small><BlockchainLink type="user" text={proposalInfo.proposer} toCopy/></small>
+            </span>
             <span> <strong>Scheme</strong> <small>{schemeInfo.name}</small></span>
             <span><strong>State in Voting Machine </strong>
               <small>{VotingMachineProposalState[proposalInfo.stateInVotingMachine]}</small>
@@ -327,7 +340,7 @@ const ProposalInformation = observer(() => {
           <SidebarDivider/> 
         
           <SidebarRow>
-            <span> <strong>Votes</strong> </span>
+            <strong>Votes</strong>
           </SidebarRow>
           <SidebarRow style={{ margin: "0px 10px" }}> 
             <span style={{width: "50%", textAlign:"center", color: "green"}}>
@@ -379,8 +392,8 @@ const ProposalInformation = observer(() => {
                 onChange={onVoteValueChange}
                 style={{flex: 2}}
               />
-              <VoteButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="green" onClick={() => submitVote(1)}><FiThumbsUp /></VoteButton>
-              <VoteButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="red" onClick={() => submitVote(2)}><FiThumbsDown /></VoteButton>
+              <ActionButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="green" onClick={() => submitVote(1)}><FiThumbsUp /></ActionButton>
+              <ActionButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="red" onClick={() => submitVote(2)}><FiThumbsDown /></ActionButton>
               
             </SidebarRow>
           : votedAmount.toNumber() !== 0 ?
@@ -393,7 +406,7 @@ const ProposalInformation = observer(() => {
           <SidebarDivider/> 
           
           <SidebarRow>
-            <span> <strong>Staked</strong> </span>
+            <strong>Staked</strong>
           </SidebarRow>
           <SidebarRow style={{ margin: "0px 10px" }}>
             <span style={{width: "50%", textAlign:"center", color: "green"}}>
@@ -438,7 +451,7 @@ const ProposalInformation = observer(() => {
           {(proposalInfo.priority === 3 || proposalInfo.priority === 4) && dxdApproved.toString() === "0" ?
             <SidebarRow>
               <small>Approve DXD to stake</small>
-              <VoteButton color="blue" onClick={() => approveDXD()}>Approve DXD</VoteButton>
+              <ActionButton color="blue" onClick={() => approveDXD()}>Approve DXD</ActionButton>
             </SidebarRow>
             : (proposalInfo.priority === 3 || proposalInfo.priority === 4)  ?
               <div>
@@ -455,8 +468,8 @@ const ProposalInformation = observer(() => {
                     onChange={onStakeAmountChange}
                     style={{flex: 2}}
                   />
-                  <VoteButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="green" onClick={() => submitStake(1)}><FiThumbsUp /></VoteButton>
-                  <VoteButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="red" onClick={() => submitStake(2)}><FiThumbsDown /></VoteButton>
+                  <ActionButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="green" onClick={() => submitStake(1)}><FiThumbsUp /></ActionButton>
+                  <ActionButton style={{flex: 1, maxWidth: "20px", textAlign: "center"}} color="red" onClick={() => submitStake(2)}><FiThumbsDown /></ActionButton>
                 </SidebarRow>
               </div>
             : <div></div>
@@ -464,7 +477,7 @@ const ProposalInformation = observer(() => {
           
           {proposalInfo.priority < 3 && canRedeem
             ? <SidebarRow style={{ borderTop: "1px solid gray",  margin: "0px 10px" }}>
-              <VoteButton color="blue" onClick={() => redeem()}>Redeem</VoteButton>
+              <ActionButton color="blue" onClick={() => redeem()}>Redeem</ActionButton>
             </SidebarRow>
             : <div></div>
           }
