@@ -17,7 +17,7 @@ export enum VoteDecision {
   NO
 }
 
-export enum WalletSchemeProposalState { Submitted, Passed, Failed, Executed }
+export enum WalletSchemeProposalState { Submitted, Rejected, ExecutionSucceded, ExecutionTimeout }
 
 export enum VotingMachineProposalState { 
   None, ExpiredInQueue, Executed, Queued, PreBoosted, Boosted, QuietEndingPeriod
