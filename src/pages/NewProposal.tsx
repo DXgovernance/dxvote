@@ -9,6 +9,7 @@ import ActiveButton from '../components/common/ActiveButton';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
+import ProposalTemplates from '../config/proposalTemplates';
 
 const NewProposalFormWrapper = styled.div`
   width: cacl(100% -40px);
@@ -40,9 +41,15 @@ const SchemeInput = styled.div`
     
 
 `;
-
+const PlaceHolders = styled.div`
+    width: calc(100% - 300px);
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    padding-bottom: 7px;
+`
 const TitleInput = styled.div`
-    width: 100%;
+    width: calc(100% - 300px);
     display: flex;
     justify-content: left;
     flex-direction: row;
@@ -159,6 +166,9 @@ const NewProposalPage = observer(() => {
     const [submitionState, setSubmitionState] = React.useState(0);
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     
+    if (ProposalTemplates[0].name != "Custom")
+      ProposalTemplates.unshift({name: "Custom", title: "", description: "" });
+
     const uploadToIPFS = async function() {
       const hash = await ipfsService.add(descriptionText);
       setIpfsHash(hash);
@@ -171,7 +181,6 @@ const NewProposalPage = observer(() => {
     }
     
     const createProposal = async function() {
-      
       console.debug('[RAW PROPOSAL]', schemeToUse, calls, titleText, ipfsHash);
 
       const { library } = providerStore.getActiveWeb3React();
@@ -220,7 +229,7 @@ const NewProposalPage = observer(() => {
         setSubmitionState(1);
         // history.push("/");
       } catch (error) {
-        console.error(error)
+        console.error('[PROPOSAL]', error);
         setSubmitionState(2);
       }
       
@@ -394,6 +403,16 @@ const NewProposalPage = observer(() => {
       forceUpdate();
     }
     
+    function onProposalTemplate(event) {
+      if (ProposalTemplates[event.target.value].name != 'Custom') {
+        setTitleText(ProposalTemplates[event.target.value].title);
+        setDescriptionText(ProposalTemplates[event.target.value].description);
+        calls.splice(0, calls.length);
+        setCalls(calls)
+        forceUpdate();
+      }
+    }
+    
     schemeToUse.callPermissions.map((callPermission) => {
       if (callPermission.asset == ZERO_ADDRESS)
         if (callPermission.to == ANY_ADDRESS){
@@ -413,19 +432,36 @@ const NewProposalPage = observer(() => {
         <div style={{
           display: "flex",
           flexDirection: "row",
+          justifyContent: "space-between",
+          marginBottom: "-10px"
+        }}>
+          <PlaceHolders>
+            <span style={{width: "100%"}}>Title</span>
+            <span style={{minWidth: "150px"}}>Scheme</span>
+            <span style={{minWidth: "150px"}}>Template</span>
+          </PlaceHolders>
+          <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
+          <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
+          <ActiveButton route="/?view=dao">DAO</ActiveButton>
+        </div>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
           justifyContent: "space-between"
         }}>
           <TitleInput>
             <input type="text" placeholder="Proposal Title" onChange={onTitleChange} value={titleText}/>
             <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
-            {schemes.map((scheme, i) =>{
-              return <option key={scheme.address} value={i}>{scheme.name}</option>
-            })}
+              {schemes.map((scheme, i) =>{
+                return <option key={scheme.address} value={i}>{scheme.name}</option>
+              })}
+            </select>
+            <select name="proposalTemplate" id="proposalTemplateSelector" onChange={onProposalTemplate}>
+              {ProposalTemplates.map((template, i) =>{
+                return <option key={"proposalTemplate"+i} value={i}>{template.name}</option>
+              })}
             </select>
           </TitleInput>
-          <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
-          <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
-          <ActiveButton route="/?view=dao">DAO</ActiveButton>
         </div>
         <MDEditor
           value={descriptionText}
