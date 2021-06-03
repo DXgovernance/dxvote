@@ -160,23 +160,28 @@ const NewProposalForm = observer(() => {
     const [schemeToUse, setSchemeToUse] = React.useState(schemes[0]);
     const [titleText, setTitleText] = React.useState("");
     const [ipfsHash, setIpfsHash] = React.useState("");
-    const [uploadToPinata, setUploadToPInata] = React.useState(false);
+    const [uploadedToIPFS, setUploadedToIPFS] = React.useState(false);
     const [descriptionText, setDescriptionText] = React.useState("");
     const [calls, setCalls] = React.useState([]);
     const [submitionState, setSubmitionState] = React.useState(0);
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
-    const uploadToIPFS = async function() {
-      setIpfsHash((await ipfsService.add(descriptionText)).toString())
-    }
     
-    const pinToPinata = async function() {
-      const pinataUpload = await pinataService.pin(ipfsHash)
-      if (pinataUpload.data.status == "prechecking")
-        setUploadToPInata(true);
+    const uploadToIPFS = async function() {
+      setIpfsHash(await ipfsService.add(descriptionText));
+      
+      if (pinataService.auth) {
+        const pinataUpload = await pinataService.pin(ipfsHash)
+        console.debug('[PINATA UPLOAD]', pinataUpload.data)
+      }
+      await ipfsService.pin(ipfsHash);
+
+      setUploadedToIPFS(true);
+      forceUpdate();
     }
     
     const createProposal = async function() {
-      console.log(schemeToUse, calls, titleText, contentHash.fromIpfs(ipfsHash))
+      
+      console.debug('[RAW PROPOSAL]', schemeToUse, calls, titleText, ipfsHash);
 
       const { library } = providerStore.getActiveWeb3React();
       
@@ -218,7 +223,8 @@ const NewProposalForm = observer(() => {
           : call.callType === "simple" ? library.utils.toWei(call.value).toString()
             : call.value
         });
-        console.log(schemeToUse, to, data, value, titleText, contentHash.fromIpfs(ipfsHash))
+        
+        console.debug('[PROPOSAL]', schemeToUse.address, to, data, value, titleText, contentHash.fromIpfs(ipfsHash))
         daoStore.createProposal(schemeToUse.address, to, data, value, titleText, contentHash.fromIpfs(ipfsHash));
         setSubmitionState(1);
         // history.push("/");
@@ -227,6 +233,12 @@ const NewProposalForm = observer(() => {
         setSubmitionState(2);
       }
       
+    }
+    
+    function onDescriptionChange(newValue) {
+      if (!uploadedToIPFS) {
+        setDescriptionText(newValue);
+      }
     }
     
     function onTitleChange(newValue) {
@@ -436,7 +448,7 @@ const NewProposalForm = observer(() => {
         </TitleInput>
         <MDEditor
           value={descriptionText}
-          onChange={setDescriptionText}
+          onChange={onDescriptionChange}
           preview="edit"
           height="300"
           minheights="300"
@@ -603,18 +615,7 @@ const NewProposalForm = observer(() => {
         </div>
         
         <TextActions>
-          {ipfsHash.length > 0 ?
-            <span>{`Description Document IPFS Hash: ${ipfsHash}`}</span>
-            : <div/>
-          }
-          {ipfsHash.length > 0 && !pinataService.auth ?
-            <span>
-              <strong>It is not recommended to submit a proposal with unpinned description.</strong><br/>
-              Add a Pinata API key in the configuration section or share your IPFS hash to be pinned by the community. 
-              </span>
-            : <div/>
-          }
-          {uploadToPinata ?
+          {uploadedToIPFS ?
             <span>
               Uploaded to pinata:
                 <a href={`https://gateway.pinata.cloud/ipfs/${ipfsHash}`} target="_blank">https://gateway.pinata.cloud/ipfs/{ipfsHash}</a>
@@ -624,7 +625,7 @@ const NewProposalForm = observer(() => {
             : <div/>
           }
           { (submitionState == 1) ?
-            <span>Proposal Submitted</span>
+            <span>Proposal is correct</span>
             : (submitionState == 2) ?
             <span>Error when trying to submit proposal</span>
             : <div/>
@@ -632,15 +633,9 @@ const NewProposalForm = observer(() => {
         </TextActions>
         
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
-          <ActiveButton onClick={
-            ipfsHash.length === 0 ? uploadToIPFS
-            : (pinataService.auth && !uploadToPinata) ? pinToPinata
-            : createProposal
-          }>{
-            ipfsHash.length === 0 ? "Upload to IPFS"
-            : (pinataService.auth && !uploadToPinata) ? "Pin To Pinata"
-            : "Submit Proposal"
-          }</ActiveButton>
+          <ActiveButton onClick={ (!uploadedToIPFS) ? uploadToIPFS : createProposal}>
+            { (!uploadedToIPFS) ? "Upload to IPFS" : "Submit Proposal" }
+          </ActiveButton>
         </div>
         
       </NewProposalFormWrapper>

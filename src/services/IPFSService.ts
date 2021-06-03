@@ -24,9 +24,13 @@ export default class IPFSService {
     }
   }
 
-  async add(content: String){
-    const { cid } = await this.ipfs.add({content})
-    return cid;
+  async add(content: String): Promise<string>{
+    const cid = (await this.ipfs.add({content})).cid;
+    return cid.string;
+  }
+  
+  async pin(cid: String){
+    await this.ipfs.pin.add(cid);
   }
   
   async get(hash: String){

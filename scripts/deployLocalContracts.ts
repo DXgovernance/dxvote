@@ -231,10 +231,10 @@ async function main() {
   
   const ipfs = await IPFS.create();
   
-  async function getContentHash(descriptionText) {
-    return contentHash.fromIpfs(
-      (await ipfs.add({content: descriptionText})).cid
-    );
+  async function uploadAndGetContentHash(descriptionText) {
+    const cid = (await ipfs.add({content: descriptionText})).cid;
+    await ipfs.pin.add(cid);
+    return contentHash.fromIpfs(cid);
   }
 
   const mintReputationABI = {
@@ -296,7 +296,7 @@ async function main() {
     ],
     [0, 0, 0, 0],
     "Test Proposal #0 (Seed rep mint)",
-    await getContentHash(descriptionText),
+    await uploadAndGetContentHash(descriptionText),
     { from: accounts[0] }
   ) ).logs[0].args[0];
 
@@ -321,7 +321,7 @@ async function main() {
     ],
     [0],
     "Test Proposal #1",
-    await getContentHash(descriptionText),
+    await uploadAndGetContentHash(descriptionText),
     { from: accounts[0] }
   ) ).logs[0].args[0];
   await dxdVotingMachine.vote(testProposal1, 1, 0, NULL_ADDRESS, { from: accounts[2] });
@@ -342,7 +342,7 @@ async function main() {
     ],
     [0, 0, 0],
     "Test Proposal #2",
-    await getContentHash(descriptionText),
+    await uploadAndGetContentHash(descriptionText),
     { from: accounts[0] }
   ) ).logs[0].args[0];
   
@@ -357,7 +357,7 @@ async function main() {
     ],
     [0],
     "Test Proposal #3",
-    await getContentHash(descriptionText),
+    await uploadAndGetContentHash(descriptionText),
     { from: accounts[0] }
   ) ).logs[0].args[0];
   
@@ -377,7 +377,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("5").toString()],
     "Test Proposal #4",
-    await getContentHash(descriptionText),
+    await uploadAndGetContentHash(descriptionText),
     { from: accounts[0] }
   );
   
@@ -386,7 +386,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #5",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
   
@@ -395,7 +395,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #6",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
   
@@ -404,7 +404,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #7",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
   
@@ -413,7 +413,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #8",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
   
@@ -422,7 +422,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #9",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
   
@@ -431,7 +431,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #10",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
   
@@ -440,7 +440,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #11",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
   
@@ -449,7 +449,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #12",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
   
@@ -458,7 +458,7 @@ async function main() {
     ["0x0"],
     [web3.utils.toWei("666").toString()],
     "Test Proposal #13",
-    await getContentHash('Transfer 666 wei ETH to '+accounts[1]),
+    await uploadAndGetContentHash('Transfer 666 wei ETH to '+accounts[1]),
     { from: accounts[0] }
   );
     
