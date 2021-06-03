@@ -137,4 +137,7 @@ export const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;

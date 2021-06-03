@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 const PageRouterWrapper = styled.div`
   border: 1px solid var(--medium-gray);
   margin-top: 20px;
-  padding: 10px 0px;
+  padding-top: 10px;
   font-weight: 400;
   border-radius: 4px;
   display: flex;
