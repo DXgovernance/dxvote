@@ -31,9 +31,9 @@ const PageRouterWrapper = styled.div`
   }
 `
 const PageRouter = observer(({ children }) => {
-  console.log(children, useLocation())
+    
     const {
-        root: { providerStore, blockchainStore, ipfsService, etherscanService, pinataService },
+        root: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService },
     } = useStores();
     let needsLoading = true;
     
@@ -58,8 +58,11 @@ const PageRouter = observer(({ children }) => {
           <div className="loader"> <FiZap/> <br/> Loading.. </div>
         </PageRouterWrapper>
       );
-    else 
+    else {
+      if (configStore.getLocalConfig().pinOnStart)
+        pinataService.updatePinList();
       return <PageRouterWrapper> {children} </PageRouterWrapper>;
+    }
 });
 
 export default PageRouter;

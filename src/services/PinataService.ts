@@ -1,5 +1,6 @@
 import RootStore from '../stores';
 import axios from "axios";
+import contentHash from 'content-hash';
 
 export default class PinataService {
   rootStore: RootStore;
@@ -9,8 +10,21 @@ export default class PinataService {
     this.rootStore = rootStore;
   }
   
+  async updatePinList() {
+    const pinList = await this.getPinList();
+    const ipfsHashes = this.rootStore.daoStore.getCache().ipfsHashes;
+    const alreadyPinned = pinList.data.rows;
+    for (let i = 0; i < ipfsHashes.length; i++) {
+      if (alreadyPinned.indexOf(pinned => alreadyPinned.ipfs_pin_hash == ipfsHashes[i].hash) < 0) {
+        console.log('[PINATA] Pinning:', ipfsHashes[i].hash);
+      } else {
+        console.log('[PINATA] Alpready pinned:', ipfsHashes[i].hash);
+      }
+    }
+  }
+  
   async isAuthenticated(){
-    const pinataApiKey = this.rootStore.configStore.getApiKeys().pinata;
+    const pinataApiKey = this.rootStore.configStore.getLocalConfig().pinata;
     try {
       const auth = await axios({
         method: "GET",
@@ -23,21 +37,28 @@ export default class PinataService {
     }
   }
 
-  async pin(hash: String){
-    const pinataApiKey = this.rootStore.configStore.getApiKeys().pinata;
+  async pin(hashToPin: String){
+    console.log('pininng', hashToPin)
+    const pinataApiKey = this.rootStore.configStore.getLocalConfig().pinata;
     return axios({
       method: "POST",
       url: "https://api.pinata.cloud/pinning/pinByHash",
-      data: { hashToPin: hash },
+      data: {
+        hashToPin,
+        pinataMetadata: {
+          name: `DXdao ${this.rootStore.configStore.getActiveChainName()} DescriptionHash ${contentHash.fromIpfs(hashToPin)}`,
+          keyValues: { type: 'proposal' }
+        }
+      },
       headers: { Authorization: `Bearer ${pinataApiKey}` }
     });
   }
   
   async getPinList(){
-    const pinataApiKey = this.rootStore.configStore.getApiKeys().pinata;
+    const pinataApiKey = this.rootStore.configStore.getLocalConfig().pinata;
     return axios({
       method: "GET",
-      url: "https://api.pinata.cloud/data/pinList",
+      url: `https://api.pinata.cloud/data/pinList?pageLimit=1000&metadata[name]=DXdao ${this.rootStore.configStore.getActiveChainName()}`,
       headers: { Authorization: `Bearer ${pinataApiKey}` }
     });
   }

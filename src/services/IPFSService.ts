@@ -20,12 +20,17 @@ export default class IPFSService {
   async start(){
     if (!this.ipfs && !this.started) {
       this.started = true;
-      this.ipfs = await IPFS.create();
+      try {
+        this.ipfs = await IPFS.create();
+      } catch (error) {
+        console.error('[IPFS]', error);
+      }
     }
   }
 
-  async add(content: String): Promise<string>{
-    const cid = (await this.ipfs.add({content})).cid;
+  async add(content: String) {
+    const { cid } = await this.ipfs.add({content});
+    console.log(cid.string)
     return cid.string;
   }
   

@@ -167,16 +167,14 @@ const NewProposalForm = observer(() => {
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     
     const uploadToIPFS = async function() {
-      setIpfsHash(await ipfsService.add(descriptionText));
-      
+      const hash = await ipfsService.add(descriptionText);
+      setIpfsHash(hash);
       if (pinataService.auth) {
-        const pinataUpload = await pinataService.pin(ipfsHash)
+        const pinataUpload = await pinataService.pin(hash);
         console.debug('[PINATA UPLOAD]', pinataUpload.data)
       }
-      await ipfsService.pin(ipfsHash);
-
+      await ipfsService.pin(hash);
       setUploadedToIPFS(true);
-      forceUpdate();
     }
     
     const createProposal = async function() {

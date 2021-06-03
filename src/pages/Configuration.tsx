@@ -15,20 +15,17 @@ const Row = styled.div`
 
 const InputBox = styled.input`
   background-color: white;
-  border: 1px solid #536DFE;
+  border: 1px solid var(--medium-gray );
   border-radius: 4px;
-  color: #536DFE;
   height: 34px;
   letter-spacing: 1px;
   font-weight: 500;
   line-height: 32px;
   text-align: left;
-  cursor: pointer;
-  width: max-content;
   padding: 0px 10px;
   margin: 5px;
-  font-family: var(--roboto);
 `;
+
 const ConfigPage = observer(() => {
     const {
         root: { providerStore, configStore, blockchainStore, pinataService, etherscanService },
@@ -39,18 +36,17 @@ const ConfigPage = observer(() => {
     const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(etherscanService.auth);
     const [pinataKeyStatus, setPinataKeyStatus] = React.useState(pinataService.auth);
 
-    const [apiKeys, setApiKeys] = React.useState(configStore.getApiKeys());
+    const [localConfig, setLocalConfig] = React.useState(configStore.getLocalConfig());
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
     
-    function onApiKeyValueChange(event, key) {
-      apiKeys[key] = event.target.value;
-      setApiKeys(apiKeys)
+    function onApiKeyValueChange(value, key) {
+      localConfig[key] = value;
+      setLocalConfig(localConfig)
       forceUpdate();
     }
     
-    function saveApiKeys() {
-      configStore.setApiKey('etherscan', apiKeys.etherscan);
-      configStore.setApiKey('pinata', apiKeys.pinata);
+    function saveConfig() {
+      configStore.setLocalConfig(localConfig);
     }
     
     async function testApis() {
@@ -59,39 +55,53 @@ const ConfigPage = observer(() => {
       setPinataKeyStatus(pinataService.auth);  
       setEtherscanApiStatus(etherscanService.auth);
     }
+    
+    async function pinDXvoteHashes() {
+      pinataService.updatePinList();
+    }
   
     return (
-      <div style={{padding: "0px 10px"}}>
+      <div style={{padding: "0px 20px 20px 20px", display: "flex", flexDirection: "column", alignItems: "center"}}>
         <h2>API Keys</h2>
-        <Row style={{maxWidth: "300px"}}>
+        <Row style={{maxWidth: "500px"}}>
           <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Etherscan:</span>
           <InputBox
             type="text"
             serviceName="etherscan"
-            onChange={(event) => onApiKeyValueChange(event, "etherscan")}
-            value={apiKeys.etherscan}
-            style={{width: "50%"}}
+            onChange={(event) => onApiKeyValueChange(event.target.value, "etherscan")}
+            value={localConfig.etherscan}
+            style={{width: "100%"}}
           ></InputBox>
-          <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>
+          <span style={{ height: "34px", padding:"10px 0px"}}>
             {etherscanApiStatus ? <FiCheckCircle/> : <FiX/>}
           </span>
         </Row>
-        <Row style={{maxWidth: "300px"}}>
+        <Row style={{maxWidth: "500px"}}>
           <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Pinata:</span>
           <InputBox
             type="text"
             serviceName="pinata"
-            onChange={(event) => onApiKeyValueChange(event, "pinata")}
-            value={apiKeys.pinata}
-            style={{width: "50%"}}
+            onChange={(event) => onApiKeyValueChange(event.target.value, "pinata")}
+            value={localConfig.pinata}
+            style={{width: "100%"}}
           ></InputBox>
-          <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>
+          <span style={{ height: "34px", padding:"10px 0px"}}>
             {pinataKeyStatus ? <FiCheckCircle/> : <FiX/>}
           </span>
         </Row>
-        <Row style={{maxWidth: "300px"}}>
-          <ActiveButton onClick={saveApiKeys}>Save</ActiveButton>
+        <Row style={{maxWidth: "500px"}}>
+          <span style={{height: "34px", padding:"10px 10px"}}>Pin DXdao hashes on start</span>
+          <InputBox
+            type="checkbox"
+            checked={localConfig.pinOnStart}
+            onChange={(event) => onApiKeyValueChange(event.target.checked, "pinOnStart")}
+            style={{width: "20px"}}
+          ></InputBox>
+        </Row>
+        <Row style={{maxWidth: "500px"}}>
+          <ActiveButton onClick={saveConfig}>Save</ActiveButton>
           <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
+          <ActiveButton onClick={pinDXvoteHashes}>Pin Dxvote Hashes</ActiveButton>
         </Row>
       </div>
     );

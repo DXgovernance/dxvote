@@ -28,7 +28,8 @@ async function main() {
           redeems: [],
           redeemsRep: [],
           proposalStateChanges: []
-        }
+        },
+        ipfsHashes: []
       }
     };
     
@@ -46,7 +47,8 @@ async function main() {
         redeems: [],
         redeemsRep: [],
         proposalStateChanges: []
-      }
+      },
+      ipfsHashes: []
     } : (networkName == 'localhost') ?
     {
       blockNumber: 1,
@@ -61,7 +63,8 @@ async function main() {
         redeems: [],
         redeemsRep: [],
         proposalStateChanges: []
-      }
+      },
+      ipfsHashes: []
     } : cacheFile[networkName];
   
   // Set block range for the script to run

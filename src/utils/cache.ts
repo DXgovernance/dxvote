@@ -1,4 +1,5 @@
 const _ = require("lodash");
+import contentHash from 'content-hash';
 import { bnum, ZERO_ADDRESS } from './helpers';
 const { decodePermission } = require('./permissions');
 const { decodeSchemeParameters } = require('./scheme');
@@ -626,6 +627,12 @@ export const updateProposals = async function (
           block: schemeEvent.blockNumber,
           transactionIndex: schemeEvent.transactionIndex,
           logIndex: schemeEvent.logIndex
+        });
+        
+        networkCache.ipfsHashes.push({
+          hash: contentHash.decode(schemeProposalInfo.descriptionHash),
+          type: 'proposal',
+          name: proposalId
         });
         
         // Save proposal created in users

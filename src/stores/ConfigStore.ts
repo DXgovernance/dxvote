@@ -23,27 +23,26 @@ export default class ConfigStore {
       return activeWeb3 ? NETWORK_NAMES[activeWeb3.chainId] : 'none';
     }
     
-    getApiKeys() {
-      return {
-        etherscan: localStorage.getItem('dxvote-etherscan'),
-        pinata: localStorage.getItem('dxvote-pinata')
-      }
+    getLocalConfig() {
+      if (localStorage.getItem('dxvote-config'))
+        return JSON.parse(localStorage.getItem('dxvote-config'));
+      else return {
+        etherscan: '',
+        pinata: '',
+        pinOnStart: false
+      };
     }
     
-    getApiKey(service) {
-      localStorage.getItem('dxvote-'+service);
-    }
-    
-    setApiKey(service, key) {
-      localStorage.setItem('dxvote-'+service, key);
+    setLocalConfig(config) {
+      localStorage.setItem('dxvote-config', JSON.stringify(config));
     }
     
     toggleDarkMode() {
-        this.darkMode = !this.darkMode;
+      this.darkMode = !this.darkMode;
     }
 
     @action setDarkMode(visible: boolean) {
-        this.darkMode = visible;
+      this.darkMode = visible;
     }
     
     getNetworkConfig() {

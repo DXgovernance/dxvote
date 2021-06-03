@@ -197,6 +197,12 @@ export interface DaoInfo {
   dxdBalance: BigNumber;
 }
 
+export interface IPFSHash {
+  hash: string;
+  type: string;
+  name: string;
+}
+
 export interface DaoNetworkCache {
   blockNumber: number;
   daoInfo: DaoInfo;
@@ -209,7 +215,8 @@ export interface DaoNetworkCache {
     redeems: Redeem[];
     redeemsRep: RedeemRep[];
     proposalStateChanges: ProposalStateChange[];
-  }
+  },
+  ipfsHashes: IPFSHash[]
 };
 
 export interface DaoCache {
