@@ -1,73 +1,48 @@
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-        'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-        'Helvetica Neue', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-        monospace;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  font-family: var(--roboto);
+  background-color: var(--background-color);
 }
 
 :root {
-    width: 100%;
-    height: calc(100%);
+  --active-button-border: #304ffe;
+  --orange: #f9aa33;
+  --blue-text: #536DFE;
+  --red-text: #FF4081;
+  --blue-onHover: #4864FE;
+  --blue-onHover-border: #2545FE;
+  --dangerous-alert: #D32F2F;
+  --wrong-network-border: #D81B60;
+  --wrong-network-border-hover: #C2185B;
+  --wrong-network-hover: #E91E63;
+  --wrong-network: #EC407A;
+  --light-text-gray: #bdbdbd;
+  --text-gray-onHover: #727D82;
+  --dark-text-gray: #616161;
+  --nav-text-light: rgba(55, 71, 79, 0.4);
+  --nav-text-dark: rgba(55, 71, 79, 1);
+  --panel-text: rgba(83, 109, 254, 0.8);
+  --pending-panel-text: rgba(83, 109, 254, 0.6);
+  --panel-icon: rgba(83, 109, 254, 0.2);
+  --panel-icon-2: #758afe;
+  --panel-pending: #98a7fe;
+  --footer-text-gray: #c2c2c2;
+  --pending-text-gray: #d4dcdf;
+  --pending-ellipses-purple: #dde2ff;
+  --medium-gray: rgba(207, 216, 220, 0.9); /*For border*/
+  --light-gray: #FAFAFA; /*Site background*/
+  --line-gray: rgba(225, 227, 231, 0.4);
+  --turquois-text: #2d9cdb;
+  --turquois-text-onHover: #226C96;
+  --white: #ffffff;
+  --gridLine: rgba(232, 234, 246, 0.5);
 
-    --active-button-border: #304ffe;
-    --orange: #f9aa33;
-    --blue-text: #536DFE;
-    --red-text: #FF4081;
-    --blue-onHover: #4864FE;
-    --blue-onHover-border: #2545FE;
-    --dangerous-alert: #D32F2F;
-    --wrong-network-border: #D81B60;
-    --wrong-network-border-hover: #C2185B;
-    --wrong-network-hover: #E91E63;
-    --wrong-network: #EC407A;
-    --light-text-gray: #bdbdbd;
-    --text-gray-onHover: #727D82;
-    --dark-text-gray: #616161;
-    --nav-text-light: rgba(55, 71, 79, 0.4);
-    --nav-text-dark: rgba(55, 71, 79, 1);
-    --panel-text: rgba(83, 109, 254, 0.8);
-    --pending-panel-text: rgba(83, 109, 254, 0.6);
-    --panel-icon: rgba(83, 109, 254, 0.2);
-    --panel-icon-2: #758afe;
-    --panel-pending: #98a7fe;
-    --footer-text-gray: #c2c2c2;
-    --pending-text-gray: #d4dcdf;
-    --pending-ellipses-purple: #dde2ff;
-    --medium-gray: rgba(207, 216, 220, 0.9); /*For border*/
-    --light-gray: #FAFAFA; /*Site background*/
-    --line-gray: rgba(225, 227, 231, 0.4);
-    --turquois-text: #2d9cdb;
-    --turquois-text-onHover: #226C96;
-    --white: #ffffff;
-    --gridLine: rgba(232, 234, 246, 0.5);
-
-    --rewards-text-green: #54ae6f;
-    --rewards-background-green: rgba(84, 174, 111, 0.1);
-
-    --roboto: 'Roboto', sans-serif;
-
-    /*Landing Page Styles*/
-    --background: #E4E6F0;
-    --light-header-text: #AAAAAA;
-    --light-body-text: #999999;
-    --dark-text: #333333;
-    --dark-button-background: #189DDF;
-    --lp-border-color-onHover: #ADADAD;
-    --footer-divider: #E0E0E0;
-    /*white from above is also used in landing page*/
-}
-
-body {
-  font-family: var(--roboto);
-  background-color: var(--light-gray);
+  --roboto: 'Roboto', sans-serif;
+  
   height: 100%;
+  width: 100%;
 }
 
 #root{
@@ -79,24 +54,4 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-}
-.green-text {
-  color: #54ae6f;
-}
-
-.blue-text {
-  color: var(--blue-text);
-}
-
-.red-text {
-  color: #ff4081;
-}
-
-.turquois-text {
-  color: var(--turquois-text);
-}
-
-.form-vivid-blue {
-  color: rgba(48, 79, 254, 0.6);
-  width: 100%;
 }

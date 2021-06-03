@@ -83,13 +83,11 @@ export const updateDaoInfo = async function (
   networkCache: DaoNetworkCache, networkName: string, web3: any
 ): Promise<DaoNetworkCache> {
   const allContracts = await getContracts(networkName, web3);
-  
   const calls = await executeMulticall(web3, allContracts.multicall, [
     [allContracts.reputation, "totalSupply", []],
     [allContracts.multicall, "getEthBalance", [allContracts.avatar._address]],
     [allContracts.dxd, "balanceOf", [allContracts.avatar._address]]
   ]);
-
   networkCache.daoInfo.address = allContracts.avatar._address;
   networkCache.daoInfo.repEvents = !networkCache.daoInfo.repEvents ? [] : networkCache.daoInfo.repEvents;
   networkCache.daoInfo.totalRep = bnum(calls.decodedReturnData[0]);

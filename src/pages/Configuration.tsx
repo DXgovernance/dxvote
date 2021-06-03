@@ -5,16 +5,6 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import { FiCheckCircle, FiX } from "react-icons/fi";
 
-const ConfigWrapper = styled.div`
-  background: white;
-  padding: 15px 20px;
-  font-weight: 400;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-`;
-
 const Row = styled.div`
   flex-direction: row;
   flex: auto;
@@ -39,7 +29,7 @@ const InputBox = styled.input`
   margin: 5px;
   font-family: var(--roboto);
 `;
-const DaiInformation = observer(() => {
+const ConfigPage = observer(() => {
     const {
         root: { providerStore, configStore, blockchainStore, pinataService, etherscanService },
     } = useStores();
@@ -71,7 +61,7 @@ const DaiInformation = observer(() => {
     }
   
     return (
-      <ConfigWrapper>
+      <div style={{padding: "0px 10px"}}>
         <h2>API Keys</h2>
         <Row style={{maxWidth: "300px"}}>
           <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Etherscan:</span>
@@ -103,8 +93,8 @@ const DaiInformation = observer(() => {
           <ActiveButton onClick={saveApiKeys}>Save</ActiveButton>
           <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
         </Row>
-      </ConfigWrapper>
+      </div>
     );
 });
 
-export default DaiInformation;
+export default ConfigPage;

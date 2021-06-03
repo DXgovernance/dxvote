@@ -56,6 +56,10 @@ const Footer = () => {
         <FooterItem>
         <a href="https://github.com/AugustoL/dxvote" target="#" > Source Code </a>
         </FooterItem>
+        <FooterDivider></FooterDivider>
+        <FooterItem>
+        <a href="/#/faq" target="_self" > FAQ </a>
+        </FooterItem>
       </LeftFooter>
     </FooterWrapper>
 

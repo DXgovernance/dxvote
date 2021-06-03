@@ -8,16 +8,6 @@ import { bnum } from '../utils/helpers';
 import { useLocation } from 'react-router-dom';
 import moment from 'moment';
 
-const SchemeInformationWrapper = styled.div`
-  background: white;
-  padding: 0px 10px;
-  font-weight: 400;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-`;
-
 const SchemePage = observer(() => {
     const {
         root: { providerStore, daoStore, blockchainStore },
@@ -28,7 +18,7 @@ const SchemePage = observer(() => {
     const schemeInfo = daoStore.getScheme(schemeAddress);
     const schemeConfiguration = schemeInfo.configurations[ schemeInfo.configurations.length -1 ];
     return (
-      <SchemeInformationWrapper>
+      <div>
         <div style={{
           display: "flex",
           flexDirection: "row",
@@ -79,7 +69,7 @@ const SchemePage = observer(() => {
         <h4>Proposal Boost Bounty Const: {schemeConfiguration.parameters.daoBountyConst.toString()}</h4>
         <h4>Boost Threshold Constant: {schemeConfiguration.parameters.thresholdConst.toString()}</h4>
         <h4>Boost Limit Exponent Value: {schemeConfiguration.parameters.limitExponentValue.toString()}</h4>
-      </SchemeInformationWrapper>
+      </div>
     );
 });
 

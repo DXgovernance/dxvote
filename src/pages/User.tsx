@@ -6,16 +6,6 @@ import ActiveButton from '../components/common/ActiveButton';
 import { useLocation } from 'react-router-dom';
 import BlockchainLink from '../components/common/BlockchainLink';
 
-const UserInfoWrapper = styled.div`
-  background: white;
-  padding: 0px 10px;
-  font-weight: 400;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-`;
-
 const UserPage = observer(() => {
     const {
         root: { daoStore, blockchainStore },
@@ -25,7 +15,7 @@ const UserPage = observer(() => {
     const userInfo = daoStore.getUser(userAddress);
 
     return (
-      <UserInfoWrapper>
+      <div style={{padding: "0px 10px"}}>
         <div style={{
           display: "flex",
           flexDirection: "row",
@@ -53,7 +43,7 @@ const UserPage = observer(() => {
             {i < userEvents.history.length - 1 ? <hr/> : <div/>}
           </div>);
         })}
-      </UserInfoWrapper>
+      </div>
     );
 });
 
