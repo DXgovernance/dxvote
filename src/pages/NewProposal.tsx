@@ -38,18 +38,17 @@ const SchemeInput = styled.div`
       line-height: 18px;
       padding: 10px 10px;
     }
-    
 
 `;
 const PlaceHolders = styled.div`
-    width: calc(100% - 300px);
+    width: calc(100% - 1px);
     display: flex;
     align-items: center;
     font-size: 20px;
-    padding-bottom: 7px;
+    padding-bottom: 0px;
 `
 const TitleInput = styled.div`
-    width: calc(100% - 300px);
+    width: calc(100% - 1px);
     display: flex;
     justify-content: left;
     flex-direction: row;
@@ -433,16 +432,12 @@ const NewProposalPage = observer(() => {
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
-          marginBottom: "-10px"
         }}>
           <PlaceHolders>
             <span style={{width: "100%"}}>Title</span>
             <span style={{minWidth: "150px"}}>Scheme</span>
             <span style={{minWidth: "150px"}}>Template</span>
           </PlaceHolders>
-          <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
-          <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
-          <ActiveButton route="/?view=dao">DAO</ActiveButton>
         </div>
         <div style={{
           display: "flex",

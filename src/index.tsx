@@ -17,11 +17,11 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import PageRouter from './PageRouter';
 
-import HomePage from './pages/Home';
+import ProposalsPage from './pages/Proposals';
 import NewProposalPage from './pages/NewProposal';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
-import SchemePage from './pages/Scheme';
+import InfoPage from './pages/Info';
 import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
 
@@ -49,12 +49,12 @@ const Root = (
           <Web3ReactManager>
             <Header />
             <PageRouter>
-              <Route exact path="/"> <HomePage /> </Route>
+              <Route exact path="/"> <ProposalsPage /> </Route>
               <Route exact path="/new"> <NewProposalPage /> </Route>
+              <Route exact path="/info"> <InfoPage /> </Route>
               <Route exact path="/config"> <ConfigPage /> </Route>
               <Route exact path="/faq"> <FAQPage /> </Route>
               <Route exact path="/user/:address"> <UserPage /> </Route>
-              <Route exact path="/scheme/:schemAddress"> <SchemePage /> </Route>
               <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
             </PageRouter>
             <Footer />

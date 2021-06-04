@@ -5,7 +5,7 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
 
-const DaoInfoWrapper = styled.div`
+const FinanceInfoWrapper = styled.div`
     background: white;
     padding: 0px 10px;
     font-weight: 400;
@@ -16,24 +16,7 @@ const DaoInfoWrapper = styled.div`
     color: var(--dark-text-gray);
 `;
 
-const AssetsTableHeaderActions = styled.div`
-    padding: 0px 10px 10px 10px;
-    color: var(--dark-text-gray);
-    border-bottom: 1px solid var(--line-gray);
-    font-weight: 500;
-    font-size: 18px;
-    letter-spacing: 1px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    
-    span {
-      font-size: 20px;
-      padding: 10px 5px 5px 5px;
-    }
-`;
-
-const AssetsTableHeaderWrapper = styled.div`
+const FinanceTableHeaderWrapper = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -75,7 +58,7 @@ const TableCell = styled.div`
     text-overflow: ${(props) => props.wrapText ? 'ellipsis' : 'inherit'};
 `;
 
-const DaoInformation = observer(() => {
+const FinanceInformation = observer(() => {
     const {
         root: { providerStore, daoStore, configStore },
     } = useStores();
@@ -96,36 +79,18 @@ const DaoInformation = observer(() => {
     })
     
     return (
-      <DaoInfoWrapper>
-        <div style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between"
-        }}>
-          <h2 style={{ display: "flex"}}>Address: <BlockchainLink size="long" text={daoInfo.address} toCopy/></h2>
-          <div style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between"
-          }}>
-          <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
-          <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
-          </div>
-        </div>
-        <h3>Total REP: {parseFloat(Number(library.utils.fromWei(daoInfo.totalRep.toString())).toFixed(4))}</h3>
-        <AssetsTableHeaderActions>
-          <span>Dao Funds</span>
-        </AssetsTableHeaderActions>
-        <AssetsTableHeaderWrapper>
+      <FinanceInfoWrapper>
+        <h2 style={{ display: "flex", justifyContent: "center"}}>DAO <BlockchainLink size="long" text={daoInfo.address} toCopy/></h2>
+        <FinanceTableHeaderWrapper>
             <TableHeader width="50%" align="center"> Asset </TableHeader>
-            <TableHeader width="50%" align="center"> Amount </TableHeader>
-        </AssetsTableHeaderWrapper>
+            <TableHeader width="50%" align="center"> Balance </TableHeader>
+        </FinanceTableHeaderWrapper>
         <TableRowsWrapper>
         {assets.map((asset, i) => {
           if (asset) {
             return (
               <TableRow key={`asset${i}`}>
-                <TableCell width="50%" align="center" weight='500' wrapText="true">
+                <TableCell width="50%" align="center" weight='500'>
                   {asset.name}
                 </TableCell>
                 <TableCell width="50%" align="center"> 
@@ -138,8 +103,8 @@ const DaoInformation = observer(() => {
           }
         )}
         </TableRowsWrapper>
-      </DaoInfoWrapper>
+      </FinanceInfoWrapper>
     );
 });
 
-export default DaoInformation;
+export default FinanceInformation;

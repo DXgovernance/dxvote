@@ -29,9 +29,6 @@ const UserPage = observer(() => {
             flexDirection: "row",
             justifyContent: "space-between"
           }}>
-          <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
-          <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
-          <ActiveButton route="/?view=dao">DAO</ActiveButton>
           </div>
         </div>
         <h3>REP: {userInfo.repPercentage.toFixed(2)} %</h3>

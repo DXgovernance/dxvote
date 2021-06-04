@@ -124,7 +124,7 @@ const TableCell = styled.div`
     text-overflow: ${(props) => props.wrapText ? 'ellipsis' : 'inherit'};
 `;
 
-const ProposalsTable = observer(() => {
+const ProposalsPage = observer(() => {
     const {
         root: { providerStore, daoStore, blockchainStore },
     } = useStores();
@@ -173,8 +173,6 @@ const ProposalsTable = observer(() => {
             flexDirection: "row",
             justifyContent: "space-between"
           }}>
-            <ActiveButton route="/?view=schemes">Schemes</ActiveButton>
-            <ActiveButton route="/?view=dao">DAO</ActiveButton>
             <ActiveButton route="/new">+ New Proposal</ActiveButton>
           </div>
         </ProposalTableHeaderActions>
@@ -240,4 +238,4 @@ const ProposalsTable = observer(() => {
     );
 });
 
-export default ProposalsTable;
+export default ProposalsPage;

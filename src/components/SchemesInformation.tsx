@@ -3,34 +3,19 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
+import BlockchainLink from '../components/common/BlockchainLink';
+import { bnum } from '../utils/helpers';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
-const SchemesTableWrapper = styled.div`
-    width: 100%;
-    background: white;
-    font-weight: 400;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-`;
-
-const ProposalTableHeaderActions = styled.div`
-    padding: 0px 10px 10px 10px;
-    color: var(--dark-text-gray);
-    border-bottom: 1px solid var(--line-gray);
-    font-weight: 500;
-    font-size: 18px;
-    letter-spacing: 1px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    
-    span {
-      font-size: 20px;
-      padding: 10px 5px 5px 5px;
-    }
+const SchemesInformationWrapper = styled.div`
+  width: 100%;
+  background: white;
+  font-weight: 400;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 `;
 
 const ProposalTableHeaderWrapper = styled.div`
@@ -88,7 +73,7 @@ const SchemesInformation = observer(() => {
     const {
         root: { providerStore, daoStore, blockchainStore },
     } = useStores();
-    const { active: providerActive } = providerStore.getActiveWeb3React();
+    const { active: providerActive, library } = providerStore.getActiveWeb3React();
     
     const loading = (
       !blockchainStore.initialLoadComplete
@@ -96,25 +81,14 @@ const SchemesInformation = observer(() => {
     
     const schemes = daoStore.getAllSchemes();
     return (
-      <SchemesTableWrapper>
-        <ProposalTableHeaderActions>
-          <span>Schemes</span>
-          <div style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between"
-          }}>
-            <ActiveButton route="/?view=proposals">Proposals</ActiveButton>
-            <ActiveButton route="/?view=dao">DAO</ActiveButton>
-          </div>
-        </ProposalTableHeaderActions>
+      <SchemesInformationWrapper>
         <ProposalTableHeaderWrapper>
             <TableHeader width="15%" align="left"> Name </TableHeader>
-            <TableHeader width="25%" align="center"> Times </TableHeader>
-            <TableHeader width="15%" align="center"> Permissions </TableHeader>
-            <TableHeader width="15%" align="center"> Boosted Proposals </TableHeader>
-            <TableHeader width="15%" align="center"> Active Proposals </TableHeader>
-            <TableHeader width="15%" align="center"> Total proposals  </TableHeader>
+            <TableHeader width="40%" align="center"> Configuration </TableHeader>
+            <TableHeader width="25%" align="center"> Permissions </TableHeader>
+            <TableHeader width="20%" align="center" style={{display: "flex", justifyContent: "space-between"}}>
+              <span>Boosted</span> - <span>Active</span> - <span>Total</span>
+            </TableHeader>
         </ProposalTableHeaderWrapper>
         <TableRowsWrapper>
         {schemes.map((scheme, i) => {
@@ -124,9 +98,10 @@ const SchemesInformation = observer(() => {
             <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
               <TableRow>
                 <TableCell width="15%" align="left" weight='500' wrapText="true">
-                  {scheme.name}
+                  {scheme.name}<br/>
+                  <BlockchainLink size="short" text={scheme.address} toCopy/>
                 </TableCell>
-                <TableCell width="25%" align="center">
+                <TableCell width="40%" align="center">
                   <small>Queued Proposal Period: {
                     moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
                   }</small><br/>
@@ -141,31 +116,56 @@ const SchemesInformation = observer(() => {
                   }</small><br/>
                   <small>Max time for execution: {
                     moment.duration(scheme.maxSecondsForExecution.toString(), 'seconds').humanize()
-                  }</small>
+                  }</small><br/>
+                  
+                  <small>Required Percentage for queue approval: {schemeConfiguration.parameters.queuedVoteRequiredPercentage.toString()} %</small><br/>
+                  <small>Required Percentage for boosted approval: {bnum(schemeConfiguration.boostedVoteRequiredPercentage).div("1000").toString()} %</small><br/>
+                  <small>Queued Proposal Period: {
+                    moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
+                  }</small><br/>
+                  <small>Boosted Proposal Period: {
+                    moment.duration(schemeConfiguration.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
+                  }</small><br/>
+                  <small>PreBoosted Proposal Period: {
+                    moment.duration(schemeConfiguration.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
+                  }</small><br/>
+                  <small>Quiet Ending Period: {
+                    moment.duration(schemeConfiguration.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
+                  }</small><br/>
+                  <small>Rep Proposing Reward: {
+                    Number(library.utils.fromWei(schemeConfiguration.parameters.proposingRepReward.toString())).toFixed(2)
+                  } REP</small><br/>
+                  <small>Reputation Loss Ratio: {schemeConfiguration.parameters.votersReputationLossRatio.toString()} %</small><br/>
+                  <small>Minimum Dao Boost: {
+                    Number(library.utils.fromWei(schemeConfiguration.parameters.minimumDaoBounty.toString())).toFixed(2)
+                  } DXD</small><br/>
+                  <small>Proposal Boost Bounty Const: {schemeConfiguration.parameters.daoBountyConst.toString()}</small><br/>
+                  <small>Boost Threshold Constant: {schemeConfiguration.parameters.thresholdConst.toString()}</small><br/>
+                  <small>Boost Limit Exponent Value: {schemeConfiguration.parameters.limitExponentValue.toString()}</small>
+                  
                 </TableCell>
-                <TableCell width="15%" align="center">
+                <TableCell width="25%" align="center">
                   <small>{schemeConfiguration.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
                   <small>{schemeConfiguration.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
                   <small>{schemeConfiguration.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
                   <small>{schemeConfiguration.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
                 </TableCell>
-                <TableCell width="15%" align="center"> 
-                  {scheme.boostedProposals}
-                </TableCell>
-                <TableCell width="15%" align="center"> 
-                  {schemeProposals.filter((proposal) => {
+
+                <TableCell width="20%" align="center" style={{display: "flex", justifyContent: "space-around"}}> 
+                  <span>{scheme.boostedProposals}</span>
+                  -
+                  <span>{schemeProposals.filter((proposal) => {
                     return (proposal.priority >=3 && proposal.priority <= 6 )
-                  }).length}
-                </TableCell>
-                <TableCell width="15%" align="center"> 
-                  {scheme.proposalIds ? scheme.proposalIds.length : 0}
+                  }).length}</span>
+                  -
+                  <span>{scheme.proposalIds ? scheme.proposalIds.length : 0}</span>
                 </TableCell>
               </TableRow>
             </Link>);
           }
         )}
         </TableRowsWrapper>
-      </SchemesTableWrapper>
+      </SchemesInformationWrapper>
     );
 });
 

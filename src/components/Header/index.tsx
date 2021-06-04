@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import Web3ConnectStatus from '../Web3ConnectStatus';
 import { useStores } from '../../contexts/storesContext';
-import { FiSettings, FiUser } from "react-icons/fi";
+import { FiSettings, FiUser, FiBarChart2 } from "react-icons/fi";
 import dxdaoIcon from "assets/images/DXdao.svg"
 import Web3 from 'web3';
 import { bnum } from '../../utils/helpers';
@@ -98,6 +98,7 @@ const Header = observer(() => {
           <BalanceItem> {dxdBalance} DXD </BalanceItem>
           <BalanceItem> {repBalance} REP - {repPercentage.toFixed(2)} % </BalanceItem>
           <Web3ConnectStatus text="Connect Wallet" />
+          <a href={`${window.location.pathname}#/info`}><FiBarChart2 style={{margin: "0px 10px", color: "#616161"}}/></a>
           <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
           <a href={`${window.location.pathname}#/user/${account}`}><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
         </NavSection>
