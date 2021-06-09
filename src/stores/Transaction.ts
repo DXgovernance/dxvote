@@ -1,4 +1,4 @@
-import { action, observable } from 'mobx';
+import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { TransactionReceipt } from 'web3-core';
@@ -27,12 +27,18 @@ export interface TransactionRecordMap {
 }
 
 export default class TransactionStore {
-    @observable txRecords: TransactionRecordMap;
+    txRecords: TransactionRecordMap;
     rootStore: RootStore;
 
     constructor(rootStore) {
         this.rootStore = rootStore;
-        this.txRecords = {} as TransactionRecordMap;
+        this.txRecords = {};
+        makeObservable(this, {
+            txRecords: observable,
+            checkPendingTransactions: action,
+            addTransactionRecord: action,
+          }
+        );
     }
 
     // @dev Transactions are pending if we haven't seen their receipt yet
@@ -44,7 +50,7 @@ export default class TransactionStore {
             });
         }
 
-        return [] as TransactionRecord[];
+        return [];
     }
 
     getConfirmedTransactions(account: string): TransactionRecord[] {
@@ -55,10 +61,10 @@ export default class TransactionStore {
             });
         }
 
-        return [] as TransactionRecord[];
+        return [];
     }
 
-    @action async checkPendingTransactions(
+    async checkPendingTransactions(
         web3React: Web3ReactContextInterface,
         account
     ): Promise<FetchCode> {
@@ -92,7 +98,7 @@ export default class TransactionStore {
     }
 
     // @dev Add transaction record. It's in a pending state until mined.
-    @action addTransactionRecord(account: string, txHash: string) {
+    addTransactionRecord(account: string, txHash: string) {
         const record: TransactionRecord = {
             hash: txHash,
             blockNumberChecked: 0,
@@ -114,16 +120,16 @@ export default class TransactionStore {
             }
             this.txRecords[account].push(record);
         } else {
-            this.txRecords[account] = [] as TransactionRecord[];
+            this.txRecords[account] = [];
             this.txRecords[account].push(record);
         }
     }
 
-    private isTxPending(txRecord: TransactionRecord): boolean {
+    isTxPending(txRecord: TransactionRecord): boolean {
         return !txRecord.receipt;
     }
 
-    private isStale(txRecord: TransactionRecord, currentBlock: number) {
+    isStale(txRecord: TransactionRecord, currentBlock: number) {
         return txRecord.blockNumberChecked < currentBlock;
     }
 }

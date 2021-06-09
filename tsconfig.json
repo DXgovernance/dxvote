@@ -5,7 +5,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es2018",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "baseUrl": "src",
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -27,7 +27,12 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "allowUnreachableCode": false,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": [
+      "./src/types"
+    ]
   },
   "include": [
     "src",

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
 import { observer } from 'mobx-react';
-import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 
 import Modal from '../Modal';
 import AccountDetails from '../AccountDetails';
@@ -11,10 +10,11 @@ import Option from './Option';
 import { usePrevious } from 'utils/helperHooks';
 import { Link } from '../../theme';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
-import { injected, walletconnect, SUPPORTED_WALLETS } from 'provider/connectors';
+import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
 import { useStores } from 'contexts/storesContext';
 import { isChainIdSupported } from '../../provider/connectors';
 import { useActiveWeb3React } from 'provider/providerHooks';
+import metamaskIcon from '../../assets/images/metamask.png';
 
 const CloseIcon = styled.div`
     position: absolute;
@@ -121,9 +121,9 @@ const WalletModal = observer(
         } = useStores();
         const { active, connector, error, activate, account, chainId } = useActiveWeb3React();
         const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
-        const [pendingWallet, setPendingWallet] = useState();
-        const [pendingError, setPendingError] = useState();
-        const [connectionErrorMessage, setConnectionErrorMessage] = useState();
+        const [pendingWallet, setPendingWallet] = useState(false);
+        const [pendingError, setPendingError] = useState(false);
+        const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);
 
         const walletModalOpen = modalStore.walletModalVisible;
 
@@ -139,20 +139,6 @@ const WalletModal = observer(
                 setWalletView(WALLET_VIEWS.ACCOUNT);
             }
         }, [walletModalOpen]);
-        
-        // set up uri listener for walletconnect
-        const [uri, setUri] = useState()
-        useEffect(() => {
-          const activateWC = uri => {
-            console.debug('uri',uri)
-            setUri(uri)
-            setWalletView(WALLET_VIEWS.PENDING)
-          }
-          walletconnect.on(URI_AVAILABLE, activateWC)
-          return () => {
-            walletconnect.off(URI_AVAILABLE, activateWC)
-          }
-        }, [])
         
         // close modal when a connection is successful
         const activePrevious = usePrevious(active);
@@ -228,7 +214,6 @@ const WalletModal = observer(
                                     header={'Install Metamask'}
                                     subheader={null}
                                     link={'https://metamask.io/'}
-                                    icon={require('assets/images/metamask.png')}
                                 />
                             );
                         } else {
@@ -346,7 +331,6 @@ const WalletModal = observer(
                     <ContentWrapper>
                         {walletView === WALLET_VIEWS.PENDING ? (
                             <PendingView
-                                uri={uri}
                                 size={220}
                                 connector={pendingWallet}
                                 error={pendingError}

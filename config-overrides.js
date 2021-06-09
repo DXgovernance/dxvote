@@ -27,12 +27,15 @@ module.exports = (config, env) => {
             chunkFilename: "static/css/[name].chunk.css",
         })
     );
-    config.module.rules[2].oneOf.find(
-        (rule) => rule.loader === process.cwd()+"/node_modules/react-scripts/node_modules/file-loader/dist/cjs.js"
-    ).options.name = "static/media/[name].[ext]";
-    config.module.rules[2].oneOf.find(
-        (rule) => rule.loader === process.cwd()+"/node_modules/react-scripts/node_modules/url-loader/dist/cjs.js"
-    ).options.name = "static/media/[name].[ext]";
-    config.optimization.moduleIds = "hashed";
+    
+    // TO DO: Check how to enable this later
+
+    // config.module.rules[2].oneOf.find(
+    //     (rule) => rule.loader === process.cwd()+"/node_modules/react-scripts/node_modules/file-loader/dist/cjs.js"
+    // ).options.name = "static/media/[name].[ext]";
+    // config.module.rules[2].oneOf.find(
+    //     (rule) => rule.loader === process.cwd()+"/node_modules/react-scripts/node_modules/url-loader/dist/cjs.js"
+    // ).options.name = "static/media/[name].[ext]";
+    // config.optimization.moduleIds = "hashed";
     return config;
 };

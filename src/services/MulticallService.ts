@@ -22,7 +22,7 @@ export default class MulticallService {
     const multi = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.Multicall,
-      configStore.getMulticallAddress()
+      configStore.getNetworkConfig().multicall
     );
 
     const response = await multi.methods.aggregate(rawCalls || this.activeCallsRaw).call();
@@ -41,7 +41,7 @@ export default class MulticallService {
     this.addContractCall(call);
   }
 
-  private addContractCall(call: Call) {
+  addContractCall(call: Call) {
     const { abiService } = this.root;
     const iface = new Interface(abiService.getAbi(call.contractType));
     call.params = call.params ? call.params : [];
@@ -57,7 +57,7 @@ export default class MulticallService {
   }
 
   resetActiveCalls() {
-    this.activeCalls = [] as Call[];
-    this.activeCallsRaw = [] as any[];
+    this.activeCalls = [];
+    this.activeCallsRaw = [];
   }
 }

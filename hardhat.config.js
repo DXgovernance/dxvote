@@ -36,16 +36,19 @@ module.exports = {
     ]
   },
   networks: {
-    localhost: {
+    hardhat: {
       chainId: 1337,
-      url: "http://127.0.0.1:8545",
       accounts: { mnemonic: MNEMONIC },
       throwOnTransactionFailures: true,
       throwOnCallFailures: true,
       allowUnlimitedContractSize: true,
       gasLimit: 9000000,
       gasPrice: 10000000000, // 10 gwei
-      timeout: 60000
+      timeout: 60000,
+      
+      // Uses the time now minus one hour in local development, you might need to disable it.
+      // For some reason the EVM date was one hour ahead my local system date.
+      initialDate: new Date((new Date().getTime()) - 3600 * 1000).toString()
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
@@ -53,13 +56,18 @@ module.exports = {
       gasLimit: 9000000,
       gasPrice: 1000000000 // 1 gwei
     },
-    arbitrum: {
-      url: 'https://kovan4.arbitrum.io/rpc',
+    xdai: {
+      url: `https://rpc.xdaichain.com/`,
       accounts: { mnemonic: MNEMONIC },
-      gasPrice: 0,
-      chainId: 212984383488152,
-      timeout: 60000,
-      networkCheckTimeout: 1000000
+      gasLimit: 17000000,
+      gasPrice: 2000000000, // 2 gwei
+      timeout: 60000
+    },
+    arbitrum: {
+      url: `https://arb1.arbitrum.io/rpc`,
+      accounts: { mnemonic: MNEMONIC },
+      chainId: 42161,
+      timeout: 60000
     },
   }
 };

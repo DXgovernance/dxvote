@@ -21,9 +21,10 @@ ganache_running() {
 
 time=date
 
-start_ganache() {
+start-hardhat_node() {
 
-  npx ganache-cli --gasLimit 9000000 --gasPrice 10000000000 -d -m "$mnemonic" -e 5000 > /dev/null &
+  # npx ganache-cli --gasLimit 9000000 --gasPrice 10000000000 -d -m "$mnemonic" -e 5000 > /dev/null &
+  npx hardhat node > /dev/null &
 
   ganache_pid=$!
 
@@ -33,14 +34,14 @@ start_ganache() {
     sleep 0.1 # wait for 1/10 of the second before check again
   done
 
-  echo "Ganache launched!"
+  echo "Harhat node launched!"
 }
 
 if ganache_running; then
-  echo "Using existing ganache instance"
+  echo "Using existing hardhat node instance"
 else
-  echo "Starting our own ganache instance"
-  start_ganache
+  echo "Starting our own hardhat node instance"
+  start-hardhat_node
 fi
 
 # Compile your contracts and copy the compiled code into the src
@@ -53,11 +54,18 @@ cp artifacts/dxdao-contracts/contracts/utils/Multicall.sol/Multicall.json src/co
 cp artifacts/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol/ERC20.json src/contracts/ERC20.json
 cp artifacts/dxdao-contracts/contracts/schemes/WalletScheme.sol/WalletScheme.json src/contracts/WalletScheme.json
 cp artifacts/dxdao-contracts/contracts/schemes/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
-yarn hardhat run --network localhost scripts/deployLocalContracts.js
 
-# Disable isolatedModules in tsconfig
+# Disable isolatedModules and use commonjs in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = false' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
+contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+
+# Deploy local contracts
+yarn hardhat run --network localhost scripts/deployLocalContracts.ts
+
+# Copy dxdao contracts addresses in live networks
+# cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
 
 # Run build cache
 REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
@@ -70,8 +78,10 @@ REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
 yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
 
-# Enable isolatedModules in tsconfig
+# Enable isolatedModules and use esnext as module in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+contents="$(jq '.compilerOptions.module = "esnext"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
 # Run dapp with localhost contracts

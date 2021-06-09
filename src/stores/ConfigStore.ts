@@ -1,68 +1,51 @@
-import { action, observable } from 'mobx';
+import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
-import { getConfig } from '../config';
+import { getTokens, getNetworkConfig } from '../config';
 import { _ } from 'lodash';
-import { CHAIN_NAME_BY_ID } from '../provider/connectors';
+import { NETWORK_NAMES } from '../provider/connectors';
 
 export default class ConfigStore {
-    @observable darkMode: boolean;
+    darkMode: boolean;
     rootStore: RootStore;
 
     constructor(rootStore) {
       this.rootStore = rootStore;
       this.darkMode = false;
+      makeObservable(this, {
+          darkMode: observable,
+          toggleDarkMode: action
+        }
+      );
     }
     
     getActiveChainName() {
       const activeWeb3 = this.rootStore.providerStore.getActiveWeb3React();
-      return activeWeb3 ? CHAIN_NAME_BY_ID[activeWeb3.chainId] : 'none';
+      return activeWeb3 ? NETWORK_NAMES[activeWeb3.chainId] : 'none';
     }
     
-    getApiKeys() {
-      return {
-        etherscan: localStorage.getItem('dxvote-etherscan'),
-        pinata: localStorage.getItem('dxvote-pinata')
-      }
+    getLocalConfig() {
+      if (localStorage.getItem('dxvote-config'))
+        return JSON.parse(localStorage.getItem('dxvote-config'));
+      else return {
+        etherscan: '',
+        pinata: '',
+        pinOnStart: false
+      };
     }
     
-    getApiKey(service) {
-      localStorage.getItem('dxvote-'+service);
+    setLocalConfig(config) {
+      localStorage.setItem('dxvote-config', JSON.stringify(config));
     }
     
-    setApiKey(service, key) {
-      localStorage.setItem('dxvote-'+service, key);
-    }
-    
-    @action toggleDarkMode() {
-        this.darkMode = !this.darkMode;
+    toggleDarkMode() {
+      this.darkMode = !this.darkMode;
     }
 
     @action setDarkMode(visible: boolean) {
-        this.darkMode = visible;
+      this.darkMode = visible;
     }
     
     getNetworkConfig() {
-      return getConfig(this.getActiveChainName());
-    }
-    getAvatarAddress() {
-      return getConfig(this.getActiveChainName()).avatar || "0x0000000000000000000000000000000000000000";
-    }
-    getControllerAddress() {
-      return getConfig(this.getActiveChainName()).controller || "0x0000000000000000000000000000000000000000";
-    }
-    getReputationAddress() {
-      return getConfig(this.getActiveChainName()).reputation || "0x0000000000000000000000000000000000000000";
-    }
-    getVotingMachineAddress() {
-      return getConfig(this.getActiveChainName()).votingMachine || "0x0000000000000000000000000000000000000000";
-    }
-    getPermissionRegistryAddress() {
-      return getConfig(this.getActiveChainName()).permissionRegistry || "0x0000000000000000000000000000000000000000";
-    }
-    getMulticallAddress() {
-      return getConfig(this.getActiveChainName()).multicall || "0x0000000000000000000000000000000000000000";
-    }
-    getStartBlock() {
-      return getConfig(this.getActiveChainName()).fromBlock;
+      return getNetworkConfig(this.getActiveChainName());
     }
 }

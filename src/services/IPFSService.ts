@@ -1,7 +1,7 @@
 import RootStore from '../stores';
 import IPFS from 'ipfs-core';
 import contentHash from 'content-hash';
-import * as request from "request-promise-native";
+import axios from "axios";
 
 export default class IPFSService {
   rootStore: RootStore;
@@ -20,43 +20,25 @@ export default class IPFSService {
   async start(){
     if (!this.ipfs && !this.started) {
       this.started = true;
-      this.ipfs = await IPFS.create();
+      try {
+        this.ipfs = await IPFS.create();
+      } catch (error) {
+        console.error('[IPFS]', error);
+      }
     }
   }
 
-  async add(
-    content: String
-  ){
-    const { cid } = await this.ipfs.add({content})
-    return contentHash.fromIpfs(cid);
-  }
-
-  call(
-    hash: String
-  ){
-    if (!this.calls[contentHash.decode(hash)]) {
-      this.calls[contentHash.decode(hash)] = {
-        time: new Date().getTime() / 1000,
-        content: "",
-        fetched: false
-      };
-      request.get({uri: `https://ipfs.io/ipfs/${contentHash.decode(hash)}`}).then((content) => {
-        this.calls[contentHash.decode(hash)] = {
-          time: new Date().getTime() / 1000,
-          content: content,
-          fetched: true
-        };
-      })
-    }
+  async add(content: String) {
+    const { cid } = await this.ipfs.add({content});
+    console.log(cid.string)
+    return cid.string;
   }
   
-  get(
-    hash: String
-  ){
-    return !this.calls[contentHash.decode(hash)] ? {
-      time: 0,
-      content: "",
-      fetched: false,
-    } : this.calls[contentHash.decode(hash)];
-  }  
+  async pin(cid: String){
+    await this.ipfs.pin.add(cid);
+  }
+  
+  async get(hash: String){
+    return axios.get(`https://gateway.pinata.cloud/ipfs/${contentHash.decode(hash)}`);
+  }
 }

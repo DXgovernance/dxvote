@@ -1,5 +1,5 @@
 import { Contract } from 'ethers';
-import { TXEvents } from '../../types';
+import { TXEvents } from '../../enums';
 import { getErrorByCode, isKnownErrorCode } from './error';
 import PromiEvent from 'promievent';
 

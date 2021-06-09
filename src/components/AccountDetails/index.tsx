@@ -1,12 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { isMobile } from 'react-device-detect';
-import Copy from './Copy';
-import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
-//@ts-ignore
+import Copy from '../common/Copy';
+import { injected } from 'provider/connectors';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { getEtherscanLink } from 'utils/etherscan';
-import { web3Window as window } from 'provider/Web3Window';
 
 import { Link } from '../../theme';
 import { useStores } from '../../contexts/storesContext';
@@ -176,24 +173,6 @@ const CloseColor = styled(Close)`
     }
 `;
 
-const WalletName = styled.div`
-    padding-left: 0.5rem;
-    width: initial;
-`;
-
-const IconWrapper = styled.div`
-    ${({ theme }) => theme.flexColumnNoWrap};
-    align-items: center;
-    justify-content: center;
-    & > img,
-    span {
-        height: ${({ size }) => (size ? size + 'px' : '32px')};
-        width: ${({ size }) => (size ? size + 'px' : '32px')};
-    }
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-    align-items: flex-end;
-  `};
-`;
 
 const WalletAction = styled.div`
     color: ${({ theme }) => theme.chaliceGray};
@@ -222,32 +201,6 @@ export default function AccountDetails(props: Props) {
     } = useStores();
     const { chainId, account, connector } = providerStore.getActiveWeb3React();
 
-    function formatConnectorName() {
-        const isMetaMask =
-            window.ethereum && window.ethereum.isMetaMask ? true : false;
-        const name = Object.keys(SUPPORTED_WALLETS)
-            .filter(
-                (k) =>
-                    SUPPORTED_WALLETS[k].connector === connector &&
-                    (connector !== injected ||
-                        isMetaMask === (k === 'METAMASK'))
-            )
-            .map((k) => SUPPORTED_WALLETS[k].name)[0];
-        return <WalletName>{name}</WalletName>;
-    }
-
-    function getStatusIcon() {
-        if (connector === injected) {
-            return (
-                <IconWrapper size={16}>
-                    {formatConnectorName()}
-                </IconWrapper>
-            );
-        } else {
-          return <div />;
-        }
-    }
-
     return (
         <>
             <UpperSection>
@@ -259,7 +212,6 @@ export default function AccountDetails(props: Props) {
                     <YourAccount>
                         <InfoCard>
                             <AccountGroupingRow>
-                                {getStatusIcon()}
                                 <div>
                                     {connector !== injected && (
                                         <WalletAction
@@ -320,17 +272,15 @@ export default function AccountDetails(props: Props) {
                         </InfoCard>
                     </YourAccount>
 
-                    {!(isMobile && (window.web3 || window.ethereum)) && (
-                        <ConnectButtonRow>
-                            <OptionButton
-                                onClick={() => {
-                                    openOptions();
-                                }}
-                            >
-                                Connect to a different wallet
-                            </OptionButton>
-                        </ConnectButtonRow>
-                    )}
+                    <ConnectButtonRow>
+                        <OptionButton
+                            onClick={() => {
+                                openOptions();
+                            }}
+                        >
+                            Connect to a different wallet
+                        </OptionButton>
+                    </ConnectButtonRow>
                 </AccountSection>
             </UpperSection>
         </>
