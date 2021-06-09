@@ -56,12 +56,6 @@ module.exports = {
       gasLimit: 9000000,
       gasPrice: 1000000000 // 1 gwei
     },
-    "arbitrum-testnet-v5": {
-      url: 'https://kovan5.arbitrum.io/rpc',
-      accounts: { mnemonic: MNEMONIC },
-      gasPrice: 0,
-      chainId: 144545313136048
-    },
     xdai: {
       url: `https://rpc.xdaichain.com/`,
       accounts: { mnemonic: MNEMONIC },

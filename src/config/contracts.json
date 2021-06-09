@@ -29,21 +29,6 @@
     "votingMachineToken": "0x1a34b416e8A744aFBc66E96414C6A7705e780Fc1",
     "permissionRegistry": "0x5c34F404aA92997f7342Ec0F89568c71f4f9FaB1"
   },
-  "arbitrum-testnet-v5": {
-    "schemes": {
-      "masterWallet": "0x1FD1C4d820432C154bD1b48b6cC669b1675F6153",
-      "quickWallet": "0x96f33354CAac9C096AbDD631db25A4a0E22b58bB"
-    },
-    "multicall": "0x18Ebdf0E8542F07Ea1d869Df38Fd1173be2C6142",
-    "fromBlock": 185395,
-    "reputation": "0xf8560B8474C48b187D972ccA565c10F691223262",
-    "token": "0x5AAFf6fDfcfce823E02C53be04Ec60230a57001c",
-    "avatar": "0x4876F67D6aE09a78d722532744955c004d1DDCbE",
-    "controller": "0x4E66A51e4a41E2683f5245cF31207f10c6658Ea5",
-    "votingMachine": "0x0d4035bD16DE204116af1075D8E7603D26EBabF5",
-    "votingMachineToken": "0xbDa121C4bf517FfeA4eac10A59067973D4004a5a",
-    "permissionRegistry": "0xDDb50f60B189a37918d2616e59A231F6a1a4A4ff"
-  },
   "arbitrum": {
     "schemes": {
       "masterWallet": "0x8a5a7B614D663607E2E8075B407f45B21A13759A",

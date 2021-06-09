@@ -45,16 +45,12 @@ const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy, only
           case "user":
             return `${window.location.pathname}#/user/${text}`;
           case "address":
-            if (networkName == 'arbitrum-testnet-v5')
-              return `https://explorer5.arbitrum.io/#/address/${text}`
-            else if (networkName == 'arbitrum')
+            if (networkName == 'arbitrum')
               return `https://explorer5.arbitrum.io/#/address/${text}`
             else
               return `https://${networkName}.etherscan.io/address/${text}`
           default:
-            if (networkName == 'arbitrum-testnet-v5')
-              return `https://explorer5.arbitrum.io/#/tx/${text}`
-            else if (networkName == 'arbitrum')
+            if (networkName == 'arbitrum')
               return `https://explorer5.arbitrum.io/#/tx/${text}`
             else
               return `https://${networkName}.etherscan.io/tx/${text}`
