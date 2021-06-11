@@ -58,6 +58,12 @@ export interface BlockchainEvent {
   logIndex: number;
 }
 
+export interface ERC20TransferEvent extends BlockchainEvent{
+  from: string;
+  to: String;
+  amount: BigNumber;
+};
+
 export interface RepEvent extends BlockchainEvent{
   account: string;
   amount: BigNumber;
@@ -167,8 +173,10 @@ export interface Scheme {
   address: string;
   registered: boolean;
   name: string,
+  type: string,
   controllerAddress: string;
   ethBalance: BigNumber;
+  votingMachine: String;
   configurations: {
     paramsHash: string;
     parameters: SchemeParameters;
@@ -185,8 +193,7 @@ export interface Scheme {
 
 export interface User {
   repBalance: BigNumber;
-  dxdBalance: BigNumber;
-  proposalsCreated: string[]
+  proposalsCreated: string[];
 }
 
 export interface DaoInfo {
@@ -194,7 +201,6 @@ export interface DaoInfo {
   totalRep: BigNumber;
   repEvents: RepEvent[];
   ethBalance: BigNumber;
-  dxdBalance: BigNumber;
 }
 
 export interface IPFSHash {
@@ -209,14 +215,21 @@ export interface DaoNetworkCache {
   schemes: {[address: string]: Scheme};
   proposals: {[id: string]: Proposal};
   users: {[address: string]: User};
-  votingMachineEvents: {
-    votes: Vote[];
-    stakes: Stake[];
-    redeems: Redeem[];
-    redeemsRep: RedeemRep[];
-    proposalStateChanges: ProposalStateChange[];
-  },
-  ipfsHashes: IPFSHash[]
+  votingMachines: {[address: string]: {
+    name: string;
+    events: {
+      votes: Vote[];
+      stakes: Stake[];
+      redeems: Redeem[];
+      redeemsRep: RedeemRep[];
+      proposalStateChanges: ProposalStateChange[];
+    };
+    token: {
+      address: string;
+      totalSupply: BigNumber;
+    };
+  }};
+  ipfsHashes: IPFSHash[];
 };
 
 export interface DaoCache {

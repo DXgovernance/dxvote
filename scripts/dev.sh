@@ -54,6 +54,7 @@ cp artifacts/dxdao-contracts/contracts/utils/Multicall.sol/Multicall.json src/co
 cp artifacts/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol/ERC20.json src/contracts/ERC20.json
 cp artifacts/dxdao-contracts/contracts/schemes/WalletScheme.sol/WalletScheme.json src/contracts/WalletScheme.json
 cp artifacts/dxdao-contracts/contracts/schemes/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
+cp artifacts/@daostack/infra/contracts/votingMachines/GenesisProtocol.sol/GenesisProtocol.json src/contracts/GenesisProtocol.json
 
 # Disable isolatedModules and use commonjs in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = false' tsconfig.json)" && \
@@ -71,8 +72,8 @@ yarn hardhat run --network localhost scripts/deployLocalContracts.ts
 REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
 REACT_APP_CONTROLLER_ADDRESS=`jq .controller .developmentAddresses.json` \
 REACT_APP_REPUTATION_ADDRESS=`jq .reputation .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachine .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachineToken .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachines.dxd.address .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachines.dxd.token .developmentAddresses.json` \
 REACT_APP_PERMISSION_REGISTRY_ADDRESS=`jq .permissionRegistry .developmentAddresses.json` \
 REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
 yarn hardhat run --network localhost scripts/buildCache.ts
@@ -89,8 +90,8 @@ FORCE_COLOR=true \
 REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
 REACT_APP_CONTROLLER_ADDRESS=`jq .controller .developmentAddresses.json` \
 REACT_APP_REPUTATION_ADDRESS=`jq .reputation .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachine .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachineToken .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachines.dxd.address .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachines.dxd.token .developmentAddresses.json` \
 REACT_APP_PERMISSION_REGISTRY_ADDRESS=`jq .permissionRegistry .developmentAddresses.json` \
 REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
 SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-app-rewired start | cat

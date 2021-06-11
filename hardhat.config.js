@@ -19,7 +19,8 @@ module.exports = {
       'dxdao-contracts/contracts/utils/Multicall.sol',
       'dxdao-contracts/contracts/schemes/WalletScheme.sol',
       'dxdao-contracts/contracts/schemes/PermissionRegistry.sol',
-      'dxdao-contracts/contracts/test/ERC20Mock.sol'
+      'dxdao-contracts/contracts/test/ERC20Mock.sol',
+      '@daostack/infra/contracts/votingMachines/GenesisProtocol.sol'
     ],
   },
   solidity: {
@@ -49,6 +50,12 @@ module.exports = {
       // Uses the time now minus one hour in local development, you might need to disable it.
       // For some reason the EVM date was one hour ahead my local system date.
       initialDate: new Date((new Date().getTime()) - 3600 * 1000).toString()
+    },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
+      accounts: { mnemonic: MNEMONIC },
+      gasLimit: 9000000,
+      timeout: 60000
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
