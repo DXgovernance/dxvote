@@ -174,7 +174,10 @@ const ProposalsPage = observer(() => {
             flexDirection: "row",
             justifyContent: "space-between"
           }}>
-            <ActiveButton route="/new">+ New Proposal</ActiveButton>
+            {(configStore.getActiveChainName() != 'mainnet') 
+              ? <ActiveButton route="/new">+ New Proposal</ActiveButton>
+              : <div/>
+            }
           </div>
         </ProposalTableHeaderActions>
         <ProposalTableHeaderWrapper>
