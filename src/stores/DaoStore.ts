@@ -30,7 +30,6 @@ export default class DaoStore {
   parseCache(unparsedCache: DaoNetworkCache): DaoNetworkCache {
     unparsedCache.daoInfo.totalRep = bnum(unparsedCache.daoInfo.totalRep);
     unparsedCache.daoInfo.ethBalance = bnum(unparsedCache.daoInfo.ethBalance);
-    unparsedCache.daoInfo.dxdBalance = bnum(unparsedCache.daoInfo.dxdBalance);
     unparsedCache.daoInfo.repEvents.map((repEvent, i) => {
       unparsedCache.daoInfo.repEvents[i].amount = bnum(repEvent.amount)
     })
@@ -159,8 +158,9 @@ export default class DaoStore {
   }
   
   getAllProposals(): Proposal[] {
-    const proposalsIds = Object.keys(this.getCache().proposals);
-    return proposalsIds.map( (proposalId) => {return this.getCache().proposals[proposalId] } );
+    const allProposals = Object.keys(this.getCache().proposals)
+      .map( (proposalId) => {return this.getCache().proposals[proposalId] } );
+    return _.orderBy(allProposals , ["creationEvent.blockNumber", "creationEvent.transactionIndex", "creationEvent.logIndex"], ["asc","asc","asc"]);
   }
   
   getAllSchemes(): Scheme[] {
@@ -168,12 +168,18 @@ export default class DaoStore {
     return schemeAddresses.map( (schemeAddress) => {return this.getCache().schemes[schemeAddress] } );
   }
   
-  getProposal(proposalId): Proposal{
+  getProposal(proposalId): Proposal {
     return this.getCache().proposals[proposalId];
   }
   
-  getScheme(schemeAddress): Scheme{
+  getScheme(schemeAddress): Scheme {
     return this.getCache().schemes[schemeAddress];
+  }
+  
+  getVotingMachineOfProposal(proposalId): String {
+    return this.getCache().schemes[
+      this.getCache().proposals[proposalId].scheme
+    ].votingMachine;
   }
   
   getProposalEvents(proposalId): {
@@ -279,14 +285,12 @@ export default class DaoStore {
   }
   
   getUser(userAddress): {
-    dxdBalance: BigNumber,
     repBalance: BigNumber,
     repPercentage: Number
   } {
     const user = this.getCache().users[userAddress];
 
     return {
-      dxdBalance: user ? bnum(user.dxdBalance) : bnum(0),
       repBalance: user ? bnum(user.repBalance) : bnum(0),
       repPercentage: user && user.repBalance ? bnum(user.repBalance).div(this.getCache().daoInfo.totalRep).times('100').toNumber() : 0
     }
@@ -310,16 +314,33 @@ export default class DaoStore {
     } = [];
     
     const cache = this.getCache();
-    
-    const proposalEvents = {
-      votes: cache.votingMachineEvents.votes
-        .filter((vote) => {return (userAddress === vote.voter)}),
-      stakes: cache.votingMachineEvents.stakes
-        .filter((stake) => {return (userAddress === stake.staker)}),
-      redeems: cache.votingMachineEvents.redeems
-        .filter((redeem) => {return (userAddress === redeem.beneficiary)}),
-      redeemsRep: cache.votingMachineEvents.redeemsRep
-        .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)})
+    const votingMachines = this.rootStore.configStore.getNetworkConfig().votingMachines;
+    let proposalEvents = {
+      votes: [],
+      stakes: [],
+      redeems: [],
+      redeemsRep: []
+    };
+    if (votingMachines.gen) {
+      proposalEvents.votes = proposalEvents.votes.concat(cache.votingMachines[votingMachines.gen.address].events.votes
+        .filter((vote) => {return (userAddress === vote.voter)}));
+      proposalEvents.stakes = proposalEvents.stakes.concat(cache.votingMachines[votingMachines.gen.address].events.stakes
+        .filter((stake) => {return (userAddress === stake.staker)}));
+      proposalEvents.redeems = proposalEvents.redeems.concat(cache.votingMachines[votingMachines.gen.address].events.redeems
+        .filter((redeem) => {return (userAddress === redeem.beneficiary)}));
+      proposalEvents.redeemsRep = proposalEvents.redeemsRep.concat(cache.votingMachines[votingMachines.gen.address].events.redeemsRep
+        .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)}));
+    }
+
+    if (votingMachines.dxd) {
+      proposalEvents.votes = proposalEvents.votes.concat(cache.votingMachines[votingMachines.dxd.address].events.votes
+        .filter((vote) => {return (userAddress === vote.voter)}));
+      proposalEvents.stakes = proposalEvents.stakes.concat(cache.votingMachines[votingMachines.dxd.address].events.stakes
+        .filter((stake) => {return (userAddress === stake.staker)}));
+      proposalEvents.redeems = proposalEvents.redeems.concat(cache.votingMachines[votingMachines.dxd.address].events.redeems
+        .filter((redeem) => {return (userAddress === redeem.beneficiary)}));
+      proposalEvents.redeemsRep = proposalEvents.redeemsRep.concat(cache.votingMachines[votingMachines.dxd.address].events.redeemsRep
+        .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)}));
     }
     
     const newProposalEvents = cache.users[userAddress]
@@ -400,27 +421,33 @@ export default class DaoStore {
   }
   
   getVotesOfProposal(proposalId: string): Vote[]{
-    return this.getCache().votingMachineEvents.votes
+    
+    return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+      .events.votes
       .filter((vote) => {return (proposalId === vote.proposalId)});
   }
   
   getStakesOfProposal(proposalId: string): Stake[]{
-    return this.getCache().votingMachineEvents.stakes
+    return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+      .events.stakes
       .filter((stake) => {return (proposalId === stake.proposalId)});
   }
   
   getRedeemsOfProposal(proposalId: string): Redeem[]{
-    return this.getCache().votingMachineEvents.redeems
+    return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+      .events.redeems
       .filter((redeem) => {return (proposalId === redeem.proposalId)});
   }
   
   getRedeemsRepOfProposal(proposalId: string): RedeemRep[]{
-    return this.getCache().votingMachineEvents.redeemsRep
+    return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+      .events.redeemsRep
       .filter((redeemRep) => {return (proposalId === redeemRep.proposalId)});
   }
   
   getProposalStateChanges(proposalId: string): ProposalStateChange[]{
-    return this.getCache().votingMachineEvents.proposalStateChanges
+    return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+      .events.proposalStateChanges
       .filter((proposalStateChange) => {return (proposalId === proposalStateChange.proposalId)});
   }
 
@@ -453,22 +480,21 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getNetworkConfig().votingMachine,
+      this.getVotingMachineOfProposal(proposalId),
       'vote',
       [proposalId, decision, amount.toString(), account],
       {}
     );
   }
   
-  @action approveVotingMachineToken(
-  ): PromiEvent<any> {
+  @action approveVotingMachineToken(votingMachineAddress): PromiEvent<any> {
     const { providerStore, configStore, blockchainStore } = this.rootStore;
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.ERC20,
-      configStore.getNetworkConfig().votingMachineToken,
+      this.getCache().votingMachines[votingMachineAddress].token.address,
       'approve',
-      [configStore.getNetworkConfig().votingMachine, utils.bigNumberify(ethers.constants.MaxUint256)],
+      [votingMachineAddress, utils.bigNumberify(ethers.constants.MaxUint256)],
       {}
     );
   }
@@ -482,7 +508,7 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getNetworkConfig().votingMachine,
+      this.getVotingMachineOfProposal(proposalId),
       'stake',
       [proposalId, decision, amount.toString()],
       {}
@@ -496,7 +522,7 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getNetworkConfig().votingMachine,
+      this.getVotingMachineOfProposal(proposalId),
       'execute',
       [proposalId],
       {}
@@ -510,7 +536,7 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      configStore.getNetworkConfig().votingMachine,
+      this.getVotingMachineOfProposal(proposalId),
       'redeem',
       [proposalId, account],
       {}

@@ -68,8 +68,6 @@ const FinanceInformation = observer(() => {
     const networkConfig = configStore.getNetworkConfig();
     let assets = [{
       name: "ETH", amount: parseFloat(Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(4))
-    },{
-      name: "DXD", amount: parseFloat(Number(library.utils.fromWei(daoInfo.dxdBalance.toString())).toFixed(4))
     }];
     Object.keys(daoStore.tokenBalances).map((tokenAddress) => {
       assets.push({

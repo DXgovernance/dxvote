@@ -129,15 +129,18 @@ const ProposalPage = observer(() => {
     } = useStores();
     const proposalId = useLocation().pathname.split("/")[2];
     const proposalInfo = daoStore.getProposal(proposalId);
+    const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
     const { dxdApproved } = userStore.getUserInfo(); 
     const { active, account, library } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
     const [canRedeem, setCanRedeem] = React.useState(false);
     const [proposalDescription, setProposalDescription] = React.useState("## Getting proposal description from IPFS...");
+    const [proposalTitle, setProposalTitle] = React.useState(
+      schemeInfo.type == 'WalletScheme' ? proposalInfo.title : "Getting proposal title from IPFS..."
+    );
     
     const proposalEvents = daoStore.getProposalEvents(proposalId);
-    const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
     console.debug("[Scheme info]", schemeInfo);
     
     let votedAmount = bnum(0);
@@ -154,9 +157,20 @@ const ProposalPage = observer(() => {
     totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
       
     // @ts-ignore
-    ipfsService.get(proposalInfo.descriptionHash).then((response) => {
-      setProposalDescription(response.data);
-    });
+    try {
+      ipfsService.get(proposalInfo.descriptionHash).then((response) => {
+        if (schemeInfo.type == 'WalletScheme') {
+          setProposalDescription(response.data);
+        } else {
+          setProposalTitle(response.data.title);
+          setProposalDescription(response.data.description);
+        }
+      });
+    } catch (error) {
+      setProposalTitle("Error getting proposal title from ipfs");
+      setProposalDescription("Error getting proposal description from IPFS");
+    }
+    
     
     proposalEvents.votes.map((vote) => {
       if (vote.voter === account) {
@@ -253,7 +267,7 @@ const ProposalPage = observer(() => {
     return (
       <ProposalInformationWrapper>
         <ProposalInfoSection>
-          <h1 style={{margin: "0px"}}> {proposalInfo.title} </h1>
+          <h1 style={{margin: "0px"}}> {proposalTitle} </h1>
           <MDEditor.Markdown source={ proposalDescription } style={{
             padding: "20px 10px"
           }} />

@@ -177,8 +177,9 @@ const ProposalsPage = observer(() => {
           </div>
         </ProposalTableHeaderActions>
         <ProposalTableHeaderWrapper>
-            <TableHeader width="40%" align="left"> Title </TableHeader>
-            <TableHeader width="10%" align="center"> Scheme </TableHeader>
+            <TableHeader width="5%" align="left"> # </TableHeader>
+            <TableHeader width="30%" align="left"> Title </TableHeader>
+            <TableHeader width="15%" align="center"> Scheme </TableHeader>
             <TableHeader width="15%" align="center"> Status </TableHeader>
             <TableHeader width="17.5%" align="center"> Staked </TableHeader>
             <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
@@ -204,10 +205,13 @@ const ProposalsPage = observer(() => {
                 return (
                   <Link key={"proposal"+i} to={"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
                     <TableRow>
-                      <TableCell width="40%" align="left" weight='500' wrapText="true">
-                        {proposal.title}
+                      <TableCell width="5%" align="center">
+                        #{allProposals.length - i}
                       </TableCell>
-                      <TableCell width="10%" align="center">
+                      <TableCell width="30%" align="left" weight='500' wrapText="true">
+                        {proposal.title.length > 0 ? proposal.title : proposal.id}
+                      </TableCell>
+                      <TableCell width="15%" align="center">
                         {daoStore.getCache().schemes[proposal.scheme].name}
                       </TableCell>
                       <TableCell width="15%" align="center">
