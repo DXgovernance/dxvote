@@ -5,7 +5,6 @@ const moment = require("moment");
 const { encodePermission, decodePermission } = require('../src/utils/permissions');
 const IPFS = require('ipfs-core');
 const contentHash = require('content-hash');
-const repHolders = require('../.repHolders.json');
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 const MAX_UINT_256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
