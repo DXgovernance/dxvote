@@ -22,13 +22,7 @@ async function main() {
         proposals: {},
         users: {},
         callPermissions: {},
-        votingMachineEvents: {
-          votes: [],
-          stakes: [],
-          redeems: [],
-          redeemsRep: [],
-          proposalStateChanges: []
-        },
+        votingMachines: {},
         ipfsHashes: []
       }
     };
@@ -41,13 +35,7 @@ async function main() {
       proposals: {},
       users: {},
       callPermissions: {},
-      votingMachineEvents: {
-        votes: [],
-        stakes: [],
-        redeems: [],
-        redeemsRep: [],
-        proposalStateChanges: []
-      },
+      votingMachines: {},
       ipfsHashes: []
     } : (networkName == 'localhost') ?
     {
@@ -57,13 +45,7 @@ async function main() {
       proposals: {},
       users: {},
       callPermissions: {},
-      votingMachineEvents: {
-        votes: [],
-        stakes: [],
-        redeems: [],
-        redeemsRep: [],
-        proposalStateChanges: []
-      },
+      votingMachines: {},
       ipfsHashes: []
     } : cacheFile[networkName];
   
@@ -75,7 +57,7 @@ async function main() {
   
   cacheFile[networkName] = await updateNetworkCache(networkCache, networkName, fromBlock, toBlock, web3);
 
-  fs.writeFileSync("./src/cache.json", JSON.stringify(cacheFile), { encoding: "utf8", flag: "w" });
+  fs.writeFileSync("./src/cache.json", JSON.stringify(cacheFile, null, 2), { encoding: "utf8", flag: "w" });
 
 } 
 

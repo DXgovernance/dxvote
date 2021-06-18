@@ -151,11 +151,13 @@ const NewProposalPage = observer(() => {
         root: { providerStore, daoStore, configStore, daoService, ipfsService, pinataService, blockchainStore },
     } = useStores();
     
+    if (configStore.getActiveChainName() == 'mainnet')
+      history.push('/')
+    
     const { active, account } = providerStore.getActiveWeb3React();
     
     const schemes = daoStore.getAllSchemes();
     const networkConfig = configStore.getNetworkConfig()
-
     const [schemeToUse, setSchemeToUse] = React.useState(schemes[0]);
     const [titleText, setTitleText] = React.useState("");
     const [ipfsHash, setIpfsHash] = React.useState("");

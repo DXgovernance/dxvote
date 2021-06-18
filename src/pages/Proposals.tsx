@@ -126,9 +126,10 @@ const TableCell = styled.div`
 
 const ProposalsPage = observer(() => {
     const {
-        root: { providerStore, daoStore, blockchainStore },
+        root: { providerStore, daoStore, blockchainStore, configStore },
     } = useStores();
 
+    const votingMachines = configStore.getNetworkConfig().votingMachines;
     const { library, active } = providerStore.getActiveWeb3React();
     const [stateFilter, setStateFilter] = React.useState("All");
     const [titleFilter, setTitleFilter] = React.useState("");
@@ -173,12 +174,16 @@ const ProposalsPage = observer(() => {
             flexDirection: "row",
             justifyContent: "space-between"
           }}>
-            <ActiveButton route="/new">+ New Proposal</ActiveButton>
+            {(configStore.getActiveChainName() != 'mainnet') 
+              ? <ActiveButton route="/new">+ New Proposal</ActiveButton>
+              : <div/>
+            }
           </div>
         </ProposalTableHeaderActions>
         <ProposalTableHeaderWrapper>
-            <TableHeader width="40%" align="left"> Title </TableHeader>
-            <TableHeader width="10%" align="center"> Scheme </TableHeader>
+            <TableHeader width="5%" align="left"> # </TableHeader>
+            <TableHeader width="30%" align="left"> Title </TableHeader>
+            <TableHeader width="15%" align="center"> Scheme </TableHeader>
             <TableHeader width="15%" align="center"> Status </TableHeader>
             <TableHeader width="17.5%" align="center"> Staked </TableHeader>
             <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
@@ -200,14 +205,20 @@ const ProposalsPage = observer(() => {
                 const positiveVotesPercentage = proposal.positiveVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
                 const negativeVotesPercentage =  proposal.negativeVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
                 const timeToBoost = moment().to( moment.unix(proposal.boostTime.toNumber()) ).toString();
-                const timeToFinish = moment().to( moment.unix(proposal.finishTime.toNumber()) ).toString();;
+                const timeToFinish = moment().to( moment.unix(proposal.finishTime.toNumber()) ).toString();
+                const votingMachineTokenName = 
+                (votingMachines.gen && (daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.gen.address))
+                ? 'GEN' : 'DXD';
                 return (
                   <Link key={"proposal"+i} to={"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
                     <TableRow>
-                      <TableCell width="40%" align="left" weight='500' wrapText="true">
-                        {proposal.title}
+                      <TableCell width="5%" align="center">
+                        #{allProposals.length - i}
                       </TableCell>
-                      <TableCell width="10%" align="center">
+                      <TableCell width="30%" align="left" weight='500' wrapText="true">
+                        {proposal.title.length > 0 ? proposal.title : proposal.id}
+                      </TableCell>
+                      <TableCell width="15%" align="center">
                         {daoStore.getCache().schemes[proposal.scheme].name}
                       </TableCell>
                       <TableCell width="15%" align="center">
@@ -216,9 +227,9 @@ const ProposalsPage = observer(() => {
                         {(proposal.finishTime.toNumber() > moment().unix()) ? <small>Finish {timeToFinish} </small> : <span></span>}
                       </TableCell>
                       <TableCell width="17.5%" align="center"> 
-                        <span style={{color: "green"}}>{positiveStake} DXD </span>
+                        <span style={{color: "green"}}>{positiveStake} {votingMachineTokenName} </span>
                         -
-                        <span style={{color: "red"}}> {negativeStake} DXD</span>
+                        <span style={{color: "red"}}> {negativeStake} {votingMachineTokenName}</span>
                       </TableCell>
                       <TableCell width="17.5%" align="center"> 
                         <span style={{color: "green"}}>{positiveVotesPercentage} % </span>

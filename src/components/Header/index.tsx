@@ -66,19 +66,23 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, daoStore, blockchainStore },
+      root: { userStore, providerStore, daoStore, blockchainStore, configStore },
   } = useStores();
   
+  const votingMachines = configStore.getNetworkConfig().votingMachines;
   const userInfo = userStore.getUserInfo();
   const { active, account } = providerStore.getActiveWeb3React();
   const ethBalance = active && userInfo.ethBalance ?
-    parseFloat(Number(Web3.utils.fromWei(userInfo.ethBalance.toString())).toFixed(4))
+    parseFloat(Number(Web3.utils.fromWei(userInfo.ethBalance.toString())).toFixed(2))
     : 0;
   const dxdBalance = active && userInfo.dxdBalance ?
-    parseFloat(Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(4))
+    parseFloat(Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(2))
+    : 0;
+  const genBalance = active && userInfo.genBalance ?
+    parseFloat(Number(Web3.utils.fromWei(userInfo.genBalance.toString())).toFixed(2))
     : 0;
   const repBalance = active && userInfo.repBalance ?
-    parseFloat(Number(Web3.utils.fromWei(userInfo.repBalance.toString())).toFixed(4))
+    parseFloat(Number(Web3.utils.fromWei(userInfo.repBalance.toString())).toFixed(0))
     : 0;
     
   const repPercentage = active && daoStore.getDaoInfo().totalRep
@@ -94,9 +98,9 @@ const Header = observer(() => {
       </NavSection>
       { active && blockchainStore.initialLoadComplete ?
         <NavSection>
-          <BalanceItem> {ethBalance} ETH </BalanceItem>
-          <BalanceItem> {dxdBalance} DXD </BalanceItem>
-          <BalanceItem> {repBalance} REP - {repPercentage.toFixed(2)} % </BalanceItem>
+          {votingMachines.dxd ? <BalanceItem> {dxdBalance} DXD </BalanceItem> : <div/> }
+          {votingMachines.gen ? <BalanceItem> {genBalance} GEN </BalanceItem> : <div/> }
+          <BalanceItem> {repPercentage.toFixed(4)} % REP </BalanceItem>
           <Web3ConnectStatus text="Connect Wallet" />
           <a href={`${window.location.pathname}#/info`}><FiBarChart2 style={{margin: "0px 10px", color: "#616161"}}/></a>
           <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>

@@ -4,18 +4,34 @@ const DxController = require("./DxController");
 const DxAvatar = require("./DxAvatar");
 const DxReputation = require("./DxReputation");
 const DXDVotingMachine = require("./DXDVotingMachine");
+const GenesisProtocol = require("./GenesisProtocol");
 const ERC20 = require("./ERC20");
 const Multicall = require("./Multicall");
 
 export const getContracts = async function(network: string, web3: any) {
-  const contractsAddresses = getNetworkConfig(network);
-  const votingMachine = await new web3.eth.Contract(DXDVotingMachine.abi, contractsAddresses.votingMachine);
-  const avatar = await new web3.eth.Contract(DxAvatar.abi, contractsAddresses.avatar);
-  const controller = await new web3.eth.Contract(DxController.abi, contractsAddresses.controller);
-  const reputation = await new web3.eth.Contract(DxReputation.abi, contractsAddresses.reputation);
-  const permissionRegistry = await new web3.eth.Contract(PermissionRegistry.abi, contractsAddresses.permissionRegistry);
-  const dxd = await new web3.eth.Contract(ERC20.abi, contractsAddresses.votingMachineToken);
-  const multicall = await new web3.eth.Contract(Multicall.abi, contractsAddresses.multicall);
+  const networkConfig = getNetworkConfig(network);
+  const avatar = await new web3.eth.Contract(DxAvatar.abi, networkConfig.avatar);
+  const controller = await new web3.eth.Contract(DxController.abi, networkConfig.controller);
+  const reputation = await new web3.eth.Contract(DxReputation.abi, networkConfig.reputation);
+  const permissionRegistry = await new web3.eth.Contract(PermissionRegistry.abi, networkConfig.permissionRegistry);
+  const multicall = await new web3.eth.Contract(Multicall.abi, networkConfig.multicall);
 
-  return { votingMachine, avatar, controller, reputation, permissionRegistry, dxd, multicall };
+  let votingMachines = {};
+
+  if (networkConfig.votingMachines.gen)
+    votingMachines[networkConfig.votingMachines.gen.address] = {
+      name: "GenesisProtocol",
+      contract: await new web3.eth.Contract(GenesisProtocol.abi, networkConfig.votingMachines.gen.address),
+      token: await new web3.eth.Contract(ERC20.abi, networkConfig.votingMachines.gen.token)
+    }
+  
+  if (networkConfig.votingMachines.dxd)
+    votingMachines[networkConfig.votingMachines.dxd.address] = {
+      name: "DXDVotingMachine",
+      contract: await new web3.eth.Contract(DXDVotingMachine.abi, networkConfig.votingMachines.dxd.address),
+      token: await new web3.eth.Contract(ERC20.abi, networkConfig.votingMachines.dxd.token)
+    }
+  
+  return { votingMachines, avatar, controller, reputation, permissionRegistry, multicall };
+  
 }

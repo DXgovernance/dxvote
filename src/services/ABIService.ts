@@ -4,7 +4,8 @@ import RootStore from '../stores';
 export const schema = {
   Avatar: require('../contracts/DxAvatar').abi,
   Controller: require('../contracts/DxController').abi,
-  VotingMachine: require('../contracts/DXDVotingMachine').abi,
+  VotingMachine: require('../contracts/GenesisProtocol').abi,
+  DXDVotingMachine: require('../contracts/DXDVotingMachine').abi,
   Reputation: require('../contracts/DxReputation').abi,
   WalletScheme: require('../contracts/WalletScheme').abi,
   ERC20: require('../contracts/ERC20').abi,

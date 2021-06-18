@@ -5,7 +5,6 @@ const moment = require("moment");
 const { encodePermission, decodePermission } = require('../src/utils/permissions');
 const IPFS = require('ipfs-core');
 const contentHash = require('content-hash');
-const repHolders = require('../.repHolders.json');
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 const MAX_UINT_256 = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
@@ -463,14 +462,18 @@ async function main() {
   );
     
   const contractsDeployed = {
+    fromBlock: 1,
     avatar: avatar.address,
     controller: controller.address,
     reputation: reputation.address,
-    votingMachine: dxdVotingMachine.address,
-    votingMachineToken: votingMachineToken.address,
+    votingMachines: {
+      dxd: {
+        address: dxdVotingMachine.address,
+        token: votingMachineToken.address
+      }
+    },
     permissionRegistry: permissionRegistry.address,
-    multicall: multicall.address,
-    fromBlock: 1
+    multicall: multicall.address
   };
   
   console.log("Contracts Deployed:", contractsDeployed);

@@ -189,7 +189,7 @@ export default class BlockchainStore {
         // Get user-specific blockchain data
         if (account) {
           transactionStore.checkPendingTransactions(web3React, account);
-          multicallService.addCalls([{
+          let accountCalls = [{
             contractType: ContractType.Multicall,
             address: configStore.getNetworkConfig().multicall,
             method: 'getEthBalance',
@@ -199,17 +199,38 @@ export default class BlockchainStore {
             address: configStore.getNetworkConfig().reputation,
             method: 'balanceOf',
             params: [account],
-          },{
-            contractType: ContractType.ERC20,
-            address: configStore.getNetworkConfig().votingMachineToken,
-            method: 'balanceOf',
-            params: [account],
-          },{
-            contractType: ContractType.ERC20,
-            address: configStore.getNetworkConfig().votingMachineToken,
-            method: 'allowance',
-            params: [account, configStore.getNetworkConfig().votingMachine],
-          }]);
+          }];
+          
+          if (configStore.getNetworkConfig().votingMachines.gen) {
+            accountCalls.push({
+              contractType: ContractType.ERC20,
+              address: configStore.getNetworkConfig().votingMachines.gen.token,
+              method: 'balanceOf',
+              params: [account],
+            });
+            accountCalls.push({
+              contractType: ContractType.ERC20,
+              address: configStore.getNetworkConfig().votingMachines.gen.token,
+              method: 'allowance',
+              params: [account, configStore.getNetworkConfig().votingMachines.gen.address],
+            });
+          }
+          if (configStore.getNetworkConfig().votingMachines.dxd) {
+            accountCalls.push({
+              contractType: ContractType.ERC20,
+              address: configStore.getNetworkConfig().votingMachines.dxd.token,
+              method: 'balanceOf',
+              params: [account],
+            });
+            accountCalls.push({
+              contractType: ContractType.ERC20,
+              address: configStore.getNetworkConfig().votingMachines.dxd.token,
+              method: 'allowance',
+              params: [account, configStore.getNetworkConfig().votingMachines.dxd.address],
+            });
+          }
+          
+          multicallService.addCalls(accountCalls);
           await this.executeAndUpdateMulticall(multicallService);
           userStore.update();
         };

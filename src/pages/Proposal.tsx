@@ -127,17 +127,24 @@ const ProposalPage = observer(() => {
     const {
         root: { providerStore, daoStore, configStore, daoService, ipfsService, userStore, blockchainStore },
     } = useStores();
+    const votingMachines = configStore.getNetworkConfig().votingMachines;
     const proposalId = useLocation().pathname.split("/")[2];
     const proposalInfo = daoStore.getProposal(proposalId);
+    const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
     const { dxdApproved } = userStore.getUserInfo(); 
     const { active, account, library } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
     const [canRedeem, setCanRedeem] = React.useState(false);
     const [proposalDescription, setProposalDescription] = React.useState("## Getting proposal description from IPFS...");
+    const [proposalTitle, setProposalTitle] = React.useState(
+      schemeInfo.type == 'WalletScheme' ? proposalInfo.title : "Getting proposal title from IPFS..."
+    );
     
+    const votingMachineTokenName = (votingMachines.gen && (schemeInfo.votingMachine == votingMachines.gen.address))
+      ? 'GEN' : 'DXD';
+      
     const proposalEvents = daoStore.getProposalEvents(proposalId);
-    const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
     console.debug("[Scheme info]", schemeInfo);
     
     let votedAmount = bnum(0);
@@ -154,9 +161,20 @@ const ProposalPage = observer(() => {
     totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
       
     // @ts-ignore
-    ipfsService.get(proposalInfo.descriptionHash).then((response) => {
-      setProposalDescription(response.data);
-    });
+    try {
+      ipfsService.get(proposalInfo.descriptionHash).then((response) => {
+        if (schemeInfo.type == 'WalletScheme') {
+          setProposalDescription(response.data);
+        } else {
+          setProposalTitle(response.data.title);
+          setProposalDescription(response.data.description);
+        }
+      });
+    } catch (error) {
+      setProposalTitle("Error getting proposal title from ipfs");
+      setProposalDescription("Error getting proposal description from IPFS");
+    }
+    
     
     proposalEvents.votes.map((vote) => {
       if (vote.voter === account) {
@@ -242,7 +260,7 @@ const ProposalPage = observer(() => {
       daoStore.redeem(proposalId, account);
     }
     
-    const approveDXD = function() {
+    const approveVotingMachineToken = function() {
       daoStore.approveVotingMachineToken();
     };
     
@@ -253,7 +271,7 @@ const ProposalPage = observer(() => {
     return (
       <ProposalInformationWrapper>
         <ProposalInfoSection>
-          <h1 style={{margin: "0px"}}> {proposalInfo.title} </h1>
+          <h1 style={{margin: "0px"}}> {proposalTitle} </h1>
           <MDEditor.Markdown source={ proposalDescription } style={{
             padding: "20px 10px"
           }} />
@@ -411,21 +429,21 @@ const ProposalPage = observer(() => {
           <SidebarRow style={{ margin: "0px 10px" }}>
             <span style={{width: "50%", textAlign:"center", color: "green"}}>
               <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
-              {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(4)} DXD
+              {Number(library.utils.fromWei(proposalInfo.positiveStakes.toString())).toFixed(4)} {votingMachineTokenName}
               <br/> 
               {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
                 if (stakeEvent.vote.toString() === "1")
                   return (
                     <small color="green" key={`stakeUp${i}`} style={{ display: "flex", alignItems:"center"}}>
                       <BlockchainLink size="short" type="user" text={stakeEvent.staker}/>
-                      {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} DXD
+                      {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} {votingMachineTokenName}
                     </small>
                   )
                 else return undefined;
               })}
             </span>
             <span style={{width: "50%", textAlign:"center", color: "red"}}>
-              {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(4)} DXD
+              {Number(library.utils.fromWei(proposalInfo.negativeStakes.toString())).toFixed(4)} {votingMachineTokenName}
               <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
               <br/> 
               {proposalEvents && proposalEvents.stakes.map(function(stakeEvent, i){
@@ -433,7 +451,7 @@ const ProposalPage = observer(() => {
                   return (
                     <small color="red" key={`stakeDown${i}`} style={{ display: "flex", alignItems:"center"}}>
                       <BlockchainLink size="short" type="user" text={stakeEvent.staker}/>
-                      {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} DXD
+                      {Number(library.utils.fromWei(stakeEvent.amount.toString())).toFixed(4)} {votingMachineTokenName}
                     </small>
                   )
                 else return undefined;
@@ -443,24 +461,24 @@ const ProposalPage = observer(() => {
           
           {stakedAmount.toNumber() > 0
             ? <SidebarRow>
-            Already staked {(stakedAmount.toNumber() > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount.toString())).toFixed(4)} DXD
+            Already staked {(stakedAmount.toNumber() > 0) ? "for" : "against"} with {Number(library.utils.fromWei(stakedAmount.toString())).toFixed(4)} {votingMachineTokenName}
             </SidebarRow>
             : <div></div>
           }
 
           {(proposalInfo.priority === 3 || proposalInfo.priority === 4) && dxdApproved.toString() === "0" ?
             <SidebarRow>
-              <small>Approve DXD to stake</small>
-              <ActionButton color="blue" onClick={() => approveDXD()}>Approve DXD</ActionButton>
+              <small>Approve {votingMachineTokenName} to stake</small>
+              <ActionButton color="blue" onClick={() => approveVotingMachineToken()}>Approve {votingMachineTokenName}</ActionButton>
             </SidebarRow>
             : (proposalInfo.priority === 3 || proposalInfo.priority === 4)  ?
               <div>
-                {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(4)} DXD to boost</small> : <span/>}
-                {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(4)} DXD to unboost</small> : <span/>}
+                {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(4)} {votingMachineTokenName} to boost</small> : <span/>}
+                {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(4)} {votingMachineTokenName} to unboost</small> : <span/>}
                 <SidebarRow>
                   <AmountInput
                     type="number"
-                    placeholder="DXD"
+                    placeholder={votingMachineTokenName}
                     name="stakeAmount"
                     id="stakeAmount"
                     step="0.01"
