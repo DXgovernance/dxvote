@@ -10,6 +10,7 @@ export const NETWORK_NAMES = {
   '42': 'kovan',
   '100': 'xdai',
   '42161': 'arbitrum',
+  '421611': 'arbitrumTestnet',
   '1337': 'localhost',
 };
 
@@ -20,6 +21,7 @@ export const NETWORK_IDS = {
   'kovan': 42,
   'xdai': 100,
   'arbitrum': 42161,
+  'arbitrumTestnet': 421611,
   'localhost': 1337,
 };
 

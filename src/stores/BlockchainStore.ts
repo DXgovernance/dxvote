@@ -191,7 +191,7 @@ export default class BlockchainStore {
           transactionStore.checkPendingTransactions(web3React, account);
           let accountCalls = [{
             contractType: ContractType.Multicall,
-            address: configStore.getNetworkConfig().multicall,
+            address: configStore.getNetworkConfig().utils.multicall,
             method: 'getEthBalance',
             params: [account],
           },{

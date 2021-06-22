@@ -18,7 +18,6 @@ const PermissionRegistry = hre.artifacts.require("PermissionRegistry");
 const DxController = hre.artifacts.require("DxController");
 const DxAvatar = hre.artifacts.require("DxAvatar");
 const DxReputation = hre.artifacts.require("DxReputation");
-const DxToken = hre.artifacts.require("DxToken");
 const DXDVotingMachine = hre.artifacts.require("DXDVotingMachine");
 const ERC20Mock = hre.artifacts.require("ERC20Mock");
 const Multicall = hre.artifacts.require("Multicall");
@@ -33,13 +32,9 @@ async function main() {
   const reputation = await DxReputation.new();
   await reputation.mint(accounts[0], 100);
   
-  // Deploy empty token
-  console.log('Deploying DxToken...');
-  const token = await DxToken.new("", "", 0, {gas: GAS_LIMIT});
-
   // Deploy Avatar
   console.log('Deploying DxAvatar...');
-  const avatar = await DxAvatar.new("DXdao", token.address, reputation.address, {gas: GAS_LIMIT});
+  const avatar = await DxAvatar.new("DXdao", votingMachineToken.address, reputation.address, {gas: GAS_LIMIT});
 
   // Deploy controller and transfer avatar to controller
   console.log('Deploying DxController...');
@@ -48,176 +43,228 @@ async function main() {
   // Transfer reputation adn avatar to controller
   await reputation.transferOwnership(controller.address);
   await avatar.transferOwnership(controller.address);
-  await token.transferOwnership(controller.address);
 
   const dxdVotingMachine = await DXDVotingMachine.new(votingMachineToken.address, {gas: GAS_LIMIT});
   const multicall = await Multicall.new();
   
-  var permissionRegistry = await PermissionRegistry.new(
-    accounts[0], moment.duration(1, 'hours').asSeconds(), { gas: 1000000 }
+  const permissionRegistry = await PermissionRegistry.new(
+    accounts[0], 1, { gas: 1000000 }
   );
   
-  const schemesConfiguration = {
-    master: {
-      queuedVoteRequiredPercentage: 50,
-      queuedVotePeriodLimit: moment.duration(40, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(20, 'minutes').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-      thresholdConst: 1500,
-      quietEndingPeriod: moment.duration(4, 'minutes').asSeconds(),
-      proposingRepReward: web3.utils.toWei("0.02"),
-      votersReputationLossRatio: 2,
-      minimumDaoBounty: web3.utils.toWei("1"),
-      daoBountyConst: 20,
-    },
-    quick: {
-      queuedVoteRequiredPercentage: 60,
-      queuedVotePeriodLimit: moment.duration(20, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-      thresholdConst: 1050,
+  // Only allow the functions mintReputation, burnReputation, genericCall, registerScheme and unregisterScheme to be
+  // called to in the controller contract from a scheme that calls the controller.
+  // This permissions makes the other functions inaccessible
+  const notAllowedControllerFunctions = [
+    controller.contract._jsonInterface.find(method => method.name == 'mintTokens').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'unregisterSelf').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'addGlobalConstraint').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'removeGlobalConstraint').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'upgradeController').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'sendEther').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'externalTokenTransfer').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'externalTokenTransferFrom').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'externalTokenApproval').signature,
+    controller.contract._jsonInterface.find(method => method.name == 'metaData').signature
+  ];
+  for (var i = 0; i < notAllowedControllerFunctions.length; i++) {
+    await permissionRegistry.setAdminPermission(
+      NULL_ADDRESS, 
+      avatar.address, 
+      controller.address, 
+      notAllowedControllerFunctions[i],
+      MAX_UINT_256, 
+      false
+    );
+  }
+  
+  await permissionRegistry.setAdminPermission(
+    NULL_ADDRESS,
+    avatar.address,
+    controller.address,
+    ANY_FUNC_SIGNATURE,
+    0,
+    true
+  );
+  
+  const schemesConfiguration = [
+    {
+      name: "RegistrarWalletScheme",
+      callToController: true,
+      maxSecondsForExecution: moment.duration(21, 'minutes').asSeconds(),
+      maxRepPercentageToMint: 0,
+      controllerPermissions: {
+        canGenericCall: false,
+        canUpgrade: false,
+        canChangeConstraints: false,
+        canRegisterSchemes: true
+      },
+      permissions: [],
+      queuedVoteRequiredPercentage: 75,
+      boostedVoteRequiredPercentage: 2500,
+      queuedVotePeriodLimit: moment.duration(15, 'minutes').asSeconds(),
+      boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
+      preBoostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
+      thresholdConst: 2000,
       quietEndingPeriod: moment.duration(2, 'minutes').asSeconds(),
-      proposingRepReward: web3.utils.toWei("0.002"),
-      votersReputationLossRatio: 4,
-      minimumDaoBounty: web3.utils.toWei("0.25"),
-      daoBountyConst: 10,
+      proposingRepReward: 0,
+      votersReputationLossRatio: 100,
+      minimumDaoBounty: web3.utils.toWei("100"),
+      daoBountyConst: 2,
+    },{
+      name: "MasterWalletScheme",
+      callToController: true,
+      maxSecondsForExecution: moment.duration(20, 'minutes').asSeconds(),
+      maxRepPercentageToMint: 5,
+      controllerPermissions: {
+        canGenericCall: true,
+        canUpgrade: false,
+        canChangeConstraints: false,
+        canRegisterSchemes: false
+      },
+      permissions: [{
+        asset: NULL_ADDRESS,
+        to: "SCHEME",
+        functionSignature: ANY_FUNC_SIGNATURE,
+        value: web3.utils.toWei("100"),
+        allowed: true
+      }],
+      queuedVoteRequiredPercentage: 50,
+      boostedVoteRequiredPercentage: 5,
+      queuedVotePeriodLimit: moment.duration(15, 'minutes').asSeconds(), 
+      boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(), 
+      preBoostedVotePeriodLimit: moment.duration(2, 'minutes').asSeconds(), 
+      thresholdConst: 1500, 
+      quietEndingPeriod: moment.duration(2, 'minutes').asSeconds(), 
+      proposingRepReward: 0, 
+      votersReputationLossRatio: 10, 
+      minimumDaoBounty: web3.utils.toWei("10"),
+      daoBountyConst: 2
+    },{
+      name: "QuickWalletScheme",
+      callToController: false,
+      maxSecondsForExecution: moment.duration(10, 'minutes').asSeconds(),
+      maxRepPercentageToMint: 1,
+      controllerPermissions: {
+        canGenericCall: false,
+        canUpgrade: false,
+        canChangeConstraints: false,
+        canRegisterSchemes: false
+      },
+      permissions: [{
+        asset: NULL_ADDRESS,
+        to: ANY_ADDRESS,
+        functionSignature: ANY_FUNC_SIGNATURE,
+        value: MAX_UINT_256,
+        allowed: true
+      }],
+      queuedVoteRequiredPercentage: 50,
+      boostedVoteRequiredPercentage: 1,
+      queuedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(), 
+      boostedVotePeriodLimit: moment.duration(2, 'minutes').asSeconds(), 
+      preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(), 
+      thresholdConst: 1500, 
+      quietEndingPeriod: moment.duration(1, 'minutes').asSeconds(), 
+      proposingRepReward: 0, 
+      votersReputationLossRatio: 1, 
+      minimumDaoBounty: web3.utils.toWei("1"),
+      daoBountyConst: 2
     }
-  };
+  ];
   console.log('Schemes configuration:', schemesConfiguration);
   
-  await dxdVotingMachine.setParameters([
-      schemesConfiguration.master.queuedVoteRequiredPercentage,
-      schemesConfiguration.master.queuedVotePeriodLimit,
-      schemesConfiguration.master.boostedVotePeriodLimit,
-      schemesConfiguration.master.preBoostedVotePeriodLimit,
-      schemesConfiguration.master.thresholdConst,
-      schemesConfiguration.master.quietEndingPeriod,
-      schemesConfiguration.master.proposingRepReward,
-      schemesConfiguration.master.votersReputationLossRatio,
-      schemesConfiguration.master.minimumDaoBounty,
-      schemesConfiguration.master.daoBountyConst,
-      0 
-    ], NULL_ADDRESS
-  );
-  const masterWalletSchemeParamsHash = await dxdVotingMachine.getParametersHash([
-      schemesConfiguration.master.queuedVoteRequiredPercentage,
-      schemesConfiguration.master.queuedVotePeriodLimit,
-      schemesConfiguration.master.boostedVotePeriodLimit,
-      schemesConfiguration.master.preBoostedVotePeriodLimit,
-      schemesConfiguration.master.thresholdConst,
-      schemesConfiguration.master.quietEndingPeriod,
-      schemesConfiguration.master.proposingRepReward,
-      schemesConfiguration.master.votersReputationLossRatio,
-      schemesConfiguration.master.minimumDaoBounty,
-      schemesConfiguration.master.daoBountyConst,
-      0 
-    ], NULL_ADDRESS
-  );
-  const masterWalletScheme = await WalletScheme.new();
-  await masterWalletScheme.initialize(
-    avatar.address,
-    dxdVotingMachine.address,
-    masterWalletSchemeParamsHash,
-    controller.address,
-    permissionRegistry.address,
-    "Master Wallet",
-    Math.max(86400 * 2, schemesConfiguration.master.queuedVotePeriodLimit * 2)
-  );
-  await controller.registerScheme(
-    masterWalletScheme.address,
-    masterWalletSchemeParamsHash,
-    encodePermission({
-      canGenericCall: true,
-      canUpgrade: true,
-      canChangeConstraints: true,
-      canRegisterSchemes: true
-    }),
-    avatar.address
-  );
+  let schemes = {};
+  for (var i = 0; i < schemesConfiguration.length; i++) {
+    const schemeConfiguration = schemesConfiguration[i];
+      
+    console.log(`Deploying ${schemeConfiguration.name}...`);
+    const newScheme = await WalletScheme.new();
+    console.log(`${schemeConfiguration.name} deployed to: ${newScheme.address}`);
+    
+    const timeNow = moment().unix();
+    let schemeParamsHash = await dxdVotingMachine.getParametersHash(
+      [
+        schemeConfiguration.queuedVoteRequiredPercentage,
+        schemeConfiguration.queuedVotePeriodLimit,
+        schemeConfiguration.boostedVotePeriodLimit,
+        schemeConfiguration.preBoostedVotePeriodLimit,
+        schemeConfiguration.thresholdConst,
+        schemeConfiguration.quietEndingPeriod,
+        schemeConfiguration.proposingRepReward,
+        schemeConfiguration.votersReputationLossRatio,
+        schemeConfiguration.minimumDaoBounty,
+        schemeConfiguration.daoBountyConst,
+        timeNow,
+      ], NULL_ADDRESS
+    );
+
+    await dxdVotingMachine.setParameters(
+      [
+        schemeConfiguration.queuedVoteRequiredPercentage,
+        schemeConfiguration.queuedVotePeriodLimit,
+        schemeConfiguration.boostedVotePeriodLimit,
+        schemeConfiguration.preBoostedVotePeriodLimit,
+        schemeConfiguration.thresholdConst,
+        schemeConfiguration.quietEndingPeriod,
+        schemeConfiguration.proposingRepReward,
+        schemeConfiguration.votersReputationLossRatio,
+        schemeConfiguration.minimumDaoBounty,
+        schemeConfiguration.daoBountyConst,
+        timeNow,
+      ], NULL_ADDRESS
+    );
+    
+    console.log("Initializing scheme...");
+    await newScheme.initialize(
+      avatar.address,
+      dxdVotingMachine.address,
+      schemeParamsHash,
+      schemeConfiguration.callToController ? controller.address : NULL_ADDRESS,
+      permissionRegistry.address,
+      schemeConfiguration.name,
+      Math.max(86400, schemeConfiguration.maxSecondsForExecution),
+      schemeConfiguration.maxRepPercentageToMint
+    );
+    
+    console.log("Setting scheme permissions...");
+    await Promise.all(schemeConfiguration.permissions.map(async (permission) => {
+      await permissionRegistry.setAdminPermission(
+        permission.asset, 
+        schemeConfiguration.callToController ? controller.address : newScheme.address,
+        permission.to == "SCHEME" ? newScheme.address : permission.to,
+        permission.functionSignature,
+        permission.value,
+        permission.allowed
+      );
+    }))
+    
+    console.log('Registering scheme in controller...');
+    await controller.registerScheme(
+      newScheme.address,
+      schemeParamsHash,
+      encodePermission(schemeConfiguration.controllerPermissions),
+      avatar.address
+    );
+    
+    if (schemeConfiguration.boostedVoteRequiredPercentage > 0){
+      console.log('Setting boosted vote required percentage in voting machine...');
+      await dxdVotingMachine.setBoostedVoteRequiredPercentage(
+        newScheme.address, schemeParamsHash, schemeConfiguration.boostedVoteRequiredPercentage
+      );
+    }
+    
+    schemes[schemeConfiguration.name] = newScheme;
+    
+  }
   
-  await dxdVotingMachine.setParameters(
-    [
-      schemesConfiguration.quick.queuedVoteRequiredPercentage,
-      schemesConfiguration.quick.queuedVotePeriodLimit,
-      schemesConfiguration.quick.boostedVotePeriodLimit,
-      schemesConfiguration.quick.preBoostedVotePeriodLimit,
-      schemesConfiguration.quick.thresholdConst,
-      schemesConfiguration.quick.quietEndingPeriod,
-      schemesConfiguration.quick.proposingRepReward,
-      schemesConfiguration.quick.votersReputationLossRatio,
-      schemesConfiguration.quick.minimumDaoBounty,
-      schemesConfiguration.quick.daoBountyConst,
-      0 
-    ],
-    NULL_ADDRESS
-  );
-  const quickWalletSchemeParamsHash = await dxdVotingMachine.getParametersHash(
-    [
-      schemesConfiguration.quick.queuedVoteRequiredPercentage,
-      schemesConfiguration.quick.queuedVotePeriodLimit,
-      schemesConfiguration.quick.boostedVotePeriodLimit,
-      schemesConfiguration.quick.preBoostedVotePeriodLimit,
-      schemesConfiguration.quick.thresholdConst,
-      schemesConfiguration.quick.quietEndingPeriod,
-      schemesConfiguration.quick.proposingRepReward,
-      schemesConfiguration.quick.votersReputationLossRatio,
-      schemesConfiguration.quick.minimumDaoBounty,
-      schemesConfiguration.quick.daoBountyConst,
-      0
-    ],
-    NULL_ADDRESS
-  );
-  const quickWalletScheme = await WalletScheme.new();
-  await quickWalletScheme.initialize(
-    avatar.address,
-    dxdVotingMachine.address,
-    quickWalletSchemeParamsHash,
-    NULL_ADDRESS,
-    permissionRegistry.address,
-    "Quick Wallet",
-    Math.max(86400, schemesConfiguration.quick.queuedVotePeriodLimit * 2)
-  );
+  await permissionRegistry.setTimeDelay(moment.duration(10, 'minutes').asSeconds());
   
-  await controller.registerScheme(
-    quickWalletScheme.address,
-    quickWalletSchemeParamsHash,
-    encodePermission({
-      canGenericCall: false,
-      canUpgrade: false,
-      canChangeConstraints: false,
-      canRegisterSchemes: false
-    }),
-    avatar.address
-  );
-  await controller.metaData("metaData", avatar.address);
+  await controller.mintReputation(web3.utils.toWei("10"), accounts[0], avatar.address);
+  await controller.mintReputation(web3.utils.toWei("20"), accounts[1], avatar.address);
+  await controller.mintReputation(web3.utils.toWei("70"), accounts[2], avatar.address);
+  await controller.burnReputation(100, accounts[0], avatar.address);
+  
   await controller.unregisterScheme(accounts[0], avatar.address);
   
-  // Set permissions to avatar and quickwallet scheme to do anything
-  await permissionRegistry.setAdminPermission(
-    NULL_ADDRESS, 
-    avatar.address, 
-    ANY_ADDRESS, 
-    ANY_FUNC_SIGNATURE,
-    MAX_UINT_256,
-    true
-  );
-  await permissionRegistry.setAdminPermission(
-    NULL_ADDRESS, 
-    quickWalletScheme.address, 
-    ANY_ADDRESS, 
-    ANY_FUNC_SIGNATURE,
-    MAX_UINT_256,
-    true
-  );
-  
-  // Increase one hour that is the time delay for a permission to became enabled
-  await web3.currentProvider.send({
-    jsonrpc: '2.0',
-    method: 'evm_increaseTime',
-    params: [moment.duration(1, 'hours').asSeconds()],
-    id: 0,
-  }, () => {});
-
   // Transfer permission registry control to avatar
   await permissionRegistry.transferOwnership(avatar.address);
   
@@ -245,15 +292,15 @@ async function main() {
         { type: 'address', name: '_avatar' }
       ]
   };
-  const burnReputationABI = {
-      name: 'burnReputation',
-      type: 'function',
-      inputs: [
-        { type: 'uint256', name: '_amount' },
-        { type: 'address', name: '_to' },
-        { type: 'address', name: '_avatar' }
-      ]
-  };
+  // const burnReputationABI = {
+  //     name: 'burnReputation',
+  //     type: 'function',
+  //     inputs: [
+  //       { type: 'uint256', name: '_amount' },
+  //       { type: 'address', name: '_to' },
+  //       { type: 'address', name: '_avatar' }
+  //     ]
+  // };
   const generiCallABI = {
     name: 'genericCall',
     type: 'function',
@@ -283,35 +330,35 @@ async function main() {
     ],
   }
   
-  // Create test proposal 0 to mint multiple REP
+  // // Create test proposal 0 to mint multiple REP
   let descriptionText = "Set 10 REP tokens to "+accounts[0]+", 20 REP tokens to "+accounts[1]+", and 70 REP tokens to "+accounts[2]
-  const testProposal0 = ( await masterWalletScheme.proposeCalls(
-    [controller.address, controller.address, controller.address, controller.address],
-    [
-      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("10"), accounts[0], avatar.address]),
-      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("20"), accounts[1], avatar.address]),
-      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("70"), accounts[2], avatar.address]),
-      web3.eth.abi.encodeFunctionCall(burnReputationABI, ["100", accounts[0], avatar.address]),
-    ],
-    [0, 0, 0, 0],
-    "Test Proposal #0 (Seed rep mint)",
-    await uploadAndGetContentHash(descriptionText),
-    { from: accounts[0] }
-  ) ).logs[0].args[0];
-
-  // Pass test proposal 0 with majority vote
-  await dxdVotingMachine.vote(testProposal0, 1, 0, NULL_ADDRESS, { from: accounts[0] });
+  // const testProposal0 = ( await schemes["MasterWalletScheme"].proposeCalls(
+  //   [controller.address, controller.address, controller.address, controller.address],
+  //   [
+  //     web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("10"), accounts[0], avatar.address]),
+  //     web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("20"), accounts[1], avatar.address]),
+  //     web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("70"), accounts[2], avatar.address]),
+  //     web3.eth.abi.encodeFunctionCall(burnReputationABI, ["100", accounts[0], avatar.address]),
+  //   ],
+  //   [0, 0, 0, 0],
+  //   "Test Proposal #0 (Seed rep mint)",
+  //   await uploadAndGetContentHash(descriptionText),
+  //   { from: accounts[0] }
+  // ) ).logs[0].args[0];
+  // 
+  // // Pass test proposal 0 with majority vote
+  // await dxdVotingMachine.vote(testProposal0, 1, 0, NULL_ADDRESS, { from: accounts[0] });
   
   // Create test proposal #1 to set VoostedVoteRequiredPercentage in Master Wallet
   descriptionText = "Set required % of votes for boosted proposals to 1% to execute in Master Wallet.";
-  const testProposal1 = ( await masterWalletScheme.proposeCalls(
+  const testProposal1 = ( await schemes["MasterWalletScheme"].proposeCalls(
     [controller.address],
     [
       web3.eth.abi.encodeFunctionCall(generiCallABI, [
         dxdVotingMachine.address,
         web3.eth.abi.encodeFunctionCall(setBoostedVoteRequiredPercentageABI, [
-          masterWalletScheme.address,
-          masterWalletSchemeParamsHash,
+          schemes["MasterWalletScheme"].address,
+          await controller.getSchemeParameters(schemes["MasterWalletScheme"].address, avatar.address),
           1000
         ]),
         avatar.address,
@@ -327,14 +374,14 @@ async function main() {
   
   // Create test proposal 2
   descriptionText = "Mint 20 REP, tranfer 15 ETH and 50 tokens to QuickWalletScheme.";
-  const testProposal2 = ( await masterWalletScheme.proposeCalls(
+  const testProposal2 = ( await schemes["MasterWalletScheme"].proposeCalls(
     [controller.address, controller.address, controller.address],
     [
-      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("20"), accounts[1], avatar.address]),
-      web3.eth.abi.encodeFunctionCall(generiCallABI, [quickWalletScheme.address, "0x0", avatar.address, web3.utils.toWei("15")]),
+      web3.eth.abi.encodeFunctionCall(mintReputationABI, [web3.utils.toWei("1"), accounts[1], avatar.address]),
+      web3.eth.abi.encodeFunctionCall(generiCallABI, [schemes["QuickWalletScheme"].address, "0x0", avatar.address, web3.utils.toWei("15")]),
       web3.eth.abi.encodeFunctionCall(generiCallABI, [
         votingMachineToken.address,
-        web3.eth.abi.encodeFunctionCall(ERC20TransferABI, [quickWalletScheme.address, web3.utils.toWei("50")]),
+        web3.eth.abi.encodeFunctionCall(ERC20TransferABI, [schemes["QuickWalletScheme"].address, web3.utils.toWei("50")]),
         avatar.address,
         0
       ]),
@@ -349,7 +396,7 @@ async function main() {
   await dxdVotingMachine.vote(testProposal2, 1, 0, NULL_ADDRESS, { from: accounts[2] });
 
   descriptionText = "Tranfer 5 ETH to " + accounts[1];
-  const testProposal3 = (await masterWalletScheme.proposeCalls(
+  const testProposal3 = (await schemes["MasterWalletScheme"].proposeCalls(
     [controller.address],
     [
       web3.eth.abi.encodeFunctionCall(generiCallABI, [accounts[1], "0x0", avatar.address, web3.utils.toWei("5")])
@@ -371,7 +418,7 @@ async function main() {
 
   // Create test proposal 3 in quick wallet scheme
   descriptionText = "Tranfer 5 ETH to " + accounts[2];
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[2]],
     ["0x0"],
     [web3.utils.toWei("5").toString()],
@@ -380,7 +427,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
@@ -389,7 +436,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
@@ -398,7 +445,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
@@ -407,7 +454,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
@@ -416,7 +463,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
@@ -425,7 +472,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
@@ -434,7 +481,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
@@ -443,7 +490,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],
@@ -452,7 +499,7 @@ async function main() {
     { from: accounts[0] }
   );
   
-  await quickWalletScheme.proposeCalls(
+  await schemes["QuickWalletScheme"].proposeCalls(
     [accounts[1]],
     ["0x0"],
     [web3.utils.toWei("666").toString()],

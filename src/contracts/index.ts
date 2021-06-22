@@ -14,7 +14,7 @@ export const getContracts = async function(network: string, web3: any) {
   const controller = await new web3.eth.Contract(DxController.abi, networkConfig.controller);
   const reputation = await new web3.eth.Contract(DxReputation.abi, networkConfig.reputation);
   const permissionRegistry = await new web3.eth.Contract(PermissionRegistry.abi, networkConfig.permissionRegistry);
-  const multicall = await new web3.eth.Contract(Multicall.abi, networkConfig.multicall);
+  const multicall = await new web3.eth.Contract(Multicall.abi, networkConfig.utils.multicall);
 
   let votingMachines = {};
 

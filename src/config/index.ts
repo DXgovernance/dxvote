@@ -11,18 +11,20 @@ export const getNetworkConfig = function(network) {
   
   if (network === 'localhost') {
     return Object.assign(networkData, {
+      fromBlock: 1,
       avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ""),
       controller: process.env.REACT_APP_CONTROLLER_ADDRESS.replace(/["']/g, ""),
       reputation: process.env.REACT_APP_REPUTATION_ADDRESS.replace(/["']/g, ""),
+      permissionRegistry: process.env.REACT_APP_PERMISSION_REGISTRY_ADDRESS.replace(/["']/g, ""),
+      utils: {
+        multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ""),
+      },
       votingMachines: {
         dxd: {
           address: process.env.REACT_APP_VOTING_MACHINE_ADDRESS.replace(/["']/g, ""),
           token: process.env.REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS.replace(/["']/g, "")
         }
       },
-      permissionRegistry: process.env.REACT_APP_PERMISSION_REGISTRY_ADDRESS.replace(/["']/g, ""),
-      multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ""),
-      fromBlock: 1
     })
   } else  if (network == 'mainnet') {
     let networkConfig = contractsFile[network];
@@ -186,7 +188,11 @@ export const getSchemeTypeData = function(network, schemeAddress) {
     type: "WalletScheme",
     votingMachine: networkConfig.votingMachines.dxd.address,
     name: "WalletScheme",
-    newProposalTopics: [[web3.utils.soliditySha3("NewCallProposal(bytes32)")]],
+    newProposalTopics: [[
+      web3.utils.soliditySha3("ProposalStateChange(bytes32,uint256)"),
+      null,
+      '0x0000000000000000000000000000000000000000000000000000000000000001']
+    ],
     creationLogEncoding: []
   }
 }

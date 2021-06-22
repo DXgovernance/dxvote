@@ -11,9 +11,9 @@ echo "${contents}" > tsconfig.json
 
 # Run build cache
 yarn hardhat run --network mainnet scripts/buildCache.ts
-yarn hardhat run --network xdai scripts/buildCache.ts
+# yarn hardhat run --network xdai scripts/buildCache.ts
 yarn hardhat run --network rinkeby scripts/buildCache.ts
-# yarn hardhat run --network arbitrum scripts/buildCache.ts
+yarn hardhat run --network arbitrumTestnet scripts/buildCache.ts
 sleep 1
 
 # Enable isolatedModules and use esnext as module in tsconfig

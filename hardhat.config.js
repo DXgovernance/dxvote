@@ -14,11 +14,11 @@ module.exports = {
       'dxdao-contracts/contracts/dxdao/DxAvatar.sol',
       'dxdao-contracts/contracts/dxdao/DxController.sol',
       'dxdao-contracts/contracts/dxdao/DxReputation.sol',
-      'dxdao-contracts/contracts/dxdao/DXDVotingMachine.sol',
       'dxdao-contracts/contracts/dxdao/DxToken.sol',
+      'dxdao-contracts/contracts/dxvote/DXDVotingMachine.sol',
+      'dxdao-contracts/contracts/dxvote/WalletScheme.sol',
+      'dxdao-contracts/contracts/dxvote/PermissionRegistry.sol',
       'dxdao-contracts/contracts/utils/Multicall.sol',
-      'dxdao-contracts/contracts/schemes/WalletScheme.sol',
-      'dxdao-contracts/contracts/schemes/PermissionRegistry.sol',
       'dxdao-contracts/contracts/test/ERC20Mock.sol',
       '@daostack/infra/contracts/votingMachines/GenesisProtocol.sol'
     ],
@@ -45,11 +45,7 @@ module.exports = {
       allowUnlimitedContractSize: true,
       gasLimit: 9000000,
       gasPrice: 10000000000, // 10 gwei
-      timeout: 60000,
-      
-      // Uses the time now minus one hour in local development, you might need to disable it.
-      // For some reason the EVM date was one hour ahead my local system date.
-      initialDate: new Date((new Date().getTime()) - 3600 * 1000).toString()
+      timeout: 60000
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
@@ -76,5 +72,11 @@ module.exports = {
       chainId: 42161,
       timeout: 60000
     },
+    arbitrumTestnet: {
+      url: 'https://rinkeby.arbitrum.io/rpc',
+      accounts: { mnemonic: MNEMONIC },
+      chainId: 421611,
+      timeout: 60000
+    }
   }
 };

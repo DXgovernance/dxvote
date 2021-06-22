@@ -37,7 +37,7 @@
     "depcheck": "^1.4.1",
     "dotenv": "^8.1.0",
     "dotenv-cli": "^4.0.0",
-    "dxdao-contracts": "git://github.com/AugustoL/dxdao-contracts.git#0eb5924085367c2aa693a6434b435d49cb21b4fb",
+    "dxdao-contracts": "git://github.com/AugustoL/dxdao-contracts.git#augustol-develop",
     "ethers": "^4.0.45",
     "git-revision-webpack-plugin": "^3.0.6",
     "ipfs-core": "^0.3.0",
