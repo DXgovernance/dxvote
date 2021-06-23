@@ -5,7 +5,7 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import { useLocation } from 'react-router-dom';
 import BlockchainLink from '../components/common/BlockchainLink';
-import { Box } from '../theme';
+import Box from '../components/common/Box';
 
 const UserPage = observer(() => {
     const {

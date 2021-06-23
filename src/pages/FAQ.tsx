@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { Box } from '../theme';
+import Box from '../components/common/Box';
 import { useLocation } from 'react-router-dom';
 
 const FAQPage = observer(() => {

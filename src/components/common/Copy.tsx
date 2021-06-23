@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useCopyClipboard } from '../../utils/helperHooks';
 
-import { Link } from '../../theme';
+import Link from '../../components/common/Link';
 import { FiCopy, FiCheckCircle } from "react-icons/fi";
 
 const CopyIcon = styled(Link)`

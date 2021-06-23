@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
-import { Box } from '../theme';
+import Box from '../components/common/Box';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 

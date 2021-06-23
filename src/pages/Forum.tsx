@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box } from '../theme';
+import Box from '../components/common/Box';
 import { FiZap } from "react-icons/fi";
 
 const ForumPage = () => {

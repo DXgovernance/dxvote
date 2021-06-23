@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { transparentize } from 'polished';
-import { Link } from '../../theme';
+import Link from '../../components/common/Link';
 import metamaskIcon from '../../assets/images/metamask.png';
 
 const InfoCard = styled.button`

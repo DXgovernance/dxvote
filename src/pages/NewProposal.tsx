@@ -7,7 +7,7 @@ import { useStores } from '../contexts/storesContext';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from '../utils/helpers';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
-import { Box } from '../theme';
+import Box from '../components/common/Box';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';

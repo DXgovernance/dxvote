@@ -10,7 +10,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
-import { Box } from '../theme';
+import Box from '../components/common/Box';
 import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 import {
   WalletSchemeProposalState,

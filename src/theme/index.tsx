@@ -6,8 +6,6 @@ import {
 } from 'styled-components';
 import { useStores } from '../contexts/storesContext';
 
-export * from './components';
-
 export const SUPPORTED_THEMES = {
     DARK: 'DARK',
     LIGHT: 'LIGHT',

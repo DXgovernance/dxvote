@@ -5,7 +5,7 @@ import { injected } from 'provider/connectors';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { getEtherscanLink } from 'utils/etherscan';
 
-import { Link } from '../../theme';
+import Link from '../../components/common/Link';
 import { useStores } from '../../contexts/storesContext';
 
 const OptionButton = styled.div`

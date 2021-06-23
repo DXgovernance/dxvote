@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { useStores } from './contexts/storesContext';
 import { FiZapOff, FiZap } from "react-icons/fi";
 import { useLocation } from 'react-router-dom';
-import { Box } from './theme';
+import Box from './components/common/Box';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;

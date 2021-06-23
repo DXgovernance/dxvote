@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components'; 
 import { useLocation } from 'react-router-dom';
 import ActiveButton from '../components/common/ActiveButton';
-import { Box } from '../theme';
+import Box from '../components/common/Box';
 
 import FinanceInformation from '../components/FinanceInformation';
 import SchemesInformation from '../components/SchemesInformation';

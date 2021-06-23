@@ -5,7 +5,7 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
 import { FiCheckCircle, FiX } from "react-icons/fi";
-import { Box } from '../theme';
+import Box from '../components/common/Box';
 
 const Row = styled.div`
   flex-direction: row;

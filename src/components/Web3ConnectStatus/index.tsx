@@ -5,7 +5,7 @@ import { shortenAddress } from 'utils/address';
 import WalletModal from 'components/WalletModal';
 import { isChainIdSupported } from 'provider/connectors';
 import { useStores } from '../../contexts/storesContext';
-import { Box } from '../../theme';
+import Box from '../../components/common/Box';
 
 const WrongNetworkButton = styled(Box)`
   color: var(--dark-text-gray);
