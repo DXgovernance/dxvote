@@ -12,6 +12,7 @@ import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
 import ProposalTemplates from '../config/proposalTemplates';
+import { TXEvents } from '../enums';
 
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
@@ -160,16 +161,22 @@ const NewProposalPage = observer(() => {
     const [schemeToUse, setSchemeToUse] = React.useState(schemes[0]);
     const [titleText, setTitleText] = React.useState(localStorage.getItem('dxvote-newProposal-title'));
     const [ipfsHash, setIpfsHash] = React.useState("");
-    const [uploadedToIPFS, setUploadedToIPFS] = React.useState(false);
     const [descriptionText, setDescriptionText] = React.useState(localStorage.getItem('dxvote-newProposal-description'));
     const [calls, setCalls] = React.useState([]);
-    const [submitionState, setSubmitionState] = React.useState(0);
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+
+    const [submitionState, setSubmitionState] = React.useState(0);
+    // 0 = Proposal Description not uploaded
+    // 1 = Uploading proposal description
+    // 2 = Proposal description uploaded
+    // 3 = Submiting new proposal tx
+    // 4 = Proposal submited
     
     if (ProposalTemplates[0].name != "Custom")
       ProposalTemplates.unshift({name: "Custom", title: "", description: "" });
 
     const uploadToIPFS = async function() {
+      setSubmitionState(1);
       const hash = await ipfsService.add(descriptionText);
       setIpfsHash(hash);
       if (pinataService.auth) {
@@ -177,11 +184,25 @@ const NewProposalPage = observer(() => {
         console.debug('[PINATA UPLOAD]', pinataUpload.data)
       }
       await ipfsService.pin(hash);
-      setUploadedToIPFS(true);
+      
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      
+      let uploaded = false;
+      while (!uploaded) {
+        const response = await ipfsService.get(contentHash.fromIpfs(hash));
+        if (response.data == descriptionText)
+          uploaded = true;
+        await sleep(1000);
+      }
+
+      setSubmitionState(2);
     }
     
     const createProposal = async function() {
       console.debug('[RAW PROPOSAL]', schemeToUse, calls, titleText, ipfsHash);
+      setSubmitionState(3);
 
       const { library } = providerStore.getActiveWeb3React();
       
@@ -225,18 +246,29 @@ const NewProposalPage = observer(() => {
         });
         
         console.debug('[PROPOSAL]', schemeToUse.address, to, data, value, titleText, contentHash.fromIpfs(ipfsHash))
-        daoStore.createProposal(schemeToUse.address, to, data, value, titleText, contentHash.fromIpfs(ipfsHash));
-        setSubmitionState(1);
+        daoStore.createProposal(schemeToUse.address, to, data, value, titleText, contentHash.fromIpfs(ipfsHash))
+          .on(TXEvents.TX_HASH, (hash) => {
+            console.debug("[TX_SUBMITTED]", hash);
+            setSubmitionState(4);
+          })
+          .on(TXEvents.TX_ERROR, (txerror) => {
+              console.error("[TX_ERROR]", txerror);
+              setSubmitionState(-1);
+          })
+          .on(TXEvents.INVARIANT, (error) => {
+              console.error("[ERROR]", error);
+              setSubmitionState(-1);
+          });
         // history.push("/");
       } catch (error) {
-        console.error('[PROPOSAL]', error);
-        setSubmitionState(2);
+        console.error('[PROPOSAL_ERROR]', error);
+        setSubmitionState(-1);
       }
       
     }
     
     function onDescriptionChange(newValue) {
-      if (!uploadedToIPFS) {
+      if (submitionState < 1) {
         setDescriptionText(newValue);
         localStorage.setItem('dxvote-newProposal-description', newValue);
       }
@@ -461,29 +493,33 @@ const NewProposalPage = observer(() => {
             </select>
           </TitleInput>
         </div>
-        <MDEditor
-          value={descriptionText}
-          onChange={onDescriptionChange}
-          preview="edit"
-          height="300"
-          minheights="300"
-          maxheights="1000"
-          commands={[
-            commands.bold,
-            commands.italic,
-            commands.strikethrough,
-            commands.hr,
-            commands.title,
-            commands.divider,
-            commands.link,
-            commands.quote,
-            commands.code,
-            commands.image,
-            commands.unorderedListCommand,
-            commands.orderedListCommand,
-            commands.checkedListCommand,
-          ]}
-        />
+        {(submitionState < 1) ?
+          <MDEditor
+            value={descriptionText}
+            disabled={submitionState > 0}
+            onChange={onDescriptionChange}
+            preview="edit"
+            height="300"
+            minheights="300"
+            maxheights="1000"
+            commands={[
+              commands.bold,
+              commands.italic,
+              commands.strikethrough,
+              commands.hr,
+              commands.title,
+              commands.divider,
+              commands.link,
+              commands.quote,
+              commands.code,
+              commands.image,
+              commands.unorderedListCommand,
+              commands.orderedListCommand,
+              commands.checkedListCommand,
+            ]}
+          />
+          : <div/>
+        }
         <h2>Description Preview</h2>
         <MDEditor.Markdown source={descriptionText} style={{
           backgroundColor: "white",
@@ -629,29 +665,42 @@ const NewProposalPage = observer(() => {
           <ActiveButton onClick={addCall}>Add Call</ActiveButton>
         </div>
         
-        <TextActions>
-          {uploadedToIPFS ?
-            <span>
-              Uploaded to pinata:
-                <a href={`https://gateway.pinata.cloud/ipfs/${ipfsHash}`} target="_blank">https://gateway.pinata.cloud/ipfs/{ipfsHash}</a>
-              <br/>
-              Check before submitting proposal
-            </span>
-            : <div/>
-          }
-          { (submitionState == 1) ?
-            <span>Proposal is correct</span>
-            : (submitionState == 2) ?
-            <span>Error when trying to submit proposal</span>
-            : <div/>
-          }
-        </TextActions>
+        {
+          (submitionState < 0) ?
+            <TextActions>
+              <span>
+                ERROR
+              </span>
+            </TextActions>
+          : (submitionState > 1) ?
+            <TextActions>
+              <span>
+                Uploaded to IPFS:
+                  <a href={`https://gateway.pinata.cloud/ipfs/${ipfsHash}`} target="_blank">https://gateway.pinata.cloud/ipfs/{ipfsHash}</a>
+                <br/>
+                Check before submitting proposal
+              </span>
+            </TextActions>
+          : <div/>
+        }
         
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
-          <ActiveButton onClick={ (!uploadedToIPFS) ? uploadToIPFS : createProposal}>
-            { (!uploadedToIPFS) ? "Upload to IPFS" : "Submit Proposal" }
-          </ActiveButton>
+          {
+            (submitionState == 0) ?
+              <ActiveButton onClick={uploadToIPFS}> Upload to IPFS </ActiveButton>
+            : (submitionState == 1) ?
+              <ActiveButton> Uploading descritpion to IPFS.. </ActiveButton>
+            : (submitionState == 2) ?
+              <ActiveButton onClick={createProposal}>Submit Proposal</ActiveButton>
+            : (submitionState == 3) ?
+              <ActiveButton>Submiting TX...</ActiveButton>
+            :
+              <ActiveButton route="/">Back to Proposals</ActiveButton>
+          }
         </div>
+
+      
+        
         
       </NewProposalFormWrapper>
     );
