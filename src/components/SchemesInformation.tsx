@@ -49,7 +49,6 @@ const TableRow = styled.div`
     padding: 16px 24px;
     color: var(--dark-text-gray);
     text-align: right;
-    cursor: pointer;
 `;
 
 const TableCell = styled.div`
@@ -96,7 +95,7 @@ const SchemesInformation = observer(() => {
           const schemeProposals = daoStore.getSchemeProposals(scheme.name);
           const schemeConfiguration = scheme.configurations[ scheme.configurations.length - 1];
           return (
-            <Link key={"scheme"+i} to={"/scheme/"+scheme.address} style={{textDecoration: "none"}}>
+            <div key={"scheme"+i}>
               <TableRow>
                 <TableCell width="15%" align="left" weight='500' wrapText="true">
                   {scheme.name}<br/>
@@ -115,12 +114,22 @@ const SchemesInformation = observer(() => {
                   <small>Quiet Ending Period: {
                     moment.duration(schemeConfiguration.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
                   }</small><br/>
-                  <small>Max time for execution: {
-                    moment.duration(scheme.maxSecondsForExecution.toString(), 'seconds').humanize()
-                  }</small><br/>
+                  { (scheme.type == "WalletScheme")
+                    ? <small>Max time for execution: {
+                        moment.duration(scheme.maxSecondsForExecution.toString(), 'seconds').humanize()
+                      }<br/></small>
+                    : <div/>
+                  }
+                  { (scheme.type == "WalletScheme")
+                    ? <small>Max REP % to change in proposal: {scheme.maxRepPercentageChange.toString()} %<br/></small>
+                    : <div/>
+                  }
+                  { (scheme.type == "WalletScheme")
+                    ? <small>Required Percentage for boosted approval: {bnum(schemeConfiguration.boostedVoteRequiredPercentage).div("1000").toString()} %<br/></small>
+                    : <div/>
+                  }
                   
                   <small>Required Percentage for queue approval: {schemeConfiguration.parameters.queuedVoteRequiredPercentage.toString()} %</small><br/>
-                  <small>Required Percentage for boosted approval: {bnum(schemeConfiguration.boostedVoteRequiredPercentage).div("1000").toString()} %</small><br/>
                   <small>Queued Proposal Period: {
                     moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
                   }</small><br/>
@@ -162,7 +171,7 @@ const SchemesInformation = observer(() => {
                   <span>{scheme.proposalIds ? scheme.proposalIds.length : 0}</span>
                 </TableCell>
               </TableRow>
-            </Link>);
+            </div>);
           }
         )}
         </TableRowsWrapper>
