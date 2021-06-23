@@ -58,7 +58,6 @@ const Root = (
               <Route exact path="/forum"> <ForumPage /> </Route>
               <Route exact path="/user/:address"> <UserPage /> </Route>
               <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
-              <Redirect push to="/"> </Redirect>
             </PageRouter>
             <Footer />
           </Web3ReactManager>
