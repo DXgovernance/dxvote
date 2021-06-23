@@ -158,10 +158,10 @@ const NewProposalPage = observer(() => {
     const schemes = daoStore.getAllSchemes();
     const networkConfig = configStore.getNetworkConfig()
     const [schemeToUse, setSchemeToUse] = React.useState(schemes[0]);
-    const [titleText, setTitleText] = React.useState("");
+    const [titleText, setTitleText] = React.useState(localStorage.getItem('dxvote-newProposal-title'));
     const [ipfsHash, setIpfsHash] = React.useState("");
     const [uploadedToIPFS, setUploadedToIPFS] = React.useState(false);
-    const [descriptionText, setDescriptionText] = React.useState("");
+    const [descriptionText, setDescriptionText] = React.useState(localStorage.getItem('dxvote-newProposal-description'));
     const [calls, setCalls] = React.useState([]);
     const [submitionState, setSubmitionState] = React.useState(0);
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
@@ -238,6 +238,7 @@ const NewProposalPage = observer(() => {
     function onDescriptionChange(newValue) {
       if (!uploadedToIPFS) {
         setDescriptionText(newValue);
+        localStorage.setItem('dxvote-newProposal-description', newValue);
       }
     }
     
@@ -245,10 +246,11 @@ const NewProposalPage = observer(() => {
       if (newValue.target.value == "dxtest") {
         setTitleText(`Test Proposal for ${account}`);
         setDescriptionText(`## Test Proposal \n Send 0.0006666 ETH, 0.0006666 DXD and minting 666 REP to ${account}`);
-      } else {
         setCalls([{"callType":"advanced","to":account,"data":"0x0","functionName":"","functionParams":"","value":"666000000000000000000","allowedFunctions":[]},{"callType":"simple","to":networkConfig.votingMachineToken,"data":"","functionName":"transfer(address,uint256)","functionParams":`${account},666000000000000000000`,"value":"0","allowedFunctions":[{"value":"transfer(address,uint256)","label":"transfer(address to ,uint256 value)"},{"value":"approve(address,uint256)","label":"approve(address to,uint256 value)"},{"value":"transferFrom(address,address,uint256)","label":"transferFrom(address from ,address to,uint256 value)"}]},{"callType":"simple","to":networkConfig.controller,"data":"","functionName":"mintReputation(uint256,address,address)","functionParams":`666,${account},${networkConfig.avatar}`,"value":"0","allowedFunctions":[{"value":"mintReputation(uint256,address,address)","label":"mintReputation(uint256 _amount, address _to, address _avatar)"},{"value":"burnReputation(uint256,address,address)","label":"burnReputation(uint256 _amount, address _from, address _avatar)"},{"value":"registerScheme(address,bytes32,bytes4,address)","label":"registerScheme(address _scheme, bytes32 _paramsHash, bytes4 _permissions, address _avatar)"},{"value":"unregisterScheme(address,address)","label":"unregisterScheme(address _scheme, address _avatar)"},{"value":"genericCall(address,bytes,addres,uint256)","label":"genericCall(address _contract, bytes calldata _data, Avatar _avatar, uint256 _value)"}]}])
+      } else {
         setTitleText(newValue.target.value);
       }
+      localStorage.setItem('dxvote-newProposal-title', newValue.target.value);
     }
     
     let callToAny = false;
