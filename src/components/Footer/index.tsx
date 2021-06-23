@@ -42,11 +42,7 @@ const Footer = () => {
     <FooterWrapper>
       <LeftFooter>
         <FooterItem>
-          <a href="https://dxvote.eth.link" target="#" > Stable Version </a>
-        </FooterItem>
-        <FooterDivider></FooterDivider>
-        <FooterItem>
-          <a href="https://augustol.github.io/dxvote/" target="#" > Developer Version </a>
+          <a href="https://dxdao.eth.link/#/" target="_blank" > Website </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
@@ -54,11 +50,15 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-        <a href="https://github.com/AugustoL/dxvote" target="#" > Source Code </a>
+        <a href="https://github.com/AugustoL/dxvote" target="_blank" > Source Code </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
         <a href="/#/faq" target="_self" > FAQ </a>
+        </FooterItem>
+        <FooterDivider></FooterDivider>
+        <FooterItem>
+        <a href="https://github.com/AugustoL/dxvote/issues/new/choose" target="_blank" > Submit Issue </a>
         </FooterItem>
       </LeftFooter>
     </FooterWrapper>
