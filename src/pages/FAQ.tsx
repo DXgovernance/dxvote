@@ -6,9 +6,10 @@ import { useLocation } from 'react-router-dom';
 
 const FAQPage = observer(() => {
     
-  const questionId = useLocation().search.split("=")[1];
+  const questionId = useLocation().search.indexOf("=") > -1 ? useLocation().search.split("=")[1] : 0;
   
   useEffect(() => {
+    if (questionId > 0)
       document.getElementById('question'+questionId).scrollIntoView();
    }, []);
 
