@@ -36,7 +36,7 @@ const PageRouter = observer(({ children }) => {
     let needsLoading = true;
     
     const { pathname } = useLocation();
-    const noLoading = ['/faq', '/config'];
+    const noLoading = ['/faq', '/config', '/forum'];
     
     // Start or auth services
     ipfsService.start();

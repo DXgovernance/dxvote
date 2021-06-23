@@ -24,6 +24,7 @@ import ProposalPage from './pages/Proposal';
 import InfoPage from './pages/Info';
 import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
+import ForumPage from './pages/Forum';
 
 moment.updateLocale('en', {
   relativeTime : {
@@ -54,6 +55,7 @@ const Root = (
               <Route exact path="/info"> <InfoPage /> </Route>
               <Route exact path="/config"> <ConfigPage /> </Route>
               <Route exact path="/faq"> <FAQPage /> </Route>
+              <Route exact path="/forum"> <ForumPage /> </Route>
               <Route exact path="/user/:address"> <UserPage /> </Route>
               <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
             </PageRouter>

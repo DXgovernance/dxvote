@@ -50,7 +50,7 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a href="https://daotalk.org/c/daos/dx-dao" target="#"> Forum </a>
+          <a href="/#/forum" target="_self" > Forum </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
