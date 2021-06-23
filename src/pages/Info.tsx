@@ -2,20 +2,15 @@ import React from 'react';
 import styled from 'styled-components'; 
 import { useLocation } from 'react-router-dom';
 import ActiveButton from '../components/common/ActiveButton';
+import { Box } from '../theme';
 
 import FinanceInformation from '../components/FinanceInformation';
 import SchemesInformation from '../components/SchemesInformation';
 import GovernanceInformation from '../components/GovernanceInformation';
 import ProposalsTable from '../components/ProposalsTable';
 
-const InfoPageWrapper = styled.div`
+const InfoPageWrapper = styled(Box)`
   width: 100%;
-  background: white;
-  font-weight: 400;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
 `;
 
 const InfoNavigation = styled.div`

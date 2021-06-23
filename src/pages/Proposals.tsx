@@ -3,17 +3,12 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
+import { Box } from '../theme';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
-const ProposalsTableWrapper = styled.div`
+const ProposalsTableWrapper = styled(Box)`
   width: 100%;
-  background: white;
-  font-weight: 400;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
 `;
 
 const ProposalsFilter = styled.select`

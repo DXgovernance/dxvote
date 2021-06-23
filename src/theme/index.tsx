@@ -64,6 +64,8 @@ const theme = (darkMode) => ({
     inputBackground: darkMode ? '#202124' : white,
     placeholderGray: darkMode ? '#5F5F5F' : '#E1E1E1',
     shadowColor: darkMode ? '#000' : '#2F80ED',
+    
+    borderStyle: "rgba(14, 0, 135, 0.1) 0px 2px 10px, rgba(14, 0, 135, 0.05) 0px 12px 32px",
 
     // grays
     concreteGray: darkMode ? '#292C2F' : '#FAFAFA',

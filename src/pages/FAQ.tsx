@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
+import { Box } from '../theme';
 
 const FAQPage = observer(() => {
     return (
-      <div style={{padding: "0px 10px"}}>
+      <Box style={{padding: "0px 10px"}}>
         <h2>Question 1</h2>
         <p>
         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book
@@ -33,7 +34,7 @@ const FAQPage = observer(() => {
         <p>
         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book
         </p>
-      </div>
+      </Box>
     );
 });
 

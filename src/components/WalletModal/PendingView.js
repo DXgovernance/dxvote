@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Option from './Option';
 import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
-import { Spinner } from '../../theme';
-import Circle from '../../assets/images/circle.svg';
+import { FiZap } from "react-icons/fi";
 import { darken } from 'polished';
 
 const PendingSection = styled.div`
@@ -13,16 +12,6 @@ const PendingSection = styled.div`
   width: 100%;
   & > * {
     width: 100%;
-  }
-`
-
-const SpinnerWrapper = styled(Spinner)`
-  font-size: 4rem;
-  margin-right: 1rem;
-  svg {
-    path {
-      color: ${({ theme }) => theme.placeholderGray};
-    }
   }
 `
 
@@ -75,7 +64,7 @@ export default function PendingView({ uri = '', size, connector, error = false, 
     <PendingSection>
       <LoadingMessage error={error}>
         <LoadingWrapper>
-          {!error && <SpinnerWrapper src={Circle} />}
+          {!error && <FiZap/>}
           {error ? (
             <ErrorGroup>
               <div>Error connecting.</div>

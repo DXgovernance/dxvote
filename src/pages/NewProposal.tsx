@@ -6,18 +6,16 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from '../utils/helpers';
 import ActiveButton from '../components/common/ActiveButton';
+import { Box } from '../theme';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
 import ProposalTemplates from '../config/proposalTemplates';
 
-const NewProposalFormWrapper = styled.div`
+const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
-  background: white;
-  padding: 0px 10px;
-  font-weight: 400;
-  border-radius: 4px;
   display: flex;
+  padding: 10px 10px;
   justify-content: center;
   flex-direction: column;
 `;

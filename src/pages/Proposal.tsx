@@ -9,20 +9,18 @@ import Slider from '@material-ui/core/Slider';
 import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
 import BlockchainLink from '../components/common/BlockchainLink';
+import { Box } from '../theme';
 import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState
 } from '../enums';
 
-const ProposalInformationWrapper = styled.div`
-    width: 100%;
-    background: white;
-    font-weight: 400;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
+const ProposalInformationWrapper = styled(Box)`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
 `;
 
 const InfoSidebar = styled.div`

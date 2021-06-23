@@ -5,6 +5,7 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import { useLocation } from 'react-router-dom';
 import BlockchainLink from '../components/common/BlockchainLink';
+import { Box } from '../theme';
 
 const UserPage = observer(() => {
     const {
@@ -15,7 +16,7 @@ const UserPage = observer(() => {
     const userInfo = daoStore.getUser(userAddress);
 
     return (
-      <div style={{padding: "0px 10px"}}>
+      <Box style={{padding: "10px 20px"}}>
         <div style={{
           display: "flex",
           flexDirection: "row",
@@ -40,7 +41,7 @@ const UserPage = observer(() => {
             {i < userEvents.history.length - 1 ? <hr/> : <div/>}
           </div>);
         })}
-      </div>
+      </Box>
     );
 });
 
