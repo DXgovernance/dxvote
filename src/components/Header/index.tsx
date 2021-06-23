@@ -10,7 +10,6 @@ import Web3 from 'web3';
 import { bnum } from '../../utils/helpers';
 import { Box } from '../../theme';
 
-
 const NavWrapper = styled.div`
   display: flex;
   flex-direction: row;

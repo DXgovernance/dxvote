@@ -9,6 +9,7 @@ import Slider from '@material-ui/core/Slider';
 import MDEditor from '@uiw/react-md-editor';
 import { bnum } from '../utils/helpers';
 import BlockchainLink from '../components/common/BlockchainLink';
+import Question from '../components/common/Question';
 import { Box } from '../theme';
 import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 import {
@@ -274,7 +275,7 @@ const ProposalPage = observer(() => {
             padding: "20px 10px"
           }} />
           <hr/>
-          <h2> Calls </h2>
+          <h2> Calls  <Question question="1"/></h2>
           {proposalCallTexts.map((proposalCallText, i) => {
             return(
             <div key={"proposalCallText"+i}>
@@ -298,7 +299,7 @@ const ProposalPage = observer(() => {
           })}
         </ProposalInfoSection>
         <InfoSidebar>
-          <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{proposalInfo.status}</h2>
+          <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{proposalInfo.status} <Question question="1"/></h2>
           <SidebarRow style={{
             margin: "0px 10px",
             flexDirection: "column"
@@ -356,7 +357,7 @@ const ProposalPage = observer(() => {
           <SidebarDivider/> 
         
           <SidebarRow>
-            <strong>Votes</strong>
+            <strong>Votes <Question question="1"/></strong>
           </SidebarRow>
           <SidebarRow style={{ margin: "0px 10px" }}> 
             <span style={{width: "50%", textAlign:"center", color: "green"}}>
@@ -422,7 +423,7 @@ const ProposalPage = observer(() => {
           <SidebarDivider/> 
           
           <SidebarRow>
-            <strong>Staked</strong>
+            <strong>Stakes <Question question="1"/></strong>
           </SidebarRow>
           <SidebarRow style={{ margin: "0px 10px" }}>
             <span style={{width: "50%", textAlign:"center", color: "green"}}>

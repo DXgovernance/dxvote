@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
+import Question from '../components/common/Question';
 import { bnum } from '../utils/helpers';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
@@ -22,20 +23,20 @@ const ProposalTableHeaderWrapper = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    color: var(--light-text-gray);
+    color: var(--dark-text-gray);
     padding: 20px 40px 8px 24px;
-    font-size: 14px;
+    font-size: 16px;
     text-align: center;
 `;
 
 const TableHeader = styled.div`
     width: ${(props) => props.width || '25%'};
     text-align: ${(props) => props.align};
+    align-items: center;
 `;
 
 const TableRowsWrapper = styled.div`
     overflow-y: scroll;
-    /* height: 260px; */
 `;
 
 const TableRow = styled.div`
@@ -84,8 +85,8 @@ const SchemesInformation = observer(() => {
       <SchemesInformationWrapper>
         <ProposalTableHeaderWrapper>
             <TableHeader width="15%" align="left"> Name </TableHeader>
-            <TableHeader width="40%" align="center"> Configuration </TableHeader>
-            <TableHeader width="25%" align="center"> Permissions </TableHeader>
+            <TableHeader width="40%" align="center"> Configuration <Question question="1"/> </TableHeader>
+            <TableHeader width="25%" align="center"> Permissions <Question question="1"/> </TableHeader>
             <TableHeader width="20%" align="center" style={{display: "flex", justifyContent: "space-between"}}>
               <span>Boosted</span> - <span>Active</span> - <span>Total</span>
             </TableHeader>

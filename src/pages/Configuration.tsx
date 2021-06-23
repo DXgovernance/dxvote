@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
+import Question from '../components/common/Question';
 import { FiCheckCircle, FiX } from "react-icons/fi";
 import { Box } from '../theme';
 
@@ -63,7 +64,7 @@ const ConfigPage = observer(() => {
   
     return (
       <Box style={{alignItems: "center"}}>
-        <h2>API Keys</h2>
+        <h2>API Keys <Question question="1"/></h2>
         <Row style={{maxWidth: "500px"}}>
           <span style={{width: "80px", height: "34px", padding:"10px 0px"}}>Etherscan:</span>
           <InputBox

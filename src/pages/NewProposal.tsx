@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from '../utils/helpers';
 import ActiveButton from '../components/common/ActiveButton';
+import Question from '../components/common/Question';
 import { Box } from '../theme';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
@@ -435,7 +436,7 @@ const NewProposalPage = observer(() => {
         }}>
           <PlaceHolders>
             <span style={{width: "100%"}}>Title</span>
-            <span style={{minWidth: "150px"}}>Scheme</span>
+            <span style={{minWidth: "150px"}}>Scheme <Question question="1"/></span>
             <span style={{minWidth: "150px"}}>Template</span>
           </PlaceHolders>
         </div>
@@ -481,7 +482,7 @@ const NewProposalPage = observer(() => {
             commands.checkedListCommand,
           ]}
         />
-        <h2>Description Preview:</h2>
+        <h2>Description Preview</h2>
         <MDEditor.Markdown source={descriptionText} style={{
           backgroundColor: "white",
           borderRadius: "5px",
@@ -489,8 +490,8 @@ const NewProposalPage = observer(() => {
           padding: "20px 10px"
         }} />
         {schemeToUse.controllerAddress == networkConfig.controller ?
-          <h2>Calls executed from the avatar:</h2>
-          :<h2>Calls executed from the scheme:</h2>
+          <h2>Calls executed from the avatar <Question question="1"/></h2>
+          :<h2>Calls executed from the scheme <Question question="1"/></h2>
         }
         {calls.map((call, i) => 
           <CallRow key={"call"+i}>

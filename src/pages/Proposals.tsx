@@ -207,8 +207,8 @@ const ProposalsPage = observer(() => {
                 return (
                   <Link key={"proposal"+i} to={"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
                     <TableRow>
-                      <TableCell width="5%" align="center">
-                        #{allProposals.length - i}
+                      <TableCell width="5%" align="left">
+                        {allProposals.length - i}
                       </TableCell>
                       <TableCell width="30%" align="left" weight='500' wrapText="true">
                         {proposal.title.length > 0 ? proposal.title : proposal.id}
