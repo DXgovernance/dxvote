@@ -188,6 +188,7 @@ export interface Scheme {
   proposalIds: string[];
   boostedProposals: number;
   maxSecondsForExecution: BigNumber;
+  maxRepPercentageChange: BigNumber;
   newProposalEvents: ProposalEvent[]
 }
 

@@ -349,6 +349,7 @@ export const updateSchemes = async function (
         callsToExecute.push([walletSchemeContract, "controllerAddress", []]);
         callsToExecute.push([walletSchemeContract, "schemeName", []]);
         callsToExecute.push([walletSchemeContract, "maxSecondsForExecution", []]);
+        callsToExecute.push([walletSchemeContract, "maxRepPercentageChange", []]);
       }
       
       const callsResponse1 = await executeMulticall(web3, allContracts.multicall, callsToExecute);
@@ -365,6 +366,9 @@ export const updateSchemes = async function (
         : schemeTypeData.name;
       const maxSecondsForExecution = (schemeTypeData.type == 'WalletScheme')
         ? callsResponse1.decodedReturnData[5]
+        : 0;
+      const maxRepPercentageChange = (schemeTypeData.type == 'WalletScheme')
+        ? callsResponse1.decodedReturnData[6]
         : 0;
       
       callsToExecute = [
@@ -430,6 +434,7 @@ export const updateSchemes = async function (
           proposalIds: [],
           boostedProposals: 0,
           maxSecondsForExecution,
+          maxRepPercentageChange,
           newProposalEvents: []
         };
       } else {
