@@ -16,9 +16,9 @@ export default class PinataService {
     const alreadyPinned = pinList.data.rows;
     for (let i = 0; i < ipfsHashes.length; i++) {
       if (alreadyPinned.indexOf(pinned => alreadyPinned.ipfs_pin_hash == ipfsHashes[i].hash) < 0) {
-        console.log('[PINATA] Pinning:', ipfsHashes[i].hash);
+        console.debug('[PINATA] Pinning:', ipfsHashes[i].hash);
       } else {
-        console.log('[PINATA] Alpready pinned:', ipfsHashes[i].hash);
+        console.debug('[PINATA] Alpready pinned:', ipfsHashes[i].hash);
       }
     }
   }
