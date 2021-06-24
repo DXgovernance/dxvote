@@ -192,7 +192,7 @@ export default class DaoStore {
           if (cache.proposals[vote.proposalId].winningVote == vote.vote){
             users[vote.voter].correctVotes ++;
             users[vote.voter].totalVoted = users[vote.voter].totalVoted.plus(bnum(vote.amount));
-            users[vote.voter].score += 2;
+            users[vote.voter].score += 3;
             
           } else {
             users[vote.voter].wrongVotes ++;
@@ -223,7 +223,7 @@ export default class DaoStore {
           if (cache.proposals[stake.proposalId].winningVote == stake.vote){
             users[stake.staker].correctStakes ++;
             users[stake.staker].totalStaked = users[stake.staker].totalStaked.plus(bnum(stake.amount));
-            users[stake.staker].score += 2;
+            users[stake.staker].score += 3;
           } else {
             users[stake.staker].wrongStakes ++;
             users[stake.staker].totalStaked = users[stake.staker].totalStaked.plus(bnum(stake.amount));
@@ -249,7 +249,7 @@ export default class DaoStore {
         
       const score = cache.proposals[proposalId].positiveVotes.plus(cache.proposals[proposalId].negativeVotes)
         .div(cache.proposals[proposalId].repAtCreation).div("0.20").times("10").toFixed(2);
-      users[proposalCreator].score += Math.max(score, 10);
+      users[proposalCreator].score += Math.min(Math.min(score, 1), 30);
       users[proposalCreator].proposals ++;
       totalProposalsCreated ++;
 

@@ -115,10 +115,20 @@ const GovernanceInformation = observer(() => {
               i < 12 ? <FaMedal style={{color:"#CD7F32"}}/> :
               <div/>}
               </TableCell>
-              <TableCell width="35%" align="center" weight='500'> <BlockchainLink size="long" text={user.address}/> </TableCell>
+              <TableCell width="35%" align="center" weight='500'>
+                <BlockchainLink size="long" type="address" text={user.address}/>
+              </TableCell>
               <TableCell width="15%" align="center"> {user.proposals} </TableCell>
-              <TableCell width="15%" align="center"> {user.correctVotes} - {user.wrongVotes} </TableCell>
-              <TableCell width="15%" align="center"> {user.correctStakes} - {user.wrongStakes} </TableCell>
+              <TableCell width="15%" align="center"> 
+                <span style={{color:"green"}}>{user.correctVotes} </span>
+                  -
+                <span style={{color:"red"}}> {user.wrongVotes}</span>
+               </TableCell>
+              <TableCell width="15%" align="center"> 
+                <span style={{color:"green"}}>{user.correctStakes} </span>
+                  -
+                <span style={{color:"red"}}> {user.wrongStakes}</span>
+               </TableCell>
               <TableCell width="15%" align="center"> {user.score.toFixed(0)} </TableCell>
             </TableRow>
           );
