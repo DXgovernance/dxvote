@@ -111,6 +111,7 @@ export interface Proposal{
   stateInScheme: WalletSchemeProposalState;
   stateInVotingMachine: VotingMachineProposalState;
   descriptionHash: string;
+  creationEventSender: string;
   creationEvent: BlockchainEvent;
   repAtCreation: BigNumber;
   winningVote: number;

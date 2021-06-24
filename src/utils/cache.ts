@@ -706,6 +706,7 @@ export const updateProposals = async function (
         stateInScheme: schemeProposalInfo.state,
         stateInVotingMachine: votingMachineProposalInfo.state,
         descriptionHash: schemeProposalInfo.descriptionHash,
+        creationEventSender: (await web3.eth.getTransaction(schemeEvent.transactionHash)).from,
         creationEvent: {
           event: schemeEvent.event,
           signature: schemeEvent.signature,
