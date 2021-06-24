@@ -157,6 +157,123 @@ export default class DaoStore {
     return proposals;
   }
   
+  getUsersRanking(): any {
+    let users = {},
+    totalPositiveVotes = 0,
+    totalPositiveVotesAmount = bnum(0),
+    totalNegativeVotes = 0,
+    totalNegativeVotesAmount = bnum(0),
+    totalPositiveStakes = 0,
+    totalPositiveStakesAmount = bnum(0),
+    totalNegativeStakes = 0,
+    totalNegativeStakesAmount = bnum(0),
+    totalProposalsCreated = 0;
+    const cache = this.getCache();
+
+    Object.keys(cache.votingMachines).map((votingMachineAddress) => {
+      cache.votingMachines[votingMachineAddress].events.votes.map((vote) => {
+        if (!users[vote.voter])
+          users[vote.voter] = {
+            correctVotes: 0, wrongVotes:0,
+            correctStakes: 0, wrongStakes: 0,
+            proposals: 0, totalVoted: bnum(0), totalStaked: bnum(0), score: 0
+          };
+        
+        if (!cache.proposals[vote.proposalId]) {
+          console.debug("MISSING PROPOSAL", vote.proposalId);
+        } else {
+          if (vote.vote == 1){
+            totalPositiveVotes ++;
+            totalPositiveVotesAmount = totalPositiveVotesAmount.plus(bnum(vote.amount));
+          } else {
+            totalNegativeVotes ++;
+            totalNegativeVotesAmount = totalNegativeVotesAmount.plus(bnum(vote.amount));
+          }
+          if (cache.proposals[vote.proposalId].winningVote == vote.vote){
+            users[vote.voter].correctVotes ++;
+            users[vote.voter].totalVoted = users[vote.voter].totalVoted.plus(bnum(vote.amount));
+            users[vote.voter].score += 2;
+            
+          } else {
+            users[vote.voter].wrongVotes ++;
+            users[vote.voter].totalVoted = users[vote.voter].totalVoted.plus(bnum(vote.amount));
+            users[vote.voter].score += 1;
+          }
+        }
+      })
+      cache.votingMachines[votingMachineAddress].events.stakes.map((stake) => {
+        if (!users[stake.staker])
+          users[stake.staker] = {
+            correctVotes: 0, wrongVotes:0,
+            correctStakes: 0, wrongStakes: 0,
+            proposals: 0, totalVoted: bnum(0), totalStaked: bnum(0), score: 0
+          };
+        
+        if (!cache.proposals[stake.proposalId]) {
+          console.debug("MISSING PROPOSAL", stake.proposalId);
+        } else {
+          if (stake.vote == 1){
+            totalPositiveStakes ++;
+            totalPositiveStakesAmount = totalPositiveStakesAmount.plus(bnum(stake.amount));
+          } else {
+            totalNegativeStakes ++;
+            totalNegativeStakesAmount = totalNegativeStakesAmount.plus(bnum(stake.amount));
+          }
+          
+          if (cache.proposals[stake.proposalId].winningVote == stake.vote){
+            users[stake.staker].correctStakes ++;
+            users[stake.staker].totalStaked = users[stake.staker].totalStaked.plus(bnum(stake.amount));
+            users[stake.staker].score += 2;
+          } else {
+            users[stake.staker].wrongStakes ++;
+            users[stake.staker].totalStaked = users[stake.staker].totalStaked.plus(bnum(stake.amount));
+            users[stake.staker].score += 1;
+          }
+        }
+      });
+    })
+
+
+    Object.keys(cache.proposals).map( (proposalId) => {
+      
+      const proposalCreator = (cache.users[cache.proposals[proposalId].proposer] &&
+        bnum(cache.users[cache.proposals[proposalId].proposer].repBalance).gt("0"))
+        ? cache.proposals[proposalId].proposer : cache.proposals[proposalId].creationEventSender;
+        
+      if (!users[proposalCreator])
+        users[proposalCreator] = {
+          correctVotes: 0, wrongVotes:0,
+          correctStakes: 0, wrongStakes: 0,
+          proposals: 0, totalVoted: bnum(0), totalStaked: bnum(0), score: 0
+        };
+        
+      const score = cache.proposals[proposalId].positiveVotes.plus(cache.proposals[proposalId].negativeVotes)
+        .div(cache.proposals[proposalId].repAtCreation).div("0.20").times("10").toFixed(2);
+      users[proposalCreator].score += Math.max(score, 10);
+      users[proposalCreator].proposals ++;
+      totalProposalsCreated ++;
+
+    });
+    
+    delete users["0x0000000000000000000000000000000000000000"];
+    delete users["0x4D953115678b15CE0B0396bCF95Db68003f86FB5"];
+    
+    return {
+      totalPositiveVotes,
+      totalPositiveVotesAmount,
+      totalNegativeVotes,
+      totalNegativeVotesAmount,
+      totalPositiveStakes,
+      totalPositiveStakesAmount,
+      totalNegativeStakes,
+      totalNegativeStakesAmount,
+      totalProposalsCreated,
+      ranking: _.orderBy(
+        Object.keys(users).map(key => ( Object.assign({ address: key }, users[key]) )), ["score"], ["desc"]
+      )
+    }
+  }
+  
   getAllProposals(): Proposal[] {
     const allProposals = Object.keys(this.getCache().proposals)
       .map( (proposalId) => {return this.getCache().proposals[proposalId] } );
