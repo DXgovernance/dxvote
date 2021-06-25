@@ -2,10 +2,18 @@
 import { ethers, utils } from 'ethers';
 import { BigNumber } from './bignumber';
 
+BigNumber.config({
+  DECIMAL_PLACES: 2,
+  FORMAT: {
+    groupSize: 3,
+    groupSeparator: ' ',
+    decimalSeparator: '.'
+  }
+});
+
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
 export const MAX_UINT = utils.bigNumberify(ethers.constants.MaxUint256);
-export const DEFAULT_TOKEN_DECIMALS = 18;
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const ANY_ADDRESS = "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa";
 export const ANY_FUNC_SIGNATURE = "0xaaaaaaaa";

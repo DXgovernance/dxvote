@@ -170,20 +170,36 @@ export default class BlockchainStore {
         
         let tokensBalancesCalls = [];
         Object.keys(networkConfig.tokens).map((tokenAddress) => {
-          if (!daoStore.tokenBalances[tokenAddress])
+          if (!networkCache.daoInfo.tokenBalances[tokenAddress])
             tokensBalancesCalls.push({
               contractType: ContractType.ERC20,
               address: tokenAddress,
               method: 'balanceOf',
               params: [networkConfig.avatar],
             });
+          Object.keys(networkCache.schemes).map((schemeAddress) => {
+            if (networkCache.schemes[schemeAddress].controllerAddress != networkConfig.controller)
+              tokensBalancesCalls.push({
+                contractType: ContractType.ERC20,
+                address: tokenAddress,
+                method: 'balanceOf',
+                params: [schemeAddress],
+              });
+          })
         });
 
         if (tokensBalancesCalls.length > 0)
           multicallService.addCalls(tokensBalancesCalls);
         await this.executeAndUpdateMulticall(multicallService);
+        
         tokensBalancesCalls.map((tokensBalancesCall) => {
-          daoStore.updateTokenBalance(tokensBalancesCall.address)
+          if (tokensBalancesCall.params[0] == networkConfig.avatar) {
+            networkCache.daoInfo.tokenBalances[tokensBalancesCall.address] =
+              this.rootStore.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
+          } else {
+            networkCache.schemes[tokensBalancesCall.params[0]].tokenBalances[tokensBalancesCall.address] =
+              this.rootStore.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
+          }
         });
         
         // Get user-specific blockchain data

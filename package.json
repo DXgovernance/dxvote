@@ -55,6 +55,7 @@
     "react-dom": "^16.10.2",
     "react-feather": "^2.0.3",
     "react-form-validator-core": "^1.0.0",
+    "react-google-charts": "^3.0.15",
     "react-icons": "^4.1.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^4.0.3",

@@ -50,9 +50,12 @@ const TableRow = styled.div`
 `;
 
 const TableCell = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: ${(props) => props.align};;
     color: ${(props) => props.color};
     width: ${(props) => props.width};
-    text-align: ${(props) => props.align};
     font-weight: ${(props) => props.weight};
     white-space: ${(props) => props.wrapText ? 'nowrap' : 'inherit'};
     overflow: ${(props) => props.wrapText ? 'hidden' : 'inherit'};
@@ -68,22 +71,25 @@ const FinanceInformation = observer(() => {
     const daoInfo = daoStore.getDaoInfo();
     const networkConfig = configStore.getNetworkConfig();
     let assets = [{
-      name: "ETH", amount: bnum(daoInfo.ethBalance).div(10**18).toFixed(2)
+      address: "0x0000000000000000000000000000000000000000",
+      name: "ETH",
+      amount: bnum(daoInfo.ethBalance).div(10**18).toFormat()
     }];
-    Object.keys(daoStore.tokenBalances).map((tokenAddress) => {
+    Object.keys(daoInfo.tokenBalances).map((tokenAddress) => {
       assets.push({
+        address: tokenAddress,
         name: networkConfig.tokens[tokenAddress].name,
-        amount: bnum(daoStore.tokenBalances[tokenAddress])
-          .div(10**networkConfig.tokens[tokenAddress].decimals).toFixed(2)
+        amount: bnum(daoInfo.tokenBalances[tokenAddress])
+          .div(10**networkConfig.tokens[tokenAddress].decimals).toFormat()
       })
     })
     
     return (
       <FinanceInfoWrapper>
-        <h2 style={{ display: "flex", justifyContent: "center"}}>DAO <BlockchainLink size="long" text={daoInfo.address} toCopy/></h2>
+        <h2 style={{textAlign: "center"}}>Total</h2>
         <FinanceTableHeaderWrapper>
-            <TableHeader width="50%" align="center"> Asset </TableHeader>
-            <TableHeader width="50%" align="center"> Balance </TableHeader>
+          <TableHeader width="50%" align="center"> Asset </TableHeader>
+          <TableHeader width="50%" align="center"> Balance </TableHeader>
         </FinanceTableHeaderWrapper>
         <TableRowsWrapper>
         {assets.map((asset, i) => {
@@ -91,7 +97,31 @@ const FinanceInformation = observer(() => {
             return (
               <TableRow key={`asset${i}`}>
                 <TableCell width="50%" align="center" weight='500'>
-                  {asset.name}
+                  {asset.name} <BlockchainLink size="long" text={daoInfo.address} onlyIcon/>
+                </TableCell>
+                <TableCell width="50%" align="center"> 
+                  {asset.amount}
+                </TableCell>
+              </TableRow>);
+            } else {
+              return <div/>
+            }
+          }
+        )}
+        </TableRowsWrapper>
+        
+        <h2 style={{textAlign: "center"}}>Avatar</h2>
+        <FinanceTableHeaderWrapper>
+          <TableHeader width="50%" align="center"> Asset </TableHeader>
+          <TableHeader width="50%" align="center"> Balance </TableHeader>
+        </FinanceTableHeaderWrapper>
+        <TableRowsWrapper>
+        {assets.map((asset, i) => {
+          if (asset) {
+            return (
+              <TableRow key={`asset${i}`}>
+                <TableCell width="50%" align="center" weight='500'>
+                  {asset.name} <BlockchainLink size="long" text={daoInfo.address} onlyIcon/>
                 </TableCell>
                 <TableCell width="50%" align="center"> 
                   {asset.amount}

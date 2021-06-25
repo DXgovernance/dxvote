@@ -17,9 +17,6 @@ const CACHE = require('../cache');
 
 export default class DaoStore {
   daoCache: DaoCache = CACHE;
-  tokenBalances: { 
-    [tokenAddress: string] : BigNumber
-  } = {};
   rootStore: RootStore;
 
   constructor(rootStore) {
@@ -94,15 +91,6 @@ export default class DaoStore {
     this.daoCache[networkName] = this.parseCache(newNetworkCache);
     console.debug('Cache Updated]', this.daoCache[networkName]);
   }
-  
-  updateTokenBalance(tokenAddress: string) {
-    this.tokenBalances[tokenAddress] = this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.ERC20,
-      address: tokenAddress,
-      method: 'balanceOf',
-      params: [this.rootStore.configStore.getNetworkConfig().avatar]
-    }) || bnum(0);
-  }
 
   getDaoInfo(): DaoInfo {
     return this.getCache().daoInfo;
@@ -157,7 +145,7 @@ export default class DaoStore {
     return proposals;
   }
   
-  getUsersRanking(): any {
+  getGovernanceInfo(): any {
     let users = {},
     totalPositiveVotes = 0,
     totalPositiveVotesAmount = bnum(0),
@@ -169,6 +157,31 @@ export default class DaoStore {
     totalNegativeStakesAmount = bnum(0),
     totalProposalsCreated = 0;
     const cache = this.getCache();
+    let rep = [];
+    Object.keys(cache.users).map((userAddress) => {
+      if (cache.users[userAddress].repBalance > 0)
+        rep.push([userAddress, bnum(cache.users[userAddress].repBalance).div(10**18).toNumber()])
+    })
+    rep = _.sortBy(rep, [function(o) { return o[1]; }]);
+    rep.unshift(["User Address", "REP %"]);
+    
+    
+    let repEvents = [];
+    let repTotalSupply = bnum(0);
+    let blockNumber = 0;
+    for (let i = 0; i < cache.daoInfo.repEvents.length; i++) {
+
+      if (cache.daoInfo.repEvents[i].event == "Mint")
+        repTotalSupply = repTotalSupply.plus(cache.daoInfo.repEvents[i].amount);
+      else if (cache.daoInfo.repEvents[i].event == "Burn")
+        repTotalSupply = repTotalSupply.minus(cache.daoInfo.repEvents[i].amount);
+      
+      if (cache.daoInfo.repEvents[i].block > blockNumber){
+        blockNumber = cache.daoInfo.repEvents[i].block;
+        repEvents.push([blockNumber, bnum(repTotalSupply).div(10**18).toNumber()])
+      }
+    }
+    repEvents.unshift(["Block", "Total Rep"]);
 
     Object.keys(cache.votingMachines).map((votingMachineAddress) => {
       cache.votingMachines[votingMachineAddress].events.votes.map((vote) => {
@@ -235,15 +248,8 @@ export default class DaoStore {
 
     Object.keys(cache.proposals).map( (proposalId) => {
       
-      const invalidCreators = [
-        "0x0000000000000000000000000000000000000000",
-        "0x4D953115678b15CE0B0396bCF95Db68003f86FB5"
-      ]
-        
-      const GNOSIS_RELAY_MAINNET = "0x4D953115678b15CE0B0396bCF95Db68003f86FB5"
-      const proposalCreator = cache.proposals[proposalId].creationEventSender == GNOSIS_RELAY_MAINNET 
-      ? cache.proposals[proposalId].proposer : cache.proposals[proposalId].creationEventSender; 
-    
+      const proposalCreator = cache.proposals[proposalId].proposer;
+      
       if (proposalCreator != "0x0000000000000000000000000000000000000000") {
         if (!users[proposalCreator])
           users[proposalCreator] = {
@@ -277,6 +283,8 @@ export default class DaoStore {
       totalNegativeStakes,
       totalNegativeStakesAmount,
       totalProposalsCreated,
+      rep,
+      repEvents,
       ranking: _.orderBy(
         Object.keys(users).map(key => ( Object.assign({ address: key }, users[key]) )), ["score"], ["desc"]
       )

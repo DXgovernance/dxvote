@@ -84,8 +84,8 @@ const SchemesInformation = observer(() => {
       <SchemesInformationWrapper>
         <ProposalTableHeaderWrapper>
             <TableHeader width="15%" align="left"> Name </TableHeader>
-            <TableHeader width="40%" align="center"> Configuration <Question question="1"/> </TableHeader>
-            <TableHeader width="25%" align="center"> Permissions <Question question="1"/> </TableHeader>
+            <TableHeader width="40%" align="center"> Configuration <Question question="9"/> </TableHeader>
+            <TableHeader width="25%" align="center"> Permissions <Question question="9"/> </TableHeader>
             <TableHeader width="20%" align="center" style={{display: "flex", justifyContent: "space-between"}}>
               <span>Boosted</span> - <span>Active</span> - <span>Total</span>
             </TableHeader>

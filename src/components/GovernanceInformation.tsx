@@ -5,6 +5,8 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { FaTrophy, FaMedal } from "react-icons/fa";
+import { bnum } from '../utils/helpers';
+import { Chart } from "react-google-charts";
 
 const GovernanceInfoWrapper = styled.div`
     background: white;
@@ -15,6 +17,17 @@ const GovernanceInfoWrapper = styled.div`
     justify-content: center;
     flex-direction: column;
     color: var(--dark-text-gray);
+`;
+
+const InfoBox = styled.div`
+  flex: 1;
+  text-align: center;
+  padding: 2px 5px;
+  margin: 10px 5px;
+  font-size: 25px;
+  font-weight: 300;
+  border-radius: 3px;
+  color: var(--activeButtonBackground);
 `;
 
 const GovernanceTableHeaderActions = styled.div`
@@ -82,18 +95,77 @@ const GovernanceInformation = observer(() => {
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
     const daoInfo = daoStore.getDaoInfo();
-    const usersRanking = daoStore.getUsersRanking();
-    console.log(usersRanking);
-    
+    const governanceInfo = daoStore.getGovernanceInfo();
+    console.log(governanceInfo);
     function toNumber(weiNumber) {
-      return parseFloat(Number(library.utils.fromWei(weiNumber.toString())).toFixed(0))
+      return bnum(weiNumber).div(10**18).toFixed(0)
     }
     return (
       <GovernanceInfoWrapper>
-        <h2>Total REP: {toNumber(daoInfo.totalRep)}</h2>
-        <h2>Total Positive Votes: {usersRanking.totalPositiveVotes} - {toNumber(usersRanking.totalPositiveVotesAmount)} REP</h2>
-        <h2>Total Negative Votes: {usersRanking.totalNegativeVotes} - {toNumber(usersRanking.totalNegativeVotesAmount)} REP</h2>
-        <h2>Total Proposals Created: {usersRanking.totalProposalsCreated}</h2>
+        <h1 style={{textAlign: "center"}}>Stats</h1>
+        <div style={{display: "flex", flexDirection: "row"}}>
+          <InfoBox>
+            {toNumber(daoInfo.totalRep)} REP
+          </InfoBox>
+          <InfoBox>
+            {governanceInfo.totalPositiveVotes} Positive Votes
+          </InfoBox>
+          <InfoBox>
+            {governanceInfo.totalNegativeVotes} Negative Votes
+          </InfoBox>
+          <InfoBox>
+            {governanceInfo.totalProposalsCreated} Proposals
+          </InfoBox>
+        </div>
+        
+        <h1 style={{textAlign: "center"}}>Reputation Charts</h1>
+        <div style={{display: "flex", flexDirection: "row", width: "100%"}}>
+          <Chart
+            chartType="PieChart"
+            loader={<div>Loading Chart</div>}
+            data={governanceInfo.rep}
+            options={{
+              legend: 'none',
+              pieSliceText: 'none',
+              pieStartAngle: 100,
+              title: "Reputation Distribution",
+              sliceVisibilityThreshold: 0.001, // 0.1%
+            }}
+          />
+          <Chart
+            width="100%"
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={governanceInfo.repEvents}
+            options={{
+              hAxis: { title: 'Block Number', },
+              vAxis: { title: 'Reputation', },
+              title: "Reputation over Time",
+              legend: 'none'
+            }}
+          />
+        </div>
+        
+        <h1 style={{textAlign: "center"}}>Governance Ranking</h1>
+
+        <div style={{display: "flex", flexDirection: "row"}}>
+          <InfoBox>
+            Create Proposal<br/>
+            <strong>1 to 30 Points</strong>
+          </InfoBox>
+          <InfoBox>
+            Vote Winning Option<br/>
+            <strong>3 Points</strong>
+          </InfoBox>
+          <InfoBox>
+            Vote Losing Option<br/>
+            <strong>1 Point</strong>
+          </InfoBox>
+          <InfoBox>
+            Stake Winning Option<br/>
+            <strong>1 Point</strong>
+          </InfoBox>
+        </div>
         <GovernanceTableHeaderWrapper>
           <TableHeader width="5%" align="center"> # </TableHeader>
           <TableHeader width="35%" align="center"> Address </TableHeader>
@@ -103,7 +175,7 @@ const GovernanceInformation = observer(() => {
           <TableHeader width="15%" align="center"> Score </TableHeader>
         </GovernanceTableHeaderWrapper>
         <TableRowsWrapper>
-        {usersRanking.ranking.map((user, i) => {
+        {governanceInfo.ranking.map((user, i) => {
           return (
             <TableRow key={`user${i}`}>
               <TableCell width="5%" align="center" weight='500'> {i + 1}
