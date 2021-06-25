@@ -62,7 +62,12 @@ export const updateNetworkCache = async function (
       };
   
     networkCache = await updateVotingMachineEvents(
-      networkCache, networkContracts.votingMachines[votingMachineAddress].contract, fromBlock, toBlock, web3
+      networkCache,
+      networkContracts.avatar._address,
+      networkContracts.votingMachines[votingMachineAddress].contract,
+      fromBlock,
+      toBlock,
+      web3
     );
 
   }));
@@ -95,6 +100,7 @@ export const updateDaoInfo = async function (
   networkCache.daoInfo.repEvents = !networkCache.daoInfo.repEvents ? [] : networkCache.daoInfo.repEvents;
   networkCache.daoInfo.totalRep = bnum(callsResponse.decodedReturnData[0]);
   networkCache.daoInfo.ethBalance = bnum(callsResponse.decodedReturnData[1]);
+  networkCache.daoInfo.tokenBalances = {};
   return networkCache;
 }
 
@@ -154,101 +160,105 @@ export const updateReputationEvents = async function (
 }
 
 export const updateVotingMachineEvents = async function (
-  networkCache: DaoNetworkCache, votingMachine: any, fromBlock: string, toBlock: string, web3: any
+  networkCache: DaoNetworkCache,
+  avatarAddress: string,
+  votingMachine: any,
+  fromBlock: string,
+  toBlock: string,
+  web3: any
 ): Promise<DaoNetworkCache> {
 
   let newVotingMachineEvents = sortEvents(
     await getEvents(web3, votingMachine, fromBlock, toBlock, 'allEvents')
   );
   const votingMachineEventsInCache = networkCache.votingMachines[votingMachine._address].events;
-  
+    
   newVotingMachineEvents.map((votingMachineEvent) => {
-    switch (votingMachineEvent.event) {
-      case "StateChange":
-        votingMachineEventsInCache.proposalStateChanges.push({
-          event: votingMachineEvent.event,
-          signature: votingMachineEvent.signature,
-          address: votingMachineEvent.address,
-          state: votingMachineEvent.returnValues._proposalState,
-          proposalId: votingMachineEvent.returnValues._proposalId,
-          tx: votingMachineEvent.transactionHash,
-          block: votingMachineEvent.blockNumber,
-          timestamp: votingMachineEvent.timestamp,
-          transactionIndex: votingMachineEvent.transactionIndex,
-          logIndex: votingMachineEvent.logIndex
-        });
-      break;
-      case "VoteProposal":
-        
-        const preBoosted = votingMachineEventsInCache.proposalStateChanges
-          .findIndex(i => i.state === "5") >= 0;
+    if (votingMachineEvent.returnValues._organization == avatarAddress)
+      switch (votingMachineEvent.event) {
+        case "StateChange":
+          votingMachineEventsInCache.proposalStateChanges.push({
+            event: votingMachineEvent.event,
+            signature: votingMachineEvent.signature,
+            address: votingMachineEvent.address,
+            state: votingMachineEvent.returnValues._proposalState,
+            proposalId: votingMachineEvent.returnValues._proposalId,
+            tx: votingMachineEvent.transactionHash,
+            block: votingMachineEvent.blockNumber,
+            timestamp: votingMachineEvent.timestamp,
+            transactionIndex: votingMachineEvent.transactionIndex,
+            logIndex: votingMachineEvent.logIndex
+          });
+        break;
+        case "VoteProposal":
+          
+          const preBoosted = votingMachineEventsInCache.proposalStateChanges
+            .findIndex(i => i.state === "5") >= 0;
 
-        votingMachineEventsInCache.votes.push({
+          votingMachineEventsInCache.votes.push({
+            event: votingMachineEvent.event,
+            signature: votingMachineEvent.signature,
+            address: votingMachineEvent.address,
+            voter: votingMachineEvent.returnValues._voter,
+            vote: votingMachineEvent.returnValues._vote,
+            amount: votingMachineEvent.returnValues._reputation,
+            preBoosted: preBoosted,
+            proposalId: votingMachineEvent.returnValues._proposalId,
+            tx: votingMachineEvent.transactionHash,
+            block: votingMachineEvent.blockNumber,
+            timestamp: votingMachineEvent.timestamp,
+            transactionIndex: votingMachineEvent.transactionIndex,
+            logIndex: votingMachineEvent.logIndex
+          });
+        break;
+        case "Stake":
+        votingMachineEventsInCache.stakes.push({
           event: votingMachineEvent.event,
           signature: votingMachineEvent.signature,
           address: votingMachineEvent.address,
-          voter: votingMachineEvent.returnValues._voter,
-          vote: votingMachineEvent.returnValues._vote,
-          amount: votingMachineEvent.returnValues._reputation,
-          preBoosted: preBoosted,
-          proposalId: votingMachineEvent.returnValues._proposalId,
-          tx: votingMachineEvent.transactionHash,
-          block: votingMachineEvent.blockNumber,
-          timestamp: votingMachineEvent.timestamp,
-          transactionIndex: votingMachineEvent.transactionIndex,
-          logIndex: votingMachineEvent.logIndex
-        });
-        
-      break;
-      case "Stake":
-      votingMachineEventsInCache.stakes.push({
-        event: votingMachineEvent.event,
-        signature: votingMachineEvent.signature,
-        address: votingMachineEvent.address,
-          staker: votingMachineEvent.returnValues._staker,
-          vote: votingMachineEvent.returnValues._vote,
-          amount: votingMachineEvent.returnValues._amount,
-          amount4Bounty: bnum("0"),
-          proposalId: votingMachineEvent.returnValues._proposalId,
-          tx: votingMachineEvent.transactionHash,
-          block: votingMachineEvent.blockNumber,
-          timestamp: votingMachineEvent.timestamp,
-          transactionIndex: votingMachineEvent.transactionIndex,
-          logIndex: votingMachineEvent.logIndex
-        });
-        
-      break;
-      case "Redeem":
-        votingMachineEventsInCache.redeems.push({
-          event: votingMachineEvent.event,
-          signature: votingMachineEvent.signature,
-          address: votingMachineEvent.address,
-          beneficiary: votingMachineEvent.returnValues._beneficiary,
-          amount: votingMachineEvent.returnValues._amount,
-          proposalId: votingMachineEvent.returnValues._proposalId,
-          tx: votingMachineEvent.transactionHash,
-          block: votingMachineEvent.blockNumber,
-          timestamp: votingMachineEvent.timestamp,
-          transactionIndex: votingMachineEvent.transactionIndex,
-          logIndex: votingMachineEvent.logIndex
-        });
-      break;
-      case "RedeemRep":
-        votingMachineEventsInCache.redeemsRep.push({
-          event: votingMachineEvent.event,
-          signature: votingMachineEvent.signature,
-          address: votingMachineEvent.address,
-          beneficiary: votingMachineEvent.returnValues._beneficiary,
-          amount: votingMachineEvent.returnValues._amount,
-          proposalId: votingMachineEvent.returnValues._proposalId,
-          tx: votingMachineEvent.transactionHash,
-          block: votingMachineEvent.blockNumber,
-          timestamp: votingMachineEvent.timestamp,
-          transactionIndex: votingMachineEvent.transactionIndex,
-          logIndex: votingMachineEvent.logIndex
-        });
-      break;
-    }
+            staker: votingMachineEvent.returnValues._staker,
+            vote: votingMachineEvent.returnValues._vote,
+            amount: votingMachineEvent.returnValues._amount,
+            amount4Bounty: bnum("0"),
+            proposalId: votingMachineEvent.returnValues._proposalId,
+            tx: votingMachineEvent.transactionHash,
+            block: votingMachineEvent.blockNumber,
+            timestamp: votingMachineEvent.timestamp,
+            transactionIndex: votingMachineEvent.transactionIndex,
+            logIndex: votingMachineEvent.logIndex
+          });
+        break;
+        case "Redeem":
+          votingMachineEventsInCache.redeems.push({
+            event: votingMachineEvent.event,
+            signature: votingMachineEvent.signature,
+            address: votingMachineEvent.address,
+            beneficiary: votingMachineEvent.returnValues._beneficiary,
+            amount: votingMachineEvent.returnValues._amount,
+            proposalId: votingMachineEvent.returnValues._proposalId,
+            tx: votingMachineEvent.transactionHash,
+            block: votingMachineEvent.blockNumber,
+            timestamp: votingMachineEvent.timestamp,
+            transactionIndex: votingMachineEvent.transactionIndex,
+            logIndex: votingMachineEvent.logIndex
+          });
+        break;
+        case "RedeemRep":
+          votingMachineEventsInCache.redeemsRep.push({
+            event: votingMachineEvent.event,
+            signature: votingMachineEvent.signature,
+            address: votingMachineEvent.address,
+            beneficiary: votingMachineEvent.returnValues._beneficiary,
+            amount: votingMachineEvent.returnValues._amount,
+            proposalId: votingMachineEvent.returnValues._proposalId,
+            tx: votingMachineEvent.transactionHash,
+            block: votingMachineEvent.blockNumber,
+            timestamp: votingMachineEvent.timestamp,
+            transactionIndex: votingMachineEvent.transactionIndex,
+            logIndex: votingMachineEvent.logIndex
+          });
+        break;
+      }
   });
   
   networkCache.votingMachines[votingMachine._address].events = votingMachineEventsInCache;
@@ -425,6 +435,7 @@ export const updateSchemes = async function (
           name: schemeName,
           type: schemeTypeData.type,
           ethBalance: ethBalance,
+          tokenBalances: {},
           votingMachine: schemeTypeData.votingMachine,
           
           configurations: [{
@@ -651,6 +662,8 @@ export const updateProposals = async function (
         descriptionHash: "",
         submittedTime: 0
       };
+      let decodedProposer;
+
       if (schemeTypeData.type == 'WalletScheme') {
         schemeProposalInfo = web3.eth.abi.decodeParameters(
             [ 
@@ -670,6 +683,13 @@ export const updateProposals = async function (
           let creationLogDecoded;
           schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
             transactionReceipt.logs.map((log) => {
+              if (log.topics[0] == "0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c") {
+                decodedProposer = web3.eth.abi.decodeParameters([
+                  { type:'uint256', name: "_numOfChoices"},
+                  { type:'address', name: "_proposer"},
+                  { type:'bytes32', name: "_paramsHash"}
+                ], log.data)._proposer
+              }
               if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
                 creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
                 if (creationLogDecoded._descriptionHash.length > 0)
@@ -726,7 +746,7 @@ export const updateProposals = async function (
         },
         repAtCreation: bnum(await allContracts.reputation.methods.totalSupplyAt(schemeEvent.blockNumber).call()),
         winningVote: votingMachineProposalInfo.winningVote,
-        proposer: votingMachineProposalInfo.proposer,
+        proposer: decodedProposer ? decodedProposer : votingMachineProposalInfo.proposer,
         currentBoostedVotePeriodLimit: votingMachineProposalInfo.currentBoostedVotePeriodLimit,
         paramsHash: schemeConfigurationAtProposalCreation.paramsHash,
         daoBountyRemain: bnum(votingMachineProposalInfo.daoBountyRemain),

@@ -178,6 +178,9 @@ export interface Scheme {
   type: string,
   controllerAddress: string;
   ethBalance: BigNumber;
+  tokenBalances: { 
+    [tokenAddress: string] : BigNumber
+  };
   votingMachine: String;
   configurations: {
     paramsHash: string;
@@ -204,6 +207,9 @@ export interface DaoInfo {
   totalRep: BigNumber;
   repEvents: RepEvent[];
   ethBalance: BigNumber;
+  tokenBalances: { 
+    [tokenAddress: string] : BigNumber
+  };
 }
 
 export interface IPFSHash {
