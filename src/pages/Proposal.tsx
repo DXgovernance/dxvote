@@ -275,7 +275,7 @@ const ProposalPage = observer(() => {
             padding: "20px 10px"
           }} />
           <hr/>
-          <h2> Calls  <Question question="1"/></h2>
+          <h2> Calls  <Question question="9"/></h2>
           {proposalCallTexts.map((proposalCallText, i) => {
             return(
             <div key={"proposalCallText"+i}>
@@ -299,7 +299,7 @@ const ProposalPage = observer(() => {
           })}
         </ProposalInfoSection>
         <InfoSidebar>
-          <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{proposalInfo.status} <Question question="1"/></h2>
+          <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{proposalInfo.status} <Question question="3"/></h2>
           <SidebarRow style={{
             margin: "0px 10px",
             flexDirection: "column"
@@ -357,7 +357,7 @@ const ProposalPage = observer(() => {
           <SidebarDivider/> 
         
           <SidebarRow>
-            <strong>Votes <Question question="1"/></strong>
+            <strong>Votes <Question question="4"/></strong>
           </SidebarRow>
           <SidebarRow style={{ margin: "0px 10px" }}> 
             <span style={{width: "50%", textAlign:"center", color: "green"}}>
@@ -423,7 +423,7 @@ const ProposalPage = observer(() => {
           <SidebarDivider/> 
           
           <SidebarRow>
-            <strong>Stakes <Question question="1"/></strong>
+            <strong>Stakes <Question question="5"/></strong>
           </SidebarRow>
           <SidebarRow style={{ margin: "0px 10px" }}>
             <span style={{width: "50%", textAlign:"center", color: "green"}}>

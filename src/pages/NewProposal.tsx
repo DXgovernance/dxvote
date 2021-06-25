@@ -470,7 +470,7 @@ const NewProposalPage = observer(() => {
         }}>
           <PlaceHolders>
             <span style={{width: "100%"}}>Title</span>
-            <span style={{minWidth: "150px"}}>Scheme <Question question="1"/></span>
+            <span style={{minWidth: "150px"}}>Scheme <Question question="2"/></span>
             <span style={{minWidth: "150px"}}>Template</span>
           </PlaceHolders>
         </div>
@@ -528,8 +528,8 @@ const NewProposalPage = observer(() => {
           padding: "20px 10px"
         }} />
         {schemeToUse.controllerAddress == networkConfig.controller ?
-          <h2>Calls executed from the avatar <Question question="1"/></h2>
-          :<h2>Calls executed from the scheme <Question question="1"/></h2>
+          <h2>Calls executed from the avatar <Question question="9"/></h2>
+          :<h2>Calls executed from the scheme <Question question="9"/></h2>
         }
         {calls.map((call, i) => 
           <CallRow key={"call"+i}>
