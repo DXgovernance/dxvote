@@ -223,11 +223,10 @@ export default class DaoStore {
           if (cache.proposals[stake.proposalId].winningVote == stake.vote){
             users[stake.staker].correctStakes ++;
             users[stake.staker].totalStaked = users[stake.staker].totalStaked.plus(bnum(stake.amount));
-            users[stake.staker].score += 3;
+            users[stake.staker].score += 1;
           } else {
             users[stake.staker].wrongStakes ++;
             users[stake.staker].totalStaked = users[stake.staker].totalStaked.plus(bnum(stake.amount));
-            users[stake.staker].score += 1;
           }
         }
       });
@@ -236,27 +235,37 @@ export default class DaoStore {
 
     Object.keys(cache.proposals).map( (proposalId) => {
       
-      const proposalCreator = (cache.users[cache.proposals[proposalId].proposer] &&
-        bnum(cache.users[cache.proposals[proposalId].proposer].repBalance).gt("0"))
-        ? cache.proposals[proposalId].proposer : cache.proposals[proposalId].creationEventSender;
+      const invalidCreators = [
+        "0x0000000000000000000000000000000000000000",
+        "0x4D953115678b15CE0B0396bCF95Db68003f86FB5"
+      ]
         
-      if (!users[proposalCreator])
-        users[proposalCreator] = {
-          correctVotes: 0, wrongVotes:0,
-          correctStakes: 0, wrongStakes: 0,
-          proposals: 0, totalVoted: bnum(0), totalStaked: bnum(0), score: 0
-        };
-        
-      const score = cache.proposals[proposalId].positiveVotes.plus(cache.proposals[proposalId].negativeVotes)
-        .div(cache.proposals[proposalId].repAtCreation).div("0.20").times("10").toFixed(2);
-      users[proposalCreator].score += Math.min(Math.min(score, 1), 30);
-      users[proposalCreator].proposals ++;
+      const GNOSIS_RELAY_MAINNET = "0x4D953115678b15CE0B0396bCF95Db68003f86FB5"
+      const proposalCreator = cache.proposals[proposalId].creationEventSender == GNOSIS_RELAY_MAINNET 
+      ? cache.proposals[proposalId].proposer : cache.proposals[proposalId].creationEventSender; 
+    
+      if (proposalCreator != "0x0000000000000000000000000000000000000000") {
+        if (!users[proposalCreator])
+          users[proposalCreator] = {
+            correctVotes: 0, wrongVotes:0,
+            correctStakes: 0, wrongStakes: 0,
+            proposals: 0, totalVoted: bnum(0), totalStaked: bnum(0), score: 0
+          };
+          
+        const score = cache.proposals[proposalId].positiveVotes.plus(cache.proposals[proposalId].negativeVotes)
+          .div(cache.proposals[proposalId].repAtCreation).div("0.20").times("10").toFixed(2);
+        users[proposalCreator].score += Math.min(Math.min(score, 1), 30);
+        users[proposalCreator].proposals ++;
+      } else {
+        console.debug(
+          "Couldnt get proposer for proposal", proposalId, "in scheme",
+          cache.schemes[cache.proposals[proposalId].scheme].name,
+          "in transaction", cache.proposals[proposalId].creationEvent.tx
+        )
+      }
       totalProposalsCreated ++;
 
     });
-    
-    delete users["0x0000000000000000000000000000000000000000"];
-    delete users["0x4D953115678b15CE0B0396bCF95Db68003f86FB5"];
     
     return {
       totalPositiveVotes,
