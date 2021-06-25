@@ -8,9 +8,10 @@ export const getNetworkConfig = function(network) {
   const networkData = dataFile[network] || {
     tokens: {}
   };
-  
+  let networkConfig;
+
   if (network === 'localhost') {
-    return Object.assign(networkData, {
+    networkConfig = {
       fromBlock: 1,
       avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ""),
       controller: process.env.REACT_APP_CONTROLLER_ADDRESS.replace(/["']/g, ""),
@@ -25,9 +26,9 @@ export const getNetworkConfig = function(network) {
           token: process.env.REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS.replace(/["']/g, "")
         }
       },
-    })
+    };
   } else  if (network == 'mainnet') {
-    let networkConfig = contractsFile[network];
+    networkConfig = contractsFile[network];
     const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
     
     networkConfig.daostack = {
@@ -132,10 +133,20 @@ export const getNetworkConfig = function(network) {
       }
     };
     
-    return Object.assign(networkData, networkConfig);
   } else {
-    return Object.assign(networkData, contractsFile[network]);
+    networkConfig = contractsFile[network];
   };
+  
+  if (networkConfig.votingMachines.dxd)
+    networkData.tokens[networkConfig.votingMachines.dxd.token] = {
+      name: "DXD", decimals: 18
+    };
+  if (networkConfig.votingMachines.gen)
+    networkData.tokens[networkConfig.votingMachines.gen.token] = {
+      name: "GEN", decimals: 18
+    };
+  return Object.assign(networkData, networkConfig);
+
 }
 
 export const getSchemeTypeData = function(network, schemeAddress) {

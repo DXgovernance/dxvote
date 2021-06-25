@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
+import { bnum } from '../utils/helpers';
 
 const FinanceInfoWrapper = styled.div`
     background: white;
@@ -67,12 +68,13 @@ const FinanceInformation = observer(() => {
     const daoInfo = daoStore.getDaoInfo();
     const networkConfig = configStore.getNetworkConfig();
     let assets = [{
-      name: "ETH", amount: parseFloat(Number(library.utils.fromWei(daoInfo.ethBalance.toString())).toFixed(4))
+      name: "ETH", amount: bnum(daoInfo.ethBalance).div(10**18).toFixed(2)
     }];
     Object.keys(daoStore.tokenBalances).map((tokenAddress) => {
       assets.push({
         name: networkConfig.tokens[tokenAddress].name,
-        amount: parseFloat(Number(library.utils.fromWei(daoStore.tokenBalances[tokenAddress].toString())).toFixed(4))
+        amount: bnum(daoStore.tokenBalances[tokenAddress])
+          .div(10**networkConfig.tokens[tokenAddress].decimals).toFixed(2)
       })
     })
     

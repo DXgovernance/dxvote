@@ -168,7 +168,7 @@ export default class BlockchainStore {
         const networkConfig = configStore.getNetworkConfig();
         networkCache = await updateNetworkCache(networkCache, networkName, fromBlock, toBlock, library);
         
-        let tokensBalancesCalls = []
+        let tokensBalancesCalls = [];
         Object.keys(networkConfig.tokens).map((tokenAddress) => {
           if (!daoStore.tokenBalances[tokenAddress])
             tokensBalancesCalls.push({
@@ -191,42 +191,42 @@ export default class BlockchainStore {
           transactionStore.checkPendingTransactions(web3React, account);
           let accountCalls = [{
             contractType: ContractType.Multicall,
-            address: configStore.getNetworkConfig().utils.multicall,
+            address: networkConfig.utils.multicall,
             method: 'getEthBalance',
             params: [account],
           },{
             contractType: ContractType.Reputation,
-            address: configStore.getNetworkConfig().reputation,
+            address: networkConfig.reputation,
             method: 'balanceOf',
             params: [account],
           }];
           
-          if (configStore.getNetworkConfig().votingMachines.gen) {
+          if (networkConfig.votingMachines.gen) {
             accountCalls.push({
               contractType: ContractType.ERC20,
-              address: configStore.getNetworkConfig().votingMachines.gen.token,
+              address: networkConfig.votingMachines.gen.token,
               method: 'balanceOf',
               params: [account],
             });
             accountCalls.push({
               contractType: ContractType.ERC20,
-              address: configStore.getNetworkConfig().votingMachines.gen.token,
+              address: networkConfig.votingMachines.gen.token,
               method: 'allowance',
-              params: [account, configStore.getNetworkConfig().votingMachines.gen.address],
+              params: [account, networkConfig.votingMachines.gen.address],
             });
           }
-          if (configStore.getNetworkConfig().votingMachines.dxd) {
+          if (networkConfig.votingMachines.dxd) {
             accountCalls.push({
               contractType: ContractType.ERC20,
-              address: configStore.getNetworkConfig().votingMachines.dxd.token,
+              address: networkConfig.votingMachines.dxd.token,
               method: 'balanceOf',
               params: [account],
             });
             accountCalls.push({
               contractType: ContractType.ERC20,
-              address: configStore.getNetworkConfig().votingMachines.dxd.token,
+              address: networkConfig.votingMachines.dxd.token,
               method: 'allowance',
-              params: [account, configStore.getNetworkConfig().votingMachines.dxd.address],
+              params: [account, networkConfig.votingMachines.dxd.address],
             });
           }
           
