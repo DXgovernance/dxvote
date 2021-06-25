@@ -39,7 +39,7 @@ export const updateNetworkCache = async function (
   
   (await Promise.all([
     updateDaoInfo(networkCache, networkContracts, web3),
-    updateReputationEvents(networkCache, networkContracts.reputation, fromBlock, toBlock)
+    updateReputationEvents(networkCache, networkContracts.reputation, fromBlock, toBlock, web3)
   ])).map((networkCacheUpdated) => {
     networkCache = networkCacheUpdated;
   });
@@ -62,7 +62,7 @@ export const updateNetworkCache = async function (
       };
   
     networkCache = await updateVotingMachineEvents(
-      networkCache, networkContracts.votingMachines[votingMachineAddress].contract, fromBlock, toBlock
+      networkCache, networkContracts.votingMachines[votingMachineAddress].contract, fromBlock, toBlock, web3
     );
 
   }));
@@ -99,13 +99,13 @@ export const updateDaoInfo = async function (
 }
 
 export const updateReputationEvents = async function (
-  networkCache: DaoNetworkCache, reputation: any, fromBlock: string, toBlock: string
+  networkCache: DaoNetworkCache, reputation: any, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
 
   if (!networkCache.daoInfo.repEvents)
     networkCache.daoInfo.repEvents = [];
 
-  let reputationEvents = sortEvents( await getEvents(reputation, fromBlock, toBlock, 'allEvents'));
+  let reputationEvents = sortEvents( await getEvents(web3, reputation, fromBlock, toBlock, 'allEvents'));
   reputationEvents.map((reputationEvent) => {
     switch (reputationEvent.event) {
       case "Mint":
@@ -117,6 +117,7 @@ export const updateReputationEvents = async function (
           amount: bnum(reputationEvent.returnValues._amount),
           tx: reputationEvent.transactionHash,
           block: reputationEvent.blockNumber,
+          timestamp: reputationEvent.timestamp,
           transactionIndex: reputationEvent.transactionIndex,
           logIndex: reputationEvent.logIndex
         });
@@ -139,6 +140,7 @@ export const updateReputationEvents = async function (
           amount: bnum(reputationEvent.returnValues._amount),
           tx: reputationEvent.transactionHash,
           block: reputationEvent.blockNumber,
+          timestamp: reputationEvent.timestamp,
           transactionIndex: reputationEvent.transactionIndex,
           logIndex: reputationEvent.logIndex
         });
@@ -152,11 +154,11 @@ export const updateReputationEvents = async function (
 }
 
 export const updateVotingMachineEvents = async function (
-  networkCache: DaoNetworkCache, votingMachine: any, fromBlock: string, toBlock: string
+  networkCache: DaoNetworkCache, votingMachine: any, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
 
   let newVotingMachineEvents = sortEvents(
-    await getEvents(votingMachine, fromBlock, toBlock, 'allEvents')
+    await getEvents(web3, votingMachine, fromBlock, toBlock, 'allEvents')
   );
   const votingMachineEventsInCache = networkCache.votingMachines[votingMachine._address].events;
   
@@ -171,6 +173,7 @@ export const updateVotingMachineEvents = async function (
           proposalId: votingMachineEvent.returnValues._proposalId,
           tx: votingMachineEvent.transactionHash,
           block: votingMachineEvent.blockNumber,
+          timestamp: votingMachineEvent.timestamp,
           transactionIndex: votingMachineEvent.transactionIndex,
           logIndex: votingMachineEvent.logIndex
         });
@@ -191,6 +194,7 @@ export const updateVotingMachineEvents = async function (
           proposalId: votingMachineEvent.returnValues._proposalId,
           tx: votingMachineEvent.transactionHash,
           block: votingMachineEvent.blockNumber,
+          timestamp: votingMachineEvent.timestamp,
           transactionIndex: votingMachineEvent.transactionIndex,
           logIndex: votingMachineEvent.logIndex
         });
@@ -208,6 +212,7 @@ export const updateVotingMachineEvents = async function (
           proposalId: votingMachineEvent.returnValues._proposalId,
           tx: votingMachineEvent.transactionHash,
           block: votingMachineEvent.blockNumber,
+          timestamp: votingMachineEvent.timestamp,
           transactionIndex: votingMachineEvent.transactionIndex,
           logIndex: votingMachineEvent.logIndex
         });
@@ -223,6 +228,7 @@ export const updateVotingMachineEvents = async function (
           proposalId: votingMachineEvent.returnValues._proposalId,
           tx: votingMachineEvent.transactionHash,
           block: votingMachineEvent.blockNumber,
+          timestamp: votingMachineEvent.timestamp,
           transactionIndex: votingMachineEvent.transactionIndex,
           logIndex: votingMachineEvent.logIndex
         });
@@ -237,6 +243,7 @@ export const updateVotingMachineEvents = async function (
           proposalId: votingMachineEvent.returnValues._proposalId,
           tx: votingMachineEvent.transactionHash,
           block: votingMachineEvent.blockNumber,
+          timestamp: votingMachineEvent.timestamp,
           transactionIndex: votingMachineEvent.transactionIndex,
           logIndex: votingMachineEvent.logIndex
         });
@@ -256,7 +263,7 @@ export const updatePermissionRegistryEvents = async function (
   if (allContracts.permissionRegistry._address != '0x0000000000000000000000000000000000000000') {
   
     let permissionRegistryEvents = sortEvents(
-      await getEvents(allContracts.permissionRegistry, fromBlock, toBlock, 'allEvents')
+      await getEvents(web3, allContracts.permissionRegistry, fromBlock, toBlock, 'allEvents')
     );
     permissionRegistryEvents.map((permissionRegistryEvent) => {
       const eventValues = permissionRegistryEvent.returnValues;
@@ -323,7 +330,7 @@ export const updateSchemes = async function (
   const allContracts = await getContracts(networkName, web3);
 
   let controllerEvents = sortEvents(
-    await getEvents(allContracts.controller, fromBlock, toBlock, 'allEvents')
+    await getEvents(web3, allContracts.controller, fromBlock, toBlock, 'allEvents')
   );
   
   for (let controllerEventsIndex = 0; controllerEventsIndex < controllerEvents.length; controllerEventsIndex++) {
@@ -713,6 +720,7 @@ export const updateProposals = async function (
           address: schemeEvent.address,
           tx: schemeEvent.transactionHash,
           block: schemeEvent.blockNumber,
+          timestamp: schemeEvent.timestamp,
           transactionIndex: schemeEvent.transactionIndex,
           logIndex: schemeEvent.logIndex
         },
@@ -751,6 +759,7 @@ export const updateProposals = async function (
         address: schemeEvent.address,
         tx: schemeEvent.transactionHash,
         block: schemeEvent.blockNumber,
+        timestamp: schemeEvent.timestamp,
         transactionIndex: schemeEvent.transactionIndex,
         logIndex: schemeEvent.logIndex
       });

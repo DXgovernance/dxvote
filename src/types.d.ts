@@ -54,6 +54,7 @@ export interface BlockchainEvent {
   address: string;
   tx: string;
   block: number;
+  timestamp: number;
   transactionIndex: number;
   logIndex: number;
 }
