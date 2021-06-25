@@ -57,6 +57,8 @@ const theme = (darkMode) => ({
 
     // for setting css on <html>
     backgroundColor: darkMode ? '#333639' : white,
+    
+    activeButtonBackground: "#536DFE",
 
     modalBackground: darkMode ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.5)',
     inputBackground: darkMode ? '#202124' : white,
@@ -122,12 +124,6 @@ const theme = (darkMode) => ({
 });
 
 export const GlobalStyle = createGlobalStyle`
-  @import url('https://rsms.me/inter/inter.css');
-  html { font-family: 'Inter', sans-serif; }
-  @supports (font-variation-settings: normal) {
-    html { font-family: 'Inter var', sans-serif; }
-  }
-
   html {
     font-size: 16px;
     font-variant: none;

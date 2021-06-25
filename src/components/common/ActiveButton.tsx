@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 const Button = styled.div`
-    background-color: ${(props) => props.color};
+    background-color: ${({ theme }) => theme.activeButtonBackground};
     border-radius: 4px;
     color: white;
     height: 34px;
@@ -18,19 +18,19 @@ const Button = styled.div`
 `;
 
 const ButtonWithRouter = withRouter(
-  ({ route, history, children, color }) => {
+  ({ route, history, children }) => {
     return (
-      <Button color={color} onClick={() => { history.push(route)}} >
+      <Button onClick={() => { history.push(route)}} >
         {children}
       </Button>
     );
   }
 );
-const ActiveButton = ({ children, onClick = undefined, route = undefined, color = '#536DFE' }) => {
+const ActiveButton = ({ children, onClick = undefined, route = undefined }) => {
     if (route) {
-      return <ButtonWithRouter color={color} route={route}>{children}</ButtonWithRouter>
+      return <ButtonWithRouter route={route}>{children}</ButtonWithRouter>
     } else {
-      return <Button color={color} onClick={onClick}>{children}</Button>;
+      return <Button onClick={onClick}>{children}</Button>;
     }
 };
 

@@ -5,7 +5,7 @@ import { FiZap } from "react-icons/fi";
 
 const ForumPage = () => {
   
-  const LoadingBox = styled(Box)`
+  const LoadingBox = styled.div`
    .loader {
       text-align: center;
       font-weight: 500;
