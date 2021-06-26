@@ -137,11 +137,11 @@ export const getNetworkConfig = function(network) {
     networkConfig = contractsFile[network];
   };
   
-  if (networkConfig.votingMachines.dxd)
+  if (networkConfig && networkConfig.votingMachines.dxd)
     networkData.tokens[networkConfig.votingMachines.dxd.token] = {
       name: "DXD", decimals: 18
     };
-  if (networkConfig.votingMachines.gen)
+  if (networkConfig && networkConfig.votingMachines.gen)
     networkData.tokens[networkConfig.votingMachines.gen.token] = {
       name: "GEN", decimals: 18
     };
