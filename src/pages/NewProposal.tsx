@@ -483,12 +483,9 @@ const NewProposalPage = observer(() => {
         }}>
           <TitleInput>
             <input type="text" placeholder="Proposal Title" onChange={onTitleChange} value={titleText}/>
-            <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
+            <select name="scheme" id="schemeSelector" onChange={onSchemeChange} defaultValue={defaultSchemeToUse}>
               {schemes.map((scheme, i) =>{
-                if (schemeToUse.name == scheme.name)
-                  return <option key={scheme.address} value={i} selected>{scheme.name}</option>
-                else
-                  return <option key={scheme.address} value={i}>{scheme.name}</option>
+                return <option key={scheme.address} value={i}>{scheme.name}</option>
               })}
             </select>
             <select name="proposalTemplate" id="proposalTemplateSelector" onChange={onProposalTemplate}>
