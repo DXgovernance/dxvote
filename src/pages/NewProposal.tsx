@@ -192,8 +192,9 @@ const NewProposalPage = observer(() => {
       
       let uploaded = false;
       while (!uploaded) {
-        const response = await ipfsService.get(contentHash.fromIpfs(hash));
-        if (response.data == descriptionText)
+        const ipfsContent = await ipfsService.getContent(hash);
+        console.debug('[IPFS CONTENT]', ipfsContent);
+        if (ipfsContent == descriptionText)
           uploaded = true;
         await sleep(1000);
       }

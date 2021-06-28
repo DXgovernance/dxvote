@@ -40,14 +40,15 @@ export default class IPFSService {
     return await this.ipfs.pin.add(new CID(hash));
   }
   
-  async get(hash: String){
-    const _headers = document.location.origin == "http://localhost:3000" ? {} : {
-      "Access-Control-Allow-Origin": "*"
+  async getContent(hash: String){
+    const content = []
+    for await (const file of this.ipfs.get(hash)) {
+      console.debug("[IPFS FILE]",file.type, file.path);
+      if (!file.content) continue;
+      for await (const chunk of file.content) {
+        content.push(chunk)
+      }
     }
-    return axios({
-      method: "GET",
-      url: `https://ipfs.io/ipfs/${contentHash.decode(hash)}`,
-      headers: _headers
-    });
+    return content.toString("utf8");
   }
 }
