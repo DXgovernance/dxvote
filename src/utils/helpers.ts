@@ -72,6 +72,10 @@ export function getQueryParam(windowLocation, name) {
     return q && q[1];
 }
 
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const copyToClipboard = (e) => {
     const value = e.target.title.replace(',', '');
     var aux = document.createElement('input');

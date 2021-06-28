@@ -4,7 +4,7 @@ import CreatableSelect from 'react-select/creatable';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from '../utils/helpers';
+import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE, sleep } from '../utils/helpers';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
@@ -157,8 +157,12 @@ const NewProposalPage = observer(() => {
     const { active, account } = providerStore.getActiveWeb3React();
     
     const schemes = daoStore.getAllSchemes();
-    const networkConfig = configStore.getNetworkConfig()
-    const [schemeToUse, setSchemeToUse] = React.useState(schemes[0]);
+    const networkConfig = configStore.getNetworkConfig();
+    
+    const defaultSchemeToUse = schemes.findIndex((scheme) => scheme.name == "MasterWalletScheme");
+    console.log(schemes[defaultSchemeToUse])
+    const [schemeToUse, setSchemeToUse] =
+      React.useState(defaultSchemeToUse > -1 ? schemes[defaultSchemeToUse] : schemes[0]);
     const [titleText, setTitleText] = React.useState(localStorage.getItem('dxvote-newProposal-title'));
     const [ipfsHash, setIpfsHash] = React.useState("");
     const [descriptionText, setDescriptionText] = React.useState(localStorage.getItem('dxvote-newProposal-description'));
@@ -180,14 +184,11 @@ const NewProposalPage = observer(() => {
       const hash = await ipfsService.add(descriptionText);
       setIpfsHash(hash);
       if (pinataService.auth) {
-        const pinataUpload = await pinataService.pin(hash);
-        console.debug('[PINATA UPLOAD]', pinataUpload.data)
+        const pinataPin = await pinataService.pin(hash);
+        console.debug('[PINATA PIN]', pinataPin.data)
       }
-      await ipfsService.pin(hash);
-      
-      function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-      }
+      const ipfsPin = await ipfsService.pin(hash);
+      console.debug('[IPFS PIN]', ipfsPin)
       
       let uploaded = false;
       while (!uploaded) {
@@ -483,7 +484,10 @@ const NewProposalPage = observer(() => {
             <input type="text" placeholder="Proposal Title" onChange={onTitleChange} value={titleText}/>
             <select name="scheme" id="schemeSelector" onChange={onSchemeChange}>
               {schemes.map((scheme, i) =>{
-                return <option key={scheme.address} value={i}>{scheme.name}</option>
+                if (schemeToUse.name == scheme.name)
+                  return <option key={scheme.address} value={i} selected>{scheme.name}</option>
+                else
+                  return <option key={scheme.address} value={i}>{scheme.name}</option>
               })}
             </select>
             <select name="proposalTemplate" id="proposalTemplateSelector" onChange={onProposalTemplate}>
@@ -676,7 +680,7 @@ const NewProposalPage = observer(() => {
             <TextActions>
               <span>
                 Uploaded to IPFS:
-                  <a href={`https://gateway.pinata.cloud/ipfs/${ipfsHash}`} target="_blank">https://gateway.pinata.cloud/ipfs/{ipfsHash}</a>
+                  <a href={`https://ipfs.io/ipfs/${ipfsHash}`} target="_blank">https://ipfs.io/ipfs/{ipfsHash}</a>
                 <br/>
                 Check before submitting proposal
               </span>
