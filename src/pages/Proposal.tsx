@@ -7,6 +7,7 @@ import moment from 'moment';
 import { FiPlayCircle, FiFastForward } from "react-icons/fi";
 import Slider from '@material-ui/core/Slider';
 import MDEditor from '@uiw/react-md-editor';
+import contentHash from 'content-hash';
 import { bnum } from '../utils/helpers';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
@@ -135,7 +136,9 @@ const ProposalPage = observer(() => {
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
     const [canRedeem, setCanRedeem] = React.useState(false);
-    const [proposalDescription, setProposalDescription] = React.useState("## Getting proposal description from IPFS...");
+    const [proposalDescription, setProposalDescription] = React.useState(
+      "## Getting proposal description from IPFS..."
+    );
     const [proposalTitle, setProposalTitle] = React.useState(
       schemeInfo.type == 'WalletScheme' ? proposalInfo.title : "Getting proposal title from IPFS..."
     );
@@ -161,15 +164,17 @@ const ProposalPage = observer(() => {
       
     // @ts-ignore
     try {
-      ipfsService.get(proposalInfo.descriptionHash).then((response) => {
-        if (schemeInfo.type == 'WalletScheme') {
-          setProposalDescription(response.data);
-        } else {
-          setProposalTitle(response.data.title);
-          setProposalDescription(response.data.description);
-        }
-      });
+      if (proposalDescription == "## Getting proposal description from IPFS...")
+        ipfsService.getContent(contentHash.decode(proposalInfo.descriptionHash)).then((data) => {
+          if (schemeInfo.type == 'WalletScheme') {
+            setProposalDescription(data);
+          } else {
+            setProposalTitle(JSON.parse(data).title);
+            setProposalDescription(JSON.parse(data).description);
+          }
+        });
     } catch (error) {
+      console.error("[IPFS ERROR]",error);
       setProposalTitle("Error getting proposal title from ipfs");
       setProposalDescription("Error getting proposal description from IPFS");
     }
