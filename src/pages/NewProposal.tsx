@@ -1,6 +1,4 @@
 import React from 'react';
-import Select from 'react-select';
-import CreatableSelect from 'react-select/creatable';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
@@ -144,6 +142,25 @@ const CallInput = styled.input`
   margin-right: 5px;
 `;
 
+const SelectEditable = styled.div`
+
+  position:relative;
+  background-color:white;
+  border:solid grey 1px; 
+  width:120px;
+  height:18px;
+
+  select {
+    position:absolute; top:0px; left:0px; font-size:14px; border:none; width:120px; margin:0;
+  }
+  input {
+    position:absolute; top:0px; left:0px; width:100px; padding:1px; font-size:12px; border:none;
+  }
+  select:focus, .select-editable input:focus {
+    outline:none;
+  }
+`
+
 const NewProposalPage = observer(() => {
     let history = useHistory();
 
@@ -160,7 +177,7 @@ const NewProposalPage = observer(() => {
     const networkConfig = configStore.getNetworkConfig();
     
     const defaultSchemeToUse = schemes.findIndex((scheme) => scheme.name == "MasterWalletScheme");
-    console.log(schemes[defaultSchemeToUse])
+
     const [schemeToUse, setSchemeToUse] =
       React.useState(defaultSchemeToUse > -1 ? schemes[defaultSchemeToUse] : schemes[0]);
     const [titleText, setTitleText] = React.useState(localStorage.getItem('dxvote-newProposal-title'));
@@ -281,13 +298,7 @@ const NewProposalPage = observer(() => {
     }
     
     function onTitleChange(newValue) {
-      if (newValue.target.value == "dxtest") {
-        setTitleText(`Test Proposal for ${account}`);
-        setDescriptionText(`## Test Proposal \n Send 0.0006666 ETH, 0.0006666 DXD and minting 666 REP to ${account}`);
-        setCalls([{"callType":"advanced","to":account,"data":"0x0","functionName":"","functionParams":"","value":"666000000000000000000","allowedFunctions":[]},{"callType":"simple","to":networkConfig.votingMachineToken,"data":"","functionName":"transfer(address,uint256)","functionParams":`${account},666000000000000000000`,"value":"0","allowedFunctions":[{"value":"transfer(address,uint256)","label":"transfer(address to ,uint256 value)"},{"value":"approve(address,uint256)","label":"approve(address to,uint256 value)"},{"value":"transferFrom(address,address,uint256)","label":"transferFrom(address from ,address to,uint256 value)"}]},{"callType":"simple","to":networkConfig.controller,"data":"","functionName":"mintReputation(uint256,address,address)","functionParams":`666,${account},${networkConfig.avatar}`,"value":"0","allowedFunctions":[{"value":"mintReputation(uint256,address,address)","label":"mintReputation(uint256 _amount, address _to, address _avatar)"},{"value":"burnReputation(uint256,address,address)","label":"burnReputation(uint256 _amount, address _from, address _avatar)"},{"value":"registerScheme(address,bytes32,bytes4,address)","label":"registerScheme(address _scheme, bytes32 _paramsHash, bytes4 _permissions, address _avatar)"},{"value":"unregisterScheme(address,address)","label":"unregisterScheme(address _scheme, address _avatar)"},{"value":"genericCall(address,bytes,addres,uint256)","label":"genericCall(address _contract, bytes calldata _data, Avatar _avatar, uint256 _value)"}]}])
-      } else {
-        setTitleText(newValue.target.value);
-      }
+      setTitleText(newValue.target.value);
       localStorage.setItem('dxvote-newProposal-title', newValue.target.value);
     }
     
@@ -296,18 +307,17 @@ const NewProposalPage = observer(() => {
     let allowedToCall = [];
     
     if (schemeToUse.controllerAddress == networkConfig.controller) {
-      allowedToCall.push({ value: networkConfig.controller, label: `DXController ${networkConfig.controller}` });
+      allowedToCall.push({ value: networkConfig.controller, name: `DXController ${networkConfig.controller}` });
     }
     // TO DO: Check that the permission regsitry is allowed, we assume it is
-    allowedToCall.push({ value: networkConfig.permissionRegistry, label: `PermissionRegistry ${networkConfig.permissionRegistry}` });
-    allowedToCall.push({ value: networkConfig.votingMachineToken, label: `DXD ${networkConfig.votingMachineToken}` });
+    allowedToCall.push({ value: networkConfig.permissionRegistry, name: `PermissionRegistry ${networkConfig.permissionRegistry}` });
     
     // Add ERC20 tokens
     if (networkConfig.tokens)
       Object.keys(networkConfig.tokens).map((tokenAddress) => {
         allowedToCall.push({
           value: tokenAddress,
-          label: `${networkConfig.tokens[tokenAddress].name} ${tokenAddress}`
+          name: `${networkConfig.tokens[tokenAddress].name} ${tokenAddress}`
         });
       });
 
@@ -344,78 +354,81 @@ const NewProposalPage = observer(() => {
       forceUpdate();
     };
     
-    function onToSelectChange(callIndex, toAddress) {
-      if (toAddress.value && toAddress.value.length > 0) {
+    function onToSelectChange(callIndex, event) {
+      const toAddress = event.target.value;
 
-        calls[callIndex].to = toAddress.value;
+      calls[callIndex].to = toAddress;
+      
+      if (toAddress && toAddress.length > 0) {
         calls[callIndex].allowedFunctions = [];
-        if (toAddress.value == networkConfig.controller) {
+        if (toAddress == networkConfig.controller) {
           calls[callIndex].allowedFunctions.push({
             value: "mintReputation(uint256,address,address)",
-            label: "mintReputation(uint256 _amount, address _to, address _avatar)"
+            params: "uint256 _amount, address _to, address _avatar"
           });
           calls[callIndex].allowedFunctions.push({
             value: "burnReputation(uint256,address,address)",
-            label: "burnReputation(uint256 _amount, address _from, address _avatar)"
+            params: "uint256 _amount, address _from, address _avatar"
           });
           calls[callIndex].allowedFunctions.push({
             value: "registerScheme(address,bytes32,bytes4,address)",
-            label: "registerScheme(address _scheme, bytes32 _paramsHash, bytes4 _permissions, address _avatar)"
+            params: "address _scheme, bytes32 _paramsHash, bytes4 _permissions, address _avatar"
           });
           calls[callIndex].allowedFunctions.push({
             value: "unregisterScheme(address,address)",
-            label: "unregisterScheme(address _scheme, address _avatar)"
+            params: "address _scheme, address _avatar"
           });
           calls[callIndex].allowedFunctions.push({
             value: "genericCall(address,bytes,addres,uint256)",
-            label: "genericCall(address _contract, bytes calldata _data, Avatar _avatar, uint256 _value)"
+            params: "address _contract, bytes calldata _data, Avatar _avatar, uint256 _value"
           });
-        } else if (toAddress.value == networkConfig.permissionRegistry) {
+        } else if (toAddress == networkConfig.permissionRegistry) {
           if (schemeToUse.controllerAddress == networkConfig.controller) {
             calls[callIndex].allowedFunctions.push({
               value: "setTimeDelay(uint256)",
-              label: "setTimeDelay(uint256 newTimeDelay)"
+              params: "uint256 newTimeDelay"
             });
             calls[callIndex].allowedFunctions.push({
               value: "setAdminPermission(address,address,address,bytes4,uint256,bool)",
-              label: "setAdminPermission(address asset, address from, address to, bytes4 functionSignature, uint256 valueAllowed, bool allowed)"
+              params: "address asset, address from, address to, bytes4 functionSignature, uint256 valueAllowed, bool allowed"
             });
           } else {
             calls[callIndex].allowedFunctions.push({
               value: "setPermission(address,address,bytes4,uint256,bool)",
-              label: "setPermission(address asset, address to, bytes4 functionSignature, uint256 valueAllowed, bool allowed)"
+              params: "address asset, address to, bytes4 functionSignature, uint256 valueAllowed, bool allowed"
             });
           }
-        } else if ((toAddress.value == networkConfig.votingMachineToken) || networkConfig.tokens[toAddress.value]) {
-          calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", label: `transfer(address to ,uint256 value)` });
-          calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", label: `approve(address to,uint256 value)` });
-          calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", label: `transferFrom(address from ,address to,uint256 value)` });
+        } else if ((toAddress == networkConfig.votingMachineToken) || networkConfig.tokens[toAddress]) {
+          calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to ,uint256 value` });
+          calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", params: `address to,uint256 value` });
+          calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from ,address to,uint256 value` });
         } else {
           schemeToUse.callPermissions.map((callPermission) => {
-            if ((callPermission.asset == ZERO_ADDRESS) && (callPermission.to == toAddress.value)){
-              if (callPermission.functionSignature == ANY_FUNC_SIGNATURE)
-                callAnyFunction = true;
-              else
-                calls[callIndex].allowedFunctions.push({ value: callPermission.functionSignature, label: callPermission.functionSignature });
-            } else if (callPermission.asset == toAddress.value) {
-              calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", label: `transfer(address to ,uint256 value)` });
-              calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", label: `approve(address to,uint256 value)` });
-              calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", label: `transferFrom(address from ,address to,uint256 value)` });
-            }
+            if (callPermission.fromTime > 0)
+              if ((callPermission.asset == ZERO_ADDRESS) && (callPermission.to == toAddress)){
+                if (callPermission.functionSignature == ANY_FUNC_SIGNATURE)
+                  callAnyFunction = true;
+                else
+                  calls[callIndex].allowedFunctions.push({ value: callPermission.functionSignature, params: callPermission.functionSignature });
+              } else if (callPermission.asset == toAddress) {
+                calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to ,uint256 value` });
+                calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", params: `address to,uint256 value` });
+                calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from ,address to,uint256 value` });
+              }
           });
         }
-        
-        setCalls(calls)
-        forceUpdate();
       }
+      setCalls(calls)
+      forceUpdate();
     }
     
-    function onFunctionSelectChange(callIndex, functionSelected) {
-      if (functionSelected && functionSelected.value) {
-        calls[callIndex].functionName = functionSelected.value;
+    function onFunctionSelectChange(callIndex, functionSelected, params) {
+      // if (functionSelected && functionSelected.target.value) {
+        calls[callIndex].functionName = functionSelected.target.value;
+        calls[callIndex].functionParams = params;
         setCalls(calls)
         forceUpdate();
-      }
+      // }
     }
     
     function onFunctionParamsChange(callIndex, event) {
@@ -452,19 +465,23 @@ const NewProposalPage = observer(() => {
         forceUpdate();
       }
     }
-    
     schemeToUse.callPermissions.map((callPermission) => {
-      if (callPermission.asset == ZERO_ADDRESS)
-        if (callPermission.to == ANY_ADDRESS){
-          callToAny = true;
-          allowedToCall.push({ value: "", label: "Custom" });
-          if (callPermission.functionSignature == ANY_FUNC_SIGNATURE)
-            callAnyFunction = true;
+      if (callPermission.fromTime > 0)
+        if (callPermission.asset == ZERO_ADDRESS) {
+          if (callPermission.to == ANY_ADDRESS){
+            callToAny = true;
+            allowedToCall.push({ value: "", name: "Custom" });
+            if (callPermission.functionSignature == ANY_FUNC_SIGNATURE)
+              callAnyFunction = true;
+          }
+          else {
+            if (allowedToCall.findIndex((allowedPermission) => allowedPermission.value == callPermission.to) < 0)
+              allowedToCall.push({ value: callPermission.to, name: callPermission.to });
+          }
+        } else {
+          if (allowedToCall.findIndex((allowedPermission) => allowedPermission.value == callPermission.asset) < 0)
+            allowedToCall.push({ value: callPermission.asset, name: `ERC20 ${callPermission.asset}` });
         }
-        else
-          allowedToCall.push({ value: callPermission.to, label: callPermission.to });
-      else
-        allowedToCall.push({ value: callPermission.asset, label: `ERC20 ${callPermission.asset}` });
     });
     
     return (
@@ -540,54 +557,23 @@ const NewProposalPage = observer(() => {
         {calls.map((call, i) => 
           <CallRow key={"call"+i}>
             <span>#{i}</span>
-            {callToAny ?
-              <CreatableSelect
-                id={`toSelector${i}`}
-                styles={{
-                  option: (provided, state) => ({ ...provided, fontSize: '12px', }),
-                  control: (provided, state) => ({
-                    alignItems: "center",
-                    display: "flex",
-                    position: "relative",
-                    borderRadius: "3px",
-                    border: "1px solid gray"
-                  }),
-                  container: (provided, state) => ({ ...provided, 
-                    width: "20%",
-                    marginRight: "5px"
-                  }),
-                  indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
-                  singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
-                }}
-                className="toSelector"
-                options={allowedToCall}
-                onChange={(value) => onToSelectChange(i, value)}
-                onInputChange={(value) => onToSelectChange(i, value)}
-              />
-            : 
-              <Select
-                id={`toSelector${i}`}
-                styles={{
-                  option: (provided, state) => ({ ...provided, fontSize: '12px', }),
-                  control: (provided, state) => ({
-                    alignItems: "center",
-                    display: "flex",
-                    position: "relative",
-                    borderRadius: "3px",
-                    border: "1px solid gray"
-                  }),
-                  container: (provided, state) => ({ ...provided, 
-                    width: "20%",
-                    marginRight: "5px"
-                  }),
-                  indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
-                  singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
-                }}
-                className="toSelector"
-                options={allowedToCall}
-                onChange={(value) => onToSelectChange(i, value)}
-              />
-            }
+
+            <CallInput
+              list="allowedCalls"
+              value={calls[i].to}
+              onChange={(value) => {onToSelectChange(i, value)}}
+              width="20%"
+            />
+            <datalist id="allowedCalls">
+              {allowedToCall.map((allowedCall, allowedCallIndex) =>{
+                return (
+                  <option key={"toCall"+allowedCallIndex} value={allowedCall.value}>
+                    {allowedCall.name}
+                  </option>
+                );
+              })}
+            </datalist>
+            
             { call.callType === "advanced"
               ? <CallInput 
                 type="text"
@@ -597,53 +583,29 @@ const NewProposalPage = observer(() => {
                 width="50%"
               />
               : <div style={{display: "flex", width: "50%"}}>
-                {callAnyFunction ?
-                  <CreatableSelect
-                    id={`functionSelector${i}`}
-                    styles={{
-                      option: (provided, state) => ({ ...provided, fontSize: '12px', }),
-                      control: (provided, state) => ({
-                        alignItems: "center",
-                        display: "flex",
-                        position: "relative",
-                        borderRadius: "3px",
-                        border: "1px solid gray"
-                      }),
-                      container: (provided, state) => ({ ...provided, 
-                        width: "40%",
-                        marginRight: "5px"
-                      }),
-                      indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
-                      singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
-                    }}
-                    className="functionSelector"
-                    options={calls[i].allowedFunctions}
-                    onChange={(value, action) => onFunctionSelectChange(i, value, action)}
-                    onInputChange={(value, action) => onFunctionSelectChange(i, value, action)}
-                  />
-                : <Select
-                    id={`functionSelector${i}`}
-                    styles={{
-                      option: (provided, state) => ({ ...provided, fontSize: '12px', }),
-                      control: (provided, state) => ({
-                        alignItems: "center",
-                        display: "flex",
-                        position: "relative",
-                        borderRadius: "3px",
-                        border: "1px solid gray"
-                      }),
-                      container: (provided, state) => ({ ...provided, 
-                        width: "40%",
-                        marginRight: "5px"
-                      }),
-                      indicatorSeparator: (provided, state) => ({ ...provided, backgroundColor: "white" }),
-                      singleValue: (provided, state) => ({ ...provided, fontSize: '12px', })
-                    }}
-                    className="functionSelector"
-                    onChange={(value, action) => onFunctionSelectChange(i, value, action)}
-                    onChange={(value) => onFunctionSelectChange(i, value)}
-                  />
-                }
+              
+                <CallInput
+                  list="allowedFunctions"
+                  value={calls[i].functionName}
+                  onChange={(event) => {
+                    const selectedFunction = calls[i].allowedFunctions.find((allowedFunc) => allowedFunc.value == event.target.value);
+                    onFunctionSelectChange(
+                      i,
+                      event,
+                      selectedFunction ? selectedFunction.params : ""
+                    )
+                  }}
+                      
+                  width="40%"
+                />
+                <datalist id="allowedFunctions">
+                  {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
+                    return (
+                      <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.value}/>
+                    );
+                  })}
+                </datalist>
+            
                 <CallInput 
                   type="text"
                   onChange={(value) => onFunctionParamsChange(i, value)}

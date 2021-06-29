@@ -282,47 +282,25 @@ export const updatePermissionRegistryEvents = async function (
         
         Object.keys(networkCache.schemes).map((schemeAddress) => {
           if (networkCache.schemes[schemeAddress].controllerAddress == allContracts.controller._address) {
-            
-            if (eventValues.value != 0 && eventValues.fromTime != 0) {
-              networkCache.schemes[schemeAddress].callPermissions.push({
-                asset: eventValues.asset,
-                to: eventValues.to,
-                functionSignature: eventValues.functionSignature,
-                value: eventValues.value,
-                fromTime: eventValues.fromTime
-              })
-            } else {
-              const permissionIndex = networkCache.schemes[schemeAddress].callPermissions
-                .findIndex(i =>
-                  i.asset === eventValues.asset
-                  && i.to === eventValues.to
-                  && i.functionSignature === eventValues.functionSignature
-                );
-              networkCache.schemes[schemeAddress].callPermissions.splice(permissionIndex, 1);
-            }
-            
+            networkCache.schemes[schemeAddress].callPermissions.push({
+              asset: eventValues.asset,
+              to: eventValues.to,
+              functionSignature: eventValues.functionSignature,
+              value: eventValues.value,
+              fromTime: eventValues.fromTime
+            })
           }
         });
 
       } else if (networkCache.schemes[eventValues.from]){
         
-        if (eventValues.value != 0 && eventValues.fromTime != 0) {
-          networkCache.schemes[eventValues.from].callPermissions.push({
-            asset: eventValues.asset,
-            to: eventValues.to,
-            functionSignature: eventValues.functionSignature,
-            value: eventValues.value,
-            fromTime: eventValues.fromTime
-          })
-        } else {
-          const permissionIndex = networkCache.schemes[eventValues.from].callPermissions
-            .findIndex(i =>
-              i.asset === eventValues.asset
-              && i.to === eventValues.to
-              && i.functionSignature === eventValues.functionSignature
-            );
-          networkCache.schemes[eventValues.from].callPermissions.splice(permissionIndex, 1);
-        }
+        networkCache.schemes[eventValues.from].callPermissions.push({
+          asset: eventValues.asset,
+          to: eventValues.to,
+          functionSignature: eventValues.functionSignature,
+          value: eventValues.value,
+          fromTime: eventValues.fromTime
+        })
         
       } else {
         console.error('[Scheme does not exist]', eventValues.from);
