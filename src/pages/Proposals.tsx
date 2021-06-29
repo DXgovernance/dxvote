@@ -197,8 +197,8 @@ const ProposalsPage = observer(() => {
               ) {
                 const positiveStake = Number(library.utils.fromWei(proposal.positiveStakes.toString())).toFixed(2);
                 const negativeStake = Number(library.utils.fromWei(proposal.negativeStakes.toString())).toFixed(2);
-                const positiveVotesPercentage = proposal.positiveVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
-                const negativeVotesPercentage =  proposal.negativeVotes.div( proposal.repAtCreation ).times("100").toNumber().toFixed(2);
+                const positiveVotesPercentage = proposal.positiveVotes.times("100").div( proposal.repAtCreation ).toNumber().toFixed(2);
+                const negativeVotesPercentage =  proposal.negativeVotes.times("100").div( proposal.repAtCreation ).toNumber().toFixed(2);
                 const timeToBoost = moment().to( moment.unix(proposal.boostTime.toNumber()) ).toString();
                 const timeToFinish = moment().to( moment.unix(proposal.finishTime.toNumber()) ).toString();
                 const votingMachineTokenName = 
