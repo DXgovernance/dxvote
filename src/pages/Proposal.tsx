@@ -407,7 +407,7 @@ const ProposalPage = observer(() => {
                 type="number"
                 placeholder="REP"
                 name="votePercentage"
-                max={votePercentage}
+                max={repPercentageAtCreation}
                 value={votePercentage}
                 min="0"
                 step={votePercentage > 10 ? "1" : votePercentage > 1 ? "0.01" : votePercentage > 0.1 ? "0.001" : "0.00001"}
