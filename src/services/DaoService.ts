@@ -51,7 +51,7 @@ export default class DaoService {
     }
   }
   
-  getRepAt(atBlock: number): {
+  getRepAt(atBlock: number, l2BlockNumber: boolean = false): {
     userRep: BigNumber,
     totalSupply: BigNumber
   } {
@@ -61,7 +61,7 @@ export default class DaoService {
     let userRep = bnum(0), totalSupply = bnum(0);
 
     for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i].l1BlockNumber <= atBlock) {
+      if (repEvents[i][l2BlockNumber ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
         if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount)
           if (repEvents[i].account == account)

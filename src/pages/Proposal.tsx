@@ -165,12 +165,13 @@ const ProposalPage = observer(() => {
     let stakedAmount = bnum(0);
     let positiveStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "1").length;
     let negativeStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "2").length;
-    let userRepAtProposalCreation = bnum(0);
-    let totalRepAtProposalCreation = bnum(0);
     
-    const repAtCreation = daoService.getRepAt(proposalInfo.creationEvent.l1BlockNumber);
-    userRepAtProposalCreation = bnum(repAtCreation.userRep);
-    totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
+    const {
+      userRep: userRepAtProposalCreation,
+      totalSupply: totalRepAtProposalCreation
+    } = configStore.getActiveChainName().indexOf('arbitrum') > -1 ?
+      daoService.getRepAt(proposalInfo.creationEvent.l2BlockNumber, true)
+      : daoService.getRepAt(proposalInfo.creationEvent.l1BlockNumber, true);
 
     // @ts-ignore
     try {
@@ -188,7 +189,6 @@ const ProposalPage = observer(() => {
       setProposalTitle("Error getting proposal title from ipfs");
       setProposalDescription("Error getting proposal description from IPFS");
     }
-    
     
     proposalEvents.votes.map((vote) => {
       if (vote.voter === account) {
@@ -245,7 +245,7 @@ const ProposalPage = observer(() => {
   
     const boostedVoteRequiredPercentage = schemeInfo.configurations[schemeInfo.configurations.length -1]
       .boostedVoteRequiredPercentage / 1000;
-      
+
     const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
     
     function onStakeAmountChange(event) {
