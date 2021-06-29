@@ -46,7 +46,7 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a href="/#/forum" target="_self" > Forum </a>
+          <a href="dxvote/#/forum" target="_self" > Forum </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
@@ -54,7 +54,7 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-        <a href="/#/faq" target="_self" > FAQ </a>
+        <a href="dxvote/#/faq" target="_self" > FAQ </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
