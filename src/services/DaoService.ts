@@ -66,13 +66,11 @@ export default class DaoService {
           totalSupply = totalSupply.plus(repEvents[i].amount)
           if (repEvents[i].account == account)
             userRep = userRep.plus(repEvents[i].amount)
-        } else {
+        } else if (repEvents[i].event === 'Burn') {
           totalSupply = totalSupply.minus(repEvents[i].amount)
           if (repEvents[i].account == account)
             userRep = userRep.minus(repEvents[i].amount)
         }
-      } else {
-        break;
       }
     }
 

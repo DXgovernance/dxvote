@@ -162,7 +162,7 @@ const ProposalPage = observer(() => {
     const repAtCreation = daoService.getRepAt(proposalInfo.creationEvent.block);
     userRepAtProposalCreation = bnum(repAtCreation.userRep);
     totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
-      
+
     // @ts-ignore
     try {
       if (proposalDescription == "## Getting proposal description from IPFS...")
@@ -233,8 +233,7 @@ const ProposalPage = observer(() => {
     const timeToFinish = proposalInfo && proposalInfo.finishTime.toNumber() > moment().unix() ?
     moment().to( moment(proposalInfo.finishTime.times(1000).toNumber()) ).toString()
     : "";
-    console.log(schemeInfo.configurations[schemeInfo.configurations.length -1]
-      .boostedVoteRequiredPercentage.toString())
+  
     const boostedVoteRequiredPercentage = schemeInfo.configurations[schemeInfo.configurations.length -1]
       .boostedVoteRequiredPercentage / 1000;
       

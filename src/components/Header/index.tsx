@@ -74,12 +74,9 @@ const Header = observer(() => {
   const genBalance = active && userInfo.genBalance ?
     parseFloat(Number(Web3.utils.fromWei(userInfo.genBalance.toString())).toFixed(2))
     : 0;
-  const repBalance = active && userInfo.repBalance ?
-    parseFloat(Number(Web3.utils.fromWei(userInfo.repBalance.toString())).toFixed(0))
-    : 0;
     
-  const repPercentage = active && daoStore.getDaoInfo().totalRep
-    ? bnum(userInfo.repBalance).div(bnum(daoStore.getDaoInfo().totalRep)).times(100)
+   const repPercentage = active && daoStore.getDaoInfo().totalRep
+    ? bnum(userInfo.repBalance).times(100).div(bnum(daoStore.getDaoInfo().totalRep)).toFixed(4)
     : bnum(0);
 
   return (
@@ -93,7 +90,7 @@ const Header = observer(() => {
         <NavSection>
           {votingMachines.dxd ? <ItemBox> {dxdBalance} DXD </ItemBox> : <div/> }
           {votingMachines.gen ? <ItemBox> {genBalance} GEN </ItemBox> : <div/> }
-          <ItemBox> {repPercentage.toFixed(4)} % REP </ItemBox>
+          <ItemBox> {repPercentage.toString()} % REP </ItemBox>
           <Web3ConnectStatus text="Connect Wallet" />
           <a href={`${window.location.pathname}#/info`}><FiBarChart2 style={{margin: "0px 10px", color: "#616161"}}/></a>
           <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
