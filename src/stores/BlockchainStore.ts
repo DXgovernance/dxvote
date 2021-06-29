@@ -162,7 +162,7 @@ export default class BlockchainStore {
         console.debug('[Fetch Loop] Fetch Blockchain Data', { blockNumber, account, chainId });
         
         let networkCache = daoStore.getCache();
-        const fromBlock = networkCache.blockNumber;
+        const fromBlock = networkCache.blockNumber + 1;
         const toBlock = blockNumber;
         const networkName = configStore.getActiveChainName();
         const networkConfig = configStore.getNetworkConfig();
