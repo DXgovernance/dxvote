@@ -251,6 +251,10 @@ const NewProposalPage = observer(() => {
         daoStore.createProposal(schemeToUse.address, to, data, value, titleText, contentHash.fromIpfs(ipfsHash))
           .on(TXEvents.TX_HASH, (hash) => {
             console.debug("[TX_SUBMITTED]", hash);
+            // setSubmitionState(4);
+          })
+          .on(TXEvents.RECEIPT, (hash) => {
+            console.debug("[TX_RECEIPT]", hash);
             setSubmitionState(4);
           })
           .on(TXEvents.TX_ERROR, (txerror) => {
