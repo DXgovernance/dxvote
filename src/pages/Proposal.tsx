@@ -129,6 +129,7 @@ const ProposalPage = observer(() => {
     } = useStores();
     const votingMachines = configStore.getNetworkConfig().votingMachines;
     const proposalId = useLocation().pathname.split("/")[2];
+    const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
     const proposalInfo = daoStore.getProposal(proposalId);
     const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
     const { dxdApproved } = userStore.getUserInfo(); 
@@ -265,7 +266,7 @@ const ProposalPage = observer(() => {
     }
     
     const approveVotingMachineToken = function() {
-      daoStore.approveVotingMachineToken();
+      daoStore.approveVotingMachineToken(votingMachineUsed);
     };
     
     const executeProposal = function() {
