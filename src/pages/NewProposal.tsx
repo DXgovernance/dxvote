@@ -13,11 +13,11 @@ import ProposalTemplates from '../config/proposalTemplates';
 import { TXEvents } from '../enums';
 
 const NewProposalFormWrapper = styled(Box)`
-  width: cacl(100% -40px);
-  display: flex;
-  padding: 10px 10px;
-  justify-content: center;
-  flex-direction: column;
+    width: cacl(100% -40px);
+    display: flex;
+    padding: 10px 10px;
+    justify-content: center;
+    flex-direction: column;
 `;
 
 const SchemeInput = styled.div`
@@ -235,26 +235,44 @@ const NewProposalPage = observer(() => {
         const data = calls.map((call) => {
           if (call.to == "")
             return "";
-          const parameters = (call.callType === "simple" && (call.functionName.length > 0 && call.functionParams.length > 0))
-            ? call.functionName.substring(
-              call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
-            : [];  
-
-          const simpleData = 
-            call.callType === "simple" && call.functionName.length > 0 ? 
-            library.eth.abi.encodeFunctionSignature(call.functionName) + 
-            library.eth.abi.encodeParameters(parameters, call.functionParams.split(",")).substring(2)
-            : "0x0"
+          
+          let callData;
+          
+          if (call.callType == "simple") {
+            let callDataFunctionSignature = "0x0";
+            let callDataFunctionParamsEncoded = "";
+            
+            if (call.functionName.length == 0) {
+              callDataFunctionSignature = "0x0";
+            } else {
+              callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(call.functionName)
+            }
+            
+            if (call.functionParams.length > 0) {
+              const parameters = (call.functionName.length > 0 && call.functionParams.length > 0)
+                ? call.functionName.substring(
+                  call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
+                : [];
+              callDataFunctionParamsEncoded = parameters.length > 0 ? library.eth.abi.encodeParameters(
+                  parameters,
+                  call.functionParams
+                ).substring(2)
+                : "";
+            }
+            callData = callDataFunctionSignature + callDataFunctionParamsEncoded;
+          } else {
+            callData = call.data;
+          }
           
           if (callToController && call.to != networkConfig.controller) {
             return daoService.encodeControllerGenericCall(
               call.to,
-              simpleData,
+              callData,
               call.callType === "simple" ? library.utils.toWei(call.value).toString()
               : call.value
             )
           } else {
-            return simpleData;
+            return callData;
           }
         });
 
@@ -282,7 +300,6 @@ const NewProposalPage = observer(() => {
               console.error("[ERROR]", error);
               setSubmitionState(-1);
           });
-        // history.push("/");
       } catch (error) {
         console.error('[PROPOSAL_ERROR]', error);
         setSubmitionState(-1);
@@ -328,7 +345,7 @@ const NewProposalPage = observer(() => {
         to: "",
         data: "",
         functionName: "",
-        functionParams: "",
+        functionParams: [],
         value: ""
       })
       setCalls(calls);
@@ -344,10 +361,11 @@ const NewProposalPage = observer(() => {
     function changeCallType(proposalIndex) {
       calls[proposalIndex] = {
         callType: calls[proposalIndex].callType === "simple" ? "advanced" : "simple",
+        allowedFunctions: [],
         to: "",
         data: "",
         functionName: "",
-        functionParams: "",
+        functionParams: [],
         value: ""
       }
       setCalls(calls)
@@ -423,16 +441,14 @@ const NewProposalPage = observer(() => {
     }
     
     function onFunctionSelectChange(callIndex, functionSelected, params) {
-      // if (functionSelected && functionSelected.target.value) {
-        calls[callIndex].functionName = functionSelected.target.value;
-        calls[callIndex].functionParams = params;
-        setCalls(calls)
-        forceUpdate();
-      // }
+      calls[callIndex].functionName = functionSelected.target.value;
+      calls[callIndex].functionParams = params.split(",");
+      setCalls(calls)
+      forceUpdate();
     }
     
-    function onFunctionParamsChange(callIndex, event) {
-      calls[callIndex].functionParams = event.target.value;
+    function onFunctionParamsChange(callIndex, event, paramIndex) {
+      calls[callIndex].functionParams[paramIndex] = event.target.value;
       setCalls(calls)
       forceUpdate();
     }
@@ -574,47 +590,58 @@ const NewProposalPage = observer(() => {
               })}
             </datalist>
             
-            { call.callType === "advanced"
-              ? <CallInput 
-                type="text"
-                onChange={(value) => onCallDataChange(i, value)}
-                value={call.data}
-                placeholder="0x..."
-                width="50%"
+            <div style={{display: "flex", width: call.callType === "simple" ? "60%" : "50%"}}>
+              <CallInput
+                list="allowedFunctions"
+                value={calls[i].functionName}
+                onChange={(event) => {
+                  const selectedFunction = calls[i].allowedFunctions.find((allowedFunc) => allowedFunc.value == event.target.value);
+                  onFunctionSelectChange(
+                    i,
+                    event,
+                    selectedFunction ? selectedFunction.params : ""
+                  )
+                }}
+                width="40%"
               />
-              : <div style={{display: "flex", width: "50%"}}>
-              
-                <CallInput
-                  list="allowedFunctions"
-                  value={calls[i].functionName}
-                  onChange={(event) => {
-                    const selectedFunction = calls[i].allowedFunctions.find((allowedFunc) => allowedFunc.value == event.target.value);
-                    onFunctionSelectChange(
-                      i,
-                      event,
-                      selectedFunction ? selectedFunction.params : ""
-                    )
-                  }}
-                      
-                  width="40%"
-                />
-                <datalist id="allowedFunctions">
-                  {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
-                    return (
-                      <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.value}/>
-                    );
-                  })}
-                </datalist>
-            
+              <datalist id="allowedFunctions">
+                {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
+                  return (
+                    <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.value}/>
+                  );
+                })}
+              </datalist>
+          
+              { call.callType === "advanced" ?
                 <CallInput 
                   type="text"
-                  onChange={(value) => onFunctionParamsChange(i, value)}
+                  onChange={(value) => onFunctionParamsChange(i, value, 0)}
                   value={calls[i].functionParams}
                   placeholder="functions values separated with commas"
-                  width="60%"
+                  width="100%"
                 />
-              </div>
-            }
+              :
+                <div style={{display: "flex", width: "60%", flexDirection: "column", paddingRight: "10px"}}>
+                  {calls[i].functionParams.map((funcParam, funcParamIndex) => {
+                    if (funcParam == " address _avatar" || funcParam == " Avatar _avatar" ) {
+                      calls[i].functionParams[funcParamIndex] = networkConfig.avatar;
+                    } else {
+                      return (
+                        <CallInput 
+                          key={"functionParam"+funcParamIndex}
+                          type="text"
+                          onChange={(value) => onFunctionParamsChange(i, value, funcParamIndex)}
+                          value={calls[i].functionParams[funcParamIndex]}
+                          placeholder={funcParam}
+                          width="100%"
+                          style={{marginTop: funcParamIndex > 0 ? "5px": "0px"}}
+                        />
+                      );
+                    }
+                  })}
+                </div>
+              }
+            </div>
             
             <CallInput
               type="text"
