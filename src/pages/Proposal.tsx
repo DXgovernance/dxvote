@@ -168,7 +168,7 @@ const ProposalPage = observer(() => {
     let userRepAtProposalCreation = bnum(0);
     let totalRepAtProposalCreation = bnum(0);
     
-    const repAtCreation = daoService.getRepAt(proposalInfo.creationEvent.block);
+    const repAtCreation = daoService.getRepAt(proposalInfo.creationEvent.l1BlockNumber);
     userRepAtProposalCreation = bnum(repAtCreation.userRep);
     totalRepAtProposalCreation = bnum(repAtCreation.totalSupply);
 
@@ -380,21 +380,21 @@ const ProposalPage = observer(() => {
           <SidebarRow style={{ margin: "0px 10px" }}> 
             <span style={{width: "50%", textAlign:"center", color: "green"}}>
               <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
-              {proposalInfo.positiveVotes.div(totalRepAtProposalCreation).times("100").toFixed(2)} %
+              {proposalInfo.positiveVotes.times("100").div(totalRepAtProposalCreation).toFixed(2)} %
               <br/> 
               {proposalEvents.votes && proposalEvents.votes.map(function(voteEvent, i){
                 if (voteEvent.vote.toString() === "1")
                   return (
                     <small color="green" key={`voteUp${i}`} style={{ display: "flex", alignItems:"center"}}>
                       <BlockchainLink size="short" type="user" text={voteEvent.voter}/>
-                      {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toFixed(2)} %
+                      {bnum(voteEvent.amount).times("100").div(totalRepAtProposalCreation).toFixed(2)} %
                     </small>
                   );
                 else return undefined;
               })}
             </span>
             <span style={{width: "50%", textAlign:"center", color: "red"}}>
-              {proposalInfo.negativeVotes.div(totalRepAtProposalCreation).times("100").toFixed(2)} %
+              {proposalInfo.negativeVotes.times("100").div(totalRepAtProposalCreation).toFixed(2)} %
               <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
               <br/> 
               {proposalEvents && proposalEvents.votes.map(function(voteEvent, i){
@@ -402,7 +402,7 @@ const ProposalPage = observer(() => {
                   return (
                     <small color="red" key={`voteDown${i}`} style={{ display: "flex", alignItems:"center"}}>
                       <BlockchainLink size="short" type="user" text={voteEvent.voter}/>
-                      {bnum(voteEvent.amount).div(totalRepAtProposalCreation).times("100").toNumber().toFixed(2)} %
+                      {bnum(voteEvent.amount).times("100").div(totalRepAtProposalCreation).toNumber().toFixed(2)} %
                     </small>
                   )
                 else return undefined;
@@ -433,7 +433,7 @@ const ProposalPage = observer(() => {
             </SidebarRow>
           : votedAmount.toNumber() !== 0 ?
             <SidebarRow>
-              Already voted {(votedAmount.toNumber() > 0) ? "for" : "against"} with { (votedAmount.div(totalRepAtProposalCreation).times("100")).toFixed(2)} % REP
+              Already voted {(votedAmount.toNumber() > 0) ? "for" : "against"} with { (votedAmount.times("100").div(totalRepAtProposalCreation)).toFixed(2)} % REP
             </SidebarRow>
           : <div/>
           }

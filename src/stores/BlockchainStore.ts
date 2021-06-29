@@ -157,7 +157,7 @@ export default class BlockchainStore {
 
       let networkCache = daoStore.getCache();
       const blockNumber = await library.eth.getBlockNumber();
-      const lastCheckedBlockNumber = networkCache.blockNumber;
+      const lastCheckedBlockNumber = networkCache.l1BlockNumber;
 
       if (blockNumber > lastCheckedBlockNumber) {
         console.debug('[Fetch Loop] Fetch Blockchain Data', { blockNumber, account, chainId });
@@ -251,7 +251,7 @@ export default class BlockchainStore {
           userStore.update();
         };
         
-        networkCache.blockNumber = toBlock;
+        networkCache.l1BlockNumber = toBlock;
         providerStore.setCurrentBlockNumber(toBlock);
         daoStore.updateNetworkCache(networkCache, configStore.getActiveChainName());
         

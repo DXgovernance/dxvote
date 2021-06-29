@@ -16,7 +16,8 @@ async function main() {
     ? JSON.parse(fs.readFileSync('./src/cache.json', 'utf-8'))
     : {
       [networkName] : {
-        blockNumber: contractsConfig.fromBlock,
+        l1BlockNumber: contractsConfig.fromBlock,
+        l2BlockNumber: 0,
         daoInfo: {} as DaoInfo,
         schemes: {},
         proposals: {},
@@ -29,7 +30,8 @@ async function main() {
     
   let networkCache = (!cacheFile[networkName])
     ? {
-      blockNumber: networkName != 'localhost' ? contractsConfig.fromBlock : 1,
+      l1BlockNumber: networkName != 'localhost' ? contractsConfig.fromBlock : 1,
+      l2BlockNumber: 0,
       daoInfo: {} as DaoInfo,
       schemes: {},
       proposals: {},
@@ -50,7 +52,7 @@ async function main() {
     } : cacheFile[networkName];
   
   // Set block range for the script to run
-  const fromBlock = networkCache.blockNumber + 1;
+  const fromBlock = networkCache.l1BlockNumber + 1;
   const toBlock = process.env.CACHE_TO_BLOCK || await web3.eth.getBlockNumber();
   
   console.log('Runing cache script from block', fromBlock, 'to block', toBlock, 'in network', networkName);

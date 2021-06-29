@@ -176,8 +176,8 @@ export default class DaoStore {
       else if (cache.daoInfo.repEvents[i].event == "Burn")
         repTotalSupply = repTotalSupply.minus(cache.daoInfo.repEvents[i].amount);
       
-      if (cache.daoInfo.repEvents[i].block > blockNumber){
-        blockNumber = cache.daoInfo.repEvents[i].block;
+      if (cache.daoInfo.repEvents[i].l1BlockNumber > blockNumber){
+        blockNumber = cache.daoInfo.repEvents[i].l1BlockNumber;
         repEvents.push([blockNumber, bnum(repTotalSupply).div(10**18).toNumber()])
       }
     }
@@ -294,7 +294,11 @@ export default class DaoStore {
   getAllProposals(): Proposal[] {
     const allProposals = Object.keys(this.getCache().proposals)
       .map( (proposalId) => {return this.getCache().proposals[proposalId] } );
-    return _.orderBy(allProposals , ["creationEvent.blockNumber", "creationEvent.transactionIndex", "creationEvent.logIndex"], ["asc","asc","asc"]);
+    return _.orderBy(
+      allProposals ,
+      ["creationEvent.l1BlockNumber", "creationEvent.l2BlockNumber", "creationEvent.transactionIndex", "creationEvent.logIndex"],
+      ["asc","asc","asc","asc"]
+    );
   }
   
   getAllSchemes(): Scheme[] {
@@ -342,11 +346,11 @@ export default class DaoStore {
       event: ProposalEvent
     }[] = proposalEvents.votes.map((event) => {
       return {
-        text: `Vote from ${event.voter} of ${(bnum(event.amount)).div(proposal.repAtCreation).times('100').toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`,
+        text: `Vote from ${event.voter} of ${(bnum(event.amount)).times('100').div(proposal.repAtCreation).toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -357,7 +361,7 @@ export default class DaoStore {
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -368,7 +372,7 @@ export default class DaoStore {
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -379,7 +383,7 @@ export default class DaoStore {
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -390,7 +394,7 @@ export default class DaoStore {
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -403,8 +407,8 @@ export default class DaoStore {
     
     history = _.orderBy(
       history,
-      ["event.blockNumber", "event.transactionIndex", "event.logIndex"],
-      ["asc","asc","asc"]
+      ["event.l1BlockNumber", "event.l2BlockNumber", "event.transactionIndex", "event.logIndex"],
+      ["asc","asc","asc","asc"]
     );
     
     
@@ -426,7 +430,7 @@ export default class DaoStore {
 
     return {
       repBalance: user ? bnum(user.repBalance) : bnum(0),
-      repPercentage: user && user.repBalance ? bnum(user.repBalance).div(this.getCache().daoInfo.totalRep).times('100').toNumber() : 0
+      repPercentage: user && user.repBalance ? bnum(user.repBalance).times('100').div(this.getCache().daoInfo.totalRep).toNumber() : 0
     }
   }
   
@@ -499,7 +503,7 @@ export default class DaoStore {
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -510,7 +514,7 @@ export default class DaoStore {
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -521,7 +525,7 @@ export default class DaoStore {
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -532,7 +536,7 @@ export default class DaoStore {
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
-          block: event.block,
+          block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
           logIndex: event.logIndex
         }
@@ -540,8 +544,8 @@ export default class DaoStore {
     }))
     history = _.orderBy(
       history,
-      ["event.blockNumber", "event.transactionIndex", "event.logIndex"],
-      ["asc","asc","asc"]
+      ["event.l1BlockNumber", "event.l2BlockNumber", "event.transactionIndex", "event.logIndex"],
+      ["asc","asc","asc","asc"]
     );
     
     return {

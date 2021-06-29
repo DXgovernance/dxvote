@@ -17,10 +17,9 @@ async function executeMulticall(web3, multicall, calls) {
     )];
   });
   
-  const { returnData, blockNumber } = await multicall.methods.aggregate(rawCalls).call();
+  const { returnData } = await multicall.methods.aggregate(rawCalls).call();
 
   return {
-    blockNumber,
     returnData,
     decodedReturnData:returnData.map((callResult, i) => {
       return web3.eth.abi.decodeParameters(
@@ -53,7 +52,8 @@ export const updateNetworkCache = async function (
           stakes: [],
           redeems: [],
           redeemsRep: [],
-          proposalStateChanges: []
+          proposalStateChanges: [],
+          newProposal: []
         },
         token: {
           address: networkContracts.votingMachines[votingMachineAddress].token._address,
@@ -81,7 +81,8 @@ export const updateNetworkCache = async function (
     networkCache = networkCacheUpdated;
   });
 
-  networkCache.blockNumber = Number(toBlock);
+  networkCache.l1BlockNumber = Number(toBlock);
+  networkCache.l2BlockNumber = 0;
   
   console.debug('Total Proposals', Object.keys(networkCache.proposals).length);
 
@@ -112,7 +113,8 @@ export const updateReputationEvents = async function (
     networkCache.daoInfo.repEvents = [];
 
   let reputationEvents = sortEvents( await getEvents(web3, reputation, fromBlock, toBlock, 'allEvents'));
-  reputationEvents.map((reputationEvent) => {
+
+  reputationEvents.map((reputationEvent, i) => {
     switch (reputationEvent.event) {
       case "Mint":
         networkCache.daoInfo.repEvents.push({
@@ -122,7 +124,8 @@ export const updateReputationEvents = async function (
           account: reputationEvent.returnValues._to,
           amount: bnum(reputationEvent.returnValues._amount),
           tx: reputationEvent.transactionHash,
-          block: reputationEvent.blockNumber,
+          l1BlockNumber: reputationEvent.l1BlockNumber,
+          l2BlockNumber: reputationEvent.l2BlockNumber,
           timestamp: reputationEvent.timestamp,
           transactionIndex: reputationEvent.transactionIndex,
           logIndex: reputationEvent.logIndex
@@ -145,13 +148,15 @@ export const updateReputationEvents = async function (
           account: reputationEvent.returnValues._from,
           amount: bnum(reputationEvent.returnValues._amount),
           tx: reputationEvent.transactionHash,
-          block: reputationEvent.blockNumber,
+          l1BlockNumber: reputationEvent.l1BlockNumber,
+          l2BlockNumber: reputationEvent.l2BlockNumber,
           timestamp: reputationEvent.timestamp,
           transactionIndex: reputationEvent.transactionIndex,
           logIndex: reputationEvent.logIndex
         });
         networkCache.users[reputationEvent.returnValues._from].repBalance =
-          bnum(networkCache.users[reputationEvent.returnValues._from].repBalance).minus(reputationEvent.returnValues._amount)
+          bnum(networkCache.users[reputationEvent.returnValues._from].repBalance)
+          .minus(reputationEvent.returnValues._amount)
       break;
     }
   });
@@ -174,8 +179,27 @@ export const updateVotingMachineEvents = async function (
   const votingMachineEventsInCache = networkCache.votingMachines[votingMachine._address].events;
     
   newVotingMachineEvents.map((votingMachineEvent) => {
-    if (votingMachineEvent.returnValues._organization == avatarAddress)
+    const proposalCreated = votingMachineEventsInCache.newProposal
+      .findIndex(newProposalEvent => votingMachineEvent.returnValues._proposalId == newProposalEvent.proposalId) > -1;
+    
+    if (votingMachineEvent.returnValues._organization == avatarAddress
+      || (votingMachineEvent.event == "StateChange" && proposalCreated))
       switch (votingMachineEvent.event) {
+        case "NewProposal":
+          votingMachineEventsInCache.newProposal.push({
+            event: votingMachineEvent.event,
+            signature: votingMachineEvent.signature,
+            address: votingMachineEvent.address,
+            proposer: votingMachineEvent.returnValues._proposer,
+            proposalId: votingMachineEvent.returnValues._proposalId,
+            tx: votingMachineEvent.transactionHash,
+            l1BlockNumber: votingMachineEvent.l1BlockNumber,
+            l2BlockNumber: votingMachineEvent.l2BlockNumber,
+            timestamp: votingMachineEvent.timestamp,
+            transactionIndex: votingMachineEvent.transactionIndex,
+            logIndex: votingMachineEvent.logIndex
+          });
+        break;
         case "StateChange":
           votingMachineEventsInCache.proposalStateChanges.push({
             event: votingMachineEvent.event,
@@ -184,7 +208,8 @@ export const updateVotingMachineEvents = async function (
             state: votingMachineEvent.returnValues._proposalState,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            block: votingMachineEvent.blockNumber,
+            l1BlockNumber: votingMachineEvent.l1BlockNumber,
+            l2BlockNumber: votingMachineEvent.l2BlockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex
@@ -205,7 +230,8 @@ export const updateVotingMachineEvents = async function (
             preBoosted: preBoosted,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            block: votingMachineEvent.blockNumber,
+            l1BlockNumber: votingMachineEvent.l1BlockNumber,
+            l2BlockNumber: votingMachineEvent.l2BlockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex
@@ -222,7 +248,8 @@ export const updateVotingMachineEvents = async function (
             amount4Bounty: bnum("0"),
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            block: votingMachineEvent.blockNumber,
+            l1BlockNumber: votingMachineEvent.l1BlockNumber,
+            l2BlockNumber: votingMachineEvent.l2BlockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex
@@ -237,7 +264,8 @@ export const updateVotingMachineEvents = async function (
             amount: votingMachineEvent.returnValues._amount,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            block: votingMachineEvent.blockNumber,
+            l1BlockNumber: votingMachineEvent.l1BlockNumber,
+            l2BlockNumber: votingMachineEvent.l2BlockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex
@@ -252,7 +280,8 @@ export const updateVotingMachineEvents = async function (
             amount: votingMachineEvent.returnValues._amount,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            block: votingMachineEvent.blockNumber,
+            l1BlockNumber: votingMachineEvent.l1BlockNumber,
+            l2BlockNumber: votingMachineEvent.l2BlockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex
@@ -445,7 +474,7 @@ export const updateSchemes = async function (
         })
         networkCache.schemes[schemeAddress].configurations[
           networkCache.schemes[schemeAddress].configurations.length - 1
-        ].toBlock = controllerEvent.blockNumber;
+        ].toBlock = controllerEvent.l1BlockNumber;
       }
     
     // Mark scheme as not registered but save all previous data
@@ -683,7 +712,7 @@ export const updateProposals = async function (
       
       let schemeConfigurationAtProposalCreation;
       for (let i = networkCache.schemes[schemeAddress].configurations.length - 1; i >= 0; i--) {
-        if (schemeEvent.blockNumber < networkCache.schemes[schemeAddress].configurations[i].toBlock)
+        if (schemeEvent.l1BlockNumber < networkCache.schemes[schemeAddress].configurations[i].toBlock)
           schemeConfigurationAtProposalCreation = networkCache.schemes[schemeAddress].configurations[i]
       }
 
@@ -717,12 +746,13 @@ export const updateProposals = async function (
           signature: schemeEvent.signature,
           address: schemeEvent.address,
           tx: schemeEvent.transactionHash,
-          block: schemeEvent.blockNumber,
+          l1BlockNumber: schemeEvent.l1BlockNumber,
+          l2BlockNumber: schemeEvent.l2BlockNumber,
           timestamp: schemeEvent.timestamp,
           transactionIndex: schemeEvent.transactionIndex,
           logIndex: schemeEvent.logIndex
         },
-        repAtCreation: bnum(await allContracts.reputation.methods.totalSupplyAt(schemeEvent.blockNumber).call()),
+        repAtCreation: bnum(await allContracts.reputation.methods.totalSupplyAt(schemeEvent.l1BlockNumber).call()),
         winningVote: votingMachineProposalInfo.winningVote,
         proposer: decodedProposer ? decodedProposer : votingMachineProposalInfo.proposer,
         currentBoostedVotePeriodLimit: votingMachineProposalInfo.currentBoostedVotePeriodLimit,
@@ -756,7 +786,8 @@ export const updateProposals = async function (
         signature: schemeEvent.signature,
         address: schemeEvent.address,
         tx: schemeEvent.transactionHash,
-        block: schemeEvent.blockNumber,
+        l1BlockNumber: schemeEvent.l1BlockNumber,
+        l2BlockNumber: schemeEvent.l2BlockNumber,
         timestamp: schemeEvent.timestamp,
         transactionIndex: schemeEvent.transactionIndex,
         logIndex: schemeEvent.logIndex
@@ -802,13 +833,13 @@ export const updateProposals = async function (
         [ 
           votingMachine,
           "voteStatus",
-          [proposalId,
-            1] ],
+          [proposalId, 1]
+        ],
         [ 
           votingMachine,
           "voteStatus",
-          [proposalId,
-            2] ],
+          [proposalId, 2]
+        ],
         [ 
           votingMachine,
           "proposalStatus",

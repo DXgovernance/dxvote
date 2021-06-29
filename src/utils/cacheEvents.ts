@@ -81,17 +81,28 @@ export const getTimestampOfEvents = async function(web3, events) {
     //   return blockResult.timestamp;
     // });
     const blocksToFetchBatch = blocksToFetch.splice(0, 500)
-    timestamps = timestamps.concat(await Promise.all(blocksToFetchBatch.map(async (block) => {
-      return (await web3.eth.getBlock(block)).timestamp
-    })));
+    await Promise.all(blocksToFetchBatch.map(async (block) => {
+      const blockInfo = (await web3.eth.getBlock(block));
+      for (let i = 0; i < events.length; i++) {
+        if (events[i].blockNumber == blockInfo.number)
+          events[i].timestamp = blockInfo.timestamp;
+        if (blockInfo.l1BlockNumber)
+          events[i].l1BlockNumber = Number(blockInfo.l1BlockNumber);
+      }
+    }));
   }
-  
-  events.map((event) => {
-    event.timestamp = timestamps[ blocksToFetch.indexOf(event.blockNumber) ];
-  })
+
+  for (let i = 0; i < events.length; i++) {
+    if (events[i].l1BlockNumber){
+      events[i].l2BlockNumber = events[i].blockNumber;
+    } else {
+      events[i].l1BlockNumber = events[i].blockNumber;
+      events[i].l2BlockNumber = 0;
+    }
+  }
   return events;
 };
 
 export const sortEvents = function(events) {
-  return _.orderBy( events , ["blockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc"]);
+  return _.orderBy( events , ["l1BlockNumber", "l2BlockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc"]);
 };

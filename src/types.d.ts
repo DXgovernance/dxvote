@@ -43,17 +43,13 @@ export interface ContractStorage {
 
 // DaoStore types
 
-export interface BlockchainValue {
-  value: any;
-  blockNumber: number;
-}
-
 export interface BlockchainEvent {
   event: string;
   signature: string;
   address: string;
   tx: string;
-  block: number;
+  l1BlockNumber: number;
+  l2BlockNumber: number;
   timestamp: number;
   transactionIndex: number;
   logIndex: number;
@@ -72,6 +68,10 @@ export interface RepEvent extends BlockchainEvent{
 
 export interface ProposalEvent extends BlockchainEvent {
   proposalId: string;
+}
+
+export interface NewProposal extends ProposalEvent {
+  proposer: string;
 }
 
 export interface Vote extends ProposalEvent {
@@ -219,7 +219,8 @@ export interface IPFSHash {
 }
 
 export interface DaoNetworkCache {
-  blockNumber: number;
+  l1BlockNumber: number;
+  l2BlockNumber: number;
   daoInfo: DaoInfo;
   schemes: {[address: string]: Scheme};
   proposals: {[id: string]: Proposal};
@@ -232,6 +233,7 @@ export interface DaoNetworkCache {
       redeems: Redeem[];
       redeemsRep: RedeemRep[];
       proposalStateChanges: ProposalStateChange[];
+      newProposal: NewProposal[];
     };
     token: {
       address: string;
