@@ -50,7 +50,7 @@ async function main() {
     } : cacheFile[networkName];
   
   // Set block range for the script to run
-  const fromBlock = networkCache.blockNumber;
+  const fromBlock = networkCache.blockNumber + 1;
   const toBlock = process.env.CACHE_TO_BLOCK || await web3.eth.getBlockNumber();
   
   console.log('Runing cache script from block', fromBlock, 'to block', toBlock, 'in network', networkName);
