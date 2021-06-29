@@ -18,20 +18,36 @@ import {
   VotingMachineProposalState
 } from '../enums';
 
-const ProposalInformationWrapper = styled(Box)`
+const ProposalInformationWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
   flex-direction: row;
 `;
 
-const InfoSidebar = styled.div`
+const InfoSidebarBox = styled(Box)`
   max-width: 400px;
   min-width: 300px;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
+  padding: 10px 15px;
 `;
+
+const ProposalInfoSection = styled.div`
+  max-width: 900px;
+  width: 100%;
+  flex-direction: column;
+  margin-right: 15px;
+`
+
+const ProposalInfoBox = styled(Box)`
+  max-width: 900px;
+  overflow-wrap: break-word;
+  padding: 20px 15px 10px 15px;
+  justify-content: flex-start;
+  overflow: auto;
+`
 
 const SidebarDivider = styled.div`
   border-bottom: 1px solid gray;
@@ -72,13 +88,6 @@ const AmountInput = styled.input`
   font-family: var(--roboto);
 `;
 
-const ProposalInfoSection = styled.div`
-  max-width: 900px;
-  width: 100%;
-  padding: 20px;
-  overflow-wrap: break-word;
-  overflow: auto;
-`
 
 const AmountBadge = styled.span`
     background-color: ${(props) => props.color || 'inherit'};
@@ -275,35 +284,39 @@ const ProposalPage = observer(() => {
     return (
       <ProposalInformationWrapper>
         <ProposalInfoSection>
-          <h1 style={{margin: "0px"}}> {proposalTitle} </h1>
-          <MDEditor.Markdown source={ proposalDescription } style={{
-            padding: "20px 10px"
-          }} />
-          <hr/>
-          <h2> Calls  <Question question="9"/></h2>
-          {proposalCallTexts.map((proposalCallText, i) => {
-            return(
-            <div key={"proposalCallText"+i}>
-              <span> {proposalCallText} </span> 
-              {i < proposalCallTexts.length - 1 ? <hr/> : <div/>}
-            </div>);
-          })}
-          <h2> History </h2>
-          
-          {proposalEvents.history.map((historyEvent, i) => {
-            return(
-              <div key={"proposalHistoryEvent"+i} style={{
-                display: "flex", alignItems:"center", padding:"4px 0px",
-                borderBottom: i < proposalEvents.history.length - 1 ? " 1px --medium-gray": ""
-              }}>
-                <span> {historyEvent.text} </span> 
-                <BlockchainLink type="transaction" size="short" text={historyEvent.event.tx} onlyIcon/>
-                {i < proposalEvents.history.length - 1 ? <hr/> : <div/>}
-              </div>
-            );
-          })}
+          <ProposalInfoBox>
+            <h1 style={{margin: "0px"}}> {proposalTitle} </h1>
+            <MDEditor.Markdown source={ proposalDescription } style={{
+              padding: "20px 10px"
+            }} />
+            <hr/>
+            <h2> Calls  <Question question="9"/></h2>
+            {proposalCallTexts.map((proposalCallText, i) => {
+              return(
+              <div key={"proposalCallText"+i}>
+                <span> {proposalCallText} </span> 
+                {i < proposalCallTexts.length - 1 ? <hr/> : <div/>}
+              </div>);
+            })}
+          </ProposalInfoBox>
+          <ProposalInfoBox style={{marginTop: "15px"}}>
+            <h1 style={{margin: "0px"}}> History </h1>
+            
+            {proposalEvents.history.map((historyEvent, i) => {
+              return(
+                <div key={"proposalHistoryEvent"+i} style={{
+                  display: "flex", alignItems:"center", padding:"4px 0px",
+                  borderBottom: i < proposalEvents.history.length - 1 ? " 1px --medium-gray": ""
+                }}>
+                  <span> {historyEvent.text} </span> 
+                  <BlockchainLink type="transaction" size="short" text={historyEvent.event.tx} onlyIcon/>
+                  {i < proposalEvents.history.length - 1 ? <hr/> : <div/>}
+                </div>
+              );
+            })}
+          </ProposalInfoBox>
         </ProposalInfoSection>
-        <InfoSidebar>
+        <InfoSidebarBox>
           <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{proposalInfo.status} <Question question="3"/></h2>
           <SidebarRow style={{
             margin: "0px 10px",
@@ -504,7 +517,7 @@ const ProposalPage = observer(() => {
             : <div></div>
           }
           
-        </InfoSidebar>
+        </InfoSidebarBox>
       </ProposalInformationWrapper>
     );
     
