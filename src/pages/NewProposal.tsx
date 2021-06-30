@@ -175,15 +175,22 @@ const NewProposalPage = observer(() => {
     
     const schemes = daoStore.getAllSchemes();
     const networkConfig = configStore.getNetworkConfig();
-    
-    const defaultSchemeToUse = schemes.findIndex((scheme) => scheme.name == "MasterWalletScheme");
+    const schemeInLocalStorage = localStorage.getItem('dxvote-newProposal-scheme');
+    console.log(schemeInLocalStorage)
+    const defaultSchemeToUse = schemeInLocalStorage
+      ? schemes.findIndex((scheme) => scheme.address == schemeInLocalStorage)
+      : schemes.findIndex((scheme) => scheme.name == "MasterWalletScheme");
 
     const [schemeToUse, setSchemeToUse] =
       React.useState(defaultSchemeToUse > -1 ? schemes[defaultSchemeToUse] : schemes[0]);
     const [titleText, setTitleText] = React.useState(localStorage.getItem('dxvote-newProposal-title'));
     const [ipfsHash, setIpfsHash] = React.useState("");
     const [descriptionText, setDescriptionText] = React.useState(localStorage.getItem('dxvote-newProposal-description'));
-    const [calls, setCalls] = React.useState([]);
+    const [calls, setCalls] = React.useState(
+      localStorage.getItem('dxvote-newProposal-calls') ? 
+        JSON.parse(localStorage.getItem('dxvote-newProposal-calls'))
+      : []
+    );
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
     const [submitionState, setSubmitionState] = React.useState(0);
@@ -337,6 +344,12 @@ const NewProposalPage = observer(() => {
           name: `${networkConfig.tokens[tokenAddress].name} ${tokenAddress}`
         });
       });
+      
+    function setCallsInState(calls) {
+      localStorage.setItem('dxvote-newProposal-calls', JSON.stringify(calls));
+      setCalls(calls);
+      forceUpdate();
+    }
 
     function addCall() {
       calls.push({
@@ -348,14 +361,12 @@ const NewProposalPage = observer(() => {
         functionParams: [],
         value: ""
       })
-      setCalls(calls);
-      forceUpdate()
+      setCallsInState(calls);
     };
     
     function removeCall(proposalIndex) {
       calls.splice(proposalIndex, 1);
-      setCalls(calls)
-      forceUpdate();
+      setCallsInState(calls);
     };
     
     function changeCallType(proposalIndex) {
@@ -368,8 +379,7 @@ const NewProposalPage = observer(() => {
         functionParams: [],
         value: ""
       }
-      setCalls(calls)
-      forceUpdate();
+      setCallsInState(calls);
     };
     
     function onToSelectChange(callIndex, event) {
@@ -436,40 +446,35 @@ const NewProposalPage = observer(() => {
           });
         }
       }
-      setCalls(calls)
-      forceUpdate();
+      setCallsInState(calls);
     }
     
     function onFunctionSelectChange(callIndex, functionSelected, params) {
       calls[callIndex].functionName = functionSelected.target.value;
       calls[callIndex].functionParams = params.split(",");
-      setCalls(calls)
-      forceUpdate();
+      setCallsInState(calls);
     }
     
     function onFunctionParamsChange(callIndex, event, paramIndex) {
       calls[callIndex].functionParams[paramIndex] = event.target.value;
-      setCalls(calls)
-      forceUpdate();
+      setCallsInState(calls);
     }
     
     function onValueChange(callIndex, event) {
       calls[callIndex].value = event.target.value;
-      setCalls(calls)
-      forceUpdate();
+      setCallsInState(calls);
     }
     
     function onCallDataChange(callIndex, event) {
       calls[callIndex].data = event.target.value;
-      setCalls(calls)
-      forceUpdate();
+      setCallsInState(calls);
     }
     
     function onSchemeChange(event) {
       setSchemeToUse(schemes[event.target.value]);
+      localStorage.setItem('dxvote-newProposal-scheme', schemes[event.target.value].address);
       calls.splice(0, calls.length);
-      setCalls(calls)
-      forceUpdate();
+      setCallsInState(calls);
     }
     
     function onProposalTemplate(event) {
@@ -477,8 +482,7 @@ const NewProposalPage = observer(() => {
         setTitleText(ProposalTemplates[event.target.value].title);
         setDescriptionText(ProposalTemplates[event.target.value].description);
         calls.splice(0, calls.length);
-        setCalls(calls)
-        forceUpdate();
+        setCallsInState(calls);
       }
     }
     schemeToUse.callPermissions.map((callPermission) => {
@@ -693,9 +697,6 @@ const NewProposalPage = observer(() => {
               <ActiveButton route="/">Back to Proposals</ActiveButton>
           }
         </div>
-
-      
-        
         
       </NewProposalFormWrapper>
     );
