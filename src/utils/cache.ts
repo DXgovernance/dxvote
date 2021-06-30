@@ -114,7 +114,7 @@ export const updateReputationEvents = async function (
 
   let reputationEvents = sortEvents( await getEvents(web3, reputation, fromBlock, toBlock, 'allEvents'));
 
-  reputationEvents.map((reputationEvent, i) => {
+  reputationEvents.map((reputationEvent) => {
     switch (reputationEvent.event) {
       case "Mint":
         networkCache.daoInfo.repEvents.push({
@@ -406,8 +406,8 @@ export const updateSchemes = async function (
       if (schemeTypeData.type == 'WalletScheme') {
         callsToExecute.push([
           votingMachine,
-          "boostedVoteRequiredPercentage",
-          [web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address), paramsHash]
+          "getBoostedVoteRequiredPercentage",
+          [schemeAddress, allContracts.avatar._address, paramsHash]
         ]);
       }
 

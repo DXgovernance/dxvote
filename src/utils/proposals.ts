@@ -22,16 +22,23 @@ export const decodeStatus = function(
         finishTime: 0
       };
     case "2":
-      if (stateInScheme == "3")
+      if (stateInScheme == "2")
+      return { 
+        status: "Proposal Rejected", 
+        priority: 2,
+        boostTime: boostedPhaseTime,
+        finishTime: 0
+      };
+      else if (stateInScheme == "3")
         return { 
-          status: "Execution Failed", 
+          status: "Execution Succeded", 
           priority: 2,
           boostTime: boostedPhaseTime,
           finishTime: 0
         };
-      else if (stateInScheme == "2")
+      else if (stateInScheme == "4")
         return { 
-          status: "Execution Succeded", 
+          status: "Execution Timeout", 
           priority: 2,
           boostTime: boostedPhaseTime,
           finishTime: 0
