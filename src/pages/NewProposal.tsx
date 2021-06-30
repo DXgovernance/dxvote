@@ -696,7 +696,7 @@ const NewProposalPage = observer(() => {
               <ActiveButton onClick={uploadToIPFS}> Upload to IPFS </ActiveButton>
             : (submitionState == 1) ?
               <ActiveButton> Uploading descritpion to IPFS.. </ActiveButton>
-            : (submitionState == 2) ?
+            : (submitionState == 2) || (submitionState == -1) ?
               <ActiveButton onClick={createProposal}>Submit Proposal</ActiveButton>
             : (submitionState == 3) ?
               <ActiveButton>Submiting TX...</ActiveButton>

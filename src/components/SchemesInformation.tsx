@@ -154,11 +154,25 @@ const SchemesInformation = observer(() => {
                   <small>Boost Limit Exponent Value: {schemeConfiguration.parameters.limitExponentValue.toString()}</small>
                   
                 </TableCell>
-                <TableCell width="25%" align="center">
+                <TableCell width="25%" align="center" wrapText>
+                  <strong>Controller Permissions</strong><br/>
                   <small>{schemeConfiguration.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
                   <small>{schemeConfiguration.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
                   <small>{schemeConfiguration.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
                   <small>{schemeConfiguration.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
+                  <br/><br/>
+                  <strong>Call Permissions</strong><br/>
+
+                  {scheme.callPermissions.map((callPermission, i) => {
+                    if (callPermission.fromTime > 0)
+                      return (
+                        <small>
+                          Address: {callPermission.to == "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa" ? "Any Address" : callPermission.to}<br/>
+                          Function: {callPermission.functionSignature == "0xaaaaaaaa" ? "Any" : callPermission.functionSignature}<br/>
+                          Value: {callPermission.value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ? "Any": callPermission.value}
+                        </small>
+                      );
+                  })}
                 </TableCell>
 
                 <TableCell width="20%" align="center" style={{display: "flex", justifyContent: "space-around"}}> 
