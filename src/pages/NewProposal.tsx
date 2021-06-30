@@ -451,7 +451,7 @@ const NewProposalPage = observer(() => {
     
     function onFunctionSelectChange(callIndex, functionSelected, params) {
       calls[callIndex].functionName = functionSelected.target.value;
-      calls[callIndex].functionParams = params.split(",");
+      calls[callIndex].functionParams = params.split(",").map(() => "");
       setCallsInState(calls);
     }
     
@@ -599,7 +599,8 @@ const NewProposalPage = observer(() => {
                 list="allowedFunctions"
                 value={calls[i].functionName}
                 onChange={(event) => {
-                  const selectedFunction = calls[i].allowedFunctions.find((allowedFunc) => allowedFunc.value == event.target.value);
+                  const selectedFunction = calls[i].allowedFunctions
+                    .find((allowedFunc) => allowedFunc.value == event.target.value);
                   onFunctionSelectChange(
                     i,
                     event,
@@ -630,13 +631,19 @@ const NewProposalPage = observer(() => {
                     if (funcParam == " address _avatar" || funcParam == " Avatar _avatar" ) {
                       calls[i].functionParams[funcParamIndex] = networkConfig.avatar;
                     } else {
+                      let placeholder = "";
+                      if (calls[i].functionName.indexOf(',') > 0) {
+                        placeholder = calls[i].functionName.substring(
+                          calls[i].functionName.indexOf("(") + 1, calls[i].functionName.lastIndexOf(")")
+                        ).split(",")[funcParamIndex]
+                      }
                       return (
                         <CallInput 
                           key={"functionParam"+funcParamIndex}
                           type="text"
                           onChange={(value) => onFunctionParamsChange(i, value, funcParamIndex)}
                           value={calls[i].functionParams[funcParamIndex]}
-                          placeholder={funcParam}
+                          placeholder={placeholder}
                           width="100%"
                           style={{marginTop: funcParamIndex > 0 ? "5px": "0px"}}
                         />
