@@ -255,10 +255,10 @@ const ProposalPage = observer(() => {
       proposalInfo.positiveStakes.minus(proposalInfo.negativeStakes).times(101).div(100).toFixed(0)
     ).toString();
           
-    const timeToBoost = proposalInfo && boostTime.toNumber() > moment().unix() ? 
+    const timeToBoost = boostTime.toNumber() > moment().unix() ? 
     moment().to( moment(boostTime.times(1000).toNumber()) ).toString()
     : "";
-    const timeToFinish = proposalInfo && finishTime.toNumber() > moment().unix() ?
+    const timeToFinish = finishTime.toNumber() > moment().unix() ?
     moment().to( moment(finishTime.times(1000).toNumber()) ).toString()
     : "";
   
@@ -353,9 +353,11 @@ const ProposalPage = observer(() => {
             {status === "Pending Boost" ? 
               <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
               : status === "Quiet Ending Period" && timeToFinish === "" ?
-              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
+              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
               : status === "Pending Execution" ?
               <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
+              : status === "Expired in Queue" ?
+              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
               : <div/>
             }
           </SidebarRow>
@@ -373,20 +375,24 @@ const ProposalPage = observer(() => {
             <span><strong>State in Scheme </strong>
               <small>{WalletSchemeProposalState[proposalInfo.stateInScheme]}</small>
             </span>
-            <span> <strong>Submitted Time</strong> <small>{
+            <span> <strong>Submitted Date</strong> <small>{
               moment.unix(proposalInfo.submittedTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
             }</small> </span>
-            <span> <strong>Boosted Time</strong> <small>{
-              proposalInfo.boostedPhaseTime.toNumber() > 0 ?
-                moment.unix(proposalInfo.boostedPhaseTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
+            <span> <strong>Boost Date</strong> <small>{
+              boostTime.toNumber() > 0 ?
+                moment.unix(boostTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
               : "-"
             }</small> </span>
-            <span> <strong>Finish Time</strong> <small>{
+            <span> <strong>Finish Date</strong> <small>{
               moment.unix(finishTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
             }</small> </span>
+            { ((proposalInfo.stateInVotingMachine == 3) && (votingParameters.votersReputationLossRatio > 0) && (finishTime.length > 0)) ?
+              <span> <strong> Voter REP Loss Ratio: </strong> <small>{votingParameters.votersReputationLossRatio.toString()}%</small> </span>
+              : <div/> 
+            }
             { (boostedVoteRequiredPercentage > 0) ?
               <span> <strong> Required Boosted Vote: </strong> <small>{boostedVoteRequiredPercentage}%</small> </span>
-            : <div/>
+              : <div/>
             }
           </SidebarRow>
           
