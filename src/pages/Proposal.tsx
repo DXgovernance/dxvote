@@ -305,7 +305,9 @@ const ProposalPage = observer(() => {
           <ProposalInfoBox>
             <h1 style={{margin: "0px"}}> {proposalTitle} </h1>
             <MDEditor.Markdown source={ proposalDescription } style={{
-              padding: "20px 10px"
+              padding: "20px 10px",
+              lineBreak: "anywhere",
+              whiteSpace: "pre-line"
             }} />
             <h3 style={{margin: "0px"}}>
               <small>
