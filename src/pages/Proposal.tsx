@@ -434,9 +434,12 @@ const ProposalPage = observer(() => {
             </span>
           </SidebarRow>
           
-          <small>{repPercentageAtCreation} % REP at proposal creation</small>
+          {repPercentageAtCreation > 0
+            ? <small>{repPercentageAtCreation} % REP at proposal creation</small>
+            : <div/>
+          }
           
-          {votedAmount.toNumber() === 0 && proposalInfo.stateInVotingMachine >= 3 && proposalInfo.stateInVotingMachine <= 4  ?
+          {votedAmount.toNumber() === 0 && repPercentageAtCreation > 0 && proposalInfo.stateInVotingMachine >= 3 ?
             <SidebarRow>
               
               <AmountInput
