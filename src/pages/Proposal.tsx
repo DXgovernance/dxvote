@@ -7,6 +7,7 @@ import moment from 'moment';
 import { FiPlayCircle, FiFastForward } from "react-icons/fi";
 import Slider from '@material-ui/core/Slider';
 import MDEditor from '@uiw/react-md-editor';
+import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
 import { bnum } from '../utils/helpers';
 import BlockchainLink from '../components/common/BlockchainLink';
@@ -133,13 +134,19 @@ const voteMarks = [
 ];
 
 const ProposalPage = observer(() => {
+    let history = useHistory();
+
     const {
         root: { providerStore, daoStore, configStore, daoService, ipfsService, userStore, blockchainStore },
     } = useStores();
     const votingMachines = configStore.getNetworkConfig().votingMachines;
     const proposalId = useLocation().pathname.split("/")[2];
-    const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
     const proposalInfo = daoStore.getProposal(proposalId);
+    
+    if (!proposalInfo)
+      history.push('/')
+    
+    const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
     const schemeInfo = daoStore.getScheme(proposalInfo.scheme);
     const { dxdApproved } = userStore.getUserInfo(); 
     const { active, account, library } = providerStore.getActiveWeb3React();
