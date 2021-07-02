@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
+import { useHistory } from "react-router-dom";
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import { useLocation } from 'react-router-dom';
@@ -19,6 +20,8 @@ const InfoBox = styled.div`
 `;
 
 const UserPage = observer(() => {
+    let history = useHistory();
+
     const {
         root: { daoStore, blockchainStore },
     } = useStores();
@@ -97,9 +100,15 @@ const UserPage = observer(() => {
         {proposalsToRedeem.length == 0 ? <span> No redeems left </span> : <div/>}
         {proposalsToRedeem.map((proposalId, i) => {
           return(
-            <a key={"proposalLink"+i} href={`/#/proposal/${proposalId}`}>
+            <span
+              key={"proposalLink"+i}
+              onClick={() => { history.push(`/proposal/${proposalId}`)}}
+              style={{  
+                padding: "6px 0px", cursor: "pointer"
+              }}
+            >
               <span> Proposal {proposalId} </span>
-            </a>
+            </span>
           );
         })}
         
