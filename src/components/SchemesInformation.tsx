@@ -93,7 +93,8 @@ const SchemesInformation = observer(() => {
         <TableRowsWrapper>
         {schemes.map((scheme, i) => {
           const schemeProposals = daoStore.getSchemeProposals(scheme.name);
-          const schemeConfiguration = scheme.configurations[ scheme.configurations.length - 1];
+          const votingMachineParameters = daoStore.getVotingParametersOfScheme(scheme.address);
+
           return (
             <div key={"scheme"+i}>
               <TableRow>
@@ -103,16 +104,16 @@ const SchemesInformation = observer(() => {
                 </TableCell>
                 <TableCell width="40%" align="center">
                   <small>Queued Proposal Period: {
-                    moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
+                    moment.duration(votingMachineParameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
                   }</small><br/>
                   <small>Boosted Proposal Period: {
-                    moment.duration(schemeConfiguration.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
+                    moment.duration(votingMachineParameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
                   }</small><br/>
                   <small>PreBoosted Proposal Period: {
-                    moment.duration(schemeConfiguration.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
+                    moment.duration(votingMachineParameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
                   }</small><br/>
                   <small>Quiet Ending Period: {
-                    moment.duration(schemeConfiguration.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
+                    moment.duration(votingMachineParameters.quietEndingPeriod.toString(), 'seconds').humanize()
                   }</small><br/>
                   { (scheme.type == "WalletScheme")
                     ? <small>Max time for execution: {
@@ -125,41 +126,41 @@ const SchemesInformation = observer(() => {
                     : <div/>
                   }
                   { (scheme.type == "WalletScheme")
-                    ? <small>Required Percentage for boosted approval: {bnum(schemeConfiguration.boostedVoteRequiredPercentage).div("1000").toString()} %<br/></small>
+                    ? <small>Required Percentage for boosted approval: {bnum(scheme.boostedVoteRequiredPercentage).div("1000").toString()} %<br/></small>
                     : <div/>
                   }
                   
-                  <small>Required Percentage for queue approval: {schemeConfiguration.parameters.queuedVoteRequiredPercentage.toString()} %</small><br/>
+                  <small>Required Percentage for queue approval: {votingMachineParameters.queuedVoteRequiredPercentage.toString()} %</small><br/>
                   <small>Queued Proposal Period: {
-                    moment.duration(schemeConfiguration.parameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
+                    moment.duration(votingMachineParameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
                   }</small><br/>
                   <small>Boosted Proposal Period: {
-                    moment.duration(schemeConfiguration.parameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
+                    moment.duration(votingMachineParameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
                   }</small><br/>
                   <small>PreBoosted Proposal Period: {
-                    moment.duration(schemeConfiguration.parameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
+                    moment.duration(votingMachineParameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
                   }</small><br/>
                   <small>Quiet Ending Period: {
-                    moment.duration(schemeConfiguration.parameters.quietEndingPeriod.toString(), 'seconds').humanize()
+                    moment.duration(votingMachineParameters.quietEndingPeriod.toString(), 'seconds').humanize()
                   }</small><br/>
                   <small>Rep Proposing Reward: {
-                    Number(library.utils.fromWei(schemeConfiguration.parameters.proposingRepReward.toString())).toFixed(2)
+                    Number(library.utils.fromWei(votingMachineParameters.proposingRepReward.toString())).toFixed(2)
                   } REP</small><br/>
-                  <small>Reputation Loss Ratio: {schemeConfiguration.parameters.votersReputationLossRatio.toString()} %</small><br/>
+                  <small>Reputation Loss Ratio: {votingMachineParameters.votersReputationLossRatio.toString()} %</small><br/>
                   <small>Minimum Dao Boost: {
-                    Number(library.utils.fromWei(schemeConfiguration.parameters.minimumDaoBounty.toString())).toFixed(2)
+                    Number(library.utils.fromWei(votingMachineParameters.minimumDaoBounty.toString())).toFixed(2)
                   } DXD</small><br/>
-                  <small>Proposal Boost Bounty Const: {schemeConfiguration.parameters.daoBountyConst.toString()}</small><br/>
-                  <small>Boost Threshold Constant: {schemeConfiguration.parameters.thresholdConst.toString()}</small><br/>
-                  <small>Boost Limit Exponent Value: {schemeConfiguration.parameters.limitExponentValue.toString()}</small>
+                  <small>Proposal Boost Bounty Const: {votingMachineParameters.daoBountyConst.toString()}</small><br/>
+                  <small>Boost Threshold Constant: {votingMachineParameters.thresholdConst.toString()}</small><br/>
+                  <small>Boost Limit Exponent Value: {votingMachineParameters.limitExponentValue.toString()}</small>
                   
                 </TableCell>
                 <TableCell width="25%" align="center" wrapText>
                   <strong>Controller Permissions</strong><br/>
-                  <small>{schemeConfiguration.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
-                  <small>{schemeConfiguration.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
-                  <small>{schemeConfiguration.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
-                  <small>{schemeConfiguration.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
+                  <small>{scheme.permissions.canGenericCall ? 'Can' : 'Cant'} make generic call</small><br/>
+                  <small>{scheme.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
+                  <small>{scheme.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
+                  <small>{scheme.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
                   <br/><br/>
                   <strong>Call Permissions</strong><br/>
 

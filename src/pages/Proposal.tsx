@@ -145,7 +145,6 @@ const ProposalPage = observer(() => {
     const { active, account, library } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
-    const [canRedeem, setCanRedeem] = React.useState(false);
     const [proposalDescription, setProposalDescription] = React.useState(
       "## Getting proposal description from IPFS..."
     );
@@ -171,6 +170,8 @@ const ProposalPage = observer(() => {
     } = configStore.getActiveChainName().indexOf('arbitrum') > -1 ?
       daoService.getRepAt(proposalInfo.creationEvent.l2BlockNumber, true)
       : daoService.getRepAt(proposalInfo.creationEvent.l1BlockNumber);
+
+    const {status, boostTime, finishTime} = daoStore.getProposalStatus(proposalId);
 
     const totalRepAtProposalCreation = proposalInfo.repAtCreation;
     // @ts-ignore
@@ -204,10 +205,6 @@ const ProposalPage = observer(() => {
       }
     });
     
-    if ((proposalEvents.redeems.find((redeem) => redeem.beneficiary === account)) 
-      && (stakedAmount.gt('0') || votedAmount.gt('0') && !canRedeem))
-      setCanRedeem(true);
-    
       console.debug("[Proposal info]", proposalInfo);
       console.debug("[Proposal events]", proposalEvents);
     
@@ -224,10 +221,25 @@ const ProposalPage = observer(() => {
     }
     
     let stakeToBoost = 0;
+    const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
+
+    const canRedeemToken = (proposalEvents.redeems.findIndex((redeem) => redeem.beneficiary === account) < 0)
+      && (stakedAmount.gt('0'));
+
+    const vote = proposalEvents.votes.find((vote) => vote.voter === account);
+    const canRedeemRep = vote
+      ? (proposalEvents.redeemsRep.findIndex((redeemRep) => redeemRep.beneficiary === account) < 0)
+        && (votingParameters.votersReputationLossRatio > 0)
+        && (vote.timestamp < proposalInfo.preBoostedPhaseTime)
+        && ((vote.vote == proposalInfo.winningVote) || (proposalInfo.stateInVotingMachine == 1))
+      : false;
+
+    const canRedeem = (canRedeemToken || canRedeemRep);
+    
     stakeToBoost = library.utils.fromWei(
-      schemeInfo.configurations[ schemeInfo.configurations.length - 1].parameters.thresholdConst.pow(
-        (schemeInfo.boostedProposals > schemeInfo.configurations[ schemeInfo.configurations.length - 1].parameters.limitExponentValue.toNumber())
-          ? schemeInfo.configurations[ schemeInfo.configurations.length - 1].parameters.limitExponentValue : schemeInfo.boostedProposals
+      votingParameters.thresholdConst.pow(
+        (schemeInfo.boostedProposals > votingParameters.limitExponentValue.toNumber())
+          ? votingParameters.limitExponentValue : schemeInfo.boostedProposals
       ).minus(proposalInfo.positiveStakes)
       .plus(proposalInfo.negativeStakes).times(110).div(100).toFixed(0)
     ).toString();
@@ -236,15 +248,14 @@ const ProposalPage = observer(() => {
       proposalInfo.positiveStakes.minus(proposalInfo.negativeStakes).times(101).div(100).toFixed(0)
     ).toString();
           
-    const timeToBoost = proposalInfo && proposalInfo.boostTime.toNumber() > moment().unix() ? 
-    moment().to( moment(proposalInfo.boostTime.times(1000).toNumber()) ).toString()
+    const timeToBoost = proposalInfo && boostTime.toNumber() > moment().unix() ? 
+    moment().to( moment(boostTime.times(1000).toNumber()) ).toString()
     : "";
-    const timeToFinish = proposalInfo && proposalInfo.finishTime.toNumber() > moment().unix() ?
-    moment().to( moment(proposalInfo.finishTime.times(1000).toNumber()) ).toString()
+    const timeToFinish = proposalInfo && finishTime.toNumber() > moment().unix() ?
+    moment().to( moment(finishTime.times(1000).toNumber()) ).toString()
     : "";
   
-    const boostedVoteRequiredPercentage = schemeInfo.configurations[schemeInfo.configurations.length -1]
-      .boostedVoteRequiredPercentage / 1000;
+    const boostedVoteRequiredPercentage = schemeInfo.boostedVoteRequiredPercentage / 1000;
 
     const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
     
@@ -317,26 +328,26 @@ const ProposalPage = observer(() => {
           </ProposalInfoBox>
         </ProposalInfoSection>
         <InfoSidebarBox>
-          <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{proposalInfo.status} <Question question="3"/></h2>
+          <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{status} <Question question="3"/></h2>
           <SidebarRow style={{
             margin: "0px 10px",
             flexDirection: "column"
           }}>
-            {(proposalInfo.boostTime.toNumber() > moment().unix()) ?
+            {(boostTime.toNumber() > moment().unix()) ?
               <span className="timeText"> Boost {timeToBoost} </span> 
               : <div></div>
             }
-            {(proposalInfo.finishTime.toNumber() > moment().unix()) ?
+            {(finishTime.toNumber() > moment().unix()) ?
               <span className="timeText">
                 Finish {timeToFinish} </span>
               : <div></div>}
           </SidebarRow>
           <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
-            {proposalInfo.status === "Pending Boost" ? 
+            {status === "Pending Boost" ? 
               <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
-              : proposalInfo.status === "Quiet Ending Period" && timeToFinish === "" ?
+              : status === "Quiet Ending Period" && timeToFinish === "" ?
               <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
-              : proposalInfo.status === "Pending Execution" ?
+              : status === "Pending Execution" ?
               <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
               : <div/>
             }
@@ -364,7 +375,7 @@ const ProposalPage = observer(() => {
               : "-"
             }</small> </span>
             <span> <strong>Finish Time</strong> <small>{
-              moment.unix(proposalInfo.finishTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
+              moment.unix(finishTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
             }</small> </span>
             { (boostedVoteRequiredPercentage > 0) ?
               <span> <strong> Required Boosted Vote: </strong> <small>{boostedVoteRequiredPercentage}%</small> </span>
@@ -412,7 +423,7 @@ const ProposalPage = observer(() => {
           
           <small>{repPercentageAtCreation} % REP at proposal creation</small>
           
-          {votedAmount.toNumber() === 0 && proposalInfo.priority >=3 && proposalInfo.priority <= 6  ?
+          {votedAmount.toNumber() === 0 && proposalInfo.stateInVotingMachine >= 3 && proposalInfo.stateInVotingMachine <= 4  ?
             <SidebarRow>
               
               <AmountInput
@@ -483,12 +494,12 @@ const ProposalPage = observer(() => {
             : <div></div>
           }
 
-          {(proposalInfo.priority === 3 || proposalInfo.priority === 4) && dxdApproved.toString() === "0" ?
+          {(proposalInfo.stateInVotingMachine === 3 || proposalInfo.stateInVotingMachine === 4) && dxdApproved.toString() === "0" ?
             <SidebarRow>
               <small>Approve {votingMachineTokenName} to stake</small>
               <ActionButton color="blue" onClick={() => approveVotingMachineToken()}>Approve {votingMachineTokenName}</ActionButton>
             </SidebarRow>
-            : (proposalInfo.priority === 3 || proposalInfo.priority === 4)  ?
+            : (proposalInfo.stateInVotingMachine === 3 || proposalInfo.stateInVotingMachine === 4)  ?
               <div>
                 {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(4)} {votingMachineTokenName} to boost</small> : <span/>}
                 {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(4)} {votingMachineTokenName} to unboost</small> : <span/>}
@@ -510,7 +521,7 @@ const ProposalPage = observer(() => {
             : <div></div>
           }
           
-          {proposalInfo.priority < 3 && canRedeem
+          {proposalInfo.stateInVotingMachine < 3 && canRedeem
             ? <SidebarRow style={{ borderTop: "1px solid gray",  margin: "0px 10px" }}>
               <ActionButton color="blue" onClick={() => redeem()}>Redeem</ActionButton>
             </SidebarRow>

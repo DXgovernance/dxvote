@@ -129,7 +129,13 @@ const ProposalsPage = observer(() => {
     const [stateFilter, setStateFilter] = React.useState("All");
     const [titleFilter, setTitleFilter] = React.useState("");
       
-    const allProposals = daoStore.getAllProposals().sort(function(a, b) { return b.priority - a.priority; });
+    const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
+      const {status, boostTime, finishTime} = daoStore.getProposalStatus(cacheProposal.id);
+      cacheProposal.status = status; 
+      cacheProposal.boostTime = boostTime; 
+      cacheProposal.finishTime = finishTime; 
+      return cacheProposal;
+    }).sort(function(a, b) { return b.finishTime - a.finishTime; });
     function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
     function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
     console.log("All Proposals", allProposals, allProposals.length, daoStore);

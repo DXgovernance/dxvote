@@ -268,7 +268,7 @@ const NewProposalPage = observer(() => {
             }
             callData = callDataFunctionSignature + callDataFunctionParamsEncoded;
           } else {
-            callData = call.data;
+            callData = call.functionName + call.functionParams;
           }
           
           if (callToController && call.to != networkConfig.controller) {
@@ -451,7 +451,10 @@ const NewProposalPage = observer(() => {
     
     function onFunctionSelectChange(callIndex, functionSelected, params) {
       calls[callIndex].functionName = functionSelected.target.value;
-      calls[callIndex].functionParams = params.split(",").map(() => "");
+      
+      if (calls[callIndex].callType == "simple")
+        calls[callIndex].functionParams = params.split(",").map(() => "");
+        
       setCallsInState(calls);
     }
     

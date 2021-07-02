@@ -5,6 +5,7 @@ import { action } from 'mobx';
 import web3 from 'web3';
 import _ from 'lodash';
 import { bnum } from '../utils/helpers';
+import { decodeProposalStatus } from '../utils/proposals';
 import { ethers, utils } from 'ethers';
 import PromiEvent from 'promievent';
 import {
@@ -32,22 +33,6 @@ export default class DaoStore {
     })
     Object.keys(unparsedCache.schemes).map((schemeAddress) => {
       unparsedCache.schemes[schemeAddress].ethBalance = bnum(unparsedCache.schemes[schemeAddress].ethBalance)
-      unparsedCache.schemes[schemeAddress].configurations.map((configuration, i) => {
-        unparsedCache.schemes[schemeAddress].configurations[i].parameters = {
-          queuedVoteRequiredPercentage: bnum(configuration.parameters.queuedVoteRequiredPercentage),
-          queuedVotePeriodLimit: bnum(configuration.parameters.queuedVotePeriodLimit),
-          boostedVotePeriodLimit: bnum(configuration.parameters.boostedVotePeriodLimit),
-          preBoostedVotePeriodLimit: bnum(configuration.parameters.preBoostedVotePeriodLimit),
-          thresholdConst: bnum(configuration.parameters.thresholdConst),
-          limitExponentValue: bnum(configuration.parameters.limitExponentValue),
-          quietEndingPeriod: bnum(configuration.parameters.quietEndingPeriod),
-          proposingRepReward: bnum(configuration.parameters.proposingRepReward),
-          votersReputationLossRatio: bnum(configuration.parameters.votersReputationLossRatio),
-          minimumDaoBounty: bnum(configuration.parameters.minimumDaoBounty),
-          daoBountyConst: bnum(configuration.parameters.daoBountyConst),
-          activationTime: bnum(configuration.parameters.activationTime)
-        };
-      })
     })
     Object.keys(unparsedCache.callPermissions).map((callPermissionFrom) => {
       unparsedCache.callPermissions[callPermissionFrom].map((callPermission, i) => {
@@ -70,15 +55,35 @@ export default class DaoStore {
       unparsedCache.proposals[proposalId].confidenceThreshold = bnum(unparsedCache.proposals[proposalId].confidenceThreshold);
       unparsedCache.proposals[proposalId].secondsFromTimeOutTillExecuteBoosted = bnum(unparsedCache.proposals[proposalId].secondsFromTimeOutTillExecuteBoosted);
       unparsedCache.proposals[proposalId].submittedTime = bnum(unparsedCache.proposals[proposalId].submittedTime);
+      unparsedCache.proposals[proposalId].preBoostedPhaseTime = bnum(unparsedCache.proposals[proposalId].preBoostedPhaseTime);
       unparsedCache.proposals[proposalId].boostedPhaseTime = bnum(unparsedCache.proposals[proposalId].boostedPhaseTime);
-      unparsedCache.proposals[proposalId].boostTime = bnum(unparsedCache.proposals[proposalId].boostTime);
-      unparsedCache.proposals[proposalId].finishTime = bnum(unparsedCache.proposals[proposalId].finishTime);
       unparsedCache.proposals[proposalId].positiveVotes = bnum(unparsedCache.proposals[proposalId].positiveVotes);
       unparsedCache.proposals[proposalId].negativeVotes = bnum(unparsedCache.proposals[proposalId].negativeVotes);
       unparsedCache.proposals[proposalId].preBoostedPositiveVotes = bnum(unparsedCache.proposals[proposalId].preBoostedPositiveVotes);
       unparsedCache.proposals[proposalId].preBoostedNegativeVotes = bnum(unparsedCache.proposals[proposalId].preBoostedNegativeVotes);
       unparsedCache.proposals[proposalId].positiveStakes = bnum(unparsedCache.proposals[proposalId].positiveStakes);
       unparsedCache.proposals[proposalId].negativeStakes = bnum(unparsedCache.proposals[proposalId].negativeStakes);
+    });
+    
+    Object.keys(unparsedCache.votingMachines).map((votingMachineAddress) => {
+      Object.keys(unparsedCache.votingMachines[votingMachineAddress].votingParameters)
+        .map((paramsHash) => {
+          const unparsedParams = unparsedCache.votingMachines[votingMachineAddress].votingParameters[paramsHash];
+        unparsedCache.votingMachines[votingMachineAddress].votingParameters[paramsHash] = {
+          queuedVoteRequiredPercentage: bnum(unparsedParams.queuedVoteRequiredPercentage),
+          queuedVotePeriodLimit: bnum(unparsedParams.queuedVotePeriodLimit),
+          boostedVotePeriodLimit: bnum(unparsedParams.boostedVotePeriodLimit),
+          preBoostedVotePeriodLimit: bnum(unparsedParams.preBoostedVotePeriodLimit),
+          thresholdConst: bnum(unparsedParams.thresholdConst),
+          limitExponentValue: bnum(unparsedParams.limitExponentValue),
+          quietEndingPeriod: bnum(unparsedParams.quietEndingPeriod),
+          proposingRepReward: bnum(unparsedParams.proposingRepReward),
+          votersReputationLossRatio: bnum(unparsedParams.votersReputationLossRatio),
+          minimumDaoBounty: bnum(unparsedParams.minimumDaoBounty),
+          daoBountyConst: bnum(unparsedParams.daoBountyConst),
+          activationTime: bnum(unparsedParams.activationTime)
+        };
+      })
     })
     return unparsedCache;
   }
@@ -164,7 +169,6 @@ export default class DaoStore {
     })
     rep = _.sortBy(rep, [function(o) { return o[1]; }]);
     rep.unshift(["User Address", "REP %"]);
-    
     
     let repEvents = [];
     let repTotalSupply = bnum(0);
@@ -320,6 +324,17 @@ export default class DaoStore {
     ].votingMachine;
   }
   
+  getVotingParametersOfProposal(proposalId): VotingMachineParameters {
+    return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)].votingParameters[
+      this.getCache().proposals[proposalId].paramsHash
+    ];
+  }
+  
+  getVotingParametersOfScheme(schemeAddress): VotingMachineParameters {
+    const scheme = this.getCache().schemes[schemeAddress];
+    return this.getCache().votingMachines[scheme.votingMachine].votingParameters[ scheme.paramsHash ];
+  }
+  
   getProposalEvents(proposalId): {
     votes: Vote[],
     stakes: Stake[],
@@ -352,7 +367,8 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     }).concat(proposalEvents.stakes.map((event) => {
@@ -363,7 +379,8 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     })).concat(proposalEvents.redeems.map((event) => {
@@ -374,7 +391,8 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     })).concat(proposalEvents.redeemsRep.map((event) => {
@@ -385,7 +403,8 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     })).concat(proposalEvents.stateChanges.map((event) => {
@@ -396,7 +415,8 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     }))
@@ -405,12 +425,7 @@ export default class DaoStore {
       event: proposal.creationEvent
     });
     
-    history = _.orderBy(
-      history,
-      ["event.l1BlockNumber", "event.l2BlockNumber", "event.transactionIndex", "event.logIndex"],
-      ["asc","asc","asc","asc"]
-    );
-    
+    history = _.orderBy( history, ["event.timestamp", "event.logIndex"], ["asc","asc"] );
     
     return {
       votes: proposalEvents.votes,
@@ -418,7 +433,7 @@ export default class DaoStore {
       redeems: proposalEvents.redeems,
       redeemsRep: proposalEvents.redeemsRep,
       stateChanges: proposalEvents.stateChanges,
-      history: _.reverse(history)
+      history: history
     }
   }
   
@@ -490,7 +505,8 @@ export default class DaoStore {
             tx: cache.proposals[proposalId].creationEvent.tx,
             block: cache.proposals[proposalId].creationEvent.block,
             transactionIndex: cache.proposals[proposalId].creationEvent.transactionIndex,
-            logIndex: cache.proposals[proposalId].creationEvent.logIndex
+            logIndex: cache.proposals[proposalId].creationEvent.logIndex,
+            timestamp: cache.proposals[proposalId].creationEvent.timestamp
           }
         })
         return cache.proposals[proposalId].creationEvent;
@@ -505,7 +521,8 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     })).concat(proposalEvents.stakes.map((event) => {
@@ -516,7 +533,8 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     })).concat(proposalEvents.redeems.map((event) => {
@@ -527,7 +545,8 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     })).concat(proposalEvents.redeemsRep.map((event) => {
@@ -538,15 +557,12 @@ export default class DaoStore {
           tx: event.tx,
           block: event.l1BlockNumber,
           transactionIndex: event.transactionIndex,
-          logIndex: event.logIndex
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
         }
       }
     }))
-    history = _.orderBy(
-      history,
-      ["event.l1BlockNumber", "event.l2BlockNumber", "event.transactionIndex", "event.logIndex"],
-      ["asc","asc","asc","asc"]
-    );
+    history = _.orderBy( history, ["event.timestamp", "event.logIndex"], ["asc","asc"] );
     
     return {
       newProposalEvents: newProposalEvents,
@@ -554,12 +570,25 @@ export default class DaoStore {
       stakes: proposalEvents.stakes,
       redeems: proposalEvents.redeems,
       redeemsRep: proposalEvents.redeemsRep,
-      history: _.reverse(history)
+      history: history
     }
   }
   
-  getVotesOfProposal(proposalId: string): Vote[]{
+  getProposalStatus(proposalId: string): any {
+    const proposal = this.getCache().proposals[proposalId];
+    const proposalStateChangeEvents = this.getProposalStateChanges(proposalId);
+    const votingMachineParams = 
+    (proposal.paramsHash == "0x0000000000000000000000000000000000000000000000000000000000000000")
+    ? this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+      .votingParameters[this.getCache().schemes[proposal.scheme].paramsHash]
+    : this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+      .votingParameters[proposal.paramsHash];
     
+    console.log(proposal,this.getCache().schemes[proposal.scheme].paramsHash)
+    return decodeProposalStatus(proposal, proposalStateChangeEvents, votingMachineParams);
+  }
+  
+  getVotesOfProposal(proposalId: string): Vote[]{
     return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
       .events.votes
       .filter((vote) => {return (proposalId === vote.proposalId)});

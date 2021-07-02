@@ -5,7 +5,6 @@ import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
 import { decodeSchemeParameters } from '../utils/scheme';
 import { decodePermission } from '../utils/permissions';
-import { decodeStatus } from '../utils/proposals';
 import { bnum } from '../utils/helpers';
 const { updateNetworkCache } = require('../utils/cache');
 
