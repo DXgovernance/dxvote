@@ -535,7 +535,7 @@ const ProposalPage = observer(() => {
           }
           
           {proposalInfo.stateInVotingMachine < 3 && canRedeem
-            ? <SidebarRow style={{ borderTop: "1px solid gray",  margin: "0px 10px" }}>
+            ? <SidebarRow style={{ borderTop: "1px solid gray",  margin: "0px 10px", justifyContent: "center" }}>
               <ActionButton color="blue" onClick={() => redeem()}>Redeem</ActionButton>
             </SidebarRow>
             : <div></div>
