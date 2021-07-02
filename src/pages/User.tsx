@@ -34,14 +34,19 @@ const UserPage = observer(() => {
       if ((
         (proposal.stateInVotingMachine == 1) 
         ||
-        (voteParameters.votersReputationLossRatio > 0 && vote.timestamp < proposal.boostedPhaseTime)
+        (
+          voteParameters.votersReputationLossRatio > 0
+          && vote.timestamp < proposal.boostedPhaseTime
+          && proposal.winningVote == vote.vote
+        )
       ) && (proposalsToRedeem.indexOf(vote.proposalId) < 0)) {
           proposalsToRedeem.push(vote.proposalId);
       }
     })
     
     userEvents.stakes.map((stake) => {
-      if (proposalsToRedeem.indexOf(stake.proposalId) < 0)
+      const proposal = daoStore.getProposal(stake.proposalId);
+      if (proposalsToRedeem.indexOf(stake.proposalId) < 0 && proposal.winningVote == stake.vote)
         proposalsToRedeem.push(stake.proposalId);
     });
     
@@ -89,6 +94,7 @@ const UserPage = observer(() => {
         </div>
         
         <h2> Redeems Left </h2>
+        {proposalsToRedeem.length == 0 ? <span> No redeems left </span> : <div/>}
         {proposalsToRedeem.map((proposalId, i) => {
           return(
             <a key={"proposalLink"+i} href={`/#/proposal/${proposalId}`}>
