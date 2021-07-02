@@ -236,9 +236,10 @@ const ProposalPage = observer(() => {
     const vote = proposalEvents.votes.find((vote) => vote.voter === account);
     const canRedeemRep = vote
       ? (proposalEvents.redeemsRep.findIndex((redeemRep) => redeemRep.beneficiary === account) < 0)
-        && (votingParameters.votersReputationLossRatio > 0)
-        && (vote.timestamp < proposalInfo.preBoostedPhaseTime)
-        && ((vote.vote == proposalInfo.winningVote) || (proposalInfo.stateInVotingMachine == 1))
+        && (
+          ((votingParameters.votersReputationLossRatio > 0) && (vote.timestamp < proposalInfo.boostedPhaseTime))
+          || (proposalInfo.stateInVotingMachine == 1)
+        )
       : false;
 
     const canRedeem = (canRedeemToken || canRedeemRep);
@@ -298,7 +299,7 @@ const ProposalPage = observer(() => {
     const executeProposal = function() {
       daoStore.execute(proposalId);
     };
-    
+
     return (
       <ProposalInformationWrapper>
         <ProposalInfoSection>
