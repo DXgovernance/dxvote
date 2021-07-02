@@ -307,7 +307,13 @@ const ProposalPage = observer(() => {
             <MDEditor.Markdown source={ proposalDescription } style={{
               padding: "20px 10px"
             }} />
-            <hr/>
+            <h3 style={{margin: "0px"}}>
+              <small>
+                IPFS Document: <a href={`https://ipfs.io/ipfs/${contentHash.decode(proposalInfo.descriptionHash)}`}>
+                ipfs://{contentHash.decode(proposalInfo.descriptionHash)}
+                </a>
+              </small>
+            </h3>
             <h2> Calls  <Question question="9"/></h2>
             {proposalCallTexts.map((proposalCallText, i) => {
               return(
