@@ -170,8 +170,8 @@ const SchemesInformation = observer(() => {
                         <small>
                           Address: {callPermission.to == "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa" ? "Any Address" : callPermission.to}<br/>
                           Function: {callPermission.functionSignature == "0xaaaaaaaa" ? "Any" : callPermission.functionSignature}<br/>
-                          Value: {callPermission.value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ? "Any": callPermission.value}
-                        </small>
+                          Value: {callPermission.value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ? "Any": callPermission.value}<br/>
+                        <br/></small>
                       );
                   })}
                 </TableCell>
