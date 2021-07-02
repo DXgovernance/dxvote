@@ -309,7 +309,7 @@ const ProposalPage = observer(() => {
             }} />
             <h3 style={{margin: "0px"}}>
               <small>
-                IPFS Document: <a href={`https://ipfs.io/ipfs/${contentHash.decode(proposalInfo.descriptionHash)}`}>
+                IPFS Document: <a target="_blank" href={`https://ipfs.io/ipfs/${contentHash.decode(proposalInfo.descriptionHash)}`}>
                 ipfs://{contentHash.decode(proposalInfo.descriptionHash)}
                 </a>
               </small>
