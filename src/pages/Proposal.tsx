@@ -494,12 +494,12 @@ const ProposalPage = observer(() => {
             : <div></div>
           }
 
-          {(proposalInfo.stateInVotingMachine === 3 || proposalInfo.stateInVotingMachine === 4) && dxdApproved.toString() === "0" ?
+          {(proposalInfo.stateInVotingMachine == 3 || proposalInfo.stateInVotingMachine == 4) && dxdApproved.toString() === "0" ?
             <SidebarRow>
               <small>Approve {votingMachineTokenName} to stake</small>
               <ActionButton color="blue" onClick={() => approveVotingMachineToken()}>Approve {votingMachineTokenName}</ActionButton>
             </SidebarRow>
-            : (proposalInfo.stateInVotingMachine === 3 || proposalInfo.stateInVotingMachine === 4)  ?
+            : (proposalInfo.stateInVotingMachine == 3 || proposalInfo.stateInVotingMachine == 4)  ?
               <div>
                 {stakeToBoost > 0 ? <small>Stake {Number(stakeToBoost).toFixed(4)} {votingMachineTokenName} to boost</small> : <span/>}
                 {stakeToUnBoost > 0 ? <small>Stake {Number(stakeToUnBoost).toFixed(4)} {votingMachineTokenName} to unboost</small> : <span/>}
