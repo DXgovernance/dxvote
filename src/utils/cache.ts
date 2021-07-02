@@ -3,12 +3,12 @@ import { bnum } from './helpers';
 const { getEvents, getRawEvents, sortEvents } = require('./cacheEvents');
 const { decodePermission } = require('./permissions');
 const { decodeSchemeParameters } = require('./scheme');
-const { decodeStatus } = require('./proposals');
 import { DaoNetworkCache } from '../types';
 const WalletSchemeJSON = require('../contracts/WalletScheme');
 const { getContracts } = require('../contracts');
 const { getSchemeTypeData } = require('../config');
 
+const NULL_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 async function executeMulticall(web3, multicall, calls) {
   
   const rawCalls = calls.map((call) => {
@@ -44,6 +44,7 @@ export const updateNetworkCache = async function (
   });
   
   await Promise.all(Object.keys(networkContracts.votingMachines).map(async (votingMachineAddress) => {
+
     if (!networkCache.votingMachines[votingMachineAddress])
       networkCache.votingMachines[votingMachineAddress] = {
         name: networkContracts.votingMachines[votingMachineAddress].name,
@@ -58,13 +59,15 @@ export const updateNetworkCache = async function (
         token: {
           address: networkContracts.votingMachines[votingMachineAddress].token._address,
           totalSupply: bnum(0)
-        }
+        },
+        votingParameters: {}
       };
   
-    networkCache = await updateVotingMachineEvents(
+    networkCache = await updateVotingMachine(
       networkCache,
       networkContracts.avatar._address,
       networkContracts.votingMachines[votingMachineAddress].contract,
+      networkContracts.multicall,
       fromBlock,
       toBlock,
       web3
@@ -75,7 +78,7 @@ export const updateNetworkCache = async function (
   networkCache = await updateSchemes(networkCache, networkName, fromBlock, toBlock, web3);
   
   (await Promise.all([
-    updatePermissionRegistryEvents(networkCache, networkName, fromBlock, toBlock, web3),
+    updatePermissionRegistry(networkCache, networkName, fromBlock, toBlock, web3),
     updateProposals(networkCache, networkName, fromBlock, toBlock, web3)
   ])).map((networkCacheUpdated) => {
     networkCache = networkCacheUpdated;
@@ -89,6 +92,7 @@ export const updateNetworkCache = async function (
   return networkCache;
 }
 
+// Update the DAOinfo field in cache
 export const updateDaoInfo = async function (
   networkCache: DaoNetworkCache, allContracts: any, web3: any
 ): Promise<DaoNetworkCache> {
@@ -105,6 +109,7 @@ export const updateDaoInfo = async function (
   return networkCache;
 }
 
+// Get all Mint and Burn reputation events to calculate rep by time off chain
 export const updateReputationEvents = async function (
   networkCache: DaoNetworkCache, reputation: any, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
@@ -164,10 +169,12 @@ export const updateReputationEvents = async function (
   return networkCache;
 }
 
-export const updateVotingMachineEvents = async function (
+// Update all voting machine information, events, token and voting parameters used.
+export const updateVotingMachine = async function (
   networkCache: DaoNetworkCache,
   avatarAddress: string,
   votingMachine: any,
+  multicall: any,
   fromBlock: string,
   toBlock: string,
   web3: any
@@ -177,7 +184,8 @@ export const updateVotingMachineEvents = async function (
     await getEvents(web3, votingMachine, fromBlock, toBlock, 'allEvents')
   );
   const votingMachineEventsInCache = networkCache.votingMachines[votingMachine._address].events;
-    
+  const votingMachineParamsHash = [];
+
   newVotingMachineEvents.map((votingMachineEvent) => {
     const proposalCreated = votingMachineEventsInCache.newProposal
       .findIndex(newProposalEvent => votingMachineEvent.returnValues._proposalId == newProposalEvent.proposalId) > -1;
@@ -191,6 +199,7 @@ export const updateVotingMachineEvents = async function (
             signature: votingMachineEvent.signature,
             address: votingMachineEvent.address,
             proposer: votingMachineEvent.returnValues._proposer,
+            paramHash: votingMachineEvent.returnValues._paramsHash,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
             l1BlockNumber: votingMachineEvent.l1BlockNumber,
@@ -199,6 +208,9 @@ export const updateVotingMachineEvents = async function (
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex
           });
+          
+        if (votingMachineParamsHash.indexOf(votingMachineEvent.returnValues._paramsHash) < 0)
+          votingMachineParamsHash.push(votingMachineEvent.returnValues._paramsHash);
         break;
         case "StateChange":
           votingMachineEventsInCache.proposalStateChanges.push({
@@ -271,7 +283,7 @@ export const updateVotingMachineEvents = async function (
             logIndex: votingMachineEvent.logIndex
           });
         break;
-        case "RedeemRep":
+        case "RedeemReputation":
           votingMachineEventsInCache.redeemsRep.push({
             event: votingMachineEvent.event,
             signature: votingMachineEvent.signature,
@@ -290,12 +302,44 @@ export const updateVotingMachineEvents = async function (
       }
   });
   
+  const callsToExecute = [];
+  for (let i = 0; i < votingMachineParamsHash.length; i++) {
+    callsToExecute.push([
+      votingMachine,
+      "parameters",
+      [votingMachineParamsHash[i]]
+    ]);
+  }
+
+  const callsResponse = await executeMulticall(web3, multicall, callsToExecute);
+
+  for (let i = 0; i < callsResponse.returnData.length; i++) {
+    networkCache.votingMachines[votingMachine._address].votingParameters[ votingMachineParamsHash[i] ] =
+      decodeSchemeParameters(web3.eth.abi.decodeParameters(
+        [
+          {type: 'uint256', name: 'queuedVoteRequiredPercentage' },
+          {type: 'uint256', name: 'queuedVotePeriodLimit' },
+          {type: 'uint256', name: 'boostedVotePeriodLimit' },
+          {type: 'uint256', name: 'preBoostedVotePeriodLimit' },
+          {type: 'uint256', name: 'thresholdConst' },
+          {type: 'uint256', name: 'limitExponentValue' },
+          {type: 'uint256', name: 'quietEndingPeriod' },
+          {type: 'uint256', name: 'proposingRepReward' },
+          {type: 'uint256', name: 'votersReputationLossRatio' },
+          {type: 'uint256', name: 'minimumDaoBounty' },
+          {type: 'uint256', name: 'daoBountyConst' },
+          {type: 'uint256', name: 'activationTime' }
+        ], callsResponse.returnData[i])
+      );
+    }
+  
   networkCache.votingMachines[votingMachine._address].events = votingMachineEventsInCache;
 
   return networkCache;
 }
 
-export const updatePermissionRegistryEvents = async function (
+// Gets all teh events form the permission registry and stores the permissions set.
+export const updatePermissionRegistry = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
   const allContracts = await getContracts(networkName, web3);
@@ -341,6 +385,7 @@ export const updatePermissionRegistryEvents = async function (
   return networkCache;
 }
 
+// Update all the schemes information
 export const updateSchemes = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
@@ -380,8 +425,10 @@ export const updateSchemes = async function (
       
       const ethBalance = callsResponse1.decodedReturnData[0];
       const permissions = decodePermission(callsResponse1.decodedReturnData[1]);
-      const paramsHash = callsResponse1.decodedReturnData[2];
-
+      const paramsHash = (schemeTypeData.type == 'GenericScheme')
+        ? schemeTypeData.voteParams
+        : callsResponse1.decodedReturnData[2];
+      
       const controllerAddress = (schemeTypeData.type == 'WalletScheme')
         ? callsResponse1.decodedReturnData[3]
         : allContracts.avatar._address;
@@ -395,14 +442,7 @@ export const updateSchemes = async function (
         ? callsResponse1.decodedReturnData[6]
         : 0;
       
-      callsToExecute = [
-        [
-          votingMachine,
-          "parameters",
-          [paramsHash]
-        ]
-      ];
-
+      callsToExecute = [];
       if (schemeTypeData.type == 'WalletScheme') {
         callsToExecute.push([
           votingMachine,
@@ -410,29 +450,43 @@ export const updateSchemes = async function (
           [schemeAddress, allContracts.avatar._address, paramsHash]
         ]);
       }
+      
+      if (paramsHash != NULL_HASH && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash])
+        callsToExecute.push([
+          votingMachine,
+          "parameters",
+          [paramsHash]
+        ]);
 
       const callsResponse2 = await executeMulticall(web3, allContracts.multicall, callsToExecute);
       
-      const parameters = web3.eth.abi.decodeParameters(
-        [
-          {type: 'uint256', name: 'queuedVoteRequiredPercentage' },
-          {type: 'uint256', name: 'queuedVotePeriodLimit' },
-          {type: 'uint256', name: 'boostedVotePeriodLimit' },
-          {type: 'uint256', name: 'preBoostedVotePeriodLimit' },
-          {type: 'uint256', name: 'thresholdConst' },
-          {type: 'uint256', name: 'limitExponentValue' },
-          {type: 'uint256', name: 'quietEndingPeriod' },
-          {type: 'uint256', name: 'proposingRepReward' },
-          {type: 'uint256', name: 'votersReputationLossRatio' },
-          {type: 'uint256', name: 'minimumDaoBounty' },
-          {type: 'uint256', name: 'daoBountyConst' },
-          {type: 'uint256', name: 'activationTime' }
-        ], callsResponse2.returnData[0]
-      );
-      
       const boostedVoteRequiredPercentage = (schemeTypeData.type == 'WalletScheme')
-        ? web3.eth.abi.decodeParameters(['uint256'], callsResponse2.returnData[1])['0']
+        ? web3.eth.abi.decodeParameters(['uint256'], callsResponse2.returnData[0])['0']
         : 0;
+      
+      if (paramsHash != NULL_HASH && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash]) {
+        try {
+          networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash] =
+          decodeSchemeParameters(web3.eth.abi.decodeParameters(
+            [
+              {type: 'uint256', name: 'queuedVoteRequiredPercentage' },
+              {type: 'uint256', name: 'queuedVotePeriodLimit' },
+              {type: 'uint256', name: 'boostedVotePeriodLimit' },
+              {type: 'uint256', name: 'preBoostedVotePeriodLimit' },
+              {type: 'uint256', name: 'thresholdConst' },
+              {type: 'uint256', name: 'limitExponentValue' },
+              {type: 'uint256', name: 'quietEndingPeriod' },
+              {type: 'uint256', name: 'proposingRepReward' },
+              {type: 'uint256', name: 'votersReputationLossRatio' },
+              {type: 'uint256', name: 'minimumDaoBounty' },
+              {type: 'uint256', name: 'daoBountyConst' },
+              {type: 'uint256', name: 'activationTime' }
+            ], callsResponse2.returnData[1])
+          );
+        } catch (error) {
+          console.error("Error getting parameters configuration for", schemeTypeData.name);
+        }
+      }
     
       if (!networkCache.schemes[schemeAddress]) {
         networkCache.schemes[schemeAddress] = {
@@ -444,17 +498,9 @@ export const updateSchemes = async function (
           ethBalance: ethBalance,
           tokenBalances: {},
           votingMachine: schemeTypeData.votingMachine,
-          
-          configurations: [{
-            paramsHash: paramsHash,
-            // Get and decode the full parameters from the voting machine using teh parametersHash
-            parameters: decodeSchemeParameters(parameters),
-            // Get and decode the permissions
-            permissions,
-            boostedVoteRequiredPercentage,
-            toBlock: Number.MAX_SAFE_INTEGER
-          }],
-          
+          paramsHash: paramsHash,
+          permissions,
+          boostedVoteRequiredPercentage,
           callPermissions: [],
           proposalIds: [],
           boostedProposals: 0,
@@ -463,18 +509,9 @@ export const updateSchemes = async function (
           newProposalEvents: []
         };
       } else {
-        networkCache.schemes[schemeAddress].configurations.push({
-          paramsHash: paramsHash,
-          // Get and decode the full parameters from the voting machine using teh parametersHash
-          parameters: decodeSchemeParameters(parameters),
-          // Get and decode the permissions
-          permissions,
-          boostedVoteRequiredPercentage,
-          toBlock: Number.MAX_SAFE_INTEGER
-        })
-        networkCache.schemes[schemeAddress].configurations[
-          networkCache.schemes[schemeAddress].configurations.length - 1
-        ].toBlock = controllerEvent.l1BlockNumber;
+        networkCache.schemes[schemeAddress].paramsHash = paramsHash;
+        networkCache.schemes[schemeAddress].permissions = permissions;
+        networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage = boostedVoteRequiredPercentage;
       }
     
     // Mark scheme as not registered but save all previous data
@@ -522,10 +559,6 @@ export const updateSchemes = async function (
       const schemeTypeData = getSchemeTypeData(networkName, schemeAddress);
       const votingMachine = allContracts.votingMachines[schemeTypeData.votingMachine].contract;
       
-      const lastConfiguration = networkCache.schemes[schemeAddress].configurations[
-        networkCache.schemes[schemeAddress].configurations.length - 1
-      ];
-      
       let callsToExecute = [
         [allContracts.multicall, "getEthBalance", [schemeAddress]],
         [
@@ -540,7 +573,7 @@ export const updateSchemes = async function (
         callsToExecute.push([
           votingMachine,
           "boostedVoteRequiredPercentage",
-          [web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address), lastConfiguration.paramsHash]
+          [web3.utils.soliditySha3(schemeAddress, allContracts.avatar._address), networkCache.schemes[schemeAddress].paramsHash]
         ])
       }
       const callsResponse = await executeMulticall(web3, allContracts.multicall, callsToExecute);
@@ -556,9 +589,7 @@ export const updateSchemes = async function (
       networkCache.schemes[schemeAddress].ethBalance = callsResponse.decodedReturnData[0];
       networkCache.schemes[schemeAddress].boostedProposals = callsResponse.decodedReturnData[1];
       networkCache.schemes[schemeAddress].maxSecondsForExecution = maxSecondsForExecution;
-      networkCache.schemes[schemeAddress].configurations[
-        networkCache.schemes[schemeAddress].configurations.length - 1
-      ].boostedVoteRequiredPercentage = boostedVoteRequiredPercentage;
+      networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage = boostedVoteRequiredPercentage;
     }
 
   }));
@@ -566,6 +597,7 @@ export const updateSchemes = async function (
   return networkCache;
 };
 
+// Update all the proposals information
 export const updateProposals = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
@@ -592,224 +624,217 @@ export const updateProposals = async function (
     
     console.debug("Getting proposals of", schemeTypeData.name, schemeEvents.length);
     
-    while(schemeEvents.length)
-    await Promise.all(schemeEvents.splice(0,50 ).map(async (schemeEvent) => {
+    let schemeEventsBatchs = [];
+    let schemeEventsBatchsIndex = 0;
+    for (var i = 0; i < schemeEvents.length; i += 50)
+      schemeEventsBatchs.push(schemeEvents.slice(i, i + 50));
+    
+    console.log(schemeEventsBatchs.length);
+    
+    while(schemeEventsBatchsIndex < schemeEventsBatchs.length) {
+      
+      try {
+        
+        await Promise.all(schemeEventsBatchs[schemeEventsBatchsIndex].map(async (schemeEvent) => {
 
-      const proposalId = (schemeEvent.topics[1] == avatarAddressEncoded)
-      ? web3.eth.abi.decodeParameter('bytes32', schemeEvent.topics[2])
-      : web3.eth.abi.decodeParameter('bytes32', schemeEvent.topics[1]);
-      
-      // Get all the proposal information from the scheme and voting machine
-      let callsToExecute = [
-        [ 
-          votingMachine,
-          "proposals",
-          [proposalId]
-        ],
-        [ 
-          votingMachine,
-          "voteStatus",
-          [proposalId,
-            1] ],
-        [ 
-          votingMachine,
-          "voteStatus",
-          [proposalId,
-            2] ],
-        [ 
-          votingMachine,
-          "proposalStatus",
-          [proposalId]
-        ],
-        [ 
-          votingMachine,
-          "getProposalTimes",
-          [proposalId]
-        ]
-      ];
-      
-      if (schemeTypeData.type == 'WalletScheme') {
-        callsToExecute.push([ walletSchemeContract, "getOrganizationProposal", [proposalId] ]);
-      }
-      
-      const callsResponse = await executeMulticall(web3, allContracts.multicall, callsToExecute);
-      
-      const votingMachineProposalInfo = web3.eth.abi.decodeParameters(
-        [
-          {type: 'bytes32', name: 'organizationId' },
-          {type: 'address', name: 'callbacks' },
-          {type: 'uint256', name: 'state' },
-          {type: 'uint256', name: 'winningVote' },
-          {type: 'address', name: 'proposer' },
-          {type: 'uint256', name: 'currentBoostedVotePeriodLimit' },
-          {type: 'bytes32', name: 'paramsHash' },
-          {type: 'uint256', name: 'daoBountyRemain' },
-          {type: 'uint256', name: 'daoBounty' },
-          {type: 'uint256', name: 'totalStakes' },
-          {type: 'uint256', name: 'confidenceThreshold' },
-          {type: 'uint256', name: 'secondsFromTimeOutTillExecuteBoosted' }
-        ],
-        callsResponse.returnData[0]
-      );
-      const positiveVotes = callsResponse.returnData[1];
-      const negativeVotes = callsResponse.returnData[2];
-      
-      const proposalStatusWithVotes = web3.eth.abi.decodeParameters(
-        ['uint256','uint256','uint256','uint256'], 
-        callsResponse.returnData[3]
-      );
-      const proposalTimes = callsResponse.decodedReturnData[4];
-      
-      let schemeProposalInfo = {
-        to: [],
-        callData: [],
-        value: [],
-        state: 0,
-        title: "",
-        descriptionHash: "",
-        submittedTime: 0
-      };
-      let decodedProposer;
-
-      if (schemeTypeData.type == 'WalletScheme') {
-        schemeProposalInfo = web3.eth.abi.decodeParameters(
+          const proposalId = (schemeEvent.topics[1] == avatarAddressEncoded)
+          ? web3.eth.abi.decodeParameter('bytes32', schemeEvent.topics[2])
+          : web3.eth.abi.decodeParameter('bytes32', schemeEvent.topics[1]);
+          
+          // Get all the proposal information from the scheme and voting machine
+          let callsToExecute = [
             [ 
-              {type: 'address[]', name: 'to' },
-              {type: 'bytes[]', name: 'callData' },
-              {type: 'uint256[]', name: 'value' },
-              {type: 'uint256', name: 'state' },
-              {type: 'string', name: 'title' },
-              {type: 'string', name: 'descriptionHash' },
-              {type: 'uint256', name: 'submittedTime' }
+              votingMachine,
+              "proposals",
+              [proposalId]
             ],
-            callsResponse.returnData[5]
+            [ 
+              votingMachine,
+              "voteStatus",
+              [proposalId,
+                1] ],
+            [ 
+              votingMachine,
+              "voteStatus",
+              [proposalId,
+                2] ],
+            [ 
+              votingMachine,
+              "proposalStatus",
+              [proposalId]
+            ],
+            [ 
+              votingMachine,
+              "getProposalTimes",
+              [proposalId]
+            ]
+          ];
+          
+          if (schemeTypeData.type == 'WalletScheme') {
+            callsToExecute.push([ walletSchemeContract, "getOrganizationProposal", [proposalId] ]);
+          }
+          
+          const callsResponse = await executeMulticall(web3, allContracts.multicall, callsToExecute);
+          
+          const votingMachineProposalInfo = web3.eth.abi.decodeParameters(
+            [
+              {type: 'bytes32', name: 'organizationId' },
+              {type: 'address', name: 'callbacks' },
+              {type: 'uint256', name: 'state' },
+              {type: 'uint256', name: 'winningVote' },
+              {type: 'address', name: 'proposer' },
+              {type: 'uint256', name: 'currentBoostedVotePeriodLimit' },
+              {type: 'bytes32', name: 'paramsHash' },
+              {type: 'uint256', name: 'daoBountyRemain' },
+              {type: 'uint256', name: 'daoBounty' },
+              {type: 'uint256', name: 'totalStakes' },
+              {type: 'uint256', name: 'confidenceThreshold' },
+              {type: 'uint256', name: 'secondsFromTimeOutTillExecuteBoosted' }
+            ],
+            callsResponse.returnData[0]
           );
-      } else {
-        const transactionReceipt = await web3.eth.getTransactionReceipt(schemeEvent.transactionHash);
-        try {
-          let creationLogDecoded;
-          schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
-            transactionReceipt.logs.map((log) => {
-              if (log.topics[0] == "0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c") {
-                decodedProposer = web3.eth.abi.decodeParameters([
-                  { type:'uint256', name: "_numOfChoices"},
-                  { type:'address', name: "_proposer"},
-                  { type:'bytes32', name: "_paramsHash"}
-                ], log.data)._proposer
-              }
-              if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
-                creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
-                if (creationLogDecoded._descriptionHash.length > 0)
-                  schemeProposalInfo.descriptionHash = contentHash.fromIpfs(creationLogDecoded._descriptionHash)
-              }
-              
-            })
-          })
-          } catch (error) {
-          console.error('Error on adding content hash from tx', schemeEvent.transactionHash);
-        }
-      }
-      
-      let schemeConfigurationAtProposalCreation;
-      for (let i = networkCache.schemes[schemeAddress].configurations.length - 1; i >= 0; i--) {
-        if (schemeEvent.l1BlockNumber < networkCache.schemes[schemeAddress].configurations[i].toBlock)
-          schemeConfigurationAtProposalCreation = networkCache.schemes[schemeAddress].configurations[i]
-      }
+          const positiveVotes = callsResponse.returnData[1];
+          const negativeVotes = callsResponse.returnData[2];
+          
+          const proposalStatusWithVotes = web3.eth.abi.decodeParameters(
+            ['uint256','uint256','uint256','uint256'], 
+            callsResponse.returnData[3]
+          );
+          const proposalTimes = callsResponse.decodedReturnData[4];
+          
+          let schemeProposalInfo = {
+            to: [],
+            callData: [],
+            value: [],
+            state: 0,
+            title: "",
+            descriptionHash: "",
+            submittedTime: 0
+          };
+          let decodedProposer;
 
-      // Decode the status texy and pririty that will be given in the dapp
-      const { status, priority, boostTime, finishTime } = decodeStatus(
-        votingMachineProposalInfo.state.toString(),
-        schemeProposalInfo.state.toString(),
-        bnum(proposalTimes[0].toString()),
-        bnum(proposalTimes[1].toString()),
-        bnum(proposalTimes[2].toString()),
-        schemeConfigurationAtProposalCreation.parameters.queuedVotePeriodLimit,
-        schemeConfigurationAtProposalCreation.parameters.boostedVotePeriodLimit,
-        schemeConfigurationAtProposalCreation.parameters.quietEndingPeriod,
-        schemeConfigurationAtProposalCreation.parameters.preBoostedVotePeriodLimit,
-        false
-      );
-
-      networkCache.proposals[proposalId] = {
-        id: proposalId,
-        scheme: schemeAddress,
-        to: schemeProposalInfo.to,
-        title: schemeProposalInfo.title,
-        callData: schemeProposalInfo.callData,
-        values: schemeProposalInfo.value.map((value) => bnum(value)),
-        stateInScheme: schemeProposalInfo.state,
-        stateInVotingMachine: votingMachineProposalInfo.state,
-        descriptionHash: schemeProposalInfo.descriptionHash,
-        creationEventSender: (await web3.eth.getTransaction(schemeEvent.transactionHash)).from,
-        creationEvent: {
-          event: schemeEvent.event,
-          signature: schemeEvent.signature,
-          address: schemeEvent.address,
-          tx: schemeEvent.transactionHash,
-          l1BlockNumber: schemeEvent.l1BlockNumber,
-          l2BlockNumber: schemeEvent.l2BlockNumber,
-          timestamp: schemeEvent.timestamp,
-          transactionIndex: schemeEvent.transactionIndex,
-          logIndex: schemeEvent.logIndex
-        },
-        repAtCreation: bnum(await allContracts.reputation.methods.totalSupplyAt(schemeEvent.l1BlockNumber).call()),
-        winningVote: votingMachineProposalInfo.winningVote,
-        proposer: decodedProposer ? decodedProposer : votingMachineProposalInfo.proposer,
-        currentBoostedVotePeriodLimit: votingMachineProposalInfo.currentBoostedVotePeriodLimit,
-        paramsHash: schemeConfigurationAtProposalCreation.paramsHash,
-        daoBountyRemain: bnum(votingMachineProposalInfo.daoBountyRemain),
-        daoBounty: bnum(votingMachineProposalInfo.daoBounty),
-        totalStakes: bnum(votingMachineProposalInfo.totalStakes),
-        confidenceThreshold: votingMachineProposalInfo.confidenceThreshold,
-        secondsFromTimeOutTillExecuteBoosted: votingMachineProposalInfo.secondsFromTimeOutTillExecuteBoosted,
-        submittedTime: bnum(proposalTimes[0]),
-        boostedPhaseTime: bnum(proposalTimes[1]),
-        preBoostedPhaseTime: bnum(proposalTimes[2]),
-        daoRedeemItsWinnings: votingMachineProposalInfo.daoRedeemItsWinnings,
-        status: status,
-        priority: priority,
-        boostTime: bnum(boostTime),
-        finishTime: bnum(finishTime),
-        shouldBoost: false,
-        positiveVotes: bnum(positiveVotes),
-        negativeVotes: bnum(negativeVotes),
-        preBoostedPositiveVotes: bnum(proposalStatusWithVotes[0]),
-        preBoostedNegativeVotes: bnum(proposalStatusWithVotes[1]),
-        positiveStakes: bnum(proposalStatusWithVotes[2]),
-        negativeStakes: bnum(proposalStatusWithVotes[3])
-      };
-      
-      networkCache.schemes[schemeAddress].proposalIds.push(proposalId);
-      networkCache.schemes[schemeAddress].newProposalEvents.push({
-        proposalId: proposalId,
-        event: schemeEvent.event,
-        signature: schemeEvent.signature,
-        address: schemeEvent.address,
-        tx: schemeEvent.transactionHash,
-        l1BlockNumber: schemeEvent.l1BlockNumber,
-        l2BlockNumber: schemeEvent.l2BlockNumber,
-        timestamp: schemeEvent.timestamp,
-        transactionIndex: schemeEvent.transactionIndex,
-        logIndex: schemeEvent.logIndex
-      });
-      
-      if (schemeProposalInfo.descriptionHash.length > 0)
-        networkCache.ipfsHashes.push({
-          hash: contentHash.decode(schemeProposalInfo.descriptionHash),
-          type: 'proposal',
-          name: proposalId
-        });
-      
-      // Save proposal created in users
-      if (!networkCache.users[votingMachineProposalInfo.proposer]) {
-        networkCache.users[votingMachineProposalInfo.proposer] = {
-          repBalance: bnum(0),
-          proposalsCreated: [proposalId]
-        }
-      } else {
-        networkCache.users[votingMachineProposalInfo.proposer].proposalsCreated.push(proposalId);
+          if (schemeTypeData.type == 'WalletScheme') {
+            schemeProposalInfo = web3.eth.abi.decodeParameters(
+                [ 
+                  {type: 'address[]', name: 'to' },
+                  {type: 'bytes[]', name: 'callData' },
+                  {type: 'uint256[]', name: 'value' },
+                  {type: 'uint256', name: 'state' },
+                  {type: 'string', name: 'title' },
+                  {type: 'string', name: 'descriptionHash' },
+                  {type: 'uint256', name: 'submittedTime' }
+                ],
+                callsResponse.returnData[5]
+              );
+          } else {
+            const transactionReceipt = await web3.eth.getTransactionReceipt(schemeEvent.transactionHash);
+            try {
+              let creationLogDecoded;
+              schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
+                transactionReceipt.logs.map((log) => {
+                  if (log.topics[0] == "0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c") {
+                    decodedProposer = web3.eth.abi.decodeParameters([
+                      { type:'uint256', name: "_numOfChoices"},
+                      { type:'address', name: "_proposer"},
+                      { type:'bytes32', name: "_paramsHash"}
+                    ], log.data)._proposer
+                  }
+                  if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
+                    creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
+                    if (creationLogDecoded._descriptionHash.length > 0)
+                      schemeProposalInfo.descriptionHash = contentHash.fromIpfs(creationLogDecoded._descriptionHash)
+                  }
+                  
+                })
+              })
+              } catch (error) {
+              console.error('Error on adding content hash from tx', schemeEvent.transactionHash);
+            }
+          }
+          
+          networkCache.proposals[proposalId] = {
+            id: proposalId,
+            scheme: schemeAddress,
+            to: schemeProposalInfo.to,
+            title: schemeProposalInfo.title,
+            callData: schemeProposalInfo.callData,
+            values: schemeProposalInfo.value.map((value) => bnum(value)),
+            stateInScheme: schemeProposalInfo.state,
+            stateInVotingMachine: votingMachineProposalInfo.state,
+            descriptionHash: schemeProposalInfo.descriptionHash,
+            creationEventSender: (await web3.eth.getTransaction(schemeEvent.transactionHash)).from,
+            creationEvent: {
+              event: schemeEvent.event,
+              signature: schemeEvent.signature,
+              address: schemeEvent.address,
+              tx: schemeEvent.transactionHash,
+              l1BlockNumber: schemeEvent.l1BlockNumber,
+              l2BlockNumber: schemeEvent.l2BlockNumber,
+              timestamp: schemeEvent.timestamp,
+              transactionIndex: schemeEvent.transactionIndex,
+              logIndex: schemeEvent.logIndex
+            },
+            repAtCreation: bnum(await allContracts.reputation.methods.totalSupplyAt(schemeEvent.l1BlockNumber).call()),
+            winningVote: votingMachineProposalInfo.winningVote,
+            proposer: decodedProposer ? decodedProposer : votingMachineProposalInfo.proposer,
+            currentBoostedVotePeriodLimit: votingMachineProposalInfo.currentBoostedVotePeriodLimit,
+            paramsHash: votingMachineProposalInfo.paramsHash,
+            daoBountyRemain: bnum(votingMachineProposalInfo.daoBountyRemain),
+            daoBounty: bnum(votingMachineProposalInfo.daoBounty),
+            totalStakes: bnum(votingMachineProposalInfo.totalStakes),
+            confidenceThreshold: votingMachineProposalInfo.confidenceThreshold,
+            secondsFromTimeOutTillExecuteBoosted: votingMachineProposalInfo.secondsFromTimeOutTillExecuteBoosted,
+            submittedTime: bnum(proposalTimes[0]),
+            boostedPhaseTime: bnum(proposalTimes[1]),
+            preBoostedPhaseTime: bnum(proposalTimes[2]),
+            daoRedeemItsWinnings: votingMachineProposalInfo.daoRedeemItsWinnings,
+            shouldBoost: false,
+            positiveVotes: bnum(positiveVotes),
+            negativeVotes: bnum(negativeVotes),
+            preBoostedPositiveVotes: bnum(proposalStatusWithVotes[0]),
+            preBoostedNegativeVotes: bnum(proposalStatusWithVotes[1]),
+            positiveStakes: bnum(proposalStatusWithVotes[2]),
+            negativeStakes: bnum(proposalStatusWithVotes[3])
+          };
+          
+          networkCache.schemes[schemeAddress].proposalIds.push(proposalId);
+          networkCache.schemes[schemeAddress].newProposalEvents.push({
+            proposalId: proposalId,
+            event: schemeEvent.event,
+            signature: schemeEvent.signature,
+            address: schemeEvent.address,
+            tx: schemeEvent.transactionHash,
+            l1BlockNumber: schemeEvent.l1BlockNumber,
+            l2BlockNumber: schemeEvent.l2BlockNumber,
+            timestamp: schemeEvent.timestamp,
+            transactionIndex: schemeEvent.transactionIndex,
+            logIndex: schemeEvent.logIndex
+          });
+          
+          if (schemeProposalInfo.descriptionHash.length > 0)
+            networkCache.ipfsHashes.push({
+              hash: contentHash.decode(schemeProposalInfo.descriptionHash),
+              type: 'proposal',
+              name: proposalId
+            });
+          
+          // Save proposal created in users
+          if (!networkCache.users[votingMachineProposalInfo.proposer]) {
+            networkCache.users[votingMachineProposalInfo.proposer] = {
+              repBalance: bnum(0),
+              proposalsCreated: [proposalId]
+            }
+          } else {
+            networkCache.users[votingMachineProposalInfo.proposer].proposalsCreated.push(proposalId);
+          }
+        }));
+        
+        schemeEventsBatchsIndex ++;
+      } catch (error) {
+        console.error('Error:',error.message);
+        console.log('Trying again getting proposal info of schemeEventsBatchs index',schemeEventsBatchsIndex);
       }
-    }));
+    }
     
   }));
 
@@ -913,26 +938,6 @@ export const updateProposals = async function (
           submittedTime: 0
         };
   
-      let schemeConfigurationAtProposalCreation;
-      for (let i = networkCache.schemes[schemeAddress].configurations.length - 1; i >= 0; i--) {
-        if (networkCache.proposals[proposalId].paramsHash == networkCache.schemes[schemeAddress].configurations[i].paramsHash)
-          schemeConfigurationAtProposalCreation = networkCache.schemes[schemeAddress].configurations[i]
-      }
-  
-      // Decode the status texy and pririty that will be given in the dapp
-      const { status, priority, boostTime, finishTime } = decodeStatus(
-        votingMachineProposalInfo.state.toString(),
-        schemeProposalInfo.state.toString(),
-        bnum(proposalTimes[0].toString()),
-        bnum(proposalTimes[1].toString()),
-        bnum(proposalTimes[2].toString()),
-        schemeConfigurationAtProposalCreation.parameters.queuedVotePeriodLimit,
-        schemeConfigurationAtProposalCreation.parameters.boostedVotePeriodLimit,
-        schemeConfigurationAtProposalCreation.parameters.quietEndingPeriod,
-        schemeConfigurationAtProposalCreation.parameters.preBoostedVotePeriodLimit,
-        proposalShouldBoost
-      );
-  
       networkCache.proposals[proposalId].stateInScheme = schemeProposalInfo.state;
       networkCache.proposals[proposalId].stateInVotingMachine = votingMachineProposalInfo.state;
       networkCache.proposals[proposalId].winningVote = votingMachineProposalInfo.winningVote;
@@ -945,10 +950,6 @@ export const updateProposals = async function (
       networkCache.proposals[proposalId].boostedPhaseTime = bnum(proposalTimes[1]);
       networkCache.proposals[proposalId].preBoostedPhaseTime = bnum(proposalTimes[2]);
       networkCache.proposals[proposalId].daoRedeemItsWinnings = votingMachineProposalInfo.daoRedeemItsWinnings;
-      networkCache.proposals[proposalId].status = status;
-      networkCache.proposals[proposalId].priority = priority;
-      networkCache.proposals[proposalId].boostTime = bnum(boostTime);
-      networkCache.proposals[proposalId].finishTime = bnum(finishTime);
       networkCache.proposals[proposalId].shouldBoost = proposalShouldBoost;
       networkCache.proposals[proposalId].positiveVotes = bnum(positiveVotes);
       networkCache.proposals[proposalId].negativeVotes = bnum(negativeVotes);

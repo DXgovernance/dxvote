@@ -78,30 +78,44 @@ export const getNetworkConfig = function(network) {
         "addresses": {
           "0x199719EE4d5DCF174B80b80afa1FE4a8e5b0E3A0": {
             "name": "DutchXScheme",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0xff6155010292b35fb8daae8b4450cdc41a586bc591e9a76484e88ffba36f94a8",
             "contractToCall": "0xb9812E2fA995EC53B5b6DF34d21f9304762C5497",
           },
           "0x46DF3EA38a680FBc84E744D92b0A8Ec717B2eA7E":{
             "name": "GenericSchemeToENS",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
             "contractToCall": "0x314159265dd8dbb310642f98f50c066173c1259b",
           },
           "0x9A543aeF934c21Da5814785E38f9A7892D3CDE6E": {
             "name": "EnsPublicProviderScheme",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
             "contractToCall": "0x226159d592e2b063810a10ebf6dcbada94ed68b8",
           },
           "0x973ce4e81BdC3bD39f46038f3AaA928B04558b08": {
             "name": "EnsRegistrarScheme",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
             "contractToCall": "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85",
           },
           "0x9CEA0DD05C4344A769B2F4C2f8890EDa8a700d64": {
             "name": "EnsRegistryScheme",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0x0dc1fb4d230debe146613511601e0df83dd5ac323a7add833de82ead5a19db3a",
             "contractToCall": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e",
           },
           "0xc072171dA83CCe311e37BC1d168f54E6A6536DF4": {
             "name": "TokenRegistry",
+            "votingMachine": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055",
+            "voteParams": "0x8452e57c89dc78ec1b1ffc28786655279f9af4ac589dd5988c962e8cf6b4529b",
             "contractToCall": "0x93db90445b76329e9ed96ecd74e76d8fbf2590d8",
           },
           "0xB3ec6089556CcA49549Be01fF446cF40fA81c84D": {
             "name": "EnsPublicResolverScheme",
+            "votingMachine": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055",
+            "voteParams": "0xa81f982cb1c27eb142e5f602e7eb50d125dd6a7e52dac1af5f9decb88278f2fa",
             "contractToCall": "0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
           },
         },
@@ -180,9 +194,10 @@ export const getSchemeTypeData = function(network, schemeAddress) {
     } else if (Object.keys(networkConfig.daostack.genericSchemes.addresses).indexOf(schemeAddress) > -1) {
       return {
         type: "GenericScheme",
-        votingMachine: networkConfig.votingMachines.gen.address,
+        votingMachine: networkConfig.daostack.genericSchemes.addresses[schemeAddress].votingMachine,
         name: networkConfig.daostack.genericSchemes.addresses[schemeAddress].name,
         newProposalTopics: networkConfig.daostack.genericSchemes.newProposalTopics,
+        voteParams: networkConfig.daostack.genericSchemes.addresses[schemeAddress].voteParams,
         creationLogEncoding: networkConfig.daostack.genericSchemes.creationLogEncoding
       };
     } else if (Object.keys(networkConfig.daostack.dxSchemes).indexOf(schemeAddress) > -1) {

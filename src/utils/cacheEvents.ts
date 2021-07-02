@@ -15,9 +15,12 @@ export const getEvents = async function(
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      console.error(error)
-      console.debug('Lowering toBlock', (to - from) / 2, 'blocks');
-      to = from + (to - from) / 2;
+      console.error('Error fetching blocks:',error.message);
+      if (Math.trunc( ((to - from) / 2) ) > 100000) {
+        const blocksToLower = Math.max(Math.trunc( ((to - from) / 2) ), 100000);
+        console.debug('Lowering toBlock', blocksToLower, 'blocks');
+        to = to - blocksToLower;
+      }
     }
   };
   return events;
@@ -41,14 +44,20 @@ export const getRawEvents = async function(
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      console.debug('Lowering toBlock', (to - from) / 2, 'blocks');
-      to = from + (to - from) / 2;
+      console.error('Error fetching blocks:',error.message)
+      if (Math.trunc( ((to - from) / 2) ) > 100000) {
+        const blocksToLower = Math.max(Math.trunc( ((to - from) / 2) ), 100000);
+        console.debug('Lowering toBlock', blocksToLower, 'blocks');
+        to = to - blocksToLower;
+      }
     }
   };
   return events;
 };
 
 export const getTimestampOfEvents = async function(web3, events) {
+  
+  //// TODO:  See how can we bacth requests can be implemented
   
   // async function batchRequest(blocks) {
   //   const batch = new web3.BatchRequest();

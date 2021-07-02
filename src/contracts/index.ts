@@ -24,6 +24,13 @@ export const getContracts = async function(network: string, web3: any) {
       contract: await new web3.eth.Contract(GenesisProtocol.abi, networkConfig.votingMachines.gen.address),
       token: await new web3.eth.Contract(ERC20.abi, networkConfig.votingMachines.gen.token)
     }
+    
+  if (networkConfig.votingMachines.gen2)
+    votingMachines[networkConfig.votingMachines.gen2.address] = {
+      name: "GenesisProtocol2",
+      contract: await new web3.eth.Contract(GenesisProtocol.abi, networkConfig.votingMachines.gen2.address),
+      token: await new web3.eth.Contract(ERC20.abi, networkConfig.votingMachines.gen2.token)
+    }
   
   if (networkConfig.votingMachines.dxd)
     votingMachines[networkConfig.votingMachines.dxd.address] = {

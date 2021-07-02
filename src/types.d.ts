@@ -72,6 +72,7 @@ export interface ProposalEvent extends BlockchainEvent {
 
 export interface NewProposal extends ProposalEvent {
   proposer: string;
+  paramHash: string;
 }
 
 export interface Vote extends ProposalEvent {
@@ -128,10 +129,6 @@ export interface Proposal{
   boostedPhaseTime: BigNumber;
   preBoostedPhaseTime: BigNumber;
   daoRedeemItsWinnings: boolean;
-  status: string;
-  priority: number;
-  boostTime: BigNumber;
-  finishTime: BigNumber;
   shouldBoost: boolean,
   positiveVotes: BigNumber;
   negativeVotes: BigNumber;
@@ -141,7 +138,7 @@ export interface Proposal{
   negativeStakes: BigNumber;
 }
 
-export interface SchemeParameters {
+export interface VotingMachineParameters {
   queuedVoteRequiredPercentage: BigNumber;
   queuedVotePeriodLimit: BigNumber;
   boostedVotePeriodLimit: BigNumber;
@@ -182,13 +179,9 @@ export interface Scheme {
     [tokenAddress: string] : BigNumber
   };
   votingMachine: String;
-  configurations: {
-    paramsHash: string;
-    parameters: SchemeParameters;
-    permissions: SchemePermissions;
-    boostedVoteRequiredPercentage: number;
-    toBlock: number
-  }[];
+  paramsHash: string;
+  permissions: SchemePermissions;
+  boostedVoteRequiredPercentage: number;
   callPermissions: SchemeCallPermission[];
   proposalIds: string[];
   boostedProposals: number;
@@ -239,6 +232,7 @@ export interface DaoNetworkCache {
       address: string;
       totalSupply: BigNumber;
     };
+    votingParameters: {[paramsHash: string]: VotingMachineParameters}
   }};
   ipfsHashes: IPFSHash[];
 };
