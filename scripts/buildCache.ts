@@ -55,12 +55,11 @@ async function main() {
   const fromBlock = networkCache.l1BlockNumber + 1;
   const toBlock = process.env.CACHE_TO_BLOCK || await web3.eth.getBlockNumber();
   
-  console.log('Runing cache script from block', fromBlock, 'to block', toBlock, 'in network', networkName);
-  
-  cacheFile[networkName] = await updateNetworkCache(networkCache, networkName, fromBlock, toBlock, web3);
-
-  fs.writeFileSync("./src/cache.json", JSON.stringify(cacheFile, null, 2), { encoding: "utf8", flag: "w" });
-
+  if (fromBlock < toBlock) {
+    console.log('Runing cache script from block', fromBlock, 'to block', toBlock, 'in network', networkName);
+    cacheFile[networkName] = await updateNetworkCache(networkCache, networkName, fromBlock, toBlock, web3);
+    fs.writeFileSync("./src/cache.json", JSON.stringify(cacheFile, null, 2), { encoding: "utf8", flag: "w" });
+  }
 } 
 
 main()
