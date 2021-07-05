@@ -216,8 +216,8 @@ const ProposalsPage = observer(() => {
                 const timeToFinish = timeToTimestamp(proposal.finishTime);
                 
                 const votingMachineTokenName = 
-                (daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.dxd.address)
-                ? 'DXD' : 'GEN';
+                (votingMachines.gen && daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.gen.address)
+                ? 'GEN' : 'DXD';
                 return (
                   <Link key={"proposal"+i} to={"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
                     <TableRow>
