@@ -2,22 +2,15 @@
 import { ethers, utils } from 'ethers';
 import { BigNumber } from './bignumber';
 
-BigNumber.config({
-  DECIMAL_PLACES: 2,
-  FORMAT: {
-    groupSize: 3,
-    groupSeparator: ' ',
-    decimalSeparator: '.'
-  }
-});
-
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
 export const MAX_UINT = utils.bigNumberify(ethers.constants.MaxUint256);
+export const ZERO_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const ANY_ADDRESS = "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa";
 export const ANY_FUNC_SIGNATURE = "0xaaaaaaaa";
 export const ERC20_TRANSFER_SIGNATURE = "0xa9059cbb";
+export const DEFAULT_TOKEN_DECIMALS = 18;
 
 export function bnum(
     val: string | number | utils.BigNumber | BigNumber
@@ -65,24 +58,6 @@ export function str(value: any): string {
     return value.toString();
 }
 
-export function getQueryParam(windowLocation, name) {
-    var q = windowLocation.search.match(
-        new RegExp('[?&]' + name + '=([^&#?]*)')
-    );
-    return q && q[1];
-}
-
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-export const copyToClipboard = (e) => {
-    const value = e.target.title.replace(',', '');
-    var aux = document.createElement('input');
-    aux.setAttribute('value', value);
-    document.body.appendChild(aux);
-    aux.select();
-    document.execCommand('copy');
-    document.body.removeChild(aux);
-    alert(`Value: "${value}" copied to clipboard`);
-};

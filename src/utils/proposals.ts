@@ -1,7 +1,9 @@
 import { bnum } from './helpers';
 import moment from 'moment';
 
-export const decodeProposalStatus = function(proposal, proposalStateChangeEvents, votingMachineParams) {
+export const decodeProposalStatus = function(
+  proposal, proposalStateChangeEvents, votingMachineParams, maxSecondsForExecution
+) {
   const timeNow = bnum(moment().unix());
   const queuedVotePeriodLimit = votingMachineParams.queuedVotePeriodLimit;
   const boostedVotePeriodLimit = votingMachineParams.boostedVotePeriodLimit;
@@ -57,7 +59,19 @@ export const decodeProposalStatus = function(proposal, proposalStateChangeEvents
         };
       }
     case "4":
-      if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
+      if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).plus(maxSecondsForExecution).toNumber() && proposal.shouldBoost) {
+        return { 
+          status: "Execution Timeout",
+          boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
+          finishTime: bnum(timeNow).plus(boostedVotePeriodLimit)
+        };
+      } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
+        return { 
+          status: "Pending Execution", 
+          boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
+          finishTime: bnum(timeNow).plus(boostedVotePeriodLimit).plus(boostedVotePeriodLimit)
+        };
+      } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
         return { 
           status: "Pending Boost", 
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),

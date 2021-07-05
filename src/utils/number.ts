@@ -13,8 +13,7 @@ export function formatPercentage(
     if (value.lte(0.01) && value.gt(0) && useLowerLimit) {
         return '<0.01%';
     }
-
-    return `${value.times(100).toFormat(decimals, BigNumber.ROUND_DOWN)}%`;
+    return `${value.times(100).decimalPlaces(decimals).toString()}%`;
 }
 
 export function fromPercentage(value: BigNumber | string): BigNumber {

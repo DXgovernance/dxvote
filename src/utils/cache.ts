@@ -1,5 +1,5 @@
 import contentHash from 'content-hash';
-import { bnum } from './helpers';
+import { bnum, ZERO_HASH } from './helpers';
 const { getEvents, getRawEvents, sortEvents } = require('./cacheEvents');
 const { decodePermission } = require('./permissions');
 const { decodeSchemeParameters } = require('./scheme');
@@ -8,7 +8,6 @@ const WalletSchemeJSON = require('../contracts/WalletScheme');
 const { getContracts } = require('../contracts');
 const { getSchemeTypeData } = require('../config');
 
-const NULL_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 async function executeMulticall(web3, multicall, calls) {
   
   const rawCalls = calls.map((call) => {
@@ -451,7 +450,7 @@ export const updateSchemes = async function (
         ]);
       }
       
-      if (paramsHash != NULL_HASH && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash])
+      if (paramsHash != ZERO_HASH && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash])
         callsToExecute.push([
           votingMachine,
           "parameters",
@@ -464,7 +463,7 @@ export const updateSchemes = async function (
         ? web3.eth.abi.decodeParameters(['uint256'], callsResponse2.returnData[0])['0']
         : 0;
       
-      if (paramsHash != NULL_HASH && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash]) {
+      if (paramsHash != ZERO_HASH && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash]) {
         try {
           networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash] =
           decodeSchemeParameters(web3.eth.abi.decodeParameters(

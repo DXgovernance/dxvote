@@ -577,15 +577,16 @@ export default class DaoStore {
   getProposalStatus(proposalId: string): any {
     const proposal = this.getCache().proposals[proposalId];
     const proposalStateChangeEvents = this.getProposalStateChanges(proposalId);
+    const scheme = this.getCache().schemes[proposal.scheme];
     const votingMachineParams = 
     (proposal.paramsHash == "0x0000000000000000000000000000000000000000000000000000000000000000")
     ? this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
-      .votingParameters[this.getCache().schemes[proposal.scheme].paramsHash]
+      .votingParameters[scheme.paramsHash]
     : this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
       .votingParameters[proposal.paramsHash];
     
     console.log(proposal,this.getCache().schemes[proposal.scheme].paramsHash)
-    return decodeProposalStatus(proposal, proposalStateChangeEvents, votingMachineParams);
+    return decodeProposalStatus(proposal, proposalStateChangeEvents, votingMachineParams, scheme.maxSecondsForExecution);
   }
   
   getVotesOfProposal(proposalId: string): Vote[]{

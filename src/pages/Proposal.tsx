@@ -10,6 +10,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
 import { bnum } from '../utils/helpers';
+import { timeToTimestamp } from '../utils/date';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
@@ -255,13 +256,9 @@ const ProposalPage = observer(() => {
     const stakeToUnBoost = library.utils.fromWei(
       proposalInfo.positiveStakes.minus(proposalInfo.negativeStakes).times(101).div(100).toFixed(0)
     ).toString();
-          
-    const timeToBoost = boostTime.toNumber() > moment().unix() ? 
-    moment().to( moment(boostTime.times(1000).toNumber()) ).toString()
-    : "";
-    const timeToFinish = finishTime.toNumber() > moment().unix() ?
-    moment().to( moment(finishTime.times(1000).toNumber()) ).toString()
-    : "";
+    
+    const timeToBoost = timeToTimestamp(boostTime);
+    const timeToFinish = timeToTimestamp(finishTime);
   
     const boostedVoteRequiredPercentage = schemeInfo.boostedVoteRequiredPercentage / 1000;
 
@@ -358,18 +355,23 @@ const ProposalPage = observer(() => {
                 Finish {timeToFinish} </span>
               : <div></div>}
           </SidebarRow>
-          <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
-            {status === "Pending Boost" ? 
-              <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
-              : status === "Quiet Ending Period" && timeToFinish === "" ?
-              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
-              : status === "Pending Execution" ?
-              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
-              : status === "Expired in Queue" ?
-              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
-              : <div/>
-            }
-          </SidebarRow>
+          { proposalInfo.stateInScheme < 3 ? 
+            <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
+              {status === "Pending Boost" ? 
+                <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
+                : status === "Quiet Ending Period" && timeToFinish === "" ?
+                <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
+                : status === "Pending Execution" ?
+                <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
+                : status === "Execution Timeout" ?
+                <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
+                : status === "Expired in Queue" ?
+                <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
+                : <div/>
+              }
+            </SidebarRow>
+            : <div/>
+          }
           
           <SidebarDivider/> 
 

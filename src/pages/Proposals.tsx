@@ -4,6 +4,9 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import Box from '../components/common/Box';
+import { timeToTimestamp } from '../utils/date';
+import { normalizeBalance } from '../utils/token';
+import { formatPercentage } from '../utils/number';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
@@ -201,15 +204,20 @@ const ProposalsPage = observer(() => {
                 && ((stateFilter == 'All') || (stateFilter != 'All' && proposal.status == stateFilter))
                 && (titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0))
               ) {
-                const positiveStake = Number(library.utils.fromWei(proposal.positiveStakes.toString())).toFixed(2);
-                const negativeStake = Number(library.utils.fromWei(proposal.negativeStakes.toString())).toFixed(2);
-                const positiveVotesPercentage = proposal.positiveVotes.times("100").div( proposal.repAtCreation ).toNumber().toFixed(2);
-                const negativeVotesPercentage =  proposal.negativeVotes.times("100").div( proposal.repAtCreation ).toNumber().toFixed(2);
-                const timeToBoost = moment().to( moment.unix(proposal.boostTime.toNumber()) ).toString();
-                const timeToFinish = moment().to( moment.unix(proposal.finishTime.toNumber()) ).toString();
+                const positiveStake = normalizeBalance(proposal.positiveStakes, 18);
+                const negativeStake = normalizeBalance(proposal.negativeStakes, 18);
+                const positiveVotesPercentage = formatPercentage(
+                  proposal.positiveVotes.div(proposal.repAtCreation), 2
+                );
+                const negativeVotesPercentage =  formatPercentage(
+                  proposal.negativeVotes.div(proposal.repAtCreation), 2
+                );
+                const timeToBoost = timeToTimestamp(proposal.boostTime);
+                const timeToFinish = timeToTimestamp(proposal.finishTime);
+                
                 const votingMachineTokenName = 
-                (votingMachines.gen && (daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.gen.address))
-                ? 'GEN' : 'DXD';
+                (daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.dxd.address)
+                ? 'DXD' : 'GEN';
                 return (
                   <Link key={"proposal"+i} to={"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
                     <TableRow>
@@ -224,18 +232,18 @@ const ProposalsPage = observer(() => {
                       </TableCell>
                       <TableCell width="15%" align="center">
                         {proposal.status} <br/>
-                        {(proposal.boostTime.toNumber() > moment().unix()) ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
-                        {(proposal.finishTime.toNumber() > moment().unix()) ? <small>Finish {timeToFinish} </small> : <span></span>}
+                        {(timeToBoost != "") ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
+                        {(timeToFinish != "") ? <small>Finish {timeToFinish} </small> : <span></span>}
                       </TableCell>
                       <TableCell width="17.5%" align="center"> 
-                        <span style={{color: "green"}}>{positiveStake} {votingMachineTokenName} </span>
+                        <span style={{color: "green"}}>{positiveStake.toString()} {votingMachineTokenName} </span>
                         -
-                        <span style={{color: "red"}}> {negativeStake} {votingMachineTokenName}</span>
+                        <span style={{color: "red"}}> {negativeStake.toString()} {votingMachineTokenName}</span>
                       </TableCell>
                       <TableCell width="17.5%" align="center"> 
-                        <span style={{color: "green"}}>{positiveVotesPercentage} % </span>
+                        <span style={{color: "green"}}>{positiveVotesPercentage} </span>
                         -
-                        <span style={{color: "red"}}> {negativeVotesPercentage} %</span>
+                        <span style={{color: "red"}}> {negativeVotesPercentage}</span>
                       </TableCell>
                     </TableRow>
                   </Link>);
