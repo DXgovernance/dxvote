@@ -135,7 +135,6 @@ const AddButton = styled.div`
 
 const CallInput = styled.input`
   width: ${(props) => props.width || '25%'};
-  max-width: 500px;
   height: 34px;
   border-radius: 3px;
   border: 1px solid gray;
@@ -268,9 +267,8 @@ const NewProposalPage = observer(() => {
             }
             callData = callDataFunctionSignature + callDataFunctionParamsEncoded;
           } else {
-            callData = call.functionName + call.functionParams;
+            callData = call.functionParams[0];
           }
-          
           if (callToController && call.to != networkConfig.controller) {
             return daoService.encodeControllerGenericCall(
               call.to,
@@ -597,39 +595,42 @@ const NewProposalPage = observer(() => {
               })}
             </datalist>
             
-            <div style={{display: "flex", width: call.callType === "simple" ? "60%" : "50%"}}>
-              <CallInput
-                list="allowedFunctions"
-                value={calls[i].functionName}
-                onChange={(event) => {
-                  const selectedFunction = calls[i].allowedFunctions
-                    .find((allowedFunc) => allowedFunc.value == event.target.value);
-                  onFunctionSelectChange(
-                    i,
-                    event,
-                    selectedFunction ? selectedFunction.params : ""
-                  )
-                }}
-                width="40%"
-              />
-              <datalist id="allowedFunctions">
-                {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
-                  return (
-                    <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.value}/>
-                  );
-                })}
-              </datalist>
-          
-              { call.callType === "advanced" ?
-                <CallInput 
-                  type="text"
-                  onChange={(value) => onFunctionParamsChange(i, value, 0)}
-                  value={calls[i].functionParams}
-                  placeholder="functions values separated with commas"
-                  width="100%"
+            { call.callType === "simple" ?
+              
+              <div style={{display: "flex", width: call.callType === "simple" ? "60%" : "50%"}}>
+                <CallInput
+                  list="allowedFunctions"
+                  value={calls[i].functionName}
+                  onChange={(event) => {
+                    const selectedFunction = calls[i].allowedFunctions
+                      .find((allowedFunc) => allowedFunc.value == event.target.value);
+                    onFunctionSelectChange(
+                      i,
+                      event,
+                      selectedFunction ? selectedFunction.params : ""
+                    )
+                  }}
+                  width="40%"
                 />
-              :
-                <div style={{display: "flex", width: "60%", flexDirection: "column", paddingRight: "10px"}}>
+                <datalist id="allowedFunctions">
+                  {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
+                    return (
+                      <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.value}/>
+                    );
+                  })}
+                </datalist>
+                
+                <div style={{display: "flex", width: "100%", flexDirection: "column", paddingRight: "10px"}}>
+                  {calls[i].functionParams.length == 0 ?
+                    <CallInput 
+                      key={"functionParam00"}
+                      disabled
+                      type="text"
+                      placeholder="Select address to call and function"
+                      width="100%"
+                      style={{marginTop: "0px"}}
+                    /> : <div/>
+                  }
                   {calls[i].functionParams.map((funcParam, funcParamIndex) => {
                     if (funcParam == " address _avatar" || funcParam == " Avatar _avatar" ) {
                       calls[i].functionParams[funcParamIndex] = networkConfig.avatar;
@@ -654,8 +655,16 @@ const NewProposalPage = observer(() => {
                     }
                   })}
                 </div>
-              }
-            </div>
+              </div>
+            :
+              <CallInput 
+                type="text"
+                onChange={(value) => onFunctionParamsChange(i, value, 0)}
+                value={calls[i].functionParams}
+                placeholder="0x..."
+                width="100%"
+              />
+            }
             
             <CallInput
               type="text"

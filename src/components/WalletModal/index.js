@@ -291,7 +291,7 @@ const WalletModal = observer(
                         <HeaderRow>{'Wrong Network'}</HeaderRow>
                         <ContentWrapper>
                             <h5>
-                                Please connect to Rinkeby ethereum network.
+                                Please connect to a valid ethereum network.
                             </h5>
                         </ContentWrapper>
                     </UpperSection>
