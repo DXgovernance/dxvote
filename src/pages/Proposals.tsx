@@ -49,77 +49,70 @@ const ProposalsNameFilter = styled.input`
 `;
 
 const ProposalTableHeaderActions = styled.div`
-    padding: 0px 10px 10px 10px;
-    color: var(--dark-text-gray);
-    border-bottom: 1px solid var(--line-gray);
-    font-weight: 500;
-    font-size: 18px;
-    letter-spacing: 1px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    
-    span {
-      font-size: 20px;
-      padding: 10px 5px 5px 5px;
-    }
+  padding: 0px 10px 10px 10px;
+  color: var(--dark-text-gray);
+  border-bottom: 1px solid var(--line-gray);
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  
+  span {
+    font-size: 20px;
+    padding: 10px 5px 5px 5px;
+  }
 `;
 
 const ProposalTableHeaderWrapper = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    color: var(--light-text-gray);
-    padding: 20px 40px 8px 24px;
-    font-size: 14px;
-    text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: var(--light-text-gray);
+  padding: 20px 24px 8px 24px;
+  font-size: 14px;
+  text-align: center;
 `;
 
 const TableHeader = styled.div`
-    width: ${(props) => props.width || '25%'};
-    text-align: ${(props) => props.align};
+  width: ${(props) => props.width || '25%'};
+  text-align: ${(props) => props.align};
 `;
 
 const TableRowsWrapper = styled.div`
-    overflow-y: scroll;
-    height: 350px;
-    
-    h3 {
-      text-align: center;
-      margin-top: 30px;
-      color: var(--dark-text-gray);
-    }
+  overflow-y: scroll;
+  height: 350px;
+  
+  h3 {
+    text-align: center;
+    margin-top: 30px;
+    color: var(--dark-text-gray);
+  }
 `;
 
 const TableRow = styled.div`
-    font-size: 16px;
-    line-height: 18px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--line-gray);
-    padding: 16px 24px;
-    color: var(--dark-text-gray);
-    text-align: right;
-    cursor: pointer;
+  font-size: 16px;
+  line-height: 18px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line-gray);
+  padding: 16px 24px;
+  color: var(--dark-text-gray);
+  text-align: right;
+  cursor: pointer;
 `;
 
 const TableCell = styled.div`
-    a {
-        text-decoration: none;
-        width: 100%;
-
-        &:hover{
-            color: var(--turquois-text-onHover);
-        }
-    }
-    color: ${(props) => props.color};
-    width: ${(props) => props.width || '25%'};
-    text-align: ${(props) => props.align};
-    font-weight: ${(props) => props.weight};
-    white-space: ${(props) => props.wrapText ? 'nowrap' : 'inherit'};
-    overflow: ${(props) => props.wrapText ? 'hidden' : 'inherit'};
-    text-overflow: ${(props) => props.wrapText ? 'ellipsis' : 'inherit'};
+  display: flex;
+  color: ${(props) => props.color};
+  width: ${(props) => props.width || '25%'};
+  justify-content: ${(props) => props.align};
+  font-weight: ${(props) => props.weight};
+  white-space: ${(props) => props.wrapText ? 'nowrap' : 'inherit'};
+  overflow: ${(props) => props.wrapText ? 'hidden' : 'inherit'};
+  text-overflow: ${(props) => props.wrapText ? 'ellipsis' : 'inherit'};
 `;
 
 const ProposalsPage = observer(() => {
@@ -185,12 +178,12 @@ const ProposalsPage = observer(() => {
           </div>
         </ProposalTableHeaderActions>
         <ProposalTableHeaderWrapper>
-            <TableHeader width="5%" align="left"> # </TableHeader>
-            <TableHeader width="30%" align="left"> Title </TableHeader>
-            <TableHeader width="15%" align="center"> Scheme </TableHeader>
-            <TableHeader width="15%" align="center"> Status </TableHeader>
-            <TableHeader width="17.5%" align="center"> Staked </TableHeader>
-            <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
+          <TableHeader width="5%" align="left"> # </TableHeader>
+          <TableHeader width="30%" align="left"> Title </TableHeader>
+          <TableHeader width="15%" align="center"> Scheme </TableHeader>
+          <TableHeader width="15%" align="center"> Status </TableHeader>
+          <TableHeader width="17.5%" align="center"> Staked </TableHeader>
+          <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
         </ProposalTableHeaderWrapper>
         { (allProposals.length === 0) ?
           <TableRowsWrapper>
@@ -231,19 +224,21 @@ const ProposalsPage = observer(() => {
                         {daoStore.getCache().schemes[proposal.scheme].name}
                       </TableCell>
                       <TableCell width="15%" align="center">
-                        {proposal.status} <br/>
-                        {(timeToBoost != "") ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
-                        {(timeToFinish != "") ? <small>Finish {timeToFinish} </small> : <span></span>}
+                        <span style={{textAlign:"center"}}>
+                          {proposal.status} <br/>
+                          {(timeToBoost != "") ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
+                          {(timeToFinish != "") ? <small>Finish {timeToFinish} </small> : <span></span>}
+                        </span>
                       </TableCell>
-                      <TableCell width="17.5%" align="center"> 
-                        <span style={{color: "green"}}>{positiveStake.toString()} {votingMachineTokenName} </span>
-                        -
-                        <span style={{color: "red"}}> {negativeStake.toString()} {votingMachineTokenName}</span>
+                      <TableCell width="17.5%" align="space-evenly"> 
+                        <span style={{color: "green", flex:"1", textAlign:"right"}}>{positiveStake.toString()} {votingMachineTokenName} </span>
+                        <span style={{flex:"1", textAlign:"center"}}>|</span>
+                        <span style={{color: "red", flex:"1", textAlign:"left"}}> {negativeStake.toString()} {votingMachineTokenName}</span>
                       </TableCell>
-                      <TableCell width="17.5%" align="center"> 
-                        <span style={{color: "green"}}>{positiveVotesPercentage} </span>
-                        -
-                        <span style={{color: "red"}}> {negativeVotesPercentage}</span>
+                      <TableCell width="17.5%" align="space-evenly"> 
+                        <span style={{color: "green", flex:"1", textAlign:"right"}}>{positiveVotesPercentage} </span>
+                        <span style={{flex:"1", textAlign:"center"}}>|</span>
+                        <span style={{color: "red", flex:"1", textAlign:"left"}}> {negativeVotesPercentage}</span>
                       </TableCell>
                     </TableRow>
                   </Link>);

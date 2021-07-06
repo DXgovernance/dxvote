@@ -13,6 +13,8 @@ export const decodeProposalStatus = function(
   const submittedTime = proposal.submittedTime;
   const preBoostedPhaseTime = proposal.preBoostedPhaseTime;
 
+  // TODO: take in count that gen voting machine dont boost automatically
+   
   switch (proposal.stateInVotingMachine) {
     case "1":
       return { 
@@ -63,19 +65,19 @@ export const decodeProposalStatus = function(
         return { 
           status: "Execution Timeout",
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
-          finishTime: bnum(timeNow).plus(boostedVotePeriodLimit)
+          finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit)
         };
       } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
         return { 
           status: "Pending Execution", 
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
-          finishTime: bnum(timeNow).plus(boostedVotePeriodLimit).plus(boostedVotePeriodLimit)
+          finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit)
         };
       } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
         return { 
           status: "Pending Boost", 
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
-          finishTime: bnum(timeNow).plus(boostedVotePeriodLimit)
+          finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit)
         };
       } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
         return { 
@@ -87,7 +89,7 @@ export const decodeProposalStatus = function(
         return { 
           status: "Pre Boosted", 
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
-          finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit), 
+          finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit)
         };
       }
     case "5":

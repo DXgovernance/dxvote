@@ -252,11 +252,10 @@ export default class BlockchainStore {
         
         networkCache.l1BlockNumber = toBlock;
         providerStore.setCurrentBlockNumber(toBlock);
-        daoStore.updateNetworkCache(networkCache, configStore.getActiveChainName());
-        
-        this.initialLoadComplete = true;
-        
       }
+      daoStore.updateNetworkCache(networkCache, configStore.getActiveChainName());
+
+      this.initialLoadComplete = true;
       this.activeFetchLoop = false;
     }
   }
