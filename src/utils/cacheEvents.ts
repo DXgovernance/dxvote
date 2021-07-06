@@ -113,5 +113,5 @@ export const getTimestampOfEvents = async function(web3, events) {
 };
 
 export const sortEvents = function(events) {
-  return _.orderBy( events , ["l1BlockNumber", "l2BlockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc"]);
+  return _.orderBy( events , ["l1BlockNumber", "l2BlockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc","asc"]);
 };

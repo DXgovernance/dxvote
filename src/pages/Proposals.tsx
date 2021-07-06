@@ -171,9 +171,9 @@ const ProposalsPage = observer(() => {
             flexDirection: "row",
             justifyContent: "space-between"
           }}>
-            {(configStore.getActiveChainName() != 'mainnet') 
-              ? <ActiveButton route="/new">+ New Proposal</ActiveButton>
-              : <div/>
+            {((configStore.getActiveChainName() == 'mainnet') || (configStore.getActiveChainName() == 'xdai'))
+              ?<div/>
+              : <ActiveButton route="/new">+ New Proposal</ActiveButton>
             }
           </div>
         </ProposalTableHeaderActions>
@@ -231,14 +231,14 @@ const ProposalsPage = observer(() => {
                         </span>
                       </TableCell>
                       <TableCell width="17.5%" align="space-evenly"> 
-                        <span style={{color: "green", flex:"1", textAlign:"right"}}>{positiveStake.toString()} {votingMachineTokenName} </span>
+                        <span style={{color: "green", flex:"3", textAlign:"right"}}>{positiveStake.toString()} {votingMachineTokenName} </span>
                         <span style={{flex:"1", textAlign:"center"}}>|</span>
-                        <span style={{color: "red", flex:"1", textAlign:"left"}}> {negativeStake.toString()} {votingMachineTokenName}</span>
+                        <span style={{color: "red", flex:"3", textAlign:"left"}}> {negativeStake.toString()} {votingMachineTokenName}</span>
                       </TableCell>
                       <TableCell width="17.5%" align="space-evenly"> 
-                        <span style={{color: "green", flex:"1", textAlign:"right"}}>{positiveVotesPercentage} </span>
+                        <span style={{color: "green", flex:"3", textAlign:"right"}}>{positiveVotesPercentage} </span>
                         <span style={{flex:"1", textAlign:"center"}}>|</span>
-                        <span style={{color: "red", flex:"1", textAlign:"left"}}> {negativeVotesPercentage}</span>
+                        <span style={{color: "red", flex:"3", textAlign:"left"}}> {negativeVotesPercentage}</span>
                       </TableCell>
                     </TableRow>
                   </Link>);

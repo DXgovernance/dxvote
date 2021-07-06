@@ -167,7 +167,7 @@ const NewProposalPage = observer(() => {
         root: { providerStore, daoStore, configStore, daoService, ipfsService, pinataService, blockchainStore },
     } = useStores();
     
-    if (configStore.getActiveChainName() == 'mainnet')
+    if ((configStore.getActiveChainName() == 'mainnet') || (configStore.getActiveChainName() == 'xdai'))
       history.push('/')
     
     const { active, account } = providerStore.getActiveWeb3React();

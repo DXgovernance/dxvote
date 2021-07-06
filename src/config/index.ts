@@ -1,6 +1,7 @@
 const contractsFile = require('./contracts.json');
 const dataFile = require('./data.json');
 const Web3 = require('web3');
+import { ZERO_ADDRESS } from '../utils/helpers';
 
 const web3 = new Web3();
 
@@ -42,7 +43,7 @@ export const getNetworkConfig = function(network) {
       
       "schemeRegistrar": {
         "address": "0xf050F3C6772Ff35eB174A6900833243fcCD0261F",
-        "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
+        "contractToCall": networkConfig.controller,
         "newProposalTopics": [
           [web3.utils.soliditySha3("NewSchemeProposal(address,bytes32,address,address,bytes32,bytes4,string)"), avatarAddressEncoded],
           [web3.utils.soliditySha3("RemoveSchemeProposal(address,bytes32,address,address,string)"), avatarAddressEncoded]
@@ -61,7 +62,7 @@ export const getNetworkConfig = function(network) {
       
       "contributionReward": {
         "address": "0x08cC7BBa91b849156e9c44DEd51896B38400f55B",
-        "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
+        "contractToCall": networkConfig.controller,
         "newProposalTopics": [
           [web3.utils.soliditySha3("NewContributionProposal(address,bytes32,address,string,int256,uint256[5],address,address)"), avatarAddressEncoded]
         ],
@@ -147,6 +148,84 @@ export const getNetworkConfig = function(network) {
       }
     };
     
+  } else  if (network == 'xdai') {
+    networkConfig = contractsFile[network];
+    const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
+    
+    networkConfig.daostack = {
+      
+      "schemeRegistrar": {
+        "address": "0x22Ac81BE75cF76281D88A0F3A8Ae59b9abbE9da1",
+        "contractToCall": networkConfig.controller,
+        "newProposalTopics": [
+          [web3.utils.soliditySha3("NewSchemeProposal(address,bytes32,address,address,bytes32,bytes4,string)"), avatarAddressEncoded],
+          [web3.utils.soliditySha3("RemoveSchemeProposal(address,bytes32,address,address,string)"), avatarAddressEncoded]
+        ],
+        "creationLogEncoding": [[
+            { type:'address', name: "_scheme "},
+            { type:'bytes32', name: "_parametersHash"},
+            { type:'bytes4', name: "_permissions"},
+            { type:'string', name: "_descriptionHash"}
+          ],[
+            { type:'address', name: "_scheme "},
+            { type:'string', name: "_descriptionHash"}
+          ]
+        ]
+      },
+      
+      "contributionReward": {
+        "address": "0x016Bf002D361bf5563c76230D19B4DaB4d66Bda4",
+        "contractToCall": networkConfig.controller,
+        "newProposalTopics": [
+          [web3.utils.soliditySha3("NewContributionProposal(address,bytes32,address,string,int256,uint256[5],address,address)"), avatarAddressEncoded]
+        ],
+        "creationLogEncoding": [[
+          { type:'string', name: "_descriptionHash"},
+          { type:'int256', name: "_reputationChange"},
+          { type:'uint256[5]', name: "_rewards"},
+          { type:'address', name: "_externalToken"},
+          { type:'address', name: "_beneficiary"}
+        ]]
+      },
+      
+      "competitionScheme": {
+        "address": "0x73753baC5B0fBECfd741436b64163f670E0aCB30",
+        "contractToCall": ZERO_ADDRESS,
+        "newProposalTopics": [
+          [web3.utils.soliditySha3("NewContributionProposal(address,bytes32,address,string,int256,uint256[5],address,address)"), avatarAddressEncoded]
+        ],
+        "creationLogEncoding": [[
+          { type:'string', name: "_descriptionHash"},
+          { type:'int256', name: "_reputationChange"},
+          { type:'uint256[5]', name: "_rewards"},
+          { type:'address', name: "_externalToken"},
+          { type:'address', name: "_beneficiary"}
+        ]]
+      },
+      
+      "multicallSchemes": {
+        "addresses": {
+          "0xaFE59DF878E23623A7a91d16001a66A4DD87e0c0": "Multicall_1"
+        },
+        "newProposalTopics": [
+          [web3.utils.soliditySha3("NewMultiCallProposal(address,bytes32,bytes[],uint256[],string,address[])"), avatarAddressEncoded]
+        ],
+        "creationLogEncoding": [[
+          { type:'bytes[]', name: "_callsData"},
+          { type:'uint256[]', name: "_values"},
+          { type:'string', name: "_descriptionHash"},
+          { type:'address[]', name: "_contractsToCall"}
+        ]]
+      },
+      
+      "dxSchemes": {
+        "0x2b644360a24366B1ebdBf4f69563eAfA4772bCA0": "InvalidScheme",
+        "0x50d895Df2ea26b4C3aBbFa22906197458F56bAe9": "DaoDeployer",
+        "0x63F411E7cA67CB296FE2c7B875E072E82A609436": "DaoDeployer2"
+      },
+      
+    };
+    
   } else {
     networkConfig = contractsFile[network];
   };
@@ -165,9 +244,8 @@ export const getNetworkConfig = function(network) {
 
 export const getSchemeTypeData = function(network, schemeAddress) {
   const networkConfig = getNetworkConfig(network);
-
   if (networkConfig.daostack) {
-    if (networkConfig.daostack.schemeRegistrar.address == schemeAddress) {
+    if (networkConfig.daostack.schemeRegistrar && networkConfig.daostack.schemeRegistrar.address == schemeAddress) {
       return {
         type: "SchemeRegistrar",
         name: "SchemeRegistrar",
@@ -176,7 +254,7 @@ export const getSchemeTypeData = function(network, schemeAddress) {
         newProposalTopics: networkConfig.daostack.schemeRegistrar.newProposalTopics,
         creationLogEncoding: networkConfig.daostack.schemeRegistrar.creationLogEncoding
       };
-    } else if (networkConfig.daostack.contributionReward.address == schemeAddress) {
+    } else if (networkConfig.daostack.contributionReward && networkConfig.daostack.contributionReward.address == schemeAddress) {
       return {
         type: "ContributionReward",
         name: "ContributionReward",
@@ -185,16 +263,25 @@ export const getSchemeTypeData = function(network, schemeAddress) {
         newProposalTopics: networkConfig.daostack.contributionReward.newProposalTopics,
         creationLogEncoding: networkConfig.daostack.contributionReward.creationLogEncoding
       };
-    } else if (Object.keys(networkConfig.daostack.multicallSchemes.addresses).indexOf(schemeAddress) > -1) {
+    } else if (networkConfig.daostack.competitionScheme && networkConfig.daostack.competitionScheme.address == schemeAddress) {
+      return {
+        type: "CompetitionScheme",
+        name: "CompetitionScheme",
+        contractToCall: networkConfig.daostack.competitionScheme.contractToCall,
+        votingMachine: networkConfig.votingMachines.gen.address,
+        newProposalTopics: networkConfig.daostack.competitionScheme.newProposalTopics,
+        creationLogEncoding: networkConfig.daostack.competitionScheme.creationLogEncoding
+      };
+    } else if (networkConfig.daostack.multicallSchemes && Object.keys(networkConfig.daostack.multicallSchemes.addresses).indexOf(schemeAddress) > -1) {
       return {
         type: "GenericMulticall",
         votingMachine: networkConfig.votingMachines.gen.address,
-        contractToCall: "0x0000000000000000000000000000000000000000",
+        contractToCall: ZERO_ADDRESS,
         name: networkConfig.daostack.multicallSchemes.addresses[schemeAddress],
         newProposalTopics: networkConfig.daostack.multicallSchemes.newProposalTopics,
         creationLogEncoding: networkConfig.daostack.multicallSchemes.creationLogEncoding
       };
-    } else if (Object.keys(networkConfig.daostack.genericSchemes.addresses).indexOf(schemeAddress) > -1) {
+    } else if (networkConfig.daostack.genericSchemes && Object.keys(networkConfig.daostack.genericSchemes.addresses).indexOf(schemeAddress) > -1) {
       return {
         type: "GenericScheme",
         votingMachine: networkConfig.daostack.genericSchemes.addresses[schemeAddress].votingMachine,
@@ -204,16 +291,16 @@ export const getSchemeTypeData = function(network, schemeAddress) {
         voteParams: networkConfig.daostack.genericSchemes.addresses[schemeAddress].voteParams,
         creationLogEncoding: networkConfig.daostack.genericSchemes.creationLogEncoding
       };
-    } else if (Object.keys(networkConfig.daostack.dxSchemes).indexOf(schemeAddress) > -1) {
+    } else if (networkConfig.daostack.dxSchemes && Object.keys(networkConfig.daostack.dxSchemes).indexOf(schemeAddress) > -1) {
       return {
         type: "OldDxScheme",
         votingMachine: networkConfig.votingMachines.gen.address,
-        contractToCall: "0x0000000000000000000000000000000000000001",
+        contractToCall: ZERO_ADDRESS,
         name: networkConfig.daostack.dxSchemes[schemeAddress],
         newProposalTopics: [],
         creationLogEncoding: []
       };
-    } 
+    }
   }
   return {
     type: "WalletScheme",

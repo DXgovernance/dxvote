@@ -51,6 +51,8 @@ const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy, only
               return `https://rinkeby-explorer.arbitrum.io/#/address/${text}`
             else if (networkName == 'mainnet')
               return `https://etherscan.io/address/${text}`
+            else if (networkName == 'xdai')
+              return `https://blockscout.com/xdai/mainnet/address/${text}`
             else
               return `https://${networkName}.etherscan.io/address/${text}`
           default:
@@ -60,6 +62,8 @@ const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy, only
               return `https://rinkeby-explorer.arbitrum.io/#/tx/${text}`
             else if (networkName == 'mainnet')
               return `https://etherscan.io/tx/${text}`
+            else if (networkName == 'xdai')
+              return `https://blockscout.com/xdai/mainnet/tx/${text}`
             else
               return `https://${networkName}.etherscan.io/tx/${text}`
         }

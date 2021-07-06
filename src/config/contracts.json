@@ -20,6 +20,23 @@
       }
     }
   },
+  "xdai": {
+    "fromBlock": 13060713,
+    "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
+    "reputation": "0xED77eaA9590cfCE0a126Bab3D8A6ada9A393d4f6",
+    "token": "0xf255B9d83db924820ee23A7dCC30b7542e201Bb1",
+    "controller": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
+    "permissionRegistry": "0x0000000000000000000000000000000000000000",
+    "utils": {
+      "multicall": "0xDD032cd0dfCB54050E1FA30Be59056403e292700"
+    },
+    "votingMachines": {
+      "gen": {
+        "address": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF",
+        "token": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf"
+      }
+    }
+  },
   "rinkeby": {
     "fromBlock": 8569799,
     "avatar": "0xFCCfba6621f6B51206397155d4F8Ed8e20d5e63c",
