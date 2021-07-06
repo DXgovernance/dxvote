@@ -411,8 +411,8 @@ async function main() {
   await votingMachineToken.approve( 
     dxdVotingMachine.address, await votingMachineToken.balanceOf(accounts[1]) , {from: accounts[1]}
   );
-  await dxdVotingMachine.stake(testProposal3, 1, web3.utils.toWei("2").toString() , { from: accounts[1] });
-  await dxdVotingMachine.vote(testProposal3, 1, web3.utils.toWei("5"), NULL_ADDRESS, { 
+  await dxdVotingMachine.stake(testProposal3, 1, web3.utils.toWei("2.22222222").toString() , { from: accounts[1] });
+  await dxdVotingMachine.vote(testProposal3, 1, web3.utils.toWei("5.77777777"), NULL_ADDRESS, { 
     from: accounts[1]
   });
 

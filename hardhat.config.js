@@ -53,7 +53,7 @@ module.exports = {
         : `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
       accounts: { mnemonic: MNEMONIC },
       gasLimit: 9000000,
-      timeout: 10000
+      timeout: 20000
     },
     rinkeby: {
       url: ALCHEMY_API_KEY.length > 0
