@@ -42,7 +42,7 @@ export const getNetworkConfig = function(network) {
       
       "schemeRegistrar": {
         "address": "0xf050F3C6772Ff35eB174A6900833243fcCD0261F",
-        "contractToCall": "",
+        "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
         "newProposalTopics": [
           [web3.utils.soliditySha3("NewSchemeProposal(address,bytes32,address,address,bytes32,bytes4,string)"), avatarAddressEncoded],
           [web3.utils.soliditySha3("RemoveSchemeProposal(address,bytes32,address,address,string)"), avatarAddressEncoded]
@@ -61,7 +61,7 @@ export const getNetworkConfig = function(network) {
       
       "contributionReward": {
         "address": "0x08cC7BBa91b849156e9c44DEd51896B38400f55B",
-        "contractToCall": "",
+        "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
         "newProposalTopics": [
           [web3.utils.soliditySha3("NewContributionProposal(address,bytes32,address,string,int256,uint256[5],address,address)"), avatarAddressEncoded]
         ],
@@ -171,6 +171,7 @@ export const getSchemeTypeData = function(network, schemeAddress) {
       return {
         type: "SchemeRegistrar",
         name: "SchemeRegistrar",
+        contractToCall: networkConfig.daostack.schemeRegistrar.contractToCall,
         votingMachine: networkConfig.votingMachines.gen.address,
         newProposalTopics: networkConfig.daostack.schemeRegistrar.newProposalTopics,
         creationLogEncoding: networkConfig.daostack.schemeRegistrar.creationLogEncoding
@@ -179,6 +180,7 @@ export const getSchemeTypeData = function(network, schemeAddress) {
       return {
         type: "ContributionReward",
         name: "ContributionReward",
+        contractToCall: networkConfig.daostack.contributionReward.contractToCall,
         votingMachine: networkConfig.votingMachines.gen.address,
         newProposalTopics: networkConfig.daostack.contributionReward.newProposalTopics,
         creationLogEncoding: networkConfig.daostack.contributionReward.creationLogEncoding
@@ -187,6 +189,7 @@ export const getSchemeTypeData = function(network, schemeAddress) {
       return {
         type: "GenericMulticall",
         votingMachine: networkConfig.votingMachines.gen.address,
+        contractToCall: "0x0000000000000000000000000000000000000000",
         name: networkConfig.daostack.multicallSchemes.addresses[schemeAddress],
         newProposalTopics: networkConfig.daostack.multicallSchemes.newProposalTopics,
         creationLogEncoding: networkConfig.daostack.multicallSchemes.creationLogEncoding
@@ -195,6 +198,7 @@ export const getSchemeTypeData = function(network, schemeAddress) {
       return {
         type: "GenericScheme",
         votingMachine: networkConfig.daostack.genericSchemes.addresses[schemeAddress].votingMachine,
+        contractToCall: networkConfig.daostack.genericSchemes.addresses[schemeAddress].contractToCall,
         name: networkConfig.daostack.genericSchemes.addresses[schemeAddress].name,
         newProposalTopics: networkConfig.daostack.genericSchemes.newProposalTopics,
         voteParams: networkConfig.daostack.genericSchemes.addresses[schemeAddress].voteParams,
@@ -204,6 +208,7 @@ export const getSchemeTypeData = function(network, schemeAddress) {
       return {
         type: "OldDxScheme",
         votingMachine: networkConfig.votingMachines.gen.address,
+        contractToCall: "0x0000000000000000000000000000000000000001",
         name: networkConfig.daostack.dxSchemes[schemeAddress],
         newProposalTopics: [],
         creationLogEncoding: []

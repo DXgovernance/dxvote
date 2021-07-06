@@ -1,5 +1,5 @@
 import contentHash from 'content-hash';
-import { bnum, ZERO_HASH } from './helpers';
+import { bnum, ZERO_HASH, ZERO_ADDRESS } from './helpers';
 const { getEvents, getRawEvents, sortEvents } = require('./cacheEvents');
 const { decodePermission } = require('./permissions');
 const { decodeSchemeParameters } = require('./scheme');
@@ -342,7 +342,7 @@ export const updatePermissionRegistry = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
   const allContracts = await getContracts(networkName, web3);
-  if (allContracts.permissionRegistry._address != '0x0000000000000000000000000000000000000000') {
+  if (allContracts.permissionRegistry._address != ZERO_ADDRESS) {
   
     let permissionRegistryEvents = sortEvents(
       await getEvents(web3, allContracts.permissionRegistry, fromBlock, toBlock, 'allEvents')
@@ -601,7 +601,8 @@ export const updateProposals = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
   const allContracts = await getContracts(networkName, web3);
-  const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', allContracts.avatar._address)
+  const avatarAddress = allContracts.avatar._address;
+  const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', avatarAddress);
   
   // Get new proposals
   await Promise.all(Object.keys(networkCache.schemes).map(async (schemeAddress) => {
@@ -627,8 +628,6 @@ export const updateProposals = async function (
     let schemeEventsBatchsIndex = 0;
     for (var i = 0; i < schemeEvents.length; i += 50)
       schemeEventsBatchs.push(schemeEvents.slice(i, i + 50));
-    
-    console.log(schemeEventsBatchs.length);
     
     while(schemeEventsBatchsIndex < schemeEventsBatchs.length) {
       
@@ -727,8 +726,8 @@ export const updateProposals = async function (
               );
           } else {
             const transactionReceipt = await web3.eth.getTransactionReceipt(schemeEvent.transactionHash);
+            let creationLogDecoded;
             try {
-              let creationLogDecoded;
               schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
                 transactionReceipt.logs.map((log) => {
                   if (log.topics[0] == "0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c") {
@@ -740,14 +739,206 @@ export const updateProposals = async function (
                   }
                   if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
                     creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
-                    if (creationLogDecoded._descriptionHash.length > 0)
-                      schemeProposalInfo.descriptionHash = contentHash.fromIpfs(creationLogDecoded._descriptionHash)
+                    if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash != ZERO_HASH)
+                      schemeProposalInfo.descriptionHash = contentHash.fromIpfs(
+                        creationLogDecoded._descriptionHash
+                      );
                   }
                   
                 })
               })
-              } catch (error) {
+            } catch (error) {
               console.error('Error on adding content hash from tx', schemeEvent.transactionHash);
+            }
+            
+            if (schemeTypeData.type == 'SchemeRegistrar') {
+              
+              schemeProposalInfo.to = [schemeTypeData.contractToCall];
+              schemeProposalInfo.value = [0];
+              
+              if (creationLogDecoded._parametersHash) {
+                schemeProposalInfo.callData = [
+                  web3.eth.abi.encodeFunctionCall({
+                    name: 'registerScheme',
+                    type: 'function',
+                    inputs: [
+                      { type: 'address', name: '_scheme' },
+                      { type: 'bytes32', name: '_paramsHash' },
+                      { type: 'bytes4', name: '_permissions' },
+                      { type: 'address', name: '_avatar' },
+                    ]
+                  },[
+                    creationLogDecoded["_scheme "],
+                    creationLogDecoded._parametersHash,
+                    creationLogDecoded._permissions,
+                    avatarAddress
+                  ]
+                )];
+              } else {
+                schemeProposalInfo.callData = [
+                  web3.eth.abi.encodeFunctionCall({
+                    name: 'unregisterScheme',
+                    type: 'function',
+                    inputs: [
+                      { type: 'address', name: '_scheme' },
+                      { type: 'address', name: '_avatar' },
+                    ]
+                  },[
+                    creationLogDecoded["_scheme "],
+                    avatarAddress
+                  ]
+                )];
+              }
+              
+            } else if (schemeTypeData.type == "ContributionReward") {
+              
+              if (creationLogDecoded._reputationChange > 0) {
+                schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+                schemeProposalInfo.value.push(0);
+                schemeProposalInfo.callData.push(
+                  web3.eth.abi.encodeFunctionCall({
+                    name: 'mintReputation',
+                    type: 'function',
+                    inputs: [
+                      { type: 'uint256', name: '_amount' },
+                      { type: 'address', name: '_to' },
+                      { type: 'address', name: '_avatar' },
+                    ]
+                  },[
+                    creationLogDecoded._reputationChange,
+                    creationLogDecoded._beneficiary,
+                    avatarAddress
+                  ]
+                ));
+              } else if (creationLogDecoded._reputationChange < 0) {
+
+                schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+                schemeProposalInfo.value.push(0);
+                schemeProposalInfo.callData.push(
+                  web3.eth.abi.encodeFunctionCall({
+                    name: 'burnReputation',
+                    type: 'function',
+                    inputs: [
+                      { type: 'uint256', name: '_amount' },
+                      { type: 'address', name: '_from' },
+                      { type: 'address', name: '_avatar' },
+                    ]
+                  },[
+                    bnum(creationLogDecoded._reputationChange).times(-1),
+                    creationLogDecoded._beneficiary,
+                    avatarAddress
+                  ]
+                ));
+              }
+              
+              if (creationLogDecoded._rewards[0] > 0) {
+                schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+                schemeProposalInfo.value.push(0);
+                schemeProposalInfo.callData.push(
+                  web3.eth.abi.encodeFunctionCall({
+                    name: 'mintTokens',
+                    type: 'function',
+                    inputs: [
+                      { type: 'uint256', name: '_amount' },
+                      { type: 'address', name: '_beneficiary' },
+                      { type: 'address', name: '_avatar' },
+                    ]
+                  },[
+                    creationLogDecoded._rewards[0],
+                    creationLogDecoded._beneficiary,
+                    avatarAddress
+                  ]
+                ));
+              }
+              
+              if (creationLogDecoded._rewards[1] > 0) {
+                schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+                schemeProposalInfo.value.push(0);
+                schemeProposalInfo.callData.push(
+                  web3.eth.abi.encodeFunctionCall({
+                    name: 'sendEther',
+                    type: 'function',
+                    inputs: [
+                      { type: 'uint256', name: '_amountInWei' },
+                      { type: 'address', name: '_to' },
+                      { type: 'address', name: '_avatar' },
+                    ]
+                  },[
+                    creationLogDecoded._rewards[1],
+                    creationLogDecoded._beneficiary,
+                    avatarAddress
+                  ]
+                ));
+              }
+              
+              if (creationLogDecoded._rewards[2] > 0) {
+                schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+                schemeProposalInfo.value.push(0);
+                schemeProposalInfo.callData.push(
+                  web3.eth.abi.encodeFunctionCall({
+                    name: 'externalTokenTransfer',
+                    type: 'function',
+                    inputs: [
+                      { type: 'address', name: '_externalToken' },
+                      { type: 'address', name: '_to' },
+                      { type: 'uint256', name: '_value' },
+                      { type: 'address', name: '_avatar' },
+                    ]
+                  },[
+                    creationLogDecoded._externalToken,
+                    creationLogDecoded._beneficiary,
+                    creationLogDecoded._rewards[2],
+                    avatarAddress
+                  ]
+                ));
+              }
+              
+            } else if (schemeTypeData.type == "GenericScheme") {
+              
+              schemeProposalInfo.to = [allContracts.controller._address];
+              schemeProposalInfo.value = [0];
+              schemeProposalInfo.callData = [
+                web3.eth.abi.encodeFunctionCall({
+                  name: 'genericCall',
+                  type: 'function',
+                  inputs: [
+                    { type: 'address', name: '_contract' },
+                    { type: 'bytes', name: '_data' },
+                    { type: 'address', name: '_avatar' },
+                    { type: 'uint256', name: '_value' },
+                  ]
+                },[
+                  schemeTypeData.contractToCall,
+                  creationLogDecoded._data,
+                  avatarAddress,
+                  creationLogDecoded._value
+                ]
+              )];
+              
+            } else if (schemeTypeData.type == "GenericMulticall") {
+              
+              for (let callIndex = 0; callIndex < creationLogDecoded._contractsToCall.length; callIndex++) {
+                schemeProposalInfo.to.push(allContracts.controller._address);
+                schemeProposalInfo.value.push(0)
+                schemeProposalInfo.callData.push(
+                  web3.eth.abi.encodeFunctionCall({
+                    name: 'genericCall',
+                    type: 'function',
+                    inputs: [
+                      { type: 'address', name: '_contract' },
+                      { type: 'bytes', name: '_data' },
+                      { type: 'address', name: '_avatar' },
+                      { type: 'uint256', name: '_value' },
+                    ]
+                  },[
+                    creationLogDecoded._contractsToCall[callIndex],
+                    creationLogDecoded._callsData[callIndex],
+                    avatarAddress,
+                    creationLogDecoded._values[callIndex],
+                  ]
+                ));
+              }
+              
             }
           }
           

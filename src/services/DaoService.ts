@@ -2,6 +2,7 @@ import RootStore from '../stores';
 import { ContractType } from '../stores/Provider';
 import { BigNumber } from '../utils/bignumber';
 import { bnum, ERC20_TRANSFER_SIGNATURE } from '../utils/helpers';
+import { normalizeBalance } from '../utils/token';
 
 export default class DaoService {
   rootStore: RootStore;
@@ -33,10 +34,14 @@ export default class DaoService {
       return "Couldnt decode call";
     } else {
       switch (callDecoded.function.name) {
+        case "externalTokenTransfer":
+          return "Send "+callDecoded.args[2]+" tokens of contract "+callDecoded.args[0]+" to "+callDecoded.args[1];
+        case "sendEther":
+          return "Send "+normalizeBalance(callDecoded.args[0], 18)+" ETH to "+callDecoded.args[1];
         case "mintReputation":
-          return "Mint "+callDecoded.args[0]+" REP to "+callDecoded.args[1];
+          return "Mint "+normalizeBalance(callDecoded.args[0], 18)+" REP to "+callDecoded.args[1];
         case "burnReputation":
-          return "Burn "+callDecoded.args[0]+" REP of "+callDecoded.args[1];
+          return "Burn "+normalizeBalance(callDecoded.args[0], 18)+" REP of "+callDecoded.args[1];
         case "genericCall":
           const genericCallData = callDecoded.args[1];
           

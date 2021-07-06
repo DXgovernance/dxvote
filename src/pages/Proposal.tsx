@@ -218,7 +218,10 @@ const ProposalPage = observer(() => {
     
     let proposalCallTexts = new Array(proposalInfo.to.length);
     for (var p = 0; p < proposalInfo.to.length; p++) {
-      if (schemeInfo.controllerAddress === configStore.getNetworkConfig().controller) {
+      if (
+        schemeInfo.controllerAddress === configStore.getNetworkConfig().controller
+        || proposalInfo.to[p] === configStore.getNetworkConfig().controller
+      ) {
         const decodedGenericCall = daoService.decodeControllerCall(proposalInfo.callData[p]);
         proposalCallTexts[p] = decodedGenericCall;
       } else {

@@ -585,7 +585,6 @@ export default class DaoStore {
     : this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
       .votingParameters[proposal.paramsHash];
     
-    console.log(proposal,this.getCache().schemes[proposal.scheme].paramsHash)
     return decodeProposalStatus(proposal, proposalStateChangeEvents, votingMachineParams, scheme.maxSecondsForExecution);
   }
   
