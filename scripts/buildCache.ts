@@ -28,7 +28,7 @@ async function main() {
       }
     };
     
-  let networkCache = (!cacheFile[networkName])
+  let networkCache = (process.env.RESET_CACHE || (!cacheFile[networkName]))
     ? {
       l1BlockNumber: networkName != 'localhost' ? contractsConfig.fromBlock : 1,
       l2BlockNumber: 0,

@@ -1,5 +1,6 @@
+const axios = require('axios');
 import contentHash from 'content-hash';
-import { bnum, ZERO_HASH, ZERO_ADDRESS } from './helpers';
+import { bnum, ZERO_HASH, ZERO_ADDRESS, sleep } from './helpers';
 const { getEvents, getRawEvents, sortEvents } = require('./cacheEvents');
 const { decodePermission } = require('./permissions');
 const { decodeSchemeParameters } = require('./scheme');
@@ -710,7 +711,8 @@ export const updateProposals = async function (
             submittedTime: 0
           };
           let decodedProposer;
-
+          let creationLogDecoded;
+          
           if (schemeTypeData.type == 'WalletScheme') {
             schemeProposalInfo = web3.eth.abi.decodeParameters(
                 [ 
@@ -726,7 +728,6 @@ export const updateProposals = async function (
               );
           } else {
             const transactionReceipt = await web3.eth.getTransactionReceipt(schemeEvent.transactionHash);
-            let creationLogDecoded;
             try {
               schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
                 transactionReceipt.logs.map((log) => {
@@ -739,14 +740,14 @@ export const updateProposals = async function (
                   }
                   if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
                     creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
-                    if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash != ZERO_HASH)
-                      schemeProposalInfo.descriptionHash = contentHash.fromIpfs(
-                        creationLogDecoded._descriptionHash
-                      );
+                    if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash != ZERO_HASH) {
+                      schemeProposalInfo.descriptionHash = contentHash.fromIpfs(creationLogDecoded._descriptionHash);
+                    }
                   }
                   
                 })
-              })
+              });
+              
             } catch (error) {
               console.error('Error on adding content hash from tx', schemeEvent.transactionHash);
             }
@@ -1027,10 +1028,30 @@ export const updateProposals = async function (
     }
     
   }));
+  
+  // Update proposals title
+  for (let proposalIndex = 0; proposalIndex < Object.keys(networkCache.proposals).length; proposalIndex++) {
+    const proposal = networkCache.proposals[Object.keys(networkCache.proposals)[proposalIndex]];
+    if (networkCache.schemes[proposal.scheme].type != "WalletScheme" && proposal.title.length == 0)
+      try {
+        console.error('getting title from proposal', proposal.id);
+        const response = await axios.get('https://ipfs.io/ipfs/'+contentHash.decode(proposal.descriptionHash))
+        if (response && response.data && response.data.title) {
+          console.log(response.data.title)
+          networkCache.proposals[proposal.id].title = response.data.title;
+        } else {
+          console.error('Couldnt not get title from', proposal.descriptionHash);
+        }
+        await sleep(1000);
+      } catch (error) {
+        console.error('Error getting title from', proposal.descriptionHash, 'waiting 2 seconds and trying again..');
+        await sleep(2000);
+      }
+  }
 
   // Update existent active proposals
   await Promise.all(Object.keys(networkCache.proposals).map(async (proposalId) => {
-  
+    
     if (networkCache.proposals[proposalId].stateInVotingMachine > 2) {
   
       const schemeAddress = networkCache.proposals[proposalId].scheme;
