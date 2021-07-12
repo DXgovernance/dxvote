@@ -67,7 +67,7 @@ const hexToBinary = function(hexString) {
 // 3rd bit: Scheme can add/remove global constraints
 // 4th bit: Scheme can upgrade the controller
 // 5th bit: Scheme can call genericCall on behalf of the organization avatar
-const encodePermission = function(permissions) {
+export const encodePermission = function(permissions) {
   const canGenericCall = permissions.canGenericCall || false;
   const canUpgrade = permissions.canUpgrade || false;
   const canChangeConstraints = permissions.canChangeConstraints || false;
@@ -75,7 +75,7 @@ const encodePermission = function(permissions) {
   const permissionBytes = `000${canGenericCall ? 1 : 0} ${canUpgrade ? 1 : 0}${canChangeConstraints ? 1 : 0}${canRegisterSchemes ? 1 : 0}1`;
   return "0x000000" + binaryToHex(permissionBytes);
 }
-const decodePermission = function(permission) {
+export const decodePermission = function(permission) {
   permission = hexToBinary(permission);
   return {
     canGenericCall: permission.length > 3 && permission[ 4 ] == "1",
@@ -84,5 +84,3 @@ const decodePermission = function(permission) {
     canRegisterSchemes: permission.length > 3 && permission[ 7 ] == "1"
   };
 }
-
-module.exports = { encodePermission, decodePermission }
