@@ -44,7 +44,7 @@ export const updateNetworkCache = async function (
   });
   
   await Promise.all(Object.keys(networkContracts.votingMachines).map(async (votingMachineAddress) => {
-
+  
     if (!networkCache.votingMachines[votingMachineAddress])
       networkCache.votingMachines[votingMachineAddress] = {
         name: networkContracts.votingMachines[votingMachineAddress].name,
@@ -72,7 +72,7 @@ export const updateNetworkCache = async function (
       toBlock,
       web3
     );
-
+  
   }));
   
   networkCache = await updateSchemes(networkCache, networkName, fromBlock, toBlock, web3);
@@ -428,7 +428,7 @@ export const updateSchemes = async function (
       const paramsHash = (schemeTypeData.type == 'GenericScheme')
         ? schemeTypeData.voteParams
         : callsResponse1.decodedReturnData[2];
-      
+
       const controllerAddress = (schemeTypeData.type == 'WalletScheme')
         ? callsResponse1.decodedReturnData[3]
         : allContracts.avatar._address;

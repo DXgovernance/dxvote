@@ -94,7 +94,6 @@ const SchemesInformation = observer(() => {
         {schemes.map((scheme, i) => {
           const schemeProposals = daoStore.getSchemeProposals(scheme.name);
           const votingMachineParameters = daoStore.getVotingParametersOfScheme(scheme.address);
-
           return (
             <div key={"scheme"+i}>
               <TableRow>
@@ -167,7 +166,7 @@ const SchemesInformation = observer(() => {
                   {scheme.callPermissions.map((callPermission, i) => {
                     if (callPermission.fromTime > 0)
                       return (
-                        <small>
+                        <small key={`callPermission${i}`}>
                           Address: {callPermission.to == "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa" ? "Any Address" : callPermission.to}<br/>
                           Function: {callPermission.functionSignature == "0xaaaaaaaa" ? "Any" : callPermission.functionSignature}<br/>
                           Value: {callPermission.value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ? "Any": callPermission.value}<br/>

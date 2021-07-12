@@ -34,6 +34,10 @@ export default class DaoService {
       return "Couldnt decode call";
     } else {
       switch (callDecoded.function.name) {
+        case "registerScheme":
+          return "Register scheme "+callDecoded.args[0]+" with params hash "+callDecoded.args[1]+" and permissions "+callDecoded.args[2];
+        case "unregisterScheme":
+          return "Unregister scheme "+callDecoded.args[0];
         case "externalTokenTransfer":
           return "Send "+callDecoded.args[2]+" tokens of contract "+callDecoded.args[0]+" to "+callDecoded.args[1];
         case "sendEther":
