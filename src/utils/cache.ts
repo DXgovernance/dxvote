@@ -406,7 +406,7 @@ export const updateSchemes = async function (
       const schemeTypeData = getSchemeTypeData(networkName, schemeAddress);
       const votingMachine = allContracts.votingMachines[schemeTypeData.votingMachine].contract;
       
-      console.debug('Adding scheme',schemeTypeData.name);
+      console.debug('Register Scheme event for ', schemeAddress, schemeTypeData.name);
       
       let callsToExecute = [
         [allContracts.multicall, "getEthBalance", [schemeAddress]],
@@ -451,12 +451,16 @@ export const updateSchemes = async function (
         ]);
       }
       
-      if (paramsHash != ZERO_HASH && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash])
+      if (
+        paramsHash != ZERO_HASH
+        && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash]
+      ) {
         callsToExecute.push([
           votingMachine,
           "parameters",
           [paramsHash]
         ]);
+      }
 
       const callsResponse2 = await executeMulticall(web3, allContracts.multicall, callsToExecute);
       
@@ -464,7 +468,10 @@ export const updateSchemes = async function (
         ? web3.eth.abi.decodeParameters(['uint256'], callsResponse2.returnData[0])['0']
         : 0;
       
-      if (paramsHash != ZERO_HASH && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash]) {
+      if (
+        paramsHash != ZERO_HASH
+        && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash]
+      ) {
         try {
           networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash] =
           decodeSchemeParameters(web3.eth.abi.decodeParameters(
@@ -523,7 +530,7 @@ export const updateSchemes = async function (
       const schemeTypeData = getSchemeTypeData(networkName, schemeAddress);
       const votingMachine = allContracts.votingMachines[schemeTypeData.votingMachine].contract;
 
-      console.debug('Removing scheme',schemeTypeData.name);
+      console.debug('Unregister scheme event', schemeAddress, schemeTypeData.name);
       let callsToExecute = [
         [allContracts.multicall, "getEthBalance", [schemeAddress]],
         [
@@ -1023,7 +1030,7 @@ export const updateProposals = async function (
         schemeEventsBatchsIndex ++;
       } catch (error) {
         console.error('Error:',error.message);
-        console.log('Trying again getting proposal info of schemeEventsBatchs index',schemeEventsBatchsIndex);
+        console.debug('Trying again getting proposal info of schemeEventsBatchs index',schemeEventsBatchsIndex);
       }
     }
     
@@ -1037,7 +1044,6 @@ export const updateProposals = async function (
         console.error('getting title from proposal', proposal.id);
         const response = await axios.get('https://ipfs.io/ipfs/'+contentHash.decode(proposal.descriptionHash))
         if (response && response.data && response.data.title) {
-          console.log(response.data.title)
           networkCache.proposals[proposal.id].title = response.data.title;
         } else {
           console.error('Couldnt not get title from', proposal.descriptionHash);

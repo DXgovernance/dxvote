@@ -11,12 +11,12 @@ const binaryToHex = function(binaryString) {
     "0111": "7",
     "1000": "8",
     "1001": "9",
-    "1010": "a",
-    "1011": "b",
-    "1100": "c",
-    "1101": "d",
-    "1110": "e",
-    "1111": "f"
+    "1010": "A",
+    "1011": "B",
+    "1100": "C",
+    "1101": "D",
+    "1110": "E",
+    "1111": "F"
   };
   var ret = "";
   binaryString = binaryString.split(" ");
@@ -55,7 +55,7 @@ const hexToBinary = function(hexString) {
 
   var ret = "";
   for (var i = 0, len = hexString.length; i < len; i++) {
-    if (hexString[ i ] !== "0")
+    if (hexString[ i ] != "0")
       ret += lookup[ hexString[ i ] ];
   }
   return ret;
@@ -67,7 +67,7 @@ const hexToBinary = function(hexString) {
 // 3rd bit: Scheme can add/remove global constraints
 // 4th bit: Scheme can upgrade the controller
 // 5th bit: Scheme can call genericCall on behalf of the organization avatar
-export const encodePermission = function(permissions) {
+const encodePermission = function(permissions) {
   const canGenericCall = permissions.canGenericCall || false;
   const canUpgrade = permissions.canUpgrade || false;
   const canChangeConstraints = permissions.canChangeConstraints || false;
@@ -75,12 +75,14 @@ export const encodePermission = function(permissions) {
   const permissionBytes = `000${canGenericCall ? 1 : 0} ${canUpgrade ? 1 : 0}${canChangeConstraints ? 1 : 0}${canRegisterSchemes ? 1 : 0}1`;
   return "0x000000" + binaryToHex(permissionBytes);
 }
-export const decodePermission = function(permission) {
+const decodePermission = function(permission) {
   permission = hexToBinary(permission);
   return {
-    canGenericCall: permission[ 3 ] === "1",
-    canUpgrade: permission[ 4 ] === "1",
-    canChangeConstraints: permission[ 5 ] === "1",
-    canRegisterSchemes: permission[ 6 ] === "1"
+    canGenericCall: permission.length > 3 && permission[ 4 ] == "1",
+    canUpgrade: permission.length > 3 && permission[ 5 ] == "1",
+    canChangeConstraints: permission.length > 3 && permission[ 6 ] == "1",
+    canRegisterSchemes: permission.length > 3 && permission[ 7 ] == "1"
   };
 }
+
+module.exports = { encodePermission, decodePermission }

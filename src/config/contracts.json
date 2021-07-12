@@ -39,25 +39,25 @@
   },
   "rinkeby": {
     "fromBlock": 8569799,
-    "avatar": "0xFCCfba6621f6B51206397155d4F8Ed8e20d5e63c",
-    "reputation": "0x7eEfEEd345dA3a5bE60E8066Ed69C0D97a702cbD",
+    "avatar": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+    "reputation": "0xB936C38441233CeC0722636e6D3091cE293A8481",
     "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
-    "controller": "0x86ae48eEa39dddDEdB494f6e7c724a6A642C38a0",
-    "permissionRegistry": "0x2A0dc6EdA0A85F4e91b751C87390ED1F872E2654",
+    "controller": "0x3E8D2B27a5aB8e0afa2c42991f7B13da45D5491d",
+    "permissionRegistry": "0x5a9C2FAF55D368498810e4Fc7db54f1c783DA24E",
     "schemes": {
-      "RegistrarWalletScheme": "0xed2b33783536Bf12F7865d74Ea907275a79cE05C",
-      "MasterWalletScheme": "0x4b33AE8f6645A44e492F31b96d438f2E0c40817A",
-      "QuickWalletScheme": "0xC9d721c7a46d29ACc10316958054EED2b4239B08"
+      "RegistrarWalletScheme": "0x8d188F9dC62Ba5858b185Ac2110fC6554aA6D32d",
+      "MasterWalletScheme": "0x1AB34Db58B20008aA61E66115eFb8E010A9e3956",
+      "QuickWalletScheme": "0x6CD4EAE24EbFBa832b44b66eDD209ED8f7Ea8EE4"
     },
     "utils": {
-      "multicall": "0xD6d24BD58253Dc2a5e0Ff1509Fd57Cc7d96ab68f",
-      "dxDaoNFT": "0x413E8683526a758651585ceCc6E39779d3bd4EDb",
-      "vestingFactory": "0xb3bca1EBaD88d5211C35C3bd41F2328ae8f57d9D"
+      "multicall": "0x81cB87FE0d97467eA894f7f5DdDC87DDc92359ac",
+      "dxDaoNFT": "0x1A445901Ab9f3fCBAA974Dc37E7b02CD23178Cdc",
+      "dxdVestingFactory": "0x637ED52F7f63aadf6402e1154f9651CdbB4817D5"
     },
     "votingMachines": {
       "dxd": {
-        "address": "0x3eeAac2ba5FC3D21A1F83aC1266c2FD2D5fAB7ec",
-        "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d"
+        "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
+        "address": "0x0E8F08DaC2eEfF205d6a76bB2380912229409538"
       }
     }
   },
