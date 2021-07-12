@@ -1,13 +1,19 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useStores } from '../contexts/storesContext';
 import { observer } from 'mobx-react';
 import Box from '../components/common/Box';
 import { useLocation } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
+import { ZERO_ADDRESS } from '../utils/helpers';
 
 const FAQPage = observer(() => {
     
   const questionId = useLocation().search.indexOf("=") > -1 ? useLocation().search.split("=")[1] : 0;
+  
+  const {
+      root: { configStore, daoStore },
+  } = useStores();
   
   const FAQBox = styled(Box)`
     padding: 20px 30px;
@@ -28,12 +34,28 @@ const FAQPage = observer(() => {
   useEffect(() => {
     if (questionId > 0)
       document.querySelectorAll("#FAQBody div h1")[questionId].scrollIntoView();
-   }, []);
+  }, []);
    
-   
+  const networkConfig = configStore.getNetworkConfig();
+  const schemes = daoStore.getCache().schemes;
+  let schemeAddresses = "";
+  for (let i = 0; i < Object.keys(schemes).length; i++) {
+    schemeAddresses += "   - "+schemes[Object.keys(schemes)[i]].name+": "+schemes[Object.keys(schemes)[i]].address+"\n";
+  }
+
    const FAQBody = 
 `# Where are the dao funds held?
 Most of the ETH and tokens are held in the DXdao avatar address, this is the safest place for the funds to be, the access to this funds is usually slow and it take day for a proposal to move funds from this address. The Wallet Schemes can also hold funds too, but only the ones that dont make calls from the avatar.
+
+## DXdao Addresses
+
+- Avatar: ${networkConfig.avatar}
+- Controller: ${networkConfig.controller}
+- Reputation: ${networkConfig.reputation}
+- Permission Registry: ${networkConfig.permissionRegistry}
+- Reputation: ${networkConfig.reputation}
+- Schemes:
+${schemeAddresses}
 
 # What is a Wallet Scheme?
 A wallet scheme is a smart contract that manage the access to DXdao funds, in order to make transfers or calls from the DXdao avatar or the scheme itself the scheme needs to execute a proposal. The proposals are executed after it reaches a certain amount of votes or stakes over time, the amount of votes, staked and time that has to passed depends on the scheme configuration. An scheme who will have access to the DXdao avatar funds will usually take more votes, stakes and time than a scheme who make calls form itself, this means that funds can be allocated in the schemes as well, but this schemes will have only access to the funds held by themselves.
