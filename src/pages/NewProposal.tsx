@@ -390,23 +390,23 @@ const NewProposalPage = observer(() => {
         if (toAddress == networkConfig.controller) {
           calls[callIndex].allowedFunctions.push({
             value: "mintReputation(uint256,address,address)",
-            params: "uint256 _amount, address _to, address _avatar"
+            params: "uint256 _amount,address _to,address _avatar"
           });
           calls[callIndex].allowedFunctions.push({
             value: "burnReputation(uint256,address,address)",
-            params: "uint256 _amount, address _from, address _avatar"
+            params: "uint256 _amount,address _from,address _avatar"
           });
           calls[callIndex].allowedFunctions.push({
             value: "registerScheme(address,bytes32,bytes4,address)",
-            params: "address _scheme, bytes32 _paramsHash, bytes4 _permissions, address _avatar"
+            params: "address _scheme,bytes32 _paramsHash,bytes4 _permissions,address _avatar"
           });
           calls[callIndex].allowedFunctions.push({
             value: "unregisterScheme(address,address)",
-            params: "address _scheme, address _avatar"
+            params: "address _scheme,address _avatar"
           });
           calls[callIndex].allowedFunctions.push({
             value: "genericCall(address,bytes,addres,uint256)",
-            params: "address _contract, bytes calldata _data, Avatar _avatar, uint256 _value"
+            params: "address _contract,bytes calldata _data,Avatar _avatar,uint256 _value"
           });
         } else if (toAddress == networkConfig.permissionRegistry) {
           if (schemeToUse.controllerAddress == networkConfig.controller) {
@@ -416,18 +416,18 @@ const NewProposalPage = observer(() => {
             });
             calls[callIndex].allowedFunctions.push({
               value: "setAdminPermission(address,address,address,bytes4,uint256,bool)",
-              params: "address asset, address from, address to, bytes4 functionSignature, uint256 valueAllowed, bool allowed"
+              params: "address asset, address from,address to,bytes4 functionSignature,uint256 valueAllowed,bool allowed"
             });
           } else {
             calls[callIndex].allowedFunctions.push({
               value: "setPermission(address,address,bytes4,uint256,bool)",
-              params: "address asset, address to, bytes4 functionSignature, uint256 valueAllowed, bool allowed"
+              params: "address asset,address to,bytes4 functionSignature,uint256 valueAllowed,bool allowed"
             });
           }
         } else if ((toAddress == networkConfig.votingMachineToken) || networkConfig.tokens[toAddress]) {
-          calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to ,uint256 value` });
+          calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to,uint256 value` });
           calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", params: `address to,uint256 value` });
-          calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from ,address to,uint256 value` });
+          calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from,address to,uint256 value` });
         } else {
           schemeToUse.callPermissions.map((callPermission) => {
             if (callPermission.fromTime > 0)
@@ -437,9 +437,9 @@ const NewProposalPage = observer(() => {
                 else
                   calls[callIndex].allowedFunctions.push({ value: callPermission.functionSignature, params: callPermission.functionSignature });
               } else if (callPermission.asset == toAddress) {
-                calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to ,uint256 value` });
+                calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to,uint256 value` });
                 calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", params: `address to,uint256 value` });
-                calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from ,address to,uint256 value` });
+                calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from,address to,uint256 value` });
               }
           });
         }
