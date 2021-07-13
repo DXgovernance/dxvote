@@ -13,6 +13,7 @@ import EventsService from '../services/EventsService';
 import IPFSService from '../services/IPFSService';
 import PinataService from '../services/PinataService';
 import EtherscanService from '../services/EtherscanService';
+import CoingeckoService from '../services/CoingeckoService';
 
 export default class RootStore {
   providerStore: ProviderStore;
@@ -30,6 +31,7 @@ export default class RootStore {
   ipfsService: IPFSService;
   pinataService: PinataService;
   etherscanService: EtherscanService;
+  coingeckoService: CoingeckoService;
 
   constructor() {
     this.abiService = new ABIService(this);
@@ -39,6 +41,7 @@ export default class RootStore {
     this.ipfsService = new IPFSService(this);
     this.pinataService = new PinataService(this);
     this.etherscanService = new EtherscanService(this);
+    this.coingeckoService = new CoingeckoService(this);
     this.providerStore = new ProviderStore(this);
     this.transactionStore = new TransactionStore(this);
     this.modalStore = new ModalStore(this);

@@ -4,7 +4,9 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
-import { bnum } from '../utils/helpers';
+import { bnum, parseCamelCase, ZERO_ADDRESS } from '../utils/helpers';
+import { formatBalance } from '../utils/token';
+import { formatCurrency } from '../utils/number';
 
 const FinanceInfoWrapper = styled.div`
     background: white;
@@ -13,8 +15,9 @@ const FinanceInfoWrapper = styled.div`
     border-radius: 4px;
     display: flex;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
     color: var(--dark-text-gray);
+    flex-wrap: wrap;
 `;
 
 const FinanceTableHeaderWrapper = styled.div`
@@ -64,75 +67,124 @@ const TableCell = styled.div`
 
 const FinanceInformation = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore },
+        root: { providerStore, daoStore, configStore, coingeckoService },
     } = useStores();
     const { active: providerActive, library } = providerStore.getActiveWeb3React();
 
     const daoInfo = daoStore.getDaoInfo();
     const networkConfig = configStore.getNetworkConfig();
-    let assets = [{
-      address: "0x0000000000000000000000000000000000000000",
-      name: "ETH",
-      amount: bnum(daoInfo.ethBalance).div(10**18).toFormat()
-    }];
+    const schemes = daoStore.getAllSchemes();
+    const prices = coingeckoService.getPrices();
+
+    let assets = {
+      total: [{
+        address: ZERO_ADDRESS,
+        name: "ETH",
+        amount: bnum(daoInfo.ethBalance),
+        decimals: 18
+      }],
+      avatar: [{
+        address: ZERO_ADDRESS,
+        name: "ETH",
+        amount: bnum(daoInfo.ethBalance),
+        decimals: 18
+      }]
+    };
     Object.keys(daoInfo.tokenBalances).map((tokenAddress) => {
-      assets.push({
+      assets.avatar.push({
         address: tokenAddress,
         name: networkConfig.tokens[tokenAddress].name,
-        amount: bnum(daoInfo.tokenBalances[tokenAddress])
-          .div(10**networkConfig.tokens[tokenAddress].decimals).toFormat()
+        amount: bnum(daoInfo.tokenBalances[tokenAddress]),
+        decimals: networkConfig.tokens[tokenAddress].decimals
       })
-    })
+      assets.total.push({
+        address: tokenAddress,
+        name: networkConfig.tokens[tokenAddress].name,
+        amount: bnum(daoInfo.tokenBalances[tokenAddress]),
+        decimals: networkConfig.tokens[tokenAddress].decimals
+      })
+    });
+    
+    schemes.map((scheme) => {
+      if (scheme.controllerAddress != ZERO_ADDRESS)
+        return;
+        
+      const tokenBalances = scheme.tokenBalances;
+      if (!assets[scheme.name])
+        assets[scheme.name] = [{
+          address: ZERO_ADDRESS,
+          name: "ETH",
+          amount: bnum(scheme.ethBalance),
+          decimals: 18
+        }]
+      
+      Object.keys(tokenBalances).map((tokenAddress) => {
+        assets[scheme.name].push({
+          address: tokenAddress,
+          name: networkConfig.tokens[tokenAddress].name,
+          amount: bnum(tokenBalances[tokenAddress]),
+          decimals: networkConfig.tokens[tokenAddress].decimals
+        })
+        const indexOfAssetInTotal = assets.total.findIndex((asset) => asset.address == tokenAddress);
+        if (indexOfAssetInTotal > -1) {
+          assets.total[indexOfAssetInTotal].amount = assets.total[indexOfAssetInTotal].amount.plus(
+            bnum(tokenBalances[tokenAddress])
+          );
+        } else {
+          assets.total.push({
+            address: tokenAddress,
+            name: networkConfig.tokens[tokenAddress].name,
+            amount: bnum(tokenBalances[tokenAddress]),
+            decimals: networkConfig.tokens[tokenAddress].decimals,
+          })
+        }
+        
+      });
+    });
     
     return (
       <FinanceInfoWrapper>
-        <h2 style={{textAlign: "center"}}>Total</h2>
-        <FinanceTableHeaderWrapper>
-          <TableHeader width="50%" align="center"> Asset </TableHeader>
-          <TableHeader width="50%" align="center"> Balance </TableHeader>
-        </FinanceTableHeaderWrapper>
-        <TableRowsWrapper>
-        {assets.map((asset, i) => {
-          if (asset) {
-            return (
-              <TableRow key={`asset${i}`}>
-                <TableCell width="50%" align="center" weight='500'>
-                  {asset.name} <BlockchainLink size="long" text={daoInfo.address} onlyIcon/>
-                </TableCell>
-                <TableCell width="50%" align="center"> 
-                  {asset.amount}
-                </TableCell>
-              </TableRow>);
-            } else {
-              return <div/>
-            }
-          }
-        )}
-        </TableRowsWrapper>
-        
-        <h2 style={{textAlign: "center"}}>Avatar</h2>
-        <FinanceTableHeaderWrapper>
-          <TableHeader width="50%" align="center"> Asset </TableHeader>
-          <TableHeader width="50%" align="center"> Balance </TableHeader>
-        </FinanceTableHeaderWrapper>
-        <TableRowsWrapper>
-        {assets.map((asset, i) => {
-          if (asset) {
-            return (
-              <TableRow key={`asset${i}`}>
-                <TableCell width="50%" align="center" weight='500'>
-                  {asset.name} <BlockchainLink size="long" text={daoInfo.address} onlyIcon/>
-                </TableCell>
-                <TableCell width="50%" align="center"> 
-                  {asset.amount}
-                </TableCell>
-              </TableRow>);
-            } else {
-              return <div/>
-            }
-          }
-        )}
-        </TableRowsWrapper>
+        { Object.keys(assets).map((assetHolder, i) => {
+          const assetsOfHolder = assets[assetHolder];
+          return (
+            <div style={{width: i > 0 ? "50%" : "100%"}}>
+              <h2 style={{textAlign: "center"}}>{parseCamelCase(assetHolder)}</h2>
+              <FinanceTableHeaderWrapper>
+              <TableHeader width="33%" align="center"> Asset </TableHeader>
+              <TableHeader width="34%" align="center"> Balance </TableHeader>
+              <TableHeader width="33%" align="center"> USD Value </TableHeader>
+
+              </FinanceTableHeaderWrapper>
+              <TableRowsWrapper>
+              {assetsOfHolder.map((asset, i) => {
+                if (asset && formatBalance(asset.amount, asset.decimals, 2) > 0) {
+                  return (
+                    <TableRow key={`asset${i}`}>
+                      <TableCell width="33%" align="center" weight='500'>
+                        {asset.name} <BlockchainLink size="long" type="address" text={asset.address} onlyIcon/>
+                      </TableCell>
+                      <TableCell width="34%" align="center"> 
+                        {formatBalance(asset.amount, asset.decimals, 2).toString()}
+                      </TableCell>
+                      <TableCell width="33%" align="center"> 
+                        {(prices[asset.address] && prices[asset.address].usd) ?
+                          formatCurrency(
+                            bnum(
+                              Number(formatBalance(asset.amount, asset.decimals, 2)) * prices[asset.address].usd
+                            )
+                          )
+                          : "-"
+                        }
+                      </TableCell>
+                    </TableRow>);
+                } else {
+                  return <div/>
+                }
+              })}
+              </TableRowsWrapper>
+            </div>
+          );
+        })}
       </FinanceInfoWrapper>
     );
 });

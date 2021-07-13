@@ -42,10 +42,9 @@ export const normalizePriceValues = (
 
 export const formatCurrency = (balance: BigNumber): string => {
     const fmt = {
-        decimalSeparator: '.',
-        groupSeparator: ',',
-        groupSize: 3,
-        secondaryGroupSize: 2,
+      groupSize: 3,
+      groupSeparator: ' ',
+      decimalSeparator: '.'
     };
     return balance.toFormat(2, BigNumber.ROUND_DOWN, fmt);
 };

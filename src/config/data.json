@@ -11,13 +11,41 @@
       }
     }
   },
+  "xdai": {
+    "tokens": {
+      "0xb90d6bec20993be5d72a5ab353343f7a0281f158": {
+        "name": "DXD",
+        "decimals": 18
+      },
+      "0x543ff227f64aa17ea132bf9886cab5db55dcaddf": {
+        "name": "xGEN",
+        "decimals": 18
+      },
+      "0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1": {
+        "name": "WETH",
+        "decimals": 18
+      },
+      "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83": {
+        "name": "USDC",
+        "decimals": 6
+      },
+      "0xe91d153e0b41518a2ce8dd3d7944fa863463a97d": {
+        "name": "XXDAI",
+        "decimals": 18
+      }
+    }
+  },
   "mainnet": {
     "tokens": {
-      "0x6b175474e89094c44da98b954eedeac495271d0f": {
+      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": {
+        "name": "WETH",
+        "decimals": 18
+      },
+      "0x6B175474E89094C44Da98b954EedeAC495271d0F": {
         "name": "DAI",
         "decimals": 18
       },
-      "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": {
+      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": {
         "name": "USDC",
         "decimals": 6
       },

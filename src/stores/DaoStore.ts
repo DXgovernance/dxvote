@@ -134,13 +134,7 @@ export default class DaoStore {
     return schemeInfo;
   }
   
-  getSchemeProposals(_schemeName: string): Proposal[] {
-    let schemeAddress;
-    for (const _schemeAddress in this.getCache().schemes) {
-      if (this.getCache().schemes[_schemeAddress].name === _schemeName) {
-        schemeAddress = _schemeAddress;
-      }
-    }
+  getSchemeProposals(schemeAddress: string): Proposal[] {
     let proposals = [];
     for (const proposalId in this.getCache().proposals) {
       if (this.getCache().proposals[proposalId].scheme === schemeAddress) {

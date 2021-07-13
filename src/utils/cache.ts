@@ -33,7 +33,7 @@ async function executeMulticall(web3, multicall, calls) {
 export const updateNetworkCache = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
-  console.debug('[Cache Update]', networkCache, fromBlock, toBlock);
+  console.debug('[Cache Update]', fromBlock, toBlock);
   const networkContracts = await getContracts(networkName, web3);
   
   (await Promise.all([
@@ -1039,9 +1039,14 @@ export const updateProposals = async function (
   // Update proposals title
   for (let proposalIndex = 0; proposalIndex < Object.keys(networkCache.proposals).length; proposalIndex++) {
     const proposal = networkCache.proposals[Object.keys(networkCache.proposals)[proposalIndex]];
-    if (networkCache.schemes[proposal.scheme].type != "WalletScheme" && proposal.title.length == 0)
+    if (
+      networkCache.schemes[proposal.scheme].type != "WalletScheme"
+      && proposal.descriptionHash && proposal.descriptionHash.length > 0
+      && proposal.title.length == 0
+      // && proposal.creationEvent.l1BlockNumber < Number(toBlock) - 100000
+    )
       try {
-        console.error('getting title from proposal', proposal.id);
+        console.debug('getting title from proposal', proposal.id, contentHash.decode(proposal.descriptionHash));
         const response = await axios.get('https://ipfs.io/ipfs/'+contentHash.decode(proposal.descriptionHash))
         if (response && response.data && response.data.title) {
           networkCache.proposals[proposal.id].title = response.data.title;

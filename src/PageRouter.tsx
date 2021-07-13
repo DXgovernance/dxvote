@@ -31,7 +31,7 @@ const LoadingBox = styled(Box)`
 const PageRouter = observer(({ children }) => {
     
     const {
-        root: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService },
+        root: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService, coingeckoService },
     } = useStores();
     let needsLoading = true;
     
@@ -42,6 +42,7 @@ const PageRouter = observer(({ children }) => {
     ipfsService.start();
     etherscanService.isAuthenticated();
     pinataService.isAuthenticated();
+    coingeckoService.loadPrices();
 
     const { active: providerActive } = providerStore.getActiveWeb3React();
     if (!providerActive)
