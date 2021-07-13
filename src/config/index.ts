@@ -157,6 +157,7 @@ export const getNetworkConfig = function(network) {
       "schemeRegistrar": {
         "address": "0x22Ac81BE75cF76281D88A0F3A8Ae59b9abbE9da1",
         "contractToCall": networkConfig.controller,
+        "voteParams": "0x6dad5170747d9874fff73b4d9467c343a93f196d130e1f4fec0f8d4929c6d0a9",
         "newProposalTopics": [
           [web3.utils.soliditySha3("NewSchemeProposal(address,bytes32,address,address,bytes32,bytes4,string)"), avatarAddressEncoded],
           [web3.utils.soliditySha3("RemoveSchemeProposal(address,bytes32,address,address,string)"), avatarAddressEncoded]
@@ -176,6 +177,7 @@ export const getNetworkConfig = function(network) {
       "contributionReward": {
         "address": "0x016Bf002D361bf5563c76230D19B4DaB4d66Bda4",
         "contractToCall": networkConfig.controller,
+        "voteParams": "0xb079b7b09001a6bfc99d28b6891711f6fb12182091acbede2a207036be380422",
         "newProposalTopics": [
           [web3.utils.soliditySha3("NewContributionProposal(address,bytes32,address,string,int256,uint256[5],address,address)"), avatarAddressEncoded]
         ],

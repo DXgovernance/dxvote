@@ -13,24 +13,24 @@
   },
   "xdai": {
     "tokens": {
-      "0xb90d6bec20993be5d72a5ab353343f7a0281f158": {
+      "0xb90D6bec20993Be5d72A5ab353343f7a0281f158": {
         "name": "DXD",
         "decimals": 18
       },
-      "0x543ff227f64aa17ea132bf9886cab5db55dcaddf": {
+      "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf": {
         "name": "xGEN",
         "decimals": 18
       },
-      "0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1": {
+      "0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1": {
         "name": "WETH",
         "decimals": 18
       },
-      "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83": {
+      "0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83": {
         "name": "USDC",
         "decimals": 6
       },
-      "0xe91d153e0b41518a2ce8dd3d7944fa863463a97d": {
-        "name": "XXDAI",
+      "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d": {
+        "name": "xXDAI",
         "decimals": 18
       }
     }

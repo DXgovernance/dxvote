@@ -105,7 +105,8 @@ export const updateDaoInfo = async function (
   networkCache.daoInfo.repEvents = !networkCache.daoInfo.repEvents ? [] : networkCache.daoInfo.repEvents;
   networkCache.daoInfo.totalRep = bnum(callsResponse.decodedReturnData[0]);
   networkCache.daoInfo.ethBalance = bnum(callsResponse.decodedReturnData[1]);
-  networkCache.daoInfo.tokenBalances = {};
+  if (!networkCache.daoInfo.tokenBalances)
+    networkCache.daoInfo.tokenBalances = {};
   return networkCache;
 }
 
