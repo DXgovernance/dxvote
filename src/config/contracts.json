@@ -62,26 +62,26 @@
     }
   },
   "arbitrumTestnet": {
-    "fromBlock": 87284,
-    "avatar": "0xd732E905D4b6FC97916B525B1c926bee1ee43B04",
-    "reputation": "0x22D0e7A96CB236B5fAB869a1EC65979a5dC7Ff10",
+    "fromBlock": 794551,
+    "avatar": "0xbF076432A92EDB36994F545aCEBF71E3E715c7fc",
+    "reputation": "0xcdB833CFE05fb34CBA37825276CC60B3509Bb463",
     "token": "0x5d47100B0854525685907D5D773b92c22c0c745e",
-    "controller": "0x232Af049e34770DAd94f452cCDC6FEb0EcD42623",
-    "permissionRegistry": "0x3ee53e199Ac93893436C3Cf89f4B295cf78ae2c7",
+    "controller": "0xb1934Ed1A6663b31C1770aA12E7c150c1fb5b801",
+    "permissionRegistry": "0xbc1D90e0411e9d64c5305Ffd77804622C64F22E4",
     "schemes": {
-      "RegistrarWalletScheme": "0xACDa60EAcD04F8930A174b90801798B8b41C2446",
-      "MasterWalletScheme": "0x77a449DD6066302f6f783D9c36D87a46c2cAA04C",
-      "QuickWalletScheme": "0x90133e7FE0379702f4C7b4d4a19eb8eC79560e48"
+      "RegistrarWalletScheme": "0x2FB5A316bfF7caA323F7EE97Ac3C8c2F7212d783",
+      "MasterWalletScheme": "0xf7f925efdB86661EaF89c270909c3428153F0E7C",
+      "QuickWalletScheme": "0x8e501257e4BACe5dF343c5895edBca643E9D6E10"
     },
     "utils": {
-      "multicall": "0x06d73088B5d33DE21507aAD4419beA66B24F6059",
-      "dxDaoNFT": "0x3c16Abf147AbC53c829C29526FF257Eb407b1CF8",
-      "vestingFactory": "0xDcB2193aadCDfB9737C321011D991c35a77aaFad"
+      "multicall": "0x1272b7681a7c14184BdE592301b9d6920dD5C03d",
+      "dxDaoNFT": "0xcd3d743F45125Af3a00ECa4b80d95193B4e1Bb8f",
+      "dxdVestingFactory": "0x3e7773BDC93bC9e8Ee4FaD2806E787Ddf6C012d4"
     },
     "votingMachines": {
       "dxd": {
-        "address": "0xDD032cd0dfCB54050E1FA30Be59056403e292700",
-        "token": "0x5d47100B0854525685907D5D773b92c22c0c745e"
+        "token": "0x5d47100B0854525685907D5D773b92c22c0c745e",
+        "address": "0xDEd01041163211f3D707FD83465935F2F3bAd352"
       }
     }
   }
