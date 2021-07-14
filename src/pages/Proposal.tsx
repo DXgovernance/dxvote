@@ -213,8 +213,12 @@ const ProposalPage = observer(() => {
       }
     });
     
-      console.debug("[Proposal info]", proposalInfo);
-      console.debug("[Proposal events]", proposalEvents);
+    console.debug("[Proposal info]", proposalInfo);
+    console.debug("[Proposal events]", proposalEvents);
+    
+    const executionTimeoutTime = schemeInfo.type == "WalletScheme"
+      ? proposalInfo.submittedTime.plus(schemeInfo.maxSecondsForExecution)
+      : bnum(0);
     
     let proposalCallTexts = new Array(proposalInfo.to.length);
     for (var p = 0; p < proposalInfo.to.length; p++) {
@@ -373,6 +377,11 @@ const ProposalPage = observer(() => {
                 : <div/>
               }
             </SidebarRow>
+            : <div/>
+          }
+          
+          { ((status == "Pending Execution") && (executionTimeoutTime.toNumber() > 0)) ?
+            <span style={{textAlign: "center"}}> <strong> Execution Timeout Date </strong> <br/> <small>{moment.unix(executionTimeoutTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")}</small> </span>
             : <div/>
           }
           
