@@ -120,22 +120,27 @@ const ProposalsPage = observer(() => {
         root: { providerStore, daoStore, blockchainStore, configStore },
     } = useStores();
 
+    const schemes = daoStore.getAllSchemes();
     const votingMachines = configStore.getNetworkConfig().votingMachines;
     const { library, active } = providerStore.getActiveWeb3React();
     const [stateFilter, setStateFilter] = React.useState("All");
+    const [schemeFilter, setSchemeFilter] = React.useState("All");
     const [titleFilter, setTitleFilter] = React.useState("");
-      
     const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
       const {status, boostTime, finishTime} = daoStore.getProposalStatus(cacheProposal.id);
       cacheProposal.status = status; 
       cacheProposal.boostTime = boostTime; 
-      cacheProposal.finishTime = finishTime; 
+      cacheProposal.finishTime = finishTime;
       return cacheProposal;
-    }).sort(function(a, b) { return b.finishTime - a.finishTime; });
+    }).sort(function(a, b) { return a.finishTime - b.finishTime; })
+    .sort(function(a, b) { return b.stateInVotingMachine - a.stateInVotingMachine });
+    
     function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
     function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
-    console.log("All Proposals", allProposals, allProposals.length, daoStore);
-    
+    function onSchemeFilterChange(newValue) { setSchemeFilter(newValue.target.value) }
+
+    console.debug("All Proposals", allProposals, allProposals.length, daoStore);
+
     return (
       <ProposalsTableWrapper>
         <ProposalTableHeaderActions>
@@ -164,6 +169,14 @@ const ProposalsPage = observer(() => {
               <option value="Executed">Executed</option>
               <option value="Expired in Queue">Expired</option>
             </ProposalsFilter>
+            <ProposalsFilter name="schemeFilter" id="schemeSelector" onChange={onSchemeFilterChange}>
+              <option value="All">All</option>
+
+              {schemes.map((scheme) => {
+                return <option value={scheme.address}>{scheme.name}</option>
+              })}
+
+            </ProposalsFilter>
           </div>
 
           <div style={{
@@ -178,8 +191,7 @@ const ProposalsPage = observer(() => {
           </div>
         </ProposalTableHeaderActions>
         <ProposalTableHeaderWrapper>
-          <TableHeader width="5%" align="left"> # </TableHeader>
-          <TableHeader width="30%" align="left"> Title </TableHeader>
+          <TableHeader width="35%" align="left"> Title </TableHeader>
           <TableHeader width="15%" align="center"> Scheme </TableHeader>
           <TableHeader width="15%" align="center"> Status </TableHeader>
           <TableHeader width="17.5%" align="center"> Staked </TableHeader>
@@ -195,7 +207,8 @@ const ProposalsPage = observer(() => {
               if (
                 proposal 
                 && ((stateFilter == 'All') || (stateFilter != 'All' && proposal.status == stateFilter))
-                && (titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0))
+                && ((titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0)))
+                && ((schemeFilter == 'All') || (proposal.scheme == schemeFilter))
               ) {
                 const positiveStake = normalizeBalance(proposal.positiveStakes, 18);
                 const negativeStake = normalizeBalance(proposal.negativeStakes, 18);
@@ -214,10 +227,7 @@ const ProposalsPage = observer(() => {
                 return (
                   <Link key={"proposal"+i} to={"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
                     <TableRow>
-                      <TableCell width="5%" align="left">
-                        {allProposals.length - i}
-                      </TableCell>
-                      <TableCell width="30%" align="left" weight='500' wrapText="true">
+                      <TableCell width="35%" align="left" weight='500' wrapText="true">
                         {proposal.title.length > 0 ? proposal.title : proposal.id}
                       </TableCell>
                       <TableCell width="15%" align="center">
