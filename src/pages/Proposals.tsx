@@ -123,9 +123,10 @@ const ProposalsPage = observer(() => {
     const schemes = daoStore.getAllSchemes();
     const votingMachines = configStore.getNetworkConfig().votingMachines;
     const { library, active } = providerStore.getActiveWeb3React();
-    const [stateFilter, setStateFilter] = React.useState("All");
-    const [schemeFilter, setSchemeFilter] = React.useState("All");
+    const [stateFilter, setStateFilter] = React.useState("Any Status");
+    const [schemeFilter, setSchemeFilter] = React.useState("All Schemes");
     const [titleFilter, setTitleFilter] = React.useState("");
+    const [proposalsLength, setProposalsLength] = React.useState(0);
     const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
       const {status, boostTime, finishTime} = daoStore.getProposalStatus(cacheProposal.id);
       cacheProposal.status = status; 
@@ -138,7 +139,9 @@ const ProposalsPage = observer(() => {
     function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
     function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
     function onSchemeFilterChange(newValue) { setSchemeFilter(newValue.target.value) }
-
+    
+    if (proposalsLength < allProposals.length)
+      setProposalsLength(allProposals.length);
     console.debug("All Proposals", allProposals, allProposals.length, daoStore);
 
     return (
@@ -157,7 +160,7 @@ const ProposalsPage = observer(() => {
               onChange={onTitleFilterChange}
             ></ProposalsNameFilter>
             <ProposalsFilter name="stateFilter" id="stateSelector" onChange={onStateFilterChange}>
-              <option value="All">All</option>
+              <option value="Any Status">Any Status</option>
               <option value="Pending Boost">Pending Boost</option>
               <option value="Pre Boosted">Pre Boosted</option>
               <option value="Boosted">Boosted</option>
@@ -170,12 +173,10 @@ const ProposalsPage = observer(() => {
               <option value="Expired in Queue">Expired</option>
             </ProposalsFilter>
             <ProposalsFilter name="schemeFilter" id="schemeSelector" onChange={onSchemeFilterChange}>
-              <option value="All">All</option>
-
+              <option value="All Schemes">All Schemes</option>
               {schemes.map((scheme) => {
                 return <option value={scheme.address}>{scheme.name}</option>
               })}
-
             </ProposalsFilter>
           </div>
 
@@ -206,9 +207,9 @@ const ProposalsPage = observer(() => {
             { allProposals.map((proposal, i) => {
               if (
                 proposal 
-                && ((stateFilter == 'All') || (stateFilter != 'All' && proposal.status == stateFilter))
+                && ((stateFilter == 'Any Status') || (stateFilter != 'Any Status' && proposal.status == stateFilter))
                 && ((titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0)))
-                && ((schemeFilter == 'All') || (proposal.scheme == schemeFilter))
+                && ((schemeFilter == 'All Schemes') || (proposal.scheme == schemeFilter))
               ) {
                 const positiveStake = normalizeBalance(proposal.positiveStakes, 18);
                 const negativeStake = normalizeBalance(proposal.negativeStakes, 18);
