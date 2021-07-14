@@ -126,7 +126,6 @@ const ProposalsPage = observer(() => {
     const [stateFilter, setStateFilter] = React.useState("Any Status");
     const [schemeFilter, setSchemeFilter] = React.useState("All Schemes");
     const [titleFilter, setTitleFilter] = React.useState("");
-    const [proposalsLength, setProposalsLength] = React.useState(0);
     const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
       const {status, boostTime, finishTime} = daoStore.getProposalStatus(cacheProposal.id);
       cacheProposal.status = status; 
@@ -140,8 +139,6 @@ const ProposalsPage = observer(() => {
     function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
     function onSchemeFilterChange(newValue) { setSchemeFilter(newValue.target.value) }
     
-    if (proposalsLength < allProposals.length)
-      setProposalsLength(allProposals.length);
     console.debug("All Proposals", allProposals, allProposals.length, daoStore);
 
     return (

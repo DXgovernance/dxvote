@@ -400,10 +400,7 @@ const ProposalPage = observer(() => {
             <span> <strong>Finish Date</strong> <small>{
               moment.unix(finishTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")
             }</small> </span>
-            { ((proposalInfo.stateInVotingMachine == 3) && (votingParameters.votersReputationLossRatio > 0) && (finishTime.length > 0)) ?
-              <span> <strong> Voter REP Loss Ratio: </strong> <small>{votingParameters.votersReputationLossRatio.toString()}%</small> </span>
-              : <div/> 
-            }
+            
             { (boostedVoteRequiredPercentage > 0) ?
               <span> <strong> Required Boosted Vote: </strong> <small>{boostedVoteRequiredPercentage}%</small> </span>
               : <div/>
@@ -451,6 +448,14 @@ const ProposalPage = observer(() => {
           {repPercentageAtCreation > 0
             ? <small>{repPercentageAtCreation} % REP at proposal creation</small>
             : <div/>
+          }
+          
+          { (
+              ((proposalInfo.stateInVotingMachine == "3") || (proposalInfo.stateInVotingMachine == "4"))
+              && (votingParameters.votersReputationLossRatio.toNumber() > 0)
+              && (finishTime.toNumber() > 0)
+            ) ? <small>Voter REP Loss Ratio: {votingParameters.votersReputationLossRatio.toString()}%</small>
+            : <div/> 
           }
           
           {votedAmount.toNumber() === 0 && repPercentageAtCreation > 0 && proposalInfo.stateInVotingMachine >= 3 ?

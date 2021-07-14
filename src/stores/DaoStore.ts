@@ -1,7 +1,7 @@
 import RootStore from 'stores';
 import { BigNumber } from '../utils/bignumber';
 import { ContractType } from './Provider';
-import { action } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import web3 from 'web3';
 import _ from 'lodash';
 import { bnum } from '../utils/helpers';
@@ -17,11 +17,21 @@ import {
 const CACHE = require('../cache');
 
 export default class DaoStore {
-  daoCache: DaoCache = CACHE;
+  daoCache: DaoCache;
   rootStore: RootStore;
 
   constructor(rootStore) {
     this.rootStore = rootStore;
+    this.daoCache = CACHE;
+    makeObservable(this, {
+      updateNetworkCache: action,
+      createProposal: action,
+      vote: action,
+      approveVotingMachineToken: action,
+      stake: action,
+      execute: action,
+      redeem: action
+    });
   }
   
   // Parse bignnumbers
@@ -612,7 +622,7 @@ export default class DaoStore {
       .filter((proposalStateChange) => {return (proposalId === proposalStateChange.proposalId)});
   }
 
-  @action createProposal(
+  createProposal(
     scheme: string,
     to: String[],
     callData: String[],
@@ -631,7 +641,7 @@ export default class DaoStore {
     );
   }
   
-  @action vote(
+  vote(
     decision: Number,
     amount: Number,
     proposalId: String,
@@ -648,7 +658,7 @@ export default class DaoStore {
     );
   }
   
-  @action approveVotingMachineToken(votingMachineAddress): PromiEvent<any> {
+  approveVotingMachineToken(votingMachineAddress): PromiEvent<any> {
     const { providerStore, configStore, blockchainStore } = this.rootStore;
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
@@ -660,7 +670,7 @@ export default class DaoStore {
     );
   }
   
-  @action stake(
+  stake(
     decision: Number,
     amount: Number,
     proposalId: String,
@@ -676,7 +686,7 @@ export default class DaoStore {
     );
   }
   
-  @action execute(
+  execute(
     proposalId: String,
   ): PromiEvent<any> {
     const { providerStore, configStore } = this.rootStore;
@@ -690,7 +700,7 @@ export default class DaoStore {
     );
   }
   
-  @action redeem(
+  redeem(
     proposalId: String, account: string
   ): PromiEvent<any> {
     const { providerStore, configStore } = this.rootStore;
