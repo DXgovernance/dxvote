@@ -151,7 +151,7 @@ const SchemesInformation = observer(() => {
                       Number(library.utils.fromWei(votingMachineParameters.minimumDaoBounty.toString())).toFixed(2)
                     } DXD</small><br/>
                     <small>Proposal Boost Bounty Const: {votingMachineParameters.daoBountyConst.toString()}</small><br/>
-                    <small>Boost Threshold Constant: {votingMachineParameters.thresholdConst.toString()}</small><br/>
+                    <small>Boost Threshold Constant: {votingMachineParameters.thresholdConst.div(10**12).toString()}</small><br/>
                     <small>Boost Limit Exponent Value: {votingMachineParameters.limitExponentValue.toString()}</small>
                     
                   </TableCell>
