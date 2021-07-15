@@ -269,7 +269,7 @@ const WalletModal = observer(
                         <ContentWrapper>
                             {connectionErrorMessage.toString().indexOf('UnsupportedChainIdError') >= 0 ? (
                                 <h5>
-                                    Please connect to Rinkeby ethereum network.
+                                    Please connect to a valid ethereum network.
                                 </h5>
                             ) : (
                                 'Error connecting. Try refreshing the page.'
