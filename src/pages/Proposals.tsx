@@ -172,7 +172,7 @@ const ProposalsPage = observer(() => {
             <ProposalsFilter name="schemeFilter" id="schemeSelector" onChange={onSchemeFilterChange}>
               <option value="All Schemes">All Schemes</option>
               {schemes.map((scheme) => {
-                return <option value={scheme.address}>{scheme.name}</option>
+                return <option key={scheme.address} value={scheme.address}>{scheme.name}</option>
               })}
             </ProposalsFilter>
           </div>

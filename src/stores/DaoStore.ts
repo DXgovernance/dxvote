@@ -154,6 +154,12 @@ export default class DaoStore {
     return proposals;
   }
   
+  getAmountOfProposalsPreBoostedInScheme(schemeAddress: string): number {
+    return this.getSchemeProposals(schemeAddress).filter((proposal) => {
+      return (proposal.stateInVotingMachine== 4)
+    }).length;
+  }
+  
   getGovernanceInfo(): any {
     let users = {},
     totalPositiveVotes = 0,

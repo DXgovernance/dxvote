@@ -1,5 +1,33 @@
 import { bnum } from './helpers';
 import moment from 'moment';
+import { BigNumber } from 'bignumber.js';
+
+export const calculateStakes = function(thresholdConst, boostedProposals, preBoostedProposals, upstakes, downstakes ) {
+
+  let threshold = thresholdConst.div(10**12).pow(boostedProposals);
+  if (threshold.lt(1.0001))
+    threshold = bnum("1.0001");
+    
+  let recommendedThreshold = thresholdConst.div(10**12).pow(boostedProposals + preBoostedProposals);
+  if (recommendedThreshold.lt(1.0001))
+    recommendedThreshold = bnum("1.0001");
+    
+  // console.log("thresholdConst", thresholdConst.toString());
+  // console.log("threshold", threshold.toString());
+  // console.log("score", upstakes.div(downstakes).toString())
+  // console.log(
+  //   downstakes.times(threshold).minus(upstakes).div(10**18).toString(),
+  //   upstakes.div(threshold).minus(downstakes).div(10**18).toString()
+  // )
+  
+  return {
+    stakeToBoost: downstakes.times(threshold).minus(upstakes),
+    stakeToUnBoost: upstakes.div(threshold).minus(downstakes),
+    recommendedStakeToBoost: downstakes.times(recommendedThreshold).minus(upstakes),
+    recommendedStakeToUnBoost: upstakes.div(recommendedThreshold).minus(downstakes)
+  }
+
+}
 
 export const decodeProposalStatus = function(
   proposal, proposalStateChangeEvents, votingMachineParams, maxSecondsForExecution
@@ -14,7 +42,6 @@ export const decodeProposalStatus = function(
   const preBoostedPhaseTime = proposal.preBoostedPhaseTime;
 
   // TODO: take in count that gen voting machine dont boost automatically
-   
   switch (proposal.stateInVotingMachine) {
     case "1":
       return { 
@@ -84,6 +111,18 @@ export const decodeProposalStatus = function(
           status: "Pending Execution",
           boostTime: boostedPhaseTime,
           finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit)
+        };
+      } else if (timeNow > submittedTime.plus(queuedVotePeriodLimit) && !proposal.shouldBoost) {
+        return { 
+          status: "Pending Execution", 
+          boostTime: bnum(0),
+          finishTime: submittedTime.plus(queuedVotePeriodLimit)
+        };
+      } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit) && !proposal.shouldBoost) {
+        return { 
+          status: "In Queue", 
+          boostTime: bnum(0),
+          finishTime: submittedTime.plus(queuedVotePeriodLimit)
         };
       } else {
         return { 
