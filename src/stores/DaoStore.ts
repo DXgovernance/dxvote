@@ -588,14 +588,19 @@ export default class DaoStore {
     const proposal = this.getCache().proposals[proposalId];
     const proposalStateChangeEvents = this.getProposalStateChanges(proposalId);
     const scheme = this.getCache().schemes[proposal.scheme];
+    const votingMachineOfProposal = this.getVotingMachineOfProposal(proposalId);
+    const networkConfig = this.rootStore.configStore.getNetworkConfig();
     const votingMachineParams = 
     (proposal.paramsHash == "0x0000000000000000000000000000000000000000000000000000000000000000")
-    ? this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+    ? this.getCache().votingMachines[votingMachineOfProposal]
       .votingParameters[scheme.paramsHash]
-    : this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+    : this.getCache().votingMachines[votingMachineOfProposal]
       .votingParameters[proposal.paramsHash];
     
-    return decodeProposalStatus(proposal, proposalStateChangeEvents, votingMachineParams, scheme.maxSecondsForExecution);
+    const autoBoost = (networkConfig.votingMachines.dxd && networkConfig.votingMachines.dxd.address == votingMachineOfProposal)
+    return decodeProposalStatus(
+      proposal, proposalStateChangeEvents, votingMachineParams, scheme.maxSecondsForExecution, autoBoost
+    );
   }
   
   getVotesOfProposal(proposalId: string): Vote[]{

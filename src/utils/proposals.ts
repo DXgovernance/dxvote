@@ -30,7 +30,7 @@ export const calculateStakes = function(thresholdConst, boostedProposals, preBoo
 }
 
 export const decodeProposalStatus = function(
-  proposal, proposalStateChangeEvents, votingMachineParams, maxSecondsForExecution
+  proposal, proposalStateChangeEvents, votingMachineParams, maxSecondsForExecution, autoBoost
 ) {
   const timeNow = bnum(moment().unix());
   const queuedVotePeriodLimit = votingMachineParams.queuedVotePeriodLimit;
@@ -106,7 +106,7 @@ export const decodeProposalStatus = function(
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
           finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit)
         };
-      } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
+      } else if (autoBoost && timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
         return { 
           status: "Pending Execution",
           boostTime: boostedPhaseTime,

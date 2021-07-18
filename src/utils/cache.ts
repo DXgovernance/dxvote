@@ -426,7 +426,7 @@ export const updateSchemes = async function (
       
       const ethBalance = callsResponse1.decodedReturnData[0];
       const permissions = decodePermission(callsResponse1.decodedReturnData[1]);
-      const paramsHash = (schemeTypeData.type == 'GenericScheme')
+      const paramsHash = schemeTypeData.voteParams
         ? schemeTypeData.voteParams
         : callsResponse1.decodedReturnData[2];
 
@@ -641,7 +641,7 @@ export const updateProposals = async function (
     while(schemeEventsBatchsIndex < schemeEventsBatchs.length) {
       
       try {
-        
+        console.debug("Getting proposals in event batch index", schemeEventsBatchsIndex, "in", schemeTypeData.name,);
         await Promise.all(schemeEventsBatchs[schemeEventsBatchsIndex].map(async (schemeEvent) => {
 
           const proposalId = (schemeEvent.topics[1] == avatarAddressEncoded)
@@ -1044,7 +1044,7 @@ export const updateProposals = async function (
       networkCache.schemes[proposal.scheme].type != "WalletScheme"
       && proposal.descriptionHash && proposal.descriptionHash.length > 0
       && proposal.title.length == 0
-      // && proposal.creationEvent.l1BlockNumber < Number(toBlock) - 100000
+      && proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000
     )
       try {
         console.debug('getting title from proposal', proposal.id, contentHash.decode(proposal.descriptionHash));
