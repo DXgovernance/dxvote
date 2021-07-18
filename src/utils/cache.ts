@@ -9,6 +9,11 @@ const WalletSchemeJSON = require('../contracts/WalletScheme');
 const { getContracts } = require('../contracts');
 const { getSchemeTypeData } = require('../config');
 
+var isNode = false;
+if (typeof module !== 'undefined' && module.exports) {
+  isNode = true;
+}
+
 async function executeMulticall(web3, multicall, calls) {
   
   const rawCalls = calls.map((call) => {
@@ -1051,11 +1056,14 @@ export const updateProposals = async function (
     if (
       networkCache.schemes[proposal.scheme].type != "WalletScheme"
       && proposal.descriptionHash && proposal.descriptionHash.length > 0
-      && (proposal.title.length == 0 && proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
+      // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
+      && (proposal.title.length == 0
+        && (isNode || proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
+      )
     )
       try {
         console.debug('getting title from proposal', proposal.id, contentHash.decode(proposal.descriptionHash));
-        const response = await axios.get({
+        const response = await axios.request({
           url:'https://ipfs.io/ipfs/'+contentHash.decode(proposal.descriptionHash),
           method: "GET",
           timeout: 5000
