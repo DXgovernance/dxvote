@@ -182,10 +182,7 @@ const ProposalsPage = observer(() => {
             flexDirection: "row",
             justifyContent: "space-between"
           }}>
-            {((configStore.getActiveChainName() == 'mainnet') || (configStore.getActiveChainName() == 'xdai'))
-              ?<div/>
-              : <ActiveButton route="/new">+ New Proposal</ActiveButton>
-            }
+            <ActiveButton route="/new">+ New Proposal</ActiveButton>
           </div>
         </ProposalTableHeaderActions>
         <ProposalTableHeaderWrapper>

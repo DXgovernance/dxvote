@@ -206,4 +206,59 @@ export default class ProviderStore {
 
         return response;
     };
+    
+    @action sendRawTransaction = (
+        web3React: Web3ReactContextInterface,
+        to: string,
+        data: string,
+        value: string
+    ): PromiEvent<any> => {
+        const { transactionStore } = this.rootStore;
+        const { chainId, account } = web3React;
+
+        if (!account) {
+            throw new Error(ERRORS.BlockchainActionNoAccount);
+        }
+
+        if (!chainId) {
+            throw new Error(ERRORS.BlockchainActionNoChainId);
+        }
+        console.log(value)
+        const promiEvent = new PromiEvent<any>(() => {
+            web3React.library.eth.sendTransaction({ from: account, to: to, data: data, value: value })
+                .once('transactionHash', (hash) => {
+                    transactionStore.addTransactionRecord(account, hash);
+                    promiEvent.emit(TXEvents.TX_HASH, hash);
+                    console.debug(TXEvents.TX_HASH, hash);
+                })
+                .once('receipt', (receipt) => {
+                    promiEvent.emit(TXEvents.RECEIPT, receipt);
+                    console.debug(TXEvents.RECEIPT, receipt);
+                })
+                .once('confirmation', (confNumber, receipt) => {
+                    promiEvent.emit(TXEvents.CONFIRMATION, {
+                        confNumber,
+                        receipt,
+                    });
+                    console.debug(TXEvents.CONFIRMATION, {
+                        confNumber,
+                        receipt,
+                    });
+                })
+                .on('error', (error) => {
+                    console.debug(error.code);
+                    promiEvent.emit(TXEvents.INVARIANT, error);
+                    console.debug(TXEvents.INVARIANT, error);
+                })
+                .then((receipt) => {
+                    promiEvent.emit(TXEvents.FINALLY, receipt);
+                    console.debug(TXEvents.FINALLY, receipt);
+                })
+                .catch((e) => {
+                    console.debug('rejected', e);
+                });
+        });
+
+        return promiEvent;
+    };
 }

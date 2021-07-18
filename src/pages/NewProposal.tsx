@@ -167,15 +167,12 @@ const NewProposalPage = observer(() => {
         root: { providerStore, daoStore, configStore, daoService, ipfsService, pinataService, blockchainStore },
     } = useStores();
     
-    if ((configStore.getActiveChainName() == 'mainnet') || (configStore.getActiveChainName() == 'xdai'))
-      history.push('/')
-    
     const { active, account } = providerStore.getActiveWeb3React();
     
     const schemes = daoStore.getAllSchemes();
     const networkConfig = configStore.getNetworkConfig();
     const schemeInLocalStorage = localStorage.getItem('dxvote-newProposal-scheme');
-    console.log(schemeInLocalStorage)
+
     const defaultSchemeToUse = schemeInLocalStorage
       ? schemes.findIndex((scheme) => scheme.address == schemeInLocalStorage)
       : schemes.findIndex((scheme) => scheme.name == "MasterWalletScheme");
@@ -190,6 +187,15 @@ const NewProposalPage = observer(() => {
         JSON.parse(localStorage.getItem('dxvote-newProposal-calls'))
       : []
     );
+    
+    const [contributionRewardCalls, setContributionRewardCalls] = React.useState({
+      beneficiary: "ZERO_ADDRESS",
+      repChange: "0",
+      ethValue: "0",
+      externalToken: ZERO_ADDRESS,
+      tokenValue: "0"
+    });
+    
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
     const [submitionState, setSubmitionState] = React.useState(0);
@@ -197,32 +203,52 @@ const NewProposalPage = observer(() => {
     // 1 = Uploading proposal description
     // 2 = Proposal description uploaded
     // 3 = Submiting new proposal tx
-    // 4 = Proposal submited
+    // 4 = Proposal creation tx submited
+    // 5 = Proposal creation tx receipt received
+    
+    const [errorMessage, setErrorMessage] = React.useState("");
     
     if (ProposalTemplates[0].name != "Custom")
       ProposalTemplates.unshift({name: "Custom", title: "", description: "" });
 
     const uploadToIPFS = async function() {
-      setSubmitionState(1);
-      const hash = await ipfsService.add(descriptionText);
-      setIpfsHash(hash);
-      if (pinataService.auth) {
-        const pinataPin = await pinataService.pin(hash);
-        console.debug('[PINATA PIN]', pinataPin.data)
-      }
-      const ipfsPin = await ipfsService.pin(hash);
-      console.debug('[IPFS PIN]', ipfsPin)
-      
-      let uploaded = false;
-      while (!uploaded) {
-        const ipfsContent = await ipfsService.getContent(hash);
-        console.debug('[IPFS CONTENT]', ipfsContent);
-        if (ipfsContent == descriptionText)
-          uploaded = true;
-        await sleep(1000);
-      }
+      if (titleText.length == 10) {
+        setErrorMessage("Title has to be at mimimum 10 characters length");
+      } else if (descriptionText.length == 0) {
+        setErrorMessage("Description has to be at mimimum 100 characters length");
+      } else {
+        setSubmitionState(1);
+        setErrorMessage("");
 
-      setSubmitionState(2);
+        const bodyTextToUpload = (schemeToUse.type == "ContributionReward" || schemeToUse.type == "GenericMulticall")
+          ? JSON.stringify({
+              description: descriptionText,
+              title: titleText,
+              url: ""
+            })
+          : descriptionText;
+          
+        const hash = await ipfsService.add(bodyTextToUpload);
+        setIpfsHash(hash);
+        
+        if (pinataService.auth) {
+          const pinataPin = await pinataService.pin(hash);
+          console.debug('[PINATA PIN]', pinataPin.data)
+        }
+        const ipfsPin = await ipfsService.pin(hash);
+        console.debug('[IPFS PIN]', ipfsPin)
+        
+        let uploaded = false;
+        while (!uploaded) {
+          const ipfsContent = await ipfsService.getContent(hash);
+          console.debug('[IPFS CONTENT]', ipfsContent);
+          if (ipfsContent == bodyTextToUpload)
+            uploaded = true;
+          await sleep(1000);
+        }
+
+        setSubmitionState(2);
+      }
     }
     
     const createProposal = async function() {
@@ -231,83 +257,112 @@ const NewProposalPage = observer(() => {
 
       const { library } = providerStore.getActiveWeb3React();
       
+      let to = [], data = [], value = [];
       try {
-        const callToController = (schemeToUse.controllerAddress == networkConfig.controller);
         
-        const to = calls.map((call) => {
-          return callToController ? networkConfig.controller : call.to;
-        });
+        if ((schemeToUse.type != "ContributionReward")) {
+          const callToController = (schemeToUse.controllerAddress == networkConfig.controller);
+          
+          to = calls.map((call) => {
+            return callToController ? networkConfig.controller : call.to;
+          });
 
-        const data = calls.map((call) => {
-          if (call.to == "")
-            return "";
-          
-          let callData;
-          
-          if (call.callType == "simple") {
-            let callDataFunctionSignature = "0x0";
-            let callDataFunctionParamsEncoded = "";
+          data = calls.map((call) => {
+            if (call.to == "")
+              return "";
             
-            if (call.functionName.length == 0) {
-              callDataFunctionSignature = "0x0";
+            let callData;
+            
+            if (call.callType == "simple") {
+              let callDataFunctionSignature = "0x0";
+              let callDataFunctionParamsEncoded = "";
+              
+              if (call.functionName.length == 0) {
+                callDataFunctionSignature = "0x0";
+              } else {
+                callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(call.functionName)
+              }
+              
+              if (call.functionParams.length > 0) {
+                const parameters = (call.functionName.length > 0 && call.functionParams.length > 0)
+                  ? call.functionName.substring(
+                    call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
+                  : [];
+                callDataFunctionParamsEncoded = parameters.length > 0 ? library.eth.abi.encodeParameters(
+                    parameters,
+                    call.functionParams
+                  ).substring(2)
+                  : "";
+              }
+              callData = callDataFunctionSignature + callDataFunctionParamsEncoded;
             } else {
-              callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(call.functionName)
+              callData = call.functionParams[0];
             }
-            
-            if (call.functionParams.length > 0) {
-              const parameters = (call.functionName.length > 0 && call.functionParams.length > 0)
-                ? call.functionName.substring(
-                  call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
-                : [];
-              callDataFunctionParamsEncoded = parameters.length > 0 ? library.eth.abi.encodeParameters(
-                  parameters,
-                  call.functionParams
-                ).substring(2)
-                : "";
+            if (callToController && call.to != networkConfig.controller) {
+              return daoService.encodeControllerGenericCall(
+                call.to,
+                callData,
+                call.callType === "simple" ? library.utils.toWei(call.value).toString()
+                : call.value
+              )
+            } else {
+              return callData;
             }
-            callData = callDataFunctionSignature + callDataFunctionParamsEncoded;
-          } else {
-            callData = call.functionParams[0];
-          }
-          if (callToController && call.to != networkConfig.controller) {
-            return daoService.encodeControllerGenericCall(
-              call.to,
-              callData,
-              call.callType === "simple" ? library.utils.toWei(call.value).toString()
-              : call.value
-            )
-          } else {
-            return callData;
-          }
-        });
+          });
 
-        const value = calls.map((call) => {
-          return callToController ? "0"
-          : call.callType === "simple" ? library.utils.toWei(call.value).toString()
-            : call.value
-        });
+          value = calls.map((call) => {
+            return callToController ? "0"
+            : call.callType === "simple" ? library.utils.toWei(call.value).toString()
+              : call.value
+          });
+        }
         
-        console.debug('[PROPOSAL]', schemeToUse.address, to, data, value, titleText, contentHash.fromIpfs(ipfsHash))
-        daoStore.createProposal(schemeToUse.address, to, data, value, titleText, contentHash.fromIpfs(ipfsHash))
-          .on(TXEvents.TX_HASH, (hash) => {
+        const proposalData = (schemeToUse.type == "ContributionReward")
+        ? {
+          beneficiary: contributionRewardCalls.beneficiary,
+          reputationChange: contributionRewardCalls.repChange,
+          ethValue: contributionRewardCalls.ethValue,
+          externalToken: contributionRewardCalls.externalToken,
+          tokenValue: contributionRewardCalls.tokenValue,
+          descriptionHash: contentHash.fromIpfs(ipfsHash)
+        } : {
+          to, data, value, titleText, descriptionHash: contentHash.fromIpfs(ipfsHash) 
+        };
+      
+        console.debug('[PROPOSAL]', schemeToUse.address, proposalData);
+      
+        daoStore.createProposal(
+          schemeToUse.address,
+          schemeToUse.type,
+          proposalData,
+        ).on(TXEvents.TX_HASH, (hash) => {
             console.debug("[TX_SUBMITTED]", hash);
-            // setSubmitionState(4);
+            setSubmitionState(4);
+            setErrorMessage("");
           })
           .on(TXEvents.RECEIPT, (hash) => {
             console.debug("[TX_RECEIPT]", hash);
-            setSubmitionState(4);
+            setSubmitionState(5);
           })
           .on(TXEvents.TX_ERROR, (txerror) => {
-              console.error("[TX_ERROR]", txerror);
-              setSubmitionState(-1);
+            console.error("[TX_ERROR]", txerror);
+            setSubmitionState(2);
+            setErrorMessage(txerror.message);
           })
           .on(TXEvents.INVARIANT, (error) => {
-              console.error("[ERROR]", error);
-              setSubmitionState(-1);
+            console.error("[ERROR]", error);
+            setSubmitionState(2);
+            setErrorMessage(error.message);
+          })
+          .catch((error) => {
+            console.error("[ERROR]", error);
+            setSubmitionState(2);
+            setErrorMessage(error.message);
           });
       } catch (error) {
         console.error('[PROPOSAL_ERROR]', error);
-        setSubmitionState(-1);
+        setSubmitionState(2);
+        setErrorMessage(error.message);
       }
       
     }
@@ -320,8 +375,10 @@ const NewProposalPage = observer(() => {
     }
     
     function onTitleChange(newValue) {
-      setTitleText(newValue.target.value);
-      localStorage.setItem('dxvote-newProposal-title', newValue.target.value);
+      if (submitionState < 1) {
+        setTitleText(newValue.target.value);
+        localStorage.setItem('dxvote-newProposal-title', newValue.target.value);
+      }
     }
     
     let callToAny = false;
@@ -348,10 +405,15 @@ const NewProposalPage = observer(() => {
       setCalls(calls);
       forceUpdate();
     }
+    
+    function setContributionRewardCallsInState(contributionRewardCalls) {
+      setContributionRewardCalls(contributionRewardCalls);
+      forceUpdate();
+    }
 
     function addCall() {
       calls.push({
-        callType: "simple",
+        callType: schemeToUse.type == "WalletScheme" ? "simple" : "advanced",
         allowedFunctions: [],
         to: "",
         data: "",
@@ -471,10 +533,23 @@ const NewProposalPage = observer(() => {
       setCallsInState(calls);
     }
     
+    function onContributionRewardValueChange(key, value) {
+      console.log(key, value)
+      contributionRewardCalls[key] = value;
+      setContributionRewardCallsInState(contributionRewardCalls);
+    }
+    
     function onSchemeChange(event) {
       setSchemeToUse(schemes[event.target.value]);
       localStorage.setItem('dxvote-newProposal-scheme', schemes[event.target.value].address);
       calls.splice(0, calls.length);
+      setContributionRewardCalls({
+        beneficiary: "",
+        repChange: "0",
+        ethValue: "0",
+        externalToken: ZERO_ADDRESS,
+        tokenValue: "0"
+      })
       setCallsInState(calls);
     }
     
@@ -527,7 +602,8 @@ const NewProposalPage = observer(() => {
             <input type="text" placeholder="Proposal Title" onChange={onTitleChange} value={titleText}/>
             <select name="scheme" id="schemeSelector" onChange={onSchemeChange} defaultValue={defaultSchemeToUse}>
               {schemes.map((scheme, i) =>{
-                return <option key={scheme.address} value={i}>{scheme.name}</option>
+                if (scheme.type == "WalletScheme" || scheme.type == "ContributionReward" ||scheme.type == "GenericMulticall")
+                  return <option key={scheme.address} value={i}>{scheme.name}</option>
               })}
             </select>
             <select name="proposalTemplate" id="proposalTemplateSelector" onChange={onProposalTemplate}>
@@ -571,126 +647,190 @@ const NewProposalPage = observer(() => {
           border: "1px solid gray",
           padding: "20px 10px"
         }} />
-        {schemeToUse.controllerAddress == networkConfig.controller ?
-          <h2>Calls executed from the avatar <Question question="9"/></h2>
-          :<h2>Calls executed from the scheme <Question question="9"/></h2>
+        {(schemeToUse.type == "ContributionReward" || schemeToUse.type == "GenericMulticall")
+          || (schemeToUse.type == "WalletScheme" && schemeToUse.controllerAddress == networkConfig.controller)
+          ? <h2>Calls executed from the avatar <Question question="9"/></h2>
+          : <h2>Calls executed from the scheme <Question question="9"/></h2>
         }
-        {calls.map((call, i) => 
-          <CallRow key={"call"+i}>
-            <span>#{i}</span>
-
-            <CallInput
-              list="allowedCalls"
-              value={calls[i].to}
-              onChange={(value) => {onToSelectChange(i, value)}}
-              width="20%"
-            />
-            <datalist id="allowedCalls">
-              {allowedToCall.map((allowedCall, allowedCallIndex) =>{
-                return (
-                  <option key={"toCall"+allowedCallIndex} value={allowedCall.value}>
-                    {allowedCall.name}
-                  </option>
-                );
-              })}
-            </datalist>
-            
-            { call.callType === "simple" ?
-              
-              <div style={{display: "flex", width: call.callType === "simple" ? "60%" : "50%"}}>
-                <CallInput
-                  list="allowedFunctions"
-                  value={calls[i].functionName}
-                  onChange={(event) => {
-                    const selectedFunction = calls[i].allowedFunctions
-                      .find((allowedFunc) => allowedFunc.value == event.target.value);
-                    onFunctionSelectChange(
-                      i,
-                      event,
-                      selectedFunction ? selectedFunction.params : ""
-                    )
-                  }}
-                  width="40%"
-                />
-                <datalist id="allowedFunctions">
-                  {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
-                    return (
-                      <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.value}/>
-                    );
-                  })}
-                </datalist>
-                
-                <div style={{display: "flex", width: "100%", flexDirection: "column", paddingRight: "10px"}}>
-                  {calls[i].functionParams.length == 0 ?
-                    <CallInput 
-                      key={"functionParam00"}
-                      disabled
-                      type="text"
-                      placeholder="Select address to call and function"
-                      width="100%"
-                      style={{marginTop: "0px"}}
-                    /> : <div/>
-                  }
-                  {calls[i].functionParams.map((funcParam, funcParamIndex) => {
-                    if (funcParam == " address _avatar" || funcParam == " Avatar _avatar" ) {
-                      calls[i].functionParams[funcParamIndex] = networkConfig.avatar;
-                    } else {
-                      let placeholder = "";
-                      if (calls[i].functionName.indexOf(',') > 0) {
-                        placeholder = calls[i].functionName.substring(
-                          calls[i].functionName.indexOf("(") + 1, calls[i].functionName.lastIndexOf(")")
-                        ).split(",")[funcParamIndex]
-                      }
-                      return (
-                        <CallInput 
-                          key={"functionParam"+funcParamIndex}
-                          type="text"
-                          onChange={(value) => onFunctionParamsChange(i, value, funcParamIndex)}
-                          value={calls[i].functionParams[funcParamIndex]}
-                          placeholder={placeholder}
-                          width="100%"
-                          style={{marginTop: funcParamIndex > 0 ? "5px": "0px"}}
-                        />
-                      );
-                    }
-                  })}
-                </div>
-              </div>
-            :
-              <CallInput 
-                type="text"
-                onChange={(value) => onFunctionParamsChange(i, value, 0)}
-                value={calls[i].functionParams}
-                placeholder="0x..."
-                width="100%"
-              />
-            }
-            
+      
+        {(schemeToUse.type == "ContributionReward")
+        ? 
+        // If scheme to use is COntribution Rewar display a different form with less fields
+        <div>
+          <CallRow>
+            <span style={{width: "20%", fontSize:"13px"}}>Beneficiary Account</span>
+            <span style={{width: "20%", fontSize:"13px"}}>REP Change</span>
+            <span style={{width: "20%", fontSize:"13px"}}>ETH Value (in WEI)</span>
+            <span style={{width: "20%", fontSize:"13px"}}>Address of Token</span>
+            <span style={{width: "20%", fontSize:"13px"}}>Token Amount (in WEI)</span>
+          </CallRow>
+          <CallRow>
             <CallInput
               type="text"
-              onChange={(value) => onValueChange(i, value)}
-              value={calls[i].value}
-              width="10%"
-              placeholder={calls[i].callType === "advanced" ? "WEI" : "ETH"}
+              onChange={(event) => onContributionRewardValueChange("beneficiary", event.target.value)}
+              value={contributionRewardCalls.beneficiary}
+              width="50%"
             />
-            
-            <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>
-            <RemoveButton onClick={() => {changeCallType(i)}}> {calls[i].callType === "advanced" ? "Simple" : "Advanced"} </RemoveButton>
+            <CallInput
+              type="text"
+              onChange={(event) => onContributionRewardValueChange("repChange", event.target.value)}
+              value={contributionRewardCalls.repChange}
+              width="50%"
+            />
+            <CallInput
+              type="text"
+              onChange={(event) => onContributionRewardValueChange("ethValue", event.target.value)}
+              value={contributionRewardCalls.ethValue}
+              width="50%"
+            />
+            <CallInput
+              type="text"
+              onChange={(event) => onContributionRewardValueChange("externalToken", event.target.value)}
+              value={contributionRewardCalls.externalToken}
+              width="50%"
+            />
+            <CallInput
+              type="text"
+              onChange={(event) => onContributionRewardValueChange("tokenValue", event.target.value)}
+              value={contributionRewardCalls.tokenValue}
+              width="50%"
+            />
           </CallRow>
-        )}
-        
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
-          <ActiveButton onClick={addCall}>Add Call</ActiveButton>
         </div>
         
+        : 
+        // If the scheme is GenericMulticall allow only advanced encoded calls
+        // At last if the scheme used is a Wallet Scheme type allow a complete edition of the calls :)
+          <div>
+            {calls.map((call, i) => 
+              <CallRow key={"call"+i}>
+                <span>#{i}</span>
+
+                <CallInput
+                  list="allowedCalls"
+                  value={calls[i].to}
+                  onChange={(value) => {onToSelectChange(i, value)}}
+                  width="20%"
+                />
+                {(schemeToUse.type == "WalletScheme")
+                  ? <datalist id="allowedCalls">
+                    {allowedToCall.map((allowedCall, allowedCallIndex) =>{
+                      return (
+                        <option key={"toCall"+allowedCallIndex} value={allowedCall.value}>
+                          {allowedCall.name}
+                        </option>
+                      );
+                    })}
+                  </datalist>
+                  : <div/>
+                }
+                
+                { call.callType === "simple" ?
+                  
+                  <div style={{display: "flex", width: call.callType === "simple" ? "60%" : "50%"}}>
+                    <CallInput
+                      list="allowedFunctions"
+                      value={calls[i].functionName}
+                      onChange={(event) => {
+                        const selectedFunction = calls[i].allowedFunctions
+                          .find((allowedFunc) => allowedFunc.value == event.target.value);
+                        onFunctionSelectChange(
+                          i,
+                          event,
+                          selectedFunction ? selectedFunction.params : ""
+                        )
+                      }}
+                      width="40%"
+                    />
+                    <datalist id="allowedFunctions">
+                      {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
+                        return (
+                          <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.value}/>
+                        );
+                      })}
+                    </datalist>
+                    
+                    <div style={{display: "flex", width: "100%", flexDirection: "column", paddingRight: "10px"}}>
+                      {calls[i].functionParams.length == 0 ?
+                        <CallInput 
+                          key={"functionParam00"}
+                          disabled
+                          type="text"
+                          placeholder="Select address to call and function"
+                          width="100%"
+                          style={{marginTop: "0px"}}
+                        /> : <div/>
+                      }
+                      {calls[i].functionParams.map((funcParam, funcParamIndex) => {
+                        if (funcParam == " address _avatar" || funcParam == " Avatar _avatar" ) {
+                          calls[i].functionParams[funcParamIndex] = networkConfig.avatar;
+                        } else {
+                          let placeholder = "";
+                          if (calls[i].functionName.indexOf(',') > 0) {
+                            placeholder = calls[i].functionName.substring(
+                              calls[i].functionName.indexOf("(") + 1, calls[i].functionName.lastIndexOf(")")
+                            ).split(",")[funcParamIndex]
+                          }
+                          return (
+                            <CallInput 
+                              key={"functionParam"+funcParamIndex}
+                              type="text"
+                              onChange={(value) => onFunctionParamsChange(i, value, funcParamIndex)}
+                              value={calls[i].functionParams[funcParamIndex]}
+                              placeholder={placeholder}
+                              width="100%"
+                              style={{marginTop: funcParamIndex > 0 ? "5px": "0px"}}
+                            />
+                          );
+                        }
+                      })}
+                    </div>
+                  </div>
+                :
+                  <CallInput 
+                    type="text"
+                    onChange={(value) => onFunctionParamsChange(i, value, 0)}
+                    value={calls[i].functionParams}
+                    placeholder="0x..."
+                    width="100%"
+                  />
+                }
+                
+                <CallInput
+                  type="text"
+                  onChange={(value) => onValueChange(i, value)}
+                  value={calls[i].value}
+                  width="10%"
+                  placeholder={calls[i].callType === "advanced" ? "WEI" : "ETH"}
+                />
+                
+                <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>
+                { schemeToUse.type == "WalletScheme"
+                  ? <RemoveButton onClick={() => {changeCallType(i)}}>
+                    {calls[i].callType === "advanced" ? "Simple" : "Advanced"}
+                    </RemoveButton>
+                  : <div/>
+                }
+              </CallRow>
+            )}
+            
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
+              <ActiveButton onClick={addCall}>Add Call</ActiveButton>
+            </div>
+            
+          </div>
+        }
+        
         {
-          (submitionState < 0) ?
+          (errorMessage.length > 0) ?
             <TextActions>
               <span>
-                ERROR
+                {errorMessage}
               </span>
             </TextActions>
-          : (submitionState > 1) ?
+          : <div/>
+        }
+        { (submitionState > 1) ?
             <TextActions>
               <span>
                 Uploaded to IPFS:
@@ -708,10 +848,12 @@ const NewProposalPage = observer(() => {
               <ActiveButton onClick={uploadToIPFS}> Upload to IPFS </ActiveButton>
             : (submitionState == 1) ?
               <ActiveButton> Uploading descritpion to IPFS.. </ActiveButton>
-            : (submitionState == 2) || (submitionState == -1) ?
+            : (submitionState == 2) ?
               <ActiveButton onClick={createProposal}>Submit Proposal</ActiveButton>
             : (submitionState == 3) ?
               <ActiveButton>Submiting TX...</ActiveButton>
+            : (submitionState == 4) ?
+              <ActiveButton>Waiting for TX...</ActiveButton>
             :
               <ActiveButton route="/">Back to Proposals</ActiveButton>
           }

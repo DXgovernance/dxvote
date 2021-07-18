@@ -635,21 +635,89 @@ export default class DaoStore {
 
   createProposal(
     scheme: string,
-    to: String[],
-    callData: String[],
-    values: BigNumber[],
-    title: String,
-    descriptionHash: String,
+    schemeType: string,
+    proposalData: any
   ): PromiEvent<any> {
+    const networkConfig = this.rootStore.configStore.getNetworkConfig();
     const { providerStore } = this.rootStore;
-    return providerStore.sendTransaction(
-      providerStore.getActiveWeb3React(),
-      ContractType.WalletScheme,
-      scheme,
-      'proposeCalls',
-      [to, callData, values, title, descriptionHash],
-      {}
-    );
+    const { library } = providerStore.getActiveWeb3React();
+    console.log(proposalData)
+    if (schemeType == "ContributionReward") {
+      // function proposeContributionReward(
+      //   Avatar _avatar,
+      //   string memory _descriptionHash,
+      //   int256 _reputationChange,
+      //   uint256[5] memory _rewards,
+      //   IERC20 _externalToken,
+      //   address payable _beneficiary
+      // )
+      return providerStore.sendRawTransaction(
+        providerStore.getActiveWeb3React(),
+        scheme,
+        library.eth.abi.encodeFunctionCall({
+            name: 'proposeContributionReward',
+            type: 'function',
+            inputs: [
+              { type: 'address', name: '_avatar' },
+              { type: 'string', name: '_descriptionHash' },
+              { type: 'int256', name: '_reputationChange' },
+              { type: 'uint256[5]', name: '_rewards' },
+              { type: 'address', name: '_externalToken' },
+              { type: 'address', name: '_beneficiary' }
+            ]
+        },[
+          networkConfig.avatar,
+          proposalData.descriptionHash,
+          proposalData.reputationChange,
+          [0, proposalData.ethValue, proposalData.tokenValue, 0, 1],
+          proposalData.externalToken,
+          proposalData.beneficiary,
+        ]),
+        "0"
+      );
+    } else if (schemeType == "GenericMulticall") {
+      // function proposeCalls(
+      //   address[] memory _contractsToCall,
+      //   bytes[] memory _callsData,
+      //   uint256[] memory _values,
+      //   string memory _descriptionHash
+      // )
+      return providerStore.sendRawTransaction(
+        providerStore.getActiveWeb3React(),
+        scheme,
+        library.eth.abi.encodeFunctionCall({
+            name: 'proposeCalls',
+            type: 'function',
+            inputs: [
+              { type: 'address[]', name: '_contractsToCall' },
+              { type: 'bytes[]', name: '_callsData' },
+              { type: 'uint256[]', name: '_values' },
+              { type: 'string', name: '_descriptionHash' }
+            ]
+        },[
+          proposalData.to,
+          proposalData.data,
+          proposalData.value,
+          proposalData.descriptionHash
+        ]),
+        "0"
+      );
+    } else {
+      return providerStore.sendTransaction(
+        providerStore.getActiveWeb3React(),
+        ContractType.WalletScheme,
+        scheme,
+        'proposeCalls',
+        [
+          proposalData.to,
+          proposalData.data,
+          proposalData.value,
+          proposalData.titleText,
+          proposalData.descriptionHash
+        ],
+        {}
+      );
+    }
   }
   
   vote(
