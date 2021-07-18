@@ -180,7 +180,7 @@ const SchemesInformation = observer(() => {
                     <span>{scheme.boostedProposals}</span>
                     -
                     <span>{schemeProposals.filter((proposal) => {
-                      return (proposal.priority >=3 && proposal.priority <= 6 )
+                      return (proposal.stateInVotingMachine > 2)
                     }).length}</span>
                     -
                     <span>{scheme.proposalIds ? scheme.proposalIds.length : 0}</span>
