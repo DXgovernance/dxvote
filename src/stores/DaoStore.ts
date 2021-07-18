@@ -4,6 +4,7 @@ import { ContractType } from './Provider';
 import { action, makeObservable, observable } from 'mobx';
 import web3 from 'web3';
 import _ from 'lodash';
+import contentHash from 'content-hash';
 import { bnum } from '../utils/helpers';
 import { decodeProposalStatus } from '../utils/proposals';
 import { ethers, utils } from 'ethers';
@@ -667,7 +668,7 @@ export default class DaoStore {
             ]
         },[
           networkConfig.avatar,
-          proposalData.descriptionHash,
+          contentHash.decode(proposalData.descriptionHash),
           proposalData.reputationChange,
           [0, proposalData.ethValue, proposalData.tokenValue, 0, 1],
           proposalData.externalToken,
@@ -698,7 +699,7 @@ export default class DaoStore {
           proposalData.to,
           proposalData.data,
           proposalData.value,
-          proposalData.descriptionHash
+          contentHash.decode(proposalData.descriptionHash)
         ]),
         "0"
       );

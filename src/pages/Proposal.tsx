@@ -313,13 +313,15 @@ const ProposalPage = observer(() => {
               lineBreak: "anywhere",
               whiteSpace: "pre-line"
             }} />
-            <h3 style={{margin: "0px"}}>
-              <small>
-                IPFS Document: <a target="_blank" href={`https://ipfs.io/ipfs/${contentHash.decode(proposal.descriptionHash)}`}>
-                ipfs://{contentHash.decode(proposal.descriptionHash)}
-                </a>
-              </small>
-            </h3>
+            {proposal.descriptionHash.length > 0 &&
+              <h3 style={{margin: "0px"}}>
+                <small>
+                  IPFS Document: <a target="_blank" href={`https://ipfs.io/ipfs/${contentHash.decode(proposal.descriptionHash)}`}>
+                  ipfs://{contentHash.decode(proposal.descriptionHash)}
+                  </a>
+                </small>
+              </h3>
+            }
             <h2> Calls  <Question question="9"/></h2>
             {proposalCallTexts.map((proposalCallText, i) => {
               return(

@@ -749,7 +749,10 @@ export const updateProposals = async function (
                   if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
                     creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
                     if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash != ZERO_HASH) {
-                      schemeProposalInfo.descriptionHash = contentHash.fromIpfs(creationLogDecoded._descriptionHash);
+                      if (creationLogDecoded._descriptionHash.substring(0,1) == "Qm")
+                        schemeProposalInfo.descriptionHash = contentHash.fromIpfs(creationLogDecoded._descriptionHash);
+                      else
+                        schemeProposalInfo.descriptionHash = creationLogDecoded._descriptionHash;
                     }
                   }
                   
@@ -1010,13 +1013,13 @@ export const updateProposals = async function (
             logIndex: schemeEvent.logIndex
           });
           
-          if (schemeProposalInfo.descriptionHash.length > 0)
+          if (schemeProposalInfo.descriptionHash.length > 0){
             networkCache.ipfsHashes.push({
               hash: contentHash.decode(schemeProposalInfo.descriptionHash),
               type: 'proposal',
               name: proposalId
             });
-          
+          }
           // Save proposal created in users
           if (!networkCache.users[votingMachineProposalInfo.proposer]) {
             networkCache.users[votingMachineProposalInfo.proposer] = {
@@ -1037,18 +1040,26 @@ export const updateProposals = async function (
     
   }));
   
+  let retryIntent = 0;
   // Update proposals title
   for (let proposalIndex = 0; proposalIndex < Object.keys(networkCache.proposals).length; proposalIndex++) {
     const proposal = networkCache.proposals[Object.keys(networkCache.proposals)[proposalIndex]];
+    if (retryIntent > 3) {
+      retryIntent = 0;
+      continue;
+    }
     if (
       networkCache.schemes[proposal.scheme].type != "WalletScheme"
       && proposal.descriptionHash && proposal.descriptionHash.length > 0
-      && proposal.title.length == 0
-      && proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000
+      && (proposal.title.length == 0 && proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
     )
       try {
         console.debug('getting title from proposal', proposal.id, contentHash.decode(proposal.descriptionHash));
-        const response = await axios.get('https://ipfs.io/ipfs/'+contentHash.decode(proposal.descriptionHash))
+        const response = await axios.get({
+          url:'https://ipfs.io/ipfs/'+contentHash.decode(proposal.descriptionHash),
+          method: "GET",
+          timeout: 5000
+        });
         if (response && response.data && response.data.title) {
           networkCache.proposals[proposal.id].title = response.data.title;
         } else {
@@ -1057,6 +1068,8 @@ export const updateProposals = async function (
         await sleep(1000);
       } catch (error) {
         console.error('Error getting title from', proposal.descriptionHash, 'waiting 2 seconds and trying again..');
+        proposalIndex --;
+        retryIntent ++;
         await sleep(2000);
       }
   }
