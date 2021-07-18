@@ -159,7 +159,7 @@ const ProposalPage = observer(() => {
       "## Getting proposal description from IPFS..."
     );
     const [proposalTitle, setProposalTitle] = React.useState(
-      scheme.type == 'WalletScheme' ? proposal.title : "Getting proposal title from IPFS..."
+      proposal.title.length > 0 ? proposal.title : "Getting proposal title from IPFS..."
     );
     
     const votingMachineTokenName = (votingMachines.gen && (scheme.votingMachine == votingMachines.gen.address))
