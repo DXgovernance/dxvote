@@ -151,7 +151,7 @@ const ProposalPage = observer(() => {
     
     const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
     const scheme = daoStore.getScheme(proposal.scheme);
-    const { dxdApproved } = userStore.getUserInfo(); 
+    const { dxdApproved, genApproved } = userStore.getUserInfo(); 
     const { active, account, library } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
@@ -164,6 +164,8 @@ const ProposalPage = observer(() => {
     
     const votingMachineTokenName = (votingMachines.gen && (scheme.votingMachine == votingMachines.gen.address))
       ? 'GEN' : 'DXD';
+    const votingMachineTokenApproved = (votingMachines.gen && (scheme.votingMachine == votingMachines.gen.address))
+      ? genApproved : dxdApproved;
       
     const proposalEvents = daoStore.getProposalEvents(proposalId);
     console.debug("[Scheme]", scheme);
@@ -539,7 +541,7 @@ const ProposalPage = observer(() => {
             : <div></div>
           }
 
-          {!finishTimeReached && (proposal.stateInVotingMachine == 3 || proposal.stateInVotingMachine == 4) && dxdApproved.toString() === "0" ?
+          {!finishTimeReached && (proposal.stateInVotingMachine == 3 || proposal.stateInVotingMachine == 4) && votingMachineTokenApproved.toString() === "0" ?
             <SidebarRow>
               <small>Approve {votingMachineTokenName} to stake</small>
               <ActionButton color="blue" onClick={() => approveVotingMachineToken()}>Approve {votingMachineTokenName}</ActionButton>

@@ -4,20 +4,29 @@ import { BigNumber } from 'bignumber.js';
 
 export const calculateStakes = function(thresholdConst, boostedProposals, preBoostedProposals, upstakes, downstakes ) {
 
+  // No idea why but the estimation of staking token by diving the thresholdConst get on chain by 0.90...
+  // I think it might be due to the precision magic used in the real number library used in teh GenensisProtocol
+  thresholdConst = thresholdConst.times(0.90949470177);
   let threshold = thresholdConst.div(10**12).pow(boostedProposals);
   if (threshold.lt(1.0001))
     threshold = bnum("1.0001");
     
-  let recommendedThreshold = thresholdConst.div(10**12).pow(boostedProposals + preBoostedProposals);
+  let recommendedThreshold = thresholdConst.div(10**12).pow(Number(boostedProposals) + Number(preBoostedProposals));
   if (recommendedThreshold.lt(1.0001))
     recommendedThreshold = bnum("1.0001");
     
-  // console.log("thresholdConst", thresholdConst.toString());
-  // console.log("threshold", threshold.toString());
+  // console.log("--", boostedProposals, preBoostedProposals);
+  // console.log("thresholdConst", thresholdConst.div(10**12).toString());
   // console.log("score", upstakes.div(downstakes).toString())
+  // console.log("threshold", threshold.toString());
   // console.log(
   //   downstakes.times(threshold).minus(upstakes).div(10**18).toString(),
   //   upstakes.div(threshold).minus(downstakes).div(10**18).toString()
+  // )
+  // console.log("recommendedThreshold", recommendedThreshold.toString());
+  // console.log(
+  //   downstakes.times(recommendedThreshold).minus(upstakes).div(10**18).toString(),
+  //   upstakes.div(recommendedThreshold).minus(downstakes).div(10**18).toString()
   // )
   
   return {
