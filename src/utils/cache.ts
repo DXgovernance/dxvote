@@ -405,7 +405,6 @@ export const updateSchemes = async function (
     const controllerEvent = controllerEvents[controllerEventsIndex];
     
     const schemeAddress = controllerEvent.returnValues._scheme;
-    const walletSchemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
     
     // Add or update the scheme information, register scheme is used to add and updates scheme parametersHash
     if (controllerEvent.event == "RegisterScheme") {
@@ -421,6 +420,7 @@ export const updateSchemes = async function (
       ];
       
       if (schemeTypeData.type == 'WalletScheme') {
+        const walletSchemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
         callsToExecute.push([walletSchemeContract, "controllerAddress", []]);
         callsToExecute.push([walletSchemeContract, "schemeName", []]);
         callsToExecute.push([walletSchemeContract, "maxSecondsForExecution", []]);
@@ -547,7 +547,10 @@ export const updateSchemes = async function (
       ];
       
       if (networkCache.schemes[schemeAddress].type == 'WalletScheme') {
-        callsToExecute.push([walletSchemeContract, "maxSecondsForExecution", []]);
+        callsToExecute.push([
+          await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
+          "maxSecondsForExecution", []
+        ]);
       }
       const callsResponse = await executeMulticall(web3, allContracts.multicall, callsToExecute);
       
@@ -568,7 +571,6 @@ export const updateSchemes = async function (
   await Promise.all(Object.keys(networkCache.schemes).map(async (schemeAddress) => {
     if (networkCache.schemes[schemeAddress].registered) {
       
-      const walletSchemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
       const schemeTypeData = getSchemeTypeData(networkName, schemeAddress);
       const votingMachine = allContracts.votingMachines[schemeTypeData.votingMachine].contract;
       
@@ -582,7 +584,10 @@ export const updateSchemes = async function (
       ];
       
       if (networkCache.schemes[schemeAddress].type == 'WalletScheme') {
-        callsToExecute.push([walletSchemeContract, "maxSecondsForExecution", []]);
+        callsToExecute.push([
+          await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
+          "maxSecondsForExecution", []
+        ]);
         callsToExecute.push([
           votingMachine,
           "boostedVoteRequiredPercentage",
@@ -614,14 +619,14 @@ export const updateSchemes = async function (
 export const updateProposals = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
 ): Promise<DaoNetworkCache> {
+  
   const allContracts = await getContracts(networkName, web3);
   const avatarAddress = allContracts.avatar._address;
   const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', avatarAddress);
   
   // Get new proposals
   await Promise.all(Object.keys(networkCache.schemes).map(async (schemeAddress) => {
-
-    const walletSchemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
+    
     const schemeTypeData = getSchemeTypeData(networkName, schemeAddress);
     const votingMachine = allContracts.votingMachines[schemeTypeData.votingMachine].contract;
   
@@ -648,11 +653,9 @@ export const updateProposals = async function (
       try {
         console.debug("Getting proposals in event batch index", schemeEventsBatchsIndex, "in", schemeTypeData.name,);
         await Promise.all(schemeEventsBatchs[schemeEventsBatchsIndex].map(async (schemeEvent) => {
-
           const proposalId = (schemeEvent.topics[1] == avatarAddressEncoded)
           ? web3.eth.abi.decodeParameter('bytes32', schemeEvent.topics[2])
           : web3.eth.abi.decodeParameter('bytes32', schemeEvent.topics[1]);
-          
           // Get all the proposal information from the scheme and voting machine
           let callsToExecute = [
             [ 
@@ -681,9 +684,12 @@ export const updateProposals = async function (
               [proposalId]
             ]
           ];
-          
+
           if (schemeTypeData.type == 'WalletScheme') {
-            callsToExecute.push([ walletSchemeContract, "getOrganizationProposal", [proposalId] ]);
+            callsToExecute.push([ 
+              await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
+              "getOrganizationProposal", [proposalId]
+            ]);
           }
           
           const callsResponse = await executeMulticall(web3, allContracts.multicall, callsToExecute);
@@ -754,7 +760,7 @@ export const updateProposals = async function (
                   if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
                     creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
                     if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash != ZERO_HASH) {
-                      if (creationLogDecoded._descriptionHash.substring(0,1) == "Qm")
+                      if (creationLogDecoded._descriptionHash.substring(0,2) == "Qm")
                         schemeProposalInfo.descriptionHash = contentHash.fromIpfs(creationLogDecoded._descriptionHash);
                       else
                         schemeProposalInfo.descriptionHash = creationLogDecoded._descriptionHash;
@@ -933,7 +939,6 @@ export const updateProposals = async function (
               )];
               
             } else if (schemeTypeData.type == "GenericMulticall") {
-              
               for (let callIndex = 0; callIndex < creationLogDecoded._contractsToCall.length; callIndex++) {
                 schemeProposalInfo.to.push(allContracts.controller._address);
                 schemeProposalInfo.value.push(0)
@@ -1018,12 +1023,20 @@ export const updateProposals = async function (
             logIndex: schemeEvent.logIndex
           });
           
-          if (schemeProposalInfo.descriptionHash.length > 0){
-            networkCache.ipfsHashes.push({
-              hash: contentHash.decode(schemeProposalInfo.descriptionHash),
-              type: 'proposal',
-              name: proposalId
-            });
+          if (schemeProposalInfo.descriptionHash.length > 1){
+            try {
+              const ipfsHash =
+                (schemeProposalInfo.descriptionHash.length > 1 && schemeProposalInfo.descriptionHash.substring(0,2) != "Qm")
+                ? contentHash.decode(schemeProposalInfo.descriptionHash)
+                : schemeProposalInfo.descriptionHash
+              networkCache.ipfsHashes.push({
+                hash: ipfsHash,
+                type: 'proposal',
+                name: proposalId
+              });
+            } catch (error) {
+              console.error('Error decoding descriptionHash from proposal', proposalId, schemeProposalInfo.descriptionHash);
+            }
           }
           // Save proposal created in users
           if (!networkCache.users[votingMachineProposalInfo.proposer]) {
@@ -1088,7 +1101,6 @@ export const updateProposals = async function (
     if (networkCache.proposals[proposalId].stateInVotingMachine > 2) {
   
       const schemeAddress = networkCache.proposals[proposalId].scheme;
-      const walletSchemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
       const schemeTypeData = getSchemeTypeData(networkName, schemeAddress);
       const votingMachine = allContracts.votingMachines[schemeTypeData.votingMachine].contract;
 
@@ -1127,7 +1139,10 @@ export const updateProposals = async function (
       ];
   
       if (schemeTypeData.type == 'WalletScheme') {
-        callsToExecute.push([ walletSchemeContract, "getOrganizationProposal", [proposalId] ]);
+        callsToExecute.push([ 
+          await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
+          "getOrganizationProposal", [proposalId]
+        ]);
       }
   
       const callsResponse = await executeMulticall(web3, allContracts.multicall, callsToExecute);
