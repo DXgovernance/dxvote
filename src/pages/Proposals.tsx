@@ -189,7 +189,7 @@ const ProposalsPage = observer(() => {
           <TableHeader width="35%" align="left"> Title </TableHeader>
           <TableHeader width="15%" align="center"> Scheme </TableHeader>
           <TableHeader width="15%" align="center"> Status </TableHeader>
-          <TableHeader width="17.5%" align="center"> Staked </TableHeader>
+          <TableHeader width="17.5%" align="center"> Stakes </TableHeader>
           <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
         </ProposalTableHeaderWrapper>
         { (allProposals.length === 0) ?
