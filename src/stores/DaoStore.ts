@@ -15,7 +15,7 @@ import {
   VotingMachineProposalState
 } from '../enums';
 
-const CACHE = require('../cache');
+const CACHE = require('../cache/data.json');
 
 export default class DaoStore {
   daoCache: DaoCache;

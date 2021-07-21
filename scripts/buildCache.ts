@@ -2,7 +2,7 @@ const fs = require("fs");
 const hre = require("hardhat");
 const web3 = hre.web3;
 const { getNetworkConfig } = require('../src/config');
-const { updateNetworkCache } = require('../src/utils/cache');
+const { updateNetworkCache } = require('../src/cache');
 
 import { DaoCache, DaoInfo } from '../src/types';
 
@@ -12,8 +12,8 @@ async function main() {
   const networkName = hre.network.name;
   const contractsConfig = getNetworkConfig(networkName);
   
-  let cacheFile: DaoCache = fs.existsSync('./src/cache.json')
-    ? JSON.parse(fs.readFileSync('./src/cache.json', 'utf-8'))
+  let cacheFile: DaoCache = fs.existsSync('./src/cache/data.json')
+    ? JSON.parse(fs.readFileSync('./src/cache/data.json', 'utf-8'))
     : {
       [networkName] : {
         l1BlockNumber: contractsConfig.fromBlock,
@@ -58,7 +58,7 @@ async function main() {
   if (fromBlock < toBlock) {
     console.log('Runing cache script from block', fromBlock, 'to block', toBlock, 'in network', networkName);
     cacheFile[networkName] = await updateNetworkCache(networkCache, networkName, fromBlock, toBlock, web3);
-    fs.writeFileSync("./src/cache.json", JSON.stringify(cacheFile, null, 2), { encoding: "utf8", flag: "w" });
+    fs.writeFileSync("./src/cache/data.json", JSON.stringify(cacheFile, null, 2), { encoding: "utf8", flag: "w" });
   }
 } 
 

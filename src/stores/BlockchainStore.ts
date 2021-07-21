@@ -6,7 +6,7 @@ import { ContractType } from './Provider';
 import { decodeSchemeParameters } from '../utils/scheme';
 import { decodePermission } from '../utils/permissions';
 import { bnum } from '../utils/helpers';
-const { updateNetworkCache } = require('../utils/cache');
+const { updateNetworkCache } = require('../cache');
 
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;

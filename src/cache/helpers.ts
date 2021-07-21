@@ -1,4 +1,5 @@
-const _ = require("lodash");
+import contentHash from 'content-hash';
+import _ from "lodash";
 
 const MAX_BLOCKS_PER_EVENTS_FETCH : number = Number(process.env.MAX_BLOCKS_PER_EVENTS_FETCH) || 1000000;
 
@@ -115,3 +116,53 @@ export const getTimestampOfEvents = async function(web3, events) {
 export const sortEvents = function(events) {
   return _.orderBy( events , ["l1BlockNumber", "l2BlockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc","asc"]);
 };
+
+export const executeMulticall = async function(web3, multicall, calls) {
+  const rawCalls = calls.map((call) => {
+    return [call[0]._address, web3.eth.abi.encodeFunctionCall(
+      call[0]._jsonInterface.find(method => method.name == call[1]), call[2]
+    )];
+  });
+  
+  const { returnData } = await multicall.methods.aggregate(rawCalls).call();
+
+  return {
+    returnData,
+    decodedReturnData:returnData.map((callResult, i) => {
+      return web3.eth.abi.decodeParameters(
+        calls[i][0]._jsonInterface.find(method => method.name == calls[i][1]).outputs,
+        callResult
+      )["0"];
+    })
+  };
+}
+
+export const isNode = function () {
+  return (typeof module !== 'undefined' && module.exports);
+}
+
+export const descriptionHashToIPFSHash = function (descriptionHash) {
+  try {
+    if (contentHash.getCodec(descriptionHash) == "ipfs-ns")
+      return contentHash.decode(descriptionHash);
+    else if (descriptionHash.length > 1 && descriptionHash.substring(0,2) != "Qm")
+      return descriptionHash;
+    else
+      return "";
+  } catch (error) {
+    console.error('Error decoding descriptionHash', descriptionHash);
+  }
+}
+
+export const ipfsHashToDescriptionHash = function (ipfsHash) {
+  try {
+    if (ipfsHash.length > 1 && ipfsHash.substring(0,2) == "Qm")
+      return contentHash.fromIpfs(ipfsHash);
+    else if (contentHash.getCodec(ipfsHash) == "ipfs-ns")
+      return ipfsHash;
+    else
+      return "";
+  } catch (error) {
+    console.error('Error encoding ipfsHash', ipfsHash);
+  }
+}

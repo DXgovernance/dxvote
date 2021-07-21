@@ -1,42 +1,23 @@
-const axios = require('axios');
-import contentHash from 'content-hash';
-import { bnum, ZERO_HASH, ZERO_ADDRESS, sleep } from './helpers';
-const { getEvents, getRawEvents, sortEvents } = require('./cacheEvents');
-const { decodePermission } = require('./permissions');
-const { decodeSchemeParameters } = require('./scheme');
+import axios from 'axios';
+import { bnum, ZERO_HASH, ZERO_ADDRESS, sleep } from '../utils/helpers';
+import { decodePermission } from '../utils/permissions';
+import { decodeSchemeParameters } from '../utils/scheme';
+import {
+  getEvents,
+  getRawEvents,
+  sortEvents,
+  executeMulticall,
+  isNode,
+  descriptionHashToIPFSHash,
+  ipfsHashToDescriptionHash
+} from './helpers';
 import { DaoNetworkCache } from '../types';
-const WalletSchemeJSON = require('../contracts/WalletScheme');
-const { getContracts } = require('../contracts');
-const { getSchemeTypeData } = require('../config');
-
-var isNode = false;
-if (typeof module !== 'undefined' && module.exports) {
-  isNode = true;
-}
-
-async function executeMulticall(web3, multicall, calls) {
-  
-  const rawCalls = calls.map((call) => {
-    return [call[0]._address, web3.eth.abi.encodeFunctionCall(
-      call[0]._jsonInterface.find(method => method.name == call[1]), call[2]
-    )];
-  });
-  
-  const { returnData } = await multicall.methods.aggregate(rawCalls).call();
-
-  return {
-    returnData,
-    decodedReturnData:returnData.map((callResult, i) => {
-      return web3.eth.abi.decodeParameters(
-        calls[i][0]._jsonInterface.find(method => method.name == calls[i][1]).outputs,
-        callResult
-      )["0"];
-    })
-  };
-}
+import WalletSchemeJSON from '../contracts/WalletScheme.json';
+import { getContracts } from '../contracts';
+import { getSchemeTypeData } from '../config';
 
 export const updateNetworkCache = async function (
-  networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
+  networkCache: DaoNetworkCache, networkName: string, fromBlock: number, toBlock: number, web3: any
 ): Promise<DaoNetworkCache> {
   console.debug('[Cache Update]', fromBlock, toBlock);
   const networkContracts = await getContracts(networkName, web3);
@@ -117,7 +98,7 @@ export const updateDaoInfo = async function (
 
 // Get all Mint and Burn reputation events to calculate rep by time off chain
 export const updateReputationEvents = async function (
-  networkCache: DaoNetworkCache, reputation: any, fromBlock: string, toBlock: string, web3: any
+  networkCache: DaoNetworkCache, reputation: any, fromBlock: number, toBlock: number, web3: any
 ): Promise<DaoNetworkCache> {
 
   if (!networkCache.daoInfo.repEvents)
@@ -181,8 +162,8 @@ export const updateVotingMachine = async function (
   avatarAddress: string,
   votingMachine: any,
   multicall: any,
-  fromBlock: string,
-  toBlock: string,
+  fromBlock: number,
+  toBlock: number,
   web3: any
 ): Promise<DaoNetworkCache> {
 
@@ -346,7 +327,7 @@ export const updateVotingMachine = async function (
 
 // Gets all teh events form the permission registry and stores the permissions set.
 export const updatePermissionRegistry = async function (
-  networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
+  networkCache: DaoNetworkCache, networkName: string, fromBlock: number, toBlock: number, web3: any
 ): Promise<DaoNetworkCache> {
   const allContracts = await getContracts(networkName, web3);
   if (allContracts.permissionRegistry._address != ZERO_ADDRESS) {
@@ -393,7 +374,7 @@ export const updatePermissionRegistry = async function (
 
 // Update all the schemes information
 export const updateSchemes = async function (
-  networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
+  networkCache: DaoNetworkCache, networkName: string, fromBlock: number, toBlock: number, web3: any
 ): Promise<DaoNetworkCache> {
   const allContracts = await getContracts(networkName, web3);
 
@@ -617,7 +598,7 @@ export const updateSchemes = async function (
 
 // Update all the proposals information
 export const updateProposals = async function (
-  networkCache: DaoNetworkCache, networkName: string, fromBlock: string, toBlock: string, web3: any
+  networkCache: DaoNetworkCache, networkName: string, fromBlock: number, toBlock: number, web3: any
 ): Promise<DaoNetworkCache> {
   
   const allContracts = await getContracts(networkName, web3);
@@ -760,10 +741,7 @@ export const updateProposals = async function (
                   if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
                     creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
                     if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash != ZERO_HASH) {
-                      if (creationLogDecoded._descriptionHash.substring(0,2) == "Qm")
-                        schemeProposalInfo.descriptionHash = contentHash.fromIpfs(creationLogDecoded._descriptionHash);
-                      else
-                        schemeProposalInfo.descriptionHash = creationLogDecoded._descriptionHash;
+                      schemeProposalInfo.descriptionHash = ipfsHashToDescriptionHash(creationLogDecoded._descriptionHash);
                     }
                   }
                   
@@ -1024,19 +1002,11 @@ export const updateProposals = async function (
           });
           
           if (schemeProposalInfo.descriptionHash.length > 1){
-            try {
-              const ipfsHash =
-                (schemeProposalInfo.descriptionHash.length > 1 && schemeProposalInfo.descriptionHash.substring(0,2) != "Qm")
-                ? contentHash.decode(schemeProposalInfo.descriptionHash)
-                : schemeProposalInfo.descriptionHash
-              networkCache.ipfsHashes.push({
-                hash: ipfsHash,
-                type: 'proposal',
-                name: proposalId
-              });
-            } catch (error) {
-              console.error('Error decoding descriptionHash from proposal', proposalId, schemeProposalInfo.descriptionHash);
-            }
+            networkCache.ipfsHashes.push({
+              hash: descriptionHashToIPFSHash(schemeProposalInfo.descriptionHash),
+              type: 'proposal',
+              name: proposalId
+            });
           }
           // Save proposal created in users
           if (!networkCache.users[votingMachineProposalInfo.proposer]) {
@@ -1071,13 +1041,13 @@ export const updateProposals = async function (
       && proposal.descriptionHash && proposal.descriptionHash.length > 0
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
       && (proposal.title.length == 0
-        && (isNode || proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
+        && (isNode() || proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
       )
     )
       try {
-        console.debug('getting title from proposal', proposal.id, contentHash.decode(proposal.descriptionHash));
+        console.debug('Getting title from proposal', proposal.id, proposal.descriptionHash);
         const response = await axios.request({
-          url:'https://ipfs.io/ipfs/'+contentHash.decode(proposal.descriptionHash),
+          url:'https://ipfs.io/ipfs/'+descriptionHashToIPFSHash(proposal.descriptionHash),
           method: "GET",
           timeout: 5000
         });
