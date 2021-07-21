@@ -7,6 +7,7 @@ import BlockchainLink from '../components/common/BlockchainLink';
 import { bnum, parseCamelCase, ZERO_ADDRESS } from '../utils/helpers';
 import { formatBalance } from '../utils/token';
 import { formatCurrency } from '../utils/number';
+import { getTokenData } from '../config';
 
 const FinanceInfoWrapper = styled.div`
     background: white;
@@ -91,17 +92,18 @@ const FinanceInformation = observer(() => {
       }]
     };
     Object.keys(daoInfo.tokenBalances).map((tokenAddress) => {
+      const tokenData = getTokenData(tokenAddress);
       assets.avatar.push({
         address: tokenAddress,
-        name: networkConfig.tokens[tokenAddress].name,
+        name: tokenData.name,
         amount: bnum(daoInfo.tokenBalances[tokenAddress]),
-        decimals: networkConfig.tokens[tokenAddress].decimals
+        decimals: tokenData.decimals
       })
       assets.total.push({
         address: tokenAddress,
-        name: networkConfig.tokens[tokenAddress].name,
+        name: tokenData.name,
         amount: bnum(daoInfo.tokenBalances[tokenAddress]),
-        decimals: networkConfig.tokens[tokenAddress].decimals
+        decimals: tokenData.decimals
       })
     });
     
@@ -119,11 +121,13 @@ const FinanceInformation = observer(() => {
         }]
       
       Object.keys(tokenBalances).map((tokenAddress) => {
+        const tokenData = getTokenData(tokenAddress);
+
         assets[scheme.name].push({
           address: tokenAddress,
-          name: networkConfig.tokens[tokenAddress].name,
+          name: tokenData.name,
           amount: bnum(tokenBalances[tokenAddress]),
-          decimals: networkConfig.tokens[tokenAddress].decimals
+          decimals: tokenData.decimals
         })
         const indexOfAssetInTotal = assets.total.findIndex((asset) => asset.address == tokenAddress);
         if (indexOfAssetInTotal > -1) {
@@ -133,9 +137,9 @@ const FinanceInformation = observer(() => {
         } else {
           assets.total.push({
             address: tokenAddress,
-            name: networkConfig.tokens[tokenAddress].name,
+            name: tokenData.name,
             amount: bnum(tokenBalances[tokenAddress]),
-            decimals: networkConfig.tokens[tokenAddress].decimals,
+            decimals: tokenData.decimals,
           })
         }
         

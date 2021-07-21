@@ -1,14 +1,15 @@
 const contractsFile = require('./contracts.json');
-const dataFile = require('./data.json');
+const tokensToFetchPriceFile = require('./tokensToFetchPrice.json');
+const tokensFile = require('./tokens.json');
 const Web3 = require('web3');
 import { ZERO_ADDRESS } from '../utils/helpers';
+import { NETWORK_IDS } from '../provider/connectors';
 
 const web3 = new Web3();
 
 export const getNetworkConfig = function(network) {
-  const networkData = dataFile[network] || {
-    tokens: {}
-  };
+
+
   let networkConfig;
 
   if (network === 'localhost') {
@@ -247,15 +248,8 @@ export const getNetworkConfig = function(network) {
     networkConfig = contractsFile[network];
   };
   
-  if (networkConfig && networkConfig.votingMachines.dxd)
-    networkData.tokens[networkConfig.votingMachines.dxd.token] = {
-      name: "DXD", decimals: 18
-    };
-  if (networkConfig && networkConfig.votingMachines.gen)
-    networkData.tokens[networkConfig.votingMachines.gen.token] = {
-      name: "GEN", decimals: 18
-    };
-  return Object.assign(networkData, networkConfig);
+
+  return networkConfig;
 
 }
 
@@ -333,4 +327,13 @@ export const getSchemeTypeData = function(network, schemeAddress) {
     ],
     creationLogEncoding: []
   }
+}
+
+export const getTokenData = function(tokenAddress) {
+  console.log(tokenAddress)
+  return tokensFile.tokens.find((tokenInFile) => tokenInFile.address == tokenAddress);
+}
+
+export const getTokensToFetchPrice = function(networkName) {
+  return tokensToFetchPriceFile[networkName];
 }

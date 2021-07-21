@@ -1,6 +1,7 @@
 import RootStore from '../stores';
 import axios from "axios";
 import web3 from "web3";
+import { getTokensToFetchPrice } from '../config';
 
 export default class CoingeckoService {
   rootStore: RootStore;
@@ -11,15 +12,15 @@ export default class CoingeckoService {
   }
   
   async loadPrices(){
-    const tokens = this.rootStore.configStore.getNetworkConfig().tokens;
+    const tokens = getTokensToFetchPrice(this.rootStore.configStore.getActiveChainName());
     const networkName = this.rootStore.configStore.getActiveChainName() == 'mainnet' ? 'ethereum'
       : this.rootStore.configStore.getActiveChainName() == 'xdai' ? 'xdai'
       : '';
     
     if (networkName == 'ethereum' || networkName == 'xdai') {
       let tokenAddresses = "";
-      Object.keys(tokens).map((tokenAddress, i) => {
-        if (i == Object.keys(tokens).length - 1)
+      tokens.map((tokenAddress, i) => {
+        if (i == tokens.length - 1)
           tokenAddresses += tokenAddress;
         else
         tokenAddresses += tokenAddress + "%2C";

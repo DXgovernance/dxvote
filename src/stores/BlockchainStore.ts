@@ -7,6 +7,7 @@ import { decodeSchemeParameters } from '../utils/scheme';
 import { decodePermission } from '../utils/permissions';
 import { bnum } from '../utils/helpers';
 const { updateNetworkCache } = require('../cache');
+import { getTokensToFetchPrice } from '../config';
 
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;
@@ -168,7 +169,8 @@ export default class BlockchainStore {
         networkCache = await updateNetworkCache(networkCache, networkName, fromBlock, toBlock, library);
         
         let tokensBalancesCalls = [];
-        Object.keys(networkConfig.tokens).map((tokenAddress) => {
+        const tokens = getTokensToFetchPrice(this.rootStore.configStore.getActiveChainName());
+        tokens.map((tokenAddress) => {
           if (!networkCache.daoInfo.tokenBalances[tokenAddress])
             tokensBalancesCalls.push({
               contractType: ContractType.ERC20,

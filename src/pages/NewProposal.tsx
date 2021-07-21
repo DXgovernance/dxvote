@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
+import { getTokenData } from '../config';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE, sleep } from '../utils/helpers';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
@@ -392,13 +393,13 @@ const NewProposalPage = observer(() => {
     allowedToCall.push({ value: networkConfig.permissionRegistry, name: `PermissionRegistry ${networkConfig.permissionRegistry}` });
     
     // Add ERC20 tokens
-    if (networkConfig.tokens)
-      Object.keys(networkConfig.tokens).map((tokenAddress) => {
-        allowedToCall.push({
-          value: tokenAddress,
-          name: `${networkConfig.tokens[tokenAddress].name} ${tokenAddress}`
-        });
-      });
+    // if (networkConfig.tokens)
+    //   Object.keys(networkConfig.tokens).map((tokenAddress) => {
+    //     allowedToCall.push({
+    //       value: tokenAddress,
+    //       name: `${networkConfig.tokens[tokenAddress].name} ${tokenAddress}`
+    //     });
+    //   });
       
     function setCallsInState(calls) {
       localStorage.setItem('dxvote-newProposal-calls', JSON.stringify(calls));
@@ -486,7 +487,7 @@ const NewProposalPage = observer(() => {
               params: "address asset,address to,bytes4 functionSignature,uint256 valueAllowed,bool allowed"
             });
           }
-        } else if ((toAddress == networkConfig.votingMachineToken) || networkConfig.tokens[toAddress]) {
+        } else if ((toAddress == networkConfig.votingMachineToken) || getTokenData(toAddress)) {
           calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to,uint256 value` });
           calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", params: `address to,uint256 value` });
           calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from,address to,uint256 value` });
