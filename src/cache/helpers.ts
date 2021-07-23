@@ -151,6 +151,7 @@ export const descriptionHashToIPFSHash = function (descriptionHash) {
       return "";
   } catch (error) {
     console.error('Error decoding descriptionHash', descriptionHash);
+    return "";
   }
 }
 
@@ -164,5 +165,6 @@ export const ipfsHashToDescriptionHash = function (ipfsHash) {
       return "";
   } catch (error) {
     console.error('Error encoding ipfsHash', ipfsHash);
+    return "";
   }
 }
