@@ -3,13 +3,10 @@ const tokensToFetchPriceFile = require('./tokensToFetchPrice.json');
 const tokensFile = require('./tokens.json');
 const Web3 = require('web3');
 import { ZERO_ADDRESS } from '../utils/helpers';
-import { NETWORK_IDS } from '../provider/connectors';
 
 const web3 = new Web3();
 
 export const getNetworkConfig = function(network) {
-
-
   let networkConfig;
 
   if (network === 'localhost') {

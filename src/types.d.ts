@@ -160,12 +160,17 @@ export interface SchemePermissions {
   canRegisterSchemes: boolean;
 }
 
-export interface SchemeCallPermission {
-  asset: string;
-  to: string;
-  functionSignature: string;
-  fromTime: BigNumber;
-  value: BigNumber;
+export interface CallPermissions {
+  [asset: string] : {
+    [from: string] : {
+      [to: string] : {
+        [functionSignature: string] : {
+          fromTime: BigNumber;
+          value: BigNumber;
+        }
+      }
+    }
+  }
 }
 
 export interface Scheme {
@@ -182,7 +187,6 @@ export interface Scheme {
   paramsHash: string;
   permissions: SchemePermissions;
   boostedVoteRequiredPercentage: number;
-  callPermissions: SchemeCallPermission[];
   proposalIds: string[];
   boostedProposals: number;
   maxSecondsForExecution: BigNumber;
@@ -217,6 +221,7 @@ export interface DaoNetworkCache {
   daoInfo: DaoInfo;
   schemes: {[address: string]: Scheme};
   proposals: {[id: string]: Proposal};
+  callPermissions: CallPermissions;
   users: {[address: string]: User};
   votingMachines: {[address: string]: {
     name: string;

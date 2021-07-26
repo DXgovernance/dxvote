@@ -134,12 +134,21 @@ const AddButton = styled.div`
     margin: 5px;
 `;
 
-const CallInput = styled.input`
+const TextInput = styled.input`
   width: ${(props) => props.width || '25%'};
   height: 34px;
   border-radius: 3px;
   border: 1px solid gray;
   margin-right: 5px;
+`;
+
+const SelectInput = styled.select`
+  width: ${(props) => props.width || '25%'};
+  height: 38px;
+  border-radius: 3px;
+  border: 1px solid gray;
+  margin-right: 5px;
+  background-color: #FFF;
 `;
 
 const SelectEditable = styled.div`
@@ -211,6 +220,29 @@ const NewProposalPage = observer(() => {
     
     if (ProposalTemplates[0].name != "Custom")
       ProposalTemplates.unshift({name: "Custom", title: "", description: "" });
+
+    const {
+      assetLimits: transferLimits, recommendedCalls
+    } = daoStore.getSchemeRecommendedCalls(schemeToUse.address);
+    console.debug("[PERMISSIONS]",schemeToUse, transferLimits, recommendedCalls)
+    
+    let allowedToCall = [];
+    
+    recommendedCalls.map((recommendedCall) => {
+      if((recommendedCall.fromTime > 0)
+        && (allowedToCall.findIndex((allowedPermission) => allowedPermission.value == recommendedCall.to) < 0)
+      ) {
+        allowedToCall.push({ value: recommendedCall.to, name: recommendedCall.toName });
+      }
+    });
+    
+    const callPermissions = daoStore.getCache().callPermissions;
+    if (callPermissions
+      [ZERO_ADDRESS]
+      [schemeToUse.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeToUse.address]
+      [ANY_ADDRESS]
+    )
+    allowedToCall.push({ value: ANY_ADDRESS, name: "Custom" });
 
     const uploadToIPFS = async function() {
       if (titleText.length == 10) {
@@ -284,20 +316,21 @@ const NewProposalPage = observer(() => {
                 callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(call.functionName)
               }
               
-              if (call.functionParams.length > 0) {
-                const parameters = (call.functionName.length > 0 && call.functionParams.length > 0)
+              if (call.dataValues.length > 0) {
+                const parameters = (call.functionName.length > 0 && call.dataValues.length > 0)
                   ? call.functionName.substring(
                     call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
                   : [];
+
                 callDataFunctionParamsEncoded = parameters.length > 0 ? library.eth.abi.encodeParameters(
                     parameters,
-                    call.functionParams
+                    call.dataValues
                   ).substring(2)
                   : "";
               }
               callData = callDataFunctionSignature + callDataFunctionParamsEncoded;
             } else {
-              callData = call.functionParams[0];
+              callData = call.dataValues[0];
             }
             if (callToController && call.to != networkConfig.controller) {
               return daoService.encodeControllerGenericCall(
@@ -382,25 +415,6 @@ const NewProposalPage = observer(() => {
       }
     }
     
-    let callToAny = false;
-    let callAnyFunction = false;
-    let allowedToCall = [];
-    
-    if (schemeToUse.controllerAddress == networkConfig.controller) {
-      allowedToCall.push({ value: networkConfig.controller, name: `DXController ${networkConfig.controller}` });
-    }
-    // TO DO: Check that the permission regsitry is allowed, we assume it is
-    allowedToCall.push({ value: networkConfig.permissionRegistry, name: `PermissionRegistry ${networkConfig.permissionRegistry}` });
-    
-    // Add ERC20 tokens
-    // if (networkConfig.tokens)
-    //   Object.keys(networkConfig.tokens).map((tokenAddress) => {
-    //     allowedToCall.push({
-    //       value: tokenAddress,
-    //       name: `${networkConfig.tokens[tokenAddress].name} ${tokenAddress}`
-    //     });
-    //   });
-      
     function setCallsInState(calls) {
       localStorage.setItem('dxvote-newProposal-calls', JSON.stringify(calls));
       setCalls(calls);
@@ -420,6 +434,7 @@ const NewProposalPage = observer(() => {
         data: "",
         functionName: "",
         functionParams: [],
+        dataValues: [],
         value: ""
       })
       setCallsInState(calls);
@@ -430,14 +445,15 @@ const NewProposalPage = observer(() => {
       setCallsInState(calls);
     };
     
-    function changeCallType(proposalIndex) {
-      calls[proposalIndex] = {
-        callType: calls[proposalIndex].callType === "simple" ? "advanced" : "simple",
+    function changeCallType(callIndex) {
+      calls[callIndex] = {
+        callType: calls[callIndex].callType === "simple" ? "advanced" : "simple",
         allowedFunctions: [],
         to: "",
         data: "",
         functionName: "",
         functionParams: [],
+        dataValues: [],
         value: ""
       }
       setCallsInState(calls);
@@ -445,82 +461,49 @@ const NewProposalPage = observer(() => {
     
     function onToSelectChange(callIndex, event) {
       const toAddress = event.target.value;
-
-      calls[callIndex].to = toAddress;
       
-      if (toAddress && toAddress.length > 0) {
+      if (toAddress == ANY_ADDRESS) {
+        changeCallType(callIndex);
+      } else {
+        calls[callIndex].to = toAddress;
         calls[callIndex].allowedFunctions = [];
-        if (toAddress == networkConfig.controller) {
-          calls[callIndex].allowedFunctions.push({
-            value: "mintReputation(uint256,address,address)",
-            params: "uint256 _amount,address _to,address _avatar"
-          });
-          calls[callIndex].allowedFunctions.push({
-            value: "burnReputation(uint256,address,address)",
-            params: "uint256 _amount,address _from,address _avatar"
-          });
-          calls[callIndex].allowedFunctions.push({
-            value: "registerScheme(address,bytes32,bytes4,address)",
-            params: "address _scheme,bytes32 _paramsHash,bytes4 _permissions,address _avatar"
-          });
-          calls[callIndex].allowedFunctions.push({
-            value: "unregisterScheme(address,address)",
-            params: "address _scheme,address _avatar"
-          });
-          calls[callIndex].allowedFunctions.push({
-            value: "genericCall(address,bytes,addres,uint256)",
-            params: "address _contract,bytes calldata _data,Avatar _avatar,uint256 _value"
-          });
-        } else if (toAddress == networkConfig.permissionRegistry) {
-          if (schemeToUse.controllerAddress == networkConfig.controller) {
-            calls[callIndex].allowedFunctions.push({
-              value: "setTimeDelay(uint256)",
-              params: "uint256 newTimeDelay"
-            });
-            calls[callIndex].allowedFunctions.push({
-              value: "setAdminPermission(address,address,address,bytes4,uint256,bool)",
-              params: "address asset, address from,address to,bytes4 functionSignature,uint256 valueAllowed,bool allowed"
-            });
-          } else {
-            calls[callIndex].allowedFunctions.push({
-              value: "setPermission(address,address,bytes4,uint256,bool)",
-              params: "address asset,address to,bytes4 functionSignature,uint256 valueAllowed,bool allowed"
-            });
+        calls[callIndex].functionName = "";
+        calls[callIndex].functionParams = [];
+        calls[callIndex].dataValues = [];
+        calls[callIndex].value = "0";
+        recommendedCalls.map((recommendedCall) => {
+          if (recommendedCall.to == toAddress){
+            calls[callIndex].allowedFunctions.push(recommendedCall);
           }
-        } else if ((toAddress == networkConfig.votingMachineToken) || getTokenData(toAddress)) {
-          calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to,uint256 value` });
-          calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", params: `address to,uint256 value` });
-          calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from,address to,uint256 value` });
-        } else {
-          schemeToUse.callPermissions.map((callPermission) => {
-            if (callPermission.fromTime > 0)
-              if ((callPermission.asset == ZERO_ADDRESS) && (callPermission.to == toAddress)){
-                if (callPermission.functionSignature == ANY_FUNC_SIGNATURE)
-                  callAnyFunction = true;
-                else
-                  calls[callIndex].allowedFunctions.push({ value: callPermission.functionSignature, params: callPermission.functionSignature });
-              } else if (callPermission.asset == toAddress) {
-                calls[callIndex].allowedFunctions.push({ value: "transfer(address,uint256)", params: `address to,uint256 value` });
-                calls[callIndex].allowedFunctions.push({ value: "approve(address,uint256)", params: `address to,uint256 value` });
-                calls[callIndex].allowedFunctions.push({ value: "transferFrom(address,address,uint256)", params: `address from,address to,uint256 value` });
-              }
-          });
+        });
+        if (calls[callIndex].allowedFunctions.length > 0){
+          calls[callIndex].functionName = calls[callIndex].allowedFunctions[0].functionName;
+          calls[callIndex].functionParams = calls[callIndex].allowedFunctions[0].params;
+          calls[callIndex].dataValues = new Array(calls[callIndex].allowedFunctions[0].params.length);
         }
+
+        setCallsInState(calls);
       }
-      setCallsInState(calls);
     }
     
-    function onFunctionSelectChange(callIndex, functionSelected, params) {
-      calls[callIndex].functionName = functionSelected.target.value;
-      
-      if (calls[callIndex].callType == "simple")
-        calls[callIndex].functionParams = params.split(",").map(() => "");
+    function onFunctionSelectChange(callIndex, functionName, params) {
+      calls[callIndex].functionName = functionName;
+
+      if (calls[callIndex].callType == "simple"){
+        calls[callIndex].functionParams = params;
+        calls[callIndex].dataValues = new Array(params.length);
+        calls[callIndex].value = "0";
+      } else {
+        calls[callIndex].functionParams = [];
+        calls[callIndex].dataValues = [""];
+        calls[callIndex].value = "0";
+      }
         
       setCallsInState(calls);
     }
     
     function onFunctionParamsChange(callIndex, event, paramIndex) {
-      calls[callIndex].functionParams[paramIndex] = event.target.value;
+      calls[callIndex].dataValues[paramIndex] = event.target.value;
       setCallsInState(calls);
     }
     
@@ -535,7 +518,6 @@ const NewProposalPage = observer(() => {
     }
     
     function onContributionRewardValueChange(key, value) {
-      console.log(key, value)
       contributionRewardCalls[key] = value;
       setContributionRewardCallsInState(contributionRewardCalls);
     }
@@ -562,24 +544,6 @@ const NewProposalPage = observer(() => {
         setCallsInState(calls);
       }
     }
-    schemeToUse.callPermissions.map((callPermission) => {
-      if (callPermission.fromTime > 0)
-        if (callPermission.asset == ZERO_ADDRESS) {
-          if (callPermission.to == ANY_ADDRESS){
-            callToAny = true;
-            allowedToCall.push({ value: "", name: "Custom" });
-            if (callPermission.functionSignature == ANY_FUNC_SIGNATURE)
-              callAnyFunction = true;
-          }
-          else {
-            if (allowedToCall.findIndex((allowedPermission) => allowedPermission.value == callPermission.to) < 0)
-              allowedToCall.push({ value: callPermission.to, name: callPermission.to });
-          }
-        } else {
-          if (allowedToCall.findIndex((allowedPermission) => allowedPermission.value == callPermission.asset) < 0)
-            allowedToCall.push({ value: callPermission.asset, name: `ERC20 ${callPermission.asset}` });
-        }
-    });
     
     return (
       <NewProposalFormWrapper>
@@ -656,7 +620,7 @@ const NewProposalPage = observer(() => {
       
         {(schemeToUse.type == "ContributionReward")
         ? 
-        // If scheme to use is COntribution Rewar display a different form with less fields
+        // If scheme to use is Contribution Reward display a different form with less fields
         <div>
           <CallRow>
             <span style={{width: "20%", fontSize:"13px"}}>Beneficiary Account</span>
@@ -666,31 +630,31 @@ const NewProposalPage = observer(() => {
             <span style={{width: "20%", fontSize:"13px"}}>Token Amount (in WEI)</span>
           </CallRow>
           <CallRow>
-            <CallInput
+            <TextInput
               type="text"
               onChange={(event) => onContributionRewardValueChange("beneficiary", event.target.value)}
               value={contributionRewardCalls.beneficiary}
               width="50%"
             />
-            <CallInput
+            <TextInput
               type="text"
               onChange={(event) => onContributionRewardValueChange("repChange", event.target.value)}
               value={contributionRewardCalls.repChange}
               width="50%"
             />
-            <CallInput
+            <TextInput
               type="text"
               onChange={(event) => onContributionRewardValueChange("ethValue", event.target.value)}
               value={contributionRewardCalls.ethValue}
               width="50%"
             />
-            <CallInput
+            <TextInput
               type="text"
               onChange={(event) => onContributionRewardValueChange("externalToken", event.target.value)}
               value={contributionRewardCalls.externalToken}
               width="50%"
             />
-            <CallInput
+            <TextInput
               type="text"
               onChange={(event) => onContributionRewardValueChange("tokenValue", event.target.value)}
               value={contributionRewardCalls.tokenValue}
@@ -707,97 +671,93 @@ const NewProposalPage = observer(() => {
               <CallRow key={"call"+i}>
                 <span>#{i}</span>
 
-                <CallInput
-                  list="allowedCalls"
-                  value={calls[i].to}
-                  onChange={(value) => {onToSelectChange(i, value)}}
-                  width="20%"
-                />
-                {(schemeToUse.type == "WalletScheme")
-                  ? <datalist id="allowedCalls">
-                    {allowedToCall.map((allowedCall, allowedCallIndex) =>{
-                      return (
-                        <option key={"toCall"+allowedCallIndex} value={allowedCall.value}>
-                          {allowedCall.name}
-                        </option>
-                      );
-                    })}
-                  </datalist>
-                  : <div/>
+                {((schemeToUse.type == "WalletScheme") && (call.callType === "simple")) ?
+                  <SelectInput
+                    value={calls[i].to}
+                    onChange={(value) => {onToSelectChange(i, value)}}
+                    width={"20%"}
+                  >
+                  {allowedToCall.map((allowedCall, allowedCallIndex) =>{
+                    return (
+                      <option key={"toCall"+allowedCallIndex} value={allowedCall.value}>
+                        {allowedCall.name}
+                      </option>
+                    );
+                  })}
+                  </SelectInput>
+                  : (schemeToUse.type == "WalletScheme") &&
+                  <TextInput
+                    value={calls[i].to}
+                    onChange={(value) => {onToSelectChange(i, value)}}
+                    width={"20%"}
+                  />
                 }
                 
                 { call.callType === "simple" ?
                   
                   <div style={{display: "flex", width: call.callType === "simple" ? "60%" : "50%"}}>
-                    <CallInput
-                      list="allowedFunctions"
+                    <SelectInput
                       value={calls[i].functionName}
                       onChange={(event) => {
-                        const selectedFunction = calls[i].allowedFunctions
-                          .find((allowedFunc) => allowedFunc.value == event.target.value);
+                        const selectedFunction = calls[i].allowedFunctions.find((allowedFunction) => {
+                          return allowedFunction.functionName == event.target.value
+                        });
                         onFunctionSelectChange(
                           i,
-                          event,
+                          event.target.value,
                           selectedFunction ? selectedFunction.params : ""
                         )
                       }}
                       width="40%"
-                    />
-                    <datalist id="allowedFunctions">
+                    >
                       {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
-                        return (
-                          <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.value}/>
-                        );
+                        if (allowedFunc.fromTime > 0 && allowedFunc.value != ANY_FUNC_SIGNATURE)
+                          return (
+                            <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.functionName}>
+                              {allowedFunc.functionName}
+                            </option>
+                          );
                       })}
-                    </datalist>
+                    </SelectInput>
                     
                     <div style={{display: "flex", width: "100%", flexDirection: "column", paddingRight: "10px"}}>
                       {calls[i].functionParams.length == 0 ?
-                        <CallInput 
+                        <TextInput 
                           key={"functionParam00"}
                           disabled
                           type="text"
                           placeholder="Select address to call and function"
                           width="100%"
                           style={{marginTop: "0px"}}
-                        /> : <div/>
-                      }
-                      {calls[i].functionParams.map((funcParam, funcParamIndex) => {
-                        if (funcParam == " address _avatar" || funcParam == " Avatar _avatar" ) {
-                          calls[i].functionParams[funcParamIndex] = networkConfig.avatar;
-                        } else {
-                          let placeholder = "";
-                          if (calls[i].functionName.indexOf(',') > 0) {
-                            placeholder = calls[i].functionName.substring(
-                              calls[i].functionName.indexOf("(") + 1, calls[i].functionName.lastIndexOf(")")
-                            ).split(",")[funcParamIndex]
-                          }
-                          return (
-                            <CallInput 
-                              key={"functionParam"+funcParamIndex}
-                              type="text"
-                              onChange={(value) => onFunctionParamsChange(i, value, funcParamIndex)}
-                              value={calls[i].functionParams[funcParamIndex]}
-                              placeholder={placeholder}
-                              width="100%"
-                              style={{marginTop: funcParamIndex > 0 ? "5px": "0px"}}
-                            />
-                          );
-                        }
+                        />
+                      : calls[i].functionParams.map((funcParam, funcParamIndex) => {
+                        return (
+                          <TextInput 
+                            key={"functionParam"+funcParamIndex}
+                            type="text"
+                            onChange={(value) => onFunctionParamsChange(i, value, funcParamIndex)}
+                            defaultValue={funcParam.defaultValue}
+                            value={calls[i].dataValues[funcParamIndex]}
+                            placeholder={funcParam.name}
+                            width="100%"
+                            style={{marginTop: funcParamIndex > 0 ? "5px": "0px"}}
+                          />
+                        );
+                        
                       })}
                     </div>
                   </div>
                 :
-                  <CallInput 
+                  <TextInput 
                     type="text"
                     onChange={(value) => onFunctionParamsChange(i, value, 0)}
-                    value={calls[i].functionParams}
+                    value={calls[i].dataValues[0]}
                     placeholder="0x..."
                     width="100%"
                   />
                 }
                 
-                <CallInput
+                <TextInput
                   type="text"
                   onChange={(value) => onValueChange(i, value)}
                   value={calls[i].value}

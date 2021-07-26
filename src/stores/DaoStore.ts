@@ -1,11 +1,12 @@
 import RootStore from 'stores';
 import { BigNumber } from '../utils/bignumber';
 import { ContractType } from './Provider';
+import { getCalls } from '../config/recommendedCalls';
 import { action, makeObservable, observable } from 'mobx';
 import web3 from 'web3';
 import _ from 'lodash';
 import contentHash from 'content-hash';
-import { bnum } from '../utils/helpers';
+import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, bnum } from '../utils/helpers';
 import { decodeProposalStatus } from '../utils/proposals';
 import { ethers, utils } from 'ethers';
 import PromiEvent from 'promievent';
@@ -45,10 +46,14 @@ export default class DaoStore {
     Object.keys(unparsedCache.schemes).map((schemeAddress) => {
       unparsedCache.schemes[schemeAddress].ethBalance = bnum(unparsedCache.schemes[schemeAddress].ethBalance)
     })
-    Object.keys(unparsedCache.callPermissions).map((callPermissionFrom) => {
-      unparsedCache.callPermissions[callPermissionFrom].map((callPermission, i) => {
-        unparsedCache.callPermissions[callPermissionFrom][i].fromTime = bnum(callPermission.fromTime)
-        unparsedCache.callPermissions[callPermissionFrom][i].value = bnum(callPermission.value)
+    Object.keys(unparsedCache.callPermissions).map((asset) => {
+      Object.keys(unparsedCache.callPermissions[asset]).map((from) => {
+        Object.keys(unparsedCache.callPermissions[asset][from]).map((to) => {
+          Object.keys(unparsedCache.callPermissions[asset][from][to]).map((functionSignature) => {
+            unparsedCache.callPermissions[asset][from][to][functionSignature].value =
+              bnum(unparsedCache.callPermissions[asset][from][to][functionSignature].value);
+          })
+        })
       })
     })
     Object.keys(unparsedCache.proposals).map((proposalId) => {
@@ -634,6 +639,94 @@ export default class DaoStore {
       .filter((proposalStateChange) => {return (proposalId === proposalStateChange.proposalId)});
   }
 
+  getSchemeRecommendedCalls(schemeAddress): Any {
+    const networkConfig = this.rootStore.configStore.getNetworkConfig();
+    const scheme = this.getScheme(schemeAddress);
+    const callPermissions = this.getCache().callPermissions;
+    let assetLimits = {};
+    const from = scheme.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeAddress;
+    const recommendedCalls = getCalls(this.rootStore.configStore.getActiveChainName());
+    
+    Object.keys(callPermissions).map((assetAddress) => {
+      const callAllowance = this.getCallAllowance(assetAddress, from, schemeAddress, ANY_FUNC_SIGNATURE);
+      if (callAllowance.fromTime > 0)
+        assetLimits[assetAddress] = callAllowance.value;
+    })
+
+    for (let i = 0; i < recommendedCalls.length; i++) {
+      const callAllowance = this.getCallAllowance(
+        recommendedCalls[i].asset,
+        from,
+        recommendedCalls[i].to,
+        recommendedCalls[i].functionSignature
+      );
+      recommendedCalls[i].value = callAllowance.value;
+      recommendedCalls[i].fromTime = callAllowance.fromTime;
+    }
+    
+    return { assetLimits, recommendedCalls };
+  }
+  
+  getCallAllowance(asset, from, to, functionSignature): Any {
+    const networkConfig = this.rootStore.configStore.getNetworkConfig();
+    const callPermissions = this.getCache().callPermissions;
+  
+    if (to == networkConfig.controller && from != networkConfig.avatar) {
+      return {
+        value: bnum(0),
+        fromTime: 0
+      };
+    } else if (
+      to == networkConfig.permissionRegistry
+      && from == networkConfig.avatar
+      && (functionSignature == "0x969e6fbd" || functionSignature == "0x39af6ba9")
+    ) {
+      return {
+        value: bnum(0),
+        fromTime: 1
+      };
+    } else if (
+      to == networkConfig.permissionRegistry
+      && from != networkConfig.avatar
+      && (functionSignature == "0x969e6fbd" || functionSignature == "0x39af6ba9")
+    ) {
+      return {
+        value: bnum(0),
+        fromTime: 0
+      };
+    } else if (!callPermissions[asset] || !callPermissions[asset][from]) {
+      return {
+        value: bnum(0),
+        fromTime: 0
+      };
+    } else if (callPermissions[asset][from][to] && callPermissions[asset][from][to][functionSignature]) {
+      return {
+        value: callPermissions[asset][from][to][functionSignature].value,
+        fromTime: callPermissions[asset][from][to][functionSignature].fromTime
+      };
+    } else if (callPermissions[asset][from][to] && callPermissions[asset][from][to][ANY_FUNC_SIGNATURE]) {
+      return {
+        value: callPermissions[asset][from][to][ANY_FUNC_SIGNATURE].value,
+        fromTime: callPermissions[asset][from][to][ANY_FUNC_SIGNATURE].fromTime
+      };
+    } else if (callPermissions[asset][from][ANY_ADDRESS] && callPermissions[asset][from][ANY_ADDRESS][functionSignature]) {
+      return {
+        value: callPermissions[asset][from][ANY_ADDRESS][functionSignature].value,
+        fromTime: callPermissions[asset][from][ANY_ADDRESS][functionSignature].fromTime
+      };
+    } else if (callPermissions[asset][from][ANY_ADDRESS] && callPermissions[asset][from][ANY_ADDRESS][ANY_FUNC_SIGNATURE]) {
+      return {
+        value: callPermissions[asset][from][ANY_ADDRESS][ANY_FUNC_SIGNATURE].value,
+        fromTime: callPermissions[asset][from][ANY_ADDRESS][ANY_FUNC_SIGNATURE].fromTime
+      };
+    } else {
+      return {
+        value: bnum(0),
+        fromTime: 0
+      };
+    }
+  }
+  
   createProposal(
     scheme: string,
     schemeType: string,
@@ -642,7 +735,7 @@ export default class DaoStore {
     const networkConfig = this.rootStore.configStore.getNetworkConfig();
     const { providerStore } = this.rootStore;
     const { library } = providerStore.getActiveWeb3React();
-    console.log(proposalData)
+
     if (schemeType == "ContributionReward") {
       // function proposeContributionReward(
       //   Avatar _avatar,

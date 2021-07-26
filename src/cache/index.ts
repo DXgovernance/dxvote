@@ -338,34 +338,19 @@ export const updatePermissionRegistry = async function (
     permissionRegistryEvents.map((permissionRegistryEvent) => {
       const eventValues = permissionRegistryEvent.returnValues;
       
-      if (eventValues.from == allContracts.avatar._address) {
+      if (!networkCache.callPermissions[eventValues.asset])
+        networkCache.callPermissions[eventValues.asset] = {};
         
-        Object.keys(networkCache.schemes).map((schemeAddress) => {
-          if (networkCache.schemes[schemeAddress].controllerAddress == allContracts.controller._address) {
-            networkCache.schemes[schemeAddress].callPermissions.push({
-              asset: eventValues.asset,
-              to: eventValues.to,
-              functionSignature: eventValues.functionSignature,
-              value: eventValues.value,
-              fromTime: eventValues.fromTime
-            })
-          }
-        });
-
-      } else if (networkCache.schemes[eventValues.from]){
+      if (!networkCache.callPermissions[eventValues.asset][eventValues.from])
+        networkCache.callPermissions[eventValues.asset][eventValues.from] = {};
         
-        networkCache.schemes[eventValues.from].callPermissions.push({
-          asset: eventValues.asset,
-          to: eventValues.to,
-          functionSignature: eventValues.functionSignature,
-          value: eventValues.value,
-          fromTime: eventValues.fromTime
-        })
-        
-      } else {
-        console.error('[Scheme does not exist]', eventValues.from);
-      }
+      if (!networkCache.callPermissions[eventValues.asset][eventValues.from][eventValues.to])
+        networkCache.callPermissions[eventValues.asset][eventValues.from][eventValues.to] = {};
       
+      networkCache.callPermissions[eventValues.asset][eventValues.from][eventValues.to][eventValues.functionSignature] = {
+        value: eventValues.value,
+        fromTime: eventValues.fromTime
+      };
     });
   }
   
@@ -495,7 +480,6 @@ export const updateSchemes = async function (
           paramsHash: paramsHash,
           permissions,
           boostedVoteRequiredPercentage,
-          callPermissions: [],
           proposalIds: [],
           boostedProposals: 0,
           maxSecondsForExecution,

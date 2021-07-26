@@ -161,19 +161,7 @@ const SchemesInformation = observer(() => {
                     <small>{scheme.permissions.canUpgrade ? 'Can' : 'Cant'} upgrade controller</small><br/>
                     <small>{scheme.permissions.canChangeConstraints ? 'Can' : 'Cant'} change constraints</small><br/>
                     <small>{scheme.permissions.canRegisterSchemes ? 'Can' : 'Cant'} register schemes</small>
-                    <br/><br/>
-                    <strong>Call Permissions</strong><br/>
 
-                    {scheme.callPermissions.map((callPermission, i) => {
-                      if (callPermission.fromTime > 0)
-                        return (
-                          <small key={`callPermission${i}`}>
-                            Address: {callPermission.to == "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa" ? "Any Address" : callPermission.to}<br/>
-                            Function: {callPermission.functionSignature == "0xaaaaaaaa" ? "Any" : callPermission.functionSignature}<br/>
-                            Value: {callPermission.value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ? "Any": callPermission.value}<br/>
-                          <br/></small>
-                        );
-                    })}
                   </TableCell>
 
                   <TableCell width="20%" align="center" style={{display: "flex", justifyContent: "space-around"}}> 
