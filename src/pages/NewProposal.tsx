@@ -192,11 +192,19 @@ const NewProposalPage = observer(() => {
     const [titleText, setTitleText] = React.useState(localStorage.getItem('dxvote-newProposal-title'));
     const [ipfsHash, setIpfsHash] = React.useState("");
     const [descriptionText, setDescriptionText] = React.useState(localStorage.getItem('dxvote-newProposal-description'));
-    const [calls, setCalls] = React.useState(
-      localStorage.getItem('dxvote-newProposal-calls') ? 
-        JSON.parse(localStorage.getItem('dxvote-newProposal-calls'))
-      : []
-    );
+
+    let callsInStorage = [];
+    try {
+      if (localStorage.getItem('dxvote-newProposal-calls')) {
+        callsInStorage = JSON.parse(localStorage.getItem('dxvote-newProposal-calls'));
+        if (callsInStorage.length > 0 && !callsInStorage[0].dataValues)
+        callsInStorage = callsInStorage
+          .map((callInStorage) => Object.assign(callInStorage, {dataValues: new Array(callInStorage.functionParams.length)}))
+      }
+    } catch (error) {
+      callsInStorage = [];
+    }
+    const [calls, setCalls] = React.useState(callsInStorage);
     
     const [contributionRewardCalls, setContributionRewardCalls] = React.useState({
       beneficiary: "ZERO_ADDRESS",
@@ -285,7 +293,7 @@ const NewProposalPage = observer(() => {
     }
     
     const createProposal = async function() {
-      console.debug('[RAW PROPOSAL]', schemeToUse, calls, titleText, ipfsHash);
+      console.debug('[RAW PROPOSAL]', titleText, ipfsHash, calls);
       setSubmitionState(3);
 
       const { library } = providerStore.getActiveWeb3React();
@@ -317,13 +325,8 @@ const NewProposalPage = observer(() => {
               }
               
               if (call.dataValues.length > 0) {
-                const parameters = (call.functionName.length > 0 && call.dataValues.length > 0)
-                  ? call.functionName.substring(
-                    call.functionName.indexOf("(") + 1, call.functionName.lastIndexOf(")")).split(",")
-                  : [];
-
-                callDataFunctionParamsEncoded = parameters.length > 0 ? library.eth.abi.encodeParameters(
-                    parameters,
+                callDataFunctionParamsEncoded = call.functionParams.length > 0 ? library.eth.abi.encodeParameters(
+                    call.functionParams.map((functionParam) => functionParam.type),
                     call.dataValues
                   ).substring(2)
                   : "";

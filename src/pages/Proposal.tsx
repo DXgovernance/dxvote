@@ -328,7 +328,7 @@ const ProposalPage = observer(() => {
             {proposalCallTexts.map((proposalCallText, i) => {
               return(
               <div key={"proposalCallText"+i}>
-                <span> {proposalCallText} </span> 
+                <span style={{whiteSpace: "pre-line"}}> {proposalCallText} </span> 
                 {i < proposalCallTexts.length - 1 ? <hr/> : <div/>}
               </div>);
             })}

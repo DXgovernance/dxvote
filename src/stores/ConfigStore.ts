@@ -1,6 +1,7 @@
 import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
 import { getTokens, getNetworkConfig } from '../config';
+import { getRecommendedCalls } from '../config/recommendedCalls';
 import { _ } from 'lodash';
 import { NETWORK_NAMES } from '../provider/connectors';
 
@@ -47,5 +48,9 @@ export default class ConfigStore {
     
     getNetworkConfig() {
       return getNetworkConfig(this.getActiveChainName());
+    }
+    
+    getRecommendedCalls() {
+      return getRecommendedCalls(this.getActiveChainName());
     }
 }

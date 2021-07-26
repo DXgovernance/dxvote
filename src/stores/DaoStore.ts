@@ -1,7 +1,7 @@
 import RootStore from 'stores';
 import { BigNumber } from '../utils/bignumber';
 import { ContractType } from './Provider';
-import { getCalls } from '../config/recommendedCalls';
+import { getRecommendedCalls } from '../config/recommendedCalls';
 import { action, makeObservable, observable } from 'mobx';
 import web3 from 'web3';
 import _ from 'lodash';
@@ -645,7 +645,7 @@ export default class DaoStore {
     const callPermissions = this.getCache().callPermissions;
     let assetLimits = {};
     const from = scheme.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeAddress;
-    const recommendedCalls = getCalls(this.rootStore.configStore.getActiveChainName());
+    const recommendedCalls = getRecommendedCalls(this.rootStore.configStore.getActiveChainName());
     
     Object.keys(callPermissions).map((assetAddress) => {
       const callAllowance = this.getCallAllowance(assetAddress, from, schemeAddress, ANY_FUNC_SIGNATURE);

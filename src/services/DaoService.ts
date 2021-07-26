@@ -27,8 +27,9 @@ export default class DaoService {
   }
   
   decodeControllerCall(callData: string){
-    const { abiService, providerStore } = this.rootStore;
+    const { abiService, providerStore, configStore } = this.rootStore;
     const { library } = providerStore.getActiveWeb3React();
+    const recommendedCalls = configStore.getRecommendedCalls();
     const callDecoded = abiService.decodeCall(ContractType.Controller, callData);
     if (!callDecoded) {
       return "Couldnt decode call";
@@ -48,9 +49,25 @@ export default class DaoService {
           return "Burn "+normalizeBalance(callDecoded.args[0], 18)+" REP of "+callDecoded.args[1];
         case "genericCall":
           const genericCallData = callDecoded.args[1];
-          
-          // TO DO: Decode more functions here 
-          if (genericCallData.substring(0,10) == ERC20_TRANSFER_SIGNATURE) {
+          const recommendedCallUsed = recommendedCalls.find((recommendedCall) => {
+            return (
+              callDecoded.args[0] == recommendedCall.to
+              && callDecoded.args[1].substring(0,10) == recommendedCall.functionSignature
+            )
+          })
+          if (recommendedCallUsed) {
+            const callParameters = library.eth.abi.decodeParameters(
+              recommendedCallUsed.params.map((param) => param.type),
+              "0x"+callDecoded.args[1].substring(10)
+            );
+            if (callParameters.__length__)
+              delete callParameters.__length__;
+              
+            return `To: ${recommendedCallUsed.toName}
+            Function:${recommendedCallUsed.functionName}
+            Params: ${JSON.stringify(Object.keys(callParameters).map((paramIndex) => callParameters[paramIndex]))}
+            `;
+          } else if (genericCallData.substring(0,10) == ERC20_TRANSFER_SIGNATURE) {
             const transferParams = library.eth.abi.decodeParameters(['address', 'uint256'], "0x"+genericCallData.substring(10));
             return "Token "+callDecoded.args[0]+" transfer to "+transferParams[0]+" of "+transferParams[1];
           } else {

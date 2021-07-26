@@ -1,7 +1,7 @@
 const { getNetworkConfig } = require('./index');
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils/helpers';
 
-export const getCalls = function(network) {
+export const getRecommendedCalls = function(network) {
   let networkConfig = getNetworkConfig(network);
   let recommendedCalls = [
     {
