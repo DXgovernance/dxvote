@@ -494,7 +494,8 @@ const NewProposalPage = observer(() => {
 
       if (calls[callIndex].callType == "simple"){
         calls[callIndex].functionParams = params;
-        calls[callIndex].dataValues = new Array(params.length);
+        calls[callIndex].dataValues = [];
+        calls[callIndex].dataValues = params.map(() => {return ""});
         calls[callIndex].value = "0";
       } else {
         calls[callIndex].functionParams = [];
@@ -547,7 +548,7 @@ const NewProposalPage = observer(() => {
         setCallsInState(calls);
       }
     }
-    
+
     return (
       <NewProposalFormWrapper>
         <div style={{
@@ -676,13 +677,13 @@ const NewProposalPage = observer(() => {
 
                 {((schemeToUse.type == "WalletScheme") && (call.callType === "simple")) ?
                   <SelectInput
-                    value={calls[i].to}
+                    value={calls[i].to || ""}
                     onChange={(value) => {onToSelectChange(i, value)}}
                     width={"20%"}
                   >
                   {allowedToCall.map((allowedCall, allowedCallIndex) =>{
                     return (
-                      <option key={"toCall"+allowedCallIndex} value={allowedCall.value}>
+                      <option key={"toCall"+allowedCallIndex} value={allowedCall.value || ""}>
                         {allowedCall.name}
                       </option>
                     );
@@ -690,7 +691,7 @@ const NewProposalPage = observer(() => {
                   </SelectInput>
                   : (schemeToUse.type == "WalletScheme") &&
                   <TextInput
-                    value={calls[i].to}
+                    value={calls[i].to || ""}
                     onChange={(value) => {onToSelectChange(i, value)}}
                     width={"20%"}
                   />
@@ -700,7 +701,7 @@ const NewProposalPage = observer(() => {
                   
                   <div style={{display: "flex", width: call.callType === "simple" ? "60%" : "50%"}}>
                     <SelectInput
-                      value={calls[i].functionName}
+                      value={calls[i].functionName || ""}
                       onChange={(event) => {
                         const selectedFunction = calls[i].allowedFunctions.find((allowedFunction) => {
                           return allowedFunction.functionName == event.target.value
@@ -716,7 +717,7 @@ const NewProposalPage = observer(() => {
                       {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
                         if (allowedFunc.fromTime > 0 && allowedFunc.value != ANY_FUNC_SIGNATURE)
                           return (
-                            <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.functionName}>
+                            <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.functionName || ""}>
                               {allowedFunc.functionName}
                             </option>
                           );
@@ -739,8 +740,7 @@ const NewProposalPage = observer(() => {
                             key={"functionParam"+funcParamIndex}
                             type="text"
                             onChange={(value) => onFunctionParamsChange(i, value, funcParamIndex)}
-                            defaultValue={funcParam.defaultValue}
-                            value={calls[i].dataValues[funcParamIndex]}
+                            value={calls[i].dataValues[funcParamIndex] || ""}
                             placeholder={funcParam.name}
                             width="100%"
                             style={{marginTop: funcParamIndex > 0 ? "5px": "0px"}}
@@ -754,7 +754,7 @@ const NewProposalPage = observer(() => {
                   <TextInput 
                     type="text"
                     onChange={(value) => onFunctionParamsChange(i, value, 0)}
-                    value={calls[i].dataValues[0]}
+                    value={calls[i].dataValues[0] || ""}
                     placeholder="0x..."
                     width="100%"
                   />
@@ -763,7 +763,7 @@ const NewProposalPage = observer(() => {
                 <TextInput
                   type="text"
                   onChange={(value) => onValueChange(i, value)}
-                  value={calls[i].value}
+                  value={calls[i].value || ""}
                   width="10%"
                   placeholder={calls[i].callType === "advanced" ? "WEI" : "ETH"}
                 />
