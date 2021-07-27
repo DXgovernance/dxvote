@@ -1,8 +1,10 @@
-const { getNetworkConfig } = require('./index');
+const { getNetworkConfig, getTokensOfNetwork } = require('./index');
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils/helpers';
 
 export const getRecommendedCalls = function(network) {
-  let networkConfig = getNetworkConfig(network);
+  const networkConfig = getNetworkConfig(network);
+  const networkTokens = getTokensOfNetwork(network);
+  
   let recommendedCalls = [
     {
       asset: ZERO_ADDRESS,
@@ -108,7 +110,7 @@ export const getRecommendedCalls = function(network) {
       from: ANY_ADDRESS,
       to: "0x317113D2593e3efF1FfAE0ba2fF7A61861Df7ae5",
       toName: "Swpr Fee Setter",
-      functionName: "transferPairOwnership(address pair, address newOwner)",
+      functionName: "transferPairOwnership(address,address)",
       functionSignature: "0xa6dab93f",
       params: [
         {type: "address", name: "pair", defaultValue: ""},
@@ -119,7 +121,7 @@ export const getRecommendedCalls = function(network) {
       from: ANY_ADDRESS,
       to: "0x317113D2593e3efF1FfAE0ba2fF7A61861Df7ae5",
       toName: "Swpr Fee Setter",
-      functionName: "setProtocolFee(uint8 protocolFeeDenominator)",
+      functionName: "setProtocolFee(uint8)",
       functionSignature: "0x4e91f811",
       params: [
         {type: "uint8", name: "protocolFeeDenominator", defaultValue: ""}
@@ -129,7 +131,7 @@ export const getRecommendedCalls = function(network) {
       from: ANY_ADDRESS,
       to: "0x317113D2593e3efF1FfAE0ba2fF7A61861Df7ae5",
       toName: "Swpr Fee Setter",
-      functionName: "setSwapFee(address pair, uint32 swapFee)",
+      functionName: "setSwapFee(address,uint32)",
       functionSignature: "0x9e68ceb8",
       params: [
         {type: "address", name: "pair", defaultValue: ""},
@@ -140,7 +142,7 @@ export const getRecommendedCalls = function(network) {
       from: ANY_ADDRESS,
       to: "0xaE909196e549587b8Dc0D26cdbf05B754BB580B3",
       toName: "Swpr Fee Receiver",
-      functionName: "takeProtocolFee(address[] calldata pairs)",
+      functionName: "takeProtocolFee(address[])",
       functionSignature: "0x5cb9c4ec",
       params: [
         {type: "address[]", name: "pairs", defaultValue: ""},
@@ -150,7 +152,7 @@ export const getRecommendedCalls = function(network) {
       from: ANY_ADDRESS,
       to: "0x8EEaea23686c319133a7cC110b840d1591d9AeE0",
       toName: "Swpr Router",
-      functionName: "addLiquidity(address tokenA, address tokenB, uint256 amountADesired, uint256 amountBDesired, uint256 amountAMin, uint256 amountBMin, address to, uint256 deadline)",
+      functionName: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
       functionSignature: "0xe8e33700",
       params: [
         {type: "address", name: "tokenA", defaultValue: ""},
@@ -167,7 +169,7 @@ export const getRecommendedCalls = function(network) {
       from: ANY_ADDRESS,
       to: "0x8EEaea23686c319133a7cC110b840d1591d9AeE0",
       toName: "Swpr Router",
-      functionName: "removeLiquidity(address tokenA, address tokenB, uint256 liquidity, uint256 amountAMin, uint256 amountBMin, address to, uint256 deadline)",
+      functionName: "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
       functionSignature: "0xbaa2abde",
       params: [
         {type: "address", name: "tokenA", defaultValue: ""},
@@ -181,27 +183,31 @@ export const getRecommendedCalls = function(network) {
     }
   ];
   
+  networkTokens.map((networkToken) => {
+    recommendedCalls.push({
+      asset: networkToken.address,
+      to: ANY_ADDRESS,
+      toName: networkToken.name,
+      functionName: "transfer(address,uint256)",
+      functionSignature: "0xa9059cbb",
+      params: [
+        {type: "address", name: "to", defaultValue: ""},
+        {type: "uint256", name: "value", defaultValue: "0"}
+      ]
+    });
+
+    recommendedCalls.push({
+      asset: networkToken.address,
+      to: ANY_ADDRESS,
+      toName: `ERC20 ${networkToken.symbol}`,
+      functionName: "approve(address,uint256)",
+      functionSignature: "0x095ea7b3",
+      params: [
+        {type: "address", name: "to", defaultValue: ""},
+        {type: "uint256", name: "value", defaultValue: "0"}
+      ]
+    });
+  });
   
-  
-  // permissions[callPermission.asset].calls.push({
-  //   name: "transfer(address,uint256)",
-  //   signature: "0xa9059cbb",
-  //   params: [
-  //     {type: "address", name: "to", defaultValue: callPermission.to},
-  //     {type: "uint256", name: "value", defaultValue: `Max ${bnum(callPermission.value).toString()}`}
-  //   ],
-  //   value: bnum(0),
-  //   fromTime: callPermission.fromTime
-  // });
-  // permissions[callPermission.asset].calls.push({
-  //   name: "approve(address,uint256)",
-  //   signature: "0x095ea7b3",
-  //   params: [
-  //     {type: "address", name: "to", defaultValue: callPermission.to},
-  //     {type: "uint256", name: "value", defaultValue: `Max ${bnum(callPermission.value).toString()}`}
-  //   ],
-  //   value: bnum(0),
-  //   fromTime: callPermission.fromTime
-  // })
   return recommendedCalls;
 }

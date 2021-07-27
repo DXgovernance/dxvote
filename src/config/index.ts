@@ -2,6 +2,7 @@ const contractsFile = require('./contracts.json');
 const tokensToFetchPriceFile = require('./tokensToFetchPrice.json');
 const tokensFile = require('./tokens.json');
 const Web3 = require('web3');
+import { NETWORK_IDS } from '../provider/connectors';
 import { ZERO_ADDRESS } from '../utils/helpers';
 
 const web3 = new Web3();
@@ -327,8 +328,11 @@ export const getSchemeTypeData = function(network, schemeAddress) {
 }
 
 export const getTokenData = function(tokenAddress) {
-  console.log(tokenAddress)
   return tokensFile.tokens.find((tokenInFile) => tokenInFile.address == tokenAddress);
+}
+
+export const getTokensOfNetwork = function(networkName) {
+  return tokensFile.tokens.filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName]);
 }
 
 export const getTokensToFetchPrice = function(networkName) {

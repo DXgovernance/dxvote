@@ -646,7 +646,7 @@ export default class DaoStore {
     let assetLimits = {};
     const from = scheme.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeAddress;
     const recommendedCalls = getRecommendedCalls(this.rootStore.configStore.getActiveChainName());
-    
+
     Object.keys(callPermissions).map((assetAddress) => {
       const callAllowance = this.getCallAllowance(assetAddress, from, schemeAddress, ANY_FUNC_SIGNATURE);
       if (callAllowance.fromTime > 0)

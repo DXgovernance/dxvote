@@ -54,7 +54,7 @@ export default class DaoService {
               callDecoded.args[0] == recommendedCall.to
               && callDecoded.args[1].substring(0,10) == recommendedCall.functionSignature
             )
-          })
+          });
           if (recommendedCallUsed) {
             const callParameters = library.eth.abi.decodeParameters(
               recommendedCallUsed.params.map((param) => param.type),
