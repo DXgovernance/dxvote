@@ -1,5 +1,4 @@
 const contractsFile = require('./contracts.json');
-const tokensToFetchPriceFile = require('./tokensToFetchPrice.json');
 const tokensFile = require('./tokens.json');
 const Web3 = require('web3');
 import { NETWORK_IDS } from '../provider/connectors';
@@ -336,5 +335,6 @@ export const getTokensOfNetwork = function(networkName) {
 }
 
 export const getTokensToFetchPrice = function(networkName) {
-  return tokensToFetchPriceFile[networkName];
+  return tokensFile.tokens
+    .filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName] && tokensFile.fetchPrice);
 }
