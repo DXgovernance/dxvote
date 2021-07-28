@@ -173,11 +173,12 @@ export default class BlockchainStore {
         
         let tokensBalancesCalls = [];
         const tokens = getTokensToFetchPrice(this.rootStore.configStore.getActiveChainName());
-        tokens.map((tokenAddress) => {
-          if (!networkCache.daoInfo.tokenBalances[tokenAddress])
+        
+        tokens.map((token) => {
+          if (!networkCache.daoInfo.tokenBalances[token.address])
             tokensBalancesCalls.push({
               contractType: ContractType.ERC20,
-              address: tokenAddress,
+              address: token.address,
               method: 'balanceOf',
               params: [networkConfig.avatar],
             });
@@ -185,7 +186,7 @@ export default class BlockchainStore {
             if (networkCache.schemes[schemeAddress].controllerAddress != networkConfig.controller)
               tokensBalancesCalls.push({
                 contractType: ContractType.ERC20,
-                address: tokenAddress,
+                address: token.address,
                 method: 'balanceOf',
                 params: [schemeAddress],
               });

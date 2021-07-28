@@ -336,5 +336,5 @@ export const getTokensOfNetwork = function(networkName) {
 
 export const getTokensToFetchPrice = function(networkName) {
   return tokensFile.tokens
-    .filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName] && tokensFile.fetchPrice);
+    .filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName] && tokenInFile.fetchPrice);
 }

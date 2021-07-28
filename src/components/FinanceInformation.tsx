@@ -182,7 +182,7 @@ const FinanceInformation = observer(() => {
                       </TableCell>
                     </TableRow>);
                 } else {
-                  return <div/>
+                  return <div key={`asset${i}`} />
                 }
               })}
               </TableRowsWrapper>

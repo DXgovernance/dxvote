@@ -19,11 +19,11 @@ export default class CoingeckoService {
     
     if (networkName == 'ethereum' || networkName == 'xdai') {
       let tokenAddresses = "";
-      tokens.map((tokenAddress, i) => {
+      tokens.map((token, i) => {
         if (i == tokens.length - 1)
-          tokenAddresses += tokenAddress;
+          tokenAddresses += token.address;
         else
-        tokenAddresses += tokenAddress + "%2C";
+        tokenAddresses += token.address + "%2C";
       })
       console.log(`https://api.coingecko.com/api/v3/simple/token_price/${networkName}?contract_addresses=${tokenAddresses}&vs_currencies=usd`)
       const pricesResponse = await Promise.all([
