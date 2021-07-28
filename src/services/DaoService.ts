@@ -77,18 +77,19 @@ export default class DaoService {
     }
   }
   
-  getRepAt(userAddress: string = ZERO_ADDRESS, atBlock: number = 0, l2BlockNumber: boolean = false): {
+  getRepAt(userAddress: string = ZERO_ADDRESS, atBlock: number = 0): {
     userRep: BigNumber,
     totalSupply: BigNumber
   } {
-    const { daoStore, providerStore } = this.rootStore;
+    const { daoStore, providerStore, configStore } = this.rootStore;
     const repEvents = daoStore.getCache().daoInfo.repEvents;
     let userRep = bnum(0), totalSupply = bnum(0);
     if (atBlock == 0)
       atBlock = providerStore.getCurrentBlockNumber();
+    const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1
 
     for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i][l2BlockNumber ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
+      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
         if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount)
           if (repEvents[i].account == userAddress)

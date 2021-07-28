@@ -180,7 +180,7 @@ const ProposalPage = observer(() => {
     const {
       userRep: userRepAtProposalCreation, totalSupply: totalRepAtProposalCreation
     } = configStore.getActiveChainName().indexOf('arbitrum') > -1 ?
-      daoService.getRepAt(proposal.creationEvent.l2BlockNumber, true)
+      daoService.getRepAt(proposal.creationEvent.l2BlockNumber)
       : daoService.getRepAt(proposal.creationEvent.l1BlockNumber);
 
     const {status, boostTime, finishTime} = daoStore.getProposalStatus(proposalId);
