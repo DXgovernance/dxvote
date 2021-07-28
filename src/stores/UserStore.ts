@@ -30,15 +30,10 @@ export default class UserStore {
   }
 
   update() {
-    const { configStore, providerStore, blockchainStore } = this.rootStore;
+    const { configStore, providerStore, blockchainStore, daoService } = this.rootStore;
     const { account } = providerStore.getActiveWeb3React();
-    
-    const repBalance = account ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Reputation,
-      address: configStore.getNetworkConfig().reputation,
-      method: 'balanceOf',
-      params: [account]
-    }) : bnum(0);
+
+    const repBalance = account ? daoService.getRepAt(account, providerStore.getCurrentBlockNumber()).userRep : bnum(0);
     
     const ethBalance = account ? this.rootStore.blockchainStore.getCachedValue({
       contractType: ContractType.Multicall,

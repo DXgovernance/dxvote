@@ -7,6 +7,7 @@ import Box from '../components/common/Box';
 import { timeToTimestamp } from '../utils/date';
 import { normalizeBalance } from '../utils/token';
 import { formatPercentage } from '../utils/number';
+import { ZERO_ADDRESS } from '../utils/helpers';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
@@ -117,7 +118,7 @@ const TableCell = styled.div`
 
 const ProposalsPage = observer(() => {
     const {
-        root: { providerStore, daoStore, blockchainStore, configStore },
+        root: { providerStore, daoStore, blockchainStore, configStore, daoService },
     } = useStores();
 
     const schemes = daoStore.getAllSchemes();
@@ -207,11 +208,13 @@ const ProposalsPage = observer(() => {
               ) {
                 const positiveStake = normalizeBalance(proposal.positiveStakes, 18);
                 const negativeStake = normalizeBalance(proposal.negativeStakes, 18);
+                const repAtCreation = daoService.getRepAt(ZERO_ADDRESS, proposal.creationEvent.l1BlockNumber).totalSupply;
+                
                 const positiveVotesPercentage = formatPercentage(
-                  proposal.positiveVotes.div(proposal.repAtCreation), 2
+                  proposal.positiveVotes.div(repAtCreation), 2
                 );
                 const negativeVotesPercentage =  formatPercentage(
-                  proposal.negativeVotes.div(proposal.repAtCreation), 2
+                  proposal.negativeVotes.div(repAtCreation), 2
                 );
                 const timeToBoost = timeToTimestamp(proposal.boostTime);
                 const timeToFinish = timeToTimestamp(proposal.finishTime);

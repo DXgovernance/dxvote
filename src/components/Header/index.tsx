@@ -59,7 +59,7 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, daoStore, blockchainStore, configStore },
+      root: { userStore, providerStore, daoStore, blockchainStore, configStore, daoService },
   } = useStores();
   
   const votingMachines = configStore.getNetworkConfig().votingMachines;
@@ -74,10 +74,10 @@ const Header = observer(() => {
   const genBalance = active && userInfo.genBalance ?
     parseFloat(Number(Web3.utils.fromWei(userInfo.genBalance.toString())).toFixed(2))
     : 0;
-    
-   const repPercentage = active && daoStore.getDaoInfo().totalRep
-    ? bnum(userInfo.repBalance).times(100).div(bnum(daoStore.getDaoInfo().totalRep)).toFixed(4)
-    : bnum(0);
+  const { userRep, totalSupply } = active && blockchainStore.initialLoadComplete ?
+    daoService.getRepAt(account, providerStore.getCurrentBlockNumber())
+    : { userRep: bnum(0), totalSupply: bnum(0)};
+  const repPercentage = active ? userRep.times(100).div(totalSupply).toFixed(4) : bnum(0);
 
   return (
     <NavWrapper>

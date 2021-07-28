@@ -83,7 +83,7 @@ const UserPage = observer(() => {
         
         <div style={{display: "flex", flexDirection: "row"}}>
           <InfoBox>
-            {userInfo.repPercentage.toFixed(2)} % REP
+            {userInfo.repPercentage} % REP
           </InfoBox>
           <InfoBox>
             {userEvents.votes.filter(vote => vote.vote == 1).length} Positive Votes

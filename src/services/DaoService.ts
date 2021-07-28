@@ -1,7 +1,7 @@
 import RootStore from '../stores';
 import { ContractType } from '../stores/Provider';
 import { BigNumber } from '../utils/bignumber';
-import { bnum, ERC20_TRANSFER_SIGNATURE } from '../utils/helpers';
+import { bnum, ERC20_TRANSFER_SIGNATURE, ZERO_ADDRESS } from '../utils/helpers';
 import { normalizeBalance } from '../utils/token';
 
 export default class DaoService {
@@ -77,30 +77,54 @@ export default class DaoService {
     }
   }
   
-  getRepAt(atBlock: number, l2BlockNumber: boolean = false): {
+  getRepAt(userAddress: string = ZERO_ADDRESS, atBlock: number = 0, l2BlockNumber: boolean = false): {
     userRep: BigNumber,
     totalSupply: BigNumber
   } {
     const { daoStore, providerStore } = this.rootStore;
-    const { account } = providerStore.getActiveWeb3React();
     const repEvents = daoStore.getCache().daoInfo.repEvents;
     let userRep = bnum(0), totalSupply = bnum(0);
+    if (atBlock == 0)
+      atBlock = providerStore.getCurrentBlockNumber();
 
     for (let i = 0; i < repEvents.length; i++) {
       if (repEvents[i][l2BlockNumber ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
         if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount)
-          if (repEvents[i].account == account)
+          if (repEvents[i].account == userAddress)
             userRep = userRep.plus(repEvents[i].amount)
         } else if (repEvents[i].event === 'Burn') {
           totalSupply = totalSupply.minus(repEvents[i].amount)
-          if (repEvents[i].account == account)
+          if (repEvents[i].account == userAddress)
             userRep = userRep.minus(repEvents[i].amount)
         }
       }
     }
-
-
     return { userRep, totalSupply };
+
+  }
+    
+  getUsersRep(): {
+    [userAddress: string]: BigNumber
+  } {
+    const { daoStore, providerStore } = this.rootStore;
+    const repEvents = daoStore.getCache().daoInfo.repEvents;
+    let users = {}
+    const atBlock = providerStore.getCurrentBlockNumber();
+
+    for (let i = 0; i < repEvents.length; i++) {
+      if (repEvents[i].l1BlockNumber <= atBlock) {
+        if (repEvents[i].event === 'Mint') {
+          if (!users[repEvents[i].account])
+            users[repEvents[i].account] = repEvents[i].amount;
+          else
+            users[repEvents[i].account] = users[repEvents[i].account].plus(repEvents[i].amount);
+        } else if (repEvents[i].event === 'Burn') {
+          if (users[repEvents[i].account])
+            users[repEvents[i].account] = users[repEvents[i].account].minus(repEvents[i].amount);
+        }
+      }
+    }
+    return users;
   }
 }

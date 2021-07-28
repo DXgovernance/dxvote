@@ -113,9 +113,7 @@ export interface Proposal{
   stateInScheme: WalletSchemeProposalState;
   stateInVotingMachine: VotingMachineProposalState;
   descriptionHash: string;
-  creationEventSender: string;
   creationEvent: BlockchainEvent;
-  repAtCreation: BigNumber;
   winningVote: number;
   proposer: string;
   currentBoostedVotePeriodLimit: BigNumber;
@@ -194,11 +192,6 @@ export interface Scheme {
   newProposalEvents: ProposalEvent[]
 }
 
-export interface User {
-  repBalance: BigNumber;
-  proposalsCreated: string[];
-}
-
 export interface DaoInfo {
   address: string;
   totalRep: BigNumber;
@@ -209,6 +202,20 @@ export interface DaoInfo {
   };
 }
 
+export interface VotingMachine {
+  name: string;
+  events: {
+    votes: Vote[];
+    stakes: Stake[];
+    redeems: Redeem[];
+    redeemsRep: RedeemRep[];
+    proposalStateChanges: ProposalStateChange[];
+    newProposal: NewProposal[];
+  };
+  token: string;
+  votingParameters: {[paramsHash: string]: VotingMachineParameters}
+}
+
 export interface IPFSHash {
   hash: string;
   type: string;
@@ -216,32 +223,13 @@ export interface IPFSHash {
 }
 
 export interface DaoNetworkCache {
+  networkId: number;
   l1BlockNumber: number;
   l2BlockNumber: number;
   daoInfo: DaoInfo;
   schemes: {[address: string]: Scheme};
   proposals: {[id: string]: Proposal};
   callPermissions: CallPermissions;
-  users: {[address: string]: User};
-  votingMachines: {[address: string]: {
-    name: string;
-    events: {
-      votes: Vote[];
-      stakes: Stake[];
-      redeems: Redeem[];
-      redeemsRep: RedeemRep[];
-      proposalStateChanges: ProposalStateChange[];
-      newProposal: NewProposal[];
-    };
-    token: {
-      address: string;
-      totalSupply: BigNumber;
-    };
-    votingParameters: {[paramsHash: string]: VotingMachineParameters}
-  }};
+  votingMachines: {[address: string]: VotingMachine};
   ipfsHashes: IPFSHash[];
 };
-
-export interface DaoCache {
-  [network: string]: DaoNetworkCache;
-}

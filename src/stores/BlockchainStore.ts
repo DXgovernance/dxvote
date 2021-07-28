@@ -6,7 +6,7 @@ import { ContractType } from './Provider';
 import { decodeSchemeParameters } from '../utils/scheme';
 import { decodePermission } from '../utils/permissions';
 import { bnum } from '../utils/helpers';
-const { updateNetworkCache } = require('../cache');
+import { getUpdatedCache } from '../cache';
 import { getTokensToFetchPrice } from '../config';
 
 export default class BlockchainStore {
@@ -154,8 +154,11 @@ export default class BlockchainStore {
         daoStore,
         userStore
       } = this.rootStore;
-
+      
+      daoStore.setCache(configStore.getActiveChainName());
+      
       let networkCache = daoStore.getCache();
+
       const blockNumber = await library.eth.getBlockNumber();
       const lastCheckedBlockNumber = networkCache.l1BlockNumber;
 
@@ -166,7 +169,7 @@ export default class BlockchainStore {
         const toBlock = blockNumber;
         const networkName = configStore.getActiveChainName();
         const networkConfig = configStore.getNetworkConfig();
-        networkCache = await updateNetworkCache(networkCache, networkName, fromBlock, toBlock, library);
+        networkCache = await getUpdatedCache(networkCache, networkName, fromBlock, toBlock, library);
         
         let tokensBalancesCalls = [];
         const tokens = getTokensToFetchPrice(this.rootStore.configStore.getActiveChainName());

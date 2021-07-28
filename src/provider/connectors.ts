@@ -1,5 +1,4 @@
 import { InjectedConnector } from '@web3-react/injected-connector'
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
 export const ETH_NETWORKS = process.env.REACT_APP_ETH_NETWORKS.split(',');
 
@@ -54,7 +53,6 @@ export const SUPPORTED_WALLETS = {
     METAMASK: {
         connector: injected,
         name: 'MetaMask',
-        iconName: require('assets/images/metamask.png'),
         description: 'Easy-to-use browser extension.',
         href: null,
         color: '#E8831D',

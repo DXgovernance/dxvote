@@ -16,7 +16,30 @@ import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import { getContracts } from '../contracts';
 import { getSchemeTypeData } from '../config';
 
-export const updateNetworkCache = async function (
+const MAINNET_CACHE = require('./data/mainnet.json');
+const XDAI_CACHE = require('./data/xdai.json');
+const RINKEBY_CACHE = require('./data/rinkeby.json');
+const ARBITRUM_TESTNET_CACHE = require('./data/arbitrumTestnet.json');
+const LOCALHOST_CACHE = require('./data/localhost.json');
+
+export const getCacheFile = function (networkName: string): DaoNetworkCache {
+  switch (networkName) {
+    case "mainnet":
+      return MAINNET_CACHE;
+    case "xdai":
+      return XDAI_CACHE;
+    case "rinkeby":
+      return RINKEBY_CACHE;
+    case "arbitrumTestnet":
+      return ARBITRUM_TESTNET_CACHE;
+    case "localhost":
+      return LOCALHOST_CACHE;
+    default:
+      return MAINNET_CACHE;
+  }
+}
+
+export const getUpdatedCache = async function (
   networkCache: DaoNetworkCache, networkName: string, fromBlock: number, toBlock: number, web3: any
 ): Promise<DaoNetworkCache> {
   console.debug('[Cache Update]', fromBlock, toBlock);
@@ -42,10 +65,7 @@ export const updateNetworkCache = async function (
           proposalStateChanges: [],
           newProposal: []
         },
-        token: {
-          address: networkContracts.votingMachines[votingMachineAddress].token._address,
-          totalSupply: bnum(0)
-        },
+        token: networkContracts.votingMachines[votingMachineAddress].token._address,
         votingParameters: {}
       };
   
@@ -122,15 +142,6 @@ export const updateReputationEvents = async function (
           transactionIndex: reputationEvent.transactionIndex,
           logIndex: reputationEvent.logIndex
         });
-        if (!networkCache.users[reputationEvent.returnValues._to]) {
-          networkCache.users[reputationEvent.returnValues._to] = {
-            repBalance: bnum(reputationEvent.returnValues._amount),
-            proposalsCreated: []
-          }
-        } else {
-          networkCache.users[reputationEvent.returnValues._to].repBalance = 
-            bnum(networkCache.users[reputationEvent.returnValues._to].repBalance).plus(reputationEvent.returnValues._amount)
-        }
       break;
       case "Burn":
         networkCache.daoInfo.repEvents.push({
@@ -146,9 +157,6 @@ export const updateReputationEvents = async function (
           transactionIndex: reputationEvent.transactionIndex,
           logIndex: reputationEvent.logIndex
         });
-        networkCache.users[reputationEvent.returnValues._from].repBalance =
-          bnum(networkCache.users[reputationEvent.returnValues._from].repBalance)
-          .minus(reputationEvent.returnValues._amount)
       break;
     }
   });
@@ -936,7 +944,6 @@ export const updateProposals = async function (
             stateInScheme: schemeProposalInfo.state,
             stateInVotingMachine: votingMachineProposalInfo.state,
             descriptionHash: schemeProposalInfo.descriptionHash,
-            creationEventSender: (await web3.eth.getTransaction(schemeEvent.transactionHash)).from,
             creationEvent: {
               event: schemeEvent.event,
               signature: schemeEvent.signature,
@@ -948,7 +955,6 @@ export const updateProposals = async function (
               transactionIndex: schemeEvent.transactionIndex,
               logIndex: schemeEvent.logIndex
             },
-            repAtCreation: bnum(await allContracts.reputation.methods.totalSupplyAt(schemeEvent.l1BlockNumber).call()),
             winningVote: votingMachineProposalInfo.winningVote,
             proposer: decodedProposer ? decodedProposer : votingMachineProposalInfo.proposer,
             currentBoostedVotePeriodLimit: votingMachineProposalInfo.currentBoostedVotePeriodLimit,
@@ -992,15 +998,7 @@ export const updateProposals = async function (
               name: proposalId
             });
           }
-          // Save proposal created in users
-          if (!networkCache.users[votingMachineProposalInfo.proposer]) {
-            networkCache.users[votingMachineProposalInfo.proposer] = {
-              repBalance: bnum(0),
-              proposalsCreated: [proposalId]
-            }
-          } else {
-            networkCache.users[votingMachineProposalInfo.proposer].proposalsCreated.push(proposalId);
-          }
+          
         }));
         
         schemeEventsBatchsIndex ++;
@@ -1170,16 +1168,6 @@ export const updateProposals = async function (
       networkCache.proposals[proposalId].preBoostedNegativeVotes = bnum(proposalStatusWithVotes[1]);
       networkCache.proposals[proposalId].positiveStakes = bnum(proposalStatusWithVotes[2]);
       networkCache.proposals[proposalId].negativeStakes = bnum(proposalStatusWithVotes[3]);
-  
-      // Save proposal created in users if not saved already
-      if (!networkCache.users[networkCache.proposals[proposalId].proposer]) {
-        networkCache.users[networkCache.proposals[proposalId].proposer] = {
-          repBalance: bnum(0),
-          proposalsCreated: [proposalId]
-        }
-      } else if (networkCache.users[networkCache.proposals[proposalId].proposer].proposalsCreated.indexOf(proposalId) < 0) {
-        networkCache.users[networkCache.proposals[proposalId].proposer].proposalsCreated.push(proposalId);
-      }
   
     }
   

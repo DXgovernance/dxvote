@@ -178,14 +178,13 @@ const ProposalPage = observer(() => {
     let negativeStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "2").length;
     
     const {
-      userRep: userRepAtProposalCreation
+      userRep: userRepAtProposalCreation, totalSupply: totalRepAtProposalCreation
     } = configStore.getActiveChainName().indexOf('arbitrum') > -1 ?
       daoService.getRepAt(proposal.creationEvent.l2BlockNumber, true)
       : daoService.getRepAt(proposal.creationEvent.l1BlockNumber);
 
     const {status, boostTime, finishTime} = daoStore.getProposalStatus(proposalId);
 
-    const totalRepAtProposalCreation = proposal.repAtCreation;
     // @ts-ignore
     try {
       if (proposalDescription == "## Getting proposal description from IPFS...")

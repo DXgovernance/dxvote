@@ -16,15 +16,15 @@ import {
   VotingMachineProposalState
 } from '../enums';
 
-const CACHE = require('../cache/data.json');
+import { getCacheFile } from '../cache';
 
 export default class DaoStore {
-  daoCache: DaoCache;
+  daoCache: DaoNetworkCache;
   rootStore: RootStore;
 
   constructor(rootStore) {
     this.rootStore = rootStore;
-    this.daoCache = CACHE;
+    
     makeObservable(this, {
       updateNetworkCache: action,
       createProposal: action,
@@ -38,7 +38,6 @@ export default class DaoStore {
   
   // Parse bignnumbers
   parseCache(unparsedCache: DaoNetworkCache): DaoNetworkCache {
-    unparsedCache.daoInfo.totalRep = bnum(unparsedCache.daoInfo.totalRep);
     unparsedCache.daoInfo.ethBalance = bnum(unparsedCache.daoInfo.ethBalance);
     unparsedCache.daoInfo.repEvents.map((repEvent, i) => {
       unparsedCache.daoInfo.repEvents[i].amount = bnum(repEvent.amount)
@@ -63,7 +62,6 @@ export default class DaoStore {
 
       unparsedCache.proposals[proposalId].stateInScheme = unparsedCache.proposals[proposalId].stateInScheme;
       unparsedCache.proposals[proposalId].stateInVotingMachine = unparsedCache.proposals[proposalId].stateInVotingMachine;
-      unparsedCache.proposals[proposalId].repAtCreation = bnum(unparsedCache.proposals[proposalId].repAtCreation);
       unparsedCache.proposals[proposalId].currentBoostedVotePeriodLimit = bnum(unparsedCache.proposals[proposalId].currentBoostedVotePeriodLimit);
       unparsedCache.proposals[proposalId].daoBountyRemain = bnum(unparsedCache.proposals[proposalId].daoBountyRemain);
       unparsedCache.proposals[proposalId].daoBounty = bnum(unparsedCache.proposals[proposalId].daoBounty);
@@ -104,13 +102,17 @@ export default class DaoStore {
     return unparsedCache;
   }
   
-  getCache(): DaoNetworkCache {
-    return this.daoCache[this.rootStore.configStore.getActiveChainName()];
+  setCache(networkName: string) {
+    this.daoCache = getCacheFile(networkName);
   }
   
-  updateNetworkCache(newNetworkCache: DaoNetworkCache, networkName: string) {
-    this.daoCache[networkName] = this.parseCache(newNetworkCache);
-    console.debug('Cache Updated]', this.daoCache[networkName]);
+  getCache(): DaoNetworkCache {
+    return this.daoCache;
+  }
+  
+  updateNetworkCache(newNetworkCache: DaoNetworkCache) {
+    this.daoCache = this.parseCache(newNetworkCache);
+    console.debug('Cache Updated]', this.daoCache);
   }
 
   getDaoInfo(): DaoInfo {
@@ -178,11 +180,9 @@ export default class DaoStore {
     totalNegativeStakesAmount = bnum(0),
     totalProposalsCreated = 0;
     const cache = this.getCache();
+    const { daoService } = this.rootStore;
     let rep = [];
-    Object.keys(cache.users).map((userAddress) => {
-      if (cache.users[userAddress].repBalance > 0)
-        rep.push([userAddress, bnum(cache.users[userAddress].repBalance).div(10**18).toNumber()])
-    })
+    const usersRep = daoService.getUsersRep();
     rep = _.sortBy(rep, [function(o) { return o[1]; }]);
     rep.unshift(["User Address", "REP %"]);
     
@@ -190,7 +190,6 @@ export default class DaoStore {
     let repTotalSupply = bnum(0);
     let blockNumber = 0;
     for (let i = 0; i < cache.daoInfo.repEvents.length; i++) {
-
       if (cache.daoInfo.repEvents[i].event == "Mint")
         repTotalSupply = repTotalSupply.plus(cache.daoInfo.repEvents[i].amount);
       else if (cache.daoInfo.repEvents[i].event == "Burn")
@@ -279,7 +278,7 @@ export default class DaoStore {
           };
           
         const score = cache.proposals[proposalId].positiveVotes.plus(cache.proposals[proposalId].negativeVotes)
-          .div(cache.proposals[proposalId].repAtCreation).div("0.20").times("10").toFixed(2);
+          .div(daoService.getRepAt().totalRep).div("0.20").times("10").toFixed(2);
         users[proposalCreator].score += Math.min(Math.min(score, 1), 30);
         users[proposalCreator].proposals ++;
       } else {
@@ -371,13 +370,14 @@ export default class DaoStore {
     }
     
     const proposal = this.getProposal(proposalId);
-      
+    const totalRep = this.rootStore.daoService.getRepAt().totalRep;
+    
     let history : {
       text: string,
       event: ProposalEvent
     }[] = proposalEvents.votes.map((event) => {
       return {
-        text: `Vote from ${event.voter} of ${(bnum(event.amount)).times('100').div(proposal.repAtCreation).toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`,
+        text: `Vote from ${event.voter} of ${(bnum(event.amount)).times('100').div(totalRep).toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -457,11 +457,12 @@ export default class DaoStore {
     repBalance: BigNumber,
     repPercentage: Number
   } {
-    const user = this.getCache().users[userAddress];
+    const { daoService, providerStore } = this.rootStore;
+    const { userRep, totalSupply } = daoService.getRepAt(userAddress, providerStore.getCurrentBlockNumber())
 
     return {
-      repBalance: user ? bnum(user.repBalance) : bnum(0),
-      repPercentage: user && user.repBalance ? bnum(user.repBalance).times('100').div(this.getCache().daoInfo.totalRep).toNumber() : 0
+      repBalance: userRep,
+      repPercentage: userRep ? bnum(userRep).times('100').div(totalSupply).toFixed(4) : 0
     }
   }
   
@@ -512,8 +513,9 @@ export default class DaoStore {
         .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)}));
     }
     
-    const newProposalEvents = cache.users[userAddress]
-      ? cache.users[userAddress].proposalsCreated.map((proposalId) => {
+    const newProposalEvents: Array<string> = 
+    Object.keys(_.pickBy(cache.proposals, (proposal) => {proposal.proposer == userAddress}))
+      .map((proposalId) => {
         history.push({
           text: `Proposal ${proposalId} created`,
           event: {
@@ -526,8 +528,7 @@ export default class DaoStore {
           }
         })
         return cache.proposals[proposalId].creationEvent;
-      })
-      : [];
+      });
 
     history = history.concat(proposalEvents.votes.map((event) => {
       return {
@@ -836,7 +837,7 @@ export default class DaoStore {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.ERC20,
-      this.getCache().votingMachines[votingMachineAddress].token.address,
+      this.getCache().votingMachines[votingMachineAddress].token,
       'approve',
       [votingMachineAddress, utils.bigNumberify(ethers.constants.MaxUint256)],
       {}

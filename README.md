@@ -1,6 +1,6 @@
 # DXvote
 
-Application for voting and govern DXdao, focused on technical decentralization (fetching all data from ethereum network, ipfs or static configuration files). 
+Application for voting and govern DXdao, focused on technical decentralization (fetching all data from ethereum network, ipfs or static configuration files).
 
 ## Add Pinata Service
 
@@ -18,6 +18,12 @@ Application for voting and govern DXdao, focused on technical decentralization (
 ![pinata-help](docs/pinata1.png)
 
 6.- The information you are seeing will be displayed only once, copy the **JWT key** into the Pinata key in [/config](https://augustol.github.io/dxvote/#/config) in dxvote.
+
+## Cache
+
+The cache script will gather all immutable information from the ethereum networks supported and save all of it in cache files, one file per network inside the `src/cache/data` folder.
+
+`yarn build-cache`
 
 ## Development
 
