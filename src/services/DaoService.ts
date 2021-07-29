@@ -63,9 +63,10 @@ export default class DaoService {
             if (callParameters.__length__)
               delete callParameters.__length__;
               
-            return `To: ${recommendedCallUsed.toName}
-            Function:${recommendedCallUsed.functionName}
+            return `To: ${recommendedCallUsed.toName} (${recommendedCallUsed.to})
+            Function: ${recommendedCallUsed.functionName} (${recommendedCallUsed.functionSignature})
             Params: ${JSON.stringify(Object.keys(callParameters).map((paramIndex) => callParameters[paramIndex]))}
+            Data: 0x${callDecoded.args[1].substring(10)}
             `;
           } else if (genericCallData.substring(0,10) == ERC20_TRANSFER_SIGNATURE) {
             const transferParams = library.eth.abi.decodeParameters(['address', 'uint256'], "0x"+genericCallData.substring(10));
