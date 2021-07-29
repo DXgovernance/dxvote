@@ -1,20 +1,21 @@
 import RootStore from 'stores';
-import { BigNumber } from '../utils/bignumber';
 import { ContractType } from './Provider';
 import { getRecommendedCalls } from '../config/recommendedCalls';
 import { action, makeObservable, observable } from 'mobx';
 import web3 from 'web3';
 import _ from 'lodash';
 import contentHash from 'content-hash';
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, MAX_UINT, bnum } from '../utils/helpers';
-import { decodeProposalStatus } from '../utils/proposals';
 import { ethers, utils } from 'ethers';
 import PromiEvent from 'promievent';
 import {
+  BigNumber,
+  ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, MAX_UINT,
+  bnum,
+  decodeProposalStatus,
   VoteDecision,
   WalletSchemeProposalState,
   VotingMachineProposalState
-} from '../utils/enums';
+} from '../utils';
 
 import { getCacheFile } from '../cache';
 

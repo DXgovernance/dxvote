@@ -2,7 +2,7 @@ const contractsFile = require('./contracts.json');
 const tokensFile = require('./tokens.json');
 const Web3 = require('web3');
 import { NETWORK_IDS } from '../provider/connectors';
-import { ZERO_ADDRESS } from '../utils/helpers';
+import { ZERO_ADDRESS } from '../utils';
 
 const web3 = new Web3();
 

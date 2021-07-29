@@ -6,7 +6,7 @@ import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
 import { sendAction } from './actions/actions';
 import { web3ContextNames } from '../provider/connectors';
 import PromiEvent from 'promievent';
-import { TXEvents } from '../utils/enums';
+import { TXEvents } from '../utils';
 import moment from 'moment';
 import { schema } from '../services/ABIService';
 

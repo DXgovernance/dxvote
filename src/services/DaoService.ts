@@ -1,8 +1,6 @@
 import RootStore from '../stores';
 import { ContractType } from '../stores/Provider';
-import { BigNumber } from '../utils/bignumber';
-import { bnum, ERC20_TRANSFER_SIGNATURE, ZERO_ADDRESS } from '../utils/helpers';
-import { normalizeBalance } from '../utils/token';
+import { BigNumber, bnum, normalizeBalance, ERC20_TRANSFER_SIGNATURE, ZERO_ADDRESS } from '../utils';
 
 export default class DaoService {
   rootStore: RootStore;

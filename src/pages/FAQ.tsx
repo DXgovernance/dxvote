@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import Box from '../components/common/Box';
 import { useLocation } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
-import { ZERO_ADDRESS } from '../utils/helpers';
+import { ZERO_ADDRESS } from '../utils';
 
 const FAQPage = observer(() => {
     

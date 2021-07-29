@@ -7,7 +7,7 @@ import { useStores } from '../../contexts/storesContext';
 import { FiSettings, FiUser, FiBarChart2 } from "react-icons/fi";
 import dxdaoIcon from "assets/images/DXdao.svg"
 import Web3 from 'web3';
-import { bnum } from '../../utils/helpers';
+import { bnum } from '../../utils';
 import Box from '../../components/common/Box';
 
 const NavWrapper = styled.div`

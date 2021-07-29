@@ -5,7 +5,7 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { FaTrophy, FaMedal } from "react-icons/fa";
-import { bnum } from '../utils/helpers';
+import { bnum } from '../utils';
 import { Chart } from "react-google-charts";
 
 const GovernanceInfoWrapper = styled.div`

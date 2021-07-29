@@ -1,16 +1,5 @@
-// Libraries
 import { ethers, utils } from 'ethers';
 import { BigNumber } from './bignumber';
-
-// Utils
-export const MAX_GAS = utils.bigNumberify('0xffffffff');
-export const MAX_UINT = bnum(ethers.constants.MaxUint256);
-export const ZERO_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
-export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-export const ANY_ADDRESS = "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa";
-export const ANY_FUNC_SIGNATURE = "0xaaaaaaaa";
-export const ERC20_TRANSFER_SIGNATURE = "0xa9059cbb";
-export const DEFAULT_TOKEN_DECIMALS = 18;
 
 export function bnum(
     val: string | number | utils.BigNumber | BigNumber
@@ -19,27 +8,27 @@ export function bnum(
 }
 
 export function scale(input: BigNumber, decimalPlaces: number): BigNumber {
-    const scalePow = new BigNumber(decimalPlaces.toString());
-    const scaleMul = new BigNumber(10).pow(scalePow);
-    return input.times(scaleMul);
+  const scalePow = new BigNumber(decimalPlaces.toString());
+  const scaleMul = new BigNumber(10).pow(scalePow);
+  return input.times(scaleMul);
 }
 
 export function setPropertyToMaxUintIfEmpty(value?): string {
-    if (!value || value === 0 || value === '') {
-        value = MAX_UINT.toString();
-    }
-    return value;
+  if (!value || value === 0 || value === '') {
+    value = MAX_UINT.toString();
+  }
+  return value;
 }
 
 export function setPropertyToZeroIfEmpty(value?): string {
-    if (!value || value === '') {
-        value = '0';
-    }
-    return value;
+  if (!value || value === '') {
+    value = '0';
+  }
+  return value;
 }
 
 export function hasMaxApproval(amount: BigNumber): boolean {
-    return amount.gte(bnum(MAX_UINT.div(2).toString()));
+  return amount.gte(bnum(MAX_UINT.div(2).toString()));
 }
 
 export function isEmpty(str: string): boolean {
@@ -47,15 +36,15 @@ export function isEmpty(str: string): boolean {
 }
 
 export function roundValue(value, decimals = 4): string {
-    const decimalPoint = value.indexOf('.');
-    if (decimalPoint === -1) {
-        return value;
-    }
-    return value.slice(0, decimalPoint + decimals + 1);
+  const decimalPoint = value.indexOf('.');
+  if (decimalPoint === -1) {
+    return value;
+  }
+  return value.slice(0, decimalPoint + decimals + 1);
 }
 
 export function str(value: any): string {
-    return value.toString();
+  return value.toString();
 }
 
 export function sleep(ms) {

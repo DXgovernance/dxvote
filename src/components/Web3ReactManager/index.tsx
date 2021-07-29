@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { web3ContextNames, isChainIdSupported } from 'provider/connectors';
 import { useEagerConnect, useInactiveListener } from 'provider/providerHooks';
 import { useStores } from 'contexts/storesContext';
-import { useInterval } from 'utils/helperHooks';
+import { useInterval } from 'utils';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 

@@ -4,9 +4,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
-import { bnum, parseCamelCase, ZERO_ADDRESS } from '../utils/helpers';
-import { formatBalance } from '../utils/token';
-import { formatCurrency } from '../utils/number';
+import { bnum, parseCamelCase, ZERO_ADDRESS, formatCurrency, formatBalance } from '../utils';
 import { getTokenData } from '../config';
 
 const FinanceInfoWrapper = styled.div`

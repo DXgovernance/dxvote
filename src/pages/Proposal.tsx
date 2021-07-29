@@ -10,18 +10,18 @@ import Slider from '@material-ui/core/Slider';
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
-import { bnum } from '../utils/helpers';
-import { timeToTimestamp } from '../utils/date';
-import { calculateStakes } from '../utils/proposals';
-import { formatBalance } from '../utils/token';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
 import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 import {
   WalletSchemeProposalState,
-  VotingMachineProposalState
-} from '../utils/enums';
+  VotingMachineProposalState,
+  bnum,
+  timeToTimestamp,
+  calculateStakes,
+  formatBalance
+} from '../utils';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;

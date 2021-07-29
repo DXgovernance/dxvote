@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { getTokenData } from '../config';
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE, MAX_UINT, sleep } from '../utils/helpers';
-import { normalizeBalance } from '../utils/token';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
@@ -12,7 +10,16 @@ import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
 import ProposalTemplates from '../config/proposalTemplates';
-import { TXEvents } from '../utils/enums';
+import {
+  ZERO_ADDRESS,
+  ANY_ADDRESS,
+  ANY_FUNC_SIGNATURE,
+  ERC20_TRANSFER_SIGNATURE,
+  MAX_UINT,
+  sleep,
+  normalizeBalance,
+  TXEvents
+} from '../utils';
 
 const NewProposalFormWrapper = styled(Box)`
     width: cacl(100% -40px);
@@ -252,7 +259,7 @@ const NewProposalPage = observer(() => {
       [schemeToUse.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeToUse.address]
       [ANY_ADDRESS]
     )
-    allowedToCall.push({ value: ANY_ADDRESS, name: "Custom" });
+      allowedToCall.push({ value: ANY_ADDRESS, name: "Custom" });
 
     const uploadToIPFS = async function() {
       if (titleText.length == 10) {

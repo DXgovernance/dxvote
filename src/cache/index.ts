@@ -1,7 +1,5 @@
 import axios from 'axios';
-import { bnum, ZERO_HASH, ZERO_ADDRESS, sleep } from '../utils/helpers';
-import { decodePermission } from '../utils/permissions';
-import { decodeSchemeParameters } from '../utils/scheme';
+import { bnum, ZERO_HASH, ZERO_ADDRESS, sleep, decodePermission, decodeSchemeParameters } from '../utils';
 import {
   getEvents,
   getRawEvents,

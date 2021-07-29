@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Check } from 'react-feather';
 
-import { getEtherscanLink } from 'utils/etherscan';
+import { getEtherscanLink } from 'utils';
 import { Link, Spinner } from '../../theme';
 import Copy from './Copy';
 import Circle from '../../assets/images/circle.svg';

@@ -1,5 +1,5 @@
 const { getNetworkConfig, getTokensOfNetwork } = require('./index');
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils/helpers';
+import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
 export const getRecommendedCalls = function(network) {
   const networkConfig = getNetworkConfig(network);

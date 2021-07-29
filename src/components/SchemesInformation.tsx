@@ -5,7 +5,7 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
-import { bnum } from '../utils/helpers';
+import { bnum } from '../utils';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 

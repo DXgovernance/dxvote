@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Copy from '../common/Copy';
 import { injected } from 'provider/connectors';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
-import { getEtherscanLink } from 'utils/etherscan';
+import { getEtherscanLink } from 'utils';
 
 import Link from '../../components/common/Link';
 import { useStores } from '../../contexts/storesContext';

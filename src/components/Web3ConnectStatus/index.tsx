@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { shortenAddress } from 'utils/address';
+import { shortenAddress } from 'utils';
 import WalletModal from 'components/WalletModal';
 import { isChainIdSupported } from 'provider/connectors';
 import { useStores } from '../../contexts/storesContext';

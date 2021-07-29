@@ -1,15 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
+import moment from 'moment';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import Box from '../components/common/Box';
-import { timeToTimestamp } from '../utils/date';
-import { normalizeBalance } from '../utils/token';
-import { formatPercentage } from '../utils/number';
-import { ZERO_ADDRESS } from '../utils/helpers';
-import { Link } from 'react-router-dom';
-import moment from 'moment';
+import { ZERO_ADDRESS, formatPercentage, normalizeBalance, timeToTimestamp } from '../utils';
 
 const ProposalsTableWrapper = styled(Box)`
   width: 100%;
