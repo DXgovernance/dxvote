@@ -51,6 +51,7 @@
     "qrcode.react": "^1.0.0",
     "react": "^16.10.2",
     "react-app-rewired": "^2.1.6",
+    "react-countdown": "^2.3.2",
     "react-device-detect": "^1.17.0",
     "react-dom": "^16.10.2",
     "react-feather": "^2.0.3",

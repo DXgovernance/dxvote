@@ -6,7 +6,7 @@ import { action, makeObservable, observable } from 'mobx';
 import web3 from 'web3';
 import _ from 'lodash';
 import contentHash from 'content-hash';
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, bnum } from '../utils/helpers';
+import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, MAX_UINT, bnum } from '../utils/helpers';
 import { decodeProposalStatus } from '../utils/proposals';
 import { ethers, utils } from 'ethers';
 import PromiEvent from 'promievent';

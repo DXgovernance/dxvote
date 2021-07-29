@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import moment from 'moment';
+import Countdown from 'react-countdown';
 import { FiPlayCircle, FiFastForward } from "react-icons/fi";
 import Slider from '@material-ui/core/Slider';
 import MDEditor from '@uiw/react-md-editor';
@@ -68,6 +69,7 @@ const SidebarRow = styled.div`
     font-size: 20;
     margin-left: -10px;
     width:100%;
+    text-align: center;
     padding-top: 5px;
   }
   
@@ -351,18 +353,16 @@ const ProposalPage = observer(() => {
         </ProposalInfoSection>
         <InfoSidebarBox>
           <h2 style={{margin: "10px 0px 0px 0px", textAlign: "center"}}>{status} <Question question="3"/></h2>
-          <SidebarRow style={{
-            margin: "0px 10px",
-            flexDirection: "column"
-          }}>
-            {(boostTime.toNumber() > moment().unix()) ?
-              <span className="timeText"> Boost {timeToBoost} </span> 
-              : <div></div>
+          <SidebarRow style={{ margin: "0px 10px", flexDirection: "column" }}>
+            {(boostTime.toNumber() > moment().unix()) &&
+              <span className="timeText">Boost in <Countdown date={boostTime.toNumber()*1000} /> </span> 
             }
-            {(finishTime.toNumber() > moment().unix()) ?
-              <span className="timeText">
-                Finish {timeToFinish} </span>
-              : <div></div>}
+            {(finishTime.toNumber() > moment().unix()) &&
+              <span className="timeText"> Finish in <Countdown date={finishTime.toNumber()*1000} /> </span>
+            }
+            {((status == "Pending Execution") && (executionTimeoutTime.toNumber() > 0)) &&
+              <span className="timeText"> Execution timeout in <Countdown date={executionTimeoutTime.toNumber()*1000} /> </span>
+            }
           </SidebarRow>
           { proposal.stateInScheme < 3 ? 
             <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
@@ -379,11 +379,6 @@ const ProposalPage = observer(() => {
                 : <div/>
               }
             </SidebarRow>
-            : <div/>
-          }
-          
-          { ((status == "Pending Execution") && (executionTimeoutTime.toNumber() > 0)) ?
-            <span style={{textAlign: "center"}}> <strong> Execution Timeout Date </strong> <br/> <small>{moment.unix(executionTimeoutTime.toNumber()).format("MMMM Do YYYY, h:mm:ss")}</small> </span>
             : <div/>
           }
           
