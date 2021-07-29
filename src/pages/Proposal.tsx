@@ -180,8 +180,10 @@ const ProposalPage = observer(() => {
     const {
       userRep: userRepAtProposalCreation, totalSupply: totalRepAtProposalCreation
     } = configStore.getActiveChainName().indexOf('arbitrum') > -1 ?
-      daoService.getRepAt(proposal.creationEvent.l2BlockNumber)
-      : daoService.getRepAt(proposal.creationEvent.l1BlockNumber);
+      daoService.getRepAt(account, proposal.creationEvent.l2BlockNumber)
+      : daoService.getRepAt(account, proposal.creationEvent.l1BlockNumber);
+
+    const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
 
     const {status, boostTime, finishTime} = daoStore.getProposalStatus(proposalId);
 
@@ -266,8 +268,6 @@ const ProposalPage = observer(() => {
     const timeToFinish = timeToTimestamp(finishTime);
   
     const boostedVoteRequiredPercentage = scheme.boostedVoteRequiredPercentage / 1000;
-
-    const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
     
     function onStakeAmountChange(event) {
       setStakeAmount(event.target.value);
