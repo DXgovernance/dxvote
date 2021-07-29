@@ -247,7 +247,7 @@ const NewProposalPage = observer(() => {
     });
     
     const callPermissions = daoStore.getCache().callPermissions;
-    if (callPermissions
+    if (schemeToUse.type == "WalletScheme" && callPermissions
       [ZERO_ADDRESS]
       [schemeToUse.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeToUse.address]
       [ANY_ADDRESS]
