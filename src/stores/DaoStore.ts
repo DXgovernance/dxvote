@@ -650,7 +650,7 @@ export default class DaoStore {
 
     Object.keys(callPermissions).map((assetAddress) => {
       const callAllowance = this.getCallAllowance(assetAddress, from, schemeAddress, ANY_FUNC_SIGNATURE);
-      if (callAllowance.fromTime > 0)
+      if (callAllowance.fromTime > 0 && callAllowance.value.lt(MAX_UINT))
         assetLimits[assetAddress] = callAllowance.value;
     })
 

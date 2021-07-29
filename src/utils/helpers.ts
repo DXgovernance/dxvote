@@ -4,7 +4,7 @@ import { BigNumber } from './bignumber';
 
 // Utils
 export const MAX_GAS = utils.bigNumberify('0xffffffff');
-export const MAX_UINT = utils.bigNumberify(ethers.constants.MaxUint256);
+export const MAX_UINT = bnum(ethers.constants.MaxUint256);
 export const ZERO_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const ANY_ADDRESS = "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa";

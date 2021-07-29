@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import { getTokenData } from '../config';
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE, sleep } from '../utils/helpers';
+import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, ERC20_TRANSFER_SIGNATURE, MAX_UINT, sleep } from '../utils/helpers';
+import { normalizeBalance } from '../utils/token';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
@@ -179,6 +180,7 @@ const NewProposalPage = observer(() => {
     
     const { active, account } = providerStore.getActiveWeb3React();
     
+    const networkTokens = configStore.getTokensOfNetwork()
     const schemes = daoStore.getAllSchemes();
     const networkConfig = configStore.getNetworkConfig();
     const schemeInLocalStorage = localStorage.getItem('dxvote-newProposal-scheme');
@@ -464,7 +466,7 @@ const NewProposalPage = observer(() => {
     
     function onToSelectChange(callIndex, event) {
       const toAddress = event.target.value;
-      
+
       if (toAddress == ANY_ADDRESS) {
         changeCallType(callIndex);
       } else {
@@ -621,6 +623,17 @@ const NewProposalPage = observer(() => {
           ? <h2>Calls executed from the avatar <Question question="9"/></h2>
           : <h2>Calls executed from the scheme <Question question="9"/></h2>
         }
+        {Object.keys(transferLimits).map((assetAddress) => {
+          if (assetAddress == ZERO_ADDRESS)
+            return <h3>Transfer limit of {normalizeBalance(transferLimits[assetAddress]).toString()} ETH</h3>;
+          else {
+            const token = networkTokens.find(networkToken => networkToken.address == assetAddress);
+            if (token)
+              return <h3>Transfer limit of {normalizeBalance(transferLimits[assetAddress], token.decimals).toString()} {token.symbol}</h3>;
+            else
+              return <h3>Transfer limit {transferLimits[assetAddress].toString()} of asset {assetAddress}</h3>;
+          }
+        })}
       
         {(schemeToUse.type == "ContributionReward")
         ? 
