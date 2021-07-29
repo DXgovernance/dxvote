@@ -12,7 +12,7 @@ import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
 import ProposalTemplates from '../config/proposalTemplates';
-import { TXEvents } from '../enums';
+import { TXEvents } from '../utils/enums';
 
 const NewProposalFormWrapper = styled(Box)`
     width: cacl(100% -40px);

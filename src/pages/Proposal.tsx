@@ -21,7 +21,7 @@ import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState
-} from '../enums';
+} from '../utils/enums';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;

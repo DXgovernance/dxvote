@@ -14,7 +14,7 @@ import {
   VoteDecision,
   WalletSchemeProposalState,
   VotingMachineProposalState
-} from '../enums';
+} from '../utils/enums';
 
 import { getCacheFile } from '../cache';
 

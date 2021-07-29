@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { WalletSchemeProposalState, VotingMachineProposalState } from './enums';
+import { WalletSchemeProposalState, VotingMachineProposalState } from './utils/enums';
 
 // Multicall Types 
 
