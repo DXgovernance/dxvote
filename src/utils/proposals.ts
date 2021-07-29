@@ -158,7 +158,7 @@ export const decodeProposalStatus = function(
       return { 
         status: "Quiet Ending Period", 
         boostTime: boostedPhaseTime,
-        finishTime: boostedPhaseTime.plus(quietEndingPeriod)
+        finishTime: bnum(proposalStateChangeEvents.find(event => event.state == 6).timestamp).plus(quietEndingPeriod)
       };
   }
 }
