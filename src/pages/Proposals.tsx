@@ -128,14 +128,26 @@ const ProposalsPage = observer(() => {
     const [schemeFilter, setSchemeFilter] = React.useState("All Schemes");
     const [titleFilter, setTitleFilter] = React.useState("");
     const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
-      const {status, boostTime, finishTime} = daoStore.getProposalStatus(cacheProposal.id);
+      const {status, boostTime, finishTime, pendingAction} = daoStore.getProposalStatus(cacheProposal.id);
       cacheProposal.status = status; 
       cacheProposal.boostTime = boostTime; 
       cacheProposal.finishTime = finishTime;
+      cacheProposal.pendingAction = pendingAction;
       return cacheProposal;
-    }).sort(function(a, b) { return a.finishTime - b.finishTime; })
-    .sort(function(a, b) { return b.stateInVotingMachine - a.stateInVotingMachine });
+    });
     
+    // First show the proposals taht still have an active status in teh boting machine and order them from lower 
+    // to higher based on the finish time.
+    // Then show the proposals who finished based on the statte in the voting machine and order them from higher to 
+    // lower in the finish time.
+    // This way we show the proposals that will finish soon first and the latest proposals that finished later
+    
+    const sortedProposals = allProposals.filter((proposal) => proposal.stateInVotingMachine  > 2)
+      .sort(function(a, b) { return a.finishTime - b.finishTime; })
+      .concat(
+        allProposals.filter((proposal) => proposal.stateInVotingMachine < 3)
+        .sort(function(a, b) { return b.finishTime - a.finishTime; })
+      );
     function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
     function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
     function onSchemeFilterChange(newValue) { setSchemeFilter(newValue.target.value) }
@@ -193,13 +205,13 @@ const ProposalsPage = observer(() => {
           <TableHeader width="17.5%" align="center"> Stakes </TableHeader>
           <TableHeader width="17.5%" align="center"> Votes  </TableHeader>
         </ProposalTableHeaderWrapper>
-        { (allProposals.length === 0) ?
+        { (sortedProposals.length === 0) ?
           <TableRowsWrapper>
             <h3>No Proposals Found</h3>
           </TableRowsWrapper>
           :
           <TableRowsWrapper>
-            { allProposals.map((proposal, i) => {
+            { sortedProposals.map((proposal, i) => {
               if (
                 proposal 
                 && ((stateFilter == 'Any Status') || (stateFilter != 'Any Status' && proposal.status == stateFilter))
@@ -236,6 +248,7 @@ const ProposalsPage = observer(() => {
                           {proposal.status} <br/>
                           {(timeToBoost != "") ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
                           {(timeToFinish != "") ? <small>Finish {timeToFinish} </small> : <span></span>}
+                          {(proposal.pendingAction == 3) ? <small> Pending Finish Execution </small> : <span></span>}
                         </span>
                       </TableCell>
                       <TableCell width="17.5%" align="space-evenly"> 

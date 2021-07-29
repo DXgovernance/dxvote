@@ -187,7 +187,7 @@ const ProposalPage = observer(() => {
 
     const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
 
-    const {status, boostTime, finishTime} = daoStore.getProposalStatus(proposalId);
+    const {status, boostTime, finishTime, pendingAction} = daoStore.getProposalStatus(proposalId);
 
     // @ts-ignore
     try {
@@ -366,17 +366,13 @@ const ProposalPage = observer(() => {
           </SidebarRow>
           { proposal.stateInScheme < 3 ? 
             <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
-              {status === "Pending Boost" ? 
+              {pendingAction == 1 ? 
                 <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
-                : status === "Quiet Ending Period" && timeToFinish === "" ?
-                <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
-                : status === "Pending Execution" ?
+              : pendingAction == 2 ?
                 <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
-                : status === "Execution Timeout" ?
-                <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
-                : status === "Expired in Queue" && proposal.stateInScheme == "1" ?
+              : pendingAction == 3 ?
                 <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
-                : <div/>
+              : <div/>
               }
             </SidebarRow>
             : <div/>

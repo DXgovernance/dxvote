@@ -10,8 +10,8 @@ export function formatPercentage(
     decimals: number,
     useLowerLimit = true
 ): string {
-    if (value.lte(0.01) && value.gt(0) && useLowerLimit) {
-        return '<0.01%';
+    if (value.times(100).decimalPlaces(decimals).lte(0.1) && value.gt(0) && useLowerLimit) {
+        return '<0.1%';
     }
     return `${value.times(100).decimalPlaces(decimals).toString()}%`;
 }
