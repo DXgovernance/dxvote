@@ -61,44 +61,59 @@ const Header = observer(() => {
       root: { userStore, providerStore, blockchainStore, configStore, daoService },
   } = useStores();
   
-  const votingMachines = configStore.getNetworkConfig().votingMachines;
-  const userInfo = userStore.getUserInfo();
   const { active, account } = providerStore.getActiveWeb3React();
-
-  const dxdBalance = active && userInfo.dxdBalance ?
-    parseFloat(Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(2))
-    : 0;
-  const genBalance = active && userInfo.genBalance ?
-    parseFloat(Number(Web3.utils.fromWei(userInfo.genBalance.toString())).toFixed(2))
-    : 0;
-  const { userRep, totalSupply } = active && blockchainStore.initialLoadComplete ?
-    daoService.getRepAt(account, providerStore.getCurrentBlockNumber())
-    : { userRep: bnum(0), totalSupply: bnum(0)};
-  const repPercentage = active ? userRep.times(100).div(totalSupply).toFixed(4) : bnum(0);
-
-  return (
-    <NavWrapper>
-      <NavSection>
-        <NavItem route="/?">
-          <img alt="dxdao" src={dxdaoIcon}/>
-        </NavItem>
-      </NavSection>
-      { active && blockchainStore.initialLoadComplete ?
+  if (!active) {
+    return (
+      <NavWrapper>
         <NavSection>
-          {votingMachines.dxd ? <ItemBox> {dxdBalance} DXD </ItemBox> : <div/> }
-          {votingMachines.gen ? <ItemBox> {genBalance} GEN </ItemBox> : <div/> }
-          <ItemBox> {repPercentage.toString()} % REP </ItemBox>
-          <Web3ConnectStatus text="Connect Wallet" />
-          <a href={`${window.location.pathname}#/info`}><FiBarChart2 style={{margin: "0px 10px", color: "#616161"}}/></a>
-          <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
-          <a href={`${window.location.pathname}#/user/${account}`}><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
+          <NavItem route="/?">
+            <img alt="dxdao" src={dxdaoIcon}/>
+          </NavItem>
         </NavSection>
-      : <NavSection>
+        <NavSection>
           <Web3ConnectStatus text="Connect Wallet" />
         </NavSection>
-      }
-    </NavWrapper>
-  );
+      </NavWrapper>
+    );
+  } else {
+    const userInfo = userStore.getUserInfo();
+    const votingMachines = configStore.getNetworkConfig().votingMachines;
+
+    const dxdBalance = active && userInfo.dxdBalance ?
+      parseFloat(Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(2))
+      : 0;
+    const genBalance = active && userInfo.genBalance ?
+      parseFloat(Number(Web3.utils.fromWei(userInfo.genBalance.toString())).toFixed(2))
+      : 0;
+    const { userRep, totalSupply } = active && blockchainStore.initialLoadComplete ?
+      daoService.getRepAt(account, providerStore.getCurrentBlockNumber())
+      : { userRep: bnum(0), totalSupply: bnum(0)};
+    const repPercentage = active ? userRep.times(100).div(totalSupply).toFixed(4) : bnum(0);
+
+    return (
+      <NavWrapper>
+        <NavSection>
+          <NavItem route="/?">
+            <img alt="dxdao" src={dxdaoIcon}/>
+          </NavItem>
+        </NavSection>
+        { blockchainStore.initialLoadComplete ?
+          <NavSection>
+            {votingMachines.dxd ? <ItemBox> {dxdBalance} DXD </ItemBox> : <div/> }
+            {votingMachines.gen ? <ItemBox> {genBalance} GEN </ItemBox> : <div/> }
+            <ItemBox> {repPercentage.toString()} % REP </ItemBox>
+            <Web3ConnectStatus text="Connect Wallet" />
+            <a href={`${window.location.pathname}#/info`}><FiBarChart2 style={{margin: "0px 10px", color: "#616161"}}/></a>
+            <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
+            <a href={`${window.location.pathname}#/user/${account}`}><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
+          </NavSection>
+        : <NavSection>
+            <Web3ConnectStatus text="Connect Wallet" />
+          </NavSection>
+        }
+      </NavWrapper>
+    );
+  }
 });
 
 export default Header;
