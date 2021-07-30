@@ -62,7 +62,7 @@ contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
 # Deploy local contracts
-yarn hardhat run --network localhost scripts/deployLocalContracts.ts
+yarn hardhat run --network localhost scripts/deployDevContracts.ts
 
 # Copy dxdao contracts addresses in live networks
 # cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
