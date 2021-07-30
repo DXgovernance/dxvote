@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import styled from 'styled-components';
-import { web3ContextNames, isChainIdSupported } from 'provider/connectors';
+import { web3ContextNames } from 'provider/connectors';
 import { useEagerConnect, useInactiveListener } from 'provider/providerHooks';
 import { useStores } from 'contexts/storesContext';
 import { useInterval } from 'utils';
@@ -10,7 +9,7 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
     const {
-        root: { providerStore, blockchainStore, daoStore },
+        root: { providerStore, blockchainStore },
     } = useStores();
 
     const web3ContextInjected = useWeb3React(web3ContextNames.injected);
@@ -30,6 +29,7 @@ const Web3ReactManager = ({ children }) => {
     // try to eagerly connect to an injected provider, if it exists and has granted access already
     const triedEager = useEagerConnect();
     
+    // @ts-ignore
     ethereum.on('chainChanged', (chainId) => {
       // Handle the new chain.
       // Correctly handling chain changes can be complicated.
@@ -39,6 +39,7 @@ const Web3ReactManager = ({ children }) => {
       window.location.reload();
     });
 
+    // @ts-ignore
     ethereum.on('accountsChanged', (accounts) => {
       // Handle the new accounts, or lack thereof.
       // "accounts" will always be an array, but it can be empty.

@@ -3,9 +3,10 @@ import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
-import { decodeSchemeParameters, decodePermission, bnum } from '../utils';
+import { bnum } from '../utils';
 import { getUpdatedCache } from '../cache';
 import { getTokensToFetchPrice } from '../config';
+import { ContractStorage, EventStorage, Call, CallEntry, CallValue } from '../types';
 
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;
@@ -257,7 +258,7 @@ export default class BlockchainStore {
         networkCache.l1BlockNumber = toBlock;
         providerStore.setCurrentBlockNumber(toBlock);
       }
-      daoStore.updateNetworkCache(networkCache, configStore.getActiveChainName());
+      daoStore.updateNetworkCache(networkCache);
 
       this.initialLoadComplete = true;
       this.activeFetchLoop = false;

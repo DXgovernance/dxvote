@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { shortenAddress } from 'utils';

@@ -72,6 +72,9 @@ export default class DaoService {
           } else {
             return "Generic Call to "+callDecoded.args[0]+" with data of "+genericCallData+" using a value of "+library.utils.fromWei(callDecoded.args[3]);
           }
+        default:
+          return "Couldnt decode call";
+
       }
     }
   }

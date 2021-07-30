@@ -186,6 +186,7 @@ export const getRecommendedCalls = function(network) {
   networkTokens.map((networkToken) => {
     recommendedCalls.push({
       asset: networkToken.address,
+      from: ANY_ADDRESS,
       to: networkToken.address,
       toName: networkToken.name,
       functionName: "transfer(address,uint256)",
@@ -198,6 +199,7 @@ export const getRecommendedCalls = function(network) {
 
     recommendedCalls.push({
       asset: networkToken.address,
+      from: ANY_ADDRESS,
       to: networkToken.address,
       toName: `ERC20 ${networkToken.symbol}`,
       functionName: "approve(address,uint256)",

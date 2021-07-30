@@ -1,8 +1,6 @@
-import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { bnum, parseCamelCase, ZERO_ADDRESS, formatCurrency, formatBalance } from '../utils';
 import { getTokenData } from '../config';
@@ -66,12 +64,10 @@ const TableCell = styled.div`
 
 const FinanceInformation = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore, coingeckoService },
+        root: { daoStore, coingeckoService },
     } = useStores();
-    const { active: providerActive, library } = providerStore.getActiveWeb3React();
 
     const daoInfo = daoStore.getDaoInfo();
-    const networkConfig = configStore.getNetworkConfig();
     const schemes = daoStore.getAllSchemes();
     const prices = coingeckoService.getPrices();
 
@@ -159,11 +155,11 @@ const FinanceInformation = observer(() => {
               </FinanceTableHeaderWrapper>
               <TableRowsWrapper>
               {assetsOfHolder.map((asset, i) => {
-                if (asset && formatBalance(asset.amount, asset.decimals, 2) > 0) {
+                if (asset && Number(formatBalance(asset.amount, asset.decimals, 2)) > 0) {
                   return (
                     <TableRow key={`asset${i}`}>
                       <TableCell width="33%" align="center" weight='500'>
-                        {asset.name} <BlockchainLink size="long" type="address" text={asset.address} onlyIcon/>
+                        {asset.name} <BlockchainLink size="long" type="address" text={asset.address} onlyIcon toCopy/>
                       </TableCell>
                       <TableCell width="34%" align="center"> 
                         {formatBalance(asset.amount, asset.decimals, 2).toString()}

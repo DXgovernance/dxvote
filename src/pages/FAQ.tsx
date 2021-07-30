@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { useStores } from '../contexts/storesContext';
 import { observer } from 'mobx-react';
 import Box from '../components/common/Box';
 import { useLocation } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
-import { ZERO_ADDRESS } from '../utils';
 
 const FAQPage = observer(() => {
     

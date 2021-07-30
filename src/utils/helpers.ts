@@ -1,5 +1,6 @@
-import { ethers, utils } from 'ethers';
+import { utils } from 'ethers';
 import { BigNumber } from './bignumber';
+import { MAX_UINT } from './constants';
 
 export function bnum(
     val: string | number | utils.BigNumber | BigNumber
@@ -28,7 +29,7 @@ export function setPropertyToZeroIfEmpty(value?): string {
 }
 
 export function hasMaxApproval(amount: BigNumber): boolean {
-  return amount.gte(bnum(MAX_UINT.div(2).toString()));
+  return amount.gte(bnum(bnum(MAX_UINT).div(2).toString()));
 }
 
 export function isEmpty(str: string): boolean {
@@ -55,4 +56,33 @@ export function parseCamelCase(text)
 {
   const parsed = text.replace(/([a-z])([A-Z])/g, '$1 $2');
   return parsed[0].toUpperCase() + parsed.substring(1);
+}
+
+export function getBlockchainLink(text, networkName, type) {
+  switch (type) {
+    case "user":
+      return `${window.location.pathname}#/user/${text}`;
+    case "address":
+      if (networkName == 'arbitrum')
+        return `https://explorer.arbitrum.io/#/address/${text}`
+      else if (networkName == 'arbitrumTestnet')
+        return `https://rinkeby-explorer.arbitrum.io/#/address/${text}`
+      else if (networkName == 'mainnet')
+        return `https://etherscan.io/address/${text}`
+      else if (networkName == 'xdai')
+        return `https://blockscout.com/xdai/mainnet/address/${text}`
+      else
+        return `https://${networkName}.etherscan.io/address/${text}`
+    default:
+      if (networkName == 'arbitrum')
+        return `https://explorer.arbitrum.io/#/tx/${text}`
+      else if (networkName == 'arbitrumTestnet')
+        return `https://rinkeby-explorer.arbitrum.io/#/tx/${text}`
+      else if (networkName == 'mainnet')
+        return `https://etherscan.io/tx/${text}`
+      else if (networkName == 'xdai')
+        return `https://blockscout.com/xdai/mainnet/tx/${text}`
+      else
+        return `https://${networkName}.etherscan.io/tx/${text}`
+  }
 }

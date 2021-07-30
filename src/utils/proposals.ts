@@ -1,6 +1,5 @@
 import { bnum } from './helpers';
 import moment from 'moment';
-import { BigNumber } from 'bignumber.js';
 
 export const calculateStakes = function(thresholdConst, boostedProposals, preBoostedProposals, upstakes, downstakes ) {
 
@@ -23,7 +22,7 @@ export const calculateStakes = function(thresholdConst, boostedProposals, preBoo
   }
 
 }
-
+// @ts-ignore
 export const decodeProposalStatus = function(
   proposal, proposalStateChangeEvents, votingMachineParams, maxSecondsForExecution, autoBoost
 ) {

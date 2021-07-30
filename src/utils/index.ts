@@ -3,7 +3,6 @@ export * from './bignumber';
 export * from './constants';
 export * from './date';
 export * from './enums';
-export * from './etherscan';
 export * from './helperHooks';
 export * from './helpers';
 export * from './number';

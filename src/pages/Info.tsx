@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components'; 
 import { useLocation } from 'react-router-dom';
 import ActiveButton from '../components/common/ActiveButton';
@@ -7,7 +6,6 @@ import Box from '../components/common/Box';
 import FinanceInformation from '../components/FinanceInformation';
 import SchemesInformation from '../components/SchemesInformation';
 import GovernanceInformation from '../components/GovernanceInformation';
-import ProposalsTable from '../components/ProposalsTable';
 
 const InfoPageWrapper = styled(Box)`
   width: 100%;

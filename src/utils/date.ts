@@ -1,6 +1,5 @@
 import moment from 'moment';
 import { BigNumber } from './bignumber';
-import { bnum } from './helpers';
 
 export const formatDate = (date: Date) => {
   return moment(date).format('DD.MM - HH:mm');

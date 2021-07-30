@@ -1,4 +1,3 @@
-import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
@@ -59,15 +58,13 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, daoStore, blockchainStore, configStore, daoService },
+      root: { userStore, providerStore, blockchainStore, configStore, daoService },
   } = useStores();
   
   const votingMachines = configStore.getNetworkConfig().votingMachines;
   const userInfo = userStore.getUserInfo();
   const { active, account } = providerStore.getActiveWeb3React();
-  const ethBalance = active && userInfo.ethBalance ?
-    parseFloat(Number(Web3.utils.fromWei(userInfo.ethBalance.toString())).toFixed(2))
-    : 0;
+
   const dxdBalance = active && userInfo.dxdBalance ?
     parseFloat(Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(2))
     : 0;

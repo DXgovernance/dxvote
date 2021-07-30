@@ -1,9 +1,7 @@
-import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useHistory } from "react-router-dom";
 import { useStores } from '../contexts/storesContext';
-import ActiveButton from '../components/common/ActiveButton';
 import { useLocation } from 'react-router-dom';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Box from '../components/common/Box';
@@ -23,12 +21,12 @@ const UserPage = observer(() => {
     let history = useHistory();
 
     const {
-        root: { daoStore, blockchainStore },
+        root: { daoStore },
     } = useStores();
     const userAddress = useLocation().pathname.split("/")[2];
     const userEvents = daoStore.getUserEvents(userAddress);
     const userInfo = daoStore.getUser(userAddress);
-    const governanceInfo = daoStore.getGovernanceInfo().ranking.find(user => user.address == userAddress);
+
     let proposalsToRedeem = [];
     
     userEvents.votes.map((vote) => {
@@ -38,8 +36,8 @@ const UserPage = observer(() => {
         (proposal.stateInVotingMachine == 1) 
         ||
         (
-          voteParameters.votersReputationLossRatio > 0
-          && vote.timestamp < proposal.boostedPhaseTime
+          voteParameters.votersReputationLossRatio.toNumber() > 0
+          && vote.timestamp < proposal.boostedPhaseTime.toNumber()
           && proposal.winningVote == vote.vote
         )
       ) && (proposalsToRedeem.indexOf(vote.proposalId) < 0)) {
@@ -92,7 +90,7 @@ const UserPage = observer(() => {
             {userEvents.votes.filter(vote => vote.vote == 2).length} Negative Votes
           </InfoBox>
           <InfoBox>
-            {userEvents.newProposalEvents.length} Proposals
+            {userEvents.newProposal.length} Proposals
           </InfoBox>
         </div>
         

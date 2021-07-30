@@ -1,4 +1,3 @@
-import React from 'react';
 import styled, { css } from 'styled-components';
 import { animated, useTransition } from 'react-spring';
 import { Spring } from 'react-spring/renderprops';

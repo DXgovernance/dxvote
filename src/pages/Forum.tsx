@@ -29,12 +29,6 @@ const ForumPage = () => {
       return;
     }
   
-    if (e.data && e.data.type === "discourse-resize" && e.data.embedId) {
-      var elem = document.getElementById(e.data.embedId);
-      if (elem) {
-        elem.height = e.data.height + "px";
-      }
-    }
     if (loading){
       setLoading(false);
     }
@@ -62,7 +56,7 @@ const ForumPage = () => {
     iframe.src = url + "/embed/topics?" + params.join("&");
     iframe.id = frameId;
     iframe.width = "100%";
-    iframe.frameBorder = 0;
+    iframe.frameBorder = "0";
     iframe.scrolling = "no";
     console.log(iframe)
     list.appendChild(iframe);
@@ -75,6 +69,7 @@ const ForumPage = () => {
         <div className="loader"> <FiZap/> <br/> Loading.. </div>
         </LoadingBox>
       :
+        // @ts-ignore
         <d-topics-list discourse-url="https://daotalk.org/" category="15" per-page="10000" template="complete"></d-topics-list>
       }
     </Box>

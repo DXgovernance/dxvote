@@ -30,10 +30,8 @@ const InputBox = styled.input`
 
 const ConfigPage = observer(() => {
     const {
-        root: { providerStore, configStore, blockchainStore, pinataService, etherscanService },
+        root: { configStore, pinataService, etherscanService },
     } = useStores();
-    const { active: providerActive } = providerStore.getActiveWeb3React();
-    const loading = !blockchainStore.initialLoadComplete;
     
     const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(etherscanService.auth);
     const [pinataKeyStatus, setPinataKeyStatus] = React.useState(pinataService.auth);

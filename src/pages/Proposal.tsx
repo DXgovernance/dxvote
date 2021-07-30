@@ -6,7 +6,6 @@ import { useStores } from '../contexts/storesContext';
 import moment from 'moment';
 import Countdown from 'react-countdown';
 import { FiPlayCircle, FiFastForward } from "react-icons/fi";
-import Slider from '@material-ui/core/Slider';
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
@@ -18,7 +17,6 @@ import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
   bnum,
-  timeToTimestamp,
   calculateStakes,
   formatBalance
 } from '../utils';
@@ -126,23 +124,11 @@ const ActionButton = styled.div`
     }
 `;
 
-const AmountSlider = styled(Slider)({
-    maxWidth: "40%",
-    margin: "auto"
-});
-
-
-const voteMarks = [
-  { value: 0, label: 'NO', },
-  { value: 50, label: '', },
-  { value: 100, label: 'YES', },
-];
-
 const ProposalPage = observer(() => {
     let history = useHistory();
 
     const {
-        root: { providerStore, daoStore, configStore, daoService, ipfsService, userStore, blockchainStore },
+        root: { providerStore, daoStore, configStore, daoService, ipfsService, userStore },
     } = useStores();
     const votingMachines = configStore.getNetworkConfig().votingMachines;
     const proposalId = useLocation().pathname.split("/")[2];
@@ -154,7 +140,7 @@ const ProposalPage = observer(() => {
     const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
     const scheme = daoStore.getScheme(proposal.scheme);
     const { dxdApproved, genApproved } = userStore.getUserInfo(); 
-    const { active, account, library } = providerStore.getActiveWeb3React();
+    const { account, library } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
     const [proposalDescription, setProposalDescription] = React.useState(
@@ -251,24 +237,21 @@ const ProposalPage = observer(() => {
     const canRedeemRep = vote
       ? (proposalEvents.redeemsRep.findIndex((redeemRep) => redeemRep.beneficiary === account) < 0)
         && (
-          ((votingParameters.votersReputationLossRatio > 0) && (vote.timestamp < proposal.boostedPhaseTime))
+          ((votingParameters.votersReputationLossRatio.toNumber() > 0) && (vote.timestamp < proposal.boostedPhaseTime.toNumber()))
           || (proposal.stateInVotingMachine == 1)
         )
       : false;
 
     const canRedeem = (canRedeemToken || canRedeemRep);
 
-    const {stakeToBoost, stakeToUnBoost, recommendedStakeToBoost, recommendedStakeToUnBoost } = calculateStakes(
+    const {recommendedStakeToBoost, recommendedStakeToUnBoost } = calculateStakes(
       votingParameters.thresholdConst,
       scheme.boostedProposals,
       daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address),
       proposal.positiveStakes,
       proposal.negativeStakes,
     )
-    
-    const timeToBoost = timeToTimestamp(boostTime);
-    const timeToFinish = timeToTimestamp(finishTime);
-  
+      
     const boostedVoteRequiredPercentage = scheme.boostedVoteRequiredPercentage / 1000;
     
     function onStakeAmountChange(event) {
@@ -279,13 +262,13 @@ const ProposalPage = observer(() => {
       setVotePercentage(event.target.value < repPercentageAtCreation ? event.target.value : repPercentageAtCreation);
     }
     
-    if (repPercentageAtCreation > 0 && votePercentage === 0) {
-      setVotePercentage(repPercentageAtCreation);
+    if (Number(repPercentageAtCreation) > 0 && votePercentage === 0) {
+      setVotePercentage(Number(repPercentageAtCreation));
     }
     
     const submitVote = function(decision) {
-      const repAmount = (totalRepAtProposalCreation.times(bnum(votePercentage))).div('100');
-      daoStore.vote(decision, repAmount.toFixed(0), proposalId);
+      const repAmount = (totalRepAtProposalCreation.times(bnum(votePercentage))).div('100').toFixed(0);
+      daoStore.vote(decision, Number(repAmount), proposalId);
     };
     
     const submitStake = function(decision) {
@@ -447,20 +430,20 @@ const ProposalPage = observer(() => {
             </span>
           </SidebarRow>
           
-          {repPercentageAtCreation > 0
+          {Number(repPercentageAtCreation) > 0
             ? <small>{repPercentageAtCreation} % REP at proposal creation</small>
             : <div/>
           }
           
           { (
-              ((proposal.stateInVotingMachine == "3") || (proposal.stateInVotingMachine == "4"))
+              ((proposal.stateInVotingMachine == 3) || (proposal.stateInVotingMachine == 4))
               && (votingParameters.votersReputationLossRatio.toNumber() > 0)
               && (finishTime.toNumber() > 0)
             ) ? <small>Voter REP Loss Ratio: {votingParameters.votersReputationLossRatio.toString()}%</small>
             : <div/> 
           }
           
-          {!finishTimeReached && votedAmount.toNumber() === 0 && repPercentageAtCreation > 0 && proposal.stateInVotingMachine >= 3 ?
+          {!finishTimeReached && votedAmount.toNumber() === 0 && Number(repPercentageAtCreation) > 0 && proposal.stateInVotingMachine >= 3 ?
             <SidebarRow>
               
               <AmountInput

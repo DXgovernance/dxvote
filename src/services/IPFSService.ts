@@ -1,7 +1,5 @@
 import RootStore from '../stores';
 import IPFS from 'ipfs-core';
-import contentHash from 'content-hash';
-import axios from "axios";
 const CID = require('cids')
 
 export default class IPFSService {
@@ -49,6 +47,6 @@ export default class IPFSService {
         content.push(chunk)
       }
     }
-    return content.toString("utf8");
+    return content.toString();
   }
 }

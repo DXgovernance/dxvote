@@ -1,8 +1,6 @@
-import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { FaTrophy, FaMedal } from "react-icons/fa";
 import { bnum } from '../utils';
@@ -28,23 +26,6 @@ const InfoBox = styled.div`
   font-weight: 300;
   border-radius: 3px;
   color: var(--activeButtonBackground);
-`;
-
-const GovernanceTableHeaderActions = styled.div`
-    padding: 0px 10px 10px 10px;
-    color: var(--dark-text-gray);
-    border-bottom: 1px solid var(--line-gray);
-    font-weight: 500;
-    font-size: 18px;
-    letter-spacing: 1px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    
-    span {
-      font-size: 20px;
-      padding: 10px 5px 5px 5px;
-    }
 `;
 
 const GovernanceTableHeaderWrapper = styled.div`
@@ -91,9 +72,9 @@ const TableCell = styled.div`
 
 const GovernanceInformation = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore },
+        root: { daoStore },
     } = useStores();
-    const { active: providerActive, library } = providerStore.getActiveWeb3React();
+
     const daoInfo = daoStore.getDaoInfo();
     const governanceInfo = daoStore.getGovernanceInfo();
     console.log(governanceInfo);
@@ -188,7 +169,7 @@ const GovernanceInformation = observer(() => {
               <div/>}
               </TableCell>
               <TableCell width="35%" align="center" weight='500'>
-                <BlockchainLink size="long" type="address" text={user.address}/>
+                <BlockchainLink size="long" type="address" text={user.address} toCopy/>
               </TableCell>
               <TableCell width="15%" align="center"> {user.proposals} </TableCell>
               <TableCell width="15%" align="center"> 

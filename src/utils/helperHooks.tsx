@@ -12,15 +12,18 @@ export function useInterval(callback, delay) {
   // Set up the interval.
   useEffect(() => {
     function tick() {
+      // @ts-ignore
       savedCallback.current();
     }
     if (delay !== null) {
       let id = setInterval(tick, delay);
       return () => clearInterval(id);
+    } else {
+      return null;
     }
   }, [delay]);
 }
-
+// @ts-ignore
 export function useCopyClipboard(timeout = 500): [S, Dispatch<SetStateAction<S>>] {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -28,7 +31,7 @@ export function useCopyClipboard(timeout = 500): [S, Dispatch<SetStateAction<S>>
     const didCopy = copy(text);
     setIsCopied(didCopy);
   }, []);
-
+  // @ts-ignore
   useEffect(() => {
     if (isCopied) {
       const hide = setTimeout(() => {

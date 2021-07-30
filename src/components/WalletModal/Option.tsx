@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { transparentize } from 'polished';
 import Link from '../../components/common/Link';
@@ -105,7 +104,6 @@ export default function Option({
     color,
     header,
     subheader = null,
-    icon,
     active = false,
 }) {
     const content = (

@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import moment from 'moment';
 import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import Box from '../components/common/Box';
@@ -115,22 +114,17 @@ const TableCell = styled.div`
 
 const ProposalsPage = observer(() => {
     const {
-        root: { providerStore, daoStore, blockchainStore, configStore, daoService },
+        root: { daoStore, configStore, daoService },
     } = useStores();
 
     const schemes = daoStore.getAllSchemes();
     const votingMachines = configStore.getNetworkConfig().votingMachines;
-    const { library, active } = providerStore.getActiveWeb3React();
     const [stateFilter, setStateFilter] = React.useState("Any Status");
     const [schemeFilter, setSchemeFilter] = React.useState("All Schemes");
     const [titleFilter, setTitleFilter] = React.useState("");
     const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
-      const {status, boostTime, finishTime, pendingAction} = daoStore.getProposalStatus(cacheProposal.id);
-      cacheProposal.status = status; 
-      cacheProposal.boostTime = boostTime; 
-      cacheProposal.finishTime = finishTime;
-      cacheProposal.pendingAction = pendingAction;
-      return cacheProposal;
+      
+      return Object.assign(cacheProposal, daoStore.getProposalStatus(cacheProposal.id));
     });
     
     // First show the proposals taht still have an active status in teh boting machine and order them from lower 

@@ -1,9 +1,8 @@
-import React from 'react';
 import styled from 'styled-components';
 import Copy from '../common/Copy';
 import { injected } from 'provider/connectors';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
-import { getEtherscanLink } from 'utils';
+import { getBlockchainLink } from '../../utils';
 
 import Link from '../../components/common/Link';
 import { useStores } from '../../contexts/storesContext';
@@ -129,9 +128,8 @@ const AccountControl = styled.div`
     align-items: center;
     min-width: 0;
 
-    font-weight: ${({ hasENS, isENS }) => (hasENS ? (isENS ? 500 : 400) : 500)};
-    font-size: ${({ hasENS, isENS }) =>
-        hasENS ? (isENS ? '1rem' : '0.8rem') : '1rem'};
+    font-weight: 500;
+    font-size: 1rem;
 
     a:hover {
         text-decoration: underline;
@@ -186,103 +184,62 @@ const WalletAction = styled.div`
 
 interface Props {
     toggleWalletModal: any;
-    ENSName: any;
     openOptions: any;
 }
 
 export default function AccountDetails(props: Props) {
     const {
         toggleWalletModal,
-        ENSName,
         openOptions,
     } = props;
     const {
-        root: { providerStore },
+        root: { providerStore, configStore },
     } = useStores();
-    const { chainId, account, connector } = providerStore.getActiveWeb3React();
+    const { account, connector } = providerStore.getActiveWeb3React();
+
+    const networkName = configStore.getActiveChainName();
 
     return (
-        <>
-            <UpperSection>
-                <CloseIcon onClick={toggleWalletModal}>
-                    <CloseColor alt={'close icon'} />
-                </CloseIcon>
-                <HeaderRow>Account</HeaderRow>
-                <AccountSection>
-                    <YourAccount>
-                        <InfoCard>
-                            <AccountGroupingRow>
-                                <div>
-                                    {connector !== injected && (
-                                        <WalletAction
-                                            onClick={() => {
-                                                //@ts-ignore
-                                                connector.close();
-                                            }}
-                                        >
-                                            Disconnect
-                                        </WalletAction>
-                                    )}
-                                    <CircleWrapper>
-                                        <GreenCircle>
-                                            <div />
-                                        </GreenCircle>
-                                    </CircleWrapper>
-                                </div>
-                            </AccountGroupingRow>
-                            <AccountGroupingRow>
-                                {ENSName ? (
-                                    <AccountControl
-                                        hasENS={!!ENSName}
-                                        isENS={true}
-                                    >
-                                        <StyledLink
-                                            hasENS={!!ENSName}
-                                            isENS={true}
-                                            href={getEtherscanLink(
-                                                chainId,
-                                                ENSName,
-                                                'address'
-                                            )}
-                                        >
-                                            {ENSName} ↗{' '}
-                                        </StyledLink>
-                                        <Copy toCopy={ENSName} />
-                                    </AccountControl>
-                                ) : (
-                                    <AccountControl
-                                        hasENS={!!ENSName}
-                                        isENS={false}
-                                    >
-                                        <StyledLink
-                                            hasENS={!!ENSName}
-                                            isENS={false}
-                                            href={getEtherscanLink(
-                                                chainId,
-                                                account,
-                                                'address'
-                                            )}
-                                        >
-                                            {account} ↗{' '}
-                                        </StyledLink>
-                                        <Copy toCopy={account} />
-                                    </AccountControl>
-                                )}
-                            </AccountGroupingRow>
-                        </InfoCard>
-                    </YourAccount>
+      <UpperSection>
+        <CloseIcon onClick={toggleWalletModal}>
+          <CloseColor alt={'close icon'} />
+        </CloseIcon>
+        <HeaderRow>Account</HeaderRow>
+        <AccountSection>
+          <YourAccount>
+            <InfoCard>
+              <AccountGroupingRow>
+                <div>
+                  {connector !== injected && (
+                    <WalletAction
+                      onClick={() => {
+                        //@ts-ignore
+                        connector.close();
+                      }}
+                    >
+                        Disconnect
+                    </WalletAction>
+                  )}
+                  <CircleWrapper> <GreenCircle/> </CircleWrapper>
+                </div>
+              </AccountGroupingRow>
+              <AccountGroupingRow>
+                <AccountControl>
+                  <StyledLink href={getBlockchainLink( account, networkName, 'address' )} >
+                    {account} ↗
+                  </StyledLink>
+                  <Copy toCopy={account} />
+                </AccountControl>
+              </AccountGroupingRow>
+            </InfoCard>
+          </YourAccount>
 
-                    <ConnectButtonRow>
-                        <OptionButton
-                            onClick={() => {
-                                openOptions();
-                            }}
-                        >
-                            Connect to a different wallet
-                        </OptionButton>
-                    </ConnectButtonRow>
-                </AccountSection>
-            </UpperSection>
-        </>
+          <ConnectButtonRow>
+            <OptionButton onClick={() => { openOptions(); }} >
+              Connect to a different wallet
+            </OptionButton>
+          </ConnectButtonRow>
+        </AccountSection>
+      </UpperSection>
     );
 }

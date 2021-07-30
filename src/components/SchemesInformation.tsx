@@ -1,12 +1,9 @@
-import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import ActiveButton from '../components/common/ActiveButton';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
 import { bnum } from '../utils';
-import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 const SchemesInformationWrapper = styled.div`
@@ -71,13 +68,9 @@ const TableCell = styled.div`
 
 const SchemesInformation = observer(() => {
     const {
-        root: { providerStore, daoStore, blockchainStore },
+        root: { providerStore, daoStore },
     } = useStores();
-    const { active: providerActive, library } = providerStore.getActiveWeb3React();
-    
-    const loading = (
-      !blockchainStore.initialLoadComplete
-    );
+    const { library } = providerStore.getActiveWeb3React();
     
     const schemes = daoStore.getAllSchemes();
     return (
@@ -176,6 +169,7 @@ const SchemesInformation = observer(() => {
                 </TableRow>
               </div>
             );
+          else return <div/>;
           }
         )}
         </TableRowsWrapper>

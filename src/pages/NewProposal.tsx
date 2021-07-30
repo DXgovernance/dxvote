@@ -2,20 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
-import { getTokenData } from '../config';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
 import MDEditor, { commands } from '@uiw/react-md-editor';
-import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
 import ProposalTemplates from '../config/proposalTemplates';
 import {
   ZERO_ADDRESS,
   ANY_ADDRESS,
   ANY_FUNC_SIGNATURE,
-  ERC20_TRANSFER_SIGNATURE,
-  MAX_UINT,
   sleep,
   normalizeBalance,
   TXEvents
@@ -29,24 +25,6 @@ const NewProposalFormWrapper = styled(Box)`
     flex-direction: column;
 `;
 
-const SchemeInput = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: left;
-    flex-direction: row;
-    margin-bottom: 10px;
-    
-    label {
-      text-align: center;
-      font-family: Roboto;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 20px;
-      line-height: 18px;
-      padding: 10px 10px;
-    }
-
-`;
 const PlaceHolders = styled.div`
     width: calc(100% - 1px);
     display: flex;
@@ -54,6 +32,7 @@ const PlaceHolders = styled.div`
     font-size: 20px;
     padding-bottom: 0px;
 `
+
 const TitleInput = styled.div`
     width: calc(100% - 1px);
     display: flex;
@@ -126,22 +105,6 @@ const RemoveButton = styled.div`
     margin: 5px;
 `;
 
-const AddButton = styled.div`
-    background-color: var(--blue-text);
-    border: 1px solid black;
-    border-radius: 10px;
-    color: white;
-    height: 25px;
-    letter-spacing: 1px;
-    font-weight: 500;
-    line-height: 25px;
-    text-align: center;
-    cursor: pointer;
-    width: max-content;
-    padding: 0px 5px;
-    margin: 5px;
-`;
-
 const TextInput = styled.input`
   width: ${(props) => props.width || '25%'};
   height: 34px;
@@ -159,33 +122,10 @@ const SelectInput = styled.select`
   background-color: #FFF;
 `;
 
-const SelectEditable = styled.div`
-
-  position:relative;
-  background-color:white;
-  border:solid grey 1px; 
-  width:120px;
-  height:18px;
-
-  select {
-    position:absolute; top:0px; left:0px; font-size:14px; border:none; width:120px; margin:0;
-  }
-  input {
-    position:absolute; top:0px; left:0px; width:100px; padding:1px; font-size:12px; border:none;
-  }
-  select:focus, .select-editable input:focus {
-    outline:none;
-  }
-`
-
 const NewProposalPage = observer(() => {
-    let history = useHistory();
-
     const {
-        root: { providerStore, daoStore, configStore, daoService, ipfsService, pinataService, blockchainStore },
+        root: { providerStore, daoStore, configStore, daoService, ipfsService, pinataService },
     } = useStores();
-    
-    const { active, account } = providerStore.getActiveWeb3React();
     
     const networkTokens = configStore.getTokensOfNetwork()
     const schemes = daoStore.getAllSchemes();
@@ -525,11 +465,6 @@ const NewProposalPage = observer(() => {
       setCallsInState(calls);
     }
     
-    function onCallDataChange(callIndex, event) {
-      calls[callIndex].data = event.target.value;
-      setCallsInState(calls);
-    }
-    
     function onContributionRewardValueChange(key, value) {
       contributionRewardCalls[key] = value;
       setContributionRewardCallsInState(contributionRewardCalls);
@@ -582,6 +517,8 @@ const NewProposalPage = observer(() => {
               {schemes.map((scheme, i) =>{
                 if (scheme.type == "WalletScheme" || scheme.type == "ContributionReward" ||scheme.type == "GenericMulticall")
                   return <option key={scheme.address} value={i}>{scheme.name}</option>
+                else
+                  return null;
               })}
             </select>
             <select name="proposalTemplate" id="proposalTemplateSelector" onChange={onProposalTemplate}>
@@ -594,12 +531,11 @@ const NewProposalPage = observer(() => {
         {(submitionState < 1) ?
           <MDEditor
             value={descriptionText}
-            disabled={submitionState > 0}
             onChange={onDescriptionChange}
             preview="edit"
             height="300"
-            minheights="300"
-            maxheights="1000"
+            minHeight={300}
+            maxHeight={1000}
             commands={[
               commands.bold,
               commands.italic,
@@ -741,6 +677,7 @@ const NewProposalPage = observer(() => {
                               {allowedFunc.functionName}
                             </option>
                           );
+                        else return null;
                       })}
                     </SelectInput>
                     

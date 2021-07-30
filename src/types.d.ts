@@ -56,7 +56,7 @@ export interface BlockchainEvent {
 
 export interface ERC20TransferEvent extends BlockchainEvent{
   from: string;
-  to: String;
+  to: string;
   amount: BigNumber;
 };
 
@@ -180,7 +180,7 @@ export interface Scheme {
   tokenBalances: { 
     [tokenAddress: string] : BigNumber
   };
-  votingMachine: String;
+  votingMachine: string;
   paramsHash: string;
   permissions: SchemePermissions;
   boostedVoteRequiredPercentage: number;

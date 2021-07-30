@@ -11,9 +11,9 @@ export default class PinataService {
   }
   
   async updatePinList() {
-    const pinList = await this.getPinList();
+    // const pinList = await this.getPinList();
     const ipfsHashes = this.rootStore.daoStore.getCache().ipfsHashes;
-    const alreadyPinned = pinList.data.rows;
+    // const alreadyPinned = pinList.data.rows;
     for (let i = 0; i < ipfsHashes.length; i++) {
       // if (alreadyPinned.indexOf(pinned => alreadyPinned.ipfs_pin_hash == ipfsHashes[i].hash) < 0) {
       //   console.debug('[PINATA] Pinning:', ipfsHashes[i].hash);

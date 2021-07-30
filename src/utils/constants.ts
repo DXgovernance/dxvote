@@ -1,9 +1,4 @@
-// Libraries
-import { ethers, utils } from 'ethers';
-import { BigNumber } from './bignumber';
-
-// Utils
-export const MAX_UINT = BigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+export const MAX_UINT = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 export const ZERO_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const ANY_ADDRESS = "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa";

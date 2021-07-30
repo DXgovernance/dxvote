@@ -1,10 +1,18 @@
 import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
 import { ContractType } from './Provider';
-import { bnum } from '../utils';
+import { BigNumber, bnum } from '../utils';
 
 export default class UserStore {
-  userInfo: UserInfo;
+  userInfo: { 
+    address: string,
+    ethBalance: BigNumber,
+    repBalance: BigNumber,
+    dxdBalance: BigNumber,
+    dxdApproved: BigNumber,
+    genBalance: BigNumber,
+    genApproved: BigNumber
+  };
   rootStore: RootStore;
 
   constructor(rootStore) {
@@ -30,7 +38,7 @@ export default class UserStore {
   }
 
   update() {
-    const { configStore, providerStore, blockchainStore, daoService } = this.rootStore;
+    const { configStore, providerStore, daoService } = this.rootStore;
     const { account } = providerStore.getActiveWeb3React();
 
     const repBalance = account ? daoService.getRepAt(account, providerStore.getCurrentBlockNumber()).userRep : bnum(0);

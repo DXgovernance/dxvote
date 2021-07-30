@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from './contexts/storesContext';
@@ -33,7 +32,6 @@ const PageRouter = observer(({ children }) => {
     const {
         root: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService, coingeckoService },
     } = useStores();
-    let needsLoading = true;
     
     const { pathname } = useLocation();
     const noLoading = ['/faq', '/config', '/forum'];
