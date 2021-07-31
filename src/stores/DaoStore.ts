@@ -461,14 +461,13 @@ export default class DaoStore {
   
   getUser(userAddress): {
     repBalance: BigNumber,
-    repPercentage: Number
+    repPercentage: string
   } {
     const { providerStore } = this.rootStore;
     const { userRep, totalSupply } = this.getRepAt(userAddress, providerStore.getCurrentBlockNumber())
-
     return {
       repBalance: userRep,
-      repPercentage: userRep ? Number(formatPercentage(userRep, totalSupply.toNumber())) : 0
+      repPercentage: userRep ? formatPercentage(userRep.div(totalSupply), 2, false) : "0"
     }
   }
   
