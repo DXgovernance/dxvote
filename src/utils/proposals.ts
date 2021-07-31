@@ -48,27 +48,27 @@ export const decodeProposalStatus = function(
         return { 
           status: "Proposal Rejected", 
           boostTime: boostedPhaseTime,
-          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == 2).timestamp),
+          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
           pendingAction: 0
         };
       else if (proposal.stateInScheme == "3")
         return { 
           status: "Execution Succeded", 
           boostTime: boostedPhaseTime,
-          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == 2).timestamp),
+          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
           pendingAction: 0
         };
       else if (proposal.stateInScheme == "4")
         return { 
           status: "Execution Timeout", 
           boostTime: boostedPhaseTime,
-          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == 2).timestamp),
+          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
           pendingAction: 0
         };
       else return { 
         status: "Passed", 
         boostTime: boostedPhaseTime,
-        finishTime: bnum(proposalStateChangeEvents.find(event => event.state == 2).timestamp),
+        finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
         pendingAction: 0
       };
     case "3":
@@ -158,7 +158,7 @@ export const decodeProposalStatus = function(
       return { 
         status: "Quiet Ending Period", 
         boostTime: boostedPhaseTime,
-        finishTime: bnum(proposalStateChangeEvents.find(event => event.state == 6).timestamp).plus(quietEndingPeriod),
+        finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "6").timestamp).plus(quietEndingPeriod),
         pendingAction: 2
       };
   }
