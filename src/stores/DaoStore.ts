@@ -4,11 +4,10 @@ import { getRecommendedCalls } from '../config/recommendedCalls';
 import { action, makeObservable } from 'mobx';
 import _ from 'lodash';
 import contentHash from 'content-hash';
-import { ethers, utils } from 'ethers';
 import PromiEvent from 'promievent';
 import {
   BigNumber,
-  ANY_ADDRESS, ANY_FUNC_SIGNATURE, MAX_UINT,
+  ANY_ADDRESS, ANY_FUNC_SIGNATURE, MAX_UINT, ERC20_TRANSFER_SIGNATURE, ERC20_APPROVE_SIGNATURE,
   bnum,
   decodeProposalStatus,
   VoteDecision,
@@ -659,6 +658,7 @@ export default class DaoStore {
 
   getSchemeRecommendedCalls(schemeAddress): any {
     const networkConfig = this.rootStore.configStore.getNetworkConfig();
+    const { library } = this.rootStore.providerStore.getActiveWeb3React();
     const scheme = this.getScheme(schemeAddress);
     const callPermissions = this.getCache().callPermissions;
     let assetLimits = {};
@@ -676,8 +676,9 @@ export default class DaoStore {
         recommendedCalls[i].asset,
         from,
         recommendedCalls[i].to,
-        recommendedCalls[i].functionSignature
+        library.eth.abi.encodeFunctionSignature(recommendedCalls[i].functionName)
       );
+      recommendedCalls[i]["functionSignature"] = library.eth.abi.encodeFunctionSignature(recommendedCalls[i].functionName)
       recommendedCalls[i]["value"] = callAllowance.value;
       recommendedCalls[i]["fromTime"] = callAllowance.fromTime;
     }
@@ -697,7 +698,7 @@ export default class DaoStore {
     } else if (
       to == networkConfig.permissionRegistry
       && from == networkConfig.avatar
-      && (functionSignature == "0x969e6fbd" || functionSignature == "0x39af6ba9")
+      && (functionSignature == ERC20_TRANSFER_SIGNATURE || functionSignature == ERC20_APPROVE_SIGNATURE)
     ) {
       return {
         value: bnum(0),
@@ -706,7 +707,7 @@ export default class DaoStore {
     } else if (
       to == networkConfig.permissionRegistry
       && from != networkConfig.avatar
-      && (functionSignature == "0x969e6fbd" || functionSignature == "0x39af6ba9")
+      && (functionSignature == ERC20_TRANSFER_SIGNATURE || functionSignature == ERC20_APPROVE_SIGNATURE)
     ) {
       return {
         value: bnum(0),

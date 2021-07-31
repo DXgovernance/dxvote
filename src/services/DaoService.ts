@@ -1,6 +1,14 @@
 import RootStore from '../stores';
 import { ContractType } from '../stores/Provider';
-import { BigNumber, bnum, normalizeBalance, ERC20_TRANSFER_SIGNATURE, ZERO_ADDRESS } from '../utils';
+import {
+  BigNumber,
+  bnum,
+  ZERO_ADDRESS,
+  ANY_ADDRESS,
+  ERC20_TRANSFER_SIGNATURE,
+  ERC20_APPROVE_SIGNATURE,
+  normalizeBalance
+} from '../utils';
 
 export default class DaoService {
   rootStore: RootStore;
@@ -24,59 +32,71 @@ export default class DaoService {
     return controller.methods.genericCall(to, callData, avatarAddress, value).encodeABI();
   }
   
-  decodeControllerCall(callData: string){
+  decodeWalletSchemeCall(from: string, to: string, data: string, value: BigNumber){
     const { abiService, providerStore, configStore } = this.rootStore;
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();
-    const callDecoded = abiService.decodeCall(ContractType.Controller, callData);
-    if (!callDecoded) {
-      return "Couldnt decode call";
+    let functionSignature = data.substring(0,10);
+    const controllerCallDecoded = abiService.decodeCall(ContractType.Controller, data);
+    let asset = ZERO_ADDRESS;
+    if (controllerCallDecoded && controllerCallDecoded.function.name == "genericCall") {
+      to = controllerCallDecoded.args[0];
+      data = "0x"+controllerCallDecoded.args[1].substring(10);
+      value = bnum(controllerCallDecoded.args[3]);
+      functionSignature = controllerCallDecoded.args[1].substring(0,10);
     } else {
-      switch (callDecoded.function.name) {
-        case "registerScheme":
-          return "Register scheme "+callDecoded.args[0]+" with params hash "+callDecoded.args[1]+" and permissions "+callDecoded.args[2];
-        case "unregisterScheme":
-          return "Unregister scheme "+callDecoded.args[0];
-        case "externalTokenTransfer":
-          return "Send "+callDecoded.args[2]+" tokens of contract "+callDecoded.args[0]+" to "+callDecoded.args[1];
-        case "sendEther":
-          return "Send "+normalizeBalance(callDecoded.args[0], 18)+" ETH to "+callDecoded.args[1];
-        case "mintReputation":
-          return "Mint "+normalizeBalance(callDecoded.args[0], 18)+" REP to "+callDecoded.args[1];
-        case "burnReputation":
-          return "Burn "+normalizeBalance(callDecoded.args[0], 18)+" REP of "+callDecoded.args[1];
-        case "genericCall":
-          const genericCallData = callDecoded.args[1];
-          const recommendedCallUsed = recommendedCalls.find((recommendedCall) => {
-            return (
-              callDecoded.args[0] == recommendedCall.to
-              && callDecoded.args[1].substring(0,10) == recommendedCall.functionSignature
-            )
-          });
-          if (recommendedCallUsed) {
-            const callParameters = library.eth.abi.decodeParameters(
-              recommendedCallUsed.params.map((param) => param.type),
-              "0x"+callDecoded.args[1].substring(10)
-            );
-            if (callParameters.__length__)
-              delete callParameters.__length__;
-              
-            return `To: ${recommendedCallUsed.toName} (${recommendedCallUsed.to})
-            Function: ${recommendedCallUsed.functionName} (${recommendedCallUsed.functionSignature})
-            Params: ${JSON.stringify(Object.keys(callParameters).map((paramIndex) => callParameters[paramIndex]))}
-            Data: 0x${callDecoded.args[1].substring(10)}
-            `;
-          } else if (genericCallData.substring(0,10) == ERC20_TRANSFER_SIGNATURE) {
-            const transferParams = library.eth.abi.decodeParameters(['address', 'uint256'], "0x"+genericCallData.substring(10));
-            return "Token "+callDecoded.args[0]+" transfer to "+transferParams[0]+" of "+transferParams[1];
-          } else {
-            return "Generic Call to "+callDecoded.args[0]+" with data of "+genericCallData+" using a value of "+library.utils.fromWei(callDecoded.args[3]);
-          }
-        default:
-          return "Couldnt decode call";
-
-      }
+      data = "0x"+data.substring(10);
     }
+  
+    if (functionSignature == ERC20_TRANSFER_SIGNATURE || functionSignature == ERC20_APPROVE_SIGNATURE) {
+      asset = to;
+    }
+    
+    const recommendedCallUsed = recommendedCalls.find((recommendedCall) => {
+      return (
+        asset == recommendedCall.asset
+        && (ANY_ADDRESS == recommendedCall.from || from == recommendedCall.from)
+        && (to == recommendedCall.to)
+        && functionSignature == library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
+      )
+    });
+
+    if (recommendedCallUsed) {
+      const callParameters = library.eth.abi
+        .decodeParameters(recommendedCallUsed.params.map((param) => param.type), data);
+      
+      if (callParameters.__length__)
+        delete callParameters.__length__;
+      
+      let decodedCallText = "";
+      
+      if (recommendedCallUsed.decodeText && recommendedCallUsed.decodeText.length > 0) {
+        decodedCallText = recommendedCallUsed.decodeText;
+        for (let paramIndex = 0; paramIndex < recommendedCallUsed.params.length; paramIndex++)
+          if (recommendedCallUsed.params[paramIndex].decimals)
+            decodedCallText = decodedCallText
+              .replaceAll(
+                "[PARAM_"+paramIndex+"]",
+                "<italic>"+normalizeBalance(callParameters[paramIndex], recommendedCallUsed.params[paramIndex].decimals)+"</italic>"
+              );
+          else
+            decodedCallText = decodedCallText
+              .replaceAll("[PARAM_"+paramIndex+"]", "<italic>"+callParameters[paramIndex]+"</italic>");
+      } 
+      
+      return `<strong>Description</strong>:${decodedCallText}
+      <strong>To</strong>: ${recommendedCallUsed.toName} <small>${recommendedCallUsed.to}</small>
+      <strong>Function</strong>: ${recommendedCallUsed.functionName} <small>${library.eth.abi.encodeFunctionSignature(recommendedCallUsed.functionName)}</small>
+      <strong>Params</strong>: ${JSON.stringify(Object.keys(callParameters).map((paramIndex) => callParameters[paramIndex]))}
+      <strong>Data</strong>: ${data} `
+      
+    } else {
+      return `<strong>From</strong>: ${from}
+      <strong>To</strong>: ${to}
+      <strong>Data</strong>: 0x${data.substring(10)}
+      <strong>Value</strong>: ${normalizeBalance(bnum(value))}`
+    }
+    
   }
   
   getRepAt(userAddress: string = ZERO_ADDRESS, atBlock: number = 0): {

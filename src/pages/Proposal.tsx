@@ -215,17 +215,12 @@ const ProposalPage = observer(() => {
     
     let proposalCallTexts = new Array(proposal.to.length);
     for (var p = 0; p < proposal.to.length; p++) {
-      if (
-        scheme.controllerAddress === configStore.getNetworkConfig().controller
-        || proposal.to[p] === configStore.getNetworkConfig().controller
-      ) {
-        const decodedGenericCall = daoService.decodeControllerCall(proposal.callData[p]);
-        proposalCallTexts[p] = decodedGenericCall;
-      } else {
-        proposalCallTexts[p] =
-          "Call to "+proposal.to[p]+" with data of "+proposal.callData[p]+
-          " uinsg value of "+library.utils.fromWei(proposal.values[p].toString());
-      }
+      proposalCallTexts[p] = daoService.decodeWalletSchemeCall(
+        scheme.controllerAddress == networkConfig.controller ? networkConfig.avatar : scheme.address,
+        proposal.to[p],
+        proposal.callData[p],
+        proposal.values[p]
+      );
     }
     
     const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
@@ -312,14 +307,13 @@ const ProposalPage = observer(() => {
             {proposalCallTexts.map((proposalCallText, i) => {
               return(
               <div key={"proposalCallText"+i}>
-                <span style={{whiteSpace: "pre-line"}}> {proposalCallText} </span> 
+                <span style={{whiteSpace: "pre-line"}} dangerouslySetInnerHTML={{ __html: proposalCallText }}/>
                 {i < proposalCallTexts.length - 1 ? <hr/> : <div/>}
               </div>);
             })}
           </ProposalInfoBox>
           <ProposalInfoBox style={{marginTop: "15px"}}>
             <h1 style={{margin: "0px"}}> History </h1>
-            
             {proposalEvents.history.map((historyEvent, i) => {
               return(
                 <div key={"proposalHistoryEvent"+i} style={{

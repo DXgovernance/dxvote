@@ -5,84 +5,97 @@ export const getRecommendedCalls = function(network) {
   const networkConfig = getNetworkConfig(network);
   const networkTokens = getTokensOfNetwork(network);
   
-  let recommendedCalls = [
+  let recommendedCalls: {
+    asset: string;
+    from: string;
+    to: string;
+    toName: string;
+    functionName: string;
+    params: {
+      type: string;
+      name: string;
+      defaultValue: string;
+      decimals ?: number;
+    }[];
+    decodeText: string;
+  }[] = [
     {
       asset: ZERO_ADDRESS,
       from: networkConfig.avatar,
       to: networkConfig.controller,
       toName: "DXdao Controller",
       functionName: "mintReputation(uint256,address,address)",
-      functionSignature: "0xeaf994b2",
       params: [
-        {type: "uint256", name: "_amount", defaultValue: ""},
+        {type: "uint256", name: "_amount", defaultValue: "", decimals: 18},
         {type: "address", name: "_to", defaultValue: ""},
         {type: "address", name: "_avatar", defaultValue: networkConfig.avatar}
-      ]
+      ],
+      decodeText: "Mint of [PARAM_0] REP to [PARAM_1]"
     }, {
       asset: ZERO_ADDRESS,
       from: networkConfig.avatar,
       to: networkConfig.controller,
       toName: "DXdao Controller",
       functionName: "burnReputation(uint256,address,address)",
-      functionSignature: "0x6e94d278",
       params: [
-        {type: "uint256", name: "_amount", defaultValue: ""},
+        {type: "uint256", name: "_amount", defaultValue: "", decimals: 18},
         {type: "address", name: "_from", defaultValue: ""},
         {type: "address", name: "_avatar", defaultValue: networkConfig.avatar}
-      ]
+      ],
+      decodeText: "Burn of [PARAM_0] REP to [PARAM_1]"
     }, {
       asset: ZERO_ADDRESS,
       from: networkConfig.avatar,
       to: networkConfig.controller,
       toName: "DXdao Controller",
       functionName: "registerScheme(address,bytes32,bytes4,address)",
-      functionSignature: "0xe869d45f",
       params: [
         {type: "address", name: "_scheme", defaultValue: ""},
         {type: "bytes32", name: "_paramsHash", defaultValue: ""},
         {type: "bytes4", name: "_permissions", defaultValue: ""},
         {type: "address", name: "_avatar", defaultValue: networkConfig.avatar}
-      ]
+      ],
+      decodeText: "Register scheme [PARAM_0] with params hash [PARAM_1] and permissions [PARAM_2]"
     }, {
+      asset: ZERO_ADDRESS,
       from: networkConfig.avatar,
       to: networkConfig.controller,
       toName: "DXdao Controller",
       functionName: "unregisterScheme(address,address)",
-      functionSignature: "0x039de01d",
       params: [
         {type: "address", name: "_scheme", defaultValue: ""},
         {type: "address", name: "_avatar", defaultValue: networkConfig.avatar}
-      ]
+      ],
+      decodeText: "Unregister scheme [PARAM_0]"
     }, {
       asset: ZERO_ADDRESS,
       from: networkConfig.avatar,
       to: networkConfig.controller,
       toName: "DXdao Controller",
       functionName: "genericCall(address,bytes,addres,uint256)",
-      functionSignature: "0x92641aaa",
       params: [
         {type: "address", name: "_contract", defaultValue: ""},
         {type: "bytes", name: "_data", defaultValue: ""},
         {type: "address", name: "_avatar", defaultValue: networkConfig.avatar},
         {type: "uint256", name: "_value", defaultValue: ""}
-      ]
+      ],
+      decodeText: "Generic call to [PARAM_0] with data [PARAM_1] and value [PARAM_2] ETH"
     }, {
       asset: ZERO_ADDRESS,
       from: networkConfig.avatar,
       to: networkConfig.permissionRegistry,
       toName: "Permission Registry",
       functionName: "setTimeDelay(uint256)",
-      functionSignature: "0x39af6ba9",
       params: [
         {type: "uint256", name: "newTimeDelay", defaultValue: ""},
-      ]
+      ],
+      decodeText: "Set time delay to [PARAM_0] seconds"
     }, {
       asset: ZERO_ADDRESS,
       from: networkConfig.avatar,
       to: networkConfig.permissionRegistry,
       toName: "Permission Registry",
       functionName: "setAdminPermission(address,address,address,bytes4,uint256,bool)",
-      functionSignature: "0x969e6fbd",
       params: [
         {type: "address", name: "asset", defaultValue: ZERO_ADDRESS},
         {type: "address", name: "from", defaultValue: ""},
@@ -90,70 +103,70 @@ export const getRecommendedCalls = function(network) {
         {type: "bytes4", name: "functionSignature", defaultValue: ANY_FUNC_SIGNATURE},
         {type: "uint256", name: "valueAllowed", defaultValue: "0"},
         {type: "bool", name: "allowed", defaultValue: "true"},
-      ]
+      ],
+      decodeText: "Set [PARAM_5] admin permission in asset [PARAM_0] from [PARAM_1] to [PARAM_2] with function signature [PARAM_3] and value [PARAM_4]"
     }, {
       asset: ZERO_ADDRESS,
       from: ANY_ADDRESS,
       to: networkConfig.permissionRegistry,
       toName: "Permission Registry",
       functionName: "setPermission(address,address,bytes4,uint256,bool)",
-      functionSignature: "0x9b2dccdd",
       params: [
         {type: "address", name: "asset", defaultValue: ZERO_ADDRESS},
         {type: "address", name: "to", defaultValue: ""},
         {type: "bytes4", name: "functionSignature", defaultValue: ""},
         {type: "uint256", name: "valueAllowed", defaultValue: ""},
         {type: "bool", name: "allowed", defaultValue: ""},
-      ]
+      ],
+      decodeText: "Set [PARAM_5] permission in asset [PARAM_0] from [FROM] to [PARAM_2] with function signature [PARAM_3] and value [PARAM_4]"
     }, {
       asset: ZERO_ADDRESS,
       from: ANY_ADDRESS,
       to: "0x317113D2593e3efF1FfAE0ba2fF7A61861Df7ae5",
       toName: "Swpr Fee Setter",
       functionName: "transferPairOwnership(address,address)",
-      functionSignature: "0xa6dab93f",
       params: [
         {type: "address", name: "pair", defaultValue: ""},
         {type: "address", name: "newOwner", defaultValue: ""},
-      ]
+      ],
+      decodeText: "Transfer swpr pair [PARAM_0] ownership to [PARAM_1]"
     }, {
       asset: ZERO_ADDRESS,
       from: ANY_ADDRESS,
       to: "0x317113D2593e3efF1FfAE0ba2fF7A61861Df7ae5",
       toName: "Swpr Fee Setter",
       functionName: "setProtocolFee(uint8)",
-      functionSignature: "0x4e91f811",
       params: [
         {type: "uint8", name: "protocolFeeDenominator", defaultValue: ""}
-      ]
+      ],
+      decodeText: "Set swpr protocol fee denominator to [PARAM_0]"
     }, {
       asset: ZERO_ADDRESS,
       from: ANY_ADDRESS,
       to: "0x317113D2593e3efF1FfAE0ba2fF7A61861Df7ae5",
       toName: "Swpr Fee Setter",
       functionName: "setSwapFee(address,uint32)",
-      functionSignature: "0x9e68ceb8",
       params: [
         {type: "address", name: "pair", defaultValue: ""},
         {type: "uint32", name: "swapFee", defaultValue: ""}
-      ]
+      ],
+      decodeText: "Set swpr fee for pair [PARAM_0] to [PARAM_1]"
     }, {
       asset: ZERO_ADDRESS,
       from: ANY_ADDRESS,
       to: "0xaE909196e549587b8Dc0D26cdbf05B754BB580B3",
       toName: "Swpr Fee Receiver",
       functionName: "takeProtocolFee(address[])",
-      functionSignature: "0x5cb9c4ec",
       params: [
         {type: "address[]", name: "pairs", defaultValue: ""},
-      ]
+      ],
+      decodeText: "Take protocol fee from swpr pairs [PARAM_0]"
     }, {
       asset: ZERO_ADDRESS,
       from: ANY_ADDRESS,
       to: "0x8EEaea23686c319133a7cC110b840d1591d9AeE0",
       toName: "Swpr Router",
       functionName: "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
-      functionSignature: "0xe8e33700",
       params: [
         {type: "address", name: "tokenA", defaultValue: ""},
         {type: "address", name: "tokenB", defaultValue: ""},
@@ -163,14 +176,14 @@ export const getRecommendedCalls = function(network) {
         {type: "uint256", name: "amountBMin", defaultValue: ""},
         {type: "address", name: "to", defaultValue: ""},
         {type: "uint256", name: "deadline", defaultValue: ""}
-      ]
+      ],
+      decodeText: "Add liquidity with [PARAM_2] value of token [PARAM_0] and [PARAM_4] value of token [PARAM_1] to address [PARAM_6]"
     }, {
       asset: ZERO_ADDRESS,
       from: ANY_ADDRESS,
       to: "0x8EEaea23686c319133a7cC110b840d1591d9AeE0",
       toName: "Swpr Router",
       functionName: "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
-      functionSignature: "0xbaa2abde",
       params: [
         {type: "address", name: "tokenA", defaultValue: ""},
         {type: "address", name: "tokenB", defaultValue: ""},
@@ -179,7 +192,8 @@ export const getRecommendedCalls = function(network) {
         {type: "uint256", name: "amountBMin", defaultValue: ""},
         {type: "address", name: "to", defaultValue: ""},
         {type: "uint256", name: "deadline", defaultValue: ""}
-      ]
+      ],
+      decodeText: "Remove and send [PARAM_2] liquidity tokens from pool with tokens [PARAM_0] - [PARAM_1] to address [PARAM_5]"
     }
   ];
   
@@ -190,11 +204,11 @@ export const getRecommendedCalls = function(network) {
       to: networkToken.address,
       toName: networkToken.name,
       functionName: "transfer(address,uint256)",
-      functionSignature: "0xa9059cbb",
       params: [
         {type: "address", name: "to", defaultValue: ""},
-        {type: "uint256", name: "value", defaultValue: "0"}
-      ]
+        {type: "uint256", name: "value", defaultValue: "0", decimals: networkToken.decimals}
+      ],
+      decodeText: "Transfer [PARAM_1] "+networkToken.symbol+" to [PARAM_0]"
     });
 
     recommendedCalls.push({
@@ -203,11 +217,11 @@ export const getRecommendedCalls = function(network) {
       to: networkToken.address,
       toName: `ERC20 ${networkToken.symbol}`,
       functionName: "approve(address,uint256)",
-      functionSignature: "0x095ea7b3",
       params: [
         {type: "address", name: "to", defaultValue: ""},
-        {type: "uint256", name: "value", defaultValue: "0"}
-      ]
+        {type: "uint256", name: "value", defaultValue: "0", decimals: networkToken.decimals}
+      ],
+      decodeText: "Approve [PARAM_1] "+networkToken.symbol+" to [PARAM_0]"
     });
   });
   
