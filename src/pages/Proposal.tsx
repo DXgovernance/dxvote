@@ -18,7 +18,8 @@ import {
   VotingMachineProposalState,
   bnum,
   calculateStakes,
-  formatBalance
+  formatBalance,
+  denormalizeBalance
 } from '../utils';
 
 const ProposalInformationWrapper = styled.div`
@@ -130,7 +131,8 @@ const ProposalPage = observer(() => {
     const {
         root: { providerStore, daoStore, configStore, daoService, ipfsService, userStore },
     } = useStores();
-    const votingMachines = configStore.getNetworkConfig().votingMachines;
+    const networkConfig = configStore.getNetworkConfig();
+    const votingMachines = networkConfig.votingMachines;
     const proposalId = useLocation().pathname.split("/")[2];
     const proposal = daoStore.getProposal(proposalId);
     
@@ -140,7 +142,7 @@ const ProposalPage = observer(() => {
     const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
     const scheme = daoStore.getScheme(proposal.scheme);
     const { dxdApproved, genApproved } = userStore.getUserInfo(); 
-    const { account, library } = providerStore.getActiveWeb3React();
+    const { account } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
     const [proposalDescription, setProposalDescription] = React.useState(
@@ -168,8 +170,8 @@ const ProposalPage = observer(() => {
     const {
       userRep: userRepAtProposalCreation, totalSupply: totalRepAtProposalCreation
     } = configStore.getActiveChainName().indexOf('arbitrum') > -1 ?
-      daoService.getRepAt(account, proposal.creationEvent.l2BlockNumber)
-      : daoService.getRepAt(account, proposal.creationEvent.l1BlockNumber);
+      daoStore.getRepAt(account, proposal.creationEvent.l2BlockNumber)
+      : daoStore.getRepAt(account, proposal.creationEvent.l1BlockNumber);
 
     const repPercentageAtCreation = userRepAtProposalCreation.times(100).div(totalRepAtProposalCreation).toFixed(4);
 
@@ -263,23 +265,23 @@ const ProposalPage = observer(() => {
     
     const submitVote = function(decision) {
       const repAmount = (totalRepAtProposalCreation.times(bnum(votePercentage))).div('100').toFixed(0);
-      daoStore.vote(decision, Number(repAmount), proposalId);
+      daoService.vote(decision, repAmount, proposalId);
     };
     
     const submitStake = function(decision) {
-      daoStore.stake(decision, library.utils.toWei(stakeAmount.toString()), proposalId);
+      daoService.stake(decision, denormalizeBalance(bnum(stakeAmount)).toString(), proposalId);
     };
     
     const redeem = function() {
-      daoStore.redeem(proposalId, account);
+      daoService.redeem(proposalId, account);
     }
     
     const approveVotingMachineToken = function() {
-      daoStore.approveVotingMachineToken(votingMachineUsed);
+      daoService.approveVotingMachineToken(votingMachineUsed);
     };
     
     const executeProposal = function() {
-      daoStore.execute(proposalId);
+      daoService.execute(proposalId);
     };
 
     const finishTimeReached = finishTime.toNumber() < moment().unix();

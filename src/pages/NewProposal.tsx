@@ -317,7 +317,7 @@ const NewProposalPage = observer(() => {
       
         console.debug('[PROPOSAL]', schemeToUse.address, proposalData);
       
-        daoStore.createProposal(
+        daoService.createProposal(
           schemeToUse.address,
           schemeToUse.type,
           proposalData,

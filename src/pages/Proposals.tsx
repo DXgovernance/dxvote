@@ -114,7 +114,7 @@ const TableCell = styled.div`
 
 const ProposalsPage = observer(() => {
     const {
-        root: { daoStore, configStore, daoService },
+        root: { daoStore, configStore },
     } = useStores();
 
     const schemes = daoStore.getAllSchemes();
@@ -211,7 +211,7 @@ const ProposalsPage = observer(() => {
               ) {
                 const positiveStake = normalizeBalance(proposal.positiveStakes, 18);
                 const negativeStake = normalizeBalance(proposal.negativeStakes, 18);
-                const repAtCreation = daoService.getRepAt(ZERO_ADDRESS, proposal.creationEvent.l1BlockNumber).totalSupply;
+                const repAtCreation = daoStore.getRepAt(ZERO_ADDRESS, proposal.creationEvent.l1BlockNumber).totalSupply;
                 
                 const positiveVotesPercentage = formatPercentage(
                   proposal.positiveVotes.div(repAtCreation), 2

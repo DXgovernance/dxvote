@@ -58,7 +58,7 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, blockchainStore, configStore, daoService },
+      root: { userStore, providerStore, blockchainStore, configStore, daoStore },
   } = useStores();
   
   const { active, account } = providerStore.getActiveWeb3React();
@@ -86,7 +86,7 @@ const Header = observer(() => {
       parseFloat(Number(Web3.utils.fromWei(userInfo.genBalance.toString())).toFixed(2))
       : 0;
     const { userRep, totalSupply } = active && blockchainStore.initialLoadComplete ?
-      daoService.getRepAt(account, providerStore.getCurrentBlockNumber())
+      daoStore.getRepAt(account, providerStore.getCurrentBlockNumber())
       : { userRep: bnum(0), totalSupply: bnum(0)};
     const repPercentage = active ? userRep.times(100).div(totalSupply).toFixed(4) : bnum(0);
 

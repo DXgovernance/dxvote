@@ -1,3 +1,6 @@
+import { action, makeObservable } from 'mobx';
+import contentHash from 'content-hash';
+import PromiEvent from 'promievent';
 import RootStore from '../stores';
 import { ContractType } from '../stores/Provider';
 import {
@@ -7,6 +10,7 @@ import {
   ANY_ADDRESS,
   ERC20_TRANSFER_SIGNATURE,
   ERC20_APPROVE_SIGNATURE,
+  MAX_UINT,
   normalizeBalance
 } from '../utils';
 
@@ -15,6 +19,15 @@ export default class DaoService {
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+    
+    makeObservable(this, {
+      createProposal: action,
+      vote: action,
+      approveVotingMachineToken: action,
+      stake: action,
+      execute: action,
+      redeem: action
+    });
   }
 
   encodeControllerGenericCall(
@@ -99,55 +112,149 @@ export default class DaoService {
     
   }
   
-  getRepAt(userAddress: string = ZERO_ADDRESS, atBlock: number = 0): {
-    userRep: BigNumber,
-    totalSupply: BigNumber
-  } {
-    const { daoStore, providerStore, configStore } = this.rootStore;
-    const repEvents = daoStore.getCache().daoInfo.repEvents;
-    let userRep = bnum(0), totalSupply = bnum(0);
-    if (atBlock == 0)
-      atBlock = providerStore.getCurrentBlockNumber();
-    const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1
+  createProposal(scheme: string, schemeType: string, proposalData: any): PromiEvent<any> {
+    const { providerStore, configStore } = this.rootStore;
+    const networkConfig = configStore.getNetworkConfig();
+    const { library } = providerStore.getActiveWeb3React();
 
-    for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
-        if (repEvents[i].event === 'Mint') {
-          totalSupply = totalSupply.plus(repEvents[i].amount)
-          if (repEvents[i].account == userAddress)
-            userRep = userRep.plus(repEvents[i].amount)
-        } else if (repEvents[i].event === 'Burn') {
-          totalSupply = totalSupply.minus(repEvents[i].amount)
-          if (repEvents[i].account == userAddress)
-            userRep = userRep.minus(repEvents[i].amount)
-        }
-      }
+    if (schemeType == "ContributionReward") {
+      // function proposeContributionReward(
+      //   Avatar _avatar,
+      //   string memory _descriptionHash,
+      //   int256 _reputationChange,
+      //   uint256[5] memory _rewards,
+      //   IERC20 _externalToken,
+      //   address payable _beneficiary
+      // )
+      return providerStore.sendRawTransaction(
+        providerStore.getActiveWeb3React(),
+        scheme,
+        library.eth.abi.encodeFunctionCall({
+            name: 'proposeContributionReward',
+            type: 'function',
+            inputs: [
+              { type: 'address', name: '_avatar' },
+              { type: 'string', name: '_descriptionHash' },
+              { type: 'int256', name: '_reputationChange' },
+              { type: 'uint256[5]', name: '_rewards' },
+              { type: 'address', name: '_externalToken' },
+              { type: 'address', name: '_beneficiary' }
+            ]
+        },[
+          networkConfig.avatar,
+          contentHash.decode(proposalData.descriptionHash),
+          proposalData.reputationChange,
+          [0, proposalData.ethValue, proposalData.tokenValue, 0, 1],
+          proposalData.externalToken,
+          proposalData.beneficiary,
+        ]),
+        "0"
+      );
+    } else if (schemeType == "GenericMulticall") {
+      // function proposeCalls(
+      //   address[] memory _contractsToCall,
+      //   bytes[] memory _callsData,
+      //   uint256[] memory _values,
+      //   string memory _descriptionHash
+      // )
+      return providerStore.sendRawTransaction(
+        providerStore.getActiveWeb3React(),
+        scheme,
+        library.eth.abi.encodeFunctionCall({
+            name: 'proposeCalls',
+            type: 'function',
+            inputs: [
+              { type: 'address[]', name: '_contractsToCall' },
+              { type: 'bytes[]', name: '_callsData' },
+              { type: 'uint256[]', name: '_values' },
+              { type: 'string', name: '_descriptionHash' }
+            ]
+        },[
+          proposalData.to,
+          proposalData.data,
+          proposalData.value,
+          contentHash.decode(proposalData.descriptionHash)
+        ]),
+        "0"
+      );
+    } else {
+      return providerStore.sendTransaction(
+        providerStore.getActiveWeb3React(),
+        ContractType.WalletScheme,
+        scheme,
+        'proposeCalls',
+        [
+          proposalData.to,
+          proposalData.data,
+          proposalData.value,
+          proposalData.titleText,
+          proposalData.descriptionHash
+        ],
+        {}
+      );
     }
-    return { userRep, totalSupply };
-
   }
-    
-  getUsersRep(): {
-    [userAddress: string]: BigNumber
-  } {
-    const { daoStore, providerStore } = this.rootStore;
-    const repEvents = daoStore.getCache().daoInfo.repEvents;
-    let users = {}
-    const atBlock = providerStore.getCurrentBlockNumber();
-
-    for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i].l1BlockNumber <= atBlock) {
-        if (repEvents[i].event === 'Mint') {
-          if (!users[repEvents[i].account])
-            users[repEvents[i].account] = repEvents[i].amount;
-          else
-            users[repEvents[i].account] = users[repEvents[i].account].plus(repEvents[i].amount);
-        } else if (repEvents[i].event === 'Burn') {
-          if (users[repEvents[i].account])
-            users[repEvents[i].account] = users[repEvents[i].account].minus(repEvents[i].amount);
-        }
-      }
-    }
-    return users;
+  
+  vote(decision: string, amount: string, proposalId: string): PromiEvent<any> {
+    const { providerStore, daoStore } = this.rootStore;
+    const { account } = providerStore.getActiveWeb3React();
+    return providerStore.sendTransaction(
+      providerStore.getActiveWeb3React(),
+      ContractType.VotingMachine,
+      daoStore.getVotingMachineOfProposal(proposalId),
+      'vote',
+      [proposalId, decision, amount, account],
+      {}
+    );
+  }
+  
+  approveVotingMachineToken(votingMachineAddress): PromiEvent<any> {
+    const { providerStore, daoStore } = this.rootStore;
+    return providerStore.sendTransaction(
+      providerStore.getActiveWeb3React(),
+      ContractType.ERC20,
+      daoStore.getCache().votingMachines[votingMachineAddress].token,
+      'approve',
+      [votingMachineAddress, MAX_UINT],
+      {}
+    );
+  }
+  
+  stake( decision: string, amount: string, proposalId: string, ): PromiEvent<any> {
+    const { providerStore, daoStore } = this.rootStore;
+    return providerStore.sendTransaction(
+      providerStore.getActiveWeb3React(),
+      ContractType.VotingMachine,
+      daoStore.getVotingMachineOfProposal(proposalId),
+      'stake',
+      [proposalId, decision, amount],
+      {}
+    );
+  }
+  
+  execute(
+    proposalId: string,
+  ): PromiEvent<any> {
+    const { providerStore, daoStore } = this.rootStore;
+    return providerStore.sendTransaction(
+      providerStore.getActiveWeb3React(),
+      ContractType.VotingMachine,
+      daoStore.getVotingMachineOfProposal(proposalId),
+      'execute',
+      [proposalId],
+      {}
+    );
+  }
+  
+  redeem(proposalId: string, account: string): PromiEvent<any> {
+    const { providerStore, daoStore } = this.rootStore;
+    return providerStore.sendTransaction(
+      providerStore.getActiveWeb3React(),
+      ContractType.VotingMachine,
+      daoStore.getVotingMachineOfProposal(proposalId),
+      'redeem',
+      [proposalId, account],
+      {}
+    );
   }
 }
