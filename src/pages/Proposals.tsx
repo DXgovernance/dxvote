@@ -187,7 +187,7 @@ const ProposalsPage = observer(() => {
             flexDirection: "row",
             justifyContent: "space-between"
           }}>
-            <ActiveButton route="/new">+ New Proposal</ActiveButton>
+            <ActiveButton route={`/${networkName}/new`}>+ New Proposal</ActiveButton>
           </div>
         </ProposalTableHeaderActions>
         <ProposalTableHeaderWrapper>

@@ -138,9 +138,9 @@ const NewProposalPage = observer(() => {
 
     const [schemeToUse, setSchemeToUse] =
       React.useState(defaultSchemeToUse > -1 ? schemes[defaultSchemeToUse] : schemes[0]);
-    const [titleText, setTitleText] = React.useState(localStorage.getItem('dxvote-newProposal-title'));
+    const [titleText, setTitleText] = React.useState(localStorage.getItem('dxvote-newProposal-title') || "");
     const [ipfsHash, setIpfsHash] = React.useState("");
-    const [descriptionText, setDescriptionText] = React.useState(localStorage.getItem('dxvote-newProposal-description'));
+    const [descriptionText, setDescriptionText] = React.useState(localStorage.getItem('dxvote-newProposal-description') || "");
 
     let callsInStorage = [];
     try {

@@ -59,6 +59,10 @@ const ConfigPage = observer(() => {
     async function pinDXvoteHashes() {
       pinataService.updatePinList();
     }
+    
+    async function clearCache() {
+      localStorage.clear();
+    }
   
     return (
       <Box style={{alignItems: "center"}}>
@@ -101,7 +105,8 @@ const ConfigPage = observer(() => {
         <Row style={{maxWidth: "500px"}}>
           <ActiveButton onClick={saveConfig}>Save</ActiveButton>
           <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
-          <ActiveButton onClick={pinDXvoteHashes}>Pin Dxvote Hashes</ActiveButton>
+          <ActiveButton onClick={clearCache}>Clear Cache</ActiveButton>
+          <ActiveButton onClick={pinDXvoteHashes}>Pin DXVote Hashes</ActiveButton>
         </Row>
       </Box>
     );
