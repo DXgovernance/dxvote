@@ -6,6 +6,7 @@ import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import Box from '../components/common/Box';
 import { ZERO_ADDRESS, formatPercentage, normalizeBalance, timeToTimestamp } from '../utils';
+import { FiFeather, FiCheckCircle, FiCheckSquare } from "react-icons/fi";
 
 const ProposalsTableWrapper = styled(Box)`
   width: 100%;
@@ -114,7 +115,7 @@ const TableCell = styled.div`
 
 const ProposalsPage = observer(() => {
     const {
-        root: { daoStore, configStore },
+        root: { daoStore, configStore, providerStore },
     } = useStores();
 
     const schemes = daoStore.getAllSchemes();
@@ -123,12 +124,15 @@ const ProposalsPage = observer(() => {
     const [schemeFilter, setSchemeFilter] = React.useState("All Schemes");
     const [titleFilter, setTitleFilter] = React.useState("");
     const networkName = configStore.getActiveChainName();
+    const { account } = providerStore.getActiveWeb3React();
+    const userEvents = daoStore.getUserEvents(account);
+    
 
     const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
       return Object.assign(cacheProposal, daoStore.getProposalStatus(cacheProposal.id));
     });
     
-    // First show the proposals taht still have an active status in teh boting machine and order them from lower 
+    // First show the proposals that still have an active status in teh boting machine and order them from lower 
     // to higher based on the finish time.
     // Then show the proposals who finished based on the statte in the voting machine and order them from higher to 
     // lower in the finish time.
@@ -226,10 +230,17 @@ const ProposalsPage = observer(() => {
                 const votingMachineTokenName = 
                 (votingMachines.gen && daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.gen.address)
                 ? 'GEN' : 'DXD';
+                
+                const voted = userEvents.votes.findIndex((event) => event.proposalId == proposal.id) > -1;
+                const staked = userEvents.stakes.findIndex((event) => event.proposalId == proposal.id) > -1;
+                const created = userEvents.newProposal.findIndex((event) => event.proposalId == proposal.id) > -1;
                 return (
                   <Link key={"proposal"+i} to={`/${networkName}/proposal/${proposal.id}`} style={{textDecoration: "none"}}>
                     <TableRow>
                       <TableCell width="35%" align="left" weight='500' wrapText="true">
+                        {created && <FiFeather style={{margin: "0px 2px"}}/>}
+                        {voted && <FiCheckCircle style={{margin: "0px 2px"}}/>}
+                        {staked && <FiCheckSquare style={{margin: "0px 2px"}}/>}
                         {proposal.title.length > 0 ? proposal.title : proposal.id}
                       </TableCell>
                       <TableCell width="15%" align="center">

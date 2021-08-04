@@ -519,7 +519,7 @@ export default class DaoStore {
     }
     
     const newProposalEvents: ProposalEvent[] = 
-    Object.keys(_.pickBy(cache.proposals, (proposal) => {proposal.proposer == userAddress}))
+    Object.keys(_.pickBy(cache.proposals, (proposal) => proposal.proposer == userAddress))
       .map((proposalId) => {
         history.push({
           text: `Proposal ${proposalId} created`,
