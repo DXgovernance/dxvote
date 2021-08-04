@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useStores } from './contexts/storesContext';
 import { FiZapOff, FiZap } from "react-icons/fi";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import Box from './components/common/Box';
 
 const PageRouterWrapper = styled.div`
@@ -33,7 +33,8 @@ const PageRouter = observer(({ children }) => {
         root: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService, coingeckoService },
     } = useStores();
     
-    const { pathname } = useLocation();
+    const history = useHistory();
+    const location = useLocation();
     const noLoading = ['/faq', '/config', '/forum'];
     
     // Start or auth services
@@ -43,7 +44,11 @@ const PageRouter = observer(({ children }) => {
     coingeckoService.loadPrices();
 
     const { active: providerActive } = providerStore.getActiveWeb3React();
-    if (!providerActive)
+    
+    if (noLoading.indexOf(location.pathname) > -1) {
+      return <PageRouterWrapper> {children} </PageRouterWrapper>;
+
+    } else if (!providerActive)
       return (
         <PageRouterWrapper>
           <LoadingBox>
@@ -51,18 +56,30 @@ const PageRouter = observer(({ children }) => {
           </LoadingBox>
         </PageRouterWrapper>
       );
-    else if (!blockchainStore.initialLoadComplete && noLoading.indexOf(pathname) < 0)
-      return (
-        <PageRouterWrapper>
-          <LoadingBox>
-            <div className="loader"> <FiZap/> <br/> Loading.. </div>
-          </LoadingBox>
-        </PageRouterWrapper>
-      );
     else {
-      if (configStore.getLocalConfig().pinOnStart)
-        pinataService.updatePinList();
-      return <PageRouterWrapper> {children} </PageRouterWrapper>;
+      
+      const networkName = configStore.getActiveChainName();
+      if (location.pathname == "/"){
+        history.push(`/${networkName}/proposals`)
+      }
+      
+      if (location.pathname.split('/')[1] && location.pathname.split('/')[1] != networkName) {
+        history.push(`/${networkName}/proposals`)
+      }
+      
+      if (!blockchainStore.initialLoadComplete) {
+        return (
+          <PageRouterWrapper>
+            <LoadingBox>
+              <div className="loader"> <FiZap/> <br/> Loading.. </div>
+            </LoadingBox>
+          </PageRouterWrapper>
+        );
+      } else {
+        if (configStore.getLocalConfig().pinOnStart)
+          pinataService.updatePinList();
+        return <PageRouterWrapper> {children} </PageRouterWrapper>;
+      }
     }
 });
 

@@ -44,16 +44,8 @@ const ItemBox = styled(Box)`
 
 const Header = observer(() => {
   const NavItem = withRouter(
-    ({ route, history, children }) => {
-      return (
-        <MenuItem
-          onClick={() => {
-            history.push(route);
-          }}
-        >
-          {children}
-        </MenuItem>
-      );
+    ({ route, history, children}) => {
+      return ( <div style={{cursor: "pointer"}} onClick={() => { history.push(route); }} > {children} </div> );
     }
   );
   
@@ -62,20 +54,25 @@ const Header = observer(() => {
   } = useStores();
   
   const { active, account } = providerStore.getActiveWeb3React();
+
   if (!active) {
     return (
       <NavWrapper>
         <NavSection>
-          <NavItem route="/?">
-            <img alt="dxdao" src={dxdaoIcon}/>
+          <NavItem route={`/`}>
+            <MenuItem><img alt="dxdao" src={dxdaoIcon}/></MenuItem>
           </NavItem>
         </NavSection>
         <NavSection>
           <Web3ConnectStatus text="Connect Wallet" />
+          <NavItem route={`/config`}>
+            <a><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
+          </NavItem>
         </NavSection>
       </NavWrapper>
     );
   } else {
+    const networkName = configStore.getActiveChainName();
     const userInfo = userStore.getUserInfo();
     const votingMachines = configStore.getNetworkConfig().votingMachines;
 
@@ -93,8 +90,8 @@ const Header = observer(() => {
     return (
       <NavWrapper>
         <NavSection>
-          <NavItem route="/?">
-            <img alt="dxdao" src={dxdaoIcon}/>
+          <NavItem route={`/${networkName}/proposals`}>
+            <MenuItem><img alt="dxdao" src={dxdaoIcon}/></MenuItem>
           </NavItem>
         </NavSection>
         { blockchainStore.initialLoadComplete ?
@@ -103,12 +100,21 @@ const Header = observer(() => {
             {votingMachines.gen ? <ItemBox> {genBalance} GEN </ItemBox> : <div/> }
             <ItemBox> {repPercentage.toString()} % REP </ItemBox>
             <Web3ConnectStatus text="Connect Wallet" />
-            <a href={`${window.location.pathname}#/info`}><FiBarChart2 style={{margin: "0px 10px", color: "#616161"}}/></a>
-            <a href={`${window.location.pathname}#/config`}><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
-            <a href={`${window.location.pathname}#/user/${account}`}><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
+            <NavItem route={`/${networkName}/info`}>
+              <a><FiBarChart2 style={{margin: "0px 10px", color: "#616161"}}/></a>
+            </NavItem>
+            <NavItem route={`/config`}>
+              <a><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
+            </NavItem>
+            <NavItem route={`/${networkName}/user/${account}`}>
+              <a><FiUser style={{margin: "0px 10px", color: "#616161"}}/></a>
+            </NavItem>
           </NavSection>
         : <NavSection>
             <Web3ConnectStatus text="Connect Wallet" />
+            <NavItem route={`/config`}>
+              <a><FiSettings style={{margin: "0px 10px", color: "#616161"}}/></a>
+            </NavItem>
           </NavSection>
         }
       </NavWrapper>

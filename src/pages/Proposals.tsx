@@ -122,8 +122,9 @@ const ProposalsPage = observer(() => {
     const [stateFilter, setStateFilter] = React.useState("Any Status");
     const [schemeFilter, setSchemeFilter] = React.useState("All Schemes");
     const [titleFilter, setTitleFilter] = React.useState("");
+    const networkName = configStore.getActiveChainName();
+
     const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
-      
       return Object.assign(cacheProposal, daoStore.getProposalStatus(cacheProposal.id));
     });
     
@@ -226,7 +227,7 @@ const ProposalsPage = observer(() => {
                 (votingMachines.gen && daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.gen.address)
                 ? 'GEN' : 'DXD';
                 return (
-                  <Link key={"proposal"+i} to={"/proposal/"+proposal.id} style={{textDecoration: "none"}}>
+                  <Link key={"proposal"+i} to={`/${networkName}/proposal/${proposal.id}`} style={{textDecoration: "none"}}>
                     <TableRow>
                       <TableCell width="35%" align="left" weight='500' wrapText="true">
                         {proposal.title.length > 0 ? proposal.title : proposal.id}

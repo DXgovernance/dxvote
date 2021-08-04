@@ -21,11 +21,12 @@ const UserPage = observer(() => {
     let history = useHistory();
 
     const {
-        root: { daoStore },
+        root: { daoStore, configStore },
     } = useStores();
-    const userAddress = useLocation().pathname.split("/")[2];
+    const userAddress = useLocation().pathname.split("/")[3];
     const userEvents = daoStore.getUserEvents(userAddress);
     const userInfo = daoStore.getUser(userAddress);
+    const networkName = configStore.getActiveChainName();
 
     let proposalsToRedeem = [];
     
@@ -100,7 +101,7 @@ const UserPage = observer(() => {
           return(
             <span
               key={"proposalLink"+i}
-              onClick={() => { history.push(`/proposal/${proposalId}`)}}
+              onClick={() => { history.push(`/${networkName}/proposal/${proposalId}`)}}
               style={{  
                 padding: "6px 0px", cursor: "pointer"
               }}

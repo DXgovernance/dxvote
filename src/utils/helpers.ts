@@ -2,6 +2,12 @@ import { utils } from 'ethers';
 import { BigNumber } from './bignumber';
 import { MAX_UINT } from './constants';
 
+export function toCamelCaseString(text: string): string {
+  if (text.length > 0)
+    return text.replace(/^./, text[0].toUpperCase())
+  else return "";
+}
+
 export function bnum(
     val: string | number | utils.BigNumber | BigNumber
 ): BigNumber {

@@ -133,9 +133,9 @@ const ProposalPage = observer(() => {
     } = useStores();
     const networkConfig = configStore.getNetworkConfig();
     const votingMachines = networkConfig.votingMachines;
-    const proposalId = useLocation().pathname.split("/")[2];
+    const proposalId = useLocation().pathname.split("/")[3];
     const proposal = daoStore.getProposal(proposalId);
-    
+
     if (!proposal)
       history.push('/')
     

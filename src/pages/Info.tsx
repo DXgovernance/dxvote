@@ -1,5 +1,6 @@
 import styled from 'styled-components'; 
 import { useLocation } from 'react-router-dom';
+import { useStores } from '../contexts/storesContext';
 import ActiveButton from '../components/common/ActiveButton';
 import Box from '../components/common/Box';
 
@@ -23,24 +24,28 @@ const InfoNavigation = styled.div`
   flex-direction: row;
 `;
 const InfoPage = () => {
-    const searchPath = useLocation().search;
-    return (
-      <InfoPageWrapper>
-        <InfoNavigation>
-          <ActiveButton route="/info?view=governance">Governance</ActiveButton>
-          <ActiveButton route="/info?view=finance">Finance</ActiveButton>
-          <ActiveButton route="/info?view=schemes">Schemes</ActiveButton>
-        </InfoNavigation>
-        <div>
-          { searchPath === "?view=schemes" ?
-            <SchemesInformation/>
-          : searchPath === "?view=governance" ?
-            <GovernanceInformation/>
-          : <FinanceInformation/>
-          }
-        </div>
-      </InfoPageWrapper>
-    );
+  const {
+    root: {configStore},
+  } = useStores();
+  const networkName = configStore.getActiveChainName();
+  const searchPath = useLocation().search;
+  return (
+    <InfoPageWrapper>
+      <InfoNavigation>
+        <ActiveButton route={`/${networkName}/info?view=governance`}>Governance</ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=finance`}>Finance</ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=schemes`}>Schemes</ActiveButton>
+      </InfoNavigation>
+      <div>
+        { searchPath === `/${networkName}/info?view=schemes` ?
+          <SchemesInformation/>
+        : searchPath === `/${networkName}/info?view=governance` ?
+          <GovernanceInformation/>
+        : <FinanceInformation/>
+        }
+      </div>
+    </InfoPageWrapper>
+  );
 };
 
 export default InfoPage;

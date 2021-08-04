@@ -1,18 +1,15 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { useStores } from '../contexts/storesContext';
+import { toCamelCaseString } from '../utils';
 import { observer } from 'mobx-react';
 import Box from '../components/common/Box';
+const contractsFile = require('../config/contracts.json');
 import { useLocation } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
 
 const FAQPage = observer(() => {
     
   const questionId = useLocation().search.indexOf("=") > -1 ? useLocation().search.split("=")[1] : 0;
-  
-  const {
-      root: { configStore, daoStore },
-  } = useStores();
   
   const FAQBox = styled(Box)`
     padding: 20px 30px;
@@ -35,11 +32,25 @@ const FAQPage = observer(() => {
       document.querySelectorAll("#FAQBody div h1")[questionId].scrollIntoView();
   }, []);
    
-  const networkConfig = configStore.getNetworkConfig();
-  const schemes = daoStore.getCache().schemes;
-  let schemeAddresses = "";
-  for (let i = 0; i < Object.keys(schemes).length; i++) {
-    schemeAddresses += "   - "+schemes[Object.keys(schemes)[i]].name+": "+schemes[Object.keys(schemes)[i]].address+"\n";
+  let daoAddresses = "";
+  for (let n = 0; n < Object.keys(contractsFile).length; n++) {
+
+    const networkContracts = contractsFile[ Object.keys(contractsFile)[n] ];
+    
+    daoAddresses += "### " + toCamelCaseString(Object.keys(contractsFile)[n]) + " Network\n";
+    daoAddresses += "- Avatar: " + networkContracts.avatar+"\n";
+    daoAddresses += "- Controller: " + networkContracts.controller+"\n";
+    daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
+    daoAddresses += "- Permission Registry: " + networkContracts.permissionRegistry+"\n";
+    daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
+    
+    if (networkContracts.schemes) {
+      daoAddresses += "- Schemes:"+"\n";
+      for (let i = 0; i < Object.keys(networkContracts.schemes).length; i++) {
+        daoAddresses += "   - "+Object.keys(networkContracts.schemes)[i]+": "+networkContracts.schemes[Object.keys(networkContracts.schemes)[i]]+"\n";
+      }
+    }
+  
   }
 
    const FAQBody = 
@@ -51,13 +62,7 @@ Most of the ETH and tokens are held in the DXdao avatar address, this is the saf
 
 ## DXdao Addresses
 
-- Avatar: ${networkConfig.avatar}
-- Controller: ${networkConfig.controller}
-- Reputation: ${networkConfig.reputation}
-- Permission Registry: ${networkConfig.permissionRegistry}
-- Reputation: ${networkConfig.reputation}
-- Schemes:
-${schemeAddresses}
+${daoAddresses}
 
 # What is a Wallet Scheme?
 

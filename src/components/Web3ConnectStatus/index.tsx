@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { shortenAddress } from 'utils';
+import { shortenAddress, toCamelCaseString } from '../../utils';
 import WalletModal from 'components/WalletModal';
 import { isChainIdSupported } from 'provider/connectors';
 import { useStores } from '../../contexts/storesContext';
@@ -84,7 +84,7 @@ const Web3ConnectStatus = observer((props) => {
                     {shortenAddress(account)}
                   </AccountButton>
                   <AccountButton onClick={toggleWalletModal} style={{fontSize: "14px"}}>
-                    {configStore.getActiveChainName().replace(/^./, configStore.getActiveChainName()[0].toUpperCase())}
+                    {toCamelCaseString(configStore.getActiveChainName())}
                   </AccountButton>
               </div>
             );
