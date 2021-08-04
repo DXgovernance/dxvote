@@ -144,14 +144,12 @@ export default class BlockchainStore {
     ) {
       this.initialLoadComplete = (reset) ? false : this.initialLoadComplete;
       this.activeFetchLoop = true;
-      const { library, account, chainId } = web3React;
+      const { library, chainId } = web3React;
       const {
         providerStore,
         configStore,
         multicallService,
-        transactionStore,
-        daoStore,
-        userStore
+        daoStore
       } = this.rootStore;
       
       daoStore.setCache(configStore.getActiveChainName());
@@ -162,7 +160,7 @@ export default class BlockchainStore {
       const lastCheckedBlockNumber = networkCache.l1BlockNumber;
 
       if (blockNumber > lastCheckedBlockNumber) {
-        console.debug('[Fetch Loop] Fetch Blockchain Data', { blockNumber, account, chainId });
+        console.debug('[Fetch Loop] Fetch Blockchain Data', blockNumber, chainId);
         
         const fromBlock = lastCheckedBlockNumber + 1;
         const toBlock = blockNumber;
@@ -205,55 +203,6 @@ export default class BlockchainStore {
               this.rootStore.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
           }
         });
-        
-        // Get user-specific blockchain data
-        if (account) {
-          transactionStore.checkPendingTransactions(web3React, account);
-          let accountCalls = [{
-            contractType: ContractType.Multicall,
-            address: networkConfig.utils.multicall,
-            method: 'getEthBalance',
-            params: [account],
-          },{
-            contractType: ContractType.Reputation,
-            address: networkConfig.reputation,
-            method: 'balanceOf',
-            params: [account],
-          }];
-          
-          if (networkConfig.votingMachines.gen) {
-            accountCalls.push({
-              contractType: ContractType.ERC20,
-              address: networkConfig.votingMachines.gen.token,
-              method: 'balanceOf',
-              params: [account],
-            });
-            accountCalls.push({
-              contractType: ContractType.ERC20,
-              address: networkConfig.votingMachines.gen.token,
-              method: 'allowance',
-              params: [account, networkConfig.votingMachines.gen.address],
-            });
-          }
-          if (networkConfig.votingMachines.dxd) {
-            accountCalls.push({
-              contractType: ContractType.ERC20,
-              address: networkConfig.votingMachines.dxd.token,
-              method: 'balanceOf',
-              params: [account],
-            });
-            accountCalls.push({
-              contractType: ContractType.ERC20,
-              address: networkConfig.votingMachines.dxd.token,
-              method: 'allowance',
-              params: [account, networkConfig.votingMachines.dxd.address],
-            });
-          }
-          
-          multicallService.addCalls(accountCalls);
-          await this.executeAndUpdateMulticall(multicallService);
-          userStore.update();
-        };
         
         networkCache.l1BlockNumber = toBlock;
         providerStore.setCurrentBlockNumber(toBlock);

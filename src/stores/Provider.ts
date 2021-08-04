@@ -223,7 +223,7 @@ export default class ProviderStore {
         if (!chainId) {
             throw new Error(ERRORS.BlockchainActionNoChainId);
         }
-        console.log(value)
+
         const promiEvent = new PromiEvent<any>(() => {
             web3React.library.eth.sendTransaction({ from: account, to: to, data: data, value: value })
                 .once('transactionHash', (hash) => {

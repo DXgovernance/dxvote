@@ -9,7 +9,7 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
     const {
-        root: { providerStore, blockchainStore },
+        root: { providerStore, blockchainStore, userStore },
     } = useStores();
 
     const web3ContextInjected = useWeb3React(web3ContextNames.injected);
@@ -44,6 +44,7 @@ const Web3ReactManager = ({ children }) => {
       // Handle the new accounts, or lack thereof.
       // "accounts" will always be an array, but it can be empty.
       // blockchainStore.fetchData(web3React, false);
+      userStore.update(providerStore.getActiveWeb3React());
     });
     
     // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
@@ -52,8 +53,10 @@ const Web3ReactManager = ({ children }) => {
     // Fetch user blockchain data on an interval using current params
     useInterval(
       () => {
-        if (networkActive)
+        if (networkActive){
+          userStore.update(providerStore.getActiveWeb3React());
           blockchainStore.fetchData(providerStore.getActiveWeb3React(), false)
+        }
       }, BLOKCHAIN_FETCH_INTERVAL
     );
 
