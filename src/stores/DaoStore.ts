@@ -1,5 +1,5 @@
 import RootStore from 'stores';
-import { getRecommendedCalls } from '../config/recommendedCalls';
+import { getRecommendedCalls } from '../config';
 import { action, makeObservable } from 'mobx';
 import _ from 'lodash';
 import {

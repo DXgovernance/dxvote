@@ -1,7 +1,6 @@
 import { makeObservable, observable, action } from 'mobx';
 import RootStore from 'stores';
-import { getTokensOfNetwork, getNetworkConfig } from '../config';
-import { getRecommendedCalls } from '../config/recommendedCalls';
+import { getTokensOfNetwork, getNetworkConfig, getRecommendedCalls } from '../config';
 import { _ } from 'lodash';
 import { NETWORK_NAMES } from '../provider/connectors';
 

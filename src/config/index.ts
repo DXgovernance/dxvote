@@ -1,8 +1,7 @@
-const contractsFile = require('./contracts.json');
-const tokensFile = require('./tokens.json');
+const configDataFile = require('./data.json');
 const Web3 = require('web3');
 import { NETWORK_IDS } from '../provider/connectors';
-import { ZERO_ADDRESS } from '../utils';
+import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
 const web3 = new Web3();
 
@@ -27,7 +26,7 @@ export const getNetworkConfig = function(network) {
       },
     };
   } else  if (network == 'mainnet') {
-    networkConfig = contractsFile[network];
+    networkConfig = configDataFile.contracts.mainnet;
     const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
     
     networkConfig.daostack = {
@@ -157,8 +156,8 @@ export const getNetworkConfig = function(network) {
       }
     };
     
-  } else  if (network == 'xdai') {
-    networkConfig = contractsFile[network];
+  } else if (network == 'xdai') {
+    networkConfig = configDataFile.contracts.xdai;
     const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
     
     networkConfig.daostack = {
@@ -242,12 +241,10 @@ export const getNetworkConfig = function(network) {
     };
     
   } else {
-    networkConfig = contractsFile[network];
+    networkConfig = configDataFile.contracts[network];
   };
   
-
   return networkConfig;
-
 }
 
 export const getSchemeTypeData = function(network, schemeAddress) {
@@ -327,14 +324,169 @@ export const getSchemeTypeData = function(network, schemeAddress) {
 }
 
 export const getTokenData = function(tokenAddress) {
-  return tokensFile.tokens.find((tokenInFile) => tokenInFile.address == tokenAddress);
+  return configDataFile.tokens.find((tokenInFile) => tokenInFile.address == tokenAddress);
 }
 
 export const getTokensOfNetwork = function(networkName) {
-  return tokensFile.tokens.filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName]);
+  return configDataFile.tokens.filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName]);
 }
 
 export const getTokensToFetchPrice = function(networkName) {
-  return tokensFile.tokens
+  return configDataFile.tokens
     .filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName] && tokenInFile.fetchPrice);
+}
+
+export const getRecommendedCalls = function(networkName) {
+  const networkConfig = getNetworkConfig(networkName);
+  const networkTokens = getTokensOfNetwork(networkName);
+  
+  let recommendedCalls: {
+    asset: string;
+    from: string;
+    to: string;
+    toName: string;
+    functionName: string;
+    params: {
+      type: string;
+      name: string;
+      defaultValue: string;
+      decimals ?: number;
+    }[];
+    decodeText: string;
+  }[] = [
+    {
+      asset: ZERO_ADDRESS,
+      from: networkConfig.avatar,
+      to: networkConfig.controller,
+      toName: "DXdao Controller",
+      functionName: "mintReputation(uint256,address,address)",
+      params: [
+        {type: "uint256", name: "_amount", defaultValue: "", decimals: 18},
+        {type: "address", name: "_to", defaultValue: ""},
+        {type: "address", name: "_avatar", defaultValue: networkConfig.avatar}
+      ],
+      decodeText: "Mint of [PARAM_0] REP to [PARAM_1]"
+    }, {
+      asset: ZERO_ADDRESS,
+      from: networkConfig.avatar,
+      to: networkConfig.controller,
+      toName: "DXdao Controller",
+      functionName: "burnReputation(uint256,address,address)",
+      params: [
+        {type: "uint256", name: "_amount", defaultValue: "", decimals: 18},
+        {type: "address", name: "_from", defaultValue: ""},
+        {type: "address", name: "_avatar", defaultValue: networkConfig.avatar}
+      ],
+      decodeText: "Burn of [PARAM_0] REP to [PARAM_1]"
+    }, {
+      asset: ZERO_ADDRESS,
+      from: networkConfig.avatar,
+      to: networkConfig.controller,
+      toName: "DXdao Controller",
+      functionName: "registerScheme(address,bytes32,bytes4,address)",
+      params: [
+        {type: "address", name: "_scheme", defaultValue: ""},
+        {type: "bytes32", name: "_paramsHash", defaultValue: ""},
+        {type: "bytes4", name: "_permissions", defaultValue: ""},
+        {type: "address", name: "_avatar", defaultValue: networkConfig.avatar}
+      ],
+      decodeText: "Register scheme [PARAM_0] with params hash [PARAM_1] and permissions [PARAM_2]"
+    }, {
+      asset: ZERO_ADDRESS,
+      from: networkConfig.avatar,
+      to: networkConfig.controller,
+      toName: "DXdao Controller",
+      functionName: "unregisterScheme(address,address)",
+      params: [
+        {type: "address", name: "_scheme", defaultValue: ""},
+        {type: "address", name: "_avatar", defaultValue: networkConfig.avatar}
+      ],
+      decodeText: "Unregister scheme [PARAM_0]"
+    }, {
+      asset: ZERO_ADDRESS,
+      from: networkConfig.avatar,
+      to: networkConfig.controller,
+      toName: "DXdao Controller",
+      functionName: "genericCall(address,bytes,addres,uint256)",
+      params: [
+        {type: "address", name: "_contract", defaultValue: ""},
+        {type: "bytes", name: "_data", defaultValue: ""},
+        {type: "address", name: "_avatar", defaultValue: networkConfig.avatar},
+        {type: "uint256", name: "_value", defaultValue: ""}
+      ],
+      decodeText: "Generic call to [PARAM_0] with data [PARAM_1] and value [PARAM_2] ETH"
+    }, {
+      asset: ZERO_ADDRESS,
+      from: networkConfig.avatar,
+      to: networkConfig.permissionRegistry,
+      toName: "Permission Registry",
+      functionName: "setTimeDelay(uint256)",
+      params: [
+        {type: "uint256", name: "newTimeDelay", defaultValue: ""},
+      ],
+      decodeText: "Set time delay to [PARAM_0] seconds"
+    }, {
+      asset: ZERO_ADDRESS,
+      from: networkConfig.avatar,
+      to: networkConfig.permissionRegistry,
+      toName: "Permission Registry",
+      functionName: "setAdminPermission(address,address,address,bytes4,uint256,bool)",
+      params: [
+        {type: "address", name: "asset", defaultValue: ZERO_ADDRESS},
+        {type: "address", name: "from", defaultValue: ""},
+        {type: "address", name: "to", defaultValue: ""},
+        {type: "bytes4", name: "functionSignature", defaultValue: ANY_FUNC_SIGNATURE},
+        {type: "uint256", name: "valueAllowed", defaultValue: "0"},
+        {type: "bool", name: "allowed", defaultValue: "true"},
+      ],
+      decodeText: "Set [PARAM_5] admin permission in asset [PARAM_0] from [PARAM_1] to [PARAM_2] with function signature [PARAM_3] and value [PARAM_4]"
+    }, {
+      asset: ZERO_ADDRESS,
+      from: ANY_ADDRESS,
+      to: networkConfig.permissionRegistry,
+      toName: "Permission Registry",
+      functionName: "setPermission(address,address,bytes4,uint256,bool)",
+      params: [
+        {type: "address", name: "asset", defaultValue: ZERO_ADDRESS},
+        {type: "address", name: "to", defaultValue: ""},
+        {type: "bytes4", name: "functionSignature", defaultValue: ""},
+        {type: "uint256", name: "valueAllowed", defaultValue: ""},
+        {type: "bool", name: "allowed", defaultValue: ""},
+      ],
+      decodeText: "Set [PARAM_5] permission in asset [PARAM_0] from [FROM] to [PARAM_2] with function signature [PARAM_3] and value [PARAM_4]"
+    }
+  ];
+  
+  if (configDataFile.recommendedCalls[networkName] && configDataFile.recommendedCalls[networkName].length > 0)
+    recommendedCalls.concat(configDataFile.recommendedCalls[networkName]);
+  
+  networkTokens.map((networkToken) => {
+    recommendedCalls.push({
+      asset: networkToken.address,
+      from: ANY_ADDRESS,
+      to: networkToken.address,
+      toName: networkToken.name,
+      functionName: "transfer(address,uint256)",
+      params: [
+        {type: "address", name: "to", defaultValue: ""},
+        {type: "uint256", name: "value", defaultValue: "0", decimals: networkToken.decimals}
+      ],
+      decodeText: "Transfer [PARAM_1] "+networkToken.symbol+" to [PARAM_0]"
+    });
+
+    recommendedCalls.push({
+      asset: networkToken.address,
+      from: ANY_ADDRESS,
+      to: networkToken.address,
+      toName: `ERC20 ${networkToken.symbol}`,
+      functionName: "approve(address,uint256)",
+      params: [
+        {type: "address", name: "to", defaultValue: ""},
+        {type: "uint256", name: "value", defaultValue: "0", decimals: networkToken.decimals}
+      ],
+      decodeText: "Approve [PARAM_1] "+networkToken.symbol+" to [PARAM_0]"
+    });
+  });
+  
+  return recommendedCalls;
 }

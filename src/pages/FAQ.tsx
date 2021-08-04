@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { toCamelCaseString } from '../utils';
 import { observer } from 'mobx-react';
 import Box from '../components/common/Box';
-const contractsFile = require('../config/contracts.json');
+const configDataFile = require('../config/data.json');
 import { useLocation } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
 
@@ -33,11 +33,11 @@ const FAQPage = observer(() => {
   }, []);
    
   let daoAddresses = "";
-  for (let n = 0; n < Object.keys(contractsFile).length; n++) {
+  for (let n = 0; n < Object.keys(configDataFile.contracts).length; n++) {
 
-    const networkContracts = contractsFile[ Object.keys(contractsFile)[n] ];
+    const networkContracts = configDataFile.contracts[ Object.keys(configDataFile.contracts)[n] ];
     
-    daoAddresses += "### " + toCamelCaseString(Object.keys(contractsFile)[n]) + " Network\n";
+    daoAddresses += "### " + toCamelCaseString(Object.keys(configDataFile.contracts)[n]) + " Network\n";
     daoAddresses += "- Avatar: " + networkContracts.avatar+"\n";
     daoAddresses += "- Controller: " + networkContracts.controller+"\n";
     daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
