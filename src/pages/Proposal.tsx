@@ -495,7 +495,7 @@ const ProposalPage = observer(() => {
                   return (
                     <small color="red" key={`stakeDown${i}`} style={{ display: "flex", alignItems:"center"}}>
                       <BlockchainLink size="short" type="user" text={stakeEvent.staker}/>
-                      {formatBalance(stakeEvent.amount).toString()} {votingMachineTokenName}
+                      {formatBalance(bnum(stakeEvent.amount)).toString()} {votingMachineTokenName}
                     </small>
                   )
                 else return undefined;
