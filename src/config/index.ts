@@ -458,7 +458,7 @@ export const getRecommendedCalls = function(networkName) {
   ];
   
   if (configDataFile.recommendedCalls[networkName] && configDataFile.recommendedCalls[networkName].length > 0)
-    recommendedCalls.concat(configDataFile.recommendedCalls[networkName]);
+    recommendedCalls = recommendedCalls.concat(configDataFile.recommendedCalls[networkName]);
   
   networkTokens.map((networkToken) => {
     recommendedCalls.push({
