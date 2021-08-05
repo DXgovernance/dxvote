@@ -205,7 +205,7 @@ const NewProposalPage = observer(() => {
       allowedToCall.push({ value: ANY_ADDRESS, name: "Custom" });
 
     const uploadToIPFS = async function() {
-      if (titleText.length == 10) {
+      if (titleText.length < 10) {
         setErrorMessage("Title has to be at mimimum 10 characters length");
       } else if (descriptionText.length == 0) {
         setErrorMessage("Description has to be at mimimum 100 characters length");
