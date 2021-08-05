@@ -218,7 +218,8 @@ const ProposalPage = observer(() => {
     let proposalCallTexts = new Array(proposal.to.length);
     for (var p = 0; p < proposal.to.length; p++) {
       proposalCallTexts[p] = daoService.decodeWalletSchemeCall(
-        scheme.controllerAddress == networkConfig.controller ? networkConfig.avatar : scheme.address,
+        (scheme.type == "WalletScheme" && scheme.controllerAddress != networkConfig.controller)
+          ? scheme.address : networkConfig.avatar,
         proposal.to[p],
         proposal.callData[p],
         proposal.values[p]
