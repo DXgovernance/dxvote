@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { useStores } from '../contexts/storesContext';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { bnum, parseCamelCase, ZERO_ADDRESS, formatCurrency, formatBalance } from '../utils';
+import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 import { getTokenData } from '../config';
 
 const FinanceInfoWrapper = styled.div`
@@ -64,23 +65,24 @@ const TableCell = styled.div`
 
 const FinanceInformation = observer(() => {
     const {
-        root: { daoStore, coingeckoService },
+        root: { daoStore, coingeckoService, configStore },
     } = useStores();
 
     const daoInfo = daoStore.getDaoInfo();
     const schemes = daoStore.getAllSchemes();
     const prices = coingeckoService.getPrices();
-
+    const networkAssetSymbol = NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
+    
     let assets = {
       total: [{
         address: ZERO_ADDRESS,
-        name: "ETH",
+        name: networkAssetSymbol,
         amount: bnum(daoInfo.ethBalance),
         decimals: 18
       }],
       avatar: [{
         address: ZERO_ADDRESS,
-        name: "ETH",
+        name: networkAssetSymbol,
         amount: bnum(daoInfo.ethBalance),
         decimals: 18
       }]
@@ -109,7 +111,7 @@ const FinanceInformation = observer(() => {
       if (!assets[scheme.name])
         assets[scheme.name] = [{
           address: ZERO_ADDRESS,
-          name: "ETH",
+          name: networkAssetSymbol,
           amount: bnum(scheme.ethBalance),
           decimals: 18
         }]

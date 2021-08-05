@@ -8,6 +8,8 @@ import Box from '../components/common/Box';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 import ProposalTemplates from '../config/proposalTemplates';
+import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+
 import {
   ZERO_ADDRESS,
   ANY_ADDRESS,
@@ -131,6 +133,7 @@ const NewProposalPage = observer(() => {
     const schemes = daoStore.getAllSchemes();
     const networkConfig = configStore.getNetworkConfig();
     const schemeInLocalStorage = localStorage.getItem('dxvote-newProposal-scheme');
+    const networkAssetSymbol = NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
 
     const defaultSchemeToUse = schemeInLocalStorage
       ? schemes.findIndex((scheme) => scheme.address == schemeInLocalStorage)
@@ -568,7 +571,7 @@ const NewProposalPage = observer(() => {
         }
         {Object.keys(transferLimits).map((assetAddress) => {
           if (assetAddress == ZERO_ADDRESS)
-            return <h3>Transfer limit of {normalizeBalance(transferLimits[assetAddress]).toString()} ETH</h3>;
+            return <h3>Transfer limit of {normalizeBalance(transferLimits[assetAddress]).toString()} {networkAssetSymbol}</h3>;
           else {
             const token = networkTokens.find(networkToken => networkToken.address == assetAddress);
             if (token)
@@ -585,7 +588,7 @@ const NewProposalPage = observer(() => {
           <CallRow>
             <span style={{width: "20%", fontSize:"13px"}}>Beneficiary Account</span>
             <span style={{width: "20%", fontSize:"13px"}}>REP Change</span>
-            <span style={{width: "20%", fontSize:"13px"}}>ETH Value (in WEI)</span>
+            <span style={{width: "20%", fontSize:"13px"}}>{networkAssetSymbol} Value (in WEI)</span>
             <span style={{width: "20%", fontSize:"13px"}}>Address of Token</span>
             <span style={{width: "20%", fontSize:"13px"}}>Token Amount (in WEI)</span>
           </CallRow>
@@ -722,7 +725,7 @@ const NewProposalPage = observer(() => {
                   onChange={(value) => onValueChange(i, value)}
                   value={calls[i].value || ""}
                   width="10%"
-                  placeholder={calls[i].callType === "advanced" ? "WEI" : "ETH"}
+                  placeholder={calls[i].callType === "advanced" ? "WEI" : {networkAssetSymbol}}
                 />
                 
                 <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>

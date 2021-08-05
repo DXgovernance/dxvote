@@ -1,14 +1,14 @@
 const configDataFile = require('./data.json');
 const Web3 = require('web3');
-import { NETWORK_IDS } from '../provider/connectors';
+import { NETWORK_IDS, NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
 const web3 = new Web3();
 
-export const getNetworkConfig = function(network) {
+export const getNetworkConfig = function(networkName) {
   let networkConfig;
 
-  if (network === 'localhost') {
+  if (networkName === 'localhost') {
     networkConfig = {
       fromBlock: 1,
       avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ""),
@@ -25,7 +25,7 @@ export const getNetworkConfig = function(network) {
         }
       },
     };
-  } else  if (network == 'mainnet') {
+  } else  if (networkName == 'mainnet') {
     networkConfig = configDataFile.contracts.mainnet;
     const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
     
@@ -156,7 +156,7 @@ export const getNetworkConfig = function(network) {
       }
     };
     
-  } else if (network == 'xdai') {
+  } else if (networkName == 'xdai') {
     networkConfig = configDataFile.contracts.xdai;
     const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
     
@@ -241,14 +241,14 @@ export const getNetworkConfig = function(network) {
     };
     
   } else {
-    networkConfig = configDataFile.contracts[network];
+    networkConfig = configDataFile.contracts[networkName];
   };
   
   return networkConfig;
 }
 
-export const getSchemeTypeData = function(network, schemeAddress) {
-  const networkConfig = getNetworkConfig(network);
+export const getSchemeTypeData = function(networkName, schemeAddress) {
+  const networkConfig = getNetworkConfig(networkName);
   if (networkConfig.daostack) {
     if (networkConfig.daostack.schemeRegistrar && networkConfig.daostack.schemeRegistrar.address == schemeAddress) {
       return {
@@ -414,7 +414,7 @@ export const getRecommendedCalls = function(networkName) {
         {type: "address", name: "_avatar", defaultValue: networkConfig.avatar},
         {type: "uint256", name: "_value", defaultValue: ""}
       ],
-      decodeText: "Generic call to [PARAM_0] with data [PARAM_1] and value [PARAM_2] ETH"
+      decodeText: "Generic call to [PARAM_0] with data [PARAM_1] and value [PARAM_2] "+NETWORK_ASSET_SYMBOL[networkName]
     }, {
       asset: ZERO_ADDRESS,
       from: networkConfig.avatar,
