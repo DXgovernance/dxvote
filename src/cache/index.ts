@@ -1029,19 +1029,20 @@ export const updateProposals = async function (
         const response = await axios.request({
           url:'https://ipfs.io/ipfs/'+descriptionHashToIPFSHash(proposal.descriptionHash),
           method: "GET",
-          timeout: 5000
+          timeout: isNode() ? 5000 : 1000
         });
         if (response && response.data && response.data.title) {
           networkCache.proposals[proposal.id].title = response.data.title;
         } else {
           console.error('Couldnt not get title from', proposal.descriptionHash);
         }
-        await sleep(1000);
       } catch (error) {
         console.error('Error getting title from', proposal.descriptionHash, 'waiting 2 seconds and trying again..');
-        proposalIndex --;
-        retryIntent ++;
-        await sleep(2000);
+        if (isNode()) {
+          proposalIndex --;
+          retryIntent ++;
+          await sleep(1000);
+        }
       }
   }
 
