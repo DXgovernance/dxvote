@@ -40,6 +40,7 @@ const UserPage = observer(() => {
           voteParameters.votersReputationLossRatio.toNumber() > 0
           && vote.timestamp < proposal.boostedPhaseTime.toNumber()
           && proposal.winningVote == vote.vote
+          && proposal.stateInVotingMachine < 3
         )
       ) && (proposalsToRedeem.indexOf(vote.proposalId) < 0)) {
           proposalsToRedeem.push(vote.proposalId);
