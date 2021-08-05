@@ -212,14 +212,15 @@ const NewProposalPage = observer(() => {
       } else {
         setSubmitionState(1);
         setErrorMessage("");
-
-        const bodyTextToUpload = (schemeToUse.type == "ContributionReward" || schemeToUse.type == "GenericMulticall")
-          ? JSON.stringify({
+        console.log(schemeToUse.type)
+        const bodyTextToUpload = (schemeToUse.type == "WalletScheme")
+          ? descriptionText
+          : JSON.stringify({
               description: descriptionText,
               title: titleText,
+              tags: ["dxvote"],
               url: ""
-            })
-          : descriptionText;
+            });
           
         const hash = await ipfsService.add(bodyTextToUpload);
         setIpfsHash(hash);
