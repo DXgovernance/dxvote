@@ -44,21 +44,13 @@ const ConnectButton = styled(Box)`
 const Web3ConnectStatus = observer((props) => {
     
     const {
-        context: { modalStore, transactionStore, providerStore, configStore },
+        context: { modalStore, providerStore, configStore },
     } = useContext();
     const {
         chainId,
         account,
         error,
     } = providerStore.getActiveWeb3React();
-    
-    let pending = undefined;
-    let confirmed = undefined;
-
-    if (chainId && account && isChainIdSupported(chainId)) {
-        pending = transactionStore.getPendingTransactions(account);
-        confirmed = transactionStore.getConfirmedTransactions(account);
-    }
 
     const toggleWalletModal = () => {
         modalStore.toggleWalletModal();
@@ -111,8 +103,6 @@ const Web3ConnectStatus = observer((props) => {
         <>
             {getWeb3Status()}
             <WalletModal
-                pendingTransactions={pending}
-                confirmedTransactions={confirmed}
             />
         </>
     );

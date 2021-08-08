@@ -1,5 +1,11 @@
 import { BigNumber, WalletSchemeProposalState, VotingMachineProposalState } from './utils';
 
+declare global {
+  interface Window {
+    ethereum?: EthereumProvider;
+  }
+}
+
 // Multicall Types 
 
 export interface Call {

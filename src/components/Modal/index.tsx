@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
-import { animated, useTransition } from 'react-spring';
-import { Spring } from 'react-spring/renderprops';
+import { animated } from 'react-spring';
 
 import { DialogContent, DialogOverlay } from '@reach/dialog';
 import { isMobile } from 'react-device-detect';
@@ -106,107 +105,26 @@ export default function Modal({
     onDismiss,
     minHeight = false,
     maxHeight = 50,
-    initialFocusRef,
     children,
 }) {
-    const transitions = useTransition(isOpen, null, {
-        config: { duration: 200 },
-        from: { opacity: 0 },
-        enter: { opacity: 1 },
-        leave: { opacity: 0 },
-    });
-
-    // const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }));
-    // const bind = useGesture({
-    //     onDrag: (state) => {
-    //         let velocity = state.velocity;
-    //         if (velocity < 1) {
-    //             velocity = 1;
-    //         }
-    //         if (velocity > 8) {
-    //             velocity = 8;
-    //         }
-    //         set({
-    //             xy: state.down ? state.movement : [0, 0],
-    //             config: { mass: 1, tension: 210, friction: 20 },
-    //         });
-    //         if (velocity > 3 && state.direction[1] > 0) {
-    //             onDismiss();
-    //         }
-    //     },
-    // });
-
-    if (isMobile) {
-        return transitions.map(
-            ({ item, key, props }) =>
-                item && (
-                    <StyledDialogOverlay
-                        key={key}
-                        style={props}
-                        onDismiss={onDismiss}
-                        initialFocusRef={initialFocusRef}
-                        mobile={isMobile}
-                    >
-                        <Spring // animation for entrance and exit
-                            from={{
-                                transform: isOpen
-                                    ? 'translateY(200px)'
-                                    : 'translateY(100px)',
-                            }}
-                            to={{
-                                transform: isOpen
-                                    ? 'translateY(0px)'
-                                    : 'translateY(200px)',
-                            }}
-                        >
-                            {(props) => (
-                                <animated.div
-                                    // {...bind()}
-                                    // style={{
-                                    //     transform: `translate3d(${0}px,${ y > 0 ? y : 0 }px,0)`,
-                                    // }}
-                                >
-                                    <StyledDialogContent
-                                        style={props}
-                                        hidden={true}
-                                        minHeight={minHeight}
-                                        maxHeight={maxHeight}
-                                        mobile={isMobile}
-                                    >
-                                        <HiddenCloseButton
-                                            onClick={onDismiss}
-                                        />
-                                        {children}
-                                    </StyledDialogContent>
-                                </animated.div>
-                            )}
-                        </Spring>
-                    </StyledDialogOverlay>
-                )
-        );
-    } else {
-        return transitions.map(
-            ({ item, key, props }) =>
-                item && (
-                    <StyledDialogOverlay
-                        key={key}
-                        style={props}
-                        onDismiss={onDismiss}
-                        initialFocusRef={initialFocusRef}
-                        mobile={isMobile}
-                    >
-                        <StyledDialogContent
-                            hidden={true}
-                            minHeight={minHeight}
-                            maxHeight={maxHeight}
-                            isOpen={isOpen}
-                            mobile={isMobile}
-                        >
-                            <HiddenCloseButton onClick={onDismiss} />
-                            {children}
-                        </StyledDialogContent>
-                    </StyledDialogOverlay>
-                )
-        );
-    }
+  if (isOpen)
+    return (
+      <StyledDialogOverlay
+        onDismiss={onDismiss}
+        mobile={isMobile}
+      >
+        <StyledDialogContent
+          hidden={true}
+          minHeight={minHeight}
+          maxHeight={maxHeight}
+          isOpen={isOpen}
+          mobile={isMobile}
+        >
+          <HiddenCloseButton onClick={onDismiss} />
+          {children}
+          </StyledDialogContent>
+      </StyledDialogOverlay>
+    )
+  else
+    return <div/>
 }
