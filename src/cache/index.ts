@@ -14,11 +14,11 @@ import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import { getContracts } from '../contracts';
 import { getSchemeTypeData } from '../config';
 
-const MAINNET_CACHE = require('./data/mainnet.json');
-const XDAI_CACHE = require('./data/xdai.json');
-const RINKEBY_CACHE = require('./data/rinkeby.json');
-const ARBITRUM_TESTNET_CACHE = require('./data/arbitrumTestnet.json');
-const LOCALHOST_CACHE = require('./data/localhost.json');
+const MAINNET_CACHE = require('../data/cache/mainnet.json');
+const XDAI_CACHE = require('../data/cache/xdai.json');
+const RINKEBY_CACHE = require('../data/cache/rinkeby.json');
+const ARBITRUM_TESTNET_CACHE = require('../data/cache/arbitrumTestnet.json');
+const LOCALHOST_CACHE = require('../data/cache/localhost.json');
 
 export const getCacheFile = function (networkName: string): DaoNetworkCache {
   switch (networkName) {

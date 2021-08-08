@@ -28,7 +28,7 @@ async function main() {
   if (process.env.EMPTY_CACHE) {
     
     fs.writeFileSync(
-      "./src/cache/data/"+networkName+".json",
+      "./src/data/cache/"+networkName+".json",
       JSON.stringify( emptyCache , null, 2),
       { encoding: "utf8", flag: "w" }
     );
@@ -39,8 +39,8 @@ async function main() {
     emptyCache.daoInfo.address = contractsConfig.avatar;
     
     const networkCacheFile: DaoNetworkCache = 
-      (fs.existsSync("./src/cache/data/"+networkName+".json") && !process.env.RESET_CACHE)
-        ? JSON.parse(fs.readFileSync("./src/cache/data/"+networkName+".json", "utf-8"))
+      (fs.existsSync("./src/data/cache/"+networkName+".json") && !process.env.RESET_CACHE)
+        ? JSON.parse(fs.readFileSync("./src/data/cache/"+networkName+".json", "utf-8"))
         : emptyCache;
       
     // Set block range for the script to run, if cache to blcok is set that value is used, if not we use last block 
@@ -52,13 +52,13 @@ async function main() {
 
       // The cache file is updated with the data taht had before plus new data in the network cache file
       fs.writeFileSync(
-        "./src/cache/data/"+networkName+".json",
+        "./src/data/cache/"+networkName+".json",
         JSON.stringify( await getUpdatedCache(networkCacheFile, networkName, fromBlock, toBlock, web3) , null, 2),
         { encoding: "utf8", flag: "w" }
       );
       const ipfs = await IPFS.create();
       const result = await ipfs.add(
-        { path: "./src/cache/data/"+networkName+".json" },
+        { path: "./src/data/cache/"+networkName+".json" },
         { pin: false, onlyHash: true }
       );
       console.debug(`IPFS hash for cache in ${networkName} network: ${result.cid.toString()}`);

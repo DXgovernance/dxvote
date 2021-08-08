@@ -1,4 +1,4 @@
-const configDataFile = require('./data.json');
+const configDataFile = require('../data/config.json');
 const Web3 = require('web3');
 const web3 = new Web3();
 

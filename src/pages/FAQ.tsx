@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { toCamelCaseString } from '../utils';
 import { observer } from 'mobx-react';
 import Box from '../components/common/Box';
-const configDataFile = require('../config/data.json');
+const configDataFile = require('../data/config.json');
 import { useLocation } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
 
