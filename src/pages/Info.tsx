@@ -37,9 +37,9 @@ const InfoPage = () => {
         <ActiveButton route={`/${networkName}/info?view=schemes`}>Schemes</ActiveButton>
       </InfoNavigation>
       <div>
-        { searchPath === `/${networkName}/info?view=schemes` ?
+        { searchPath === `?view=schemes` ?
           <SchemesInformation/>
-        : searchPath === `/${networkName}/info?view=governance` ?
+        : searchPath === `?view=governance` ?
           <GovernanceInformation/>
         : <FinanceInformation/>
         }
