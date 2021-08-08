@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { shortenAddress, toCamelCaseString } from '../../utils';
 import WalletModal from 'components/WalletModal';
 import { isChainIdSupported } from 'provider/connectors';
-import { useStores } from '../../contexts/storesContext';
+import { useContext } from '../../contexts';
 import Box from '../../components/common/Box';
 
 const WrongNetworkButton = styled(Box)`
@@ -44,8 +44,8 @@ const ConnectButton = styled(Box)`
 const Web3ConnectStatus = observer((props) => {
     
     const {
-        root: { modalStore, transactionStore, providerStore, configStore },
-    } = useStores();
+        context: { modalStore, transactionStore, providerStore, configStore },
+    } = useContext();
     const {
         chainId,
         account,

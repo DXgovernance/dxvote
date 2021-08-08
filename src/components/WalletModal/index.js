@@ -11,7 +11,7 @@ import { usePrevious } from 'utils';
 import Link from '../../components/common/Link';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
-import { useStores } from 'contexts/storesContext';
+import { useContext } from '../../contexts';
 import { isChainIdSupported } from '../../provider/connectors';
 import { useActiveWeb3React } from 'provider/providerHooks';
 import metamaskIcon from '../../assets/images/metamask.png';
@@ -117,8 +117,8 @@ const WALLET_VIEWS = {
 const WalletModal = observer(
     ({ pendingTransactions, confirmedTransactions }) => {
         const {
-            root: { modalStore },
-        } = useStores();
+            context: { modalStore },
+        } = useContext();
         const { active, connector, error, activate, account, chainId } = useActiveWeb3React();
         const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
         const [pendingWallet, setPendingWallet] = useState(false);

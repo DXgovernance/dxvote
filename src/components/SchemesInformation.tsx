@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
 import { bnum } from '../utils';
@@ -68,8 +68,8 @@ const TableCell = styled.div`
 
 const SchemesInformation = observer(() => {
     const {
-        root: { providerStore, daoStore },
-    } = useStores();
+        context: { providerStore, daoStore },
+    } = useContext();
     const { library } = providerStore.getActiveWeb3React();
     
     const schemes = daoStore.getAllSchemes();

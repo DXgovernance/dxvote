@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import ActiveButton from '../components/common/ActiveButton';
 import Box from '../components/common/Box';
 import { ZERO_ADDRESS, formatPercentage, normalizeBalance, timeToTimestamp } from '../utils';
@@ -115,8 +115,8 @@ const TableCell = styled.div`
 
 const ProposalsPage = observer(() => {
     const {
-        root: { daoStore, configStore, providerStore },
-    } = useStores();
+        context: { daoStore, configStore, providerStore },
+    } = useContext();
 
     const schemes = daoStore.getAllSchemes();
     const votingMachines = configStore.getNetworkConfig().votingMachines;

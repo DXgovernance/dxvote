@@ -1,4 +1,4 @@
-import RootStore from 'stores';
+import RootContext from '../contexts';
 import { getRecommendedCalls } from '../config';
 import { action, makeObservable } from 'mobx';
 import _ from 'lodash';
@@ -30,10 +30,10 @@ import { getCacheFile } from '../cache';
 
 export default class DaoStore {
   daoCache: DaoNetworkCache;
-  rootStore: RootStore;
+  context: RootContext;
 
-  constructor(rootStore) {
-    this.rootStore = rootStore;
+  constructor(context) {
+    this.context = context;
     
     makeObservable(this, {
       updateNetworkCache: action
@@ -463,7 +463,7 @@ export default class DaoStore {
     repBalance: BigNumber,
     repPercentage: string
   } {
-    const { providerStore } = this.rootStore;
+    const { providerStore } = this.context;
     const { userRep, totalSupply } = this.getRepAt(userAddress, providerStore.getCurrentBlockNumber())
     return {
       repBalance: userRep,
@@ -489,7 +489,7 @@ export default class DaoStore {
     }[] = [];
     
     const cache = this.getCache();
-    const votingMachines = this.rootStore.configStore.getNetworkConfig().votingMachines;
+    const votingMachines = this.context.configStore.getNetworkConfig().votingMachines;
     let proposalEvents = {
       votes: [],
       stakes: [],
@@ -601,7 +601,7 @@ export default class DaoStore {
     const proposalStateChangeEvents = this.getProposalStateChanges(proposalId);
     const scheme = this.getCache().schemes[proposal.scheme];
     const votingMachineOfProposal = this.getVotingMachineOfProposal(proposalId);
-    const networkConfig = this.rootStore.configStore.getNetworkConfig();
+    const networkConfig = this.context.configStore.getNetworkConfig();
     const votingMachineParams = 
     (proposal.paramsHash == "0x0000000000000000000000000000000000000000000000000000000000000000")
     ? this.getCache().votingMachines[votingMachineOfProposal]
@@ -646,13 +646,13 @@ export default class DaoStore {
   }
 
   getSchemeRecommendedCalls(schemeAddress): any {
-    const networkConfig = this.rootStore.configStore.getNetworkConfig();
-    const { library } = this.rootStore.providerStore.getActiveWeb3React();
+    const networkConfig = this.context.configStore.getNetworkConfig();
+    const { library } = this.context.providerStore.getActiveWeb3React();
     const scheme = this.getScheme(schemeAddress);
     const callPermissions = this.getCache().callPermissions;
     let assetLimits = {};
     const from = scheme.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeAddress;
-    let recommendedCalls = getRecommendedCalls(this.rootStore.configStore.getActiveChainName());
+    let recommendedCalls = getRecommendedCalls(this.context.configStore.getActiveChainName());
 
     Object.keys(callPermissions).map((assetAddress) => {
       const callAllowance = this.getCallAllowance(assetAddress, from, schemeAddress, ANY_FUNC_SIGNATURE);
@@ -676,7 +676,7 @@ export default class DaoStore {
   }
   
   getCallAllowance(asset, from, to, functionSignature): any {
-    const networkConfig = this.rootStore.configStore.getNetworkConfig();
+    const networkConfig = this.context.configStore.getNetworkConfig();
     const callPermissions = this.getCache().callPermissions;
   
     if (to == networkConfig.controller && from != networkConfig.avatar) {
@@ -739,7 +739,7 @@ export default class DaoStore {
     userRep: BigNumber,
     totalSupply: BigNumber
   } {
-    const { daoStore, providerStore, configStore } = this.rootStore;
+    const { daoStore, providerStore, configStore } = this.context;
     const repEvents = daoStore.getCache().daoInfo.repEvents;
     let userRep = bnum(0), totalSupply = bnum(0);
     if (atBlock == 0)
@@ -765,7 +765,7 @@ export default class DaoStore {
   getUsersRep(): {
     [userAddress: string]: BigNumber
   } {
-    const { daoStore, providerStore } = this.rootStore;
+    const { daoStore, providerStore } = this.context;
     const repEvents = daoStore.getCache().daoInfo.repEvents;
     let users = {}
     const atBlock = providerStore.getCurrentBlockNumber();

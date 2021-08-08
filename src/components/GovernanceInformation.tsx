@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { FaTrophy, FaMedal } from "react-icons/fa";
 import { bnum } from '../utils';
@@ -72,8 +72,8 @@ const TableCell = styled.div`
 
 const GovernanceInformation = observer(() => {
     const {
-        root: { daoStore },
-    } = useStores();
+        context: { daoStore },
+    } = useContext();
 
     const daoInfo = daoStore.getDaoInfo();
     const governanceInfo = daoStore.getGovernanceInfo();

@@ -1,5 +1,5 @@
 import { makeObservable, observable, action } from 'mobx';
-import RootStore from 'stores';
+import RootContext from '../contexts';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { TransactionReceipt } from 'web3-core';
 
@@ -28,10 +28,10 @@ export interface TransactionRecordMap {
 
 export default class TransactionStore {
     txRecords: TransactionRecordMap;
-    rootStore: RootStore;
+    context: RootContext;
 
-    constructor(rootStore) {
-        this.rootStore = rootStore;
+    constructor(context) {
+        this.context = context;
         this.txRecords = {};
         makeObservable(this, {
             txRecords: observable,
@@ -68,7 +68,7 @@ export default class TransactionStore {
         web3React: Web3ReactContextInterface,
         account
     ): Promise<FetchCode> {
-        const { providerStore } = this.rootStore;
+        const { providerStore } = this.context;
         const currentBlock = providerStore.getCurrentBlockNumber();
 
         const { library } = web3React;

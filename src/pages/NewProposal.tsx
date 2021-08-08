@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
@@ -126,8 +126,8 @@ const SelectInput = styled.select`
 
 const NewProposalPage = observer(() => {
     const {
-        root: { providerStore, daoStore, configStore, daoService, ipfsService, pinataService },
-    } = useStores();
+        context: { providerStore, daoStore, configStore, daoService, ipfsService, pinataService },
+    } = useContext();
     
     const networkTokens = configStore.getTokensOfNetwork()
     const schemes = daoStore.getAllSchemes();

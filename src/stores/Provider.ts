@@ -1,5 +1,5 @@
 import { makeObservable, observable, action } from 'mobx';
-import RootStore from 'stores';
+import RootContext from '../contexts';
 import { ethers } from 'ethers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
@@ -44,10 +44,10 @@ export default class ProviderStore {
     activeChainId: number;
     activeFetchLoop: any;
     activeAccount: string;
-    rootStore: RootStore;
+    context: RootContext;
 
-    constructor(rootStore) {
-      this.rootStore = rootStore;
+    constructor(context) {
+      this.context = context;
       this.web3Contexts = {};
       this.chainData = { currentBlockNumber: -1 };
       makeObservable(this, {
@@ -94,7 +94,7 @@ export default class ProviderStore {
         web3React: Web3ReactContextInterface,
         account: string
     ) => {
-        const { transactionStore } = this.rootStore;
+        const { transactionStore } = this.context;
 
         console.debug('[Fetch Start - User Blockchain Data]', {
             account,
@@ -174,7 +174,7 @@ export default class ProviderStore {
         params: any[],
         overrides?: any
     ): PromiEvent<any> => {
-        const { transactionStore } = this.rootStore;
+        const { transactionStore } = this.context;
         const { chainId, account } = web3React;
 
         overrides = overrides ? overrides : {};
@@ -213,7 +213,7 @@ export default class ProviderStore {
         data: string,
         value: string
     ): PromiEvent<any> => {
-        const { transactionStore } = this.rootStore;
+        const { transactionStore } = this.context;
         const { chainId, account } = web3React;
 
         if (!account) {

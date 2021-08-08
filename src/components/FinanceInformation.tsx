@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { bnum, parseCamelCase, ZERO_ADDRESS, formatCurrency, formatBalance } from '../utils';
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
@@ -65,8 +65,8 @@ const TableCell = styled.div`
 
 const FinanceInformation = observer(() => {
     const {
-        root: { daoStore, coingeckoService, configStore },
-    } = useStores();
+        context: { daoStore, configStore, coingeckoService },
+    } = useContext();
 
     const daoInfo = daoStore.getDaoInfo();
     const schemes = daoStore.getAllSchemes();

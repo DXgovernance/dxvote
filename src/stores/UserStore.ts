@@ -1,6 +1,6 @@
 import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import RootStore from 'stores';
+import RootContext from '../contexts';
 import { ContractType } from './Provider';
 import { BigNumber, bnum } from '../utils';
 import { executeMulticall } from '../cache/helpers';
@@ -15,12 +15,12 @@ export default class UserStore {
     genBalance: BigNumber,
     genApproved: BigNumber
   };
-  rootStore: RootStore;
+  context: RootContext;
 
-  constructor(rootStore) {
-    this.rootStore = rootStore;
+  constructor(context) {
+    this.context = context;
     this.userInfo = {
-      address: rootStore.providerStore.getActiveWeb3React(),
+      address: context.providerStore.getActiveWeb3React(),
       ethBalance: bnum(0),
       repBalance: bnum(0),
       dxdBalance: bnum(0),
@@ -40,7 +40,7 @@ export default class UserStore {
   }
 
   async update(web3React: Web3ReactContextInterface) {
-    const { configStore, providerStore, daoStore, transactionStore } = this.rootStore;
+    const { configStore, providerStore, daoStore, transactionStore } = this.context;
     const networkConfig = configStore.getNetworkConfig();
     const account = web3React.account;
     

@@ -1,9 +1,9 @@
-import RootStore from '../stores';
+import RootContext from '../contexts';
 import IPFS from 'ipfs-core';
 const CID = require('cids')
 
 export default class IPFSService {
-  rootStore: RootStore;
+  context: RootContext;
   calls: {[hash:string]: {
     time: Number,
     content: String,
@@ -12,8 +12,8 @@ export default class IPFSService {
   ipfs: any = null;
   started: Boolean = false;
 
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
+  constructor(context: RootContext) {
+    this.context = context;
   }
   
   async start(){

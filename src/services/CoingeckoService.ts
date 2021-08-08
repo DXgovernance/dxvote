@@ -1,20 +1,20 @@
-import RootStore from '../stores';
+import RootContext from '../contexts';
 import axios from "axios";
 import web3 from "web3";
 import { getTokensToFetchPrice } from '../config';
 
 export default class CoingeckoService {
-  rootStore: RootStore;
+  context: RootContext;
   prices: any = {};
 
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
+  constructor(context: RootContext) {
+    this.context = context;
   }
   
   async loadPrices(){
-    const tokens = getTokensToFetchPrice(this.rootStore.configStore.getActiveChainName());
-    const networkName = this.rootStore.configStore.getActiveChainName() == 'mainnet' ? 'ethereum'
-      : this.rootStore.configStore.getActiveChainName() == 'xdai' ? 'xdai'
+    const tokens = getTokensToFetchPrice(this.context.configStore.getActiveChainName());
+    const networkName = this.context.configStore.getActiveChainName() == 'mainnet' ? 'ethereum'
+      : this.context.configStore.getActiveChainName() == 'xdai' ? 'xdai'
       : '';
     
     if (networkName == 'ethereum' || networkName == 'xdai') {

@@ -2,7 +2,7 @@ import { withRouter } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import Web3ConnectStatus from '../Web3ConnectStatus';
-import { useStores } from '../../contexts/storesContext';
+import { useContext } from '../../contexts';
 import { FiSettings, FiUser, FiBarChart2 } from "react-icons/fi";
 import dxdaoIcon from "assets/images/DXdao.svg"
 import Web3 from 'web3';
@@ -50,8 +50,8 @@ const Header = observer(() => {
   );
   
   const {
-      root: { userStore, providerStore, blockchainStore, configStore, daoStore },
-  } = useStores();
+      context: { userStore, providerStore, blockchainStore, configStore, daoStore },
+  } = useContext();
   
   const { active, account } = providerStore.getActiveWeb3React();
 

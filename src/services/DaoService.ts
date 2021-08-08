@@ -1,7 +1,7 @@
 import { action, makeObservable } from 'mobx';
 import contentHash from 'content-hash';
 import PromiEvent from 'promievent';
-import RootStore from '../stores';
+import RootContext from '../contexts';
 import { ContractType } from '../stores/Provider';
 import {
   BigNumber,
@@ -15,10 +15,10 @@ import {
 } from '../utils';
 
 export default class DaoService {
-  rootStore: RootStore;
+  context: RootContext;
 
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
+  constructor(context: RootContext) {
+    this.context = context;
     
     makeObservable(this, {
       createProposal: action,
@@ -35,7 +35,7 @@ export default class DaoService {
     callData: string,
     value: BigNumber
   ){
-    const { providerStore, configStore } = this.rootStore;
+    const { providerStore, configStore } = this.context;
     const controller = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.Controller,
@@ -46,7 +46,7 @@ export default class DaoService {
   }
   
   decodeWalletSchemeCall(from: string, to: string, data: string, value: BigNumber){
-    const { abiService, providerStore, configStore } = this.rootStore;
+    const { abiService, providerStore, configStore } = this.context;
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();
     let functionSignature = data.substring(0,10);
@@ -64,7 +64,6 @@ export default class DaoService {
     if (functionSignature == ERC20_TRANSFER_SIGNATURE || functionSignature == ERC20_APPROVE_SIGNATURE) {
       asset = to;
     }
-    
     const recommendedCallUsed = recommendedCalls.find((recommendedCall) => {
       return (
         asset == recommendedCall.asset
@@ -113,7 +112,7 @@ export default class DaoService {
   }
   
   createProposal(scheme: string, schemeType: string, proposalData: any): PromiEvent<any> {
-    const { providerStore, configStore } = this.rootStore;
+    const { providerStore, configStore } = this.context;
     const networkConfig = configStore.getNetworkConfig();
     const { library } = providerStore.getActiveWeb3React();
 
@@ -196,7 +195,7 @@ export default class DaoService {
   }
   
   vote(decision: string, amount: string, proposalId: string): PromiEvent<any> {
-    const { providerStore, daoStore } = this.rootStore;
+    const { providerStore, daoStore } = this.context;
     const { account } = providerStore.getActiveWeb3React();
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
@@ -209,7 +208,7 @@ export default class DaoService {
   }
   
   approveVotingMachineToken(votingMachineAddress): PromiEvent<any> {
-    const { providerStore, daoStore } = this.rootStore;
+    const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.ERC20,
@@ -221,7 +220,7 @@ export default class DaoService {
   }
   
   stake( decision: string, amount: string, proposalId: string, ): PromiEvent<any> {
-    const { providerStore, daoStore } = this.rootStore;
+    const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
@@ -235,7 +234,7 @@ export default class DaoService {
   execute(
     proposalId: string,
   ): PromiEvent<any> {
-    const { providerStore, daoStore } = this.rootStore;
+    const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
@@ -247,7 +246,7 @@ export default class DaoService {
   }
   
   redeem(proposalId: string, account: string): PromiEvent<any> {
-    const { providerStore, daoStore } = this.rootStore;
+    const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,

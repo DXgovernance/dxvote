@@ -1,15 +1,15 @@
 import { makeObservable, observable, action } from 'mobx';
-import RootStore from 'stores';
+import RootContext from '../contexts';
 import { getTokensOfNetwork, getNetworkConfig, getRecommendedCalls } from '../config';
 import { _ } from 'lodash';
 import { NETWORK_NAMES } from '../provider/connectors';
 
 export default class ConfigStore {
     darkMode: boolean;
-    rootStore: RootStore;
+    context: RootContext;
 
-    constructor(rootStore) {
-      this.rootStore = rootStore;
+    constructor(context) {
+      this.context = context;
       this.darkMode = false;
       makeObservable(this, {
           darkMode: observable,
@@ -19,7 +19,7 @@ export default class ConfigStore {
     }
     
     getActiveChainName() {
-      const activeWeb3 = this.rootStore.providerStore.getActiveWeb3React();
+      const activeWeb3 = this.context.providerStore.getActiveWeb3React();
       return activeWeb3 ? NETWORK_NAMES[activeWeb3.chainId] : 'none';
     }
     

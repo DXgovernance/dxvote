@@ -1,12 +1,12 @@
 import { makeObservable, observable, action } from 'mobx';
-import RootStore from 'stores';
+import RootContext from '../contexts';
 
 export default class ModalStore {
     walletModalVisible: boolean;
-    rootStore: RootStore;
+    context: RootContext;
 
-    constructor(rootStore) {
-        this.rootStore = rootStore;
+    constructor(context) {
+        this.context = context;
         this.walletModalVisible = false;
         makeObservable(this, {
             walletModalVisible: observable,

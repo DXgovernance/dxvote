@@ -5,7 +5,7 @@ import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { getBlockchainLink } from '../../utils';
 
 import Link from '../../components/common/Link';
-import { useStores } from '../../contexts/storesContext';
+import { useContext } from '../../contexts';
 
 const OptionButton = styled.div`
     ${({ theme }) => theme.flexColumnNoWrap}
@@ -193,8 +193,8 @@ export default function AccountDetails(props: Props) {
         openOptions,
     } = props;
     const {
-        root: { providerStore, configStore },
-    } = useStores();
+        context: { providerStore, configStore },
+    } = useContext();
     const { account, connector } = providerStore.getActiveWeb3React();
 
     const networkName = configStore.getActiveChainName();

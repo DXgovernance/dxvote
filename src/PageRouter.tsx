@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useStores } from './contexts/storesContext';
+import { useContext } from './contexts';
 import { FiZapOff, FiZap } from "react-icons/fi";
 import { useLocation, useHistory } from 'react-router-dom';
 import Box from './components/common/Box';
@@ -30,8 +30,8 @@ const LoadingBox = styled(Box)`
 const PageRouter = observer(({ children }) => {
     
     const {
-        root: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService, coingeckoService },
-    } = useStores();
+        context: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService, coingeckoService },
+    } = useContext();
     
     const history = useHistory();
     const location = useLocation();

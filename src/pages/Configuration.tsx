@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
 import { FiCheckCircle, FiX } from "react-icons/fi";
@@ -30,8 +30,8 @@ const InputBox = styled.input`
 
 const ConfigPage = observer(() => {
     const {
-        root: { configStore, pinataService, etherscanService },
-    } = useStores();
+        context: { configStore, pinataService, etherscanService },
+    } = useContext();
     
     const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(etherscanService.auth);
     const [pinataKeyStatus, setPinataKeyStatus] = React.useState(pinataService.auth);

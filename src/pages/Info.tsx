@@ -1,6 +1,6 @@
 import styled from 'styled-components'; 
 import { useLocation } from 'react-router-dom';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import ActiveButton from '../components/common/ActiveButton';
 import Box from '../components/common/Box';
 
@@ -25,8 +25,8 @@ const InfoNavigation = styled.div`
 `;
 const InfoPage = () => {
   const {
-    root: {configStore},
-  } = useStores();
+    context: { configStore },
+  } = useContext();
   const networkName = configStore.getActiveChainName();
   const searchPath = useLocation().search;
   return (

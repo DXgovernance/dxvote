@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useHistory } from "react-router-dom";
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import { useLocation } from 'react-router-dom';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Box from '../components/common/Box';
@@ -21,8 +21,8 @@ const UserPage = observer(() => {
     let history = useHistory();
 
     const {
-        root: { daoStore, configStore },
-    } = useStores();
+        context: { daoStore, configStore },
+    } = useContext();
     const userAddress = useLocation().pathname.split("/")[3];
     const userEvents = daoStore.getUserEvents(userAddress);
     const userInfo = daoStore.getUser(userAddress);

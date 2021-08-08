@@ -1,4 +1,4 @@
-import RootStore from 'stores';
+import RootContext from '../contexts';
 import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
@@ -13,10 +13,10 @@ export default class BlockchainStore {
   initialLoadComplete: boolean;
   contractStorage: ContractStorage = {};
   eventsStorage: EventStorage = {};
-  rootStore: RootStore;
+  context: RootContext;
 
-  constructor(rootStore) {
-    this.rootStore = rootStore;
+  constructor(context) {
+    this.context = context;
     makeObservable(this, {
         activeFetchLoop: observable,
         initialLoadComplete: observable,
@@ -27,7 +27,7 @@ export default class BlockchainStore {
   }
 
   reduceMulticall(calls: Call[], results: any, blockNumber: number): CallEntry[] {
-    const { multicallService } = this.rootStore;
+    const { multicallService } = this.context;
     return calls.map((call, index) => {
       const value = multicallService.decodeCall(call, results[index]);
       return {
@@ -150,7 +150,7 @@ export default class BlockchainStore {
         configStore,
         multicallService,
         daoStore
-      } = this.rootStore;
+      } = this.context;
       
       daoStore.setCache(configStore.getActiveChainName());
       
@@ -169,7 +169,7 @@ export default class BlockchainStore {
         networkCache = await getUpdatedCache(networkCache, networkName, fromBlock, toBlock, library);
         
         let tokensBalancesCalls = [];
-        const tokens = getTokensToFetchPrice(this.rootStore.configStore.getActiveChainName());
+        const tokens = getTokensToFetchPrice(this.context.configStore.getActiveChainName());
         
         tokens.map((token) => {
           if (!networkCache.daoInfo.tokenBalances[token.address])
@@ -197,10 +197,10 @@ export default class BlockchainStore {
         tokensBalancesCalls.map((tokensBalancesCall) => {
           if (tokensBalancesCall.params[0] == networkConfig.avatar) {
             networkCache.daoInfo.tokenBalances[tokensBalancesCall.address] =
-              this.rootStore.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
+              this.context.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
           } else {
             networkCache.schemes[tokensBalancesCall.params[0]].tokenBalances[tokensBalancesCall.address] =
-              this.rootStore.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
+              this.context.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
           }
         });
         

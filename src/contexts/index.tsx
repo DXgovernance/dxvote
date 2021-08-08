@@ -1,11 +1,5 @@
-// Stores
-import ProviderStore from './Provider';
-import TransactionStore from './Transaction';
-import ModalStore from './Modal';
-import ConfigStore from './ConfigStore';
-import DaoStore from './DaoStore';
-import UserStore from './UserStore';
-import BlockchainStore from './BlockchainStore';
+import React from 'react';
+
 import ABIService from '../services/ABIService';
 import MulticallService from '../services/MulticallService';
 import DaoService from '../services/DaoService';
@@ -15,7 +9,16 @@ import PinataService from '../services/PinataService';
 import EtherscanService from '../services/EtherscanService';
 import CoingeckoService from '../services/CoingeckoService';
 
-export default class RootStore {
+import ProviderStore from '../stores/Provider';
+import TransactionStore from '../stores/Transaction';
+import ModalStore from '../stores/Modal';
+import ConfigStore from '../stores/ConfigStore';
+import DaoStore from '../stores/DaoStore';
+import UserStore from '../stores/UserStore';
+import BlockchainStore from '../stores/BlockchainStore';
+
+export default class RootContext {
+
   providerStore: ProviderStore;
   transactionStore: TransactionStore;
   modalStore: ModalStore;
@@ -23,7 +26,7 @@ export default class RootStore {
   daoStore: DaoStore;
   userStore: UserStore;
   blockchainStore: BlockchainStore;
-
+  
   abiService: ABIService;
   multicallService: MulticallService;
   daoService: DaoService;
@@ -32,8 +35,16 @@ export default class RootStore {
   pinataService: PinataService;
   etherscanService: EtherscanService;
   coingeckoService: CoingeckoService;
-
+  
   constructor() {
+    this.providerStore = new ProviderStore(this);
+    this.transactionStore = new TransactionStore(this);
+    this.modalStore = new ModalStore(this);
+    this.configStore = new ConfigStore(this);
+    this.daoStore = new DaoStore(this);
+    this.userStore = new UserStore(this);
+    this.blockchainStore = new BlockchainStore(this);
+    
     this.abiService = new ABIService(this);
     this.multicallService = new MulticallService(this);
     this.eventsService = new EventsService(this);
@@ -42,12 +53,11 @@ export default class RootStore {
     this.pinataService = new PinataService(this);
     this.etherscanService = new EtherscanService(this);
     this.coingeckoService = new CoingeckoService(this);
-    this.providerStore = new ProviderStore(this);
-    this.transactionStore = new TransactionStore(this);
-    this.modalStore = new ModalStore(this);
-    this.configStore = new ConfigStore(this);
-    this.daoStore = new DaoStore(this);
-    this.userStore = new UserStore(this);
-    this.blockchainStore = new BlockchainStore(this);
   }
 }
+
+export const rootContext = React.createContext({
+  context: new RootContext()
+});
+
+export const useContext = () => React.useContext(rootContext);

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 import moment from 'moment';
 import Countdown from 'react-countdown';
 import { FiPlayCircle, FiFastForward } from "react-icons/fi";
@@ -129,8 +129,9 @@ const ProposalPage = observer(() => {
     let history = useHistory();
 
     const {
-        root: { providerStore, daoStore, configStore, daoService, ipfsService, userStore },
-    } = useStores();
+        context: { providerStore, daoStore, configStore, userStore, daoService, ipfsService },
+    } = useContext();
+
     const networkConfig = configStore.getNetworkConfig();
     const votingMachines = networkConfig.votingMachines;
     const proposalId = useLocation().pathname.split("/")[3];

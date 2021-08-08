@@ -4,7 +4,7 @@ import {
     css,
     ThemeProvider as StyledComponentsThemeProvider,
 } from 'styled-components';
-import { useStores } from '../contexts/storesContext';
+import { useContext } from '../contexts';
 
 export const SUPPORTED_THEMES = {
     DARK: 'DARK',
@@ -34,8 +34,8 @@ const black = '#000000';
 
 export default function ThemeProvider({ children }) {
     const {
-        root: { configStore },
-    } = useStores();
+        context: { configStore },
+    } = useContext();
 
     const darkMode = configStore.darkMode;
 

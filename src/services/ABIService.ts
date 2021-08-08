@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/utils';
-import RootStore from '../stores';
+import RootContext from '../contexts';
 
 export const schema = {
   Avatar: require('../contracts/DxAvatar').abi,
@@ -14,10 +14,10 @@ export const schema = {
 };
 
 export default class ABIService {
-  root: RootStore;
+  context: RootContext;
 
-  constructor(root: RootStore) {
-    this.root = root;
+  constructor(context: RootContext) {
+    this.context = context;
   }
   
   getAbi(contractType: string) {
@@ -25,7 +25,7 @@ export default class ABIService {
   }
   
   decodeCall(contractType: string, data: string) {
-    const { providerStore } = this.root;
+    const { providerStore } = this.context;
 
     const { library } = providerStore.getActiveWeb3React();
 

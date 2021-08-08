@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Copy from './Copy';
 import { getBlockchainLink } from '../../utils';
-import { useStores } from '../../contexts/storesContext';
+import { useContext } from '../../contexts';
 import { FiExternalLink } from "react-icons/fi";
 
 const AddressLink = styled.span`
@@ -21,8 +21,8 @@ const AddressLink = styled.span`
 const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy = false, onlyIcon = false}) => {
   
     const {
-        root: { configStore },
-    } = useStores();
+        context: { configStore },
+    } = useContext();
     
     const networkName = configStore.getActiveChainName();
 
