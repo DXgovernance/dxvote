@@ -6,7 +6,6 @@ import { ContractType } from './Provider';
 import { bnum } from '../utils';
 import { getUpdatedCache } from '../cache';
 import { getTokensToFetchPrice } from '../config';
-import { ContractStorage, EventStorage, Call, CallEntry, CallValue } from '../types';
 
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;

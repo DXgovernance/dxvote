@@ -12,19 +12,6 @@ import {
   normalizeBalance,
   formatPercentage
 } from '../utils';
-import {
-  DaoNetworkCache,
-  DaoInfo,
-  Proposal,
-  Scheme,
-  VotingMachineParameters,
-  Vote,
-  Stake,
-  Redeem,
-  RedeemRep,
-  ProposalStateChange,
-  ProposalEvent
-} from '../types';
 
 import { getCacheFile } from '../cache';
 

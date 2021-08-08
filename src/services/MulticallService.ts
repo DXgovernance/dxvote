@@ -1,8 +1,6 @@
 import { Interface } from 'ethers/utils';
 import RootContext from '../contexts';
 import { ContractType } from '../stores/Provider';
-import { Call } from '../types';
-
 
 export default class MulticallService {
   context: RootContext;

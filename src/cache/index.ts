@@ -9,7 +9,6 @@ import {
   descriptionHashToIPFSHash,
   ipfsHashToDescriptionHash
 } from './helpers';
-import { DaoNetworkCache } from '../types';
 import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import { getContracts } from '../contracts';
 import { getSchemeTypeData } from '../config';
