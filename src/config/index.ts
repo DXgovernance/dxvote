@@ -1,9 +1,15 @@
 const configDataFile = require('./data.json');
 const Web3 = require('web3');
+const web3 = new Web3();
+
 import { NETWORK_IDS, NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
-const web3 = new Web3();
+/*
+Exports the proccesed configuration in a usable way to be used by the dapp from a single json data file.
+
+The most important part is the data file, from this file is picked up all the configuration for the dapp.
+*/
 
 export const getNetworkConfig = function(networkName) {
   let networkConfig;
@@ -334,6 +340,10 @@ export const getTokensOfNetwork = function(networkName) {
 export const getTokensToFetchPrice = function(networkName) {
   return configDataFile.tokens
     .filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName] && tokenInFile.fetchPrice);
+}
+
+export const getProposalTemplates = function() {
+  return configDataFile.proposalTemplates;
 }
 
 export const getRecommendedCalls = function(networkName) {

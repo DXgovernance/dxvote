@@ -7,7 +7,7 @@ import Question from '../components/common/Question';
 import Box from '../components/common/Box';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
-import ProposalTemplates from '../config/proposalTemplates';
+import { getProposalTemplates } from '../config';
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 
 import {
@@ -177,9 +177,9 @@ const NewProposalPage = observer(() => {
     // 5 = Proposal creation tx receipt received
     
     const [errorMessage, setErrorMessage] = React.useState("");
-    
-    if (ProposalTemplates[0].name != "Custom")
-      ProposalTemplates.unshift({name: "Custom", title: "", description: "" });
+    const proposalTemplates = getProposalTemplates();
+    if (proposalTemplates[0].name != "Custom")
+      proposalTemplates.unshift({name: "Custom", title: "", description: "" });
 
     const {
       assetLimits: transferLimits, recommendedCalls
@@ -489,9 +489,9 @@ const NewProposalPage = observer(() => {
     }
     
     function onProposalTemplate(event) {
-      if (ProposalTemplates[event.target.value].name != 'Custom') {
-        setTitleText(ProposalTemplates[event.target.value].title);
-        setDescriptionText(ProposalTemplates[event.target.value].description);
+      if (proposalTemplates[event.target.value].name != 'Custom') {
+        setTitleText(proposalTemplates[event.target.value].title);
+        setDescriptionText(proposalTemplates[event.target.value].description);
         calls.splice(0, calls.length);
         setCallsInState(calls);
       }
@@ -526,7 +526,7 @@ const NewProposalPage = observer(() => {
               })}
             </select>
             <select name="proposalTemplate" id="proposalTemplateSelector" onChange={onProposalTemplate}>
-              {ProposalTemplates.map((template, i) =>{
+              {proposalTemplates.map((template, i) =>{
                 return <option key={"proposalTemplate"+i} value={i}>{template.name}</option>
               })}
             </select>
