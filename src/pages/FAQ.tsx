@@ -54,9 +54,7 @@ const FAQPage = observer(() => {
   }
 
    const FAQBody = 
-`# DXvote FAQ
-
-# Where are the dao funds held?
+`# Where are the dao funds held?
 
 Most of the ETH and tokens are held in the DXdao avatar address, this is the safest place for the funds to be, the access to this funds is usually slow and it take day for a proposal to move funds from this address. The Wallet Schemes can also hold funds too, but only the ones that dont make calls from the avatar.
 
@@ -216,6 +214,14 @@ The minimum amount to be set as downstake when a proposal is created.
 ### daoBountyConst
 
 The downstake for proposal is calculated when the proposal is created, by using the formula: (daoBountyConst * averageBoostDownstakes) / 100. If the value calculated is higher than minimumDaoBounty then this value will be used, if not the start downstake of the proposal will be minimumDaoBounty.
+
+# Useful Apps
+
+- Unit Converter Etherscan: https://rinkeby.etherscan.io/unitconverter
+- ETH Converter: https://eth-converter.com
+- UNIX Timestamp Converter: https://www.unixtimestamp.com
+- Hashhex ABI Encoder/Decoder: https://abi.hashex.org
+- Abidas ABI Encoder/Decoder: https://adibas03.github.io/online-ethereum-abi-encoder-decoder
 `
 
   return (
