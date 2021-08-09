@@ -341,7 +341,7 @@ export const getTokensOfNetwork = function(networkName) {
 }
 
 export const getTokensToFetchPrice = function(networkName) {
-  return configDataFile[networkName].tokens .filter((tokenInFile) => tokenInFile.fetchPrice);
+  return configDataFile[networkName].tokens.filter((tokenInFile) => tokenInFile.fetchPrice);
 }
 
 export const getProposalTemplates = function(networkName) {
@@ -494,8 +494,8 @@ export const getRecommendedCalls = function(networkName) {
     }
   ];
   
-  if (configDataFile.recommendedCalls[networkName] && configDataFile.recommendedCalls[networkName].length > 0)
-    recommendedCalls = recommendedCalls.concat(configDataFile.recommendedCalls[networkName]);
+  if (configDataFile[networkName].recommendedCalls && configDataFile[networkName].recommendedCalls.length > 0)
+    recommendedCalls = recommendedCalls.concat(configDataFile[networkName].recommendedCalls);
   
   networkTokens.map((networkToken) => {
     recommendedCalls.push({
