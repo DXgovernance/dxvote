@@ -15,6 +15,7 @@ import {
   ANY_ADDRESS,
   ANY_FUNC_SIGNATURE,
   sleep,
+  bnum,
   normalizeBalance,
   TXEvents
 } from '../utils';
@@ -310,7 +311,7 @@ const NewProposalPage = observer(() => {
         const proposalData = (schemeToUse.type == "ContributionReward")
         ? {
           beneficiary: contributionRewardCalls.beneficiary,
-          reputationChange: contributionRewardCalls.repChange,
+          reputationChange: normalizeBalance(bnum(contributionRewardCalls.repChange)).toString(),
           ethValue: contributionRewardCalls.ethValue,
           externalToken: contributionRewardCalls.externalToken,
           tokenValue: contributionRewardCalls.tokenValue,
