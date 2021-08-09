@@ -238,9 +238,9 @@ const ProposalsPage = observer(() => {
                   <Link key={"proposal"+i} to={`/${networkName}/proposal/${proposal.id}`} style={{textDecoration: "none"}}>
                     <TableRow>
                       <TableCell width="35%" align="left" weight='500' wrapText="true">
-                        {created && <FiFeather style={{margin: "0px 2px"}}/>}
-                        {voted && <FiCheckCircle style={{margin: "0px 2px"}}/>}
-                        {staked && <FiCheckSquare style={{margin: "0px 2px"}}/>}
+                        {created && <FiFeather style={{ minWidth: "15px", margin: "0px 2px"}}/>}
+                        {voted && <FiCheckCircle style={{ minWidth: "15px", margin: "0px 2px"}}/>}
+                        {staked && <FiCheckSquare style={{ minWidth: "15px", margin: "0px 2px"}}/>}
                         {proposal.title.length > 0 ? proposal.title : proposal.id}
                       </TableCell>
                       <TableCell width="15%" align="center">
