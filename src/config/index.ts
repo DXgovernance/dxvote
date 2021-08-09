@@ -1,4 +1,8 @@
-const configDataFile = require('../data/config.json');
+
+// Import the type protected data from config.json
+import {default as configJson} from 'data/config.json';
+const configDataFile: AppConfig = configJson;
+
 const Web3 = require('web3');
 const web3 = new Web3();
 

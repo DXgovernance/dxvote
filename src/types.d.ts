@@ -240,6 +240,58 @@ declare global {
     votingMachines: {[address: string]: VotingMachine};
     ipfsHashes: IPFSHash[];
   }
+  
+  // Application Config
+
+  interface AppConfig {
+    contracts: {
+      [networkName: string] : {
+        fromBlock: number;
+        avatar: string;
+        reputation: string;
+        token: string;
+        controller: string;
+        permissionRegistry: string;
+        utils: {[name: string]: string};
+        votingMachines: {
+          [name: string]: {
+            address: string;
+            token: string;
+          }
+        };
+      }
+    };
+    recommendedCalls: {[networkName: string] : {
+        asset: string;
+        from: string;
+        to: string;
+        toName: string;
+        functionName: string;
+        params: {
+          type: string;
+          name: string;
+          defaultValue: string;
+          decimals?: number;
+        }[],
+        decodeText: string;
+      }[]
+    };
+    proposalTemplates: {
+      name: string;
+      title: string;
+      description: string;
+    }[];
+    tokens: {
+      chainId: number;
+      address: string;
+      name: string;
+      decimals:number;
+      symbol: string;
+      fetchPrice: boolean;
+      logoURI?: string;
+    }[];
+  }
+  
 }
 
 export interface DaoInfo {
