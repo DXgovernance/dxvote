@@ -1,5 +1,4 @@
 import RootContext from '../contexts';
-import { getRecommendedCalls } from '../config';
 import { action, makeObservable } from 'mobx';
 import _ from 'lodash';
 import {
@@ -639,7 +638,7 @@ export default class DaoStore {
     const callPermissions = this.getCache().callPermissions;
     let assetLimits = {};
     const from = scheme.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeAddress;
-    let recommendedCalls = getRecommendedCalls(this.context.configStore.getActiveChainName());
+    let recommendedCalls = this.context.configStore.getRecommendedCalls();
 
     Object.keys(callPermissions).map((assetAddress) => {
       const callAllowance = this.getCallAllowance(assetAddress, from, schemeAddress, ANY_FUNC_SIGNATURE);

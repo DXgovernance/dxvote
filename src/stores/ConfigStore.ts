@@ -1,6 +1,6 @@
 import { makeObservable, observable, action } from 'mobx';
 import RootContext from '../contexts';
-import { getTokensOfNetwork, getNetworkConfig, getRecommendedCalls } from '../config';
+import { getTokensOfNetwork, getTokenData, getNetworkConfig, getRecommendedCalls, getProposalTemplates } from '../config';
 import { _ } from 'lodash';
 import { NETWORK_NAMES } from '../provider/connectors';
 
@@ -55,5 +55,13 @@ export default class ConfigStore {
     
     getTokensOfNetwork() {
       return getTokensOfNetwork(this.getActiveChainName());
+    }
+    
+    getTokenOfNetwork(address) {
+      return getTokenData(this.getActiveChainName(), address);
+    }
+    
+    getProposalTemplates() {
+      return getProposalTemplates(this.getActiveChainName());
     }
 }

@@ -4,7 +4,6 @@ import { useContext } from '../contexts';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { bnum, parseCamelCase, ZERO_ADDRESS, formatCurrency, formatBalance } from '../utils';
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
-import { getTokenData } from '../config';
 
 const FinanceInfoWrapper = styled.div`
     background: white;
@@ -88,7 +87,7 @@ const FinanceInformation = observer(() => {
       }]
     };
     Object.keys(daoInfo.tokenBalances).map((tokenAddress) => {
-      const tokenData = getTokenData(tokenAddress);
+      const tokenData = configStore.getTokenOfNetwork(tokenAddress);
       assets.avatar.push({
         address: tokenAddress,
         name: tokenData.name,
@@ -117,7 +116,7 @@ const FinanceInformation = observer(() => {
         }]
       
       Object.keys(tokenBalances).map((tokenAddress) => {
-        const tokenData = getTokenData(tokenAddress);
+        const tokenData = configStore.getTokenOfNetwork(tokenAddress);
 
         assets[scheme.name].push({
           address: tokenAddress,

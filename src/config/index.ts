@@ -6,7 +6,7 @@ const configDataFile: AppConfig = configJson;
 const Web3 = require('web3');
 const web3 = new Web3();
 
-import { NETWORK_IDS, NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
 /*
@@ -14,7 +14,6 @@ Exports the proccesed configuration in a usable way to be used by the dapp from 
 
 The most important part is the data file, from this file is picked up all the configuration for the dapp.
 */
-
 export const getNetworkConfig = function(networkName) {
   let networkConfig;
 
@@ -36,7 +35,7 @@ export const getNetworkConfig = function(networkName) {
       },
     };
   } else  if (networkName == 'mainnet') {
-    networkConfig = configDataFile.contracts.mainnet;
+    networkConfig = configDataFile.mainnet.contracts;
     const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
     
     networkConfig.daostack = {
@@ -167,7 +166,7 @@ export const getNetworkConfig = function(networkName) {
     };
     
   } else if (networkName == 'xdai') {
-    networkConfig = configDataFile.contracts.xdai;
+    networkConfig = configDataFile.xdai.contracts;
     const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
     
     networkConfig.daostack = {
@@ -251,7 +250,7 @@ export const getNetworkConfig = function(networkName) {
     };
     
   } else {
-    networkConfig = configDataFile.contracts[networkName];
+    networkConfig = configDataFile[networkName].contracts;
   };
   
   return networkConfig;
@@ -333,21 +332,20 @@ export const getSchemeTypeData = function(networkName, schemeAddress) {
   }
 }
 
-export const getTokenData = function(tokenAddress) {
-  return configDataFile.tokens.find((tokenInFile) => tokenInFile.address == tokenAddress);
+export const getTokenData = function(networkName, tokenAddress) {
+  return configDataFile[networkName].tokens.find((tokenInFile) => tokenInFile.address == tokenAddress);
 }
 
 export const getTokensOfNetwork = function(networkName) {
-  return configDataFile.tokens.filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName]);
+  return configDataFile[networkName].tokens;
 }
 
 export const getTokensToFetchPrice = function(networkName) {
-  return configDataFile.tokens
-    .filter((tokenInFile) => tokenInFile.chainId == NETWORK_IDS[networkName] && tokenInFile.fetchPrice);
+  return configDataFile[networkName].tokens .filter((tokenInFile) => tokenInFile.fetchPrice);
 }
 
-export const getProposalTemplates = function() {
-  return configDataFile.proposalTemplates;
+export const getProposalTemplates = function(networkName) {
+  return configDataFile[networkName].proposalTemplates;
 }
 
 export const getRecommendedCalls = function(networkName) {

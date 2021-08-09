@@ -244,8 +244,8 @@ declare global {
   // Application Config
 
   interface AppConfig {
-    contracts: {
-      [networkName: string] : {
+    [networkName: string] : {
+      contracts: {
         fromBlock: number;
         avatar: string;
         reputation: string;
@@ -259,9 +259,8 @@ declare global {
             token: string;
           }
         };
-      }
-    };
-    recommendedCalls: {[networkName: string] : {
+      };
+      recommendedCalls: {
         asset: string;
         from: string;
         to: string;
@@ -274,22 +273,21 @@ declare global {
           decimals?: number;
         }[],
         decodeText: string;
-      }[]
-    };
-    proposalTemplates: {
-      name: string;
-      title: string;
-      description: string;
-    }[];
-    tokens: {
-      chainId: number;
-      address: string;
-      name: string;
-      decimals:number;
-      symbol: string;
-      fetchPrice: boolean;
-      logoURI?: string;
-    }[];
+      }[];
+      proposalTemplates: {
+        name: string;
+        title: string;
+        description: string;
+      }[];
+      tokens: {
+        address: string;
+        name: string;
+        decimals:number;
+        symbol: string;
+        fetchPrice: boolean;
+        logoURI?: string;
+      }[];
+    }
   }
   
 }

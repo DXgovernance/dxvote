@@ -7,7 +7,6 @@ import Question from '../components/common/Question';
 import Box from '../components/common/Box';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
-import { getProposalTemplates } from '../config';
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 
 import {
@@ -178,7 +177,7 @@ const NewProposalPage = observer(() => {
     // 5 = Proposal creation tx receipt received
     
     const [errorMessage, setErrorMessage] = React.useState("");
-    const proposalTemplates = getProposalTemplates();
+    const proposalTemplates = configStore.getProposalTemplates();
     if (proposalTemplates[0].name != "Custom")
       proposalTemplates.unshift({name: "Custom", title: "", description: "" });
 
