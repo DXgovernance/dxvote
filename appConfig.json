@@ -1,0 +1,14 @@
+{
+  "cacheToBlock": {
+    "mainnet": 12990000,
+    "xdai": 17500000,
+    "rinkeby": 9080000,
+    "arbitrumTestnet": 1710000
+  },
+  "cacheHash": {
+    "mainnet": "QmTApRTUvHao1CcBFx7F7Y2AAiEWQfdNe5dknnENftbUaN",
+    "xdai": "QmWramp5qyJuH4Kx7SaEZgVQB2pFmAUjVX6M7zXB9Wy8JU",
+    "rinkeby": "Qmd7dWAPwqTNdStzkow6GXRhFTyN5F9ywoi5mie3ZmNJME",
+    "arbitrumTestnet": "QmTWTHTtcvDnLHK4zAZJXQVkbPCcP8aCgFfwP68oWZeRwX"
+  }
+}
