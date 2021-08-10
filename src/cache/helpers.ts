@@ -137,6 +137,18 @@ export const executeMulticall = async function(web3, multicall, calls) {
   };
 }
 
+export const executeRawMulticall = async function(multicall, calls) {
+  const rawCalls = calls.map((call) => {
+    return [call[0], call[1]];
+  });
+  
+  const { returnData } = await multicall.methods.aggregate(rawCalls).call();
+
+  return {
+    returnData
+  };
+}
+
 export const isNode = function () {
   return (typeof module !== 'undefined' && module.exports);
 }

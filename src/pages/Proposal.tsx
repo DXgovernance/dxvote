@@ -12,7 +12,9 @@ import contentHash from 'content-hash';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
+import { executeRawMulticall } from '../cache/helpers';
 import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
+import { ContractType } from '../stores/Provider';  
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
@@ -146,6 +148,7 @@ const ProposalPage = observer(() => {
     const { account } = providerStore.getActiveWeb3React();
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
+    const [contributonRewardRedeem, setContributonRewardRedeem] = React.useState([false,false,false,false]);
     const [proposalDescription, setProposalDescription] = React.useState(
       "## Getting proposal description from IPFS..."
     );
@@ -167,6 +170,56 @@ const ProposalPage = observer(() => {
     let stakedAmount = bnum(0);
     let positiveStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "1").length;
     let negativeStakesCount = proposalEvents.stakes.filter((stake) => stake.vote.toString() === "2").length;
+    
+    if (
+      scheme.type == 'ContributionReward'
+      && proposal.stateInVotingMachine == VotingMachineProposalState.Executed
+      && (contributonRewardRedeem.findIndex(reward => reward == true)) < 0
+    ) {
+      const web3 = providerStore.getActiveWeb3React().library;
+      const multicall = providerStore.getContract(
+        providerStore.getActiveWeb3React(),
+        ContractType.Multicall,
+        networkConfig.utils.multicall
+      )
+      let callsToExecute = [
+        [
+          scheme.address,
+          web3.eth.abi.encodeFunctionCall({
+              name: 'organizationsProposals',
+              type: 'function',
+              inputs: [{
+                  type: 'address',
+                  name: 'avatar'
+              },{
+                  type: 'bytes32',
+                  name: 'proposalId'
+              }]
+          }, [networkConfig.avatar, proposalId])
+        ]
+      ];
+      executeRawMulticall(
+        multicall, callsToExecute
+      ).then((callsResponse) => {
+        const decodedResponse = web3.eth.abi.decodeParameters(
+          ["uint256", "int256", "uint256", "address", "uint256", "address", "uint256", "uint256", "uint256"],
+          callsResponse.returnData[0]
+        );
+        console.log("[Decoded Contribution Reward Proposal]", decodedResponse)
+        if (
+          bnum(decodedResponse[0]).gt(0)
+          || !bnum(decodedResponse[1]).eq(0)
+          || bnum(decodedResponse[2]).gt(0)
+          || bnum(decodedResponse[4]).gt(0)
+        )
+          setContributonRewardRedeem([
+            bnum(decodedResponse[0]).gt(0),
+            !bnum(decodedResponse[1]).eq(0),
+            bnum(decodedResponse[2]).gt(0),
+            bnum(decodedResponse[4]).gt(0)
+          ]);
+      });
+    }
     
     const {
       userRep: userRepAtProposalCreation, totalSupply: totalRepAtProposalCreation
@@ -285,6 +338,10 @@ const ProposalPage = observer(() => {
     const executeProposal = function() {
       daoService.execute(proposalId);
     };
+    
+    const redeemBeneficiary = function() {
+      daoService.redeemBeneficiary(scheme.address, proposalId, contributonRewardRedeem);
+    };
 
     const finishTimeReached = finishTime.toNumber() < moment().unix();
 
@@ -354,6 +411,9 @@ const ProposalPage = observer(() => {
               : pendingAction == 3 ?
                 <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
               : <div/>
+              }
+              {(contributonRewardRedeem.findIndex(reward => reward == true)) > -1 &&
+                <ActionButton color="blue" onClick={redeemBeneficiary}><FiPlayCircle/> Redeem 4 Beneficiary </ActionButton>
               }
             </SidebarRow>
             : <div/>

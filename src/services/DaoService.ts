@@ -256,4 +256,32 @@ export default class DaoService {
       {}
     );
   }
+  
+  redeemBeneficiary(
+    schemeAddress: string,
+    proposalId: string,
+    whatToRedeem: boolean[]
+  ): PromiEvent<any> {
+    const { providerStore, configStore } = this.context;
+    console.log(schemeAddress, proposalId, whatToRedeem)
+    return providerStore.sendRawTransaction(
+      providerStore.getActiveWeb3React(),
+      schemeAddress,
+      providerStore.getActiveWeb3React().library.eth.abi.encodeFunctionCall({
+          name: 'redeem',
+          type: 'function',
+          inputs: [{
+              type: 'bytes32',
+              name: '_proposalId'
+          },{
+              type: 'address',
+              name: '_avatar'
+          },{
+              type: 'bool[4]',
+              name: '_whatToRedeem'
+          }]
+      }, [proposalId, configStore.getNetworkConfig().avatar, whatToRedeem]),
+      "0"
+    );
+  }
 }
