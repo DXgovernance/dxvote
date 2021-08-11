@@ -21,6 +21,8 @@ module.exports = {
       'dxdao-contracts/contracts/dxvote/PermissionRegistry.sol',
       'dxdao-contracts/contracts/utils/Multicall.sol',
       'dxdao-contracts/contracts/test/ERC20Mock.sol',
+      'dxdao-contracts/contracts/daostack/universalSchemes/ContributionReward.sol',
+      'dxdao-contracts/contracts/daostack/universalSchemes/SchemeRegistrar.sol',
       '@daostack/infra/contracts/votingMachines/GenesisProtocol.sol'
     ],
   },
