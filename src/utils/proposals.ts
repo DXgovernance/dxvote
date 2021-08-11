@@ -24,7 +24,7 @@ export const calculateStakes = function(thresholdConst, boostedProposals, preBoo
 }
 // @ts-ignore
 export const decodeProposalStatus = function(
-  proposal, proposalStateChangeEvents, votingMachineParams, maxSecondsForExecution, autoBoost
+  proposal, proposalStateChangeEvents, votingMachineParams, maxSecondsForExecution, autoBoost, schemeType
 ) {
   const timeNow = bnum(moment().unix());
   const queuedVotePeriodLimit = votingMachineParams.queuedVotePeriodLimit;
@@ -69,7 +69,7 @@ export const decodeProposalStatus = function(
         status: "Passed", 
         boostTime: boostedPhaseTime,
         finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
-        pendingAction: 0
+        pendingAction: schemeType == "ContributionReward" ? 4 : 0
       };
     case "3":
       if (timeNow > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {

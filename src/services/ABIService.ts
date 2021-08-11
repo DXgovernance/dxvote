@@ -11,6 +11,8 @@ export const schema = {
   ERC20: require('../contracts/ERC20').abi,
   PermissionRegistry: require('../contracts/PermissionRegistry').abi,
   Multicall: require('../contracts/Multicall').abi,
+  ContributionReward: require('../contracts/ContributionReward').abi,
+  SchemeRegistrar: require('../contracts/SchemeRegistrar').abi,
 };
 
 export default class ABIService {

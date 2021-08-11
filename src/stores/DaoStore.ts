@@ -597,7 +597,7 @@ export default class DaoStore {
     
     const autoBoost = (networkConfig.votingMachines.dxd && networkConfig.votingMachines.dxd.address == votingMachineOfProposal)
     return decodeProposalStatus(
-      proposal, proposalStateChangeEvents, votingMachineParams, scheme.maxSecondsForExecution, autoBoost
+      proposal, proposalStateChangeEvents, votingMachineParams, scheme.maxSecondsForExecution, autoBoost, scheme.type
     );
   }
   

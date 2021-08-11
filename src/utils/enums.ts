@@ -11,11 +11,7 @@ export enum TXEvents {
   INVARIANT = 'invariant',
 }
 
-export enum VoteDecision {
-  None,
-  YES,
-  NO
-}
+export enum VoteDecision { None, YES, NO }
 
 export enum WalletSchemeProposalState { None, Submitted, Rejected, ExecutionSucceded, ExecutionTimeout }
 

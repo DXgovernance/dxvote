@@ -53,6 +53,8 @@ cp artifacts/dxdao-contracts/contracts/utils/Multicall.sol/Multicall.json src/co
 cp artifacts/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol/ERC20.json src/contracts/ERC20.json
 cp artifacts/dxdao-contracts/contracts/dxvote/WalletScheme.sol/WalletScheme.json src/contracts/WalletScheme.json
 cp artifacts/dxdao-contracts/contracts/dxvote/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
+cp artifacts/dxdao-contracts/contracts/daostack/universalSchemes/ContributionReward.sol/ContributionReward.json src/contracts/ContributionReward.json
+cp artifacts/dxdao-contracts/contracts/daostack/universalSchemes/SchemeRegistrar.sol/SchemeRegistrar.json src/contracts/SchemeRegistrar.json
 cp artifacts/@daostack/infra/contracts/votingMachines/GenesisProtocol.sol/GenesisProtocol.json src/contracts/GenesisProtocol.json
 
 # Disable isolatedModules and use commonjs in tsconfig

@@ -1,5 +1,14 @@
 import axios from 'axios';
-import { bnum, ZERO_HASH, ZERO_ADDRESS, sleep, decodePermission, decodeSchemeParameters } from '../utils';
+import {
+  bnum,
+  ZERO_HASH,
+  ZERO_ADDRESS,
+  sleep,
+  decodePermission,
+  decodeSchemeParameters,
+  WalletSchemeProposalState,
+  VotingMachineProposalState
+} from '../utils';
 import {
   getEvents,
   getRawEvents,
@@ -10,6 +19,7 @@ import {
   ipfsHashToDescriptionHash
 } from './helpers';
 import WalletSchemeJSON from '../contracts/WalletScheme.json';
+import ContributionRewardJSON from '../contracts/ContributionReward.json';
 import { getContracts } from '../contracts';
 import { getSchemeTypeData } from '../config';
 
@@ -660,6 +670,23 @@ export const updateProposals = async function (
               await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
               "getOrganizationProposal", [proposalId]
             ]);
+          } else if (schemeTypeData.type == 'ContributionReward') {
+            callsToExecute.push([ 
+              await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
+              "getRedeemedPeriods", [proposalId, allContracts.avatar._address, 0]
+            ]);
+            callsToExecute.push([ 
+              await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
+              "getRedeemedPeriods", [proposalId, allContracts.avatar._address, 1]
+            ]);
+            callsToExecute.push([ 
+              await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
+              "getRedeemedPeriods", [proposalId, allContracts.avatar._address, 2]
+            ]);
+            callsToExecute.push([ 
+              await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
+              "getRedeemedPeriods", [proposalId, allContracts.avatar._address, 3]
+            ]);
           }
           
           const callsResponse = await executeMulticall(web3, allContracts.multicall, callsToExecute);
@@ -694,7 +721,7 @@ export const updateProposals = async function (
             to: [],
             callData: [],
             value: [],
-            state: 0,
+            state: WalletSchemeProposalState.Submitted,
             title: "",
             descriptionHash: "",
             submittedTime: 0
@@ -716,6 +743,21 @@ export const updateProposals = async function (
                 callsResponse.returnData[5]
               );
           } else {
+            if (schemeTypeData.type == 'ContributionReward') {
+              if (
+                callsResponse.decodedReturnData[5] > 0
+                || callsResponse.decodedReturnData[6] > 0
+                || callsResponse.decodedReturnData[7] > 0
+                || callsResponse.decodedReturnData[8] > 0
+              ) {
+                schemeProposalInfo.state = WalletSchemeProposalState.ExecutionSucceded;
+              } else if (votingMachineProposalInfo.state == "1" || votingMachineProposalInfo.state == "2") {
+                schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
+              } else {
+                schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
+              }
+            }
+            
             const transactionReceipt = await web3.eth.getTransactionReceipt(schemeEvent.transactionHash);
             try {
               schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
@@ -1011,6 +1053,7 @@ export const updateProposals = async function (
   // Update proposals title
   for (let proposalIndex = 0; proposalIndex < Object.keys(networkCache.proposals).length; proposalIndex++) {
     const proposal = networkCache.proposals[Object.keys(networkCache.proposals)[proposalIndex]];
+    const ipfsHash = descriptionHashToIPFSHash(proposal.descriptionHash);
     if (retryIntent > 3) {
       retryIntent = 0;
       continue;
@@ -1024,19 +1067,20 @@ export const updateProposals = async function (
       )
     )
       try {
-        console.debug('Getting title from proposal', proposal.id, proposal.descriptionHash);
+        console.debug('Getting title from proposal', proposal.id, proposal.descriptionHash, ipfsHash);
         const response = await axios.request({
-          url:'https://ipfs.io/ipfs/'+descriptionHashToIPFSHash(proposal.descriptionHash),
+          url:'https://ipfs.io/ipfs/'+ipfsHash,
           method: "GET",
           timeout: isNode() ? 5000 : 1000
         });
         if (response && response.data && response.data.title) {
           networkCache.proposals[proposal.id].title = response.data.title;
         } else {
-          console.error('Couldnt not get title from', proposal.descriptionHash);
+          console.error('Couldnt not get title from', proposal.id, ipfsHash);
         }
       } catch (error) {
-        console.error('Error getting title from', proposal.descriptionHash, 'waiting 2 seconds and trying again..');
+        console.error('Error getting title from', proposal.id, ipfsHash, 'waiting 2 seconds and trying again..');
+        console.error(error.message);
         if (isNode()) {
           proposalIndex --;
           retryIntent ++;
@@ -1093,6 +1137,27 @@ export const updateProposals = async function (
           await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
           "getOrganizationProposal", [proposalId]
         ]);
+      } else if (
+        schemeTypeData.type == 'ContributionReward'
+        && networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed
+        && networkCache.proposals[proposalId].stateInScheme == WalletSchemeProposalState.Submitted
+      ) {
+        callsToExecute.push([ 
+          await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
+          "getRedeemedPeriods", [proposalId, allContracts.avatar._address, 0]
+        ]);
+        callsToExecute.push([ 
+          await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
+          "getRedeemedPeriods", [proposalId, allContracts.avatar._address, 1]
+        ]);
+        callsToExecute.push([ 
+          await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
+          "getRedeemedPeriods", [proposalId, allContracts.avatar._address, 2]
+        ]);
+        callsToExecute.push([ 
+          await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
+          "getRedeemedPeriods", [proposalId, allContracts.avatar._address, 3]
+        ]);
       }
   
       const callsResponse = await executeMulticall(web3, allContracts.multicall, callsToExecute);
@@ -1124,8 +1189,8 @@ export const updateProposals = async function (
       const proposalTimes = callsResponse.decodedReturnData[4];
       const proposalShouldBoost = callsResponse.decodedReturnData[5];
   
-      const schemeProposalInfo = (schemeTypeData.type == 'WalletScheme')
-        ? web3.eth.abi.decodeParameters(
+      if (schemeTypeData.type == 'WalletScheme') {
+        networkCache.proposals[proposalId].stateInScheme = web3.eth.abi.decodeParameters(
           [ 
             {type: 'address[]', name: 'to' },
             {type: 'bytes[]', name: 'callData' },
@@ -1136,18 +1201,26 @@ export const updateProposals = async function (
             {type: 'uint256', name: 'submittedTime' }
           ],
           callsResponse.returnData[6]
-        )
-        : {
-          to: "",
-          callData: [],
-          value: [],
-          state: 0,
-          title: "",
-          descriptionHash: "",
-          submittedTime: 0
-        };
+        ).state;
+      } else if (
+        schemeTypeData.type == 'ContributionReward'
+        && networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed
+        && networkCache.proposals[proposalId].stateInScheme == WalletSchemeProposalState.Submitted
+      ) {
+        if (schemeTypeData.type == 'ContributionReward') {
+          if (
+            callsResponse.decodedReturnData[6] > 0
+            || callsResponse.decodedReturnData[7] > 0
+            || callsResponse.decodedReturnData[8] > 0
+            || callsResponse.decodedReturnData[9] > 0
+          ) {
+            networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.ExecutionSucceded;
+          } else if (votingMachineProposalInfo.state == "1" || votingMachineProposalInfo.state == "2") {
+            networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.Rejected;
+          }
+        }
+      };
   
-      networkCache.proposals[proposalId].stateInScheme = schemeProposalInfo.state;
       networkCache.proposals[proposalId].stateInVotingMachine = votingMachineProposalInfo.state;
       networkCache.proposals[proposalId].winningVote = votingMachineProposalInfo.winningVote;
       networkCache.proposals[proposalId].currentBoostedVotePeriodLimit = votingMachineProposalInfo.currentBoostedVotePeriodLimit;
