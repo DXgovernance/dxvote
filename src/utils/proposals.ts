@@ -36,42 +36,49 @@ export const decodeProposalStatus = function(
   const preBoostedPhaseTime = proposal.preBoostedPhaseTime;
 
   switch (proposal.stateInVotingMachine) {
-    case "1":
+    case 1:
       return { 
         status: "Expired in Queue", 
         boostTime: bnum(0), 
         finishTime: submittedTime.plus(queuedVotePeriodLimit),
         pendingAction: 0
       };
-    case "2":
-      if (proposal.stateInScheme == "2")
+    case 2:
+      if (proposal.stateInScheme == 2)
         return { 
           status: "Proposal Rejected", 
           boostTime: boostedPhaseTime,
           finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
           pendingAction: 0
         };
-      else if (proposal.stateInScheme == "3")
+      else if (proposal.stateInScheme == 3)
         return { 
           status: "Execution Succeded", 
           boostTime: boostedPhaseTime,
           finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
           pendingAction: 0
         };
-      else if (proposal.stateInScheme == "4")
+      else if (proposal.stateInScheme == 4)
         return { 
           status: "Execution Timeout", 
           boostTime: boostedPhaseTime,
           finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
           pendingAction: 0
         };
+      else if (proposal.stateInScheme == 1)
+        return {
+          status: "Passed", 
+          boostTime: boostedPhaseTime,
+          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
+          pendingAction: schemeType == "ContributionReward" ? 4 : 0
+        };
       else return { 
         status: "Passed", 
         boostTime: boostedPhaseTime,
         finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
-        pendingAction: schemeType == "ContributionReward" ? 4 : 0
+        pendingAction: 0
       };
-    case "3":
+    case 3:
       if (timeNow > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
         return { 
           status: "Expired in Queue",
@@ -87,7 +94,7 @@ export const decodeProposalStatus = function(
           pendingAction: 0
         };
       }
-    case "4":
+    case 4:
       if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).plus(maxSecondsForExecution).toNumber() && proposal.shouldBoost) {
         return { 
           status: "Execution Timeout",
@@ -100,7 +107,7 @@ export const decodeProposalStatus = function(
           status: "Pending Execution", 
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
           finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit),
-          pendingAction: 2
+          pendingAction: 0
         };
       } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
         return { 
@@ -138,7 +145,7 @@ export const decodeProposalStatus = function(
           pendingAction: 0
         };
       }
-    case "5":
+    case 5:
       if (timeNow > boostedPhaseTime.plus(boostedVotePeriodLimit).toNumber()) {
         return { 
           status: "Pending Execution", 
@@ -154,7 +161,7 @@ export const decodeProposalStatus = function(
           pendingAction: 0
         };
       }
-    case "6":
+    case 6:
       return { 
         status: "Quiet Ending Period", 
         boostTime: boostedPhaseTime,

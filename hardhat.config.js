@@ -4,7 +4,7 @@ require('hardhat-dependency-compiler');
 
 const MNEMONIC = process.env.REACT_APP_KEY_MNEMONIC;
 const INFURA_API_KEY = process.env.REACT_APP_KEY_INFURA_API_KEY;
-const ALCHEMY_API_KEY = process.env.REACT_APP_KEY_ALCHEMY_API_KEY;
+const ALCHEMY_API_KEY = process.env.REACT_APP_KEY_ALCHEMY_API_KEY || "";
 
 module.exports = {
   paths: {

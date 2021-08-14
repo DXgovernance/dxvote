@@ -154,7 +154,7 @@ export default class DaoStore {
   
   getAmountOfProposalsPreBoostedInScheme(schemeAddress: string): number {
     return this.getSchemeProposals(schemeAddress).filter((proposal) => {
-      return (proposal.stateInVotingMachine== 4)
+      return (proposal.stateInVotingMachine == 4)
     }).length;
   }
   

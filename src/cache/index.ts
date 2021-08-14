@@ -980,8 +980,8 @@ export const updateProposals = async function (
             title: schemeProposalInfo.title,
             callData: schemeProposalInfo.callData,
             values: schemeProposalInfo.value.map((value) => bnum(value)),
-            stateInScheme: schemeProposalInfo.state,
-            stateInVotingMachine: votingMachineProposalInfo.state,
+            stateInScheme: Number(schemeProposalInfo.state),
+            stateInVotingMachine: Number(votingMachineProposalInfo.state),
             descriptionHash: schemeProposalInfo.descriptionHash,
             creationEvent: {
               event: schemeEvent.event,
@@ -1188,9 +1188,10 @@ export const updateProposals = async function (
       );
       const proposalTimes = callsResponse.decodedReturnData[4];
       const proposalShouldBoost = callsResponse.decodedReturnData[5];
-  
+      if (proposalId == "0xe6dcd8af89f9dc40fe4a6ff3b21ed416c7e2c80b8867f12ae5be831c1b21bb30")
+        console.log(networkCache.proposals[proposalId])
       if (schemeTypeData.type == 'WalletScheme') {
-        networkCache.proposals[proposalId].stateInScheme = web3.eth.abi.decodeParameters(
+        networkCache.proposals[proposalId].stateInScheme = Number(web3.eth.abi.decodeParameters(
           [ 
             {type: 'address[]', name: 'to' },
             {type: 'bytes[]', name: 'callData' },
@@ -1201,7 +1202,7 @@ export const updateProposals = async function (
             {type: 'uint256', name: 'submittedTime' }
           ],
           callsResponse.returnData[6]
-        ).state;
+        ).state);
       } else if (
         schemeTypeData.type == 'ContributionReward'
         && networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed
@@ -1221,7 +1222,7 @@ export const updateProposals = async function (
         }
       };
   
-      networkCache.proposals[proposalId].stateInVotingMachine = votingMachineProposalInfo.state;
+      networkCache.proposals[proposalId].stateInVotingMachine = Number(votingMachineProposalInfo.state);
       networkCache.proposals[proposalId].winningVote = votingMachineProposalInfo.winningVote;
       networkCache.proposals[proposalId].currentBoostedVotePeriodLimit = votingMachineProposalInfo.currentBoostedVotePeriodLimit;
       networkCache.proposals[proposalId].daoBountyRemain = bnum(votingMachineProposalInfo.daoBountyRemain);
