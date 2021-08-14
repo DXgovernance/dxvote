@@ -6,9 +6,9 @@
     "arbitrumTestnet": 1710000
   },
   "cacheHash": {
-    "mainnet": "QmTApRTUvHao1CcBFx7F7Y2AAiEWQfdNe5dknnENftbUaN",
-    "xdai": "QmWramp5qyJuH4Kx7SaEZgVQB2pFmAUjVX6M7zXB9Wy8JU",
-    "rinkeby": "Qmd7dWAPwqTNdStzkow6GXRhFTyN5F9ywoi5mie3ZmNJME",
-    "arbitrumTestnet": "QmTWTHTtcvDnLHK4zAZJXQVkbPCcP8aCgFfwP68oWZeRwX"
+    "mainnet": "QmTHY8iTQ9ubU9XeQkbHqD4n2EPeCqRxtCtTwqagWuKMoY",
+    "xdai": "Qmdyaf8vometENEzgQ5EZjDUzqZd2cBWuFbKnaDdHHi9k8",
+    "rinkeby": "QmR3V2GcgEq89TKoBFSLZsxq8LTejvrdjBZjLzNNoFqDck",
+    "arbitrumTestnet": "QmSLDw23kumWdsyQBiTT6M3zBxGU1kqxGE6HSNUCxnGocV"
   }
 }

@@ -59,18 +59,19 @@ async function main() {
         JSON.stringify( await getUpdatedCache(networkCacheFile, networkName, fromBlock, toBlock, web3), null, 2),
         { encoding: "utf8", flag: "w" }
       );
-      const ipfs = await IPFS.create();
-      const result = await ipfs.add(
-        { path: "./src/data/cache/"+networkName+".json" },
-        { pin: false, onlyHash: true }
-      );
-      appConfig.cacheToBlock[networkName] = toBlock;
-      appConfig.cacheHash[networkName] = result.cid.toString();
-      
-      fs.writeFileSync("./appConfig.json", JSON.stringify(appConfig, null, 2), { encoding: "utf8", flag: "w" });
-      
-      console.debug(`IPFS hash for cache in ${networkName} network: ${appConfig.cacheHash[networkName]}`);
     }
+    
+    const ipfs = await IPFS.create();
+    const result = await ipfs.add(
+      fs.readFileSync("./src/data/cache/"+networkName+".json"),
+      { pin: false, onlyHash: true }
+    );
+    appConfig.cacheToBlock[networkName] = toBlock;
+    appConfig.cacheHash[networkName] = result.cid.toString();
+    
+    fs.writeFileSync("./appConfig.json", JSON.stringify(appConfig, null, 2), { encoding: "utf8", flag: "w" });
+    
+    console.debug(`IPFS hash for cache in ${networkName} network: ${appConfig.cacheHash[networkName]}`);
     
   }
 } 
