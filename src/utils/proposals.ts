@@ -1,4 +1,4 @@
-import { bnum } from './helpers';
+import { bnum, WalletSchemeProposalState, VotingMachineProposalState } from './index';
 import moment from 'moment';
 
 export const calculateStakes = function(thresholdConst, boostedProposals, preBoostedProposals, upstakes, downstakes ) {
@@ -36,49 +36,59 @@ export const decodeProposalStatus = function(
   const preBoostedPhaseTime = proposal.preBoostedPhaseTime;
 
   switch (proposal.stateInVotingMachine) {
-    case 1:
+    case VotingMachineProposalState.ExpiredInQueue:
       return { 
         status: "Expired in Queue", 
         boostTime: bnum(0), 
         finishTime: submittedTime.plus(queuedVotePeriodLimit),
         pendingAction: 0
       };
-    case 2:
-      if (proposal.stateInScheme == 2)
+    case VotingMachineProposalState.Executed:
+      if (proposal.stateInScheme == WalletSchemeProposalState.Rejected)
         return { 
           status: "Proposal Rejected", 
           boostTime: boostedPhaseTime,
-          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
+          finishTime: bnum(
+            proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+          ),
           pendingAction: 0
         };
-      else if (proposal.stateInScheme == 3)
+      else if (proposal.stateInScheme == WalletSchemeProposalState.ExecutionSucceded)
         return { 
           status: "Execution Succeded", 
           boostTime: boostedPhaseTime,
-          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
+          finishTime: bnum(
+            proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+          ),
           pendingAction: 0
         };
-      else if (proposal.stateInScheme == 4)
+      else if (proposal.stateInScheme == WalletSchemeProposalState.ExecutionTimeout)
         return { 
           status: "Execution Timeout", 
           boostTime: boostedPhaseTime,
-          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
+          finishTime: bnum(
+            proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+          ),
           pendingAction: 0
         };
-      else if (proposal.stateInScheme == 1)
+      else if (proposal.stateInScheme == WalletSchemeProposalState.Submitted)
         return {
           status: "Passed", 
           boostTime: boostedPhaseTime,
-          finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
+          finishTime: bnum(
+            proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+          ),
           pendingAction: schemeType == "ContributionReward" ? 4 : 0
         };
       else return { 
         status: "Passed", 
         boostTime: boostedPhaseTime,
-        finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "2").timestamp),
+        finishTime: bnum(
+          proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+        ),
         pendingAction: 0
       };
-    case 3:
+    case VotingMachineProposalState.Queued:
       if (timeNow > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
         return { 
           status: "Expired in Queue",
@@ -94,7 +104,7 @@ export const decodeProposalStatus = function(
           pendingAction: 0
         };
       }
-    case 4:
+    case VotingMachineProposalState.PreBoosted:
       if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).plus(maxSecondsForExecution).toNumber() && proposal.shouldBoost) {
         return { 
           status: "Execution Timeout",
@@ -145,7 +155,7 @@ export const decodeProposalStatus = function(
           pendingAction: 0
         };
       }
-    case 5:
+    case VotingMachineProposalState.Boosted:
       if (timeNow > boostedPhaseTime.plus(boostedVotePeriodLimit).toNumber()) {
         return { 
           status: "Pending Execution", 
@@ -161,11 +171,14 @@ export const decodeProposalStatus = function(
           pendingAction: 0
         };
       }
-    case 6:
+    case VotingMachineProposalState.QuietEndingPeriod:
       return { 
         status: "Quiet Ending Period", 
         boostTime: boostedPhaseTime,
-        finishTime: bnum(proposalStateChangeEvents.find(event => event.state == "6").timestamp).plus(quietEndingPeriod),
+        finishTime: bnum(
+          proposalStateChangeEvents
+            .find(event => event.state == VotingMachineProposalState.QuietEndingPeriod).timestamp
+          ).plus(quietEndingPeriod),
         pendingAction: 2
       };
   }
