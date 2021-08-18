@@ -46,7 +46,8 @@ const Web3ReactManager = ({ children }) => {
       // Handle the new accounts, or lack thereof.
       // "accounts" will always be an array, but it can be empty.
       // blockchainStore.fetchData(web3React, false);
-      userStore.update(providerStore.getActiveWeb3React());
+      if (networkActive)
+        userStore.update(providerStore.getActiveWeb3React());
     });
     
   } catch (error) {
