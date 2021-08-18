@@ -41,7 +41,6 @@ const PageRouter = observer(({ children }) => {
     ipfsService.start();
     etherscanService.isAuthenticated();
     pinataService.isAuthenticated();
-    coingeckoService.loadPrices();
 
     const { active: providerActive } = providerStore.getActiveWeb3React();
     
@@ -58,6 +57,7 @@ const PageRouter = observer(({ children }) => {
       );
     else {
       
+      coingeckoService.loadPrices();
       const networkName = configStore.getActiveChainName();
       if (location.pathname == "/"){
         history.push(`/${networkName}/proposals`)
