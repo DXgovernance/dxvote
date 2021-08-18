@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import ActiveButton from '../components/common/ActiveButton';
 import Box from '../components/common/Box';
-import { ZERO_ADDRESS, formatPercentage, normalizeBalance, timeToTimestamp } from '../utils';
+import { ZERO_ADDRESS, formatPercentage, normalizeBalance, timeToTimestamp, formatNumberValue } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from "react-icons/fi";
 
 const ProposalsTableWrapper = styled(Box)`
@@ -214,8 +214,8 @@ const ProposalsPage = observer(() => {
                 && ((titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0)))
                 && ((schemeFilter == 'All Schemes') || (proposal.scheme == schemeFilter))
               ) {
-                const positiveStake = normalizeBalance(proposal.positiveStakes, 18);
-                const negativeStake = normalizeBalance(proposal.negativeStakes, 18);
+                const positiveStake = formatNumberValue(normalizeBalance(proposal.positiveStakes, 18), 1);
+                const negativeStake = formatNumberValue(normalizeBalance(proposal.negativeStakes, 18), 1);
                 const repAtCreation = daoStore.getRepAt(ZERO_ADDRESS, proposal.creationEvent.l1BlockNumber).totalSupply;
                 
                 const positiveVotesPercentage = formatPercentage(
@@ -254,10 +254,10 @@ const ProposalsPage = observer(() => {
                           {(proposal.pendingAction == 3) ? <small> Pending Finish Execution </small> : <span></span>}
                         </span>
                       </TableCell>
-                      <TableCell width="17.5%" align="space-evenly"> 
-                        <span style={{color: "green", flex:"3", textAlign:"right"}}>{positiveStake.toString()} {votingMachineTokenName} </span>
+                      <TableCell width="17.5%" align="space-evenly" style={{ minWidth: "15px", margin: "0px 2px"}}> 
+                        <span style={{color: "green", flex:"5", textAlign:"right"}}>{positiveStake.toString()} {votingMachineTokenName} </span>
                         <span style={{flex:"1", textAlign:"center"}}>|</span>
-                        <span style={{color: "red", flex:"3", textAlign:"left"}}> {negativeStake.toString()} {votingMachineTokenName}</span>
+                        <span style={{color: "red", flex:"5", textAlign:"left"}}> {negativeStake.toString()} {votingMachineTokenName}</span>
                       </TableCell>
                       <TableCell width="17.5%" align="space-evenly"> 
                         <span style={{color: "green", flex:"3", textAlign:"right"}}>{positiveVotesPercentage} </span>
