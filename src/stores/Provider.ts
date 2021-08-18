@@ -19,7 +19,8 @@ export enum ContractType {
     VotingMachine = 'VotingMachine',
     DXDVotingMachine = 'DXDVotingMachine',
     WalletScheme = 'WalletScheme',
-    Multicall = 'Multicall'
+    Multicall = 'Multicall',
+    Redeemer ='Redeemer'
 }
 
 export interface ChainData {

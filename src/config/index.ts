@@ -40,6 +40,8 @@ export const getNetworkConfig = function(networkName) {
     
     networkConfig.daostack = {
       
+      "contributionRewardRedeemer": "0x406bfD9cDb247432fEEA52edD218F2a4Bd238C9b",
+      
       "dxSchemes": {
         "0x2E6FaE82c77e1D6433CCaAaF90281523b99D0D0a": "DxLockMgnForRep",
         "0x4D8DB062dEFa0254d00a44aA1602C30594e47B12": "DxGenAuction4Rep",
@@ -170,6 +172,8 @@ export const getNetworkConfig = function(networkName) {
     const avatarAddressEncoded = web3.eth.abi.encodeParameter('address', networkConfig.avatar);
     
     networkConfig.daostack = {
+      
+      "contributionRewardRedeemer": "0xd2cc17817c0d4cfc6819510b2e5288512122d71c",
       
       "schemeRegistrar": {
         "address": "0x22Ac81BE75cF76281D88A0F3A8Ae59b9abbE9da1",

@@ -23,6 +23,7 @@ module.exports = {
       'dxdao-contracts/contracts/test/ERC20Mock.sol',
       'dxdao-contracts/contracts/daostack/universalSchemes/ContributionReward.sol',
       'dxdao-contracts/contracts/daostack/universalSchemes/SchemeRegistrar.sol',
+      'dxdao-contracts/contracts/daostack/utils/Redeemer.sol',
       '@daostack/infra/contracts/votingMachines/GenesisProtocol.sol'
     ],
   },

@@ -13,6 +13,7 @@ export const schema = {
   Multicall: require('../contracts/Multicall').abi,
   ContributionReward: require('../contracts/ContributionReward').abi,
   SchemeRegistrar: require('../contracts/SchemeRegistrar').abi,
+  Redeemer: require('../contracts/Redeemer').abi,
 };
 
 export default class ABIService {

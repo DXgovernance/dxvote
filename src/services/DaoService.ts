@@ -257,31 +257,57 @@ export default class DaoService {
     );
   }
   
-  redeemBeneficiary(
+  redeemContributionReward(
+    redeemerAddress: string,
+    votingMachineAddress: string,
     schemeAddress: string,
     proposalId: string,
-    whatToRedeem: boolean[]
+    beneficiary: string
   ): PromiEvent<any> {
     const { providerStore, configStore } = this.context;
-    console.log(schemeAddress, proposalId, whatToRedeem)
-    return providerStore.sendRawTransaction(
+    // I have NO IDEA why it works with the voting machine address and scheme address are inverted in the function call,
+    // Alchemy uses it like that, weird.
+    return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
-      schemeAddress,
-      providerStore.getActiveWeb3React().library.eth.abi.encodeFunctionCall({
+      ContractType.Redeemer,
+      redeemerAddress,
+      'redeem',
+      [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkConfig().avatar, beneficiary],
+      {}
+    );
+  }
+  
+  redeemContributionRewardCall(
+    redeemerAddress: string,
+    votingMachineAddress: string,
+    schemeAddress: string,
+    proposalId: string,
+    beneficiary: string
+  ): PromiEvent<any> {
+    const { providerStore, configStore } = this.context;
+    const web3 = providerStore.getActiveWeb3React().library;
+    return web3.eth.call({
+      to: redeemerAddress,
+      data: web3.eth.abi.encodeFunctionCall({
           name: 'redeem',
           type: 'function',
           inputs: [{
+              type: 'address',
+              name: '_contributionReward'
+          },{
+              type: 'address',
+              name: '_genesisProtocol'
+          },{
               type: 'bytes32',
               name: '_proposalId'
           },{
               type: 'address',
               name: '_avatar'
           },{
-              type: 'bool[4]',
-              name: '_whatToRedeem'
+              type: 'address',
+              name: '_beneficiary'
           }]
-      }, [proposalId, configStore.getNetworkConfig().avatar, whatToRedeem]),
-      "0"
-    );
+      }, [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkConfig().avatar, beneficiary])
+    });
   }
 }

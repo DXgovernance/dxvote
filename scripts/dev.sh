@@ -55,6 +55,7 @@ cp artifacts/dxdao-contracts/contracts/dxvote/WalletScheme.sol/WalletScheme.json
 cp artifacts/dxdao-contracts/contracts/dxvote/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
 cp artifacts/dxdao-contracts/contracts/daostack/universalSchemes/ContributionReward.sol/ContributionReward.json src/contracts/ContributionReward.json
 cp artifacts/dxdao-contracts/contracts/daostack/universalSchemes/SchemeRegistrar.sol/SchemeRegistrar.json src/contracts/SchemeRegistrar.json
+cp artifacts/dxdao-contracts/contracts/daostack/utils/Redeemer.sol/Redeemer.json src/contracts/Redeemer.json
 cp artifacts/@daostack/infra/contracts/votingMachines/GenesisProtocol.sol/GenesisProtocol.json src/contracts/GenesisProtocol.json
 
 # Disable isolatedModules and use commonjs in tsconfig

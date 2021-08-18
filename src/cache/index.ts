@@ -1092,7 +1092,8 @@ export const updateProposals = async function (
   // Update existent active proposals
   await Promise.all(Object.keys(networkCache.proposals).map(async (proposalId) => {
     
-    if (networkCache.proposals[proposalId].stateInVotingMachine > 2) {
+    if ((networkCache.proposals[proposalId].stateInVotingMachine > VotingMachineProposalState.Executed)
+    || (networkCache.proposals[proposalId].stateInScheme == WalletSchemeProposalState.Submitted)) {
   
       const schemeAddress = networkCache.proposals[proposalId].scheme;
       const schemeTypeData = getSchemeTypeData(networkName, schemeAddress);
@@ -1220,7 +1221,9 @@ export const updateProposals = async function (
             networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.Rejected;
           }
         }
-      };
+      } else if (networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed) {
+        networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.ExecutionSucceded;
+      }
   
       networkCache.proposals[proposalId].stateInVotingMachine = Number(votingMachineProposalInfo.state);
       networkCache.proposals[proposalId].winningVote = votingMachineProposalInfo.winningVote;
