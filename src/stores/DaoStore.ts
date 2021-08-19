@@ -3,7 +3,7 @@ import { action, makeObservable } from 'mobx';
 import _ from 'lodash';
 import {
   BigNumber,
-  ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, MAX_UINT, ERC20_TRANSFER_SIGNATURE, ERC20_APPROVE_SIGNATURE,
+  ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, MAX_UINT,
   bnum,
   decodeProposalStatus,
   VoteDecision,
@@ -671,22 +671,13 @@ export default class DaoStore {
         fromTime: 0
       };
     } else if (
-      to == networkConfig.permissionRegistry
+      asset == ZERO_ADDRESS
+      && to == networkConfig.permissionRegistry
       && from == networkConfig.avatar
-      && (functionSignature == ERC20_TRANSFER_SIGNATURE || functionSignature == ERC20_APPROVE_SIGNATURE)
     ) {
       return {
         value: bnum(0),
         fromTime: 1
-      };
-    } else if (
-      to == networkConfig.permissionRegistry
-      && from != networkConfig.avatar
-      && (functionSignature == ERC20_TRANSFER_SIGNATURE || functionSignature == ERC20_APPROVE_SIGNATURE)
-    ) {
-      return {
-        value: bnum(0),
-        fromTime: 0
       };
     } else if (!callPermissions[asset] || !callPermissions[asset][from]) {
       return {
