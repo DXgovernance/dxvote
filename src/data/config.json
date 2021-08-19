@@ -882,7 +882,32 @@
         }
       }
     },
-    "recommendedCalls": [],
+    "recommendedCalls": [
+      {
+        "asset": "0x0000000000000000000000000000000000000000",
+        "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+        "to": "0x685E9F2Aae1c3e6D170c2F8c08984A2528768455",
+        "toName": "DXD Voting Machine",
+        "functionName": "setOrganizationRefund(uint256,uint256)",
+        "params": [
+          {"type": "uint256", "name": "_voteGas", "defaultValue": ""},
+          {"type": "uint256", "name": "_maxGasPrice", "defaultValue": ""}
+        ],
+        "decodeText": "Set vote refund to [PARAM_0] gas and [PARAM_1] max gas price"
+      },{
+        "asset": "0x0000000000000000000000000000000000000000",
+        "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+        "to": "0x685E9F2Aae1c3e6D170c2F8c08984A2528768455",
+        "toName": "DXD Voting Machine",
+        "functionName": "setBoostedVoteRequiredPercentage(address,bytes32,uint256)",
+        "params": [
+          {"type": "address", "name": "_scheme", "defaultValue": ""},
+          {"type": "bytes32", "name": "_paramsHash", "defaultValue": ""},
+          {"type": "uint256", "name": "_boostedVotePeriodLimit", "defaultValue": ""}
+        ],
+        "decodeText": "Set boosted required percentage for scheme [PARAM_0] to ([PARAM_2]/100) %"
+      }
+    ],
     "proposalTemplates": [
       {
         "name": "Contributor Proposal",
