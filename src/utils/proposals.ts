@@ -185,7 +185,7 @@ export const decodeProposalStatus = function(
           proposalStateChangeEvents .find(event => event.state == VotingMachineProposalState.QuietEndingPeriod).timestamp
         ).plus(quietEndingPeriod)
         : bnum(0),
-        pendingAction: 2
+        pendingAction: 0
       };
   }
 }
