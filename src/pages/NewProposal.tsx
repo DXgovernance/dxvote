@@ -12,7 +12,6 @@ import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 import {
   ZERO_ADDRESS,
   ANY_ADDRESS,
-  ANY_FUNC_SIGNATURE,
   sleep,
   bnum,
   normalizeBalance,
@@ -431,7 +430,7 @@ const NewProposalPage = observer(() => {
         calls[callIndex].dataValues = [];
         calls[callIndex].value = "0";
         recommendedCalls.map((recommendedCall) => {
-          if (recommendedCall.to == toAddress){
+          if (recommendedCall.to == toAddress && recommendedCall.fromTime > 0){
             calls[callIndex].allowedFunctions.push(recommendedCall);
           }
         });
@@ -678,13 +677,11 @@ const NewProposalPage = observer(() => {
                       width="40%"
                     >
                       {calls[i].allowedFunctions.map((allowedFunc, allowedFuncIndex) =>{
-                        if (allowedFunc.fromTime > 0 && allowedFunc.value != ANY_FUNC_SIGNATURE)
-                          return (
-                            <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.functionName || ""}>
-                              {allowedFunc.functionName}
-                            </option>
-                          );
-                        else return null;
+                        return (
+                          <option key={"functionToCall"+allowedFuncIndex} value={allowedFunc.functionName || ""}>
+                            {allowedFunc.functionName}
+                          </option>
+                        );
                       })}
                     </SelectInput>
                     
