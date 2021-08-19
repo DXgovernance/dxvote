@@ -651,7 +651,7 @@ const NewProposalPage = observer(() => {
                     );
                   })}
                   </SelectInput>
-                  : (schemeToUse.type == "WalletScheme") &&
+                  : (schemeToUse.type != "ContributionReward") &&
                   <TextInput
                     value={calls[i].to || ""}
                     onChange={(value) => {onToSelectChange(i, value)}}
