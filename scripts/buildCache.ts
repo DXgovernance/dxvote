@@ -64,7 +64,7 @@ async function main() {
     const ipfs = await IPFS.create();
     const result = await ipfs.add(
       fs.readFileSync("./src/data/cache/"+networkName+".json"),
-      { pin: false, onlyHash: true }
+      { pin: true, onlyHash: false }
     );
     appConfig.cacheToBlock[networkName] = toBlock;
     appConfig.cacheHash[networkName] = result.cid.toString();

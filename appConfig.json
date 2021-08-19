@@ -4,13 +4,15 @@
     "xdai": 17500000,
     "rinkeby": 9080000,
     "arbitrumTestnet": 1710000,
-    "localhost": 67
+    "localhost": 67,
+    "arbitrum": 220688
   },
   "cacheHash": {
     "mainnet": "QmTHY8iTQ9ubU9XeQkbHqD4n2EPeCqRxtCtTwqagWuKMoY",
-    "xdai": "Qmdyaf8vometENEzgQ5EZjDUzqZd2cBWuFbKnaDdHHi9k8",
+    "xdai": "QmPX9gDcw6oT7tzZhfWgsPp4snNrK9thbK9gC72gWGeTY7",
     "rinkeby": "QmR3V2GcgEq89TKoBFSLZsxq8LTejvrdjBZjLzNNoFqDck",
     "arbitrumTestnet": "QmSLDw23kumWdsyQBiTT6M3zBxGU1kqxGE6HSNUCxnGocV",
-    "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f"
+    "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
+    "arbitrum": "QmR2XYaXPxuq5nJSHRwYTBw6rdyhZi8vUD2d4DVVrSEgXY"
   }
 }

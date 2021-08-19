@@ -493,7 +493,7 @@ export default class DaoStore {
         .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)}));
     }
 
-    if (votingMachines.dxd) {
+    if (votingMachines.dxd && cache.votingMachines[votingMachines.dxd.address]) {
       proposalEvents.votes = proposalEvents.votes.concat(cache.votingMachines[votingMachines.dxd.address].events.votes
         .filter((vote) => {return (userAddress === vote.voter)}));
       proposalEvents.stakes = proposalEvents.stakes.concat(cache.votingMachines[votingMachines.dxd.address].events.stakes

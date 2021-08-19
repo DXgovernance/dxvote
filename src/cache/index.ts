@@ -26,6 +26,7 @@ import { getSchemeTypeData } from '../config';
 const MAINNET_CACHE = require('../data/cache/mainnet.json');
 const XDAI_CACHE = require('../data/cache/xdai.json');
 const RINKEBY_CACHE = require('../data/cache/rinkeby.json');
+const ARBITRUM_CACHE = require('../data/cache/arbitrum.json');
 const ARBITRUM_TESTNET_CACHE = require('../data/cache/arbitrumTestnet.json');
 const LOCALHOST_CACHE = require('../data/cache/localhost.json');
 
@@ -37,6 +38,8 @@ export const getCacheFile = function (networkName: string): DaoNetworkCache {
       return XDAI_CACHE;
     case "rinkeby":
       return RINKEBY_CACHE;
+    case "arbitrum":
+      return ARBITRUM_CACHE;
     case "arbitrumTestnet":
       return ARBITRUM_TESTNET_CACHE;
     case "localhost":
