@@ -96,6 +96,7 @@ const SchemesInformation = observer(() => {
                     <BlockchainLink size="short" text={scheme.address} toCopy/>
                   </TableCell>
                   <TableCell width="40%" align="center">
+                    <small>Params Hash: {scheme.paramsHash}</small><br/>
                     <small>Queued Proposal Period: {
                       moment.duration(votingMachineParameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
                     }</small><br/>
