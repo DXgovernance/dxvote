@@ -49,6 +49,19 @@ export default class ConfigStore {
       return getNetworkConfig(this.getActiveChainName());
     }
     
+    getCacheIPFSHash(networkName) {
+      const ipfsHashesOfNetworkCaches = {
+        "mainnet": "QmZVaa3n4gZqrqMX6233FeD3TQC95QwUWwn6p72KNySxeN",
+        "xdai": "QmTqG4fj72npVGmjodNdJ6ZSUMjaD4SZNJDNCFZF1vutwV",
+        "rinkeby": "QmbstfTpn2aBsxGQqkA9Y1RWPbTjB829ePWhFQsZwBv3iJ",
+        "arbitrumTestnet": "QmW8GarhVMNSNS6PNAvnsRu39UbKXRwEWQtU4BueYsQiwz",
+        "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
+        "arbitrum": "QmccjtNMVNqK7WGi34Lc22WpKk85N27eVm6pBJ1wPchWYW"
+      };
+      
+      return ipfsHashesOfNetworkCaches[networkName];
+    }
+    
     getRecommendedCalls() {
       return getRecommendedCalls(this.getActiveChainName());
     }

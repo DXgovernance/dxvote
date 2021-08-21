@@ -12,8 +12,6 @@ import {
   formatPercentage
 } from '../utils';
 
-import { getCacheFile } from '../cache';
-
 export default class DaoStore {
   daoCache: DaoNetworkCache;
   context: RootContext;
@@ -22,7 +20,7 @@ export default class DaoStore {
     this.context = context;
     
     makeObservable(this, {
-      updateNetworkCache: action
+      setCache: action
     });
   }
   
@@ -92,17 +90,13 @@ export default class DaoStore {
     return unparsedCache;
   }
   
-  setCache(networkName: string) {
-    this.daoCache = getCacheFile(networkName);
-  }
-  
   getCache(): DaoNetworkCache {
     return this.daoCache;
   }
   
-  updateNetworkCache(newNetworkCache: DaoNetworkCache) {
+  setCache(newNetworkCache: DaoNetworkCache) {
     this.daoCache = this.parseCache(newNetworkCache);
-    console.debug('Cache Updated]', this.daoCache);
+    console.debug('Cache SET]', this.daoCache);
   }
 
   getDaoInfo(): DaoInfo {

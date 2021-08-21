@@ -83,7 +83,7 @@ export default class UserStore {
     );
     
     let userInfo = this.userInfo;
-    userInfo.repBalance = account ? daoStore.getRepAt(account, providerStore.getCurrentBlockNumber()).userRep : bnum(0);
+    userInfo.repBalance = account && daoStore.daoCache ? daoStore.getRepAt(account, providerStore.getCurrentBlockNumber()).userRep : bnum(0);
 
     // TO DO: Improve this mess of ifs
     userInfo.ethBalance = account ? bnum(callsResponse.decodedReturnData[0]) : bnum(0);

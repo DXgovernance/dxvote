@@ -148,11 +148,19 @@ export default class BlockchainStore {
         providerStore,
         configStore,
         multicallService,
+        ipfsService,
         daoStore
       } = this.context;
+      const networkName = configStore.getActiveChainName();
       
-      daoStore.setCache(configStore.getActiveChainName());
-      
+      if (!daoStore.getCache()) {
+        console.debug('[IPFS Cache Fetch]', networkName, configStore.getCacheIPFSHash(networkName));
+        daoStore.setCache(
+          daoStore.parseCache(
+            await ipfsService.getContentFromIPFS(configStore.getCacheIPFSHash(networkName))
+          )
+        );
+      }
       let networkCache = daoStore.getCache();
 
       const blockNumber = await library.eth.getBlockNumber();
@@ -206,7 +214,7 @@ export default class BlockchainStore {
         networkCache.l1BlockNumber = toBlock;
         providerStore.setCurrentBlockNumber(toBlock);
       }
-      daoStore.updateNetworkCache(networkCache);
+      daoStore.setCache(networkCache);
 
       this.initialLoadComplete = true;
       this.activeFetchLoop = false;

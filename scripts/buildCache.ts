@@ -1,29 +1,38 @@
 const fs = require("fs");
 const hre = require("hardhat");
 const web3 = hre.web3;
+const { NETWORK_IDS } = require("../src/provider/connectors");
+
+const networkName = hre.network.name;
+const emptyCache: DaoNetworkCache = {
+  networkId: NETWORK_IDS[networkName],
+  l1BlockNumber: 1,
+  l2BlockNumber: 0,
+  daoInfo: {} as DaoInfo,
+  schemes: {},
+  proposals: {},
+  callPermissions: {},
+  votingMachines: {},
+  ipfsHashes: []
+};
+
+const networks = process.env.REACT_APP_ETH_NETWORKS.split(',');
+for (let i = 0; i < networks.length; i++) {
+  if (!fs.existsSync("./src/data/cache/"+networks[i]+".json"))
+    fs.writeFileSync(
+      "./src/data/cache/"+networks[i]+".json",
+      JSON.stringify(emptyCache),
+      { encoding: "utf8", flag: "w" }
+    );
+}
+
 const { getNetworkConfig } = require("../src/config");
 const { getUpdatedCache } = require("../src/cache");
-const { NETWORK_IDS } = require("../src/provider/connectors");
 import IPFS from 'ipfs-core';
 const appConfig = require("../appConfig.json");
 import { DaoNetworkCache, DaoInfo} from "../src/types";
 
 async function main() {
-  
-  // Initializing cache based on stored cache file and network used, if used localhost the cache is always restarted
-  const networkName = hre.network.name;
-
-  const emptyCache: DaoNetworkCache = {
-    networkId: NETWORK_IDS[networkName],
-    l1BlockNumber: 1,
-    l2BlockNumber: 0,
-    daoInfo: {} as DaoInfo,
-    schemes: {},
-    proposals: {},
-    callPermissions: {},
-    votingMachines: {},
-    ipfsHashes: []
-  };
   
   if (process.env.EMPTY_CACHE) {
     
@@ -38,7 +47,7 @@ async function main() {
     emptyCache.l1BlockNumber = contractsConfig.fromBlock;
     emptyCache.daoInfo.address = contractsConfig.avatar;
     
-    const networkCacheFile: DaoNetworkCache = 
+    let networkCacheFile: DaoNetworkCache = 
       (fs.existsSync("./src/data/cache/"+networkName+".json") && !process.env.RESET_CACHE)
         ? JSON.parse(fs.readFileSync("./src/data/cache/"+networkName+".json", "utf-8"))
         : emptyCache;
@@ -51,15 +60,17 @@ async function main() {
       toBlock = await web3.eth.getBlockNumber();
     
     if (fromBlock < toBlock) {
+      // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug("Runing cache script from block", fromBlock, "to block", toBlock, "in network", networkName);
-
-      // The cache file is updated with the data taht had before plus new data in the network cache file
-      fs.writeFileSync(
-        "./src/data/cache/"+networkName+".json",
-        JSON.stringify( await getUpdatedCache(networkCacheFile, networkName, fromBlock, toBlock, web3), null, 2),
-        { encoding: "utf8", flag: "w" }
-      );
+      networkCacheFile = await getUpdatedCache(networkCacheFile, networkName, fromBlock, toBlock, web3);
     }
+    
+    // Rewrite the cache file
+    fs.writeFileSync(
+      "./src/data/cache/"+networkName+".json",
+      JSON.stringify(networkCacheFile),
+      { encoding: "utf8", flag: "w" }
+    );
     
     const ipfs = await IPFS.create();
     const result = await ipfs.add(

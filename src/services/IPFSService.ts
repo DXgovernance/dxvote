@@ -1,4 +1,5 @@
 import RootContext from '../contexts';
+import axios from "axios";
 import IPFS from 'ipfs-core';
 const CID = require('cids')
 
@@ -39,14 +40,21 @@ export default class IPFSService {
   }
   
   async getContent(hash: String){
-    const content = []
+    let content = []
     for await (const file of this.ipfs.get(hash)) {
       console.debug("[IPFS FILE]",file.type, file.path);
       if (!file.content) continue;
       for await (const chunk of file.content) {
-        content.push(chunk)
+        content = content.concat(chunk)
       }
     }
     return content.toString();
+  }
+  
+  async getContentFromIPFS(hash: string) {
+    return (await axios({
+      method: "GET",
+      url: "https://gateway.pinata.cloud/ipfs/"+hash
+    })).data;
   }
 }
