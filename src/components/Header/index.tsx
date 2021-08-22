@@ -74,7 +74,9 @@ const Header = observer(() => {
   } else {
     const networkName = configStore.getActiveChainName();
     const userInfo = userStore.getUserInfo();
-    const votingMachines = configStore.getNetworkConfig().votingMachines;
+    const votingMachines = blockchainStore.initialLoadComplete 
+      ? configStore.getNetworkConfig().votingMachines
+      : {};
 
     const dxdBalance = active && userInfo.dxdBalance ?
       parseFloat(Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(2))

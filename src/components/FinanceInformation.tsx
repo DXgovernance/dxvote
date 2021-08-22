@@ -87,7 +87,7 @@ const FinanceInformation = observer(() => {
       }]
     };
     Object.keys(daoInfo.tokenBalances).map((tokenAddress) => {
-      const tokenData = configStore.getTokenOfNetwork(tokenAddress);
+      const tokenData = configStore.getTokenData(tokenAddress);
       assets.avatar.push({
         address: tokenAddress,
         name: tokenData.name,
@@ -116,7 +116,7 @@ const FinanceInformation = observer(() => {
         }]
       
       Object.keys(tokenBalances).map((tokenAddress) => {
-        const tokenData = configStore.getTokenOfNetwork(tokenAddress);
+        const tokenData = configStore.getTokenData(tokenAddress);
 
         assets[scheme.name].push({
           address: tokenAddress,

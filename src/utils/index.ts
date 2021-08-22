@@ -1,5 +1,6 @@
 export * from './address';
 export * from './bignumber';
+export * from './cache';
 export * from './constants';
 export * from './date';
 export * from './enums';

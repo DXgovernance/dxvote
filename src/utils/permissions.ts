@@ -76,11 +76,12 @@ export const encodePermission = function(permissions) {
   return "0x000000" + binaryToHex(permissionBytes);
 }
 export const decodePermission = function(permission) {
+  console.log(permission, hexToBinary(permission))
   permission = hexToBinary(permission);
   return {
-    canGenericCall: permission.length > 3 && permission[ 4 ] == "1",
-    canUpgrade: permission.length > 3 && permission[ 5 ] == "1",
-    canChangeConstraints: permission.length > 3 && permission[ 6 ] == "1",
-    canRegisterSchemes: permission.length > 3 && permission[ 7 ] == "1"
+    canRegisterSchemes: permission.length > 3 && permission[ 4 ] == "1",
+    canChangeConstraints: permission.length > 3 && permission[ 5 ] == "1",
+    canUpgrade: permission.length > 3 && permission[ 6 ] == "1",
+    canGenericCall: permission.length > 3 && permission[ 7 ] == "1"
   };
 }

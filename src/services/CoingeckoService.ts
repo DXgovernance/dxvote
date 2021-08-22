@@ -1,7 +1,6 @@
 import RootContext from '../contexts';
 import axios from "axios";
 import web3 from "web3";
-import { getTokensToFetchPrice } from '../config';
 
 export default class CoingeckoService {
   context: RootContext;
@@ -12,7 +11,7 @@ export default class CoingeckoService {
   }
   
   async loadPrices(){
-    const tokens = getTokensToFetchPrice(this.context.configStore.getActiveChainName());
+    const tokens = this.context.configStore.getTokensToFetchPrice();
     const networkName = this.context.configStore.getActiveChainName() == 'mainnet' ? 'ethereum'
       : this.context.configStore.getActiveChainName() == 'xdai' ? 'xdai'
       : '';

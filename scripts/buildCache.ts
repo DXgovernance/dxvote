@@ -26,7 +26,7 @@ for (let i = 0; i < networks.length; i++) {
     );
 }
 
-const { getNetworkConfig } = require("../src/config");
+const { getNetworkConfig } = require("../src/utils");
 const { getUpdatedCache } = require("../src/cache");
 import IPFS from 'ipfs-core';
 const appConfig = require("../appConfig.json");
@@ -43,9 +43,9 @@ async function main() {
     );
     
   } else {
-    const contractsConfig = getNetworkConfig(networkName);
-    emptyCache.l1BlockNumber = contractsConfig.fromBlock;
-    emptyCache.daoInfo.address = contractsConfig.avatar;
+    const networkConfig = await getNetworkConfig(networkName);
+    emptyCache.l1BlockNumber = networkConfig.contracts.fromBlock;
+    emptyCache.daoInfo.address = networkConfig.contracts.avatar;
     
     let networkCacheFile: DaoNetworkCache = 
       (fs.existsSync("./src/data/cache/"+networkName+".json") && !process.env.RESET_CACHE)
@@ -53,7 +53,7 @@ async function main() {
         : emptyCache;
       
     // Set block range for the script to run, if cache to blcok is set that value is used, if not we use last block 
-    const fromBlock = Math.max(networkCacheFile.l1BlockNumber + 1, contractsConfig.fromBlock);
+    const fromBlock = Math.max(networkCacheFile.l1BlockNumber + 1, networkConfig.contracts.fromBlock);
     let toBlock = process.env.CACHE_TO_BLOCK || appConfig.cacheToBlock[networkName];
     
     if (!toBlock || toBlock == 0)
@@ -62,7 +62,7 @@ async function main() {
     if (fromBlock < toBlock) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug("Runing cache script from block", fromBlock, "to block", toBlock, "in network", networkName);
-      networkCacheFile = await getUpdatedCache(networkCacheFile, networkName, fromBlock, toBlock, web3);
+      networkCacheFile = await getUpdatedCache(networkCacheFile, networkConfig.contracts, fromBlock, toBlock, web3);
     }
     
     // Rewrite the cache file

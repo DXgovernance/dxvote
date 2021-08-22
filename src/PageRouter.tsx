@@ -57,7 +57,6 @@ const PageRouter = observer(({ children }) => {
       );
     else {
       
-      coingeckoService.loadPrices();
       const networkName = configStore.getActiveChainName();
       if (location.pathname == "/"){
         history.push(`/${networkName}/proposals`)
@@ -76,6 +75,7 @@ const PageRouter = observer(({ children }) => {
           </PageRouterWrapper>
         );
       } else {
+        coingeckoService.loadPrices();
         if (configStore.getLocalConfig().pinOnStart)
           pinataService.updatePinList();
         return <PageRouterWrapper> {children} </PageRouterWrapper>;

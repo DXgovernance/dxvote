@@ -5,7 +5,6 @@ import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
 import { bnum } from '../utils';
 import { getUpdatedCache } from '../cache';
-import { getTokensToFetchPrice } from '../config';
 
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;
@@ -171,12 +170,11 @@ export default class BlockchainStore {
         
         const fromBlock = lastCheckedBlockNumber + 1;
         const toBlock = blockNumber;
-        const networkName = configStore.getActiveChainName();
         const networkConfig = configStore.getNetworkConfig();
-        networkCache = await getUpdatedCache(networkCache, networkName, fromBlock, toBlock, library);
+        networkCache = await getUpdatedCache(networkCache, networkConfig, fromBlock, toBlock, library);
         
         let tokensBalancesCalls = [];
-        const tokens = getTokensToFetchPrice(this.context.configStore.getActiveChainName());
+        const tokens = configStore.getTokensToFetchPrice();
         
         tokens.map((token) => {
           if (!networkCache.daoInfo.tokenBalances[token.address])

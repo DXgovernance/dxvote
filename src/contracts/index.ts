@@ -1,4 +1,3 @@
-const { getNetworkConfig } = require('../config');
 const PermissionRegistry = require("./PermissionRegistry");
 const DxController = require("./DxController");
 const DxAvatar = require("./DxAvatar");
@@ -8,8 +7,7 @@ const GenesisProtocol = require("./GenesisProtocol");
 const ERC20 = require("./ERC20");
 const Multicall = require("./Multicall");
 
-export const getContracts = async function(network: string, web3: any) {
-  const networkConfig = getNetworkConfig(network);
+export const getContracts = async function(networkConfig: NetworkContracts, web3: any) {
   const avatar = await new web3.eth.Contract(DxAvatar.abi, networkConfig.avatar);
   const controller = await new web3.eth.Contract(DxController.abi, networkConfig.controller);
   const reputation = await new web3.eth.Contract(DxReputation.abi, networkConfig.reputation);

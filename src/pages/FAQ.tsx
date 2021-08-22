@@ -3,12 +3,16 @@ import styled from 'styled-components';
 import { toCamelCaseString } from '../utils';
 import { observer } from 'mobx-react';
 import Box from '../components/common/Box';
-import {default as configDataFile} from '../data/config.json';
+import { useContext } from '../contexts';
 import { useLocation } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
 
 const FAQPage = observer(() => {
-    
+  
+  const {
+      context: { configStore },
+  } = useContext();
+  
   const questionId = useLocation().search.indexOf("=") > -1 ? useLocation().search.split("=")[1] : 0;
   
   const FAQBox = styled(Box)`
@@ -33,11 +37,9 @@ const FAQPage = observer(() => {
   }, []);
    
   let daoAddresses = "";
-  for (let n = 0; n < Object.keys(configDataFile).length; n++) {
-
-    const networkContracts = configDataFile[ Object.keys(configDataFile)[n] ].contracts;
-    
-    daoAddresses += "### " + toCamelCaseString(Object.keys(configDataFile)[n]) + " Network\n";
+  const networkContracts = configStore.getNetworkConfig();
+  for (let n = 0; n < Object.keys(networkContracts).length; n++) {
+    daoAddresses += "### " + toCamelCaseString(Object.keys(networkContracts)[n]) + " Network\n";
     daoAddresses += "- Avatar: " + networkContracts.avatar+"\n";
     daoAddresses += "- Controller: " + networkContracts.controller+"\n";
     daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";

@@ -9,7 +9,7 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
   const {
-    context: { providerStore, blockchainStore, userStore },
+    context: { providerStore, blockchainStore, userStore, configStore },
   } = useContext();
 
   const web3ContextInjected = useWeb3React(web3ContextNames.injected);
@@ -17,9 +17,11 @@ const Web3ReactManager = ({ children }) => {
     active: networkActive,
     error: networkError
   } = web3ContextInjected;
-
+  
   if (!providerStore.activeChainId)
     providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
+
+  configStore.loadConfig();
 
   console.debug('[Web3ReactManager] Start of render', {
     injected: web3ContextInjected,
@@ -60,7 +62,7 @@ const Web3ReactManager = ({ children }) => {
 
   // Fetch user blockchain data on an interval using current params
   useInterval(
-    () => {
+    async () => {
       if (networkActive){
         userStore.update(providerStore.getActiveWeb3React());
         blockchainStore.fetchData(providerStore.getActiveWeb3React(), false)

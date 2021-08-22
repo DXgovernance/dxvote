@@ -3,7 +3,7 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import RootContext from '../contexts';
 import { ContractType } from './Provider';
 import { BigNumber, bnum } from '../utils';
-import { executeMulticall } from '../cache/helpers';
+import { executeMulticall } from '../utils/cache';
 
 export default class UserStore {
   userInfo: { 

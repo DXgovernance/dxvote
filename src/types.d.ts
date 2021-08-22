@@ -243,51 +243,55 @@ declare global {
   
   // Application Config
 
-  interface AppConfig {
-    [networkName: string] : {
-      contracts: {
-        fromBlock: number;
-        avatar: string;
-        reputation: string;
-        token: string;
-        controller: string;
-        permissionRegistry: string;
-        utils: {[name: string]: string};
-        votingMachines: {
-          [name: string]: {
-            address: string;
-            token: string;
-          }
-        };
-      };
-      recommendedCalls: {
-        asset: string;
-        from: string;
-        to: string;
-        toName: string;
-        functionName: string;
-        params: {
-          type: string;
-          name: string;
-          defaultValue: string;
-          decimals?: number;
-        }[],
-        decodeText: string;
-      }[];
-      proposalTemplates: {
-        name: string;
-        title: string;
-        description: string;
-      }[];
-      tokens: {
+  interface NetworkContracts {
+    fromBlock: number;
+    avatar: string;
+    reputation: string;
+    token: string;
+    controller: string;
+    permissionRegistry: string;
+    utils: {[name: string]: string};
+    votingMachines: {
+      [name: string]: {
         address: string;
+        token: string;
+      }
+    };
+  };
+  
+  interface NetworkConfig {
+    contracts: NetworkContracts;
+    recommendedCalls: {
+      asset: string;
+      from: string;
+      to: string;
+      toName: string;
+      functionName: string;
+      params: {
+        type: string;
         name: string;
-        decimals:number;
-        symbol: string;
-        fetchPrice: boolean;
-        logoURI?: string;
-      }[];
-    }
+        defaultValue: string;
+        decimals?: number;
+      }[],
+      decodeText: string;
+    }[];
+    proposalTemplates: {
+      name: string;
+      title: string;
+      description: string;
+    }[];
+    tokens: {
+      address: string;
+      name: string;
+      decimals:number;
+      symbol: string;
+      fetchPrice: boolean;
+      logoURI?: string;
+    }[];
+  }
+  
+  interface AppConfig {
+    [networkName: string] : NetworkConfig
   }
   
 }
