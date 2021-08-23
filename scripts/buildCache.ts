@@ -55,7 +55,7 @@ async function main() {
     // Set block range for the script to run, if cache to blcok is set that value is used, if not we use last block 
     const fromBlock = Math.max(networkCacheFile.l1BlockNumber + 1, networkConfig.contracts.fromBlock);
     let toBlock = process.env.CACHE_TO_BLOCK || appConfig.cacheToBlock[networkName];
-    
+
     if (!toBlock || toBlock == 0)
       toBlock = await web3.eth.getBlockNumber();
     

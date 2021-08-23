@@ -3,16 +3,16 @@
     "mainnet": 12990000,
     "xdai": 17500000,
     "rinkeby": 9080000,
-    "arbitrumTestnet": 1710000,
+    "arbitrumTestnet": 2240000,
     "localhost": 67,
     "arbitrum": 220688
   },
   "cacheHash": {
-    "mainnet": "QmTHY8iTQ9ubU9XeQkbHqD4n2EPeCqRxtCtTwqagWuKMoY",
-    "xdai": "QmPX9gDcw6oT7tzZhfWgsPp4snNrK9thbK9gC72gWGeTY7",
-    "rinkeby": "QmR3V2GcgEq89TKoBFSLZsxq8LTejvrdjBZjLzNNoFqDck",
-    "arbitrumTestnet": "QmSLDw23kumWdsyQBiTT6M3zBxGU1kqxGE6HSNUCxnGocV",
+    "mainnet": "QmbJtZ8Wo6ZqHK1M17wMSGYagRrXirgsj8upXd4xM4x5GH",
+    "xdai": "QmQXaBxLHkQf6Qnj9wp6HjCGNuz8XevSCWzEtCqCV5bk6a",
+    "rinkeby": "QmT1yEZ6ouzhE3eqzB4YqiqEQBGawzv6cU7agN4Qhwh3XK",
+    "arbitrumTestnet": "QmQw1qzpD4PNb3Aj4KLmkPnKdJ6Ju7x2Vos7XbXFVFSg2s",
     "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
-    "arbitrum": "QmR2XYaXPxuq5nJSHRwYTBw6rdyhZi8vUD2d4DVVrSEgXY"
+    "arbitrum": "QmQZNzrnTyfMWPD5Rv2Bh6GAep4mwzHbH18ZTNzGaK3BVg"
   }
 }

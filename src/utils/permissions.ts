@@ -76,7 +76,6 @@ export const encodePermission = function(permissions) {
   return "0x000000" + binaryToHex(permissionBytes);
 }
 export const decodePermission = function(permission) {
-  console.log(permission, hexToBinary(permission))
   permission = hexToBinary(permission);
   return {
     canRegisterSchemes: permission.length > 3 && permission[ 4 ] == "1",
