@@ -75,7 +75,7 @@ const Header = observer(() => {
     const networkName = configStore.getActiveChainName();
     const userInfo = userStore.getUserInfo();
     const votingMachines = blockchainStore.initialLoadComplete 
-      ? configStore.getNetworkConfig().votingMachines
+      ? configStore.getNetworkContracts().votingMachines
       : {};
 
     const dxdBalance = active && userInfo.dxdBalance ?

@@ -41,44 +41,44 @@ export default class UserStore {
 
   async update(web3React: Web3ReactContextInterface) {
     const { configStore, providerStore, daoStore, transactionStore } = this.context;
-    const networkConfig = configStore.getNetworkConfig();
+    const networkContracts = configStore.getNetworkContracts();
     const account = web3React.account;
     
     transactionStore.checkPendingTransactions(web3React, account);
     let callsToExecute = [[
-      providerStore.getContract(web3React, ContractType.Multicall, networkConfig.utils.multicall),
+      providerStore.getContract(web3React, ContractType.Multicall, networkContracts.utils.multicall),
       'getEthBalance',
       [account],
     ]];
     
-    if (networkConfig.votingMachines.gen) {
+    if (networkContracts.votingMachines.gen) {
       callsToExecute.push([
-        providerStore.getContract(web3React, ContractType.ERC20, networkConfig.votingMachines.gen.token),
+        providerStore.getContract(web3React, ContractType.ERC20, networkContracts.votingMachines.gen.token),
         'balanceOf',
         [account],
       ]);
       callsToExecute.push([
-        providerStore.getContract(web3React, ContractType.ERC20, networkConfig.votingMachines.gen.token),
+        providerStore.getContract(web3React, ContractType.ERC20, networkContracts.votingMachines.gen.token),
         'allowance',
-        [account, networkConfig.votingMachines.gen.address],
+        [account, networkContracts.votingMachines.gen.address],
       ]);
     }
-    if (networkConfig.votingMachines.dxd) {
+    if (networkContracts.votingMachines.dxd) {
       callsToExecute.push([
-        providerStore.getContract(web3React, ContractType.ERC20, networkConfig.votingMachines.dxd.token),
+        providerStore.getContract(web3React, ContractType.ERC20, networkContracts.votingMachines.dxd.token),
         'balanceOf',
         [account],
       ]);
       callsToExecute.push([
-        providerStore.getContract(web3React, ContractType.ERC20, networkConfig.votingMachines.dxd.token),
+        providerStore.getContract(web3React, ContractType.ERC20, networkContracts.votingMachines.dxd.token),
         'allowance',
-        [account, networkConfig.votingMachines.dxd.address],
+        [account, networkContracts.votingMachines.dxd.address],
       ]);
     }
     
     const callsResponse = await executeMulticall(
       web3React.library,
-      providerStore.getContract(web3React, ContractType.Multicall, networkConfig.utils.multicall),
+      providerStore.getContract(web3React, ContractType.Multicall, networkContracts.utils.multicall),
       callsToExecute
     );
     
@@ -87,16 +87,16 @@ export default class UserStore {
 
     // TO DO: Improve this mess of ifs
     userInfo.ethBalance = account ? bnum(callsResponse.decodedReturnData[0]) : bnum(0);
-    userInfo.genBalance = (account && networkConfig.votingMachines.gen) ? bnum(callsResponse.decodedReturnData[1]) : bnum(0);
-    userInfo.genApproved = (account && networkConfig.votingMachines.gen) ? bnum(callsResponse.decodedReturnData[2]) : bnum(0);
-    userInfo.dxdBalance = (account && networkConfig.votingMachines.dxd && networkConfig.votingMachines.gen)
+    userInfo.genBalance = (account && networkContracts.votingMachines.gen) ? bnum(callsResponse.decodedReturnData[1]) : bnum(0);
+    userInfo.genApproved = (account && networkContracts.votingMachines.gen) ? bnum(callsResponse.decodedReturnData[2]) : bnum(0);
+    userInfo.dxdBalance = (account && networkContracts.votingMachines.dxd && networkContracts.votingMachines.gen)
       ? bnum(callsResponse.decodedReturnData[3])
-      : (account && networkConfig.votingMachines.dxd && !networkConfig.votingMachines.gen) 
+      : (account && networkContracts.votingMachines.dxd && !networkContracts.votingMachines.gen) 
       ? bnum(callsResponse.decodedReturnData[1])
       : bnum(0);
-    userInfo.dxdApproved = (account && networkConfig.votingMachines.dxd && networkConfig.votingMachines.gen)
+    userInfo.dxdApproved = (account && networkContracts.votingMachines.dxd && networkContracts.votingMachines.gen)
       ? bnum(callsResponse.decodedReturnData[4])
-      : (account && networkConfig.votingMachines.dxd && !networkConfig.votingMachines.gen) 
+      : (account && networkContracts.votingMachines.dxd && !networkContracts.votingMachines.gen) 
       ? bnum(callsResponse.decodedReturnData[2])
       : bnum(0);
       

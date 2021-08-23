@@ -400,6 +400,7 @@ export const updateSchemes = async function (
       const callsResponse1 = await executeMulticall(web3, networkContracts.multicall, callsToExecute);
       
       const ethBalance = callsResponse1.decodedReturnData[0];
+      
       const permissions = decodePermission(callsResponse1.decodedReturnData[1]);
       const paramsHash = schemeTypeData.voteParams
         ? schemeTypeData.voteParams
@@ -1182,8 +1183,7 @@ export const updateProposals = async function (
       );
       const proposalTimes = callsResponse.decodedReturnData[4];
       const proposalShouldBoost = callsResponse.decodedReturnData[5];
-      if (proposalId == "0xe6dcd8af89f9dc40fe4a6ff3b21ed416c7e2c80b8867f12ae5be831c1b21bb30")
-        console.log(networkCache.proposals[proposalId])
+      
       if (schemeTypeData.type == 'WalletScheme') {
         networkCache.proposals[proposalId].stateInScheme = Number(web3.eth.abi.decodeParameters(
           [ 

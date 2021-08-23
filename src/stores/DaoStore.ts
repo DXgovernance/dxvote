@@ -469,7 +469,7 @@ export default class DaoStore {
     }[] = [];
     
     const cache = this.getCache();
-    const votingMachines = this.context.configStore.getNetworkConfig().votingMachines;
+    const votingMachines = this.context.configStore.getNetworkContracts().votingMachines;
     let proposalEvents = {
       votes: [],
       stakes: [],
@@ -581,7 +581,7 @@ export default class DaoStore {
     const proposalStateChangeEvents = this.getProposalStateChanges(proposalId);
     const scheme = this.getCache().schemes[proposal.scheme];
     const votingMachineOfProposal = this.getVotingMachineOfProposal(proposalId);
-    const networkConfig = this.context.configStore.getNetworkConfig();
+    const networkContracts = this.context.configStore.getNetworkContracts();
     const votingMachineParams = 
     (proposal.paramsHash == "0x0000000000000000000000000000000000000000000000000000000000000000")
     ? this.getCache().votingMachines[votingMachineOfProposal]
@@ -589,7 +589,7 @@ export default class DaoStore {
     : this.getCache().votingMachines[votingMachineOfProposal]
       .votingParameters[proposal.paramsHash];
     
-    const autoBoost = (networkConfig.votingMachines.dxd && networkConfig.votingMachines.dxd.address == votingMachineOfProposal)
+    const autoBoost = (networkContracts.votingMachines.dxd && networkContracts.votingMachines.dxd.address == votingMachineOfProposal)
     return decodeProposalStatus(
       proposal, proposalStateChangeEvents, votingMachineParams, scheme.maxSecondsForExecution, autoBoost, scheme.type
     );
@@ -626,12 +626,12 @@ export default class DaoStore {
   }
 
   getSchemeRecommendedCalls(schemeAddress): any {
-    const networkConfig = this.context.configStore.getNetworkConfig();
+    const networkContracts = this.context.configStore.getNetworkContracts();
     const { library } = this.context.providerStore.getActiveWeb3React();
     const scheme = this.getScheme(schemeAddress);
     const callPermissions = this.getCache().callPermissions;
     let assetLimits = {};
-    const from = scheme.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeAddress;
+    const from = scheme.controllerAddress == networkContracts.controller ? networkContracts.avatar : schemeAddress;
     let recommendedCalls = this.context.configStore.getRecommendedCalls();
 
     Object.keys(callPermissions).map((assetAddress) => {
@@ -656,18 +656,18 @@ export default class DaoStore {
   }
   
   getCallAllowance(asset, from, to, functionSignature): any {
-    const networkConfig = this.context.configStore.getNetworkConfig();
+    const networkContracts = this.context.configStore.getNetworkContracts();
     const callPermissions = this.getCache().callPermissions;
   
-    if (to == networkConfig.controller && from != networkConfig.avatar) {
+    if (to == networkContracts.controller && from != networkContracts.avatar) {
       return {
         value: bnum(0),
         fromTime: 0
       };
     } else if (
       asset == ZERO_ADDRESS
-      && to == networkConfig.permissionRegistry
-      && from == networkConfig.avatar
+      && to == networkContracts.permissionRegistry
+      && from == networkContracts.avatar
     ) {
       return {
         value: bnum(0),

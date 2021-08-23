@@ -170,8 +170,8 @@ export default class BlockchainStore {
         
         const fromBlock = lastCheckedBlockNumber + 1;
         const toBlock = blockNumber;
-        const networkConfig = configStore.getNetworkConfig();
-        networkCache = await getUpdatedCache(networkCache, networkConfig, fromBlock, toBlock, library);
+        const networkContracts = configStore.getNetworkContracts();
+        networkCache = await getUpdatedCache(networkCache, networkContracts, fromBlock, toBlock, library);
         
         let tokensBalancesCalls = [];
         const tokens = configStore.getTokensToFetchPrice();
@@ -182,10 +182,10 @@ export default class BlockchainStore {
               contractType: ContractType.ERC20,
               address: token.address,
               method: 'balanceOf',
-              params: [networkConfig.avatar],
+              params: [networkContracts.avatar],
             });
           Object.keys(networkCache.schemes).map((schemeAddress) => {
-            if (networkCache.schemes[schemeAddress].controllerAddress != networkConfig.controller)
+            if (networkCache.schemes[schemeAddress].controllerAddress != networkContracts.controller)
               tokensBalancesCalls.push({
                 contractType: ContractType.ERC20,
                 address: token.address,
@@ -200,7 +200,7 @@ export default class BlockchainStore {
         await this.executeAndUpdateMulticall(multicallService);
         
         tokensBalancesCalls.map((tokensBalancesCall) => {
-          if (tokensBalancesCall.params[0] == networkConfig.avatar) {
+          if (tokensBalancesCall.params[0] == networkContracts.avatar) {
             networkCache.daoInfo.tokenBalances[tokensBalancesCall.address] =
               this.context.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
           } else {

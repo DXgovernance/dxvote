@@ -132,8 +132,8 @@ const ProposalPage = observer(() => {
         context: { providerStore, daoStore, configStore, userStore, daoService, ipfsService },
     } = useContext();
 
-    const networkConfig = configStore.getNetworkConfig();
-    const votingMachines = networkConfig.votingMachines;
+    const networkContracts = configStore.getNetworkContracts();
+    const votingMachines = networkContracts.votingMachines;
     const proposalId = useLocation().pathname.split("/")[3];
     const proposal = daoStore.getProposal(proposalId);
 
@@ -219,8 +219,8 @@ const ProposalPage = observer(() => {
     let proposalCallTexts = new Array(proposal.to.length);
     for (var p = 0; p < proposal.to.length; p++) {
       proposalCallTexts[p] = daoService.decodeWalletSchemeCall(
-        (scheme.type == "WalletScheme" && scheme.controllerAddress != networkConfig.controller)
-          ? scheme.address : networkConfig.avatar,
+        (scheme.type == "WalletScheme" && scheme.controllerAddress != networkContracts.controller)
+          ? scheme.address : networkContracts.avatar,
         proposal.to[p],
         proposal.callData[p],
         proposal.values[p]
@@ -274,9 +274,9 @@ const ProposalPage = observer(() => {
       daoService.stake(decision, denormalizeBalance(bnum(stakeAmount)).toString(), proposalId);
     };
     
-    if (scheme.type == "ContributionReward" && networkConfig.daostack.contributionRewardRedeemer) {
+    if (scheme.type == "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
       daoService.redeemContributionRewardCall(
-        networkConfig.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
+        networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
       ).then((toRedeemResponse) => {
         const web3 = providerStore.getActiveWeb3React().library;
         const toRedeem = web3.eth.abi.decodeParameters([
@@ -295,9 +295,9 @@ const ProposalPage = observer(() => {
     }
     
     const redeem = function() {
-      if (scheme.type == "ContributionReward" && networkConfig.daostack.contributionRewardRedeemer) {
+      if (scheme.type == "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
         daoService.redeemContributionReward(
-          networkConfig.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
+          networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
         );
       } else {
         daoService.redeem(proposalId, account);
@@ -314,7 +314,7 @@ const ProposalPage = observer(() => {
     
     const redeemBeneficiary = function() {
       daoService.redeemContributionReward(
-        networkConfig.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, proposal.to[0]
+        networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, proposal.to[0]
       );
     };
 

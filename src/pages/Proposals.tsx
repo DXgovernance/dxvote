@@ -119,7 +119,7 @@ const ProposalsPage = observer(() => {
     } = useContext();
 
     const schemes = daoStore.getAllSchemes();
-    const votingMachines = configStore.getNetworkConfig().votingMachines;
+    const votingMachines = configStore.getNetworkContracts().votingMachines;
     const [stateFilter, setStateFilter] = React.useState("Any Status");
     const [schemeFilter, setSchemeFilter] = React.useState("All Schemes");
     const [titleFilter, setTitleFilter] = React.useState("");

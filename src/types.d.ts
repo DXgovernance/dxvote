@@ -251,6 +251,7 @@ declare global {
     controller: string;
     permissionRegistry: string;
     utils: {[name: string]: string};
+    daostack?: any;
     votingMachines: {
       [name: string]: {
         address: string;

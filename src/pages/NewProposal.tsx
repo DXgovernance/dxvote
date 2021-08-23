@@ -130,7 +130,7 @@ const NewProposalPage = observer(() => {
     
     const networkTokens = configStore.getTokensOfNetwork()
     const schemes = daoStore.getAllSchemes();
-    const networkConfig = configStore.getNetworkConfig();
+    const networkContracts = configStore.getNetworkContracts();
     const schemeInLocalStorage = localStorage.getItem('dxvote-newProposal-scheme');
     const networkAssetSymbol = NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
 
@@ -199,9 +199,9 @@ const NewProposalPage = observer(() => {
     if (schemeToUse.type == "WalletScheme"
       && callPermissions[ZERO_ADDRESS]
       && callPermissions[ZERO_ADDRESS]
-      [schemeToUse.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeToUse.address]
+      [schemeToUse.controllerAddress == networkContracts.controller ? networkContracts.avatar : schemeToUse.address]
       && callPermissions[ZERO_ADDRESS]
-      [schemeToUse.controllerAddress == networkConfig.controller ? networkConfig.avatar : schemeToUse.address]
+      [schemeToUse.controllerAddress == networkContracts.controller ? networkContracts.avatar : schemeToUse.address]
       [ANY_ADDRESS]
     )
       allowedToCall.push({ value: ANY_ADDRESS, name: "Custom" });
@@ -257,10 +257,10 @@ const NewProposalPage = observer(() => {
       try {
         
         if ((schemeToUse.type != "ContributionReward")) {
-          const callToController = (schemeToUse.controllerAddress == networkConfig.controller);
+          const callToController = (schemeToUse.controllerAddress == networkContracts.controller);
           
           to = calls.map((call) => {
-            return callToController ? networkConfig.controller : call.to;
+            return callToController ? networkContracts.controller : call.to;
           });
 
           data = calls.map((call) => {
@@ -290,7 +290,7 @@ const NewProposalPage = observer(() => {
             } else {
               callData = call.dataValues[0];
             }
-            if (callToController && call.to != networkConfig.controller) {
+            if (callToController && call.to != networkContracts.controller) {
               return daoService.encodeControllerGenericCall(
                 call.to,
                 callData,
@@ -568,7 +568,7 @@ const NewProposalPage = observer(() => {
           padding: "20px 10px"
         }} />
         {(schemeToUse.type == "ContributionReward" || schemeToUse.type == "GenericMulticall")
-          || (schemeToUse.type == "WalletScheme" && schemeToUse.controllerAddress == networkConfig.controller)
+          || (schemeToUse.type == "WalletScheme" && schemeToUse.controllerAddress == networkContracts.controller)
           ? <h2>Calls executed from the avatar <Question question="9"/></h2>
           : <h2>Calls executed from the scheme <Question question="9"/></h2>
         }

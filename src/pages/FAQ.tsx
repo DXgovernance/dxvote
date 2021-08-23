@@ -37,7 +37,7 @@ const FAQPage = observer(() => {
   }, []);
    
   let daoAddresses = "";
-  const networkContracts = configStore.getNetworkConfig();
+  const networkContracts = configStore.getNetworkContracts();
   for (let n = 0; n < Object.keys(networkContracts).length; n++) {
     daoAddresses += "### " + toCamelCaseString(Object.keys(networkContracts)[n]) + " Network\n";
     daoAddresses += "- Avatar: " + networkContracts.avatar+"\n";
@@ -45,13 +45,6 @@ const FAQPage = observer(() => {
     daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
     daoAddresses += "- Permission Registry: " + networkContracts.permissionRegistry+"\n";
     daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
-    
-    if (networkContracts.schemes) {
-      daoAddresses += "- Schemes:"+"\n";
-      for (let i = 0; i < Object.keys(networkContracts.schemes).length; i++) {
-        daoAddresses += "   - "+Object.keys(networkContracts.schemes)[i]+": "+networkContracts.schemes[Object.keys(networkContracts.schemes)[i]]+"\n";
-      }
-    }
   
   }
 

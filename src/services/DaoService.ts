@@ -39,9 +39,9 @@ export default class DaoService {
     const controller = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.Controller,
-      configStore.getNetworkConfig().controller
+      configStore.getNetworkContracts().controller
     )
-    const avatarAddress = configStore.getNetworkConfig().avatar;
+    const avatarAddress = configStore.getNetworkContracts().avatar;
     return controller.methods.genericCall(to, callData, avatarAddress, value).encodeABI();
   }
   
@@ -113,7 +113,7 @@ export default class DaoService {
   
   createProposal(scheme: string, schemeType: string, proposalData: any): PromiEvent<any> {
     const { providerStore, configStore } = this.context;
-    const networkConfig = configStore.getNetworkConfig();
+    const networkContracts = configStore.getNetworkContracts();
     const { library } = providerStore.getActiveWeb3React();
 
     if (schemeType == "ContributionReward") {
@@ -140,7 +140,7 @@ export default class DaoService {
               { type: 'address', name: '_beneficiary' }
             ]
         },[
-          networkConfig.avatar,
+          networkContracts.avatar,
           contentHash.decode(proposalData.descriptionHash),
           proposalData.reputationChange,
           [0, proposalData.ethValue, proposalData.tokenValue, 0, 1],
@@ -272,7 +272,7 @@ export default class DaoService {
       ContractType.Redeemer,
       redeemerAddress,
       'redeem',
-      [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkConfig().avatar, beneficiary],
+      [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkContracts().avatar, beneficiary],
       {}
     );
   }
@@ -307,7 +307,7 @@ export default class DaoService {
               type: 'address',
               name: '_beneficiary'
           }]
-      }, [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkConfig().avatar, beneficiary])
+      }, [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkContracts().avatar, beneficiary])
     });
   }
 }
