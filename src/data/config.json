@@ -1338,7 +1338,7 @@
   "arbitrum": {
     "contracts": {
       "fromBlock": 220615,
-      "avatar": "0xe086305858d49f65a5d20adaccd31c523d32694f",
+      "avatar": "0xe086305858d49F65A5D20ADAccd31C523d32694f",
       "reputation": "0x232Af049e34770DAd94f452cCDC6FEb0EcD42623",
       "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
       "controller": "0xDD032cd0dfCB54050E1FA30Be59056403e292700",

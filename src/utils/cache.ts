@@ -207,7 +207,7 @@ export const getNetworkConfig = async function(networkName) {
   } else {
     return (await axios({
       method: "GET",
-      url: "https://gateway.pinata.cloud/ipfs/Qmc8fPUPDD3yrCxAu5iLuurwdiujRhoSaMyczjWj8P9A51"
+      url: "https://gateway.pinata.cloud/ipfs/QmQ4BB2LDWYs9sxfPtQ2dAXTDdz4ExRJVpR14q3fiLLHuP"
     })).data[networkName];
   }
 }

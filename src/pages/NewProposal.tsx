@@ -417,9 +417,8 @@ const NewProposalPage = observer(() => {
       setCallsInState(calls);
     };
     
-    function onToSelectChange(callIndex, event) {
-      const toAddress = event.target.value;
-
+    function onToSelectChange(callIndex, toAddress) {
+      console.log(toAddress)
       if (toAddress == ANY_ADDRESS) {
         changeCallType(callIndex);
       } else {
@@ -439,8 +438,7 @@ const NewProposalPage = observer(() => {
           calls[callIndex].functionParams = calls[callIndex].allowedFunctions[0].params;
           calls[callIndex].dataValues = new Array(calls[callIndex].allowedFunctions[0].params.length);
         }
-
-        setCallsInState(calls);
+        onFunctionSelectChange(callIndex, calls[callIndex].functionName, calls[callIndex].functionParams);
       }
     }
     
@@ -498,6 +496,8 @@ const NewProposalPage = observer(() => {
         setCallsInState(calls);
       }
     }
+    if (calls[0].allowedFunctions.length == 0)
+      onToSelectChange(0, allowedToCall[0].value)
 
     return (
       <NewProposalFormWrapper>
@@ -639,8 +639,8 @@ const NewProposalPage = observer(() => {
 
                 {((schemeToUse.type == "WalletScheme") && (call.callType === "simple")) ?
                   <SelectInput
-                    value={calls[i].to || ""}
-                    onChange={(value) => {onToSelectChange(i, value)}}
+                    value={calls[i].to}
+                    onChange={(e) => {onToSelectChange(i, e.target.value)}}
                     width={"20%"}
                   >
                   {allowedToCall.map((allowedCall, allowedCallIndex) =>{
@@ -654,7 +654,7 @@ const NewProposalPage = observer(() => {
                   : (schemeToUse.type != "ContributionReward") &&
                   <TextInput
                     value={calls[i].to || ""}
-                    onChange={(value) => {onToSelectChange(i, value)}}
+                    onChange={(e) => {onToSelectChange(i, e.target.value)}}
                     width={"20%"}
                   />
                 }

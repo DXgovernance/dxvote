@@ -14,7 +14,7 @@ const ipfsHashesOfNetworkCaches = {
   "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
   "arbitrum": "QmccjtNMVNqK7WGi34Lc22WpKk85N27eVm6pBJ1wPchWYW"
 };
-const ipfsHashOfAppConfig = "Qmc8fPUPDD3yrCxAu5iLuurwdiujRhoSaMyczjWj8P9A51";
+const ipfsHashOfAppConfig = "QmQ4BB2LDWYs9sxfPtQ2dAXTDdz4ExRJVpR14q3fiLLHuP";
 
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
