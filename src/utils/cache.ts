@@ -3,6 +3,8 @@ import _ from "lodash";
 import axios from 'axios';
 import { ZERO_ADDRESS } from './index';
 
+const ipfsHashOfAppConfig = "QmQ4BB2LDWYs9sxfPtQ2dAXTDdz4ExRJVpR14q3fiLLHuP";
+
 const Web3 = require('web3');
 const web3 = new Web3();
 
@@ -207,7 +209,7 @@ export const getNetworkConfig = async function(networkName) {
   } else {
     return (await axios({
       method: "GET",
-      url: "https://gateway.pinata.cloud/ipfs/QmQ4BB2LDWYs9sxfPtQ2dAXTDdz4ExRJVpR14q3fiLLHuP"
+      url: "https://gateway.pinata.cloud/ipfs/"+ipfsHashOfAppConfig
     })).data[networkName];
   }
 }

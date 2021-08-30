@@ -7,13 +7,13 @@ const Web3 = require('web3');
 const web3 = new Web3();
 
 const ipfsHashesOfNetworkCaches = {
-  "mainnet": "QmZVaa3n4gZqrqMX6233FeD3TQC95QwUWwn6p72KNySxeN",
-  "xdai": "QmTqG4fj72npVGmjodNdJ6ZSUMjaD4SZNJDNCFZF1vutwV",
-  "rinkeby": "QmbstfTpn2aBsxGQqkA9Y1RWPbTjB829ePWhFQsZwBv3iJ",
-  "arbitrumTestnet": "QmW8GarhVMNSNS6PNAvnsRu39UbKXRwEWQtU4BueYsQiwz",
+  "mainnet": "QmSDx3yvbjri8QXKpBeABmpeFocCHmEiTniZGdJBxtHHXJ",
+  "xdai": "QmX6mqR9JvjkZ5vh34DPNc739yDPjVBz58bExDULpwimdu",
+  "rinkeby": "QmdNXPU7wxxA73CDiw3BHftG352keLyQnfu6ifVCDXmYon",
+  "arbitrumTestnet": "QmNaCEyiJBHDoe8ATXKXogCs4qnoLWBxW5NMF1Ru5Nj9kL",
   "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
-  "arbitrum": "QmccjtNMVNqK7WGi34Lc22WpKk85N27eVm6pBJ1wPchWYW"
-};
+  "arbitrum": "Qmc4pbZ5u7cLuGdZtZxuYhJdeXvc7dEUvCSWEgnZaN7Qjg"
+}
 const ipfsHashOfAppConfig = "QmQ4BB2LDWYs9sxfPtQ2dAXTDdz4ExRJVpR14q3fiLLHuP";
 
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
