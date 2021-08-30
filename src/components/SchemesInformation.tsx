@@ -123,20 +123,6 @@ const SchemesInformation = observer(() => {
                       ? <small>Required Percentage for boosted approval: {bnum(scheme.boostedVoteRequiredPercentage).div("1000").toString()} %<br/></small>
                       : <div/>
                     }
-                    
-                    <small>Required Percentage for queue approval: {votingMachineParameters.queuedVoteRequiredPercentage.toString()} %</small><br/>
-                    <small>Queued Proposal Period: {
-                      moment.duration(votingMachineParameters.queuedVotePeriodLimit.toString(), 'seconds').humanize()
-                    }</small><br/>
-                    <small>Boosted Proposal Period: {
-                      moment.duration(votingMachineParameters.boostedVotePeriodLimit.toString(), 'seconds').humanize()
-                    }</small><br/>
-                    <small>PreBoosted Proposal Period: {
-                      moment.duration(votingMachineParameters.preBoostedVotePeriodLimit.toString(), 'seconds').humanize()
-                    }</small><br/>
-                    <small>Quiet Ending Period: {
-                      moment.duration(votingMachineParameters.quietEndingPeriod.toString(), 'seconds').humanize()
-                    }</small><br/>
                     <small>Rep Proposing Reward: {
                       Number(library.utils.fromWei(votingMachineParameters.proposingRepReward.toString())).toFixed(2)
                     } REP</small><br/>
