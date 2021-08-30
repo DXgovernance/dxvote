@@ -1075,6 +1075,8 @@ export const updateProposals = async function (
       } catch (error) {
         console.error('Error getting title from', proposal.id, ipfsHash, 'waiting 2 seconds and trying again..');
         console.error(error.message);
+        if (error.message == "Request failed with status code 429")
+          await sleep(10000);
         if (isNode()) {
           proposalIndex --;
           retryIntent ++;
