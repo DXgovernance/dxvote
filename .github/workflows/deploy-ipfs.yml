@@ -1,0 +1,49 @@
+name: deploy to ipfs
+  
+on:
+  push:
+    branches: 
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.13.1]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Install Dependencies
+        run: yarn
+        
+      - name: Build
+        run: CI=false yarn build
+        
+      - name: Deploy to ipfs
+        uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.4
+        with:
+          pin-name: 'dxvote'
+          path: 'build'
+          pinata-api-key: 121008788ba8017a9a57
+          pinata-secret-api-key: ${{ secrets.PINATA_KEY }}
+          verbose: true
+          remove-old: true
+      
+      # To be used to test the IPFS hashses
+      # - name: Install IPFS & Hash
+      #   run: |
+      #     # make file runnable, might not be necessary
+      #     chmod +x "${GITHUB_WORKSPACE}/.github/ipfs-install.sh"
+      # 
+      #     # run script
+      #     "${GITHUB_WORKSPACE}/.github/ipfs-install.sh"

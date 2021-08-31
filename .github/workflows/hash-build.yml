@@ -1,0 +1,36 @@
+name: hash-build
+  
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.13.1]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Install Dependencies
+        run: yarn
+        
+      - name: Build
+        run: CI=false yarn build
+      
+      To be used to test the IPFS hashses
+      - name: Install IPFS & Hash
+        run: |
+          # make file runnable, might not be necessary
+          chmod +x "${GITHUB_WORKSPACE}/.github/ipfs-install.sh"
+      
+          # run script
+          "${GITHUB_WORKSPACE}/.github/ipfs-install.sh"
