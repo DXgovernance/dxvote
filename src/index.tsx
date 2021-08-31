@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { createWeb3ReactRoot } from '@web3-react/core';
@@ -24,6 +23,7 @@ import ProposalPage from './pages/Proposal';
 import InfoPage from './pages/Info';
 import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
+import ForumPage from './pages/Forum';
 
 moment.updateLocale('en', {
   relativeTime : {
@@ -50,12 +50,14 @@ const Root = (
             <Header />
             <PageRouter>
               <Route exact path="/"> <ProposalsPage /> </Route>
-              <Route exact path="/new"> <NewProposalPage /> </Route>
-              <Route exact path="/info"> <InfoPage /> </Route>
               <Route exact path="/config"> <ConfigPage /> </Route>
+              <Route exact path="/forum"> <ForumPage /> </Route>
               <Route exact path="/faq"> <FAQPage /> </Route>
-              <Route exact path="/user/:address"> <UserPage /> </Route>
-              <Route exact path="/proposal/:proposalId"> <ProposalPage /> </Route>
+              <Route exact path="/:network/proposals"> <ProposalsPage /> </Route>
+              <Route exact path="/:network/new"> <NewProposalPage /> </Route>
+              <Route exact path="/:network/info"> <InfoPage /> </Route>
+              <Route exact path="/:network/user/:address"> <UserPage /> </Route>
+              <Route exact path="/:network/proposal/:proposalId"> <ProposalPage /> </Route>
             </PageRouter>
             <Footer />
           </Web3ReactManager>

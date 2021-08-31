@@ -1,30 +1,30 @@
-import RootStore from '../stores';
+import RootContext from '../contexts';
 import axios from "axios";
 import contentHash from 'content-hash';
 
 export default class PinataService {
-  rootStore: RootStore;
+  context: RootContext;
   auth: Boolean = false;
 
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
+  constructor(context: RootContext) {
+    this.context = context;
   }
   
   async updatePinList() {
-    const pinList = await this.getPinList();
-    const ipfsHashes = this.rootStore.daoStore.getCache().ipfsHashes;
-    const alreadyPinned = pinList.data.rows;
+    // const pinList = await this.getPinList();
+    const ipfsHashes = this.context.daoStore.getCache().ipfsHashes;
+    // const alreadyPinned = pinList.data.rows;
     for (let i = 0; i < ipfsHashes.length; i++) {
-      if (alreadyPinned.indexOf(pinned => alreadyPinned.ipfs_pin_hash == ipfsHashes[i].hash) < 0) {
-        console.log('[PINATA] Pinning:', ipfsHashes[i].hash);
-      } else {
-        console.log('[PINATA] Alpready pinned:', ipfsHashes[i].hash);
-      }
+      // if (alreadyPinned.indexOf(pinned => alreadyPinned.ipfs_pin_hash == ipfsHashes[i].hash) < 0) {
+      //   console.debug('[PINATA] Pinning:', ipfsHashes[i].hash);
+      // } else {
+      //   console.debug('[PINATA] Alpready pinned:', ipfsHashes[i].hash);
+      // }
     }
   }
   
   async isAuthenticated(){
-    const pinataApiKey = this.rootStore.configStore.getLocalConfig().pinata;
+    const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
     try {
       const auth = await axios({
         method: "GET",
@@ -39,14 +39,14 @@ export default class PinataService {
 
   async pin(hashToPin: String){
     console.log('pininng', hashToPin)
-    const pinataApiKey = this.rootStore.configStore.getLocalConfig().pinata;
+    const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
     return axios({
       method: "POST",
       url: "https://api.pinata.cloud/pinning/pinByHash",
       data: {
         hashToPin,
         pinataMetadata: {
-          name: `DXdao ${this.rootStore.configStore.getActiveChainName()} DescriptionHash ${contentHash.fromIpfs(hashToPin)}`,
+          name: `DXdao ${this.context.configStore.getActiveChainName()} DescriptionHash ${contentHash.fromIpfs(hashToPin)}`,
           keyValues: { type: 'proposal' }
         }
       },
@@ -55,10 +55,10 @@ export default class PinataService {
   }
   
   async getPinList(){
-    const pinataApiKey = this.rootStore.configStore.getLocalConfig().pinata;
+    const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
     return axios({
       method: "GET",
-      url: `https://api.pinata.cloud/data/pinList?pageLimit=1000&metadata[name]=DXdao ${this.rootStore.configStore.getActiveChainName()}`,
+      url: `https://api.pinata.cloud/data/pinList?pageLimit=1000&metadata[name]=DXdao ${this.context.configStore.getActiveChainName()}`,
       headers: { Authorization: `Bearer ${pinataApiKey}` }
     });
   }

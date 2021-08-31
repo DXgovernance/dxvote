@@ -1,26 +1,22 @@
-import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useStores } from './contexts/storesContext';
+import { useContext } from './contexts';
 import { FiZapOff, FiZap } from "react-icons/fi";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
+import Box from './components/common/Box';
 
 const PageRouterWrapper = styled.div`
-  border: 1px solid var(--medium-gray);
   margin-top: 20px;
-  padding-top: 10px;
-  font-weight: 400;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
+`
 
+const LoadingBox = styled(Box)`
+  
  .loader {
     text-align: center;
     font-weight: 500;
     font-size: 20px;
     line-height: 18px;
-    color: var(--medium-gray);
+    color: var(--dark-text-gray);
     padding: 25px 0px;
       
     .svg {
@@ -30,15 +26,16 @@ const PageRouterWrapper = styled.div`
     }
   }
 `
+
 const PageRouter = observer(({ children }) => {
     
     const {
-        root: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService },
-    } = useStores();
-    let needsLoading = true;
+        context: { providerStore, blockchainStore, configStore, ipfsService, etherscanService, pinataService, coingeckoService },
+    } = useContext();
     
-    const { pathname } = useLocation();
-    const noLoading = ['/faq', '/config'];
+    const history = useHistory();
+    const location = useLocation();
+    const noLoading = ['/faq', '/config', '/forum'];
     
     // Start or auth services
     ipfsService.start();
@@ -46,22 +43,43 @@ const PageRouter = observer(({ children }) => {
     pinataService.isAuthenticated();
 
     const { active: providerActive } = providerStore.getActiveWeb3React();
-    if (!providerActive)
+    
+    if (noLoading.indexOf(location.pathname) > -1) {
+      return <PageRouterWrapper> {children} </PageRouterWrapper>;
+
+    } else if (!providerActive)
       return (
         <PageRouterWrapper>
-          <div className="loader"> <FiZapOff/> <br/> Connect to metamask </div>
-        </PageRouterWrapper>
-      );
-    else if (!blockchainStore.initialLoadComplete && noLoading.indexOf(pathname) < 0)
-      return (
-        <PageRouterWrapper>
-          <div className="loader"> <FiZap/> <br/> Loading.. </div>
+          <LoadingBox>
+            <div className="loader"> <FiZapOff/> <br/> Connect to metamask </div>
+          </LoadingBox>
         </PageRouterWrapper>
       );
     else {
-      if (configStore.getLocalConfig().pinOnStart)
-        pinataService.updatePinList();
-      return <PageRouterWrapper> {children} </PageRouterWrapper>;
+      
+      const networkName = configStore.getActiveChainName();
+      if (location.pathname == "/"){
+        history.push(`/${networkName}/proposals`)
+      }
+      
+      if (location.pathname.split('/')[1] && location.pathname.split('/')[1] != networkName) {
+        history.push(`/${networkName}/proposals`)
+      }
+      
+      if (!blockchainStore.initialLoadComplete) {
+        return (
+          <PageRouterWrapper>
+            <LoadingBox>
+              <div className="loader"> <FiZap/> <br/> Loading.. </div>
+            </LoadingBox>
+          </PageRouterWrapper>
+        );
+      } else {
+        coingeckoService.loadPrices();
+        if (configStore.getLocalConfig().pinOnStart)
+          pinataService.updatePinList();
+        return <PageRouterWrapper> {children} </PageRouterWrapper>;
+      }
     }
 });
 

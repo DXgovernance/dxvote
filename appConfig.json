@@ -1,0 +1,18 @@
+{
+  "cacheToBlock": {
+    "mainnet": 13100000,
+    "xdai": 17770000,
+    "rinkeby": 9183000,
+    "arbitrumTestnet": 2380000,
+    "localhost": 67,
+    "arbitrum": 224000
+  },
+  "cacheHash": {
+    "mainnet": "QmSDx3yvbjri8QXKpBeABmpeFocCHmEiTniZGdJBxtHHXJ",
+    "xdai": "QmX6mqR9JvjkZ5vh34DPNc739yDPjVBz58bExDULpwimdu",
+    "rinkeby": "QmdNXPU7wxxA73CDiw3BHftG352keLyQnfu6ifVCDXmYon",
+    "arbitrumTestnet": "QmNaCEyiJBHDoe8ATXKXogCs4qnoLWBxW5NMF1Ru5Nj9kL",
+    "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
+    "arbitrum": "Qmc4pbZ5u7cLuGdZtZxuYhJdeXvc7dEUvCSWEgnZaN7Qjg"
+  }
+}

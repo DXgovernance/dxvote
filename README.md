@@ -1,38 +1,54 @@
 # DXvote
 
-Application for voting and govern DXdao, focused on technical decentralization (fetching all data from ethereum network, ipfs or static configuration files). 
+> DXdao recognizes the need to adapt and build new systems that reach consensus in a scalable, decentralized and effective way. Consensus is not an end, but a process.
+>
+> *DXdao Manifesto https://ipfs.io/ipfs/QmfGgQYwL4ZrXLVshYuwH2WHeSvPFQCDXeYTzPPFReCJqJ*
 
-## Add Pinata Service
+With the requirements mentioned above DXdao built DXvote, an application that instead of trusting external and centralized services commonly used by other dapps DXvote brings complete control and maintenance responsibilities to the DXdao members, a huge responsibility that brings the decentralized freedom that DXdao needs.
 
-1.- Register in https://auth.pinata.cloud/signup
+## Maintenance
 
-2.- Login in https://auth.pinata.cloud/login
+Like we mention before the maintenance of the dapp is in charge of the users of it, this does not mean that they have to work full time to make the DAO worked, truth be told the maintenance of the application is not hard.
+The application gets all the necessary data from a file (called cache file) and its configuration form another file (called config file).
 
-3.- Go to https://pinata.cloud/keys and click in "New Key".
+All maintenance actions are executed in the blockchain network trough transactions, this is extremely helpful to refund the maintenance cost instantly as well as providing an economic incentive to those who maintain the dapp.
 
-4.- Allow API Endpoints `pinByHash` in Pinning and `pinList` in Data.
-![pinata-help](docs/pinata2.png)
+### Cache
 
-5.- Enter a Key Name, click "Create Key" button and **dont close the "API Key Info" window**.
+To update the cache a script need to be executed, this script will fetch and index all the necessary information to be served in the dapp when it starts, so the dapp will only need to fetch the remaining information to the last block.
 
-![pinata-help](docs/pinata1.png)
+Example: If the dapp is used in mainnet and the last block number is 11 million and the cahce file has all the data till block number 10 million the application will get all the remaining data between block number 10 million and 11 million before starting, once it finish it will start the dapp.
 
-6.- The information you are seeing will be displayed only once, copy the **JWT key** into the Pinata key in [/config](https://augustol.github.io/dxvote/#/config) in dxvote.
+**Pros and Cons**: The big Pro of this is that there wont be loading times between actions while the user is using the dapp, all actions would seem to be instant, and they are because the information is already there. The Con in this approach is that if the cache is not updated often (days or weeks depending on the network) it can cause low loading times when you open the application for the first time.
+
+The cache script will gather all immutable information from the ethereum networks supported and save all of it in cache files, one file per network inside the `src/cache/data` folder.
+
+`yarn build-cache`
+
+To understand a bit better what the script will do you can see `scripts/builCache.sh` and `scripts/buildCache.ts`.
+
+### Configuration
+
+The configuration is even easier than the cache, it is just one file that stores all the smart contracts addresses, the tokens to be used, and the proposal templates and the calls to be recommended to be used in the new proposal.
+
+Each network in the config file has a token, recommended calls and templates array, if you want to add new tokens, templates and recommended calls to the dapp just add them in the config file. You only change the file when you want to change the values mentioned before.
 
 ## Development
 
-Will build the dapp with the development configuration, deploying all dxdao contracts in a local network, being able to use local network and rinkeby.
+The development script will start a local hardhat node, deploy all dxdao contracts with local development configuration and start the dapp with the development configuration in the port 3000.
 
 `yarn dev`
 
+To understand a bit better what the script will do you can see `scripts/dev.sh` and `scripts/deployDevContracts.ts`.
+
 ## Start
 
-Will start the dapp with the production configuration, right now only working on rinkeby.
+The script will start the dapp with the production configuration locally in the port 3000.
 
 `yarn start`
 
 ## Build
 
-Will build the dapp with the production configuration, right now only working on rinkeby.
+The script build the dapp with the production configuration.
 
 `yarn build`

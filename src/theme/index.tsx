@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
     createGlobalStyle,
     css,
     ThemeProvider as StyledComponentsThemeProvider,
 } from 'styled-components';
-import { useStores } from '../contexts/storesContext';
-
-export * from './components';
+import { useContext } from '../contexts';
 
 export const SUPPORTED_THEMES = {
     DARK: 'DARK',
@@ -36,8 +34,8 @@ const black = '#000000';
 
 export default function ThemeProvider({ children }) {
     const {
-        root: { configStore },
-    } = useStores();
+        context: { configStore },
+    } = useContext();
 
     const darkMode = configStore.darkMode;
 
@@ -59,11 +57,15 @@ const theme = (darkMode) => ({
 
     // for setting css on <html>
     backgroundColor: darkMode ? '#333639' : white,
+    
+    activeButtonBackground: "#536DFE",
 
     modalBackground: darkMode ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.5)',
     inputBackground: darkMode ? '#202124' : white,
     placeholderGray: darkMode ? '#5F5F5F' : '#E1E1E1',
     shadowColor: darkMode ? '#000' : '#2F80ED',
+    
+    borderStyle: "rgba(14, 0, 135, 0.1) 0px 2px 10px, rgba(14, 0, 135, 0.05) 0px 12px 32px",
 
     // grays
     concreteGray: darkMode ? '#292C2F' : '#FAFAFA',
@@ -122,12 +124,6 @@ const theme = (darkMode) => ({
 });
 
 export const GlobalStyle = createGlobalStyle`
-  @import url('https://rsms.me/inter/inter.css');
-  html { font-family: 'Inter', sans-serif; }
-  @supports (font-variation-settings: normal) {
-    html { font-family: 'Inter var', sans-serif; }
-  }
-
   html {
     font-size: 16px;
     font-variant: none;

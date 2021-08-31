@@ -1,21 +1,15 @@
-import React from 'react';
 import styled from 'styled-components'; 
 import { useLocation } from 'react-router-dom';
+import { useContext } from '../contexts';
 import ActiveButton from '../components/common/ActiveButton';
+import Box from '../components/common/Box';
 
 import FinanceInformation from '../components/FinanceInformation';
 import SchemesInformation from '../components/SchemesInformation';
 import GovernanceInformation from '../components/GovernanceInformation';
-import ProposalsTable from '../components/ProposalsTable';
 
-const InfoPageWrapper = styled.div`
+const InfoPageWrapper = styled(Box)`
   width: 100%;
-  background: white;
-  font-weight: 400;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
 `;
 
 const InfoNavigation = styled.div`
@@ -30,24 +24,28 @@ const InfoNavigation = styled.div`
   flex-direction: row;
 `;
 const InfoPage = () => {
-    const searchPath = useLocation().search;
-    return (
-      <InfoPageWrapper>
-        <InfoNavigation>
-          <ActiveButton route="/info?view=governance">Governance</ActiveButton>
-          <ActiveButton route="/info?view=finance">Finance</ActiveButton>
-          <ActiveButton route="/info?view=schemes">Schemes</ActiveButton>
-        </InfoNavigation>
-        <div>
-          { searchPath === "?view=schemes" ?
-            <SchemesInformation/>
-          : searchPath === "?view=governance" ?
-            <GovernanceInformation/>
-          : <FinanceInformation/>
-          }
-        </div>
-      </InfoPageWrapper>
-    );
+  const {
+    context: { configStore },
+  } = useContext();
+  const networkName = configStore.getActiveChainName();
+  const searchPath = useLocation().search;
+  return (
+    <InfoPageWrapper>
+      <InfoNavigation>
+        <ActiveButton route={`/${networkName}/info?view=governance`}>Governance</ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=finance`}>Finance</ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=schemes`}>Schemes</ActiveButton>
+      </InfoNavigation>
+      <div>
+        { searchPath === `?view=schemes` ?
+          <SchemesInformation/>
+        : searchPath === `?view=governance` ?
+          <GovernanceInformation/>
+        : <FinanceInformation/>
+        }
+      </div>
+    </InfoPageWrapper>
+  );
 };
 
 export default InfoPage;

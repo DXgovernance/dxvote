@@ -1,16 +1,26 @@
 import { makeObservable, observable, action } from 'mobx';
-import RootStore from 'stores';
+import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import RootContext from '../contexts';
 import { ContractType } from './Provider';
-import { bnum } from '../utils/helpers';
+import { BigNumber, bnum } from '../utils';
+import { executeMulticall } from '../utils/cache';
 
 export default class UserStore {
-  userInfo: UserInfo;
-  rootStore: RootStore;
+  userInfo: { 
+    address: string,
+    ethBalance: BigNumber,
+    repBalance: BigNumber,
+    dxdBalance: BigNumber,
+    dxdApproved: BigNumber,
+    genBalance: BigNumber,
+    genApproved: BigNumber
+  };
+  context: RootContext;
 
-  constructor(rootStore) {
-    this.rootStore = rootStore;
+  constructor(context) {
+    this.context = context;
     this.userInfo = {
-      address: rootStore.providerStore.getActiveWeb3React(),
+      address: context.providerStore.getActiveWeb3React(),
       ethBalance: bnum(0),
       repBalance: bnum(0),
       dxdBalance: bnum(0),
@@ -29,65 +39,68 @@ export default class UserStore {
     return this.userInfo;
   }
 
-  update() {
-    const { configStore, providerStore, blockchainStore } = this.rootStore;
-    const { account } = providerStore.getActiveWeb3React();
+  async update(web3React: Web3ReactContextInterface) {
+    const { configStore, providerStore, daoStore, transactionStore } = this.context;
+    const networkContracts = configStore.getNetworkContracts();
+    const account = web3React.account;
     
-    const repBalance = account ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Reputation,
-      address: configStore.getNetworkConfig().reputation,
-      method: 'balanceOf',
-      params: [account]
-    }) : bnum(0);
+    transactionStore.checkPendingTransactions(web3React, account);
+    let callsToExecute = [[
+      providerStore.getContract(web3React, ContractType.Multicall, networkContracts.utils.multicall),
+      'getEthBalance',
+      [account],
+    ]];
     
-    const ethBalance = account ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.Multicall,
-      address: configStore.getNetworkConfig().multicall,
-      method: 'getEthBalance',
-      params: [account]
-    }) : bnum(0);
+    if (networkContracts.votingMachines.gen) {
+      callsToExecute.push([
+        providerStore.getContract(web3React, ContractType.ERC20, networkContracts.votingMachines.gen.token),
+        'balanceOf',
+        [account],
+      ]);
+      callsToExecute.push([
+        providerStore.getContract(web3React, ContractType.ERC20, networkContracts.votingMachines.gen.token),
+        'allowance',
+        [account, networkContracts.votingMachines.gen.address],
+      ]);
+    }
+    if (networkContracts.votingMachines.dxd) {
+      callsToExecute.push([
+        providerStore.getContract(web3React, ContractType.ERC20, networkContracts.votingMachines.dxd.token),
+        'balanceOf',
+        [account],
+      ]);
+      callsToExecute.push([
+        providerStore.getContract(web3React, ContractType.ERC20, networkContracts.votingMachines.dxd.token),
+        'allowance',
+        [account, networkContracts.votingMachines.dxd.address],
+      ]);
+    }
     
-    const dxdBalance = account && configStore.getNetworkConfig().votingMachines.dxd 
-    ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.ERC20,
-      address: configStore.getNetworkConfig().votingMachines.dxd.token,
-      method: 'balanceOf',
-      params: [account]
-    }) : bnum(0);
+    const callsResponse = await executeMulticall(
+      web3React.library,
+      providerStore.getContract(web3React, ContractType.Multicall, networkContracts.utils.multicall),
+      callsToExecute
+    );
     
-    const dxdApproved = account && configStore.getNetworkConfig().votingMachines.dxd 
-    ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.ERC20,
-      address: configStore.getNetworkConfig().votingMachines.dxd.token,
-      method: 'allowance',
-      params: [account, configStore.getNetworkConfig().votingMachines.dxd.address]
-    }) : bnum(0);
-    
-    const genBalance = account && configStore.getNetworkConfig().votingMachines.gen 
-    ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.ERC20,
-      address: configStore.getNetworkConfig().votingMachines.gen.token,
-      method: 'balanceOf',
-      params: [account]
-    }) : bnum(0);
-    
-    const genApproved = account && configStore.getNetworkConfig().votingMachines.gen 
-    ? this.rootStore.blockchainStore.getCachedValue({
-      contractType: ContractType.ERC20,
-      address: configStore.getNetworkConfig().votingMachines.gen.token,
-      method: 'allowance',
-      params: [account, configStore.getNetworkConfig().votingMachines.gen.address]
-    }) : bnum(0);
-    
-    this.userInfo = {
-      address: account,
-      ethBalance,
-      repBalance,
-      dxdBalance,
-      dxdApproved,
-      genBalance,
-      genApproved
-    };
+    let userInfo = this.userInfo;
+    userInfo.repBalance = account && daoStore.daoCache ? daoStore.getRepAt(account, providerStore.getCurrentBlockNumber()).userRep : bnum(0);
+
+    // TO DO: Improve this mess of ifs
+    userInfo.ethBalance = account ? bnum(callsResponse.decodedReturnData[0]) : bnum(0);
+    userInfo.genBalance = (account && networkContracts.votingMachines.gen) ? bnum(callsResponse.decodedReturnData[1]) : bnum(0);
+    userInfo.genApproved = (account && networkContracts.votingMachines.gen) ? bnum(callsResponse.decodedReturnData[2]) : bnum(0);
+    userInfo.dxdBalance = (account && networkContracts.votingMachines.dxd && networkContracts.votingMachines.gen)
+      ? bnum(callsResponse.decodedReturnData[3])
+      : (account && networkContracts.votingMachines.dxd && !networkContracts.votingMachines.gen) 
+      ? bnum(callsResponse.decodedReturnData[1])
+      : bnum(0);
+    userInfo.dxdApproved = (account && networkContracts.votingMachines.dxd && networkContracts.votingMachines.gen)
+      ? bnum(callsResponse.decodedReturnData[4])
+      : (account && networkContracts.votingMachines.dxd && !networkContracts.votingMachines.gen) 
+      ? bnum(callsResponse.decodedReturnData[2])
+      : bnum(0);
+      
+    this.userInfo = userInfo;
   }
   
 }

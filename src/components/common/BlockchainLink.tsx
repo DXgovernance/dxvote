@@ -1,7 +1,7 @@
-import React from 'react';
 import styled from 'styled-components';
 import Copy from './Copy';
-import { useStores } from '../../contexts/storesContext';
+import { getBlockchainLink } from '../../utils';
+import { useContext } from '../../contexts';
 import { FiExternalLink } from "react-icons/fi";
 
 const AddressLink = styled.span`
@@ -18,11 +18,11 @@ const AddressLink = styled.span`
   }
 `;
 
-const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy, onlyIcon}) => {
+const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy = false, onlyIcon = false}) => {
   
     const {
-        root: { configStore },
-    } = useStores();
+        context: { configStore },
+    } = useContext();
     
     const networkName = configStore.getActiveChainName();
 
@@ -39,27 +39,10 @@ const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy, only
             return `${start}...${end}`;
         }
     }
-    
-    function href() {
-        switch (type) {
-          case "user":
-            return `${window.location.pathname}#/user/${text}`;
-          case "address":
-            if (networkName == 'arbitrum')
-              return `https://explorer5.arbitrum.io/#/address/${text}`
-            else
-              return `https://${networkName}.etherscan.io/address/${text}`
-          default:
-            if (networkName == 'arbitrum')
-              return `https://explorer5.arbitrum.io/#/tx/${text}`
-            else
-              return `https://${networkName}.etherscan.io/tx/${text}`
-        }
-    }
 
     return (
         <AddressLink>
-          <a href={href()} target="_blank">{ onlyIcon ? <FiExternalLink/> : formarText(text)}</a>
+          <a href={getBlockchainLink(text, networkName, type)} target="_blank">{ onlyIcon ? <FiExternalLink/> : formarText(text)}</a>
           {toCopy ? <Copy toCopy={text} /> : <div/> }
         </AddressLink>
     );

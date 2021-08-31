@@ -1,4 +1,4 @@
-import RootStore from '../stores';
+import RootContext from '../contexts';
 import _ from 'lodash';
 import { ContractType } from '../stores/Provider';
 
@@ -12,12 +12,12 @@ export interface EventCall {
 }
 
 export default class EventsService {
-  rootStore: RootStore;  
+  context: RootContext;  
 
   activeEventsCalls: EventCall[];
     
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
+  constructor(context: RootContext) {
+    this.context = context;
     this.activeEventsCalls = [];
   }
   
@@ -28,7 +28,7 @@ export default class EventsService {
     fromBlock: number,
     toBlock: number
   ){
-    const { providerStore } = this.rootStore;
+    const { providerStore } = this.context;
     const contract = providerStore.getContract(providerStore.getActiveWeb3React(), contractType, address);
     console.log('Getting event',eventName, fromBlock, toBlock);
     return _.orderBy( 

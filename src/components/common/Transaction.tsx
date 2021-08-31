@@ -1,6 +1,5 @@
-import React from 'react';
 import styled from 'styled-components';
-import { useStores } from '../../contexts/storesContext';
+import { useContext } from '../../contexts';
 
 const AddressLink = styled.a`
     padding: 2px 5px;
@@ -14,8 +13,8 @@ const AddressLink = styled.a`
 const UserAddress = ({ address, size = 'default', type = 'default' }) => {
   
     const {
-        root: { configStore },
-    } = useStores();
+        context: { configStore },
+    } = useContext();
     
     const networkName = configStore.getActiveChainName();
 

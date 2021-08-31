@@ -1,12 +1,12 @@
 import { makeObservable, observable, action } from 'mobx';
-import RootStore from 'stores';
+import RootContext from '../contexts';
 import { ethers } from 'ethers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
 import { sendAction } from './actions/actions';
 import { web3ContextNames } from '../provider/connectors';
 import PromiEvent from 'promievent';
-import { TXEvents } from '../enums';
+import { TXEvents } from '../utils';
 import moment from 'moment';
 import { schema } from '../services/ABIService';
 
@@ -19,7 +19,8 @@ export enum ContractType {
     VotingMachine = 'VotingMachine',
     DXDVotingMachine = 'DXDVotingMachine',
     WalletScheme = 'WalletScheme',
-    Multicall = 'Multicall'
+    Multicall = 'Multicall',
+    Redeemer ='Redeemer'
 }
 
 export interface ChainData {
@@ -44,10 +45,10 @@ export default class ProviderStore {
     activeChainId: number;
     activeFetchLoop: any;
     activeAccount: string;
-    rootStore: RootStore;
+    context: RootContext;
 
-    constructor(rootStore) {
-      this.rootStore = rootStore;
+    constructor(context) {
+      this.context = context;
       this.web3Contexts = {};
       this.chainData = { currentBlockNumber: -1 };
       makeObservable(this, {
@@ -94,7 +95,7 @@ export default class ProviderStore {
         web3React: Web3ReactContextInterface,
         account: string
     ) => {
-        const { transactionStore } = this.rootStore;
+        const { transactionStore } = this.context;
 
         console.debug('[Fetch Start - User Blockchain Data]', {
             account,
@@ -174,7 +175,7 @@ export default class ProviderStore {
         params: any[],
         overrides?: any
     ): PromiEvent<any> => {
-        const { transactionStore } = this.rootStore;
+        const { transactionStore } = this.context;
         const { chainId, account } = web3React;
 
         overrides = overrides ? overrides : {};
@@ -205,5 +206,60 @@ export default class ProviderStore {
         });
 
         return response;
+    };
+    
+    @action sendRawTransaction = (
+        web3React: Web3ReactContextInterface,
+        to: string,
+        data: string,
+        value: string
+    ): PromiEvent<any> => {
+        const { transactionStore } = this.context;
+        const { chainId, account } = web3React;
+
+        if (!account) {
+            throw new Error(ERRORS.BlockchainActionNoAccount);
+        }
+
+        if (!chainId) {
+            throw new Error(ERRORS.BlockchainActionNoChainId);
+        }
+
+        const promiEvent = new PromiEvent<any>(() => {
+            web3React.library.eth.sendTransaction({ from: account, to: to, data: data, value: value })
+                .once('transactionHash', (hash) => {
+                    transactionStore.addTransactionRecord(account, hash);
+                    promiEvent.emit(TXEvents.TX_HASH, hash);
+                    console.debug(TXEvents.TX_HASH, hash);
+                })
+                .once('receipt', (receipt) => {
+                    promiEvent.emit(TXEvents.RECEIPT, receipt);
+                    console.debug(TXEvents.RECEIPT, receipt);
+                })
+                .once('confirmation', (confNumber, receipt) => {
+                    promiEvent.emit(TXEvents.CONFIRMATION, {
+                        confNumber,
+                        receipt,
+                    });
+                    console.debug(TXEvents.CONFIRMATION, {
+                        confNumber,
+                        receipt,
+                    });
+                })
+                .on('error', (error) => {
+                    console.debug(error.code);
+                    promiEvent.emit(TXEvents.INVARIANT, error);
+                    console.debug(TXEvents.INVARIANT, error);
+                })
+                .then((receipt) => {
+                    promiEvent.emit(TXEvents.FINALLY, receipt);
+                    console.debug(TXEvents.FINALLY, receipt);
+                })
+                .catch((e) => {
+                    console.debug('rejected', e);
+                });
+        });
+
+        return promiEvent;
     };
 }
