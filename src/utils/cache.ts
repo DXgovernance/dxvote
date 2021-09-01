@@ -215,7 +215,6 @@ export const getNetworkConfig = async function(networkName) {
 }
 
 export const getSchemeTypeData = function(networkConfig, schemeAddress) {
-  console.log(networkConfig)
   if (networkConfig.daostack) {
     if (networkConfig.daostack.schemeRegistrar && networkConfig.daostack.schemeRegistrar.address == schemeAddress) {
       return {
