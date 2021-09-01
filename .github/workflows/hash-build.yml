@@ -29,7 +29,7 @@ jobs:
       - name: Install IPFS & Hash
         run: |
           # make file runnable, might not be necessary
-          chmod +x "${GITHUB_WORKSPACE}/.github/ipfs-install.sh"
+          chmod +x "${GITHUB_WORKSPACE}/.github/ipfs-install-and-hash.sh"
       
           # run script
-          "${GITHUB_WORKSPACE}/.github/ipfs-install.sh"
+          "${GITHUB_WORKSPACE}/.github/ipfs-install-and-hash.sh"
