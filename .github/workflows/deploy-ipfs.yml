@@ -38,12 +38,3 @@ jobs:
           pinata-secret-api-key: ${{ secrets.PINATA_KEY }}
           verbose: true
           remove-old: true
-      
-      # To be used to test the IPFS hashses
-      # - name: Install IPFS & Hash
-      #   run: |
-      #     # make file runnable, might not be necessary
-      #     chmod +x "${GITHUB_WORKSPACE}/.github/ipfs-install.sh"
-      # 
-      #     # run script
-      #     "${GITHUB_WORKSPACE}/.github/ipfs-install.sh"
