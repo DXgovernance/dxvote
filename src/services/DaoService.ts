@@ -45,7 +45,7 @@ export default class DaoService {
     return controller.methods.genericCall(to, callData, avatarAddress, value).encodeABI();
   }
   
-  decodeWalletSchemeCall(from: string, to: string, data: string, value: BigNumber){
+  decodeWalletSchemeCall(from: string, to: string, data: string, value: BigNumber, fullDescription: boolean){
     const { abiService, providerStore, configStore } = this.context;
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();
@@ -96,12 +96,15 @@ export default class DaoService {
               .replaceAll("[PARAM_"+paramIndex+"]", "<italic>"+callParameters[paramIndex]+"</italic>");
       } 
       
-      return `<strong>Description</strong>:${decodedCallText}
-      <strong>To</strong>: ${recommendedCallUsed.toName} <small>${recommendedCallUsed.to}</small>
-      <strong>Function</strong>: ${recommendedCallUsed.functionName} <small>${library.eth.abi.encodeFunctionSignature(recommendedCallUsed.functionName)}</small>
-      <strong>Params</strong>: ${JSON.stringify(Object.keys(callParameters).map((paramIndex) => callParameters[paramIndex]))}
-      <strong>Data</strong>: ${data} `
-      
+      if (fullDescription) {
+        return `<strong>Description</strong>:${decodedCallText}
+        <strong>To</strong>: ${recommendedCallUsed.toName} <small>${recommendedCallUsed.to}</small>
+        <strong>Function</strong>: ${recommendedCallUsed.functionName} <small>${library.eth.abi.encodeFunctionSignature(recommendedCallUsed.functionName)}</small>
+        <strong>Params</strong>: ${JSON.stringify(Object.keys(callParameters).map((paramIndex) => callParameters[paramIndex]))}
+        <strong>Data</strong>: ${data} `
+      } else {
+        return decodedCallText;
+      }
     } else {
       return `<strong>From</strong>: ${from}
       <strong>To</strong>: ${to}
