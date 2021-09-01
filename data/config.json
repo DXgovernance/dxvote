@@ -1439,6 +1439,13 @@
         "symbol":"DXD",
         "fetchPrice": true,
         "logoURI":"https://assets.coingecko.com/coins/images/11148/thumb/dxdao.png?1607999331"
+      },{
+        "address":"0x955b9fe60a5b5093df9dc4b1b18ec8e934e77162",
+        "name":"SWPR Token",
+        "decimals":18,
+        "symbol":"SWPR",
+        "fetchPrice": true,
+        "logoURI":"https://ipfs.io/ipfs/QmWF6nPb4y2DehfGRzKGaekXQzShSQ11uzMNmxsLJQxBUQ"
       }
     ]
   },
