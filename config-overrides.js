@@ -11,8 +11,8 @@ module.exports = (config, env) => {
     const gitRevisionPlugin = new GitRevisionPlugin();
     const shortCommitHash = gitRevisionPlugin.commithash().substring(0, 8);
     config.output.publicPath = "";
-    config.output.filename = `static/js/[name].${shortCommitHash}.js`;
-    config.output.chunkFilename = `static/js/[name].${shortCommitHash}.chunk.js`;
+    config.output.filename = `static/js/[name].js`;
+    config.output.chunkFilename = `static/js/[name].chunk.js`;
     config.plugins = config.plugins.filter(
         (plugin) =>
             !(
@@ -23,19 +23,19 @@ module.exports = (config, env) => {
     );
     config.plugins.push(
         new MiniCssExtractPlugin({
-            filename: `static/css/[name].${shortCommitHash}.css`,
+            filename: `static/css/[name].css`,
             chunkFilename: "static/css/[name].chunk.css",
         })
     );
+
     
     // TO DO: Check how to enable this later
-
-    // config.module.rules[2].oneOf.find(
-    //     (rule) => rule.loader === process.cwd()+"/node_modules/react-scripts/node_modules/file-loader/dist/cjs.js"
-    // ).options.name = "static/media/[name].[ext]";
-    // config.module.rules[2].oneOf.find(
-    //     (rule) => rule.loader === process.cwd()+"/node_modules/react-scripts/node_modules/url-loader/dist/cjs.js"
-    // ).options.name = "static/media/[name].[ext]";
-    // config.optimization.moduleIds = "hashed";
+    config.module.rules[1].oneOf.find(
+        (rule) => rule.loader === process.cwd()+"/node_modules/react-scripts/node_modules/file-loader/dist/cjs.js"
+    ).options.name = "static/media/[name].[ext]";
+    config.module.rules[1].oneOf.find(
+        (rule) => rule.loader === process.cwd()+"/node_modules/react-scripts/node_modules/url-loader/dist/cjs.js"
+    ).options.name = "static/media/[name].[ext]";
+    config.optimization.moduleIds = "hashed";
     return config;
 };
