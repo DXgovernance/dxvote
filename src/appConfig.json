@@ -1,19 +1,19 @@
 {
   "cacheToBlock": {
-    "mainnet": 13100000,
-    "xdai": 17770000,
+    "mainnet": 13142000,
+    "xdai": 1787000,
+    "arbitrum": 250000,
     "rinkeby": 9183000,
     "arbitrumTestnet": 2380000,
-    "localhost": 67,
-    "arbitrum": 224000
+    "localhost": 67
   },
   "cacheHash": {
-    "mainnet": "QmSDx3yvbjri8QXKpBeABmpeFocCHmEiTniZGdJBxtHHXJ",
+    "mainnet": "QmSVx5QAtgmzREmknksFDtXrThmmGBZPpksw2jtYqMMveJ",
     "xdai": "QmX6mqR9JvjkZ5vh34DPNc739yDPjVBz58bExDULpwimdu",
     "rinkeby": "QmdNXPU7wxxA73CDiw3BHftG352keLyQnfu6ifVCDXmYon",
     "arbitrumTestnet": "QmNaCEyiJBHDoe8ATXKXogCs4qnoLWBxW5NMF1Ru5Nj9kL",
     "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
-    "arbitrum": "Qmc4pbZ5u7cLuGdZtZxuYhJdeXvc7dEUvCSWEgnZaN7Qjg"
+    "arbitrum": "QmXWxH42UqSGPrrE4XoHkdoLouZM3Lw95h7CpVNCZyTPwE"
   },
-  "configHash": "QmSztpAwE4KxPKRmifAaz3AQiGxVzYN8REzCX5m1jMDKYn"
+  "configHash": "QmRvY2g5g1vPe3TSLsvJAnjg7zPgaB3RhwjRFTqPpcx9by"
 }
