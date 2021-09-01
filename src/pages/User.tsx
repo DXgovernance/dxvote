@@ -5,7 +5,7 @@ import { useContext } from '../contexts';
 import { useLocation } from 'react-router-dom';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Box from '../components/common/Box';
-
+import {  formatBalance } from '../utils';
 const InfoBox = styled.div`
   flex: 1;
   text-align: center;
@@ -83,7 +83,7 @@ const UserPage = observer(() => {
         
         <div style={{display: "flex", flexDirection: "row"}}>
           <InfoBox>
-            {userInfo.repPercentage} % REP
+            {formatBalance(userInfo.repBalance,18,0)} REP ({userInfo.repPercentage})
           </InfoBox>
           <InfoBox>
             {userEvents.votes.filter(vote => vote.vote == 1).length} Positive Votes

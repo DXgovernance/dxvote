@@ -5,14 +5,13 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import moment from 'moment';
 import Countdown from 'react-countdown';
-import { FiPlayCircle, FiFastForward } from "react-icons/fi";
+import { FiPlayCircle, FiFastForward, FiThumbsUp, FiThumbsDown, FiZoomIn, FiZoomOut } from "react-icons/fi";
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from "react-router-dom";
 import contentHash from 'content-hash';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
-import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
@@ -47,7 +46,7 @@ const ProposalInfoSection = styled.div`
 
 const ProposalInfoBox = styled(Box)`
   max-width: 900px;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   padding: 20px 15px 10px 15px;
   justify-content: flex-start;
   overflow: auto;
@@ -144,6 +143,7 @@ const ProposalPage = observer(() => {
     const scheme = daoStore.getScheme(proposal.scheme);
     const { dxdApproved, genApproved } = userStore.getUserInfo(); 
     const { account } = providerStore.getActiveWeb3React();
+    const [advancedCalls, setAdvancedCalls] = React.useState(false);
     const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
     const [proposalDescription, setProposalDescription] = React.useState(
@@ -223,7 +223,8 @@ const ProposalPage = observer(() => {
           ? scheme.address : networkContracts.avatar,
         proposal.to[p],
         proposal.callData[p],
-        proposal.values[p]
+        proposal.values[p],
+        advancedCalls
       );
     }
     
@@ -339,11 +340,15 @@ const ProposalPage = observer(() => {
                 </small>
               </h3>
             }
-            <h2> Calls  <Question question="9"/></h2>
+            <h2> Calls
+              {advancedCalls ? <FiZoomOut onClick={() => {setAdvancedCalls(false)}} /> 
+              : <FiZoomIn onClick={() => {setAdvancedCalls(true)}} /> }
+              <Question question="9"/>
+            </h2>
             {proposalCallTexts.map((proposalCallText, i) => {
               return(
               <div key={"proposalCallText"+i}>
-                <span style={{whiteSpace: "pre-line"}} dangerouslySetInnerHTML={{ __html: proposalCallText }}/>
+                <strong>Call #{i}</strong> - <span style={{whiteSpace: "pre-line"}} dangerouslySetInnerHTML={{ __html: proposalCallText }}/>
                 {i < proposalCallTexts.length - 1 ? <hr/> : <div/>}
               </div>);
             })}
