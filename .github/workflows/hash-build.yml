@@ -26,7 +26,6 @@ jobs:
       - name: Build
         run: CI=false yarn build
       
-      To be used to test the IPFS hashses
       - name: Install IPFS & Hash
         run: |
           # make file runnable, might not be necessary
