@@ -1395,6 +1395,23 @@
           {"type": "uint256", "name": "deadline", "defaultValue": ""}
         ],
         "decodeText": "Remove and send [PARAM_2] liquidity tokens from pool with tokens [PARAM_0] - [PARAM_1] to address [PARAM_5]"
+      },
+      {
+        "asset": "0x0000000000000000000000000000000000000000",
+        "from": "0xB7F6F30178d9598D158BFA046456cf27ACEdcECB",
+        "to": "0x85B94253ACd8C06525B509d94F9a9c5aF78a012f",
+        "toName": "Swapr liquidity mining campaigns factory",
+        "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+        "params": [
+          {"type": "address[]", "name": "rewardTokensAddresses", "defaultValue": ""},
+          {"type": "address", "name": "stakableTokenAddress", "defaultValue": ""},
+          {"type": "uint256[]", "name": "rewardAmounts", "defaultValue": ""},
+          {"type": "uint64", "name": "startingTimestamp", "defaultValue": ""},
+          {"type": "uint64", "name": "endingTimestamp", "defaultValue": ""},
+          {"type": "bool", "name": "locked", "defaultValue": ""},
+          {"type": "uint256", "name": "stakingCap", "defaultValue": ""}
+        ],
+        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_7] and locked status [PARAM_6]"
       }
     ],
     "proposalTemplates": [
