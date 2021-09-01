@@ -18,9 +18,9 @@ const emptyCache: DaoNetworkCache = {
 
 const networks = process.env.REACT_APP_ETH_NETWORKS.split(',');
 for (let i = 0; i < networks.length; i++) {
-  if (!fs.existsSync("./src/data/cache/"+networks[i]+".json"))
+  if (!fs.existsSync("./data/cache/"+networks[i]+".json"))
     fs.writeFileSync(
-      "./src/data/cache/"+networks[i]+".json",
+      "./data/cache/"+networks[i]+".json",
       JSON.stringify(emptyCache),
       { encoding: "utf8", flag: "w" }
     );
@@ -29,7 +29,7 @@ for (let i = 0; i < networks.length; i++) {
 const { getNetworkConfig } = require("../src/utils");
 const { getUpdatedCache } = require("../src/cache");
 import IPFS from 'ipfs-core';
-const appConfig = require("../appConfig.json");
+const appConfig = require("../src/appConfig.json");
 import { DaoNetworkCache, DaoInfo} from "../src/types";
 
 async function main() {
@@ -37,7 +37,7 @@ async function main() {
   if (process.env.EMPTY_CACHE) {
     
     fs.writeFileSync(
-      "./src/data/cache/"+networkName+".json",
+      "./data/cache/"+networkName+".json",
       JSON.stringify( emptyCache , null, 2),
       { encoding: "utf8", flag: "w" }
     );
@@ -48,8 +48,8 @@ async function main() {
     emptyCache.daoInfo.address = networkConfig.contracts.avatar;
     
     let networkCacheFile: DaoNetworkCache = 
-      (fs.existsSync("./src/data/cache/"+networkName+".json") && !process.env.RESET_CACHE)
-        ? JSON.parse(fs.readFileSync("./src/data/cache/"+networkName+".json", "utf-8"))
+      (fs.existsSync("./data/cache/"+networkName+".json") && !process.env.RESET_CACHE)
+        ? JSON.parse(fs.readFileSync("./data/cache/"+networkName+".json", "utf-8"))
         : emptyCache;
       
     // Set block range for the script to run, if cache to blcok is set that value is used, if not we use last block 
@@ -67,20 +67,25 @@ async function main() {
     
     // Rewrite the cache file
     fs.writeFileSync(
-      "./src/data/cache/"+networkName+".json",
+      "./data/cache/"+networkName+".json",
       JSON.stringify(networkCacheFile),
       { encoding: "utf8", flag: "w" }
     );
     
     const ipfs = await IPFS.create();
-    const result = await ipfs.add(
-      fs.readFileSync("./src/data/cache/"+networkName+".json"),
-      { pin: true, onlyHash: false }
-    );
+
     appConfig.cacheToBlock[networkName] = toBlock;
-    appConfig.cacheHash[networkName] = result.cid.toString();
+    appConfig.cacheHash[networkName] = (await ipfs.add(
+      fs.readFileSync("./data/cache/"+networkName+".json"),
+      { pin: true, onlyHash: false }
+    )).cid.toString();
+
+    appConfig.configHash = (await ipfs.add(
+      fs.readFileSync("./data/config.json"),
+      { pin: true, onlyHash: false }
+    )).cid.toString();
     
-    fs.writeFileSync("./appConfig.json", JSON.stringify(appConfig, null, 2), { encoding: "utf8", flag: "w" });
+    fs.writeFileSync("./src/appConfig.json", JSON.stringify(appConfig, null, 2), { encoding: "utf8", flag: "w" });
     
     console.debug(`IPFS hash for cache in ${networkName} network: ${appConfig.cacheHash[networkName]}`);
     

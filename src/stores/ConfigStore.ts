@@ -5,16 +5,7 @@ import { NETWORK_NAMES } from '../provider/connectors';
 
 const Web3 = require('web3');
 const web3 = new Web3();
-
-const ipfsHashesOfNetworkCaches = {
-  "mainnet": "QmSDx3yvbjri8QXKpBeABmpeFocCHmEiTniZGdJBxtHHXJ",
-  "xdai": "QmX6mqR9JvjkZ5vh34DPNc739yDPjVBz58bExDULpwimdu",
-  "rinkeby": "QmdNXPU7wxxA73CDiw3BHftG352keLyQnfu6ifVCDXmYon",
-  "arbitrumTestnet": "QmNaCEyiJBHDoe8ATXKXogCs4qnoLWBxW5NMF1Ru5Nj9kL",
-  "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
-  "arbitrum": "Qmc4pbZ5u7cLuGdZtZxuYhJdeXvc7dEUvCSWEgnZaN7Qjg"
-}
-const ipfsHashOfAppConfig = "QmQ4BB2LDWYs9sxfPtQ2dAXTDdz4ExRJVpR14q3fiLLHuP";
+const appConfig = require('../appConfig.json');
 
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
@@ -62,12 +53,12 @@ export default class ConfigStore {
     }
     
     @action async loadConfig() {
-      const config = await this.context.ipfsService.getContentFromIPFS(ipfsHashOfAppConfig)
+      const config = await this.context.ipfsService.getContentFromIPFS(appConfig.configHash)
       this.appConfig = config;
     }
     
     getCacheIPFSHash(networkName) {
-      return ipfsHashesOfNetworkCaches[networkName];
+      return appConfig.cacheHash[networkName];
     }
 
     getSchemeTypeData(schemeAddress) {
