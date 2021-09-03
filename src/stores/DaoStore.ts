@@ -164,23 +164,45 @@ export default class DaoStore {
     totalNegativeStakesAmount = bnum(0),
     totalProposalsCreated = 0;
     const cache = this.getCache();
-    let rep = [];
-    rep = _.sortBy(rep, [function(o) { return o[1]; }]);
-    rep.unshift(["User Address", "REP %"]);
     
+    let repUsers = {};
     let repEvents = [];
     let repTotalSupply = bnum(0);
     let blockNumber = 0;
     for (let i = 0; i < cache.daoInfo.repEvents.length; i++) {
-      if (cache.daoInfo.repEvents[i].event == "Mint")
+      if (cache.daoInfo.repEvents[i].event == "Mint"){
         repTotalSupply = repTotalSupply.plus(cache.daoInfo.repEvents[i].amount);
-      else if (cache.daoInfo.repEvents[i].event == "Burn")
+        if (repUsers[cache.daoInfo.repEvents[i].account]) {
+          repUsers[cache.daoInfo.repEvents[i].account] = repUsers[cache.daoInfo.repEvents[i].account]
+            .plus(cache.daoInfo.repEvents[i].amount);
+        } else {
+          repUsers[cache.daoInfo.repEvents[i].account] = cache.daoInfo.repEvents[i].amount;
+        }
+      } else if (cache.daoInfo.repEvents[i].event == "Burn") {
         repTotalSupply = repTotalSupply.minus(cache.daoInfo.repEvents[i].amount);
+        if (repUsers[cache.daoInfo.repEvents[i].account]) {
+          repUsers[cache.daoInfo.repEvents[i].account] = repUsers[cache.daoInfo.repEvents[i].account]
+            .minus(cache.daoInfo.repEvents[i].amount);
+        } else {
+          console.log('ERROR');
+        }
+      }
       
       if (cache.daoInfo.repEvents[i].l1BlockNumber > blockNumber){
         blockNumber = cache.daoInfo.repEvents[i].l1BlockNumber;
         repEvents.push([blockNumber, bnum(repTotalSupply).div(10**18).toNumber()])
       }
+    }
+    let rep = [];
+    for (const userAddress in repUsers) {
+      rep.push([userAddress, repUsers[userAddress].div(bnum(repTotalSupply)).toNumber()])
+    }
+    rep = _.sortBy(rep, [function(o) { return o[1]; }]);
+    rep.unshift(["User Address", "REP %"]);
+    let repPercentageShow = 0;
+    for (let i = rep.length-1; i >= 0; i--) {
+      repPercentageShow += rep[i][1]*100;
+      console.log(rep[i][0], rep[i][1]*100, repPercentageShow)
     }
     repEvents.unshift(["Block", "Total Rep"]);
 
