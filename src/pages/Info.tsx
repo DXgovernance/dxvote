@@ -7,6 +7,7 @@ import Box from '../components/common/Box';
 import FinanceInformation from '../components/FinanceInformation';
 import SchemesInformation from '../components/SchemesInformation';
 import GovernanceInformation from '../components/GovernanceInformation';
+import PermissionsInformation from '../components/PermissionsInformation';
 
 const InfoPageWrapper = styled(Box)`
   width: 100%;
@@ -35,12 +36,15 @@ const InfoPage = () => {
         <ActiveButton route={`/${networkName}/info?view=governance`}>Governance</ActiveButton>
         <ActiveButton route={`/${networkName}/info?view=finance`}>Finance</ActiveButton>
         <ActiveButton route={`/${networkName}/info?view=schemes`}>Schemes</ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=permissions`}>Permissions</ActiveButton>
       </InfoNavigation>
       <div>
         { searchPath === `?view=schemes` ?
           <SchemesInformation/>
         : searchPath === `?view=governance` ?
           <GovernanceInformation/>
+        : searchPath === `?view=permissions` ?
+          <PermissionsInformation/>
         : <FinanceInformation/>
         }
       </div>

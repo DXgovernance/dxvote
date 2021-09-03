@@ -122,7 +122,7 @@ export const decodeProposalStatus = function(
           status: "Pending Execution", 
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
           finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit),
-          pendingAction: 0
+          pendingAction: 2
         };
       } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
         return { 

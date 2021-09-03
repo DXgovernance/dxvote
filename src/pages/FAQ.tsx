@@ -43,6 +43,13 @@ const FAQPage = observer(() => {
   daoAddresses += "- Permission Registry: " + networkContracts.permissionRegistry+"\n";
   daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
 
+  for (const votingMachineName in networkContracts.votingMachines) {
+    if (votingMachineName == "dxd"){
+      daoAddresses += "- DXDVotingMachine: " + networkContracts.votingMachines[votingMachineName].address+"\n";
+      daoAddresses += "- DXD: " + networkContracts.votingMachines[votingMachineName].token+"\n";
+    }
+  }
+
    const FAQBody = 
 `# Where are the dao funds held?
 
