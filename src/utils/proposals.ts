@@ -56,7 +56,7 @@ export const decodeProposalStatus = function(
         };
       else if (proposal.stateInScheme == WalletSchemeProposalState.ExecutionSucceded)
         return { 
-          status: "Execution Succeded", 
+          status: "Execution Succeeded", 
           boostTime: boostedPhaseTime,
           finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed)
           ? bnum(
@@ -82,7 +82,7 @@ export const decodeProposalStatus = function(
           ? bnum(
             proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
           ) : bnum(0),
-          pendingAction: schemeType == "ContributionReward" ? 4 : 0
+          pendingAction: schemeType == "ContributionReward" ? 4 : schemeType == "GenericMulticall" ? 5 : 0
         };
       else return { 
         status: "Passed", 

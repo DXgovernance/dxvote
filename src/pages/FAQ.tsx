@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { toCamelCaseString } from '../utils';
 import { observer } from 'mobx-react';
 import Box from '../components/common/Box';
 import { useContext } from '../contexts';
@@ -38,15 +37,11 @@ const FAQPage = observer(() => {
    
   let daoAddresses = "";
   const networkContracts = configStore.getNetworkContracts();
-  for (let n = 0; n < Object.keys(networkContracts).length; n++) {
-    daoAddresses += "### " + toCamelCaseString(Object.keys(networkContracts)[n]) + " Network\n";
-    daoAddresses += "- Avatar: " + networkContracts.avatar+"\n";
-    daoAddresses += "- Controller: " + networkContracts.controller+"\n";
-    daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
-    daoAddresses += "- Permission Registry: " + networkContracts.permissionRegistry+"\n";
-    daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
-  
-  }
+  daoAddresses += "- Avatar: " + networkContracts.avatar+"\n";
+  daoAddresses += "- Controller: " + networkContracts.controller+"\n";
+  daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
+  daoAddresses += "- Permission Registry: " + networkContracts.permissionRegistry+"\n";
+  daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
 
    const FAQBody = 
 `# Where are the dao funds held?
