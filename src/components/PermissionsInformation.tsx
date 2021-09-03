@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
+import { FiX } from "react-icons/fi";
+
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
+import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, timestampToDate, bnum } from '../utils';
 
 const PermissionsInfoWrapper = styled.div`
     background: white;
@@ -22,7 +24,7 @@ const TableHeaderWrapper = styled.div`
     flex-direction: row;
     justify-content: space-between;
     color: var(--light-text-gray);
-    padding: 20px 40px 8px 24px;
+    padding: 20px 0px 8px 0px;
     font-size: 14px;
     text-align: center;
 `;
@@ -72,9 +74,10 @@ const PermissionsInformation = observer(() => {
 
     const schemes = daoStore.getAllSchemes();
     const rawPermissions = daoStore.getCache().callPermissions;
-    const networkContracts = configStore.getNetworkContracts()
+    const networkContracts = configStore.getNetworkContracts();
+    const tokens = configStore.getTokensOfNetwork();
     let addressesNames = {};
-    console.log(networkContracts)
+
     addressesNames[ZERO_ADDRESS] = NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
     addressesNames[ANY_ADDRESS] = "Avatar";
     addressesNames[networkContracts.avatar] = "Avatar";
@@ -85,6 +88,9 @@ const PermissionsInformation = observer(() => {
     schemes.map((scheme) => {
       addressesNames[scheme.address] = scheme.name;
     })
+    tokens.map((token) => {
+      addressesNames[token.address] = token.name;
+    })
 
     const permissions = [];
     
@@ -92,12 +98,13 @@ const PermissionsInformation = observer(() => {
       for (const fromAddress in rawPermissions[assetAddress]) {
         for (const toAddress in rawPermissions[assetAddress][fromAddress]) {
           for (const functionSignature in rawPermissions[assetAddress][fromAddress][toAddress]) {
+            const value = rawPermissions[assetAddress][fromAddress][toAddress][functionSignature].value.toString();
             permissions.push({
               asset: addressesNames[assetAddress] || assetAddress,
               from: addressesNames[fromAddress] || fromAddress,
               to: addressesNames[toAddress] || toAddress,
               functionSignature: functionSignature == ANY_FUNC_SIGNATURE ? "Any Function" : functionSignature,
-              value: rawPermissions[assetAddress][fromAddress][toAddress][functionSignature].value.toString(),
+              value: value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ? "ANY Value" : value,
               fromTime: rawPermissions[assetAddress][fromAddress][toAddress][functionSignature].fromTime
             });
           }
@@ -109,23 +116,26 @@ const PermissionsInformation = observer(() => {
       <PermissionsInfoWrapper>
         <TableHeaderWrapper>
           <TableHeader width="10%" align="left"> Asset </TableHeader>
-          <TableHeader width="30%" align="left"> From </TableHeader>
-          <TableHeader width="30%" align="left"> To </TableHeader>
+          <TableHeader width="25%" align="left"> From </TableHeader>
+          <TableHeader width="25%" align="left"> To </TableHeader>
           <TableHeader width="10%" align="center"> Function </TableHeader>
           <TableHeader width="10%" align="left"> Value </TableHeader>
-          <TableHeader width="10%" align="center"> From Time </TableHeader>
+          <TableHeader width="20%" align="center"> From Time </TableHeader>
         </TableHeaderWrapper>
         <TableRowsWrapper>
         {permissions.map((permission, i) => {
           return (
             <TableRow key={`permission${i}`}>
               <TableCell width="10%" align="left">{permission.asset}</TableCell>
-              <TableCell width="30%" align="left">{permission.from}</TableCell>
-              <TableCell width="30%" align="left">{permission.to}</TableCell>
+              <TableCell width="25%" align="left">{permission.from}</TableCell>
+              <TableCell width="25%" align="left">{permission.to}</TableCell>
               <TableCell width="10%" align="center">{permission.functionSignature}</TableCell>
               <TableCell width="10%" align="left">{permission.value}</TableCell>
-              <TableCell width="10%" align="center">{permission.fromTime}</TableCell>
-            </TableRow>);
+              <TableCell width="20%" align="center">
+              { (permission.fromTime == 0) ? <FiX/> : timestampToDate(bnum(permission.fromTime)) }
+              </TableCell>
+            </TableRow>
+          );
         })}
         </TableRowsWrapper>
       </PermissionsInfoWrapper>
