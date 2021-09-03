@@ -313,4 +313,25 @@ export default class DaoService {
       }, [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkContracts().avatar, beneficiary])
     });
   }
+  
+  executeMulticall(
+    schemeAddress: string,
+    proposalId: string,
+  ): PromiEvent<any> {
+    const { providerStore } = this.context;
+    const web3 = providerStore.getActiveWeb3React().library;
+    return providerStore.sendRawTransaction(
+      providerStore.getActiveWeb3React(),
+      schemeAddress,
+      web3.eth.abi.encodeFunctionCall({
+          name: 'execute',
+          type: 'function',
+          inputs: [{
+              type: 'bytes32',
+              name: '_proposalId'
+          }]
+      }, [proposalId]),
+      "0"
+    );
+  }
 }

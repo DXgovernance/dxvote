@@ -77,7 +77,7 @@ const GovernanceInformation = observer(() => {
 
     const daoInfo = daoStore.getDaoInfo();
     const governanceInfo = daoStore.getGovernanceInfo();
-    console.log(governanceInfo);
+
     function toNumber(weiNumber) {
       return bnum(weiNumber).div(10**18).toFixed(0)
     }

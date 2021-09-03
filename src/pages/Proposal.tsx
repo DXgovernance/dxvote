@@ -318,6 +318,10 @@ const ProposalPage = observer(() => {
         networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, proposal.to[0]
       );
     };
+    
+    const executeMulticall = function() {
+      daoService.executeMulticall(scheme.address, proposalId);
+    };
 
     const finishTimeReached = finishTime.toNumber() < moment().unix();
 
@@ -390,8 +394,10 @@ const ProposalPage = observer(() => {
                 <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
               : pendingAction == 3 ?
                 <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
-              : pendingAction == 4 &&
+              : pendingAction == 4 ?
                 <ActionButton color="blue" onClick={redeemBeneficiary}><FiPlayCircle/> Redeem 4 Beneficiary </ActionButton>
+              : pendingAction == 5 &&
+                <ActionButton color="blue" onClick={executeMulticall}><FiPlayCircle/> Execute Multicall </ActionButton>
               }
             </SidebarRow>
             : <div/>

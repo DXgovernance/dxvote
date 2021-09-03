@@ -335,6 +335,7 @@ export const updatePermissionRegistry = async function (
     let permissionRegistryEvents = sortEvents(
       await getEvents(web3, networkContracts.permissionRegistry, fromBlock, toBlock, 'allEvents')
     );
+
     permissionRegistryEvents.map((permissionRegistryEvent) => {
       const eventValues = permissionRegistryEvent.returnValues;
       
@@ -737,7 +738,22 @@ export const updateProposals = async function (
                 callsResponse.returnData[5]
               );
           } else {
-            if (schemeTypeData.type == 'ContributionReward') {
+            if (schemeTypeData.type == 'GenericMulticall') {
+              const executionEvent = await web3.eth.getPastLogs({
+                fromBlock: schemeEvent.l1BlockNumber,
+                address: schemeAddress,
+                topics: [
+                  "0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533",
+                  avatarAddressEncoded,
+                  proposalId
+                ]
+              });
+              if (executionEvent.length > 0)
+                schemeProposalInfo.state = WalletSchemeProposalState.ExecutionSucceded;
+              else 
+                schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
+                
+              } else if (schemeTypeData.type == 'ContributionReward') {
               if (
                 callsResponse.decodedReturnData[5] > 0
                 || callsResponse.decodedReturnData[6] > 0
@@ -1056,9 +1072,8 @@ export const updateProposals = async function (
       networkCache.schemes[proposal.scheme].type != "WalletScheme"
       && proposal.descriptionHash && proposal.descriptionHash.length > 0
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
-      && (proposal.title.length == 0
-        && (isNode() || proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
-      )
+      && proposal.title.length == 0
+      && (isNode() || proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
     )
       try {
         console.debug('Getting title from proposal', proposal.id, proposal.descriptionHash, ipfsHash);
@@ -1088,7 +1103,8 @@ export const updateProposals = async function (
   // Update existent active proposals
   await Promise.all(Object.keys(networkCache.proposals).map(async (proposalId) => {
     
-    if ((networkCache.proposals[proposalId].stateInVotingMachine > VotingMachineProposalState.Executed)
+    if (isNode() 
+    || (networkCache.proposals[proposalId].stateInVotingMachine > VotingMachineProposalState.Executed)
     || (networkCache.proposals[proposalId].stateInScheme == WalletSchemeProposalState.Submitted)) {
   
       const schemeAddress = networkCache.proposals[proposalId].scheme;
@@ -1216,7 +1232,22 @@ export const updateProposals = async function (
             networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.Rejected;
           }
         }
-      } else if (networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed) {
+      } else if (schemeTypeData.type == 'GenericMulticall') {
+        
+        const executionEvent = await web3.eth.getPastLogs({
+          fromBlock: networkCache.proposals[proposalId].creationEvent.l1BlockNumber,
+          address: schemeAddress,
+          topics: [
+            "0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe",
+            avatarAddressEncoded,
+            proposalId
+          ]
+        });
+        if (executionEvent.length > 0)
+          networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.ExecutionSucceded
+        else 
+          networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.Submitted
+        } else if (networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed) {
         networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.ExecutionSucceded;
       }
   

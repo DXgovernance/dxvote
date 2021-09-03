@@ -630,6 +630,7 @@ export default class DaoStore {
     const { library } = this.context.providerStore.getActiveWeb3React();
     const scheme = this.getScheme(schemeAddress);
     const callPermissions = this.getCache().callPermissions;
+    console.log(callPermissions)
     let assetLimits = {};
     const from = scheme.controllerAddress == networkContracts.controller ? networkContracts.avatar : schemeAddress;
     let recommendedCalls = this.context.configStore.getRecommendedCalls();
