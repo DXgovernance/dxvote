@@ -56,7 +56,7 @@ export const decodeProposalStatus = function(
         };
       else if (proposal.stateInScheme == WalletSchemeProposalState.ExecutionSucceded)
         return { 
-          status: "Execution Succeded", 
+          status: "Execution Succeeded", 
           boostTime: boostedPhaseTime,
           finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed)
           ? bnum(
