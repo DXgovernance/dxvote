@@ -12,11 +12,13 @@ export default class EtherscanService {
   async isAuthenticated(){
     const etherscanAPIKey = this.context.configStore.getLocalConfig().etherscan;
     const { account } = this.context.providerStore.getActiveWeb3React();
-    const auth = await axios({
-      method: "GET",
-      url: `https://api.etherscan.io/api?module=account&action=balance&address=${account}&tag=latest&apikey=${etherscanAPIKey}`,
-    });
-    this.auth = auth.data.status == 1;
+    if (etherscanAPIKey && etherscanAPIKey.length > 0) {
+      const auth = await axios({
+        method: "GET",
+        url: `https://api.etherscan.io/api?module=account&action=balance&address=${account}&tag=latest&apikey=${etherscanAPIKey}`,
+      });
+      this.auth = auth.data.status == 1;
+    }
   }
   
   async getContractABI(address: string){
