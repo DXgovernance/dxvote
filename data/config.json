@@ -1242,7 +1242,7 @@
       {
         "asset": "0x0000000000000000000000000000000000000000",
         "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
-        "to": "0x685E9F2Aae1c3e6D170c2F8c08984A2528768455",
+        "to": "0x0E8F08DaC2eEfF205d6a76bB2380912229409538",
         "toName": "DXD Voting Machine",
         "functionName": "setOrganizationRefund(uint256,uint256)",
         "params": [
@@ -1253,7 +1253,7 @@
       },{
         "asset": "0x0000000000000000000000000000000000000000",
         "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
-        "to": "0x685E9F2Aae1c3e6D170c2F8c08984A2528768455",
+        "to": "0x0E8F08DaC2eEfF205d6a76bB2380912229409538",
         "toName": "DXD Voting Machine",
         "functionName": "setBoostedVoteRequiredPercentage(address,bytes32,uint256)",
         "params": [
