@@ -142,80 +142,85 @@ export default class BlockchainStore {
     ) {
       this.initialLoadComplete = (reset) ? false : this.initialLoadComplete;
       this.activeFetchLoop = true;
-      const { library, chainId } = web3React;
-      const {
-        providerStore,
-        configStore,
-        multicallService,
-        ipfsService,
-        daoStore
-      } = this.context;
-      const networkName = configStore.getActiveChainName();
-      
-      if (!daoStore.getCache()) {
-        console.debug('[IPFS Cache Fetch]', networkName, configStore.getCacheIPFSHash(networkName));
-        daoStore.setCache(
-          daoStore.parseCache(
-            await ipfsService.getContentFromIPFS(configStore.getCacheIPFSHash(networkName))
-          )
-        );
-      }
-      let networkCache = daoStore.getCache();
+      try {
+        const { library, chainId } = web3React;
+        const {
+          providerStore,
+          configStore,
+          multicallService,
+          ipfsService,
+          daoStore
+        } = this.context;
+        const networkName = configStore.getActiveChainName();
+        
+        if (!daoStore.getCache()) {
+          console.debug('[IPFS Cache Fetch]', networkName, configStore.getCacheIPFSHash(networkName));
+          daoStore.setCache(
+            daoStore.parseCache(
+              await ipfsService.getContentFromIPFS(configStore.getCacheIPFSHash(networkName))
+            )
+          );
+        }
+        let networkCache = daoStore.getCache();
 
-      const blockNumber = await library.eth.getBlockNumber();
-      const lastCheckedBlockNumber = networkCache.l1BlockNumber;
+        const blockNumber = await library.eth.getBlockNumber() - 10;
+        const lastCheckedBlockNumber = networkCache.l1BlockNumber;
 
-      if (blockNumber > lastCheckedBlockNumber) {
-        console.debug('[Fetch Loop] Fetch Blockchain Data', blockNumber, chainId);
-        
-        const fromBlock = lastCheckedBlockNumber + 1;
-        const toBlock = blockNumber;
-        const networkContracts = configStore.getNetworkContracts();
-        networkCache = await getUpdatedCache(networkCache, networkContracts, fromBlock, toBlock, library);
-        
-        let tokensBalancesCalls = [];
-        const tokens = configStore.getTokensToFetchPrice();
-        
-        tokens.map((token) => {
-          if (!networkCache.daoInfo.tokenBalances[token.address])
-            tokensBalancesCalls.push({
-              contractType: ContractType.ERC20,
-              address: token.address,
-              method: 'balanceOf',
-              params: [networkContracts.avatar],
-            });
-          Object.keys(networkCache.schemes).map((schemeAddress) => {
-            if (networkCache.schemes[schemeAddress].controllerAddress != networkContracts.controller)
+        if (blockNumber > lastCheckedBlockNumber) {
+          console.debug('[Fetch Loop] Fetch Blockchain Data', blockNumber, chainId);
+          
+          const fromBlock = lastCheckedBlockNumber + 1;
+          const toBlock = blockNumber;
+          const networkContracts = configStore.getNetworkContracts();
+          networkCache = await getUpdatedCache(networkCache, networkContracts, fromBlock, toBlock, library);
+          
+          let tokensBalancesCalls = [];
+          const tokens = configStore.getTokensToFetchPrice();
+          
+          tokens.map((token) => {
+            if (!networkCache.daoInfo.tokenBalances[token.address])
               tokensBalancesCalls.push({
                 contractType: ContractType.ERC20,
                 address: token.address,
                 method: 'balanceOf',
-                params: [schemeAddress],
+                params: [networkContracts.avatar],
               });
-          })
-        });
+            Object.keys(networkCache.schemes).map((schemeAddress) => {
+              if (networkCache.schemes[schemeAddress].controllerAddress != networkContracts.controller)
+                tokensBalancesCalls.push({
+                  contractType: ContractType.ERC20,
+                  address: token.address,
+                  method: 'balanceOf',
+                  params: [schemeAddress],
+                });
+            })
+          });
 
-        if (tokensBalancesCalls.length > 0)
-          multicallService.addCalls(tokensBalancesCalls);
-        await this.executeAndUpdateMulticall(multicallService);
-        
-        tokensBalancesCalls.map((tokensBalancesCall) => {
-          if (tokensBalancesCall.params[0] == networkContracts.avatar) {
-            networkCache.daoInfo.tokenBalances[tokensBalancesCall.address] =
-              this.context.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
-          } else {
-            networkCache.schemes[tokensBalancesCall.params[0]].tokenBalances[tokensBalancesCall.address] =
-              this.context.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
-          }
-        });
-        
-        networkCache.l1BlockNumber = toBlock;
-        providerStore.setCurrentBlockNumber(toBlock);
+          if (tokensBalancesCalls.length > 0)
+            multicallService.addCalls(tokensBalancesCalls);
+          await this.executeAndUpdateMulticall(multicallService);
+          
+          tokensBalancesCalls.map((tokensBalancesCall) => {
+            if (tokensBalancesCall.params[0] == networkContracts.avatar) {
+              networkCache.daoInfo.tokenBalances[tokensBalancesCall.address] =
+                this.context.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
+            } else {
+              networkCache.schemes[tokensBalancesCall.params[0]].tokenBalances[tokensBalancesCall.address] =
+                this.context.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
+            }
+          });
+          
+          networkCache.l1BlockNumber = toBlock;
+          providerStore.setCurrentBlockNumber(toBlock);
+        }
+        daoStore.setCache(networkCache);
+
+        this.initialLoadComplete = true;
+        this.activeFetchLoop = false;
+      } catch (error) {
+        this.activeFetchLoop = false;
       }
-      daoStore.setCache(networkCache);
-
-      this.initialLoadComplete = true;
-      this.activeFetchLoop = false;
+      
     }
   }
 }
