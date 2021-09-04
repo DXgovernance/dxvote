@@ -163,7 +163,7 @@ export default class BlockchainStore {
         }
         let networkCache = daoStore.getCache();
 
-        const blockNumber = await library.eth.getBlockNumber() - 10;
+        const blockNumber = await library.eth.getBlockNumber() - 1;
         const lastCheckedBlockNumber = networkCache.l1BlockNumber;
 
         if (blockNumber > lastCheckedBlockNumber) {
