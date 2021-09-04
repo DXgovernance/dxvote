@@ -144,8 +144,8 @@ const ProposalPage = observer(() => {
     const { dxdApproved, genApproved } = userStore.getUserInfo(); 
     const { account } = providerStore.getActiveWeb3React();
     const [advancedCalls, setAdvancedCalls] = React.useState(false);
-    const [stakeAmount, setStakeAmount] = React.useState(100);
     const [votePercentage, setVotePercentage] = React.useState(0);
+    const [stakeAmount, setStakeAmount] = React.useState(0);
     const [proposalDescription, setProposalDescription] = React.useState(
       "## Getting proposal description from IPFS..."
     );
@@ -247,12 +247,14 @@ const ProposalPage = observer(() => {
     const {recommendedStakeToBoost, recommendedStakeToUnBoost } = calculateStakes(
       votingParameters.thresholdConst,
       scheme.boostedProposals,
-      daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address),
+      (proposal.stateInVotingMachine == 4)
+        ? daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address) - 1
+        : daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address) ,
       proposal.positiveStakes,
       proposal.negativeStakes,
     )
-      
-    const boostedVoteRequiredPercentage = scheme.boostedVoteRequiredPercentage / 1000;
+
+    const boostedVoteRequiredPercentage = scheme.boostedVoteRequiredPercentage / 100;
     
     function onStakeAmountChange(event) {
       setStakeAmount(event.target.value);
@@ -264,6 +266,10 @@ const ProposalPage = observer(() => {
     
     if (Number(repPercentageAtCreation) > 0 && votePercentage === 0) {
       setVotePercentage(Number(repPercentageAtCreation));
+    }
+    
+    if (Number(votingMachineTokenApproved) > 0 && stakeAmount === 0) {
+      setStakeAmount(Number(formatBalance(recommendedStakeToBoost, 18, 1, false)));
     }
     
     const submitVote = function(decision) {
@@ -570,6 +576,7 @@ const ProposalPage = observer(() => {
                     type="number"
                     placeholder={votingMachineTokenName}
                     name="stakeAmount"
+                    value={stakeAmount}
                     id="stakeAmount"
                     step="0.01"
                     min="0"
