@@ -40,7 +40,10 @@ export const decodeProposalStatus = function(
       return { 
         status: "Expired in Queue", 
         boostTime: bnum(0), 
-        finishTime: submittedTime.plus(queuedVotePeriodLimit),
+        finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.ExpiredInQueue)
+        ? bnum(
+          proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.ExpiredInQueue).timestamp
+        ) : bnum(0),
         pendingAction: 0
       };
     case VotingMachineProposalState.Executed:
