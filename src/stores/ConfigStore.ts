@@ -289,7 +289,7 @@ export default class ConfigStore {
           asset: networkToken.address,
           from: ANY_ADDRESS,
           to: networkToken.address,
-          toName: networkToken.name,
+          toName: `ERC20 (${networkToken.symbol})`,
           functionName: "transfer(address,uint256)",
           params: [
             {type: "address", name: "to", defaultValue: ""},
