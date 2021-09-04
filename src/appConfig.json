@@ -3,17 +3,15 @@
     "mainnet": 13150000,
     "xdai": 17900000,
     "arbitrum": 250000,
-    "rinkeby": 9183000,
-    "arbitrumTestnet": 3450000,
+    "rinkeby": 9235000,
     "localhost": 67
   },
   "cacheHash": {
     "mainnet": "QmfXNLSbxW64y7gvppURsQJYNFoqD3Sp6k1qdcCmehRoD9",
     "xdai": "QmSgYQsuQcfTiRq2ciQv1vBwDmHQ2nTLBNy6hsSZNpQ5BC",
-    "rinkeby": "QmdNXPU7wxxA73CDiw3BHftG352keLyQnfu6ifVCDXmYon",
-    "arbitrumTestnet": "QmXzCva1H3Sp4oTkxGyyKvcGmnx9b37dP2vrdk8eEJBwQJ",
+    "rinkeby": "QmZ5Re38esjKBzYkWFrpmLE5eYw6UgcHmX3MwjevJqJrca",
     "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
     "arbitrum": "QmXWxH42UqSGPrrE4XoHkdoLouZM3Lw95h7CpVNCZyTPwE"
   },
-  "configHash": "QmUozm2vGjkLbiK87TMAEwym3QcX9tSzFeX48uzP1A96Cg"
+  "configHash": "Qme3r5eZRQSPrJBC4WqUHXroYDJMs162nvFbSHLjHzjrzL"
 }
