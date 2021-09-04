@@ -183,31 +183,6 @@ export default class ConfigStore {
           from: networkContracts.avatar,
           to: networkContracts.controller,
           toName: "DXdao Controller",
-          functionName: "sendEther(uint256,address,address)",
-          params: [
-            {type: "uint256", name: "_amountInWei", defaultValue: "", decimals: 18},
-            {type: "address", name: "_to", defaultValue: ""},
-            {type: "address", name: "_avatar", defaultValue: networkContracts.avatar}
-          ],
-          decodeText: "Send [PARAM_0] "+NETWORK_ASSET_SYMBOL[networkName]+" to [PARAM_1]"
-        },{
-          asset: ZERO_ADDRESS,
-          from: networkContracts.avatar,
-          to: networkContracts.controller,
-          toName: "DXdao Controller",
-          functionName: "externalTokenTransfer(address,address,uint256,address)",
-          params: [
-            {type: "address", name: "_externalToken", defaultValue: ""},
-            {type: "address", name: "_to", defaultValue: ""},
-            {type: "uint256", name: "_value", defaultValue: ""},
-            {type: "address", name: "_avatar", defaultValue: networkContracts.avatar}
-          ],
-          decodeText: "Send [PARAM_2] token([PARAM_0]) to [PARAM_1]"
-        },{
-          asset: ZERO_ADDRESS,
-          from: networkContracts.avatar,
-          to: networkContracts.controller,
-          toName: "DXdao Controller",
           functionName: "mintReputation(uint256,address,address)",
           params: [
             {type: "uint256", name: "_amount", defaultValue: "", decimals: 18},

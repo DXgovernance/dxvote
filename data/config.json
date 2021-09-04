@@ -1262,6 +1262,36 @@
           {"type": "uint256", "name": "_boostedVotePeriodLimit", "defaultValue": ""}
         ],
         "decodeText": "Set boosted required percentage for scheme [PARAM_0] to ([PARAM_2]/100) %"
+      },{
+        "asset": "0x0000000000000000000000000000000000000000",
+        "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+        "to": "0x8d188F9dC62Ba5858b185Ac2110fC6554aA6D32d",
+        "toName": "RegistrarWalletScheme",
+        "functionName": "setMaxSecondsForExecution(uint256)",
+        "params": [
+          {"type": "uint256", "name": "_maxSecondsForExecution", "defaultValue": ""}
+        ],
+        "decodeText": "Set max seconds for execution in Registrar Wallet Scheme to [PARAM_0] seconds"
+      },{
+        "asset": "0x0000000000000000000000000000000000000000",
+        "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+        "to": "0x1AB34Db58B20008aA61E66115eFb8E010A9e3956",
+        "toName": "MasterWalletScheme",
+        "functionName": "setMaxSecondsForExecution(uint256)",
+        "params": [
+          {"type": "uint256", "name": "_maxSecondsForExecution", "defaultValue": ""}
+        ],
+        "decodeText": "Set max seconds for execution in Master Wallet Scheme to [PARAM_0] seconds"
+      },{
+        "asset": "0x0000000000000000000000000000000000000000",
+        "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+        "to": "0x6CD4EAE24EbFBa832b44b66eDD209ED8f7Ea8EE4",
+        "toName": "QuickWalletScheme",
+        "functionName": "setMaxSecondsForExecution(uint256)",
+        "params": [
+          {"type": "uint256", "name": "_maxSecondsForExecution", "defaultValue": ""}
+        ],
+        "decodeText": "Set max seconds for execution in Quick Wallet Scheme to [PARAM_0] seconds"
       }
     ],
     "proposalTemplates": [

@@ -4,7 +4,15 @@ import { useContext } from '../contexts';
 import { FiX } from "react-icons/fi";
 
 import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE, timestampToDate, bnum } from '../utils';
+import { 
+  ZERO_ADDRESS,
+  ERC20_TRANSFER_SIGNATURE,
+  ERC20_APPROVE_SIGNATURE,
+  ANY_ADDRESS,
+  ANY_FUNC_SIGNATURE,
+  timestampToDate,
+  bnum
+} from '../utils';
 
 const PermissionsInfoWrapper = styled.div`
     background: white;
@@ -69,15 +77,17 @@ const TableCell = styled.div`
 
 const PermissionsInformation = observer(() => {
     const {
-        context: { daoStore, configStore },
+        context: { daoStore, configStore, providerStore },
     } = useContext();
 
+    const web3 = providerStore.getActiveWeb3React().library;
     const schemes = daoStore.getAllSchemes();
     const rawPermissions = daoStore.getCache().callPermissions;
     const networkContracts = configStore.getNetworkContracts();
     const tokens = configStore.getTokensOfNetwork();
+    const recommendedCalls = configStore.getRecommendedCalls();
     let addressesNames = {};
-
+    let functionNames = {};
     addressesNames[ZERO_ADDRESS] = NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
     addressesNames[ANY_ADDRESS] = "Avatar";
     addressesNames[networkContracts.avatar] = "Avatar";
@@ -85,11 +95,27 @@ const PermissionsInformation = observer(() => {
     if (networkContracts.votingMachines.dxd)
       addressesNames[networkContracts.votingMachines.dxd.address] = "DXDVotingMachine";
     
+    functionNames[web3.eth.abi.encodeFunctionSignature("mintTokens(uint256,address,address)")] = "mintTokens(uint256,address,address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("unregisterSelf(address)")] = "unregisterSelf(address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("addGlobalConstraint(address,bytes32,address)")] = "addGlobalConstraint(address,bytes32,address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("removeGlobalConstraint(address,address)")] = "removeGlobalConstraint(address,address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("upgradeController(address,address)")] = "upgradeController(address,address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("sendEther(uint256,address,address)")] = "sendEther(uint256,address,address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("externalTokenTransfer(address,address,uint256,address)")] = "externalTokenTransfer(address,address,uint256,address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("externalTokenTransferFrom(address,address,address,uint256,address)")] = "externalTokenTransferFrom(address,address,address,uint256,address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("externalTokenApproval(address,address,uint256,address)")] = "externalTokenApproval(address,address,uint256,address)";
+    functionNames[web3.eth.abi.encodeFunctionSignature("metaData(string,address)")] = "metaData(string,address)";
+    
+    functionNames[ERC20_TRANSFER_SIGNATURE] = "ERC20 Transfer";
+    functionNames[ERC20_APPROVE_SIGNATURE] = "ERC20 Approve";
+    recommendedCalls.map((recommendedCall) => {
+      functionNames[web3.eth.abi.encodeFunctionSignature(recommendedCall.functionName)] = recommendedCall.functionName;
+    })
     schemes.map((scheme) => {
       addressesNames[scheme.address] = scheme.name;
     })
     tokens.map((token) => {
-      addressesNames[token.address] = token.name;
+      addressesNames[token.address] = token.symbol;
     })
 
     const permissions = [];
@@ -116,9 +142,9 @@ const PermissionsInformation = observer(() => {
       <PermissionsInfoWrapper>
         <TableHeaderWrapper>
           <TableHeader width="10%" align="left"> Asset </TableHeader>
-          <TableHeader width="25%" align="left"> From </TableHeader>
-          <TableHeader width="25%" align="left"> To </TableHeader>
-          <TableHeader width="10%" align="center"> Function </TableHeader>
+          <TableHeader width="20%" align="left"> From </TableHeader>
+          <TableHeader width="20%" align="left"> To </TableHeader>
+          <TableHeader width="20%" align="left"> Function </TableHeader>
           <TableHeader width="10%" align="left"> Value </TableHeader>
           <TableHeader width="20%" align="center"> From Time </TableHeader>
         </TableHeaderWrapper>
@@ -127,9 +153,10 @@ const PermissionsInformation = observer(() => {
           return (
             <TableRow key={`permission${i}`}>
               <TableCell width="10%" align="left">{permission.asset}</TableCell>
-              <TableCell width="25%" align="left">{permission.from}</TableCell>
-              <TableCell width="25%" align="left">{permission.to}</TableCell>
-              <TableCell width="10%" align="center">{permission.functionSignature}</TableCell>
+              <TableCell width="20%" align="left">{permission.from}</TableCell>
+              <TableCell width="20%" align="left">{permission.to}</TableCell>
+              <TableCell width="20%" align="left">{
+                functionNames[permission.functionSignature] || permission.functionSignature}</TableCell>
               <TableCell width="10%" align="left">{permission.value}</TableCell>
               <TableCell width="20%" align="center">
               { (permission.fromTime == 0) ? <FiX/> : timestampToDate(bnum(permission.fromTime)) }

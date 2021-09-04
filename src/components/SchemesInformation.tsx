@@ -120,7 +120,7 @@ const SchemesInformation = observer(() => {
                       : <div/>
                     }
                     { (scheme.type == "WalletScheme")
-                      ? <small>Required Percentage for boosted approval: {bnum(scheme.boostedVoteRequiredPercentage).div("1000").toString()} %<br/></small>
+                      ? <small>Required Percentage for boosted approval: {bnum(scheme.boostedVoteRequiredPercentage).div("100").toString()} %<br/></small>
                       : <div/>
                     }
                     <small>Rep Proposing Reward: {
