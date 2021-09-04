@@ -89,7 +89,7 @@ const PermissionsInformation = observer(() => {
     let addressesNames = {};
     let functionNames = {};
     addressesNames[ZERO_ADDRESS] = NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
-    addressesNames[ANY_ADDRESS] = "Avatar";
+    addressesNames[ANY_ADDRESS] = "Any Address";
     addressesNames[networkContracts.avatar] = "Avatar";
     addressesNames[networkContracts.controller] = "Controller";
     if (networkContracts.votingMachines.dxd)
