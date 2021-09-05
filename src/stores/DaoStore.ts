@@ -199,10 +199,6 @@ export default class DaoStore {
     }
     rep = _.sortBy(rep, [function(o) { return o[1]; }]);
     rep.unshift(["User Address", "REP %"]);
-    let repPercentageShow = 0;
-    for (let i = rep.length-1; i >= 0; i--) {
-      repPercentageShow += rep[i][1]*100;
-    }
     repEvents.unshift(["Block", "Total Rep"]);
 
     Object.keys(cache.votingMachines).map((votingMachineAddress) => {
