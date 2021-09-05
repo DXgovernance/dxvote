@@ -6,7 +6,8 @@
     "start": "dotenv -e .env.production ./scripts/start.sh",
     "build": "dotenv -e .env.production ./scripts/build.sh",
     "build-cache": "dotenv -e .env.production ./scripts/buildCache.sh",
-    "dev": "dotenv -e .env.development ./scripts/dev.sh"
+    "dev": "dotenv -e .env.development ./scripts/dev.sh",
+    "lint": "eslint"
   },
   "engines": {
     "node": "12.13.1"
