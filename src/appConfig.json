@@ -7,11 +7,11 @@
     "localhost": 67
   },
   "cacheHash": {
-    "mainnet": "QmfXNLSbxW64y7gvppURsQJYNFoqD3Sp6k1qdcCmehRoD9",
-    "xdai": "QmSgYQsuQcfTiRq2ciQv1vBwDmHQ2nTLBNy6hsSZNpQ5BC",
-    "rinkeby": "QmZ5Re38esjKBzYkWFrpmLE5eYw6UgcHmX3MwjevJqJrca",
+    "mainnet": "Qmc7SDd6aURKL44qrdCjP3XodYCjH4rnEzd8FZ3a4z2U6S",
+    "xdai": "QmZNBM4cPkgYLkSoHsj7wicCVB6P9aXXaRXaARwSqiDWE1",
+    "rinkeby": "QmPJFM5xVUCp48hfWtTT8UsyjYFRtMxkgNA8np5bNhSsh3",
     "localhost": "QmQFGjpUk52fYWNm3nWgELTjqter1dwnAaXggAhggnc26f",
-    "arbitrum": "QmXWxH42UqSGPrrE4XoHkdoLouZM3Lw95h7CpVNCZyTPwE"
+    "arbitrum": "QmYGy8haTb8j6AUFn51aRaaCqvbzug5ydd5Jz9gJdW5MZh"
   },
   "configHash": "QmP8XMgqV2T38oVmKxJi93BhmtNvGoPXkMdLRPwuFuwohh"
 }
