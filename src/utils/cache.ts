@@ -3,7 +3,9 @@ import _ from "lodash";
 import axios from 'axios';
 import { ZERO_ADDRESS } from './index';
 
-const ipfsHashOfAppConfig = "QmQ4BB2LDWYs9sxfPtQ2dAXTDdz4ExRJVpR14q3fiLLHuP";
+const appConfig = require('../appConfig.json');
+
+const ipfsHashOfAppConfig = appConfig.configHash;
 
 const Web3 = require('web3');
 const web3 = new Web3();
