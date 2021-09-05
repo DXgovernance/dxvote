@@ -230,19 +230,7 @@ const ProposalPage = observer(() => {
     
     const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
-    const canRedeemToken = (proposalEvents.redeems.findIndex((redeem) => redeem.beneficiary === account) < 0)
-      && (stakedAmount.gt('0'));
-
-    const vote = proposalEvents.votes.find((vote) => vote.voter === account);
-    const canRedeemRep = vote
-      ? (proposalEvents.redeemsRep.findIndex((redeemRep) => redeemRep.beneficiary === account) < 0)
-        && (
-          ((votingParameters.votersReputationLossRatio.toNumber() > 0) && (vote.timestamp < proposal.boostedPhaseTime.toNumber()))
-          || (proposal.stateInVotingMachine == 1)
-        )
-      : false;
-
-    const [canRedeem, setCanRedeem] = React.useState(canRedeemToken || canRedeemRep);
+    const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
     const {recommendedStakeToBoost, recommendedStakeToUnBoost } = calculateStakes(
       votingParameters.thresholdConst,
@@ -281,25 +269,25 @@ const ProposalPage = observer(() => {
       daoService.stake(decision, denormalizeBalance(bnum(stakeAmount)).toString(), proposalId);
     };
     
-    if (scheme.type == "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
-      daoService.redeemContributionRewardCall(
-        networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
-      ).then((toRedeemResponse) => {
-        const web3 = providerStore.getActiveWeb3React().library;
-        const toRedeem = web3.eth.abi.decodeParameters([
-          "uint[3]", "uint[2]", "bool", "uint256", "int256", "uint256", "uint256", "uint256"
-        ],toRedeemResponse)
-        console.debug("To Redeem:",toRedeem);
-        if (
-          (toRedeem[0].findIndex(value => value != "0") > -1) || (toRedeem[1].findIndex(value => value != "0") > -1)
-          || (toRedeem[4] != 0) || (toRedeem[5] > 0) || (toRedeem[6] > 0) || (toRedeem[7] > 0)
-        ) {
-          setCanRedeem(true)
-        } else {
-          setCanRedeem(false)
-        }
-      });
-    }
+    // if (scheme.type == "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
+    //   daoService.redeemContributionRewardCall(
+    //     networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
+    //   ).then((toRedeemResponse) => {
+    //     const web3 = providerStore.getActiveWeb3React().library;
+    //     const toRedeem = web3.eth.abi.decodeParameters([
+    //       "uint[3]", "uint[2]", "bool", "uint256", "int256", "uint256", "uint256", "uint256"
+    //     ],toRedeemResponse)
+    //     console.debug("To Redeem:",toRedeem);
+    //     if (
+    //       (toRedeem[0].findIndex(value => value != "0") > -1) || (toRedeem[1].findIndex(value => value != "0") > -1)
+    //       || (toRedeem[4] != 0) || (toRedeem[5] > 0) || (toRedeem[6] > 0) || (toRedeem[7] > 0)
+    //     ) {
+    //       setCanRedeem(true)
+    //     } else {
+    //       setCanRedeem(false)
+    //     }
+    //   });
+    // }
     
     const redeem = function() {
       if (scheme.type == "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
@@ -309,6 +297,10 @@ const ProposalPage = observer(() => {
       } else {
         daoService.redeem(proposalId, account);
       }
+    }
+    
+    const redeemDaoBounty = function() {
+      daoService.redeemDaoBounty(proposalId, account);
     }
     
     const approveVotingMachineToken = function() {
@@ -590,9 +582,17 @@ const ProposalPage = observer(() => {
             : <div></div>
           }
           
-          {proposal.stateInVotingMachine < 3 && canRedeem
+          { proposal.stateInVotingMachine < 3
+            && (redeemsLeft.rep.indexOf(proposalId)> -1 || redeemsLeft.stake.indexOf(proposalId)> -1)
             ? <SidebarRow style={{ borderTop: "1px solid gray",  margin: "0px 10px", justifyContent: "center" }}>
               <ActionButton color="blue" onClick={() => redeem()}>Redeem</ActionButton>
+            </SidebarRow>
+            : <div></div>
+          }
+          
+          {proposal.stateInVotingMachine < 3 && redeemsLeft.bounty.indexOf(proposalId)> -1
+            ? <SidebarRow style={{ borderTop: "1px solid gray",  margin: "0px 10px", justifyContent: "center" }}>
+              <ActionButton color="blue" onClick={() => redeemDaoBounty()}>Redeem Stake Bounty</ActionButton>
             </SidebarRow>
             : <div></div>
           }

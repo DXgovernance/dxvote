@@ -260,6 +260,18 @@ export default class DaoService {
     );
   }
   
+  redeemDaoBounty(proposalId: string, account: string): PromiEvent<any> {
+    const { providerStore, daoStore } = this.context;
+    return providerStore.sendTransaction(
+      providerStore.getActiveWeb3React(),
+      ContractType.VotingMachine,
+      daoStore.getVotingMachineOfProposal(proposalId),
+      'redeemDaoBounty',
+      [proposalId, account],
+      {}
+    );
+  }
+  
   redeemContributionReward(
     redeemerAddress: string,
     votingMachineAddress: string,

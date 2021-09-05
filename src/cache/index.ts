@@ -50,6 +50,7 @@ export const getUpdatedCache = async function (
           stakes: [],
           redeems: [],
           redeemsRep: [],
+          redeemsDaoBounty: [],
           proposalStateChanges: [],
           newProposal: []
         },
@@ -268,6 +269,22 @@ export const updateVotingMachine = async function (
         break;
         case "RedeemReputation":
           votingMachineEventsInCache.redeemsRep.push({
+            event: votingMachineEvent.event,
+            signature: votingMachineEvent.signature,
+            address: votingMachineEvent.address,
+            beneficiary: votingMachineEvent.returnValues._beneficiary,
+            amount: votingMachineEvent.returnValues._amount,
+            proposalId: votingMachineEvent.returnValues._proposalId,
+            tx: votingMachineEvent.transactionHash,
+            l1BlockNumber: votingMachineEvent.l1BlockNumber,
+            l2BlockNumber: votingMachineEvent.l2BlockNumber,
+            timestamp: votingMachineEvent.timestamp,
+            transactionIndex: votingMachineEvent.transactionIndex,
+            logIndex: votingMachineEvent.logIndex
+          });
+        break;
+        case "RedeemDaoBounty":
+          votingMachineEventsInCache.redeemsDaoBounty.push({
             event: votingMachineEvent.event,
             signature: votingMachineEvent.signature,
             address: votingMachineEvent.address,
