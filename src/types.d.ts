@@ -109,6 +109,11 @@ declare global {
     beneficiary: string;
     amount: BigNumber;
   }
+  
+  interface RedeemDaoBounty extends ProposalEvent {
+    beneficiary: string;
+    amount: BigNumber;
+  }
 
   interface Proposal{
     id: string;
@@ -216,6 +221,7 @@ declare global {
       stakes: Stake[];
       redeems: Redeem[];
       redeemsRep: RedeemRep[];
+      redeemsDaoBounty: RedeemDaoBounty[];
       proposalStateChanges: ProposalStateChange[];
       newProposal: NewProposal[];
     };

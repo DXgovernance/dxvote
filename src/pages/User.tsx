@@ -27,41 +27,7 @@ const UserPage = observer(() => {
     const userEvents = daoStore.getUserEvents(userAddress);
     const userInfo = daoStore.getUser(userAddress);
     const networkName = configStore.getActiveChainName();
-
-    let proposalsToRedeem = [];
-    
-    userEvents.votes.map((vote) => {
-      const proposal = daoStore.getProposal(vote.proposalId);
-      const voteParameters = daoStore.getVotingParametersOfProposal(vote.proposalId);
-      if ((
-        (proposal.stateInVotingMachine == 1) 
-        ||
-        (
-          voteParameters.votersReputationLossRatio.toNumber() > 0
-          && vote.timestamp < proposal.boostedPhaseTime.toNumber()
-          && proposal.winningVote == vote.vote
-          && proposal.stateInVotingMachine < 3
-        )
-      ) && (proposalsToRedeem.indexOf(vote.proposalId) < 0)) {
-          proposalsToRedeem.push(vote.proposalId);
-      }
-    })
-    
-    userEvents.stakes.map((stake) => {
-      const proposal = daoStore.getProposal(stake.proposalId);
-      if (proposalsToRedeem.indexOf(stake.proposalId) < 0 && proposal.winningVote == stake.vote)
-        proposalsToRedeem.push(stake.proposalId);
-    });
-    
-    userEvents.redeems.map((redeem) => {
-      if (proposalsToRedeem.indexOf(redeem.proposalId) > -1)
-        proposalsToRedeem.splice(proposalsToRedeem.indexOf(redeem.proposalId) , 1);
-    });
-    
-    userEvents.redeemsRep.map((redeemRep) => {
-      if (proposalsToRedeem.indexOf(redeemRep.proposalId) > -1)
-        proposalsToRedeem.splice(proposalsToRedeem.indexOf(redeemRep.proposalId) , 1);
-    });
+    const redeemsLeft = daoStore.getUserRedeemsLeft(userAddress);
 
     return (
       <Box style={{padding: "10px 20px"}}>
@@ -97,8 +63,7 @@ const UserPage = observer(() => {
         </div>
         
         <h2> Redeems Left </h2>
-        {proposalsToRedeem.length == 0 ? <span> No redeems left </span> : <div/>}
-        {proposalsToRedeem.map((proposalId, i) => {
+        {redeemsLeft.rep.map((proposalId, i) => {
           return(
             <span
               key={"proposalLink"+i}
@@ -106,9 +71,29 @@ const UserPage = observer(() => {
               style={{  
                 padding: "6px 0px", cursor: "pointer"
               }}
-            >
-              <span> Proposal {proposalId} </span>
-            </span>
+            >REP redeem in Proposal {proposalId}</span>
+          );
+        })}
+        {redeemsLeft.stake.map((proposalId, i) => {
+          return(
+            <span
+              key={"proposalLink"+i}
+              onClick={() => { history.push(`/${networkName}/proposal/${proposalId}`)}}
+              style={{  
+                padding: "6px 0px", cursor: "pointer"
+              }}
+            >Staking token redeem in Proposal {proposalId}</span>
+          );
+        })}
+        {redeemsLeft.bounty.map((proposalId, i) => {
+          return(
+            <span
+              key={"proposalLink"+i}
+              onClick={() => { history.push(`/${networkName}/proposal/${proposalId}`)}}
+              style={{  
+                padding: "6px 0px", cursor: "pointer"
+              }}
+            >Staking token bounty redeem in Proposal {proposalId}</span>
           );
         })}
         

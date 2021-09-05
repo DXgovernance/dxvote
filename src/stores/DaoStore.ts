@@ -184,7 +184,7 @@ export default class DaoStore {
           repUsers[cache.daoInfo.repEvents[i].account] = repUsers[cache.daoInfo.repEvents[i].account]
             .minus(cache.daoInfo.repEvents[i].amount);
         } else {
-          console.log('ERROR');
+          console.log('ERROR on duplicated REP');
         }
       }
       
@@ -199,11 +199,6 @@ export default class DaoStore {
     }
     rep = _.sortBy(rep, [function(o) { return o[1]; }]);
     rep.unshift(["User Address", "REP %"]);
-    let repPercentageShow = 0;
-    for (let i = rep.length-1; i >= 0; i--) {
-      repPercentageShow += rep[i][1]*100;
-      console.log(rep[i][0], rep[i][1]*100, repPercentageShow)
-    }
     repEvents.unshift(["Block", "Total Rep"]);
 
     Object.keys(cache.votingMachines).map((votingMachineAddress) => {
@@ -359,6 +354,7 @@ export default class DaoStore {
     stakes: Stake[],
     redeems: Redeem[],
     redeemsRep: RedeemRep[],
+    redeemsDaoBounty: RedeemDaoBounty[],
     stateChanges: ProposalStateChange[],
     history: {
       text: string,
@@ -370,6 +366,7 @@ export default class DaoStore {
       stakes: this.getStakesOfProposal(proposalId),
       redeems: this.getRedeemsOfProposal(proposalId),
       redeemsRep: this.getRedeemsRepOfProposal(proposalId),
+      redeemsDaoBounty: this.getRedeemsDaoBountyOfProposal(proposalId),
       stateChanges: this.getProposalStateChanges(proposalId)
     }
     
@@ -390,7 +387,7 @@ export default class DaoStore {
       }
     }).concat(proposalEvents.stakes.map((event) => {
       return {
-        text: `Stake from ${event.staker} of ${normalizeBalance(event.amount).toString()} DXD on decision ${VoteDecision[event.vote]}`,
+        text: `Stake from ${event.staker} of ${normalizeBalance(event.amount).toString()} staking token on decision ${VoteDecision[event.vote]}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -402,7 +399,7 @@ export default class DaoStore {
       }
     })).concat(proposalEvents.redeems.map((event) => {
       return {
-        text: `DXD Redeem from ${event.beneficiary} of ${event.amount}`,
+        text: `Staking token Redeem from ${event.beneficiary} of ${event.amount}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -415,6 +412,18 @@ export default class DaoStore {
     })).concat(proposalEvents.redeemsRep.map((event) => {
       return {
         text: `REP Redeem from ${event.beneficiary} of ${event.amount}`,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.l1BlockNumber,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
+        }
+      }
+    })).concat(proposalEvents.redeemsDaoBounty.map((event) => {
+      return {
+        text: `Staking token Redeem from ${event.beneficiary} of ${event.amount}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -456,6 +465,7 @@ export default class DaoStore {
       stakes: proposalEvents.stakes,
       redeems: proposalEvents.redeems,
       redeemsRep: proposalEvents.redeemsRep,
+      redeemsDaoBounty: proposalEvents.redeemsDaoBounty,
       stateChanges: proposalEvents.stateChanges,
       history: history
     }
@@ -478,12 +488,13 @@ export default class DaoStore {
     stakes: Stake[],
     redeems: Redeem[],
     redeemsRep: RedeemRep[],
+    redeemsDaoBounty: RedeemDaoBounty[],
     newProposal: ProposalEvent[],
     history: {
       text: string,
       event: any
     }[]
-  }{
+  } {
     
     let history : {
       text: string,
@@ -496,28 +507,22 @@ export default class DaoStore {
       votes: [],
       stakes: [],
       redeems: [],
-      redeemsRep: []
+      redeemsRep: [],
+      redeemsDaoBounty: []
     };
-    if (votingMachines.gen) {
-      proposalEvents.votes = proposalEvents.votes.concat(cache.votingMachines[votingMachines.gen.address].events.votes
+    
+    for (const votingMachineName in votingMachines) {
+      const votingMachine = votingMachines[votingMachineName];
+      proposalEvents.votes = proposalEvents.votes.concat(cache.votingMachines[votingMachine.address].events.votes
         .filter((vote) => {return (userAddress === vote.voter)}));
-      proposalEvents.stakes = proposalEvents.stakes.concat(cache.votingMachines[votingMachines.gen.address].events.stakes
+      proposalEvents.stakes = proposalEvents.stakes.concat(cache.votingMachines[votingMachine.address].events.stakes
         .filter((stake) => {return (userAddress === stake.staker)}));
-      proposalEvents.redeems = proposalEvents.redeems.concat(cache.votingMachines[votingMachines.gen.address].events.redeems
+      proposalEvents.redeems = proposalEvents.redeems.concat(cache.votingMachines[votingMachine.address].events.redeems
         .filter((redeem) => {return (userAddress === redeem.beneficiary)}));
-      proposalEvents.redeemsRep = proposalEvents.redeemsRep.concat(cache.votingMachines[votingMachines.gen.address].events.redeemsRep
+      proposalEvents.redeemsRep = proposalEvents.redeemsRep.concat(cache.votingMachines[votingMachine.address].events.redeemsRep
         .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)}));
-    }
-
-    if (votingMachines.dxd && cache.votingMachines[votingMachines.dxd.address]) {
-      proposalEvents.votes = proposalEvents.votes.concat(cache.votingMachines[votingMachines.dxd.address].events.votes
-        .filter((vote) => {return (userAddress === vote.voter)}));
-      proposalEvents.stakes = proposalEvents.stakes.concat(cache.votingMachines[votingMachines.dxd.address].events.stakes
-        .filter((stake) => {return (userAddress === stake.staker)}));
-      proposalEvents.redeems = proposalEvents.redeems.concat(cache.votingMachines[votingMachines.dxd.address].events.redeems
-        .filter((redeem) => {return (userAddress === redeem.beneficiary)}));
-      proposalEvents.redeemsRep = proposalEvents.redeemsRep.concat(cache.votingMachines[votingMachines.dxd.address].events.redeemsRep
-        .filter((redeemRep) => {return (userAddress === redeemRep.beneficiary)}));
+      proposalEvents.redeemsDaoBounty = proposalEvents.redeemsDaoBounty.concat(cache.votingMachines[votingMachine.address].events.redeemsDaoBounty
+        .filter((redeemDaoBounty) => {return (userAddress === redeemDaoBounty.beneficiary)}));
     }
     
     const newProposalEvents: ProposalEvent[] = 
@@ -551,7 +556,7 @@ export default class DaoStore {
       }
     })).concat(proposalEvents.stakes.map((event) => {
       return {
-        text: `Staked ${event.amount} DXD for decision ${VoteDecision[event.vote]} on proposal ${event.proposalId}`,
+        text: `Staked ${event.amount} staking token for decision ${VoteDecision[event.vote]} on proposal ${event.proposalId}`,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -563,7 +568,7 @@ export default class DaoStore {
       }
     })).concat(proposalEvents.redeems.map((event) => {
       return {
-        text: `DXD amount of ${event.amount} redeemed from proposal ${event.proposalId} `,
+        text: `Staking token amount of ${event.amount} redeemed from proposal ${event.proposalId} `,
         event: {
           proposalId: event.proposalId,
           tx: event.tx,
@@ -585,6 +590,18 @@ export default class DaoStore {
           timestamp: event.timestamp
         }
       }
+    })).concat(proposalEvents.redeemsDaoBounty.map((event) => {
+      return {
+        text: `Staking token amount of ${event.amount} redeemed from proposal ${event.proposalId} `,
+        event: {
+          proposalId: event.proposalId,
+          tx: event.tx,
+          block: event.l1BlockNumber,
+          transactionIndex: event.transactionIndex,
+          logIndex: event.logIndex,
+          timestamp: event.timestamp
+        }
+      }
     }))
     history = _.orderBy( history, ["event.timestamp", "event.logIndex"], ["asc","asc"] );
     
@@ -594,8 +611,70 @@ export default class DaoStore {
       stakes: proposalEvents.stakes,
       redeems: proposalEvents.redeems,
       redeemsRep: proposalEvents.redeemsRep,
+      redeemsDaoBounty: proposalEvents.redeemsDaoBounty,
       history: history
     }
+  }
+  
+  getUserRedeemsLeft(userAddress: string): {
+    rep: string[],
+    stake: string[],
+    bounty: string[]
+  } {
+    const userEvents = this.getUserEvents(userAddress);
+
+    let redeemsLeft = {
+      rep: [],
+      stake: [],
+      bounty: []
+    };
+    
+    // Add possible redeems
+    userEvents.votes.map((vote) => {
+      const proposal = this.getProposal(vote.proposalId);
+      const voteParameters = this.getVotingParametersOfProposal(vote.proposalId);
+      if ((
+        (proposal.stateInVotingMachine == 1) 
+        ||
+        (
+          voteParameters.votersReputationLossRatio.toNumber() > 0
+          && vote.timestamp < proposal.boostedPhaseTime.toNumber()
+          && proposal.winningVote == vote.vote
+          && proposal.stateInVotingMachine < 3
+        )
+      ) && (redeemsLeft.rep.indexOf(vote.proposalId) < 0)) {
+          redeemsLeft.rep.push(vote.proposalId);
+      }
+    })
+    userEvents.stakes.map((stake) => {
+      const proposal = this.getProposal(stake.proposalId);
+      if (
+        proposal.stateInVotingMachine < 3
+        && redeemsLeft.stake.indexOf(stake.proposalId) < 0
+        && proposal.winningVote == stake.vote
+      ){
+        redeemsLeft.stake.push(stake.proposalId);
+        if (proposal.winningVote = 1) {
+          redeemsLeft.bounty.push(stake.proposalId);
+        }
+      }
+    });
+    
+    // Remove already redeemed
+    userEvents.redeemsRep.map((redeemRep) => {
+      if (redeemsLeft.rep.indexOf(redeemRep.proposalId) > -1)
+        redeemsLeft.rep.splice(redeemsLeft.rep.indexOf(redeemRep.proposalId) , 1);
+    });
+    userEvents.redeems.map((redeem) => {
+      if (redeemsLeft.stake.indexOf(redeem.proposalId) > -1)
+      redeemsLeft.stake.splice(redeemsLeft.stake.indexOf(redeem.proposalId) , 1);
+    });
+    userEvents.redeemsDaoBounty.map((redeemDaoBounty) => {
+      if (redeemsLeft.bounty.indexOf(redeemDaoBounty.proposalId) > -1)
+        redeemsLeft.bounty.splice(redeemsLeft.bounty.indexOf(redeemDaoBounty.proposalId) , 1);
+    });
+    
+    return redeemsLeft;
   }
   
   getProposalStatus(proposalId: string): any {
@@ -641,6 +720,12 @@ export default class DaoStore {
       .filter((redeemRep) => {return (proposalId === redeemRep.proposalId)});
   }
   
+  getRedeemsDaoBountyOfProposal(proposalId: string): RedeemDaoBounty[]{
+    return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
+      .events.redeemsDaoBounty
+      .filter((redeemDaoBounty) => {return (proposalId === redeemDaoBounty.proposalId)});
+  }
+  
   getProposalStateChanges(proposalId: string): ProposalStateChange[]{
     return this.getCache().votingMachines[this.getVotingMachineOfProposal(proposalId)]
       .events.proposalStateChanges
@@ -652,7 +737,7 @@ export default class DaoStore {
     const { library } = this.context.providerStore.getActiveWeb3React();
     const scheme = this.getScheme(schemeAddress);
     const callPermissions = this.getCache().callPermissions;
-    console.log(callPermissions)
+    console.debug("Call Permissions",callPermissions)
     let assetLimits = {};
     const from = scheme.controllerAddress == networkContracts.controller ? networkContracts.avatar : schemeAddress;
     let recommendedCalls = this.context.configStore.getRecommendedCalls();
