@@ -9,7 +9,7 @@
     "dev": "dotenv -e .env.development ./scripts/dev.sh"
   },
   "engines": {
-    "node": "12.13.1"
+    "node": "^14.17.6"
   },
   "repository": {
     "type": "git",
