@@ -3,16 +3,16 @@ import RootContext from '../contexts';
 import { _ } from 'lodash';
 import { NETWORK_NAMES } from '../provider/connectors';
 
+import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
+
 const Web3 = require('web3');
 const web3 = new Web3();
 const appConfig = require('../appConfig.json');
 
-import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
-import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
-
 export default class ConfigStore {
-    darkMode: boolean;
-    context: RootContext;
+  darkMode: boolean;
+  context: RootContext;
     appConfig: AppConfig;
 
     constructor(context) {
