@@ -56,7 +56,7 @@ const ProposalTableHeaderActions = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  
+
   span {
     font-size: 20px;
     padding: 10px 5px 5px 5px;
@@ -80,8 +80,9 @@ const TableHeader = styled.div`
 
 const TableRowsWrapper = styled.div`
   overflow-y: scroll;
-  height: 350px;
-  
+  height: 60vh;
+  min-height: 350px;
+
   h3 {
     text-align: center;
     margin-top: 30px;
@@ -126,18 +127,18 @@ const ProposalsPage = observer(() => {
     const networkName = configStore.getActiveChainName();
     const { account } = providerStore.getActiveWeb3React();
     const userEvents = daoStore.getUserEvents(account);
-    
+
 
     const allProposals = daoStore.getAllProposals().map((cacheProposal) => {
       return Object.assign(cacheProposal, daoStore.getProposalStatus(cacheProposal.id));
     });
-    
-    // First show the proposals that still have an active status in teh boting machine and order them from lower 
+
+    // First show the proposals that still have an active status in teh boting machine and order them from lower
     // to higher based on the finish time.
-    // Then show the proposals who finished based on the statte in the voting machine and order them from higher to 
+    // Then show the proposals who finished based on the statte in the voting machine and order them from higher to
     // lower in the finish time.
     // This way we show the proposals that will finish soon first and the latest proposals that finished later
-    
+
     const sortedProposals = allProposals.filter((proposal) => proposal.stateInVotingMachine  > 2)
       .sort(function(a, b) { return a.finishTime - b.finishTime; })
       .concat(
@@ -147,7 +148,7 @@ const ProposalsPage = observer(() => {
     function onStateFilterChange(newValue) { setStateFilter(newValue.target.value) }
     function onTitleFilterChange(newValue) { setTitleFilter(newValue.target.value) }
     function onSchemeFilterChange(newValue) { setSchemeFilter(newValue.target.value) }
-    
+
     console.debug("All Proposals", allProposals, allProposals.length, daoStore);
 
     return (
@@ -209,7 +210,7 @@ const ProposalsPage = observer(() => {
           <TableRowsWrapper>
             { sortedProposals.map((proposal, i) => {
               if (
-                proposal 
+                proposal
                 && ((stateFilter == 'Any Status') || (stateFilter != 'Any Status' && proposal.status == stateFilter))
                 && ((titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0)))
                 && ((schemeFilter == 'All Schemes') || (proposal.scheme == schemeFilter))
@@ -217,7 +218,7 @@ const ProposalsPage = observer(() => {
                 const positiveStake = formatNumberValue(normalizeBalance(proposal.positiveStakes, 18), 1);
                 const negativeStake = formatNumberValue(normalizeBalance(proposal.negativeStakes, 18), 1);
                 const repAtCreation = daoStore.getRepAt(ZERO_ADDRESS, proposal.creationEvent.l1BlockNumber).totalSupply;
-                
+
                 const positiveVotesPercentage = formatPercentage(
                   proposal.positiveVotes.div(repAtCreation), 2
                 );
@@ -226,11 +227,11 @@ const ProposalsPage = observer(() => {
                 );
                 const timeToBoost = timeToTimestamp(proposal.boostTime);
                 const timeToFinish = timeToTimestamp(proposal.finishTime);
-                
-                const votingMachineTokenName = 
+
+                const votingMachineTokenName =
                 (votingMachines.gen && daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.gen.address)
                 ? 'GEN' : 'DXD';
-                
+
                 const voted = userEvents.votes.findIndex((event) => event.proposalId == proposal.id) > -1;
                 const staked = userEvents.stakes.findIndex((event) => event.proposalId == proposal.id) > -1;
                 const created = userEvents.newProposal.findIndex((event) => event.proposalId == proposal.id) > -1;
@@ -254,12 +255,12 @@ const ProposalsPage = observer(() => {
                           {(proposal.pendingAction == 3) ? <small> Pending Finish Execution </small> : <span></span>}
                         </span>
                       </TableCell>
-                      <TableCell width="17.5%" align="space-evenly" style={{ minWidth: "15px", margin: "0px 2px"}}> 
+                      <TableCell width="17.5%" align="space-evenly" style={{ minWidth: "15px", margin: "0px 2px"}}>
                         <span style={{color: "green", flex:"5", textAlign:"right"}}>{positiveStake.toString()} {votingMachineTokenName} </span>
                         <span style={{flex:"1", textAlign:"center"}}>|</span>
                         <span style={{color: "red", flex:"5", textAlign:"left"}}> {negativeStake.toString()} {votingMachineTokenName}</span>
                       </TableCell>
-                      <TableCell width="17.5%" align="space-evenly"> 
+                      <TableCell width="17.5%" align="space-evenly">
                         <span style={{color: "green", flex:"3", textAlign:"right"}}>{positiveVotesPercentage} </span>
                         <span style={{flex:"1", textAlign:"center"}}>|</span>
                         <span style={{color: "red", flex:"3", textAlign:"left"}}> {negativeVotesPercentage}</span>
