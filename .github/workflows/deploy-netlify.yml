@@ -1,17 +1,14 @@
 name: deploy to netifly
-  
+
 on:
   workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [12.13.1]
-
+        node-version: [14.17.6]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -19,13 +16,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-          
       - name: Install Dependencies
         run: yarn
-      
       - name: Build
         run: CI=false yarn build
-        
       - name: Deploy to Netlify
         uses: jsmrcaga/action-netlify-deploy@v1.1.0
         with:

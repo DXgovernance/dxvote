@@ -1,5 +1,5 @@
 name: deploy to gh-pages
-  
+
 on:
   push:
     branches:
@@ -8,13 +8,11 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [12.13.1]
-
+        node-version: [14.17.6]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -22,13 +20,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-          
       - name: Install Dependencies
         run: yarn
-      
       - name: Build
         run: CI=false yarn build
-        
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
