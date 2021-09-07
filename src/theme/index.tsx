@@ -57,14 +57,14 @@ const theme = (darkMode) => ({
 
     // for setting css on <html>
     backgroundColor: darkMode ? '#333639' : white,
-    
+
     activeButtonBackground: "#536DFE",
 
     modalBackground: darkMode ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.5)',
     inputBackground: darkMode ? '#202124' : white,
     placeholderGray: darkMode ? '#5F5F5F' : '#E1E1E1',
     shadowColor: darkMode ? '#000' : '#2F80ED',
-    
+
     borderStyle: "rgba(14, 0, 135, 0.1) 0px 2px 10px, rgba(14, 0, 135, 0.05) 0px 12px 32px",
 
     // grays
@@ -132,8 +132,5 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
-  ::-webkit-scrollbar {
-    display: none;
   }
 `;
