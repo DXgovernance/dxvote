@@ -1835,8 +1835,21 @@
         "symbol":"WETH",
         "fetchPrice": true,
         "logoURI":"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e/logo.png"
-      },
-      {
+      },{
+        "address":"0x5d47100B0854525685907D5D773b92c22c0c745e",
+        "name":"DXdao",
+        "decimals":18,
+        "symbol":"DXD",
+        "fetchPrice": true,
+        "logoURI":"https://assets.coingecko.com/coins/images/11148/thumb/dxdao.png?1607999331"
+      },{
+        "address":"0x8f2072c2142D9fFDc785955E0Ce71561753D44Fb",
+        "name":"SWPR Token",
+        "decimals":18,
+        "symbol":"SWPR",
+        "fetchPrice": true,
+        "logoURI":"https://ipfs.io/ipfs/QmWF6nPb4y2DehfGRzKGaekXQzShSQ11uzMNmxsLJQxBUQ"
+      },{
         "address":"0x5c6e8F8B4f657b1aC81BFA1aF9145ed048bB1E48",
         "name":"Weenus",
         "decimals":18,
