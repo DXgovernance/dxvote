@@ -384,22 +384,19 @@ const ProposalPage = observer(() => {
               <span className="timeText"> Execution timeout in <Countdown date={executionTimeoutTime.toNumber()*1000} /> </span>
             }
           </SidebarRow>
-          { proposal.stateInScheme < 3 ? 
-            <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
-              {pendingAction == 1 ? 
-                <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
-              : pendingAction == 2 ?
-                <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
-              : pendingAction == 3 ?
-                <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
-              : pendingAction == 4 ?
-                <ActionButton color="blue" onClick={redeemBeneficiary}><FiPlayCircle/> Redeem 4 Beneficiary </ActionButton>
-              : pendingAction == 5 &&
-                <ActionButton color="blue" onClick={executeMulticall}><FiPlayCircle/> Execute Multicall </ActionButton>
-              }
-            </SidebarRow>
-            : <div/>
-          }
+          <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
+            {pendingAction == 1 ? 
+              <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
+            : pendingAction == 2 ?
+              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
+            : pendingAction == 3 ?
+              <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
+            : pendingAction == 4 ?
+              <ActionButton color="blue" onClick={redeemBeneficiary}><FiPlayCircle/> Redeem 4 Beneficiary </ActionButton>
+            : pendingAction == 5 &&
+              <ActionButton color="blue" onClick={executeMulticall}><FiPlayCircle/> Execute Multicall </ActionButton>
+            }
+          </SidebarRow>
           
           <SidebarDivider/> 
 

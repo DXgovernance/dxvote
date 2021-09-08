@@ -180,15 +180,14 @@ export const decodeProposalStatus = function(
         };
       }
     case VotingMachineProposalState.QuietEndingPeriod:
+      const finishTime = bnum(
+        proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.QuietEndingPeriod).timestamp
+      ).plus(quietEndingPeriod);
       return { 
         status: "Quiet Ending Period", 
         boostTime: boostedPhaseTime,
-        finishTime: proposalStateChangeEvents .find(event => event.state == VotingMachineProposalState.QuietEndingPeriod)
-        ? bnum(
-          proposalStateChangeEvents .find(event => event.state == VotingMachineProposalState.QuietEndingPeriod).timestamp
-        ).plus(quietEndingPeriod)
-        : bnum(0),
-        pendingAction: 0
+        finishTime: finishTime,
+        pendingAction: finishTime.lt(timeNow) ? 3 : 0
       };
   }
 }
