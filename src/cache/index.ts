@@ -33,51 +33,80 @@ export const getUpdatedCache = async function (
   console.debug('[Cache Update]', fromBlock, toBlock);
   const networkContracts = await getContracts(networkConfig, web3);
   
-  (await Promise.all([
-    updateDaoInfo(networkCache, networkContracts, web3),
-    updateReputationEvents(networkCache, networkContracts.reputation, fromBlock, toBlock, web3)
-  ])).map((networkCacheUpdated) => {
-    networkCache = networkCacheUpdated;
-  });
+  //// TODO: Improve this duplicated while conditions
+  let retry = true;
+  while (retry) {
+    try {
+      (await Promise.all([
+        updateDaoInfo(networkCache, networkContracts, web3),
+        updateReputationEvents(networkCache, networkContracts.reputation, fromBlock, toBlock, web3)
+      ])).map((networkCacheUpdated) => {
+        networkCache = networkCacheUpdated;
+      });
+    } finally {
+      retry = false;
+    }
+  }
+  retry = true;
   
-  await Promise.all(Object.keys(networkContracts.votingMachines).map(async (votingMachineAddress) => {
+  while (retry) {
+    try {
+      await Promise.all(Object.keys(networkContracts.votingMachines).map(async (votingMachineAddress) => {
+      
+        if (!networkCache.votingMachines[votingMachineAddress])
+          networkCache.votingMachines[votingMachineAddress] = {
+            name: networkContracts.votingMachines[votingMachineAddress].name,
+            events: {
+              votes: [],
+              stakes: [],
+              redeems: [],
+              redeemsRep: [],
+              redeemsDaoBounty: [],
+              proposalStateChanges: [],
+              newProposal: []
+            },
+            token: networkContracts.votingMachines[votingMachineAddress].token._address,
+            votingParameters: {}
+          };
+      
+        networkCache = await updateVotingMachine(
+          networkCache,
+          networkContracts.avatar._address,
+          networkContracts.votingMachines[votingMachineAddress].contract,
+          networkContracts.multicall,
+          fromBlock,
+          toBlock,
+          web3
+        );
+      
+      }));
+    } finally {
+      retry = false;
+    }
+  }
+  retry = true;
   
-    if (!networkCache.votingMachines[votingMachineAddress])
-      networkCache.votingMachines[votingMachineAddress] = {
-        name: networkContracts.votingMachines[votingMachineAddress].name,
-        events: {
-          votes: [],
-          stakes: [],
-          redeems: [],
-          redeemsRep: [],
-          redeemsDaoBounty: [],
-          proposalStateChanges: [],
-          newProposal: []
-        },
-        token: networkContracts.votingMachines[votingMachineAddress].token._address,
-        votingParameters: {}
-      };
+  while (retry) {
+    try {
+      networkCache = await updateSchemes(networkCache, networkConfig, fromBlock, toBlock, web3);
+    } finally {
+      retry = false;
+    }
+  }
+  retry = true;
   
-    networkCache = await updateVotingMachine(
-      networkCache,
-      networkContracts.avatar._address,
-      networkContracts.votingMachines[votingMachineAddress].contract,
-      networkContracts.multicall,
-      fromBlock,
-      toBlock,
-      web3
-    );
-  
-  }));
-  
-  networkCache = await updateSchemes(networkCache, networkConfig, fromBlock, toBlock, web3);
-  
-  (await Promise.all([
-    updatePermissionRegistry(networkCache, networkConfig, fromBlock, toBlock, web3),
-    updateProposals(networkCache, networkConfig, fromBlock, toBlock, web3)
-  ])).map((networkCacheUpdated) => {
-    networkCache = networkCacheUpdated;
-  });
+  while (retry) {
+    try {
+      (await Promise.all([
+        updatePermissionRegistry(networkCache, networkConfig, fromBlock, toBlock, web3),
+        updateProposals(networkCache, networkConfig, fromBlock, toBlock, web3)
+      ])).map((networkCacheUpdated) => {
+        networkCache = networkCacheUpdated;
+      });
+    } finally {
+      retry = false;
+    }
+  }
 
   networkCache.l1BlockNumber = Number(toBlock);
   networkCache.l2BlockNumber = 0;
