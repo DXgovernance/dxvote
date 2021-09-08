@@ -215,8 +215,9 @@ const ProposalsPage = observer(() => {
                 && ((titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0)))
                 && ((schemeFilter == 'All Schemes') || (proposal.scheme == schemeFilter))
               ) {
+                const minimumDaoBounty = daoStore.getVotingParametersOfProposal(proposal.id).minimumDaoBounty;
                 const positiveStake = formatNumberValue(normalizeBalance(proposal.positiveStakes, 18), 1);
-                const negativeStake = formatNumberValue(normalizeBalance(proposal.negativeStakes, 18), 1);
+                const negativeStake = formatNumberValue(normalizeBalance(proposal.negativeStakes.plus(minimumDaoBounty), 18), 1);
                 const repAtCreation = daoStore.getRepAt(ZERO_ADDRESS, proposal.creationEvent.l1BlockNumber).totalSupply;
 
                 const positiveVotesPercentage = formatPercentage(
