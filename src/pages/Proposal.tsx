@@ -182,11 +182,11 @@ const ProposalPage = observer(() => {
     try {
       if (proposalDescription == "## Getting proposal description from IPFS...")
         ipfsService.getContent(contentHash.decode(proposal.descriptionHash)).then((data) => {
-          if (scheme.type == 'WalletScheme') {
-            setProposalDescription(data);
-          } else {
+          try {
             setProposalTitle(JSON.parse(data).title);
             setProposalDescription(JSON.parse(data).description);
+          } catch (error) {
+            setProposalDescription(data);
           }
         });
     } catch (error) {

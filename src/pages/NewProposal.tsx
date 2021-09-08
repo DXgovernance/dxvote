@@ -215,9 +215,7 @@ const NewProposalPage = observer(() => {
         setSubmitionState(1);
         setErrorMessage("");
         console.log(schemeToUse.type)
-        const bodyTextToUpload = (schemeToUse.type == "WalletScheme")
-          ? descriptionText
-          : JSON.stringify({
+        const bodyTextToUpload = JSON.stringify({
               description: descriptionText,
               title: titleText,
               tags: ["dxvote"],
