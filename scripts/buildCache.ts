@@ -16,6 +16,7 @@ const emptyCache: DaoNetworkCache = {
   ipfsHashes: []
 };
 
+// Add missing network cache files in the data/cache folder
 const networks = process.env.REACT_APP_ETH_NETWORKS.split(',');
 for (let i = 0; i < networks.length; i++) {
   if (!fs.existsSync("./data/cache/"+networks[i]+".json"))
@@ -43,6 +44,18 @@ async function main() {
     );
     
   } else {
+    
+    const ipfs = await IPFS.create();
+
+    // Update config file hash if needed
+    const configHash = (await ipfs.add(
+      fs.readFileSync("./data/config.json"),
+      { pin: true, onlyHash: false }
+    )).cid.toString();
+    if (configHash != appConfig.configHash)
+      appConfig.configHash = appConfig.configHash;
+    
+    // Get the network configuration
     const networkConfig = await getNetworkConfig(networkName);
     emptyCache.l1BlockNumber = networkConfig.contracts.fromBlock;
     emptyCache.daoInfo.address = networkConfig.contracts.avatar;
@@ -72,24 +85,18 @@ async function main() {
       { encoding: "utf8", flag: "w" }
     );
     
-    const ipfs = await IPFS.create();
-
     appConfig.cacheToBlock[networkName] = toBlock;
     appConfig.cacheHash[networkName] = (await ipfs.add(
       fs.readFileSync("./data/cache/"+networkName+".json"),
       { pin: true, onlyHash: false }
     )).cid.toString();
-
-    appConfig.configHash = (await ipfs.add(
-      fs.readFileSync("./data/config.json"),
-      { pin: true, onlyHash: false }
-    )).cid.toString();
-    
-    fs.writeFileSync("./src/appConfig.json", JSON.stringify(appConfig, null, 2), { encoding: "utf8", flag: "w" });
     
     console.debug(`IPFS hash for cache in ${networkName} network: ${appConfig.cacheHash[networkName]}`);
-    
   }
+  
+  // Update the appConfig file that stores the hashes of the dapp config and network caches
+  fs.writeFileSync("./src/appConfig.json", JSON.stringify(appConfig, null, 2), { encoding: "utf8", flag: "w" });
+
 } 
 
 main()
