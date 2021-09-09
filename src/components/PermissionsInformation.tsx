@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import { FiX } from "react-icons/fi";
 
-import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+import { NETWORK_ASSET_SYMBOL } from '../utils';
 import { 
   ZERO_ADDRESS,
   ERC20_TRANSFER_SIGNATURE,

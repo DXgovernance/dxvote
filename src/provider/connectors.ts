@@ -1,34 +1,7 @@
 import { InjectedConnector } from '@web3-react/injected-connector'
+import { NETWORK_IDS } from '../utils';
 
 export const ETH_NETWORKS = process.env.REACT_APP_ETH_NETWORKS.split(',');
-
-export const NETWORK_NAMES = {
-  '1': 'mainnet',
-  '4': 'rinkeby',
-  '100': 'xdai',
-  '42161': 'arbitrum',
-  '421611': 'arbitrumTestnet',
-  '1337': 'localhost',
-};
-
-export const NETWORK_IDS = {
-  'mainnet': 1,
-  'rinkeby': 4,
-  'xdai': 100,
-  'arbitrum': 42161,
-  'arbitrumTestnet': 421611,
-  'localhost': 1337,
-};
-
-export const NETWORK_ASSET_SYMBOL = {
-  'mainnet': 'ETH',
-  'rinkeby': 'ETH',
-  'xdai': 'XDAI',
-  'arbitrum': 'ETH',
-  'arbitrumTestnet': 'ETH',
-  'localhost': 'ETH'
-};
-
 export const ETH_NETWORKS_IDS = ETH_NETWORKS.map((network) => {return NETWORK_IDS[network]});
 export const DEFAULT_ETH_CHAIN_ID = NETWORK_IDS[ETH_NETWORKS[0]];
 

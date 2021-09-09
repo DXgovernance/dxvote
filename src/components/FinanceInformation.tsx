@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { bnum, parseCamelCase, ZERO_ADDRESS, formatCurrency, formatBalance } from '../utils';
-import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+import { NETWORK_ASSET_SYMBOL } from '../utils';
 
 const FinanceInfoWrapper = styled.div`
     background: white;

@@ -7,7 +7,7 @@ import Question from '../components/common/Question';
 import Box from '../components/common/Box';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
-import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+import { NETWORK_ASSET_SYMBOL } from '../utils';
 
 import {
   ZERO_ADDRESS,

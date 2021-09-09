@@ -1,9 +1,8 @@
 import { makeObservable, observable, action } from 'mobx';
 import RootContext from '../contexts';
 import { _ } from 'lodash';
-import { NETWORK_NAMES } from '../provider/connectors';
 
-import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+import { NETWORK_ASSET_SYMBOL, NETWORK_NAMES } from '../utils';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
 const Web3 = require('web3');
