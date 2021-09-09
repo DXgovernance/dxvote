@@ -160,9 +160,9 @@ const GovernanceInformation = observer(() => {
           return (
             <TableRow key={`user${i}`}>
               <TableCell width="5%" align="center" weight='500'> {i + 1}
-              {i == 0 ? <FaTrophy style={{color:"gold"}}/> :
-              i == 1 ? <FaTrophy style={{color:"silver"}}/> :
-              i == 2 ? <FaTrophy style={{color:"#CD7F32"}}/> :
+              {i === 0 ? <FaTrophy style={{color:"gold"}}/> :
+              i === 1 ? <FaTrophy style={{color:"silver"}}/> :
+              i === 2 ? <FaTrophy style={{color:"#CD7F32"}}/> :
               i < 6 ? <FaMedal style={{color:"gold"}}/> :
               i < 9 ? <FaMedal style={{color:"silver"}}/> :
               i < 12 ? <FaMedal style={{color:"#CD7F32"}}/> :

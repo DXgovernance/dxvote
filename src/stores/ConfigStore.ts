@@ -65,7 +65,7 @@ export default class ConfigStore {
       const networkContracts = this.getNetworkContracts();
       
       if (networkContracts.daostack) {
-        if (networkContracts.daostack.schemeRegistrar && networkContracts.daostack.schemeRegistrar.address == schemeAddress) {
+        if (networkContracts.daostack.schemeRegistrar && networkContracts.daostack.schemeRegistrar.address === schemeAddress) {
           return {
             type: "SchemeRegistrar",
             name: "SchemeRegistrar",
@@ -75,7 +75,7 @@ export default class ConfigStore {
             voteParams: networkContracts.daostack.contributionReward.voteParams,
             creationLogEncoding: networkContracts.daostack.schemeRegistrar.creationLogEncoding
           };
-        } else if (networkContracts.daostack.contributionReward && networkContracts.daostack.contributionReward.address == schemeAddress) {
+        } else if (networkContracts.daostack.contributionReward && networkContracts.daostack.contributionReward.address === schemeAddress) {
           return {
             type: "ContributionReward",
             name: "ContributionReward",
@@ -85,7 +85,7 @@ export default class ConfigStore {
             voteParams: networkContracts.daostack.contributionReward.voteParams,
             creationLogEncoding: networkContracts.daostack.contributionReward.creationLogEncoding
           };
-        } else if (networkContracts.daostack.competitionScheme && networkContracts.daostack.competitionScheme.address == schemeAddress) {
+        } else if (networkContracts.daostack.competitionScheme && networkContracts.daostack.competitionScheme.address === schemeAddress) {
           return {
             type: "CompetitionScheme",
             name: "CompetitionScheme",
@@ -140,7 +140,7 @@ export default class ConfigStore {
 
     getTokenData(tokenAddress) {
       return this.appConfig[this.getActiveChainName()]
-        .tokens.find((tokenInFile) => tokenInFile.address == tokenAddress);
+        .tokens.find((tokenInFile) => tokenInFile.address === tokenAddress);
     }
     
     getNetworkContracts() {

@@ -40,59 +40,59 @@ export const decodeProposalStatus = function(
       return { 
         status: "Expired in Queue", 
         boostTime: bnum(0), 
-        finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.ExpiredInQueue)
+        finishTime: proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.ExpiredInQueue)
         ? bnum(
-          proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.ExpiredInQueue).timestamp
+          proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.ExpiredInQueue).timestamp
         ) : bnum(0),
         pendingAction: 0
       };
     case VotingMachineProposalState.Executed:
-      if (proposal.stateInScheme == WalletSchemeProposalState.Rejected)
+      if (proposal.stateInScheme === WalletSchemeProposalState.Rejected)
         return { 
           status: "Proposal Rejected", 
           boostTime: boostedPhaseTime,
-          finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed)
+          finishTime: proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed)
           ? bnum(
-            proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+            proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed).timestamp
           ) : bnum(0),
           pendingAction: 0
         };
-      else if (proposal.stateInScheme == WalletSchemeProposalState.ExecutionSucceded)
+      else if (proposal.stateInScheme === WalletSchemeProposalState.ExecutionSucceded)
         return { 
           status: "Execution Succeeded", 
           boostTime: boostedPhaseTime,
-          finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed)
+          finishTime: proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed)
           ? bnum(
-            proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+            proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed).timestamp
           ) : bnum(0),
           pendingAction: 0
         };
-      else if (proposal.stateInScheme == WalletSchemeProposalState.ExecutionTimeout)
+      else if (proposal.stateInScheme === WalletSchemeProposalState.ExecutionTimeout)
         return { 
           status: "Execution Timeout", 
           boostTime: boostedPhaseTime,
-          finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed) 
+          finishTime: proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed) 
           ? bnum(
-            proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+            proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed).timestamp
           ) : bnum(0),
           pendingAction: 0
         };
-      else if (proposal.stateInScheme == WalletSchemeProposalState.Submitted)
+      else if (proposal.stateInScheme === WalletSchemeProposalState.Submitted)
         return {
           status: "Passed", 
           boostTime: boostedPhaseTime,
-          finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed)
+          finishTime: proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed)
           ? bnum(
-            proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+            proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed).timestamp
           ) : bnum(0),
-          pendingAction: schemeType == "ContributionReward" ? 4 : schemeType == "GenericMulticall" ? 5 : 0
+          pendingAction: schemeType === "ContributionReward" ? 4 : schemeType === "GenericMulticall" ? 5 : 0
         };
       else return { 
         status: "Passed", 
         boostTime: boostedPhaseTime,
-        finishTime: proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed)
+        finishTime: proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed)
         ? bnum(
-          proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.Executed).timestamp
+          proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.Executed).timestamp
         ) : bnum(0),
         pendingAction: 0
       };
@@ -185,7 +185,7 @@ export const decodeProposalStatus = function(
       }
     case VotingMachineProposalState.QuietEndingPeriod:
       const finishTime = bnum(
-        proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.QuietEndingPeriod).timestamp
+        proposalStateChangeEvents.find(event => event.state === VotingMachineProposalState.QuietEndingPeriod).timestamp
       ).plus(quietEndingPeriod);
       return { 
         status: "Quiet Ending Period", 

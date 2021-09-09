@@ -153,9 +153,9 @@ const ProposalPage = observer(() => {
       proposal.title.length > 0 ? proposal.title : "Getting proposal title from IPFS..."
     );
     
-    const votingMachineTokenName = (votingMachines.gen && (scheme.votingMachine == votingMachines.gen.address))
+    const votingMachineTokenName = (votingMachines.gen && (scheme.votingMachine === votingMachines.gen.address))
       ? 'GEN' : 'DXD';
-    const votingMachineTokenApproved = (votingMachines.gen && (scheme.votingMachine == votingMachines.gen.address))
+    const votingMachineTokenApproved = (votingMachines.gen && (scheme.votingMachine === votingMachines.gen.address))
       ? genApproved : dxdApproved;
       
     const proposalEvents = daoStore.getProposalEvents(proposalId);
@@ -180,7 +180,7 @@ const ProposalPage = observer(() => {
 
     // @ts-ignore
     try {
-      if (proposalDescription == "## Getting proposal description from IPFS...")
+      if (proposalDescription === "## Getting proposal description from IPFS...")
         ipfsService.getContent(contentHash.decode(proposal.descriptionHash)).then((data) => {
           try {
             setProposalTitle(JSON.parse(data).title);
@@ -202,9 +202,9 @@ const ProposalPage = observer(() => {
     });
       
     proposalEvents.stakes.map((stake) => {
-      if (stake.staker === account && stake.vote.toString() == "1") {
+      if (stake.staker === account && stake.vote.toString() === "1") {
         stakedAmount = stakedAmount.plus(stake.amount);
-      } else if (stake.staker === account && stake.vote.toString() == "2") {
+      } else if (stake.staker === account && stake.vote.toString() === "2") {
         stakedAmount = stakedAmount.minus(stake.amount);
       }
     });
@@ -212,14 +212,14 @@ const ProposalPage = observer(() => {
     console.debug("[Proposal]", proposal);
     console.debug("[Proposal events]", proposalEvents);
     
-    const executionTimeoutTime = scheme.type == "WalletScheme"
+    const executionTimeoutTime = scheme.type === "WalletScheme"
       ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
       : bnum(0);
     
     let proposalCallTexts = new Array(proposal.to.length);
     for (var p = 0; p < proposal.to.length; p++) {
       proposalCallTexts[p] = daoService.decodeWalletSchemeCall(
-        (scheme.type == "WalletScheme" && scheme.controllerAddress != networkContracts.controller)
+        (scheme.type === "WalletScheme" && scheme.controllerAddress != networkContracts.controller)
           ? scheme.address : networkContracts.avatar,
         proposal.to[p],
         proposal.callData[p],
@@ -235,7 +235,7 @@ const ProposalPage = observer(() => {
     const {recommendedStakeToBoost, recommendedStakeToUnBoost } = calculateStakes(
       votingParameters.thresholdConst,
       scheme.boostedProposals,
-      (proposal.stateInVotingMachine == 4)
+      (proposal.stateInVotingMachine === 4)
         ? daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address) - 1
         : daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address) ,
       proposal.positiveStakes,
@@ -269,7 +269,7 @@ const ProposalPage = observer(() => {
       daoService.stake(decision, denormalizeBalance(bnum(stakeAmount)).toString(), proposalId);
     };
     
-    // if (scheme.type == "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
+    // if (scheme.type === "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
     //   daoService.redeemContributionRewardCall(
     //     networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
     //   ).then((toRedeemResponse) => {
@@ -290,7 +290,7 @@ const ProposalPage = observer(() => {
     // }
     
     const redeem = function() {
-      if (scheme.type == "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
+      if (scheme.type === "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
         daoService.redeemContributionReward(
           networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
         );
@@ -380,20 +380,20 @@ const ProposalPage = observer(() => {
             {(finishTime.toNumber() > moment().unix()) &&
               <span className="timeText"> Finish in <Countdown date={finishTime.toNumber()*1000} /> </span>
             }
-            {((status == "Pending Execution") && (executionTimeoutTime.toNumber() > 0)) &&
+            {((status === "Pending Execution") && (executionTimeoutTime.toNumber() > 0)) &&
               <span className="timeText"> Execution timeout in <Countdown date={executionTimeoutTime.toNumber()*1000} /> </span>
             }
           </SidebarRow>
           <SidebarRow style={{flexDirection:"column", alignItems:"center"}}>
-            {pendingAction == 1 ? 
+            {pendingAction === 1 ? 
               <ActionButton color="blue" onClick={executeProposal}><FiFastForward/> Boost </ActionButton>
-            : pendingAction == 2 ?
+            : pendingAction === 2 ?
               <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Execute </ActionButton>
-            : pendingAction == 3 ?
+            : pendingAction === 3 ?
               <ActionButton color="blue" onClick={executeProposal}><FiPlayCircle/> Finish </ActionButton>
-            : pendingAction == 4 ?
+            : pendingAction === 4 ?
               <ActionButton color="blue" onClick={redeemBeneficiary}><FiPlayCircle/> Redeem 4 Beneficiary </ActionButton>
-            : pendingAction == 5 &&
+            : pendingAction === 5 &&
               <ActionButton color="blue" onClick={executeMulticall}><FiPlayCircle/> Execute Multicall </ActionButton>
             }
           </SidebarRow>
@@ -473,7 +473,7 @@ const ProposalPage = observer(() => {
           }
           
           { (
-              ((proposal.stateInVotingMachine == 3) || (proposal.stateInVotingMachine == 4))
+              ((proposal.stateInVotingMachine === 3) || (proposal.stateInVotingMachine === 4))
               && (votingParameters.votersReputationLossRatio.toNumber() > 0)
               && (finishTime.toNumber() > 0)
             ) ? <small>Voter REP Loss Ratio: {votingParameters.votersReputationLossRatio.toString()}%</small>
@@ -551,12 +551,12 @@ const ProposalPage = observer(() => {
             : <div></div>
           }
 
-          {!finishTimeReached && (proposal.stateInVotingMachine == 3 || proposal.stateInVotingMachine == 4) && votingMachineTokenApproved.toString() === "0" ?
+          {!finishTimeReached && (proposal.stateInVotingMachine === 3 || proposal.stateInVotingMachine === 4) && votingMachineTokenApproved.toString() === "0" ?
             <SidebarRow>
               <small>Approve {votingMachineTokenName} to stake</small>
               <ActionButton color="blue" onClick={() => approveVotingMachineToken()}>Approve {votingMachineTokenName}</ActionButton>
             </SidebarRow>
-            : !finishTimeReached && (proposal.stateInVotingMachine == 3 || proposal.stateInVotingMachine == 4)  ?
+            : !finishTimeReached && (proposal.stateInVotingMachine === 3 || proposal.stateInVotingMachine === 4)  ?
               <div>
                 {Number(recommendedStakeToBoost) > 0 ? <small>Stake ~{formatBalance(recommendedStakeToBoost, 18, 1, false).toString()} {votingMachineTokenName} to boost</small> : <span/>}
                 {Number(recommendedStakeToUnBoost) > 0 ? <small>Stake ~{formatBalance(recommendedStakeToUnBoost, 18, 1, false).toString()} {votingMachineTokenName} to unboost</small> : <span/>}

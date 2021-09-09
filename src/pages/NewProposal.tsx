@@ -135,8 +135,8 @@ const NewProposalPage = observer(() => {
     const networkAssetSymbol = NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
 
     const defaultSchemeToUse = schemeInLocalStorage
-      ? schemes.findIndex((scheme) => scheme.address == schemeInLocalStorage)
-      : schemes.findIndex((scheme) => scheme.name == "MasterWalletScheme");
+      ? schemes.findIndex((scheme) => scheme.address === schemeInLocalStorage)
+      : schemes.findIndex((scheme) => scheme.name === "MasterWalletScheme");
 
     const [schemeToUse, setSchemeToUse] =
       React.useState(defaultSchemeToUse > -1 ? schemes[defaultSchemeToUse] : schemes[0]);
@@ -189,19 +189,19 @@ const NewProposalPage = observer(() => {
     
     recommendedCalls.map((recommendedCall) => {
       if((recommendedCall.fromTime > 0)
-        && (allowedToCall.findIndex((allowedPermission) => allowedPermission.value == recommendedCall.to) < 0)
+        && (allowedToCall.findIndex((allowedPermission) => allowedPermission.value === recommendedCall.to) < 0)
       ) {
         allowedToCall.push({ value: recommendedCall.to, name: recommendedCall.toName });
       }
     });
     
     const callPermissions = daoStore.getCache().callPermissions;
-    if (schemeToUse.type == "WalletScheme"
+    if (schemeToUse.type === "WalletScheme"
       && callPermissions[ZERO_ADDRESS]
       && callPermissions[ZERO_ADDRESS]
-      [schemeToUse.controllerAddress == networkContracts.controller ? networkContracts.avatar : schemeToUse.address]
+      [schemeToUse.controllerAddress === networkContracts.controller ? networkContracts.avatar : schemeToUse.address]
       && callPermissions[ZERO_ADDRESS]
-      [schemeToUse.controllerAddress == networkContracts.controller ? networkContracts.avatar : schemeToUse.address]
+      [schemeToUse.controllerAddress === networkContracts.controller ? networkContracts.avatar : schemeToUse.address]
       [ANY_ADDRESS]
     )
       allowedToCall.push({ value: ANY_ADDRESS, name: "Custom" });
@@ -209,7 +209,7 @@ const NewProposalPage = observer(() => {
     const uploadToIPFS = async function() {
       if (titleText.length < 10) {
         setErrorMessage("Title has to be at mimimum 10 characters length");
-      } else if (descriptionText.length == 0) {
+      } else if (descriptionText.length === 0) {
         setErrorMessage("Description has to be at mimimum 100 characters length");
       } else {
         setSubmitionState(1);
@@ -236,7 +236,7 @@ const NewProposalPage = observer(() => {
         while (!uploaded) {
           const ipfsContent = await ipfsService.getContent(hash);
           console.debug('[IPFS CONTENT]', ipfsContent);
-          if (ipfsContent == bodyTextToUpload)
+          if (ipfsContent === bodyTextToUpload)
             uploaded = true;
           await sleep(1000);
         }
@@ -255,23 +255,23 @@ const NewProposalPage = observer(() => {
       try {
         
         if ((schemeToUse.type != "ContributionReward")) {
-          const callToController = (schemeToUse.controllerAddress == networkContracts.controller);
+          const callToController = (schemeToUse.controllerAddress === networkContracts.controller);
           
           to = calls.map((call) => {
             return callToController ? networkContracts.controller : call.to;
           });
 
           data = calls.map((call) => {
-            if (call.to == "")
+            if (call.to === "")
               return "";
             
             let callData;
             
-            if (call.callType == "simple") {
+            if (call.callType === "simple") {
               let callDataFunctionSignature = "0x0";
               let callDataFunctionParamsEncoded = "";
               
-              if (call.functionName.length == 0) {
+              if (call.functionName.length === 0) {
                 callDataFunctionSignature = "0x0";
               } else {
                 callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(call.functionName)
@@ -307,7 +307,7 @@ const NewProposalPage = observer(() => {
           });
         }
         
-        const proposalData = (schemeToUse.type == "ContributionReward")
+        const proposalData = (schemeToUse.type === "ContributionReward")
         ? {
           beneficiary: contributionRewardCalls.beneficiary,
           reputationChange: normalizeBalance(bnum(contributionRewardCalls.repChange)).toString(),
@@ -384,7 +384,7 @@ const NewProposalPage = observer(() => {
 
     function addCall() {
       calls.push({
-        callType: schemeToUse.type == "WalletScheme" ? "simple" : "advanced",
+        callType: schemeToUse.type === "WalletScheme" ? "simple" : "advanced",
         allowedFunctions: [],
         to: "",
         data: "",
@@ -417,7 +417,7 @@ const NewProposalPage = observer(() => {
     
     function onToSelectChange(callIndex, toAddress) {
       console.log(toAddress)
-      if (toAddress == ANY_ADDRESS) {
+      if (toAddress === ANY_ADDRESS) {
         changeCallType(callIndex);
       } else {
         calls[callIndex].to = toAddress;
@@ -427,7 +427,7 @@ const NewProposalPage = observer(() => {
         calls[callIndex].dataValues = [];
         calls[callIndex].value = "0";
         recommendedCalls.map((recommendedCall) => {
-          if (recommendedCall.to == toAddress && recommendedCall.fromTime > 0){
+          if (recommendedCall.to === toAddress && recommendedCall.fromTime > 0){
             calls[callIndex].allowedFunctions.push(recommendedCall);
           }
         });
@@ -443,7 +443,7 @@ const NewProposalPage = observer(() => {
     function onFunctionSelectChange(callIndex, functionName, params) {
       calls[callIndex].functionName = functionName;
 
-      if (calls[callIndex].callType == "simple"){
+      if (calls[callIndex].callType === "simple"){
         calls[callIndex].functionParams = params;
         calls[callIndex].dataValues = [];
         calls[callIndex].dataValues = params.map(() => {return ""});
@@ -494,7 +494,7 @@ const NewProposalPage = observer(() => {
         setCallsInState(calls);
       }
     }
-    if (calls[0] && calls[0].allowedFunctions.length == 0 && allowedToCall[0])
+    if (calls[0] && calls[0].allowedFunctions.length === 0 && allowedToCall[0])
       onToSelectChange(0, allowedToCall[0].value)
 
     return (
@@ -519,7 +519,7 @@ const NewProposalPage = observer(() => {
             <input type="text" placeholder="Proposal Title" onChange={onTitleChange} value={titleText}/>
             <select name="scheme" id="schemeSelector" onChange={onSchemeChange} defaultValue={defaultSchemeToUse}>
               {schemes.map((scheme, i) =>{
-                if (scheme.type == "WalletScheme" || scheme.type == "ContributionReward" ||scheme.type == "GenericMulticall")
+                if (scheme.type === "WalletScheme" || scheme.type === "ContributionReward" ||scheme.type === "GenericMulticall")
                   return <option key={scheme.address} value={i}>{scheme.name}</option>
                 else
                   return null;
@@ -565,16 +565,16 @@ const NewProposalPage = observer(() => {
           border: "1px solid gray",
           padding: "20px 10px"
         }} />
-        {(schemeToUse.type == "ContributionReward" || schemeToUse.type == "GenericMulticall")
-          || (schemeToUse.type == "WalletScheme" && schemeToUse.controllerAddress == networkContracts.controller)
+        {(schemeToUse.type === "ContributionReward" || schemeToUse.type === "GenericMulticall")
+          || (schemeToUse.type === "WalletScheme" && schemeToUse.controllerAddress === networkContracts.controller)
           ? <h2>Calls executed from the avatar <Question question="9"/></h2>
           : <h2>Calls executed from the scheme <Question question="9"/></h2>
         }
         {Object.keys(transferLimits).map((assetAddress) => {
-          if (assetAddress == ZERO_ADDRESS)
+          if (assetAddress === ZERO_ADDRESS)
             return <h3>Transfer limit of {normalizeBalance(transferLimits[assetAddress]).toString()} {networkAssetSymbol}</h3>;
           else {
-            const token = networkTokens.find(networkToken => networkToken.address == assetAddress);
+            const token = networkTokens.find(networkToken => networkToken.address === assetAddress);
             if (token)
               return <h3>Transfer limit of {normalizeBalance(transferLimits[assetAddress], token.decimals).toString()} {token.symbol}</h3>;
             else
@@ -582,7 +582,7 @@ const NewProposalPage = observer(() => {
           }
         })}
       
-        {(schemeToUse.type == "ContributionReward")
+        {(schemeToUse.type === "ContributionReward")
         ? 
         // If scheme to use is Contribution Reward display a different form with less fields
         <div>
@@ -635,7 +635,7 @@ const NewProposalPage = observer(() => {
               <CallRow key={"call"+i}>
                 <span>#{i}</span>
 
-                {((schemeToUse.type == "WalletScheme") && (call.callType === "simple")) ?
+                {((schemeToUse.type === "WalletScheme") && (call.callType === "simple")) ?
                   <SelectInput
                     value={calls[i].to}
                     onChange={(e) => {onToSelectChange(i, e.target.value)}}
@@ -664,7 +664,7 @@ const NewProposalPage = observer(() => {
                       value={calls[i].functionName || ""}
                       onChange={(event) => {
                         const selectedFunction = calls[i].allowedFunctions.find((allowedFunction) => {
-                          return allowedFunction.functionName == event.target.value
+                          return allowedFunction.functionName === event.target.value
                         });
                         onFunctionSelectChange(
                           i,
@@ -684,7 +684,7 @@ const NewProposalPage = observer(() => {
                     </SelectInput>
                     
                     <div style={{display: "flex", width: "100%", flexDirection: "column", paddingRight: "10px"}}>
-                      {calls[i].functionParams.length == 0 ?
+                      {calls[i].functionParams.length === 0 ?
                         <TextInput 
                           key={"functionParam00"}
                           disabled
@@ -728,7 +728,7 @@ const NewProposalPage = observer(() => {
                 />
                 
                 <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>
-                { schemeToUse.type == "WalletScheme"
+                { schemeToUse.type === "WalletScheme"
                   ? <RemoveButton onClick={() => {changeCallType(i)}}>
                     {calls[i].callType === "advanced" ? "Simple" : "Advanced"}
                     </RemoveButton>
@@ -767,15 +767,15 @@ const NewProposalPage = observer(() => {
         
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
           {
-            (submitionState == 0) ?
+            (submitionState === 0) ?
               <ActiveButton onClick={uploadToIPFS}> Upload to IPFS </ActiveButton>
-            : (submitionState == 1) ?
+            : (submitionState === 1) ?
               <ActiveButton> Uploading descritpion to IPFS.. </ActiveButton>
-            : (submitionState == 2) ?
+            : (submitionState === 2) ?
               <ActiveButton onClick={createProposal}>Submit Proposal</ActiveButton>
-            : (submitionState == 3) ?
+            : (submitionState === 3) ?
               <ActiveButton>Submiting TX...</ActiveButton>
-            : (submitionState == 4) ?
+            : (submitionState === 4) ?
               <ActiveButton>Waiting for TX...</ActiveButton>
             :
               <ActiveButton route="/">Back to Proposals</ActiveButton>

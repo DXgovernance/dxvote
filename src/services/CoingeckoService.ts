@@ -12,14 +12,14 @@ export default class CoingeckoService {
   
   async loadPrices(){
     const tokens = this.context.configStore.getTokensToFetchPrice();
-    const networkName = this.context.configStore.getActiveChainName() == 'mainnet' ? 'ethereum'
-      : this.context.configStore.getActiveChainName() == 'xdai' ? 'xdai'
+    const networkName = this.context.configStore.getActiveChainName() === 'mainnet' ? 'ethereum'
+      : this.context.configStore.getActiveChainName() === 'xdai' ? 'xdai'
       : '';
     
-    if (networkName == 'ethereum' || networkName == 'xdai') {
+    if (networkName === 'ethereum' || networkName === 'xdai') {
       let tokenAddresses = "";
       tokens.map((token, i) => {
-        if (i == tokens.length - 1)
+        if (i === tokens.length - 1)
           tokenAddresses += token.address;
         else
         tokenAddresses += token.address + "%2C";
@@ -36,7 +36,7 @@ export default class CoingeckoService {
         })
       ]);
       
-      if ((pricesResponse[0].status == 200) && (pricesResponse[1].status == 200)){
+      if ((pricesResponse[0].status === 200) && (pricesResponse[1].status === 200)){
         this.prices = pricesResponse[0].data;
         
         Object.keys(this.prices).map((tokenAddress) => {

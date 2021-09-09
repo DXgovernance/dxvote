@@ -124,7 +124,7 @@ const FinanceInformation = observer(() => {
           amount: bnum(tokenBalances[tokenAddress]),
           decimals: tokenData.decimals
         })
-        const indexOfAssetInTotal = assets.total.findIndex((asset) => asset.address == tokenAddress);
+        const indexOfAssetInTotal = assets.total.findIndex((asset) => asset.address === tokenAddress);
         if (indexOfAssetInTotal > -1) {
           assets.total[indexOfAssetInTotal].amount = assets.total[indexOfAssetInTotal].amount.plus(
             bnum(tokenBalances[tokenAddress])

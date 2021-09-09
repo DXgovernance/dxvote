@@ -44,7 +44,7 @@ const FAQPage = observer(() => {
   daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
 
   for (const votingMachineName in networkContracts.votingMachines) {
-    if (votingMachineName == "dxd"){
+    if (votingMachineName === "dxd"){
       daoAddresses += "- DXDVotingMachine: " + networkContracts.votingMachines[votingMachineName].address+"\n";
       daoAddresses += "- DXD: " + networkContracts.votingMachines[votingMachineName].token+"\n";
     }

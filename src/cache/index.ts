@@ -201,10 +201,10 @@ export const updateVotingMachine = async function (
 
   newVotingMachineEvents.map((votingMachineEvent) => {
     const proposalCreated = votingMachineEventsInCache.newProposal
-      .findIndex(newProposalEvent => votingMachineEvent.returnValues._proposalId == newProposalEvent.proposalId) > -1;
+      .findIndex(newProposalEvent => votingMachineEvent.returnValues._proposalId === newProposalEvent.proposalId) > -1;
     
-    if (votingMachineEvent.returnValues._organization == avatarAddress
-      || (votingMachineEvent.event == "StateChange" && proposalCreated))
+    if (votingMachineEvent.returnValues._organization === avatarAddress
+      || (votingMachineEvent.event === "StateChange" && proposalCreated))
       switch (votingMachineEvent.event) {
         case "NewProposal":
           votingMachineEventsInCache.newProposal.push({
@@ -424,7 +424,7 @@ export const updateSchemes = async function (
     const schemeAddress = controllerEvent.returnValues._scheme;
     
     // Add or update the scheme information, register scheme is used to add and updates scheme parametersHash
-    if (controllerEvent.event == "RegisterScheme") {
+    if (controllerEvent.event === "RegisterScheme") {
       const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
       const votingMachine = networkContracts.votingMachines[schemeTypeData.votingMachine].contract;
       
@@ -436,7 +436,7 @@ export const updateSchemes = async function (
         [networkContracts.controller, "getSchemeParameters", [schemeAddress, networkContracts.avatar._address]]
       ];
       
-      if (schemeTypeData.type == 'WalletScheme') {
+      if (schemeTypeData.type === 'WalletScheme') {
         const walletSchemeContract = await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress);
         callsToExecute.push([walletSchemeContract, "controllerAddress", []]);
         callsToExecute.push([walletSchemeContract, "schemeName", []]);
@@ -453,21 +453,21 @@ export const updateSchemes = async function (
         ? schemeTypeData.voteParams
         : callsResponse1.decodedReturnData[2];
 
-      const controllerAddress = (schemeTypeData.type == 'WalletScheme')
+      const controllerAddress = (schemeTypeData.type === 'WalletScheme')
         ? callsResponse1.decodedReturnData[3]
         : networkContracts.avatar._address;
-      const schemeName = (schemeTypeData.type == 'WalletScheme')
+      const schemeName = (schemeTypeData.type === 'WalletScheme')
         ? callsResponse1.decodedReturnData[4]
         : schemeTypeData.name;
-      const maxSecondsForExecution = (schemeTypeData.type == 'WalletScheme')
+      const maxSecondsForExecution = (schemeTypeData.type === 'WalletScheme')
         ? callsResponse1.decodedReturnData[5]
         : 0;
-      const maxRepPercentageChange = (schemeTypeData.type == 'WalletScheme')
+      const maxRepPercentageChange = (schemeTypeData.type === 'WalletScheme')
         ? callsResponse1.decodedReturnData[6]
         : 0;
       
       callsToExecute = [];
-      if (schemeTypeData.type == 'WalletScheme') {
+      if (schemeTypeData.type === 'WalletScheme') {
         callsToExecute.push([
           votingMachine,
           "getBoostedVoteRequiredPercentage",
@@ -488,7 +488,7 @@ export const updateSchemes = async function (
 
       const callsResponse2 = await executeMulticall(web3, networkContracts.multicall, callsToExecute);
       
-      const boostedVoteRequiredPercentage = (schemeTypeData.type == 'WalletScheme')
+      const boostedVoteRequiredPercentage = (schemeTypeData.type === 'WalletScheme')
         ? web3.eth.abi.decodeParameters(['uint256'], callsResponse2.returnData[0])['0']
         : 0;
       
@@ -546,7 +546,7 @@ export const updateSchemes = async function (
     
     // Mark scheme as not registered but save all previous data
     } else if (
-      controllerEvent.event == "UnregisterScheme" && 
+      controllerEvent.event === "UnregisterScheme" && 
       // This condition is added to skip the first scheme added (that is the dao creator account)
       (controllerEvent.returnValues._sender != schemeAddress)
     ) {
@@ -563,7 +563,7 @@ export const updateSchemes = async function (
         ]
       ];
       
-      if (networkCache.schemes[schemeAddress].type == 'WalletScheme') {
+      if (networkCache.schemes[schemeAddress].type === 'WalletScheme') {
         callsToExecute.push([
           await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
           "maxSecondsForExecution", []
@@ -571,7 +571,7 @@ export const updateSchemes = async function (
       }
       const callsResponse = await executeMulticall(web3, networkContracts.multicall, callsToExecute);
       
-      const maxSecondsForExecution = (networkCache.schemes[schemeAddress].type == 'WalletScheme') 
+      const maxSecondsForExecution = (networkCache.schemes[schemeAddress].type === 'WalletScheme') 
         ? callsResponse.decodedReturnData[2]
         : 0;
       
@@ -600,7 +600,7 @@ export const updateSchemes = async function (
         ]
       ];
       
-      if (networkCache.schemes[schemeAddress].type == 'WalletScheme') {
+      if (networkCache.schemes[schemeAddress].type === 'WalletScheme') {
         callsToExecute.push([
           await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
           "maxSecondsForExecution", []
@@ -613,11 +613,11 @@ export const updateSchemes = async function (
       }
       const callsResponse = await executeMulticall(web3, networkContracts.multicall, callsToExecute);
       
-      const maxSecondsForExecution = (networkCache.schemes[schemeAddress].type == 'WalletScheme') 
+      const maxSecondsForExecution = (networkCache.schemes[schemeAddress].type === 'WalletScheme') 
         ? callsResponse.decodedReturnData[2]
         : 0;
         
-      const boostedVoteRequiredPercentage = (schemeTypeData.type == 'WalletScheme')
+      const boostedVoteRequiredPercentage = (schemeTypeData.type === 'WalletScheme')
         ? web3.eth.abi.decodeParameters(['uint256'], callsResponse.returnData[3])['0']
         : 0;
       
@@ -674,7 +674,7 @@ export const updateProposals = async function (
       try {
         console.debug("Getting proposals in event batch index", schemeEventsBatchsIndex, "in", schemeTypeData.name,);
         await Promise.all(schemeEventsBatchs[schemeEventsBatchsIndex].map(async (schemeEvent) => {
-          const proposalId = (schemeEvent.topics[1] == avatarAddressEncoded)
+          const proposalId = (schemeEvent.topics[1] === avatarAddressEncoded)
           ? web3.eth.abi.decodeParameter('bytes32', schemeEvent.topics[2])
           : web3.eth.abi.decodeParameter('bytes32', schemeEvent.topics[1]);
           // Get all the proposal information from the scheme and voting machine
@@ -706,12 +706,12 @@ export const updateProposals = async function (
             ]
           ];
 
-          if (schemeTypeData.type == 'WalletScheme') {
+          if (schemeTypeData.type === 'WalletScheme') {
             callsToExecute.push([ 
               await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
               "getOrganizationProposal", [proposalId]
             ]);
-          } else if (schemeTypeData.type == 'ContributionReward') {
+          } else if (schemeTypeData.type === 'ContributionReward') {
             callsToExecute.push([ 
               await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
               "getRedeemedPeriods", [proposalId, networkContracts.avatar._address, 0]
@@ -770,7 +770,7 @@ export const updateProposals = async function (
           let decodedProposer;
           let creationLogDecoded;
           
-          if (schemeTypeData.type == 'WalletScheme') {
+          if (schemeTypeData.type === 'WalletScheme') {
             schemeProposalInfo = web3.eth.abi.decodeParameters(
                 [ 
                   {type: 'address[]', name: 'to' },
@@ -784,7 +784,7 @@ export const updateProposals = async function (
                 callsResponse.returnData[5]
               );
           } else {
-            if (schemeTypeData.type == 'GenericMulticall') {
+            if (schemeTypeData.type === 'GenericMulticall') {
               const executionEvent = await web3.eth.getPastLogs({
                 fromBlock: schemeEvent.l1BlockNumber,
                 address: schemeAddress,
@@ -799,7 +799,7 @@ export const updateProposals = async function (
               else 
                 schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
                 
-              } else if (schemeTypeData.type == 'ContributionReward') {
+              } else if (schemeTypeData.type === 'ContributionReward') {
               if (
                 callsResponse.decodedReturnData[5] > 0
                 || callsResponse.decodedReturnData[6] > 0
@@ -807,7 +807,7 @@ export const updateProposals = async function (
                 || callsResponse.decodedReturnData[8] > 0
               ) {
                 schemeProposalInfo.state = WalletSchemeProposalState.ExecutionSucceded;
-              } else if (votingMachineProposalInfo.state == "1" || votingMachineProposalInfo.state == "2") {
+              } else if (votingMachineProposalInfo.state === "1" || votingMachineProposalInfo.state === "2") {
                 schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
               } else {
                 schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
@@ -818,14 +818,14 @@ export const updateProposals = async function (
             try {
               schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
                 transactionReceipt.logs.map((log) => {
-                  if (log.topics[0] == "0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c") {
+                  if (log.topics[0] === "0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c") {
                     decodedProposer = web3.eth.abi.decodeParameters([
                       { type:'uint256', name: "_numOfChoices"},
                       { type:'address', name: "_proposer"},
                       { type:'bytes32', name: "_paramsHash"}
                     ], log.data)._proposer
                   }
-                  if (!creationLogDecoded && (log.topics[0] == newProposalTopic[0])) {
+                  if (!creationLogDecoded && (log.topics[0] === newProposalTopic[0])) {
                     creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
                     if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash != ZERO_HASH) {
                       schemeProposalInfo.descriptionHash = ipfsHashToDescriptionHash(creationLogDecoded._descriptionHash);
@@ -839,7 +839,7 @@ export const updateProposals = async function (
               console.error('Error on adding content hash from tx', schemeEvent.transactionHash);
             }
             
-            if (schemeTypeData.type == 'SchemeRegistrar') {
+            if (schemeTypeData.type === 'SchemeRegistrar') {
               
               schemeProposalInfo.to = [schemeTypeData.contractToCall];
               schemeProposalInfo.value = [0];
@@ -878,7 +878,7 @@ export const updateProposals = async function (
                 )];
               }
               
-            } else if (schemeTypeData.type == "ContributionReward") {
+            } else if (schemeTypeData.type === "ContributionReward") {
               
               if (creationLogDecoded._reputationChange > 0) {
                 schemeProposalInfo.to.push(schemeTypeData.contractToCall);
@@ -981,7 +981,7 @@ export const updateProposals = async function (
                 ));
               }
               
-            } else if (schemeTypeData.type == "GenericScheme") {
+            } else if (schemeTypeData.type === "GenericScheme") {
               
               schemeProposalInfo.to = [networkContracts.controller._address];
               schemeProposalInfo.value = [0];
@@ -1003,7 +1003,7 @@ export const updateProposals = async function (
                 ]
               )];
               
-            } else if (schemeTypeData.type == "GenericMulticall") {
+            } else if (schemeTypeData.type === "GenericMulticall") {
               for (let callIndex = 0; callIndex < creationLogDecoded._contractsToCall.length; callIndex++) {
                 schemeProposalInfo.to.push(networkContracts.controller._address);
                 schemeProposalInfo.value.push(0)
@@ -1118,7 +1118,7 @@ export const updateProposals = async function (
       networkCache.schemes[proposal.scheme].type != "WalletScheme"
       && proposal.descriptionHash && proposal.descriptionHash.length > 0
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
-      && proposal.title.length == 0
+      && proposal.title.length === 0
       && (isNode() || proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
     )
       try {
@@ -1136,7 +1136,7 @@ export const updateProposals = async function (
       } catch (error) {
         console.error('Error getting title from', proposal.id, ipfsHash, 'waiting 2 seconds and trying again..');
         console.error(error.message);
-        if (error.message == "Request failed with status code 429")
+        if (error.message === "Request failed with status code 429")
           await sleep(10000);
         if (isNode()) {
           proposalIndex --;
@@ -1151,7 +1151,7 @@ export const updateProposals = async function (
     
     if (isNode() 
     || (networkCache.proposals[proposalId].stateInVotingMachine > VotingMachineProposalState.Executed)
-    || (networkCache.proposals[proposalId].stateInScheme == WalletSchemeProposalState.Submitted)) {
+    || (networkCache.proposals[proposalId].stateInScheme === WalletSchemeProposalState.Submitted)) {
   
       const schemeAddress = networkCache.proposals[proposalId].scheme;
       const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
@@ -1191,15 +1191,15 @@ export const updateProposals = async function (
         ]
       ];
   
-      if (schemeTypeData.type == 'WalletScheme') {
+      if (schemeTypeData.type === 'WalletScheme') {
         callsToExecute.push([ 
           await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
           "getOrganizationProposal", [proposalId]
         ]);
       } else if (
-        schemeTypeData.type == 'ContributionReward'
-        && networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed
-        && networkCache.proposals[proposalId].stateInScheme == WalletSchemeProposalState.Submitted
+        schemeTypeData.type === 'ContributionReward'
+        && networkCache.proposals[proposalId].stateInVotingMachine === VotingMachineProposalState.Executed
+        && networkCache.proposals[proposalId].stateInScheme === WalletSchemeProposalState.Submitted
       ) {
         callsToExecute.push([ 
           await new web3.eth.Contract(ContributionRewardJSON.abi, schemeAddress),
@@ -1248,7 +1248,7 @@ export const updateProposals = async function (
       const proposalTimes = callsResponse.decodedReturnData[4];
       const proposalShouldBoost = callsResponse.decodedReturnData[5];
       
-      if (schemeTypeData.type == 'WalletScheme') {
+      if (schemeTypeData.type === 'WalletScheme') {
         networkCache.proposals[proposalId].stateInScheme = Number(web3.eth.abi.decodeParameters(
           [ 
             {type: 'address[]', name: 'to' },
@@ -1262,11 +1262,11 @@ export const updateProposals = async function (
           callsResponse.returnData[6]
         ).state);
       } else if (
-        schemeTypeData.type == 'ContributionReward'
-        && networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed
-        && networkCache.proposals[proposalId].stateInScheme == WalletSchemeProposalState.Submitted
+        schemeTypeData.type === 'ContributionReward'
+        && networkCache.proposals[proposalId].stateInVotingMachine === VotingMachineProposalState.Executed
+        && networkCache.proposals[proposalId].stateInScheme === WalletSchemeProposalState.Submitted
       ) {
-        if (schemeTypeData.type == 'ContributionReward') {
+        if (schemeTypeData.type === 'ContributionReward') {
           if (
             callsResponse.decodedReturnData[6] > 0
             || callsResponse.decodedReturnData[7] > 0
@@ -1274,11 +1274,11 @@ export const updateProposals = async function (
             || callsResponse.decodedReturnData[9] > 0
           ) {
             networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.ExecutionSucceded;
-          } else if (votingMachineProposalInfo.state == "1" || votingMachineProposalInfo.state == "2") {
+          } else if (votingMachineProposalInfo.state === "1" || votingMachineProposalInfo.state === "2") {
             networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.Rejected;
           }
         }
-      } else if (schemeTypeData.type == 'GenericMulticall') {
+      } else if (schemeTypeData.type === 'GenericMulticall') {
         
         const executionEvent = await web3.eth.getPastLogs({
           fromBlock: networkCache.proposals[proposalId].creationEvent.l1BlockNumber,
@@ -1293,7 +1293,7 @@ export const updateProposals = async function (
           networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.ExecutionSucceded
         else 
           networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.Submitted
-        } else if (networkCache.proposals[proposalId].stateInVotingMachine == VotingMachineProposalState.Executed) {
+        } else if (networkCache.proposals[proposalId].stateInVotingMachine === VotingMachineProposalState.Executed) {
         networkCache.proposals[proposalId].stateInScheme = WalletSchemeProposalState.ExecutionSucceded;
       }
   

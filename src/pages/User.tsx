@@ -52,10 +52,10 @@ const UserPage = observer(() => {
             {formatBalance(userInfo.repBalance,18,0)} REP ({userInfo.repPercentage})
           </InfoBox>
           <InfoBox>
-            {userEvents.votes.filter(vote => vote.vote == 1).length} Positive Votes
+            {userEvents.votes.filter(vote => vote.vote === 1).length} Positive Votes
           </InfoBox>
           <InfoBox>
-            {userEvents.votes.filter(vote => vote.vote == 2).length} Negative Votes
+            {userEvents.votes.filter(vote => vote.vote === 2).length} Negative Votes
           </InfoBox>
           <InfoBox>
             {userEvents.newProposal.length} Proposals

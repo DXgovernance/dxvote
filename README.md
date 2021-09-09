@@ -33,6 +33,12 @@ The configuration is even easier than the cache, it is just one file that stores
 
 Each network in the config file has a token, recommended calls and templates array, if you want to add new tokens, templates and recommended calls to the dapp just add them in the config file. You only change the file when you want to change the values mentioned before.
 
+## Install
+
+Install all dependencies with yarn.
+
+`yarn`
+
 ## Development
 
 The development script will start a local hardhat node, deploy all dxdao contracts with local development configuration and start the dapp with the development configuration in the port 3000.

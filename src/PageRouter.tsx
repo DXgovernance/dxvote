@@ -58,7 +58,7 @@ const PageRouter = observer(({ children }) => {
     else {
       
       const networkName = configStore.getActiveChainName();
-      if (location.pathname == "/"){
+      if (location.pathname === "/"){
         history.push(`/${networkName}/proposals`)
       }
       
