@@ -128,10 +128,12 @@ export const decodeProposalStatus = function(
           pendingAction: 2
         };
       } else if (timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
-        return { 
+        return {
           status: "Pending Boost", 
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
-          finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit),
+          finishTime: autoBoost
+            ? preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit)
+            : timeNow.plus(boostedVotePeriodLimit),
           pendingAction: 1
         };
       } else if (autoBoost && timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit).toNumber() && proposal.shouldBoost) {
@@ -159,7 +161,9 @@ export const decodeProposalStatus = function(
         return { 
           status: "Pre Boosted", 
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
-          finishTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit),
+          finishTime: autoBoost
+            ? preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).plus(boostedVotePeriodLimit)
+            : timeNow.plus(boostedVotePeriodLimit),
           pendingAction: 0
         };
       }
@@ -180,15 +184,14 @@ export const decodeProposalStatus = function(
         };
       }
     case VotingMachineProposalState.QuietEndingPeriod:
+      const finishTime = bnum(
+        proposalStateChangeEvents.find(event => event.state == VotingMachineProposalState.QuietEndingPeriod).timestamp
+      ).plus(quietEndingPeriod);
       return { 
         status: "Quiet Ending Period", 
         boostTime: boostedPhaseTime,
-        finishTime: proposalStateChangeEvents .find(event => event.state == VotingMachineProposalState.QuietEndingPeriod)
-        ? bnum(
-          proposalStateChangeEvents .find(event => event.state == VotingMachineProposalState.QuietEndingPeriod).timestamp
-        ).plus(quietEndingPeriod)
-        : bnum(0),
-        pendingAction: 0
+        finishTime: finishTime,
+        pendingAction: finishTime.lt(timeNow) ? 3 : 0
       };
   }
 }
