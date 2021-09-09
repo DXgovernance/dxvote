@@ -648,13 +648,14 @@ export default class DaoStore {
     })
     userEvents.stakes.map((stake) => {
       const proposal = this.getProposal(stake.proposalId);
-      if (
-        proposal.stateInVotingMachine < 3
-        && redeemsLeft.stake.indexOf(stake.proposalId) < 0
-        && proposal.winningVote == stake.vote
+      if ((proposal.stateInVotingMachine == 1) 
+        || ( proposal.stateInVotingMachine < 3
+          && redeemsLeft.stake.indexOf(stake.proposalId) < 0
+          && proposal.winningVote == stake.vote
+        )
       ){
         redeemsLeft.stake.push(stake.proposalId);
-        if (proposal.winningVote = 1) {
+        if ((proposal.stateInVotingMachine == 2) && (proposal.winningVote == 1)) {
           redeemsLeft.bounty.push(stake.proposalId);
         }
       }
