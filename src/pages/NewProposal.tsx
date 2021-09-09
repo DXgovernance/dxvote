@@ -278,6 +278,11 @@ const NewProposalPage = observer(() => {
               }
               
               if (call.dataValues.length > 0) {
+                call.functionParams.map((functionParam, i) => {
+                  if (functionParam.type.indexOf("[]") > 0) {
+                    call.dataValues[i] = call.dataValues[i].slice(1,-1).split(',');
+                  }
+                });
                 callDataFunctionParamsEncoded = call.functionParams.length > 0 ? library.eth.abi.encodeParameters(
                     call.functionParams.map((functionParam) => functionParam.type),
                     call.dataValues
