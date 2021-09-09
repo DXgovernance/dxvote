@@ -186,7 +186,7 @@ export default class BlockchainStore {
                 params: [networkContracts.avatar],
               });
             Object.keys(networkCache.schemes).map((schemeAddress) => {
-              if (networkCache.schemes[schemeAddress].controllerAddress != networkContracts.controller)
+              if (networkCache.schemes[schemeAddress].controllerAddress !== networkContracts.controller)
                 tokensBalancesCalls.push({
                   contractType: ContractType.ERC20,
                   address: token.address,
@@ -201,7 +201,7 @@ export default class BlockchainStore {
           await this.executeAndUpdateMulticall(multicallService);
           
           tokensBalancesCalls.map((tokensBalancesCall) => {
-            if (tokensBalancesCall.params[0] == networkContracts.avatar) {
+            if (tokensBalancesCall.params[0] === networkContracts.avatar) {
               networkCache.daoInfo.tokenBalances[tokensBalancesCall.address] =
                 this.context.blockchainStore.getCachedValue(tokensBalancesCall) || bnum(0);
             } else {

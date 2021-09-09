@@ -52,7 +52,7 @@ export default class DaoService {
     let functionSignature = data.substring(0,10);
     const controllerCallDecoded = abiService.decodeCall(ContractType.Controller, data);
     let asset = ZERO_ADDRESS;
-    if (controllerCallDecoded && controllerCallDecoded.function.name == "genericCall") {
+    if (controllerCallDecoded && controllerCallDecoded.function.name === "genericCall") {
       to = controllerCallDecoded.args[0];
       data = "0x"+controllerCallDecoded.args[1].substring(10);
       value = bnum(controllerCallDecoded.args[3]);
@@ -61,15 +61,15 @@ export default class DaoService {
       data = "0x"+data.substring(10);
     }
   
-    if (functionSignature == ERC20_TRANSFER_SIGNATURE || functionSignature == ERC20_APPROVE_SIGNATURE) {
+    if (functionSignature === ERC20_TRANSFER_SIGNATURE || functionSignature === ERC20_APPROVE_SIGNATURE) {
       asset = to;
     }
     const recommendedCallUsed = recommendedCalls.find((recommendedCall) => {
       return (
-        asset == recommendedCall.asset
-        && (ANY_ADDRESS == recommendedCall.from || from == recommendedCall.from)
-        && (to == recommendedCall.to)
-        && functionSignature == library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
+        asset === recommendedCall.asset
+        && (ANY_ADDRESS === recommendedCall.from || from === recommendedCall.from)
+        && (to === recommendedCall.to)
+        && functionSignature === library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
       )
     });
 
@@ -119,7 +119,7 @@ export default class DaoService {
     const networkContracts = configStore.getNetworkContracts();
     const { library } = providerStore.getActiveWeb3React();
 
-    if (schemeType == "ContributionReward") {
+    if (schemeType === "ContributionReward") {
       // function proposeContributionReward(
       //   Avatar _avatar,
       //   string memory _descriptionHash,
@@ -152,7 +152,7 @@ export default class DaoService {
         ]),
         "0"
       );
-    } else if (schemeType == "GenericMulticall") {
+    } else if (schemeType === "GenericMulticall") {
       // function proposeCalls(
       //   address[] memory _contractsToCall,
       //   bytes[] memory _callsData,

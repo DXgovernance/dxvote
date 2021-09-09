@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import { FiX } from "react-icons/fi";
 
-import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+import { NETWORK_ASSET_SYMBOL } from '../utils';
 import { 
   ZERO_ADDRESS,
   ERC20_TRANSFER_SIGNATURE,
@@ -129,8 +129,8 @@ const PermissionsInformation = observer(() => {
               asset: addressesNames[assetAddress] || assetAddress,
               from: addressesNames[fromAddress] || fromAddress,
               to: addressesNames[toAddress] || toAddress,
-              functionSignature: functionSignature == ANY_FUNC_SIGNATURE ? "Any Function" : functionSignature,
-              value: value == "115792089237316195423570985008687907853269984665640564039457584007913129639935" ? "ANY Value" : value,
+              functionSignature: functionSignature === ANY_FUNC_SIGNATURE ? "Any Function" : functionSignature,
+              value: value === "115792089237316195423570985008687907853269984665640564039457584007913129639935" ? "ANY Value" : value,
               fromTime: rawPermissions[assetAddress][fromAddress][toAddress][functionSignature].fromTime
             });
           }
@@ -159,7 +159,7 @@ const PermissionsInformation = observer(() => {
                 functionNames[permission.functionSignature] || permission.functionSignature}</TableCell>
               <TableCell width="10%" align="left">{permission.value}</TableCell>
               <TableCell width="20%" align="center">
-              { (permission.fromTime == 0) ? <FiX/> : timestampToDate(bnum(permission.fromTime)) }
+              { (permission.fromTime === 0) ? <FiX/> : timestampToDate(bnum(permission.fromTime)) }
               </TableCell>
             </TableRow>
           );

@@ -17,7 +17,7 @@ export default class EtherscanService {
         method: "GET",
         url: `https://api.etherscan.io/api?module=account&action=balance&address=${account}&tag=latest&apikey=${etherscanAPIKey}`,
       });
-      this.auth = auth.data.status == 1;
+      this.auth = auth.data.status === 1;
     }
   }
   

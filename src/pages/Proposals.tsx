@@ -216,9 +216,9 @@ const ProposalsPage = observer(() => {
             { proposals.map((proposal, i) => {
               if (
                 proposal
-                && ((stateFilter == 'Any Status') || (stateFilter != 'Any Status' && proposal.status == stateFilter))
-                && ((titleFilter.length == 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0)))
-                && ((schemeFilter == 'All Schemes') || (proposal.scheme == schemeFilter))
+                && ((stateFilter === 'Any Status') || (stateFilter !== 'Any Status' && proposal.status === stateFilter))
+                && ((titleFilter.length === 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0)))
+                && ((schemeFilter === 'All Schemes') || (proposal.scheme === schemeFilter))
               ) {
                 const minimumDaoBounty = daoStore.getVotingParametersOfProposal(proposal.id).minimumDaoBounty;
                 const positiveStake = formatNumberValue(normalizeBalance(proposal.positiveStakes, 18), 1);
@@ -235,12 +235,12 @@ const ProposalsPage = observer(() => {
                 const timeToFinish = timeToTimestamp(proposal.finishTime);
 
                 const votingMachineTokenName =
-                (votingMachines.gen && daoStore.getVotingMachineOfProposal(proposal.id) == votingMachines.gen.address)
+                (votingMachines.gen && daoStore.getVotingMachineOfProposal(proposal.id) === votingMachines.gen.address)
                 ? 'GEN' : 'DXD';
 
-                const voted = userEvents.votes.findIndex((event) => event.proposalId == proposal.id) > -1;
-                const staked = userEvents.stakes.findIndex((event) => event.proposalId == proposal.id) > -1;
-                const created = userEvents.newProposal.findIndex((event) => event.proposalId == proposal.id) > -1;
+                const voted = userEvents.votes.findIndex((event) => event.proposalId === proposal.id) > -1;
+                const staked = userEvents.stakes.findIndex((event) => event.proposalId === proposal.id) > -1;
+                const created = userEvents.newProposal.findIndex((event) => event.proposalId === proposal.id) > -1;
                 return (
                   <Link key={"proposal"+i} to={`/${networkName}/proposal/${proposal.id}`} style={{textDecoration: "none"}}>
                     <TableRow>
@@ -256,9 +256,9 @@ const ProposalsPage = observer(() => {
                       <TableCell width="15%" align="center">
                         <span style={{textAlign:"center"}}>
                           {proposal.status} <br/>
-                          {(timeToBoost != "") ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
-                          {(timeToFinish != "") ? <small>Finish {timeToFinish} </small> : <span></span>}
-                          {(proposal.pendingAction == 3) ? <small> Pending Finish Execution </small> : <span></span>}
+                          {(timeToBoost !== "") ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
+                          {(timeToFinish !== "") ? <small>Finish {timeToFinish} </small> : <span></span>}
+                          {(proposal.pendingAction === 3) ? <small> Pending Finish Execution </small> : <span></span>}
                         </span>
                       </TableCell>
                       <TableCell width="17.5%" align="space-evenly" style={{ minWidth: "15px", margin: "0px 2px"}}>

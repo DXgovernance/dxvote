@@ -1393,7 +1393,7 @@
           {"type": "bool", "name": "locked", "defaultValue": ""},
           {"type": "uint256", "name": "stakingCap", "defaultValue": ""}
         ],
-        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_7] and locked status [PARAM_6]"
+        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_6] and locked status [PARAM_5]"
       }
     ],
     "proposalTemplates": [
@@ -1469,128 +1469,30 @@
   
   "arbitrum": {
     "contracts": {
-      "fromBlock": 220615,
-      "avatar": "0xe086305858d49F65A5D20ADAccd31C523d32694f",
-      "reputation": "0x232Af049e34770DAd94f452cCDC6FEb0EcD42623",
+      "fromBlock": 338923,
+      "avatar": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
+      "reputation": "0x7552Bdc956947E8caa340B4E76E6eFE40764Beeb",
       "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
-      "controller": "0xDD032cd0dfCB54050E1FA30Be59056403e292700",
-      "permissionRegistry": "0xb6346B7638eE007f96025a5f61e02543c28Ce4a7",
+      "controller": "0xdB0015Fd30309D0AcB7184DD7F9Db9C46ae85674",
+      "permissionRegistry": "0x4f42BA46fD4d194CA63C40496E78f939EdC99e8C",
       "schemes": {
-        "RegistrarWalletScheme": "0x77a449DD6066302f6f783D9c36D87a46c2cAA04C",
-        "MasterWalletScheme": "0xF94B666ddA3a3C1Dc99378a81Bf424e1a18Bab89",
-        "QuickWalletScheme": "0x742092b501B7B36CbBA3E0516f352925D8c1D4c4",
-        "SWPRWalletScheme": "0xB7F6F30178d9598D158BFA046456cf27ACEdcECB"
+        "RegistrarWalletScheme": "0x628eC805A9FB5B79D21867f5fda9DEFA3967aA71",
+        "QuickWalletScheme": "0x6Bb0c340d6Fb4Fb5731Bf6EeE0D12bb60cFEDb47",
+        "SWPRWalletScheme": "0x3172eDDa6ff8B2b2Fa7FeD40EE1fD92F1F4dd424",
+        "MasterWalletScheme": "0xc0071bd6CD9ce77A7F5270A90664A88A1A664A8c",
+        "TestWalletScheme": "0xcab5367De13B5409Ee85689465B4553C375FB20d"
       },
       "utils": {
-        "multicall": "0xd732E905D4b6FC97916B525B1c926bee1ee43B04",
-        "dxDaoNFT": "0xb47a5e73969D20D8fE39f184333279fd2621cEE8",
-        "dxdVestingFactory": "0xCa8B6Cb2834b9Aaba57FD74c1Ed8E5F2bCBa47cB"
+        "multicall": "0x9645D0CEC58F0D28Be9660b9a4D464AB193817B3"
       },
       "votingMachines": {
         "dxd": {
           "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
-          "address": "0x685E9F2Aae1c3e6D170c2F8c08984A2528768455"
+          "address": "0x02F93D46C2B56777e9C82CF40917979375C2c711"
         }
       }
     },
-    "recommendedCalls":[
-      {
-        "asset": "0x0000000000000000000000000000000000000000",
-        "from": "0xB7F6F30178d9598D158BFA046456cf27ACEdcECB",
-        "to": "0xf20D10E306e34F9d830715eeEF577AC16B5Ea72e",
-        "toName": "Swpr Router",
-        "functionName": "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
-        "params": [
-          {"type": "address", "name": "tokenA", "defaultValue": ""},
-          {"type": "address", "name": "tokenB", "defaultValue": ""},
-          {"type": "uint256", "name": "amountADesired", "defaultValue": ""},
-          {"type": "uint256", "name": "amountBDesired", "defaultValue": ""},
-          {"type": "uint256", "name": "amountAMin", "defaultValue": ""},
-          {"type": "uint256", "name": "amountBMin", "defaultValue": ""},
-          {"type": "address", "name": "to", "defaultValue": ""},
-          {"type": "uint256", "name": "deadline", "defaultValue": ""}
-        ],
-        "decodeText": "Add liquidity with [PARAM_2] value of token [PARAM_0] and [PARAM_4] value of token [PARAM_1] to address [PARAM_6]"
-      }, 
-      {
-        "asset": "0x0000000000000000000000000000000000000000",
-        "from": "0xe086305858d49F65A5D20ADAccd31C523d32694f",
-        "to": "0x77a449DD6066302f6f783D9c36D87a46c2cAA04C",
-        "toName": "RegistrarWalletScheme",
-        "functionName": "setMaxSecondsForExecution(uint256)",
-        "params": [
-          {"type": "address", "name": "_maxSecondsForExecution", "defaultValue": ""}
-        ],
-        "decodeText": "Set max seconds for execution in RegistrarWalletScheme to [PARAM_0]"
-      }, 
-      {
-        "asset": "0x0000000000000000000000000000000000000000",
-        "from": "0xe086305858d49F65A5D20ADAccd31C523d32694f",
-        "to": "0xF94B666ddA3a3C1Dc99378a81Bf424e1a18Bab89",
-        "toName": "MasterWalletScheme",
-        "functionName": "setMaxSecondsForExecution(uint256)",
-        "params": [
-          {"type": "address", "name": "_maxSecondsForExecution", "defaultValue": ""}
-        ],
-        "decodeText": "Set max seconds for execution in MasterWalletScheme to [PARAM_0]"
-      }, 
-      {
-        "asset": "0x0000000000000000000000000000000000000000",
-        "from": "0xe086305858d49F65A5D20ADAccd31C523d32694f",
-        "to": "0xf20D10E306e34F9d830715eeEF577AC16B5Ea72e",
-        "toName": "QuickWalletScheme",
-        "functionName": "setMaxSecondsForExecution(uint256)",
-        "params": [
-          {"type": "address", "name": "_maxSecondsForExecution", "defaultValue": ""}
-        ],
-        "decodeText": "Set max seconds for execution in QuickWalletScheme to [PARAM_0]"
-      }, 
-      {
-        "asset": "0x0000000000000000000000000000000000000000",
-        "from": "0xe086305858d49F65A5D20ADAccd31C523d32694f",
-        "to": "0xB7F6F30178d9598D158BFA046456cf27ACEdcECB",
-        "toName": "SWPRWalletScheme",
-        "functionName": "setMaxSecondsForExecution(uint256)",
-        "params": [
-          {"type": "address", "name": "_maxSecondsForExecution", "defaultValue": ""}
-        ],
-        "decodeText": "Set max seconds for execution in SWPRWalletScheme to [PARAM_0]"
-      }, 
-      {
-        "asset": "0x0000000000000000000000000000000000000000",
-        "from": "0xB7F6F30178d9598D158BFA046456cf27ACEdcECB",
-        "to": "0xf20D10E306e34F9d830715eeEF577AC16B5Ea72e",
-        "toName": "Swpr Router",
-        "functionName": "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
-        "params": [
-          {"type": "address", "name": "tokenA", "defaultValue": ""},
-          {"type": "address", "name": "tokenB", "defaultValue": ""},
-          {"type": "uint256", "name": "liquidity", "defaultValue": ""},
-          {"type": "uint256", "name": "amountAMin", "defaultValue": ""},
-          {"type": "uint256", "name": "amountBMin", "defaultValue": ""},
-          {"type": "address", "name": "to", "defaultValue": ""},
-          {"type": "uint256", "name": "deadline", "defaultValue": ""}
-        ],
-        "decodeText": "Remove and send [PARAM_2] liquidity tokens from pool with tokens [PARAM_0] - [PARAM_1] to address [PARAM_5]"
-      },
-      {
-        "asset": "0x0000000000000000000000000000000000000000",
-        "from": "0xB7F6F30178d9598D158BFA046456cf27ACEdcECB",
-        "to": "0x85B94253ACd8C06525B509d94F9a9c5aF78a012f",
-        "toName": "Swapr liquidity mining campaigns factory",
-        "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
-        "params": [
-          {"type": "address[]", "name": "rewardTokensAddresses", "defaultValue": ""},
-          {"type": "address", "name": "stakableTokenAddress", "defaultValue": ""},
-          {"type": "uint256[]", "name": "rewardAmounts", "defaultValue": ""},
-          {"type": "uint64", "name": "startingTimestamp", "defaultValue": ""},
-          {"type": "uint64", "name": "endingTimestamp", "defaultValue": ""},
-          {"type": "bool", "name": "locked", "defaultValue": ""},
-          {"type": "uint256", "name": "stakingCap", "defaultValue": ""}
-        ],
-        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_7] and locked status [PARAM_6]"
-      }
-    ],
+    "recommendedCalls":[],
     "proposalTemplates": [
       {
         "name": "Contributor Proposal",
@@ -1617,7 +1519,7 @@
         "fetchPrice": true,
         "logoURI":"https://assets.coingecko.com/coins/images/11148/thumb/dxdao.png?1607999331"
       },{
-        "address":"0x955b9fe60a5b5093df9dc4b1b18ec8e934e77162",
+        "address":"0xdE903E2712288A1dA82942DDdF2c20529565aC30",
         "name":"SWPR Token",
         "decimals":18,
         "symbol":"SWPR",
@@ -1807,7 +1709,7 @@
           {"type": "bool", "name": "locked", "defaultValue": ""},
           {"type": "uint256", "name": "stakingCap", "defaultValue": ""}
         ],
-        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_7] and locked status [PARAM_6]"
+        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_6] and locked status [PARAM_5]"
       }
     ],
     "proposalTemplates": [

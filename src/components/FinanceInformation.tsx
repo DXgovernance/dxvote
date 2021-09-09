@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import BlockchainLink from '../components/common/BlockchainLink';
 import { bnum, parseCamelCase, ZERO_ADDRESS, formatCurrency, formatBalance } from '../utils';
-import { NETWORK_ASSET_SYMBOL } from '../provider/connectors';
+import { NETWORK_ASSET_SYMBOL } from '../utils';
 
 const FinanceInfoWrapper = styled.div`
     background: white;
@@ -103,7 +103,7 @@ const FinanceInformation = observer(() => {
     });
     
     schemes.map((scheme) => {
-      if (scheme.controllerAddress != ZERO_ADDRESS)
+      if (scheme.controllerAddress !== ZERO_ADDRESS)
         return;
         
       const tokenBalances = scheme.tokenBalances;
@@ -124,7 +124,7 @@ const FinanceInformation = observer(() => {
           amount: bnum(tokenBalances[tokenAddress]),
           decimals: tokenData.decimals
         })
-        const indexOfAssetInTotal = assets.total.findIndex((asset) => asset.address == tokenAddress);
+        const indexOfAssetInTotal = assets.total.findIndex((asset) => asset.address === tokenAddress);
         if (indexOfAssetInTotal > -1) {
           assets.total[indexOfAssetInTotal].amount = assets.total[indexOfAssetInTotal].amount.plus(
             bnum(tokenBalances[tokenAddress])

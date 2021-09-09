@@ -103,7 +103,7 @@ export const getTimestampOfEvents = async function(web3, events) {
     await Promise.all(blocksToFetchBatch.map(async (block) => {
       const blockInfo = (await web3.eth.getBlock(block));
       for (let i = 0; i < events.length; i++) {
-        if (events[i].blockNumber == blockInfo.number)
+        if (events[i].blockNumber === blockInfo.number)
           events[i].timestamp = blockInfo.timestamp;
         if (blockInfo.l1BlockNumber)
           events[i].l1BlockNumber = Number(blockInfo.l1BlockNumber);
@@ -129,7 +129,7 @@ export const sortEvents = function(events) {
 export const executeMulticall = async function(web3, multicall, calls) {
   const rawCalls = calls.map((call) => {
     return [call[0]._address, web3.eth.abi.encodeFunctionCall(
-      call[0]._jsonInterface.find(method => method.name == call[1]), call[2]
+      call[0]._jsonInterface.find(method => method.name === call[1]), call[2]
     )];
   });
   
@@ -139,7 +139,7 @@ export const executeMulticall = async function(web3, multicall, calls) {
     returnData,
     decodedReturnData:returnData.map((callResult, i) => {
       return web3.eth.abi.decodeParameters(
-        calls[i][0]._jsonInterface.find(method => method.name == calls[i][1]).outputs,
+        calls[i][0]._jsonInterface.find(method => method.name === calls[i][1]).outputs,
         callResult
       )["0"];
     })
@@ -164,9 +164,9 @@ export const isNode = function () {
 
 export const descriptionHashToIPFSHash = function (descriptionHash) {
   try {
-    if (contentHash.getCodec(descriptionHash) == "ipfs-ns")
+    if (contentHash.getCodec(descriptionHash) === "ipfs-ns")
       return contentHash.decode(descriptionHash);
-    else if (descriptionHash.length > 1 && descriptionHash.substring(0,2) != "Qm")
+    else if (descriptionHash.length > 1 && descriptionHash.substring(0,2) !== "Qm")
       return descriptionHash;
     else
       return "";
@@ -178,9 +178,9 @@ export const descriptionHashToIPFSHash = function (descriptionHash) {
 
 export const ipfsHashToDescriptionHash = function (ipfsHash) {
   try {
-    if (ipfsHash.length > 1 && ipfsHash.substring(0,2) == "Qm")
+    if (ipfsHash.length > 1 && ipfsHash.substring(0,2) === "Qm")
       return contentHash.fromIpfs(ipfsHash);
-    else if (contentHash.getCodec(ipfsHash) == "ipfs-ns")
+    else if (contentHash.getCodec(ipfsHash) === "ipfs-ns")
       return ipfsHash;
     else
       return "";
@@ -218,7 +218,7 @@ export const getNetworkConfig = async function(networkName) {
 
 export const getSchemeTypeData = function(networkConfig, schemeAddress) {
   if (networkConfig.daostack) {
-    if (networkConfig.daostack.schemeRegistrar && networkConfig.daostack.schemeRegistrar.address == schemeAddress) {
+    if (networkConfig.daostack.schemeRegistrar && networkConfig.daostack.schemeRegistrar.address === schemeAddress) {
       return {
         type: "SchemeRegistrar",
         name: "SchemeRegistrar",
@@ -228,7 +228,7 @@ export const getSchemeTypeData = function(networkConfig, schemeAddress) {
         voteParams: networkConfig.daostack.contributionReward.voteParams,
         creationLogEncoding: networkConfig.daostack.schemeRegistrar.creationLogEncoding
       };
-    } else if (networkConfig.daostack.contributionReward && networkConfig.daostack.contributionReward.address == schemeAddress) {
+    } else if (networkConfig.daostack.contributionReward && networkConfig.daostack.contributionReward.address === schemeAddress) {
       return {
         type: "ContributionReward",
         name: "ContributionReward",
@@ -238,7 +238,7 @@ export const getSchemeTypeData = function(networkConfig, schemeAddress) {
         voteParams: networkConfig.daostack.contributionReward.voteParams,
         creationLogEncoding: networkConfig.daostack.contributionReward.creationLogEncoding
       };
-    } else if (networkConfig.daostack.competitionScheme && networkConfig.daostack.competitionScheme.address == schemeAddress) {
+    } else if (networkConfig.daostack.competitionScheme && networkConfig.daostack.competitionScheme.address === schemeAddress) {
       return {
         type: "CompetitionScheme",
         name: "CompetitionScheme",

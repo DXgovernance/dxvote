@@ -109,17 +109,17 @@ const SchemesInformation = observer(() => {
                     <small>Quiet Ending Period: {
                       moment.duration(votingMachineParameters.quietEndingPeriod.toString(), 'seconds').humanize()
                     }</small><br/>
-                    { (scheme.type == "WalletScheme")
+                    { (scheme.type === "WalletScheme")
                       ? <small>Max time for execution: {
                           moment.duration(scheme.maxSecondsForExecution.toString(), 'seconds').humanize()
                         }<br/></small>
                       : <div/>
                     }
-                    { (scheme.type == "WalletScheme")
+                    { (scheme.type === "WalletScheme")
                       ? <small>Max REP % to change in proposal: {scheme.maxRepPercentageChange.toString()} %<br/></small>
                       : <div/>
                     }
-                    { (scheme.type == "WalletScheme")
+                    { (scheme.type === "WalletScheme")
                       ? <small>Required Percentage for boosted approval: {bnum(scheme.boostedVoteRequiredPercentage).div("100").toString()} %<br/></small>
                       : <div/>
                     }

@@ -1,7 +1,7 @@
 const fs = require("fs");
 const hre = require("hardhat");
 const web3 = hre.web3;
-const { NETWORK_IDS } = require("../src/provider/connectors");
+const { NETWORK_IDS } = require("../src/utils");
 
 const networkName = hre.network.name;
 const emptyCache: DaoNetworkCache = {
