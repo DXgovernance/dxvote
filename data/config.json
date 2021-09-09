@@ -1393,7 +1393,7 @@
           {"type": "bool", "name": "locked", "defaultValue": ""},
           {"type": "uint256", "name": "stakingCap", "defaultValue": ""}
         ],
-        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_7] and locked status [PARAM_6]"
+        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_6] and locked status [PARAM_5]"
       }
     ],
     "proposalTemplates": [
@@ -1807,7 +1807,7 @@
           {"type": "bool", "name": "locked", "defaultValue": ""},
           {"type": "uint256", "name": "stakingCap", "defaultValue": ""}
         ],
-        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_7] and locked status [PARAM_6]"
+        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_6] and locked status [PARAM_5]"
       }
     ],
     "proposalTemplates": [
