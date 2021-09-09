@@ -103,7 +103,7 @@ const FinanceInformation = observer(() => {
     });
     
     schemes.map((scheme) => {
-      if (scheme.controllerAddress != ZERO_ADDRESS)
+      if (scheme.controllerAddress !== ZERO_ADDRESS)
         return;
         
       const tokenBalances = scheme.tokenBalances;

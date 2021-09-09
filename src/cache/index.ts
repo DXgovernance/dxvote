@@ -376,7 +376,7 @@ export const updatePermissionRegistry = async function (
   web3: any
 ): Promise<DaoNetworkCache> {
   const networkContracts = await getContracts(networkConfig, web3);
-  if (networkContracts.permissionRegistry._address != ZERO_ADDRESS) {
+  if (networkContracts.permissionRegistry._address !== ZERO_ADDRESS) {
   
     let permissionRegistryEvents = sortEvents(
       await getEvents(web3, networkContracts.permissionRegistry, fromBlock, toBlock, 'allEvents')
@@ -476,7 +476,7 @@ export const updateSchemes = async function (
       }
       
       if (
-        paramsHash != ZERO_HASH
+        paramsHash !== ZERO_HASH
         && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash]
       ) {
         callsToExecute.push([
@@ -493,7 +493,7 @@ export const updateSchemes = async function (
         : 0;
       
       if (
-        paramsHash != ZERO_HASH
+        paramsHash !== ZERO_HASH
         && !networkCache.votingMachines[votingMachine._address].votingParameters[paramsHash]
       ) {
         try {
@@ -548,7 +548,7 @@ export const updateSchemes = async function (
     } else if (
       controllerEvent.event === "UnregisterScheme" && 
       // This condition is added to skip the first scheme added (that is the dao creator account)
-      (controllerEvent.returnValues._sender != schemeAddress)
+      (controllerEvent.returnValues._sender !== schemeAddress)
     ) {
       const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
       const votingMachine = networkContracts.votingMachines[schemeTypeData.votingMachine].contract;
@@ -827,7 +827,7 @@ export const updateProposals = async function (
                   }
                   if (!creationLogDecoded && (log.topics[0] === newProposalTopic[0])) {
                     creationLogDecoded = web3.eth.abi.decodeParameters(schemeTypeData.creationLogEncoding[i], log.data)
-                    if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash != ZERO_HASH) {
+                    if (creationLogDecoded._descriptionHash.length > 0 && creationLogDecoded._descriptionHash !== ZERO_HASH) {
                       schemeProposalInfo.descriptionHash = ipfsHashToDescriptionHash(creationLogDecoded._descriptionHash);
                     }
                   }
@@ -1115,7 +1115,7 @@ export const updateProposals = async function (
       continue;
     }
     if (
-      networkCache.schemes[proposal.scheme].type != "WalletScheme"
+      networkCache.schemes[proposal.scheme].type !== "WalletScheme"
       && proposal.descriptionHash && proposal.descriptionHash.length > 0
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
       && proposal.title.length === 0

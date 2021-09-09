@@ -216,7 +216,7 @@ const ProposalsPage = observer(() => {
             { proposals.map((proposal, i) => {
               if (
                 proposal
-                && ((stateFilter === 'Any Status') || (stateFilter != 'Any Status' && proposal.status === stateFilter))
+                && ((stateFilter === 'Any Status') || (stateFilter !== 'Any Status' && proposal.status === stateFilter))
                 && ((titleFilter.length === 0) || ((titleFilter.length > 0) && (proposal.title.indexOf(titleFilter) >= 0)))
                 && ((schemeFilter === 'All Schemes') || (proposal.scheme === schemeFilter))
               ) {
@@ -256,8 +256,8 @@ const ProposalsPage = observer(() => {
                       <TableCell width="15%" align="center">
                         <span style={{textAlign:"center"}}>
                           {proposal.status} <br/>
-                          {(timeToBoost != "") ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
-                          {(timeToFinish != "") ? <small>Finish {timeToFinish} </small> : <span></span>}
+                          {(timeToBoost !== "") ? <small>Boost {timeToBoost} <br/></small> : <span></span>}
+                          {(timeToFinish !== "") ? <small>Finish {timeToFinish} </small> : <span></span>}
                           {(proposal.pendingAction === 3) ? <small> Pending Finish Execution </small> : <span></span>}
                         </span>
                       </TableCell>

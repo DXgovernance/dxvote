@@ -62,7 +62,7 @@ const PageRouter = observer(({ children }) => {
         history.push(`/${networkName}/proposals`)
       }
       
-      if (location.pathname.split('/')[1] && location.pathname.split('/')[1] != networkName) {
+      if (location.pathname.split('/')[1] && location.pathname.split('/')[1] !== networkName) {
         history.push(`/${networkName}/proposals`)
       }
       

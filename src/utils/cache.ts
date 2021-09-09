@@ -166,7 +166,7 @@ export const descriptionHashToIPFSHash = function (descriptionHash) {
   try {
     if (contentHash.getCodec(descriptionHash) === "ipfs-ns")
       return contentHash.decode(descriptionHash);
-    else if (descriptionHash.length > 1 && descriptionHash.substring(0,2) != "Qm")
+    else if (descriptionHash.length > 1 && descriptionHash.substring(0,2) !== "Qm")
       return descriptionHash;
     else
       return "";

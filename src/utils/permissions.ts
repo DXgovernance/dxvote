@@ -55,7 +55,7 @@ const hexToBinary = function(hexString) {
 
   var ret = "";
   for (var i = 0, len = hexString.length; i < len; i++) {
-    if (hexString[ i ] != "0")
+    if (hexString[ i ] !== "0")
       ret += lookup[ hexString[ i ] ];
   }
   return ret;

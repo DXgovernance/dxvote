@@ -177,7 +177,7 @@ const NewProposalPage = observer(() => {
     
     const [errorMessage, setErrorMessage] = React.useState("");
     const proposalTemplates = configStore.getProposalTemplates();
-    if (proposalTemplates[0].name != "Custom")
+    if (proposalTemplates[0].name !== "Custom")
       proposalTemplates.unshift({name: "Custom", title: "", description: "" });
 
     const {
@@ -254,7 +254,7 @@ const NewProposalPage = observer(() => {
       let to = [], data = [], value = [];
       try {
         
-        if ((schemeToUse.type != "ContributionReward")) {
+        if ((schemeToUse.type !== "ContributionReward")) {
           const callToController = (schemeToUse.controllerAddress === networkContracts.controller);
           
           to = calls.map((call) => {
@@ -288,7 +288,7 @@ const NewProposalPage = observer(() => {
             } else {
               callData = call.dataValues[0];
             }
-            if (callToController && call.to != networkContracts.controller) {
+            if (callToController && call.to !== networkContracts.controller) {
               return daoService.encodeControllerGenericCall(
                 call.to,
                 callData,
@@ -487,7 +487,7 @@ const NewProposalPage = observer(() => {
     }
     
     function onProposalTemplate(event) {
-      if (proposalTemplates[event.target.value].name != 'Custom') {
+      if (proposalTemplates[event.target.value].name !== 'Custom') {
         setTitleText(proposalTemplates[event.target.value].title);
         setDescriptionText(proposalTemplates[event.target.value].description);
         calls.splice(0, calls.length);
@@ -649,7 +649,7 @@ const NewProposalPage = observer(() => {
                     );
                   })}
                   </SelectInput>
-                  : (schemeToUse.type != "ContributionReward") &&
+                  : (schemeToUse.type !== "ContributionReward") &&
                   <TextInput
                     value={calls[i].to || ""}
                     onChange={(e) => {onToSelectChange(i, e.target.value)}}

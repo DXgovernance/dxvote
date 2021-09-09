@@ -268,7 +268,7 @@ export default class DaoStore {
       
       const proposalCreator = cache.proposals[proposalId].proposer;
       
-      if (proposalCreator != "0x0000000000000000000000000000000000000000") {
+      if (proposalCreator !== "0x0000000000000000000000000000000000000000") {
         if (!users[proposalCreator])
           users[proposalCreator] = {
             correctVotes: 0, wrongVotes:0,
@@ -768,7 +768,7 @@ export default class DaoStore {
     const networkContracts = this.context.configStore.getNetworkContracts();
     const callPermissions = this.getCache().callPermissions;
   
-    if (to === networkContracts.controller && from != networkContracts.avatar) {
+    if (to === networkContracts.controller && from !== networkContracts.avatar) {
       return {
         value: bnum(0),
         fromTime: 0

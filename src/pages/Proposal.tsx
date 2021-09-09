@@ -219,7 +219,7 @@ const ProposalPage = observer(() => {
     let proposalCallTexts = new Array(proposal.to.length);
     for (var p = 0; p < proposal.to.length; p++) {
       proposalCallTexts[p] = daoService.decodeWalletSchemeCall(
-        (scheme.type === "WalletScheme" && scheme.controllerAddress != networkContracts.controller)
+        (scheme.type === "WalletScheme" && scheme.controllerAddress !== networkContracts.controller)
           ? scheme.address : networkContracts.avatar,
         proposal.to[p],
         proposal.callData[p],
@@ -279,8 +279,8 @@ const ProposalPage = observer(() => {
     //     ],toRedeemResponse)
     //     console.debug("To Redeem:",toRedeem);
     //     if (
-    //       (toRedeem[0].findIndex(value => value != "0") > -1) || (toRedeem[1].findIndex(value => value != "0") > -1)
-    //       || (toRedeem[4] != 0) || (toRedeem[5] > 0) || (toRedeem[6] > 0) || (toRedeem[7] > 0)
+    //       (toRedeem[0].findIndex(value => value !== "0") > -1) || (toRedeem[1].findIndex(value => value !== "0") > -1)
+    //       || (toRedeem[4] !== 0) || (toRedeem[5] > 0) || (toRedeem[6] > 0) || (toRedeem[7] > 0)
     //     ) {
     //       setCanRedeem(true)
     //     } else {
