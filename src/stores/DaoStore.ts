@@ -634,11 +634,19 @@ export default class DaoStore {
       const proposal = this.getProposal(vote.proposalId);
       const voteParameters = this.getVotingParametersOfProposal(vote.proposalId);
       if ((
-        (proposal.stateInVotingMachine === 1) 
+        ( proposal.stateInVotingMachine === 1
+          && (
+            (proposal.boostedPhaseTime.toNumber() > 0 && vote.timestamp < proposal.boostedPhaseTime.toNumber())
+            || proposal.boostedPhaseTime.toNumber() === 0
+          )
+        ) 
         ||
         (
           voteParameters.votersReputationLossRatio.toNumber() > 0
-          && vote.timestamp < proposal.boostedPhaseTime.toNumber()
+          && (
+            (proposal.boostedPhaseTime.toNumber() > 0 && vote.timestamp < proposal.boostedPhaseTime.toNumber())
+            || (proposal.boostedPhaseTime.toNumber() === 0)
+          )
           && proposal.winningVote === vote.vote
           && proposal.stateInVotingMachine < 3
         )
