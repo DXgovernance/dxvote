@@ -50,7 +50,7 @@ const TitleInput = styled.div`
       border: 1px solid gray;
       padding: 0px 5px;
     }
-    
+
     select {
       margin-left: 5px;
       background-color: white;
@@ -69,7 +69,7 @@ const TextActions = styled.div`
     flex-direction: column;
     margin: 10px 0px;
     line-height: 30px;
-    
+
 `;
 
 const CallRow = styled.div`
@@ -78,7 +78,7 @@ const CallRow = styled.div`
     justify-content: left;
     flex-direction: row;
     margin-bottom: 10px;
-    
+
     span {
       text-align: center;
       font-family: Roboto;
@@ -127,7 +127,7 @@ const NewProposalPage = observer(() => {
     const {
         context: { providerStore, daoStore, configStore, daoService, ipfsService, pinataService },
     } = useContext();
-    
+
     const networkTokens = configStore.getTokensOfNetwork()
     const schemes = daoStore.getAllSchemes();
     const networkContracts = configStore.getNetworkContracts();
@@ -156,7 +156,7 @@ const NewProposalPage = observer(() => {
       callsInStorage = [];
     }
     const [calls, setCalls] = React.useState(callsInStorage);
-    
+
     const [contributionRewardCalls, setContributionRewardCalls] = React.useState({
       beneficiary: "ZERO_ADDRESS",
       repChange: "0",
@@ -164,7 +164,7 @@ const NewProposalPage = observer(() => {
       externalToken: ZERO_ADDRESS,
       tokenValue: "0"
     });
-    
+
     const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
     const [submitionState, setSubmitionState] = React.useState(0);
@@ -174,7 +174,7 @@ const NewProposalPage = observer(() => {
     // 3 = Submiting new proposal tx
     // 4 = Proposal creation tx submited
     // 5 = Proposal creation tx receipt received
-    
+
     const [errorMessage, setErrorMessage] = React.useState("");
     const proposalTemplates = configStore.getProposalTemplates();
     if (proposalTemplates[0].name !== "Custom")
@@ -184,9 +184,9 @@ const NewProposalPage = observer(() => {
       assetLimits: transferLimits, recommendedCalls
     } = daoStore.getSchemeRecommendedCalls(schemeToUse.address);
     console.debug("[PERMISSIONS]",schemeToUse, transferLimits, recommendedCalls)
-    
+
     let allowedToCall = [];
-    
+
     recommendedCalls.map((recommendedCall) => {
       if((recommendedCall.fromTime > 0)
         && (allowedToCall.findIndex((allowedPermission) => allowedPermission.value === recommendedCall.to) < 0)
@@ -194,7 +194,7 @@ const NewProposalPage = observer(() => {
         allowedToCall.push({ value: recommendedCall.to, name: recommendedCall.toName });
       }
     });
-    
+
     const callPermissions = daoStore.getCache().callPermissions;
     if (schemeToUse.type === "WalletScheme"
       && callPermissions[ZERO_ADDRESS]
@@ -221,17 +221,17 @@ const NewProposalPage = observer(() => {
               tags: ["dxvote"],
               url: ""
             });
-          
+
         const hash = await ipfsService.add(bodyTextToUpload);
         setIpfsHash(hash);
-        
+
         if (pinataService.auth) {
           const pinataPin = await pinataService.pin(hash);
           console.debug('[PINATA PIN]', pinataPin.data)
         }
         const ipfsPin = await ipfsService.pin(hash);
         console.debug('[IPFS PIN]', ipfsPin)
-        
+
         let uploaded = false;
         while (!uploaded) {
           const ipfsContent = await ipfsService.getContent(hash);
@@ -244,19 +244,19 @@ const NewProposalPage = observer(() => {
         setSubmitionState(2);
       }
     }
-    
+
     const createProposal = async function() {
       console.debug('[RAW PROPOSAL]', titleText, ipfsHash, calls);
       setSubmitionState(3);
 
       const { library } = providerStore.getActiveWeb3React();
-      
+
       let to = [], data = [], value = [];
       try {
-        
+
         if ((schemeToUse.type !== "ContributionReward")) {
           const callToController = (schemeToUse.controllerAddress === networkContracts.controller);
-          
+
           to = calls.map((call) => {
             return callToController ? networkContracts.controller : call.to;
           });
@@ -264,23 +264,26 @@ const NewProposalPage = observer(() => {
           data = calls.map((call) => {
             if (call.to === "")
               return "";
-            
+
             let callData;
-            
+
             if (call.callType === "simple") {
               let callDataFunctionSignature = "0x0";
               let callDataFunctionParamsEncoded = "";
-              
+
               if (call.functionName.length === 0) {
                 callDataFunctionSignature = "0x0";
               } else {
                 callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(call.functionName)
               }
-              
+
               if (call.dataValues.length > 0) {
                 call.functionParams.map((functionParam, i) => {
                   if (functionParam.type.indexOf("[]") > 0) {
                     call.dataValues[i] = call.dataValues[i].slice(1,-1).split(',');
+                  }
+                  if (functionParam.type === "bool") {
+                    call.dataValues[i] = (call.dataValues[i] === "true")
                   }
                 });
                 callDataFunctionParamsEncoded = call.functionParams.length > 0 ? library.eth.abi.encodeParameters(
@@ -311,7 +314,7 @@ const NewProposalPage = observer(() => {
               : call.value
           });
         }
-        
+
         const proposalData = (schemeToUse.type === "ContributionReward")
         ? {
           beneficiary: contributionRewardCalls.beneficiary,
@@ -321,11 +324,11 @@ const NewProposalPage = observer(() => {
           tokenValue: contributionRewardCalls.tokenValue,
           descriptionHash: contentHash.fromIpfs(ipfsHash)
         } : {
-          to, data, value, titleText, descriptionHash: contentHash.fromIpfs(ipfsHash) 
+          to, data, value, titleText, descriptionHash: contentHash.fromIpfs(ipfsHash)
         };
-      
+
         console.debug('[PROPOSAL]', schemeToUse.address, proposalData);
-      
+
         daoService.createProposal(
           schemeToUse.address,
           schemeToUse.type,
@@ -359,29 +362,29 @@ const NewProposalPage = observer(() => {
         setSubmitionState(2);
         setErrorMessage(error.message);
       }
-      
+
     }
-    
+
     function onDescriptionChange(newValue) {
       if (submitionState < 1) {
         setDescriptionText(newValue);
         localStorage.setItem('dxvote-newProposal-description', newValue);
       }
     }
-    
+
     function onTitleChange(newValue) {
       if (submitionState < 1) {
         setTitleText(newValue.target.value);
         localStorage.setItem('dxvote-newProposal-title', newValue.target.value);
       }
     }
-    
+
     function setCallsInState(calls) {
       localStorage.setItem('dxvote-newProposal-calls', JSON.stringify(calls));
       setCalls(calls);
       forceUpdate();
     }
-    
+
     function setContributionRewardCallsInState(contributionRewardCalls) {
       setContributionRewardCalls(contributionRewardCalls);
       forceUpdate();
@@ -400,12 +403,12 @@ const NewProposalPage = observer(() => {
       })
       setCallsInState(calls);
     };
-    
+
     function removeCall(proposalIndex) {
       calls.splice(proposalIndex, 1);
       setCallsInState(calls);
     };
-    
+
     function changeCallType(callIndex) {
       calls[callIndex] = {
         callType: calls[callIndex].callType === "simple" ? "advanced" : "simple",
@@ -419,7 +422,7 @@ const NewProposalPage = observer(() => {
       }
       setCallsInState(calls);
     };
-    
+
     function onToSelectChange(callIndex, toAddress) {
       console.log(toAddress)
       if (toAddress === ANY_ADDRESS) {
@@ -444,7 +447,7 @@ const NewProposalPage = observer(() => {
         onFunctionSelectChange(callIndex, calls[callIndex].functionName, calls[callIndex].functionParams);
       }
     }
-    
+
     function onFunctionSelectChange(callIndex, functionName, params) {
       calls[callIndex].functionName = functionName;
 
@@ -458,25 +461,25 @@ const NewProposalPage = observer(() => {
         calls[callIndex].dataValues = [""];
         calls[callIndex].value = "0";
       }
-        
+
       setCallsInState(calls);
     }
-    
+
     function onFunctionParamsChange(callIndex, event, paramIndex) {
       calls[callIndex].dataValues[paramIndex] = event.target.value;
       setCallsInState(calls);
     }
-    
+
     function onValueChange(callIndex, event) {
       calls[callIndex].value = event.target.value;
       setCallsInState(calls);
     }
-    
+
     function onContributionRewardValueChange(key, value) {
       contributionRewardCalls[key] = value;
       setContributionRewardCallsInState(contributionRewardCalls);
     }
-    
+
     function onSchemeChange(event) {
       setSchemeToUse(schemes[event.target.value]);
       localStorage.setItem('dxvote-newProposal-scheme', schemes[event.target.value].address);
@@ -490,7 +493,7 @@ const NewProposalPage = observer(() => {
       })
       setCallsInState(calls);
     }
-    
+
     function onProposalTemplate(event) {
       if (proposalTemplates[event.target.value].name !== 'Custom') {
         setTitleText(proposalTemplates[event.target.value].title);
@@ -586,9 +589,9 @@ const NewProposalPage = observer(() => {
               return <h3>Transfer limit {transferLimits[assetAddress].toString()} of asset {assetAddress}</h3>;
           }
         })}
-      
+
         {(schemeToUse.type === "ContributionReward")
-        ? 
+        ?
         // If scheme to use is Contribution Reward display a different form with less fields
         <div>
           <CallRow>
@@ -631,12 +634,12 @@ const NewProposalPage = observer(() => {
             />
           </CallRow>
         </div>
-        
-        : 
+
+        :
         // If the scheme is GenericMulticall allow only advanced encoded calls
         // At last if the scheme used is a Wallet Scheme type allow a complete edition of the calls :)
           <div>
-            {calls.map((call, i) => 
+            {calls.map((call, i) =>
               <CallRow key={"call"+i}>
                 <span>#{i}</span>
 
@@ -661,9 +664,9 @@ const NewProposalPage = observer(() => {
                     width={"20%"}
                   />
                 }
-                
+
                 { call.callType === "simple" ?
-                  
+
                   <div style={{display: "flex", width: call.callType === "simple" ? "60%" : "50%"}}>
                     <SelectInput
                       value={calls[i].functionName || ""}
@@ -687,10 +690,10 @@ const NewProposalPage = observer(() => {
                         );
                       })}
                     </SelectInput>
-                    
+
                     <div style={{display: "flex", width: "100%", flexDirection: "column", paddingRight: "10px"}}>
                       {calls[i].functionParams.length === 0 ?
-                        <TextInput 
+                        <TextInput
                           key={"functionParam00"}
                           disabled
                           type="text"
@@ -700,7 +703,7 @@ const NewProposalPage = observer(() => {
                         />
                       : calls[i].functionParams.map((funcParam, funcParamIndex) => {
                         return (
-                          <TextInput 
+                          <TextInput
                             key={"functionParam"+funcParamIndex}
                             type="text"
                             onChange={(value) => onFunctionParamsChange(i, value, funcParamIndex)}
@@ -710,12 +713,12 @@ const NewProposalPage = observer(() => {
                             style={{marginTop: funcParamIndex > 0 ? "5px": "0px"}}
                           />
                         );
-                        
+
                       })}
                     </div>
                   </div>
                 :
-                  <TextInput 
+                  <TextInput
                     type="text"
                     onChange={(value) => onFunctionParamsChange(i, value, 0)}
                     value={calls[i].dataValues[0] || ""}
@@ -723,7 +726,7 @@ const NewProposalPage = observer(() => {
                     width="100%"
                   />
                 }
-                
+
                 <TextInput
                   type="text"
                   onChange={(value) => onValueChange(i, value)}
@@ -731,7 +734,7 @@ const NewProposalPage = observer(() => {
                   width="10%"
                   placeholder={calls[i].callType === "advanced" ? "WEI" : {networkAssetSymbol}}
                 />
-                
+
                 <RemoveButton onClick={() => {removeCall(i)}}>X</RemoveButton>
                 { schemeToUse.type === "WalletScheme"
                   ? <RemoveButton onClick={() => {changeCallType(i)}}>
@@ -741,14 +744,14 @@ const NewProposalPage = observer(() => {
                 }
               </CallRow>
             )}
-            
+
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
               <ActiveButton onClick={addCall}>Add Call</ActiveButton>
             </div>
-            
+
           </div>
         }
-        
+
         {
           (errorMessage.length > 0) ?
             <TextActions>
@@ -769,7 +772,7 @@ const NewProposalPage = observer(() => {
             </TextActions>
           : <div/>
         }
-        
+
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
           {
             (submitionState === 0) ?
@@ -786,7 +789,7 @@ const NewProposalPage = observer(() => {
               <ActiveButton route="/">Back to Proposals</ActiveButton>
           }
         </div>
-        
+
       </NewProposalFormWrapper>
     );
 });
