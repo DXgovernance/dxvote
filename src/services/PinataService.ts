@@ -1,5 +1,5 @@
 import RootContext from '../contexts';
-import axios from "axios";
+import axios from 'axios';
 import contentHash from 'content-hash';
 
 export default class PinataService {
@@ -9,7 +9,7 @@ export default class PinataService {
   constructor(context: RootContext) {
     this.context = context;
   }
-  
+
   async updatePinList() {
     // const pinList = await this.getPinList();
     const ipfsHashes = this.context.daoStore.getCache().ipfsHashes;
@@ -22,14 +22,14 @@ export default class PinataService {
       // }
     }
   }
-  
-  async isAuthenticated(){
+
+  async isAuthenticated() {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
     try {
       const auth = await axios({
-        method: "GET",
-        url: "https://api.pinata.cloud/data/testAuthentication",
-        headers: { Authorization: `Bearer ${pinataApiKey}` }
+        method: 'GET',
+        url: 'https://api.pinata.cloud/data/testAuthentication',
+        headers: { Authorization: `Bearer ${pinataApiKey}` },
       });
       this.auth = auth.status === 200;
     } catch (error) {
@@ -37,29 +37,31 @@ export default class PinataService {
     }
   }
 
-  async pin(hashToPin: String){
-    console.log('pininng', hashToPin)
+  async pin(hashToPin: String) {
+    console.log('pininng', hashToPin);
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
     return axios({
-      method: "POST",
-      url: "https://api.pinata.cloud/pinning/pinByHash",
+      method: 'POST',
+      url: 'https://api.pinata.cloud/pinning/pinByHash',
       data: {
         hashToPin,
         pinataMetadata: {
-          name: `DXdao ${this.context.configStore.getActiveChainName()} DescriptionHash ${contentHash.fromIpfs(hashToPin)}`,
-          keyValues: { type: 'proposal' }
-        }
+          name: `DXdao ${this.context.configStore.getActiveChainName()} DescriptionHash ${contentHash.fromIpfs(
+            hashToPin
+          )}`,
+          keyValues: { type: 'proposal' },
+        },
       },
-      headers: { Authorization: `Bearer ${pinataApiKey}` }
+      headers: { Authorization: `Bearer ${pinataApiKey}` },
     });
   }
-  
-  async getPinList(){
+
+  async getPinList() {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
     return axios({
-      method: "GET",
+      method: 'GET',
       url: `https://api.pinata.cloud/data/pinList?pageLimit=1000&metadata[name]=DXdao ${this.context.configStore.getActiveChainName()}`,
-      headers: { Authorization: `Bearer ${pinataApiKey}` }
+      headers: { Authorization: `Bearer ${pinataApiKey}` },
     });
   }
 }

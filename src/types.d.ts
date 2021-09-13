@@ -1,14 +1,17 @@
-import { BigNumber, WalletSchemeProposalState, VotingMachineProposalState } from './utils';
+import {
+  BigNumber,
+  WalletSchemeProposalState,
+  VotingMachineProposalState,
+} from './utils';
 
 declare global {
-  
   // Window ethereum type
-  
+
   interface Window {
     ethereum?: EthereumProvider;
   }
-  
-  // Multicall Types 
+
+  // Multicall Types
 
   interface Call {
     contractType: string;
@@ -34,22 +37,22 @@ declare global {
         emitions: any[];
         fromBlock: number;
         toBlock: number;
-      }
-    } 
-  };
+      };
+    };
+  }
 
   interface ContractStorage {
     [contractType: string]: {
       [address: string]: {
         [method: string]: {
-          [parameters: string]: CallValue
-        }
-      }
-    }
-  };
+          [parameters: string]: CallValue;
+        };
+      };
+    };
+  }
 
   // DaoStore types
-  
+
   interface BlockchainEvent {
     event: string;
     signature: string;
@@ -62,16 +65,16 @@ declare global {
     logIndex: number;
   }
 
-  interface ERC20TransferEvent extends BlockchainEvent{
+  interface ERC20TransferEvent extends BlockchainEvent {
     from: string;
     to: string;
     amount: BigNumber;
-  };
+  }
 
-  interface RepEvent extends BlockchainEvent{
+  interface RepEvent extends BlockchainEvent {
     account: string;
     amount: BigNumber;
-  };
+  }
 
   interface ProposalEvent extends BlockchainEvent {
     proposalId: string;
@@ -109,13 +112,13 @@ declare global {
     beneficiary: string;
     amount: BigNumber;
   }
-  
+
   interface RedeemDaoBounty extends ProposalEvent {
     beneficiary: string;
     amount: BigNumber;
   }
 
-  interface Proposal{
+  interface Proposal {
     id: string;
     scheme: string;
     title: string;
@@ -129,7 +132,7 @@ declare global {
     winningVote: number;
     proposer: string;
     currentBoostedVotePeriodLimit: BigNumber;
-    paramsHash: string,
+    paramsHash: string;
     daoBountyRemain: BigNumber;
     daoBounty: BigNumber;
     totalStakes: BigNumber;
@@ -139,7 +142,7 @@ declare global {
     boostedPhaseTime: BigNumber;
     preBoostedPhaseTime: BigNumber;
     daoRedeemItsWinnings: boolean;
-    shouldBoost: boolean,
+    shouldBoost: boolean;
     positiveVotes: BigNumber;
     negativeVotes: BigNumber;
     preBoostedPositiveVotes: BigNumber;
@@ -171,27 +174,27 @@ declare global {
   }
 
   interface CallPermissions {
-    [asset: string] : {
-      [from: string] : {
-        [to: string] : {
-          [functionSignature: string] : {
+    [asset: string]: {
+      [from: string]: {
+        [to: string]: {
+          [functionSignature: string]: {
             fromTime: BigNumber;
             value: BigNumber;
-          }
-        }
-      }
-    }
+          };
+        };
+      };
+    };
   }
 
   interface Scheme {
     address: string;
     registered: boolean;
-    name: string,
-    type: string,
+    name: string;
+    type: string;
     controllerAddress: string;
     ethBalance: BigNumber;
-    tokenBalances: { 
-      [tokenAddress: string] : BigNumber
+    tokenBalances: {
+      [tokenAddress: string]: BigNumber;
     };
     votingMachine: string;
     paramsHash: string;
@@ -201,7 +204,7 @@ declare global {
     boostedProposals: number;
     maxSecondsForExecution: BigNumber;
     maxRepPercentageChange: BigNumber;
-    newProposalEvents: ProposalEvent[]
+    newProposalEvents: ProposalEvent[];
   }
 
   interface DaoInfo {
@@ -209,8 +212,8 @@ declare global {
     totalRep: BigNumber;
     repEvents: RepEvent[];
     ethBalance: BigNumber;
-    tokenBalances: { 
-      [tokenAddress: string] : BigNumber
+    tokenBalances: {
+      [tokenAddress: string]: BigNumber;
     };
   }
 
@@ -226,7 +229,7 @@ declare global {
       newProposal: NewProposal[];
     };
     token: string;
-    votingParameters: {[paramsHash: string]: VotingMachineParameters}
+    votingParameters: { [paramsHash: string]: VotingMachineParameters };
   }
 
   interface IPFSHash {
@@ -234,19 +237,19 @@ declare global {
     type: string;
     name: string;
   }
-  
+
   interface DaoNetworkCache {
     networkId: number;
     l1BlockNumber: number;
     l2BlockNumber: number;
     daoInfo: DaoInfo;
-    schemes: {[address: string]: Scheme};
-    proposals: {[id: string]: Proposal};
+    schemes: { [address: string]: Scheme };
+    proposals: { [id: string]: Proposal };
     callPermissions: CallPermissions;
-    votingMachines: {[address: string]: VotingMachine};
+    votingMachines: { [address: string]: VotingMachine };
     ipfsHashes: IPFSHash[];
   }
-  
+
   // Application Config
 
   interface NetworkContracts {
@@ -256,16 +259,16 @@ declare global {
     token: string;
     controller: string;
     permissionRegistry: string;
-    utils: {[name: string]: string};
+    utils: { [name: string]: string };
     daostack?: any;
     votingMachines: {
       [name: string]: {
         address: string;
         token: string;
-      }
+      };
     };
-  };
-  
+  }
+
   interface NetworkConfig {
     contracts: NetworkContracts;
     recommendedCalls: {
@@ -279,7 +282,7 @@ declare global {
         name: string;
         defaultValue: string;
         decimals?: number;
-      }[],
+      }[];
       decodeText: string;
     }[];
     proposalTemplates: {
@@ -290,17 +293,16 @@ declare global {
     tokens: {
       address: string;
       name: string;
-      decimals:number;
+      decimals: number;
       symbol: string;
       fetchPrice: boolean;
       logoURI?: string;
     }[];
   }
-  
+
   interface AppConfig {
-    [networkName: string] : NetworkConfig
+    [networkName: string]: NetworkConfig;
   }
-  
 }
 
 export interface DaoInfo {
@@ -308,8 +310,8 @@ export interface DaoInfo {
   totalRep: BigNumber;
   repEvents: RepEvent[];
   ethBalance: BigNumber;
-  tokenBalances: { 
-    [tokenAddress: string] : BigNumber
+  tokenBalances: {
+    [tokenAddress: string]: BigNumber;
   };
 }
 
@@ -318,9 +320,9 @@ export interface DaoNetworkCache {
   l1BlockNumber: number;
   l2BlockNumber: number;
   daoInfo: DaoInfo;
-  schemes: {[address: string]: Scheme};
-  proposals: {[id: string]: Proposal};
+  schemes: { [address: string]: Scheme };
+  proposals: { [id: string]: Proposal };
   callPermissions: CallPermissions;
-  votingMachines: {[address: string]: VotingMachine};
+  votingMachines: { [address: string]: VotingMachine };
   ipfsHashes: IPFSHash[];
 }

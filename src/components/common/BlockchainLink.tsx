@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Copy from './Copy';
 import { getBlockchainLink } from '../../utils';
 import { useContext } from '../../contexts';
-import { FiExternalLink } from "react-icons/fi";
+import { FiExternalLink } from 'react-icons/fi';
 
 const AddressLink = styled.span`
   display: flex;
@@ -18,34 +18,41 @@ const AddressLink = styled.span`
   }
 `;
 
-const BlockchainLink = ({ text, size = 'default', type = 'default', toCopy = false, onlyIcon = false}) => {
-  
-    const {
-        context: { configStore },
-    } = useContext();
-    
-    const networkName = configStore.getActiveChainName();
+const BlockchainLink = ({
+  text,
+  size = 'default',
+  type = 'default',
+  toCopy = false,
+  onlyIcon = false,
+}) => {
+  const {
+    context: { configStore },
+  } = useContext();
 
-    function formarText(toFormat) {
-        const start = toFormat.slice(0, 6);
-        const end = toFormat.slice(-4);
+  const networkName = configStore.getActiveChainName();
 
-        switch (size) {
-          case "short":
-            return `${start}..`;
-          case "long":
-            return toFormat;
-          default:
-            return `${start}...${end}`;
-        }
+  function formarText(toFormat) {
+    const start = toFormat.slice(0, 6);
+    const end = toFormat.slice(-4);
+
+    switch (size) {
+      case 'short':
+        return `${start}..`;
+      case 'long':
+        return toFormat;
+      default:
+        return `${start}...${end}`;
     }
+  }
 
-    return (
-        <AddressLink>
-          <a href={getBlockchainLink(text, networkName, type)} target="_blank">{ onlyIcon ? <FiExternalLink/> : formarText(text)}</a>
-          {toCopy ? <Copy toCopy={text} /> : <div/> }
-        </AddressLink>
-    );
+  return (
+    <AddressLink>
+      <a href={getBlockchainLink(text, networkName, type)} target="_blank">
+        {onlyIcon ? <FiExternalLink /> : formarText(text)}
+      </a>
+      {toCopy ? <Copy toCopy={text} /> : <div />}
+    </AddressLink>
+  );
 };
 
 export default BlockchainLink;

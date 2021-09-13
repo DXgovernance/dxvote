@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useCopyClipboard } from '../../utils';
 
 import Link from '../../components/common/Link';
-import { FiCopy, FiCheckCircle } from "react-icons/fi";
+import { FiCopy, FiCheckCircle } from 'react-icons/fi';
 
 const CopyIcon = styled(Link)`
   color: ${({ theme }) => theme.silverGray};
@@ -13,8 +13,8 @@ const CopyIcon = styled(Link)`
   :hover,
   :active,
   :focus {
-      text-decoration: none;
-      color: ${({ theme }) => theme.doveGray};
+    text-decoration: none;
+    color: ${({ theme }) => theme.doveGray};
   }
 `;
 const TransactionStatusText = styled.span`
@@ -29,11 +29,7 @@ export default function CopyHelper({ toCopy }) {
   return (
     <CopyIcon onClick={() => setCopied(toCopy)}>
       <TransactionStatusText>
-        {isCopied ? (
-          <FiCheckCircle />
-        ) : (
-          <FiCopy />
-        )}
+        {isCopied ? <FiCheckCircle /> : <FiCopy />}
       </TransactionStatusText>
     </CopyIcon>
   );

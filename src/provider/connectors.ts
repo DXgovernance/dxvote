@@ -1,8 +1,10 @@
-import { InjectedConnector } from '@web3-react/injected-connector'
+import { InjectedConnector } from '@web3-react/injected-connector';
 import { NETWORK_IDS } from '../utils';
 
 export const ETH_NETWORKS = process.env.REACT_APP_ETH_NETWORKS.split(',');
-export const ETH_NETWORKS_IDS = ETH_NETWORKS.map((network) => {return NETWORK_IDS[network]});
+export const ETH_NETWORKS_IDS = ETH_NETWORKS.map(network => {
+  return NETWORK_IDS[network];
+});
 export const DEFAULT_ETH_CHAIN_ID = NETWORK_IDS[ETH_NETWORKS[0]];
 
 export const web3ContextNames = {
@@ -19,24 +21,24 @@ export const injected = new InjectedConnector({
 });
 
 export const SUPPORTED_WALLETS = {
-    INJECTED: {
-        connector: injected,
-        name: 'Injected',
-        iconName: 'arrow-right.svg',
-        description: 'Injected web3 provider.',
-        href: null,
-        color: '#010101',
-        primary: true,
-    },
-    METAMASK: {
-        connector: injected,
-        name: 'MetaMask',
-        description: 'Easy-to-use browser extension.',
-        href: null,
-        color: '#E8831D',
-    }
+  INJECTED: {
+    connector: injected,
+    name: 'Injected',
+    iconName: 'arrow-right.svg',
+    description: 'Injected web3 provider.',
+    href: null,
+    color: '#010101',
+    primary: true,
+  },
+  METAMASK: {
+    connector: injected,
+    name: 'MetaMask',
+    description: 'Easy-to-use browser extension.',
+    href: null,
+    color: '#E8831D',
+  },
 };
 
 export default {
-  injected
+  injected,
 };

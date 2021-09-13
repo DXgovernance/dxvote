@@ -10,7 +10,11 @@ export function formatPercentage(
   decimals: number,
   useLowerLimit = true
 ): string {
-  if (value.times(100).decimalPlaces(decimals).lte(0.1) && value.gt(0) && useLowerLimit) {
+  if (
+    value.times(100).decimalPlaces(decimals).lte(0.1) &&
+    value.gt(0) &&
+    useLowerLimit
+  ) {
     return '<0.1%';
   }
   return `${value.times(100).decimalPlaces(decimals).toString()}%`;
@@ -42,9 +46,9 @@ export const normalizePriceValues = (
 
 export const formatCurrency = (balance: BigNumber): string => {
   const fmt = {
-  groupSize: 3,
-  groupSeparator: ' ',
-  decimalSeparator: '.'
+    groupSize: 3,
+    groupSeparator: ' ',
+    decimalSeparator: '.',
   };
   return balance.toFormat(2, BigNumber.ROUND_DOWN, fmt);
 };
@@ -53,15 +57,11 @@ export const numDigits = (value: BigNumber): number => {
   return value.toString().length;
 };
 
-export const roundUpToScale = (
-  value: BigNumber
-): BigNumber => {
-  const placesValue = numDigits(value.integerValue())-1;
-  const scaledValue = value
-    .shiftedBy(-placesValue);
+export const roundUpToScale = (value: BigNumber): BigNumber => {
+  const placesValue = numDigits(value.integerValue()) - 1;
+  const scaledValue = value.shiftedBy(-placesValue);
   return scaledValue.integerValue(BigNumber.ROUND_UP).shiftedBy(placesValue);
 };
-
 
 export const denormalizeBalance = (
   normalizedBalance: string | BigNumber,
@@ -88,7 +88,10 @@ export const formatNumberValue = (
   }
 
   let result = bnum(normalizedBalance)
-    .decimalPlaces(displayPrecision, roundDown ? BigNumber.ROUND_DOWN : BigNumber.ROUND_UP)
+    .decimalPlaces(
+      displayPrecision,
+      roundDown ? BigNumber.ROUND_DOWN : BigNumber.ROUND_UP
+    )
     .toString();
 
   result = padToDecimalPlaces(result, displayPrecision);
@@ -111,7 +114,10 @@ export const formatBalance = (
   }
 
   const result = scale(balance, -decimals)
-    .decimalPlaces(precision, roundDown ? BigNumber.ROUND_DOWN : BigNumber.ROUND_UP)
+    .decimalPlaces(
+      precision,
+      roundDown ? BigNumber.ROUND_DOWN : BigNumber.ROUND_UP
+    )
     .toString();
 
   return padToDecimalPlaces(result, precision);
