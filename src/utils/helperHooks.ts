@@ -23,9 +23,10 @@ export function useInterval(callback, delay) {
     }
   }, [delay]);
 }
-// @ts-ignore
+
 export function useCopyClipboard(
   timeout = 500
+  // @ts-ignore
 ): [S, Dispatch<SetStateAction<S>>] {
   const [isCopied, setIsCopied] = useState(false);
 

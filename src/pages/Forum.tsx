@@ -77,7 +77,7 @@ const ForumPage = () => {
           category="15"
           per-page="10000"
           template="complete"
-        ></d-topics-list>
+        />
       )}
     </Box>
   );
