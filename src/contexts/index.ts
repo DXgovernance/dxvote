@@ -31,7 +31,6 @@ Stores: Context that are used to store data and expose them all around the dapp.
 */
 
 export default class RootContext {
-
   providerStore: ProviderStore;
   transactionStore: TransactionStore;
   modalStore: ModalStore;
@@ -39,7 +38,7 @@ export default class RootContext {
   daoStore: DaoStore;
   userStore: UserStore;
   blockchainStore: BlockchainStore;
-  
+
   abiService: ABIService;
   multicallService: MulticallService;
   daoService: DaoService;
@@ -48,7 +47,7 @@ export default class RootContext {
   pinataService: PinataService;
   etherscanService: EtherscanService;
   coingeckoService: CoingeckoService;
-  
+
   constructor() {
     this.providerStore = new ProviderStore(this);
     this.transactionStore = new TransactionStore(this);
@@ -57,7 +56,7 @@ export default class RootContext {
     this.daoStore = new DaoStore(this);
     this.userStore = new UserStore(this);
     this.blockchainStore = new BlockchainStore(this);
-    
+
     this.abiService = new ABIService(this);
     this.multicallService = new MulticallService(this);
     this.eventsService = new EventsService(this);
@@ -70,7 +69,7 @@ export default class RootContext {
 }
 
 export const rootContext = React.createContext({
-  context: new RootContext()
+  context: new RootContext(),
 });
 
 export const useContext = () => React.useContext(rootContext);

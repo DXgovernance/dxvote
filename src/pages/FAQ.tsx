@@ -7,13 +7,15 @@ import { useLocation } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
 
 const FAQPage = observer(() => {
-  
   const {
-      context: { configStore },
+    context: { configStore },
   } = useContext();
-  
-  const questionId = useLocation().search.indexOf("=") > -1 ? useLocation().search.split("=")[1] : 0;
-  
+
+  const questionId =
+    useLocation().search.indexOf('=') > -1
+      ? useLocation().search.split('=')[1]
+      : 0;
+
   const FAQBox = styled(Box)`
     padding: 20px 30px;
     p {
@@ -21,7 +23,7 @@ const FAQPage = observer(() => {
       font-size: 20px;
     }
     h2 {
-      margin:10px 0px;
+      margin: 10px 0px;
     }
     h3 {
       margin: 5px 0px;
@@ -29,29 +31,35 @@ const FAQPage = observer(() => {
     h4 {
       margin: 0px;
     }
-  `
+  `;
   useEffect(() => {
     if (questionId > 0)
-      document.querySelectorAll("#FAQBody div h1")[questionId].scrollIntoView();
+      document.querySelectorAll('#FAQBody div h1')[questionId].scrollIntoView();
   }, []);
-   
-  let daoAddresses = "";
+
+  let daoAddresses = '';
   const networkContracts = configStore.getNetworkContracts();
-  daoAddresses += "- Avatar: " + networkContracts.avatar+"\n";
-  daoAddresses += "- Controller: " + networkContracts.controller+"\n";
-  daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
-  daoAddresses += "- Permission Registry: " + networkContracts.permissionRegistry+"\n";
-  daoAddresses += "- Reputation: " + networkContracts.reputation+"\n";
+  daoAddresses += '- Avatar: ' + networkContracts.avatar + '\n';
+  daoAddresses += '- Controller: ' + networkContracts.controller + '\n';
+  daoAddresses += '- Reputation: ' + networkContracts.reputation + '\n';
+  daoAddresses +=
+    '- Permission Registry: ' + networkContracts.permissionRegistry + '\n';
+  daoAddresses += '- Reputation: ' + networkContracts.reputation + '\n';
 
   for (const votingMachineName in networkContracts.votingMachines) {
-    if (votingMachineName === "dxd"){
-      daoAddresses += "- DXDVotingMachine: " + networkContracts.votingMachines[votingMachineName].address+"\n";
-      daoAddresses += "- DXD: " + networkContracts.votingMachines[votingMachineName].token+"\n";
+    if (votingMachineName === 'dxd') {
+      daoAddresses +=
+        '- DXDVotingMachine: ' +
+        networkContracts.votingMachines[votingMachineName].address +
+        '\n';
+      daoAddresses +=
+        '- DXD: ' +
+        networkContracts.votingMachines[votingMachineName].token +
+        '\n';
     }
   }
 
-   const FAQBody = 
-`# Where are the dao funds held?
+  const FAQBody = `# Where are the dao funds held?
 
 Most of the ETH and tokens are held in the DXdao avatar address, this is the safest place for the funds to be, the access to this funds is usually slow and it take day for a proposal to move funds from this address. The Wallet Schemes can also hold funds too, but only the ones that dont make calls from the avatar.
 
@@ -219,13 +227,16 @@ The downstake for proposal is calculated when the proposal is created, by using 
 - UNIX Timestamp Converter: https://www.unixtimestamp.com
 - Hashhex ABI Encoder/Decoder: https://abi.hashex.org
 - Abidas ABI Encoder/Decoder: https://adibas03.github.io/online-ethereum-abi-encoder-decoder
-`
+`;
 
   return (
     <FAQBox id="FAQBody">
-      <MDEditor.Markdown source={ FAQBody } style={{
-        padding: "20px 10px"
-      }} />
+      <MDEditor.Markdown
+        source={FAQBody}
+        style={{
+          padding: '20px 10px',
+        }}
+      />
     </FAQBox>
   );
 });

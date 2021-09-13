@@ -1,23 +1,25 @@
 import RootContext from '../contexts';
-import axios from "axios";
+import axios from 'axios';
 import IPFS from 'ipfs-core';
-const CID = require('cids')
+const CID = require('cids');
 
 export default class IPFSService {
   context: RootContext;
-  calls: {[hash:string]: {
-    time: Number,
-    content: String,
-    fetched: Boolean
-  }} = {};
+  calls: {
+    [hash: string]: {
+      time: Number;
+      content: String;
+      fetched: Boolean;
+    };
+  } = {};
   ipfs: any = null;
   started: Boolean = false;
 
   constructor(context: RootContext) {
     this.context = context;
   }
-  
-  async start(){
+
+  async start() {
     if (!this.ipfs && !this.started) {
       this.started = true;
       try {
@@ -29,32 +31,34 @@ export default class IPFSService {
   }
 
   async add(content: String) {
-    const { cid } = await this.ipfs.add({content});
-    console.log(cid.string)
+    const { cid } = await this.ipfs.add({ content });
+    console.log(cid.string);
     return cid.string;
   }
-  
-  async pin(hash: String){
-    console.log(new CID(hash))
+
+  async pin(hash: String) {
+    console.log(new CID(hash));
     return await this.ipfs.pin.add(new CID(hash));
   }
-  
-  async getContent(hash: String){
-    let content = []
+
+  async getContent(hash: String) {
+    let content = [];
     for await (const file of this.ipfs.get(hash)) {
-      console.debug("[IPFS FILE]",file.type, file.path);
+      console.debug('[IPFS FILE]', file.type, file.path);
       if (!file.content) continue;
       for await (const chunk of file.content) {
-        content = content.concat(chunk)
+        content = content.concat(chunk);
       }
     }
     return content.toString();
   }
-  
+
   async getContentFromIPFS(hash: string) {
-    return (await axios({
-      method: "GET",
-      url: "https://gateway.pinata.cloud/ipfs/"+hash
-    })).data;
+    return (
+      await axios({
+        method: 'GET',
+        url: 'https://gateway.pinata.cloud/ipfs/' + hash,
+      })
+    ).data;
   }
 }

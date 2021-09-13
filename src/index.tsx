@@ -26,12 +26,12 @@ import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
 
 moment.updateLocale('en', {
-  relativeTime : {
-    s: "1 second",
-    m: "1 minute",
-    h: "1 hour",
-    d:  "1 day",
-  }
+  relativeTime: {
+    s: '1 second',
+    m: '1 minute',
+    h: '1 hour',
+    d: '1 day',
+  },
 });
 
 const Web3ProviderInjected = createWeb3ReactRoot(web3ContextNames.injected);
@@ -49,15 +49,42 @@ const Root = (
           <Web3ReactManager>
             <Header />
             <PageRouter>
-              <Route exact path="/"> <ProposalsPage /> </Route>
-              <Route exact path="/config"> <ConfigPage /> </Route>
-              <Route exact path="/forum"> <ForumPage /> </Route>
-              <Route exact path="/faq"> <FAQPage /> </Route>
-              <Route exact path="/:network/proposals"> <ProposalsPage /> </Route>
-              <Route exact path="/:network/new"> <NewProposalPage /> </Route>
-              <Route exact path="/:network/info"> <InfoPage /> </Route>
-              <Route exact path="/:network/user/:address"> <UserPage /> </Route>
-              <Route exact path="/:network/proposal/:proposalId"> <ProposalPage /> </Route>
+              <Route exact path="/">
+                {' '}
+                <ProposalsPage />{' '}
+              </Route>
+              <Route exact path="/config">
+                {' '}
+                <ConfigPage />{' '}
+              </Route>
+              <Route exact path="/forum">
+                {' '}
+                <ForumPage />{' '}
+              </Route>
+              <Route exact path="/faq">
+                {' '}
+                <FAQPage />{' '}
+              </Route>
+              <Route exact path="/:network/proposals">
+                {' '}
+                <ProposalsPage />{' '}
+              </Route>
+              <Route exact path="/:network/new">
+                {' '}
+                <NewProposalPage />{' '}
+              </Route>
+              <Route exact path="/:network/info">
+                {' '}
+                <InfoPage />{' '}
+              </Route>
+              <Route exact path="/:network/user/:address">
+                {' '}
+                <UserPage />{' '}
+              </Route>
+              <Route exact path="/:network/proposal/:proposalId">
+                {' '}
+                <ProposalPage />{' '}
+              </Route>
             </PageRouter>
             <Footer />
           </Web3ReactManager>

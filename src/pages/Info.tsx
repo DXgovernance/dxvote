@@ -1,4 +1,4 @@
-import styled from 'styled-components'; 
+import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { useContext } from '../contexts';
 import ActiveButton from '../components/common/ActiveButton';
@@ -33,20 +33,29 @@ const InfoPage = () => {
   return (
     <InfoPageWrapper>
       <InfoNavigation>
-        <ActiveButton route={`/${networkName}/info?view=governance`}>Governance</ActiveButton>
-        <ActiveButton route={`/${networkName}/info?view=finance`}>Finance</ActiveButton>
-        <ActiveButton route={`/${networkName}/info?view=schemes`}>Schemes</ActiveButton>
-        <ActiveButton route={`/${networkName}/info?view=permissions`}>Permissions</ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=governance`}>
+          Governance
+        </ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=finance`}>
+          Finance
+        </ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=schemes`}>
+          Schemes
+        </ActiveButton>
+        <ActiveButton route={`/${networkName}/info?view=permissions`}>
+          Permissions
+        </ActiveButton>
       </InfoNavigation>
       <div>
-        { searchPath === `?view=schemes` ?
-          <SchemesInformation/>
-        : searchPath === `?view=governance` ?
-          <GovernanceInformation/>
-        : searchPath === `?view=permissions` ?
-          <PermissionsInformation/>
-        : <FinanceInformation/>
-        }
+        {searchPath === `?view=schemes` ? (
+          <SchemesInformation />
+        ) : searchPath === `?view=governance` ? (
+          <GovernanceInformation />
+        ) : searchPath === `?view=permissions` ? (
+          <PermissionsInformation />
+        ) : (
+          <FinanceInformation />
+        )}
       </div>
     </InfoPageWrapper>
   );

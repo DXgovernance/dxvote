@@ -13,13 +13,13 @@ const Web3ReactManager = ({ children }) => {
   } = useContext();
 
   const web3ContextInjected = useWeb3React(web3ContextNames.injected);
-  const {
-    active: networkActive,
-    error: networkError
-  } = web3ContextInjected;
-  
+  const { active: networkActive, error: networkError } = web3ContextInjected;
+
   if (!providerStore.activeChainId)
-    providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
+    providerStore.setWeb3Context(
+      web3ContextNames.injected,
+      web3ContextInjected
+    );
 
   configStore.loadConfig();
 
@@ -30,11 +30,11 @@ const Web3ReactManager = ({ children }) => {
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect();
-  
+
   let walletInstalled = true;
   try {
     // @ts-ignore
-    ethereum.on('chainChanged', (chainId) => {
+    ethereum.on('chainChanged', chainId => {
       // Handle the new chain.
       // Correctly handling chain changes can be complicated.
       // We recommend reloading the page unless you have good reason not to.
@@ -42,36 +42,32 @@ const Web3ReactManager = ({ children }) => {
       // blockchainStore.fetchData(providerStore.getActiveWeb3React(), true);
       window.location.reload();
     });
-    
+
     // @ts-ignore
-    ethereum.on('accountsChanged', (accounts) => {
+    ethereum.on('accountsChanged', accounts => {
       // Handle the new accounts, or lack thereof.
       // "accounts" will always be an array, but it can be empty.
       // blockchainStore.fetchData(web3React, false);
-      if (networkActive)
-        userStore.update(providerStore.getActiveWeb3React());
+      if (networkActive) userStore.update(providerStore.getActiveWeb3React());
     });
-    
   } catch (error) {
     console.error(error);
     walletInstalled = false;
   }
-  
+
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager);
 
   // Fetch user blockchain data on an interval using current params
-  useInterval(
-    async () => {
-      if (networkActive){
-        userStore.update(providerStore.getActiveWeb3React());
-        blockchainStore.fetchData(providerStore.getActiveWeb3React(), false)
-      }
-    }, BLOKCHAIN_FETCH_INTERVAL
-  );
+  useInterval(async () => {
+    if (networkActive) {
+      userStore.update(providerStore.getActiveWeb3React());
+      blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
+    }
+  }, BLOKCHAIN_FETCH_INTERVAL);
 
   const BlurWrapper = styled.div`
-      filter: blur(1px);
+    filter: blur(1px);
   `;
 
   const OverBlurModal = styled.div`
@@ -82,9 +78,9 @@ const Web3ReactManager = ({ children }) => {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-    
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+
     .connectModalContent {
       background-color: #fefefe;
       max-width: 350px;
@@ -102,38 +98,42 @@ const Web3ReactManager = ({ children }) => {
   }
 
   if (!walletInstalled) {
-    console.debug('[Web3ReactManager] Render: Metamask wallet not installed, showing modal error.');
+    console.debug(
+      '[Web3ReactManager] Render: Metamask wallet not installed, showing modal error.'
+    );
     return (
       <div>
         <OverBlurModal>
-          <div className="connectModalContent">Metamask wallet not installed</div>
+          <div className="connectModalContent">
+            Metamask wallet not installed
+          </div>
         </OverBlurModal>
-        <BlurWrapper>
-          {children}
-        </BlurWrapper>
+        <BlurWrapper>{children}</BlurWrapper>
       </div>
     );
   } else if (networkError) {
-    console.debug('[Web3ReactManager] Render: Network error, showing modal error.');
+    console.debug(
+      '[Web3ReactManager] Render: Network error, showing modal error.'
+    );
     return (
       <div>
         <OverBlurModal>
           <div className="connectModalContent">Ups, something broke :(</div>
         </OverBlurModal>
-        <BlurWrapper>
-          {children}
-        </BlurWrapper>
+        <BlurWrapper>{children}</BlurWrapper>
       </div>
     );
-  // If network is not active show blur content
-  } else if(!networkActive) {
+    // If network is not active show blur content
+  } else if (!networkActive) {
     console.debug('[Web3ReactManager] Render: No active network');
     return children;
   } else {
-    console.debug( '[Web3ReactManager] Render: Active network, render children', { networkActive } );
+    console.debug(
+      '[Web3ReactManager] Render: Active network, render children',
+      { networkActive }
+    );
     return children;
   }
-
 };
 
 export default Web3ReactManager;

@@ -8,44 +8,44 @@ import { injected, web3ContextNames } from 'provider/connectors';
     If we tried to connect, or it's active, return true;
  */
 export function useActiveWeb3React() {
-    return useWeb3ReactCore(web3ContextNames.injected);
+  return useWeb3ReactCore(web3ContextNames.injected);
 }
 
 export function useEagerConnect() {
-    const { activate, active } = useWeb3ReactCore(web3ContextNames.injected);
+  const { activate, active } = useWeb3ReactCore(web3ContextNames.injected);
 
-    const [tried, setTried] = useState(false);
+  const [tried, setTried] = useState(false);
 
-    useEffect(() => {
-        console.debug('[Injected Eager Connect]', injected);
-        injected.isAuthorized().then((isAuthorized) => {
-            console.debug('[Eager Connect] Activate injected if authorized', {
-                isAuthorized,
-            });
-            if (isAuthorized) {
-                activate(injected, undefined, true).catch(() => {
-                    setTried(true);
-                });
-            } else {
-                if (isMobile && window.ethereum) {
-                    activate(injected, undefined, true).catch(() => {
-                        setTried(true);
-                    });
-                } else {
-                    setTried(true);
-                }
-            }
+  useEffect(() => {
+    console.debug('[Injected Eager Connect]', injected);
+    injected.isAuthorized().then(isAuthorized => {
+      console.debug('[Eager Connect] Activate injected if authorized', {
+        isAuthorized,
+      });
+      if (isAuthorized) {
+        activate(injected, undefined, true).catch(() => {
+          setTried(true);
         });
-    }, [activate]); // intentionally only running on mount (make sure it's only mounted once :))
-
-    // if the connection worked, wait until we get confirmation of that to flip the flag
-    useEffect(() => {
-        if (active) {
+      } else {
+        if (isMobile && window.ethereum) {
+          activate(injected, undefined, true).catch(() => {
             setTried(true);
+          });
+        } else {
+          setTried(true);
         }
-    }, [active]);
+      }
+    });
+  }, [activate]); // intentionally only running on mount (make sure it's only mounted once :))
 
-    return tried;
+  // if the connection worked, wait until we get confirmation of that to flip the flag
+  useEffect(() => {
+    if (active) {
+      setTried(true);
+    }
+  }, [active]);
+
+  return tried;
 }
 
 /**
@@ -53,50 +53,44 @@ export function useEagerConnect() {
  * and out after checking what network they're on
  */
 export function useInactiveListener(suppress = false) {
-    const { active, error, activate } = useWeb3ReactCore(
-        web3ContextNames.injected
-    );
+  const { active, error, activate } = useWeb3ReactCore(
+    web3ContextNames.injected
+  );
 
-    useEffect(() => {
-        const { ethereum } = window;
+  useEffect(() => {
+    const { ethereum } = window;
 
-        if (ethereum && ethereum.on && !active && !error && !suppress) {
-            const handleChainChanged = () => {
-                // eat errors
-                activate(injected, undefined, true).catch(() => {});
-            };
+    if (ethereum && ethereum.on && !active && !error && !suppress) {
+      const handleChainChanged = () => {
+        // eat errors
+        activate(injected, undefined, true).catch(() => {});
+      };
 
-            const handleAccountsChanged = (accounts) => {
-                if (accounts.length > 0) {
-                    // eat errors
-                    activate(injected, undefined, true).catch(() => {});
-                }
-            };
-
-            const handleNetworkChanged = () => {
-                // eat errors
-                activate(injected, undefined, true).catch(() => {});
-            };
-
-            ethereum.on('chainChanged', handleChainChanged);
-            ethereum.on('networkChanged', handleNetworkChanged);
-            ethereum.on('accountsChanged', handleAccountsChanged);
-
-            return () => {
-                if (ethereum.removeListener) {
-                    ethereum.removeListener('chainChanged', handleChainChanged);
-                    ethereum.removeListener(
-                        'networkChanged',
-                        handleNetworkChanged
-                    );
-                    ethereum.removeListener(
-                        'accountsChanged',
-                        handleAccountsChanged
-                    );
-                }
-            };
+      const handleAccountsChanged = accounts => {
+        if (accounts.length > 0) {
+          // eat errors
+          activate(injected, undefined, true).catch(() => {});
         }
+      };
 
-        return () => {};
-    }, [active, error, suppress, activate]);
+      const handleNetworkChanged = () => {
+        // eat errors
+        activate(injected, undefined, true).catch(() => {});
+      };
+
+      ethereum.on('chainChanged', handleChainChanged);
+      ethereum.on('networkChanged', handleNetworkChanged);
+      ethereum.on('accountsChanged', handleAccountsChanged);
+
+      return () => {
+        if (ethereum.removeListener) {
+          ethereum.removeListener('chainChanged', handleChainChanged);
+          ethereum.removeListener('networkChanged', handleNetworkChanged);
+          ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        }
+      };
+    }
+
+    return () => {};
+  }, [active, error, suppress, activate]);
 }

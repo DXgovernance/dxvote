@@ -7,7 +7,8 @@
     "build": "dotenv -e .env.production ./scripts/build.sh",
     "build-cache": "dotenv -e .env.development ./scripts/buildCache.sh",
     "dev": "dotenv -e .env.development ./scripts/dev.sh",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "engines": {
     "node": "^14.17.6"

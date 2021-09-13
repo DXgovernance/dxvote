@@ -11,10 +11,26 @@ export enum TXEvents {
   INVARIANT = 'invariant',
 }
 
-export enum VoteDecision { None, YES, NO }
+export enum VoteDecision {
+  None,
+  YES,
+  NO,
+}
 
-export enum WalletSchemeProposalState { None, Submitted, Rejected, ExecutionSucceded, ExecutionTimeout }
+export enum WalletSchemeProposalState {
+  None,
+  Submitted,
+  Rejected,
+  ExecutionSucceded,
+  ExecutionTimeout,
+}
 
-export enum VotingMachineProposalState { 
-  None, ExpiredInQueue, Executed, Queued, PreBoosted, Boosted, QuietEndingPeriod
+export enum VotingMachineProposalState {
+  None,
+  ExpiredInQueue,
+  Executed,
+  Queued,
+  PreBoosted,
+  Boosted,
+  QuietEndingPeriod,
 }

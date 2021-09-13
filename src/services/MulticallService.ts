@@ -23,7 +23,9 @@ export default class MulticallService {
       configStore.getNetworkContracts().utils.multicall
     );
 
-    const response = await multi.methods.aggregate(rawCalls || this.activeCallsRaw).call();
+    const response = await multi.methods
+      .aggregate(rawCalls || this.activeCallsRaw)
+      .call();
     return {
       calls: calls || this.activeCalls,
       results: response.returnData,

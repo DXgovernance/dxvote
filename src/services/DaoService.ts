@@ -11,7 +11,7 @@ import {
   ERC20_TRANSFER_SIGNATURE,
   ERC20_APPROVE_SIGNATURE,
   MAX_UINT,
-  normalizeBalance
+  normalizeBalance,
 } from '../utils';
 
 export default class DaoService {
@@ -19,89 +19,128 @@ export default class DaoService {
 
   constructor(context: RootContext) {
     this.context = context;
-    
+
     makeObservable(this, {
       createProposal: action,
       vote: action,
       approveVotingMachineToken: action,
       stake: action,
       execute: action,
-      redeem: action
+      redeem: action,
     });
   }
 
-  encodeControllerGenericCall(
-    to: string,
-    callData: string,
-    value: BigNumber
-  ){
+  encodeControllerGenericCall(to: string, callData: string, value: BigNumber) {
     const { providerStore, configStore } = this.context;
     const controller = providerStore.getContract(
       providerStore.getActiveWeb3React(),
       ContractType.Controller,
       configStore.getNetworkContracts().controller
-    )
+    );
     const avatarAddress = configStore.getNetworkContracts().avatar;
-    return controller.methods.genericCall(to, callData, avatarAddress, value).encodeABI();
+    return controller.methods
+      .genericCall(to, callData, avatarAddress, value)
+      .encodeABI();
   }
-  
-  decodeWalletSchemeCall(from: string, to: string, data: string, value: BigNumber, fullDescription: boolean){
+
+  decodeWalletSchemeCall(
+    from: string,
+    to: string,
+    data: string,
+    value: BigNumber,
+    fullDescription: boolean
+  ) {
     const { abiService, providerStore, configStore } = this.context;
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();
-    let functionSignature = data.substring(0,10);
-    const controllerCallDecoded = abiService.decodeCall(ContractType.Controller, data);
+    let functionSignature = data.substring(0, 10);
+    const controllerCallDecoded = abiService.decodeCall(
+      ContractType.Controller,
+      data
+    );
     let asset = ZERO_ADDRESS;
-    if (controllerCallDecoded && controllerCallDecoded.function.name === "genericCall") {
+    if (
+      controllerCallDecoded &&
+      controllerCallDecoded.function.name === 'genericCall'
+    ) {
       to = controllerCallDecoded.args[0];
-      data = "0x"+controllerCallDecoded.args[1].substring(10);
+      data = '0x' + controllerCallDecoded.args[1].substring(10);
       value = bnum(controllerCallDecoded.args[3]);
-      functionSignature = controllerCallDecoded.args[1].substring(0,10);
+      functionSignature = controllerCallDecoded.args[1].substring(0, 10);
     } else {
-      data = "0x"+data.substring(10);
+      data = '0x' + data.substring(10);
     }
-  
-    if (functionSignature === ERC20_TRANSFER_SIGNATURE || functionSignature === ERC20_APPROVE_SIGNATURE) {
+
+    if (
+      functionSignature === ERC20_TRANSFER_SIGNATURE ||
+      functionSignature === ERC20_APPROVE_SIGNATURE
+    ) {
       asset = to;
     }
-    const recommendedCallUsed = recommendedCalls.find((recommendedCall) => {
+    const recommendedCallUsed = recommendedCalls.find(recommendedCall => {
       return (
-        asset === recommendedCall.asset
-        && (ANY_ADDRESS === recommendedCall.from || from === recommendedCall.from)
-        && (to === recommendedCall.to)
-        && functionSignature === library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
-      )
+        asset === recommendedCall.asset &&
+        (ANY_ADDRESS === recommendedCall.from ||
+          from === recommendedCall.from) &&
+        to === recommendedCall.to &&
+        functionSignature ===
+          library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
+      );
     });
 
     if (recommendedCallUsed) {
-      const callParameters = library.eth.abi
-        .decodeParameters(recommendedCallUsed.params.map((param) => param.type), data);
-      
-      if (callParameters.__length__)
-        delete callParameters.__length__;
-      
-      let decodedCallText = "";
-      
-      if (recommendedCallUsed.decodeText && recommendedCallUsed.decodeText.length > 0) {
+      const callParameters = library.eth.abi.decodeParameters(
+        recommendedCallUsed.params.map(param => param.type),
+        data
+      );
+
+      if (callParameters.__length__) delete callParameters.__length__;
+
+      let decodedCallText = '';
+
+      if (
+        recommendedCallUsed.decodeText &&
+        recommendedCallUsed.decodeText.length > 0
+      ) {
         decodedCallText = recommendedCallUsed.decodeText;
-        for (let paramIndex = 0; paramIndex < recommendedCallUsed.params.length; paramIndex++)
+        for (
+          let paramIndex = 0;
+          paramIndex < recommendedCallUsed.params.length;
+          paramIndex++
+        )
           if (recommendedCallUsed.params[paramIndex].decimals)
-            decodedCallText = decodedCallText
-              .replaceAll(
-                "[PARAM_"+paramIndex+"]",
-                "<italic>"+normalizeBalance(callParameters[paramIndex], recommendedCallUsed.params[paramIndex].decimals)+"</italic>"
-              );
+            decodedCallText = decodedCallText.replaceAll(
+              '[PARAM_' + paramIndex + ']',
+              '<italic>' +
+                normalizeBalance(
+                  callParameters[paramIndex],
+                  recommendedCallUsed.params[paramIndex].decimals
+                ) +
+                '</italic>'
+            );
           else
-            decodedCallText = decodedCallText
-              .replaceAll("[PARAM_"+paramIndex+"]", "<italic>"+callParameters[paramIndex]+"</italic>");
-      } 
-      
+            decodedCallText = decodedCallText.replaceAll(
+              '[PARAM_' + paramIndex + ']',
+              '<italic>' + callParameters[paramIndex] + '</italic>'
+            );
+      }
+
       if (fullDescription) {
         return `<strong>Description</strong>:${decodedCallText}
-        <strong>To</strong>: ${recommendedCallUsed.toName} <small>${recommendedCallUsed.to}</small>
-        <strong>Function</strong>: ${recommendedCallUsed.functionName} <small>${library.eth.abi.encodeFunctionSignature(recommendedCallUsed.functionName)}</small>
-        <strong>Params</strong>: ${JSON.stringify(Object.keys(callParameters).map((paramIndex) => callParameters[paramIndex]))}
-        <strong>Data</strong>: ${data} `
+        <strong>To</strong>: ${recommendedCallUsed.toName} <small>${
+          recommendedCallUsed.to
+        }</small>
+        <strong>Function</strong>: ${
+          recommendedCallUsed.functionName
+        } <small>${library.eth.abi.encodeFunctionSignature(
+          recommendedCallUsed.functionName
+        )}</small>
+        <strong>Params</strong>: ${JSON.stringify(
+          Object.keys(callParameters).map(
+            paramIndex => callParameters[paramIndex]
+          )
+        )}
+        <strong>Data</strong>: ${data} `;
       } else {
         return decodedCallText;
       }
@@ -109,17 +148,20 @@ export default class DaoService {
       return `<strong>From</strong>: ${from}
       <strong>To</strong>: ${to}
       <strong>Data</strong>: 0x${data.substring(10)}
-      <strong>Value</strong>: ${normalizeBalance(bnum(value))}`
+      <strong>Value</strong>: ${normalizeBalance(bnum(value))}`;
     }
-    
   }
-  
-  createProposal(scheme: string, schemeType: string, proposalData: any): PromiEvent<any> {
+
+  createProposal(
+    scheme: string,
+    schemeType: string,
+    proposalData: any
+  ): PromiEvent<any> {
     const { providerStore, configStore } = this.context;
     const networkContracts = configStore.getNetworkContracts();
     const { library } = providerStore.getActiveWeb3React();
 
-    if (schemeType === "ContributionReward") {
+    if (schemeType === 'ContributionReward') {
       // function proposeContributionReward(
       //   Avatar _avatar,
       //   string memory _descriptionHash,
@@ -131,7 +173,8 @@ export default class DaoService {
       return providerStore.sendRawTransaction(
         providerStore.getActiveWeb3React(),
         scheme,
-        library.eth.abi.encodeFunctionCall({
+        library.eth.abi.encodeFunctionCall(
+          {
             name: 'proposeContributionReward',
             type: 'function',
             inputs: [
@@ -140,19 +183,21 @@ export default class DaoService {
               { type: 'int256', name: '_reputationChange' },
               { type: 'uint256[5]', name: '_rewards' },
               { type: 'address', name: '_externalToken' },
-              { type: 'address', name: '_beneficiary' }
-            ]
-        },[
-          networkContracts.avatar,
-          contentHash.decode(proposalData.descriptionHash),
-          proposalData.reputationChange,
-          [0, proposalData.ethValue, proposalData.tokenValue, 0, 1],
-          proposalData.externalToken,
-          proposalData.beneficiary,
-        ]),
-        "0"
+              { type: 'address', name: '_beneficiary' },
+            ],
+          },
+          [
+            networkContracts.avatar,
+            contentHash.decode(proposalData.descriptionHash),
+            proposalData.reputationChange,
+            [0, proposalData.ethValue, proposalData.tokenValue, 0, 1],
+            proposalData.externalToken,
+            proposalData.beneficiary,
+          ]
+        ),
+        '0'
       );
-    } else if (schemeType === "GenericMulticall") {
+    } else if (schemeType === 'GenericMulticall') {
       // function proposeCalls(
       //   address[] memory _contractsToCall,
       //   bytes[] memory _callsData,
@@ -162,22 +207,25 @@ export default class DaoService {
       return providerStore.sendRawTransaction(
         providerStore.getActiveWeb3React(),
         scheme,
-        library.eth.abi.encodeFunctionCall({
+        library.eth.abi.encodeFunctionCall(
+          {
             name: 'proposeCalls',
             type: 'function',
             inputs: [
               { type: 'address[]', name: '_contractsToCall' },
               { type: 'bytes[]', name: '_callsData' },
               { type: 'uint256[]', name: '_values' },
-              { type: 'string', name: '_descriptionHash' }
-            ]
-        },[
-          proposalData.to,
-          proposalData.data,
-          proposalData.value,
-          contentHash.decode(proposalData.descriptionHash)
-        ]),
-        "0"
+              { type: 'string', name: '_descriptionHash' },
+            ],
+          },
+          [
+            proposalData.to,
+            proposalData.data,
+            proposalData.value,
+            contentHash.decode(proposalData.descriptionHash),
+          ]
+        ),
+        '0'
       );
     } else {
       return providerStore.sendTransaction(
@@ -190,13 +238,13 @@ export default class DaoService {
           proposalData.data,
           proposalData.value,
           proposalData.titleText,
-          proposalData.descriptionHash
+          proposalData.descriptionHash,
         ],
         {}
       );
     }
   }
-  
+
   vote(decision: string, amount: string, proposalId: string): PromiEvent<any> {
     const { providerStore, daoStore } = this.context;
     const { account } = providerStore.getActiveWeb3React();
@@ -209,7 +257,7 @@ export default class DaoService {
       {}
     );
   }
-  
+
   approveVotingMachineToken(votingMachineAddress): PromiEvent<any> {
     const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
@@ -221,8 +269,8 @@ export default class DaoService {
       {}
     );
   }
-  
-  stake( decision: string, amount: string, proposalId: string, ): PromiEvent<any> {
+
+  stake(decision: string, amount: string, proposalId: string): PromiEvent<any> {
     const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
@@ -233,10 +281,8 @@ export default class DaoService {
       {}
     );
   }
-  
-  execute(
-    proposalId: string,
-  ): PromiEvent<any> {
+
+  execute(proposalId: string): PromiEvent<any> {
     const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
@@ -247,7 +293,7 @@ export default class DaoService {
       {}
     );
   }
-  
+
   redeem(proposalId: string, account: string): PromiEvent<any> {
     const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
@@ -259,7 +305,7 @@ export default class DaoService {
       {}
     );
   }
-  
+
   redeemDaoBounty(proposalId: string, account: string): PromiEvent<any> {
     const { providerStore, daoStore } = this.context;
     return providerStore.sendTransaction(
@@ -271,7 +317,7 @@ export default class DaoService {
       {}
     );
   }
-  
+
   redeemContributionReward(
     redeemerAddress: string,
     votingMachineAddress: string,
@@ -287,11 +333,17 @@ export default class DaoService {
       ContractType.Redeemer,
       redeemerAddress,
       'redeem',
-      [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkContracts().avatar, beneficiary],
+      [
+        votingMachineAddress,
+        schemeAddress,
+        proposalId,
+        configStore.getNetworkContracts().avatar,
+        beneficiary,
+      ],
       {}
     );
   }
-  
+
   redeemContributionRewardCall(
     redeemerAddress: string,
     votingMachineAddress: string,
@@ -303,47 +355,64 @@ export default class DaoService {
     const web3 = providerStore.getActiveWeb3React().library;
     return web3.eth.call({
       to: redeemerAddress,
-      data: web3.eth.abi.encodeFunctionCall({
+      data: web3.eth.abi.encodeFunctionCall(
+        {
           name: 'redeem',
           type: 'function',
-          inputs: [{
+          inputs: [
+            {
               type: 'address',
-              name: '_contributionReward'
-          },{
+              name: '_contributionReward',
+            },
+            {
               type: 'address',
-              name: '_genesisProtocol'
-          },{
+              name: '_genesisProtocol',
+            },
+            {
               type: 'bytes32',
-              name: '_proposalId'
-          },{
+              name: '_proposalId',
+            },
+            {
               type: 'address',
-              name: '_avatar'
-          },{
+              name: '_avatar',
+            },
+            {
               type: 'address',
-              name: '_beneficiary'
-          }]
-      }, [votingMachineAddress, schemeAddress, proposalId, configStore.getNetworkContracts().avatar, beneficiary])
+              name: '_beneficiary',
+            },
+          ],
+        },
+        [
+          votingMachineAddress,
+          schemeAddress,
+          proposalId,
+          configStore.getNetworkContracts().avatar,
+          beneficiary,
+        ]
+      ),
     });
   }
-  
-  executeMulticall(
-    schemeAddress: string,
-    proposalId: string,
-  ): PromiEvent<any> {
+
+  executeMulticall(schemeAddress: string, proposalId: string): PromiEvent<any> {
     const { providerStore } = this.context;
     const web3 = providerStore.getActiveWeb3React().library;
     return providerStore.sendRawTransaction(
       providerStore.getActiveWeb3React(),
       schemeAddress,
-      web3.eth.abi.encodeFunctionCall({
+      web3.eth.abi.encodeFunctionCall(
+        {
           name: 'execute',
           type: 'function',
-          inputs: [{
+          inputs: [
+            {
               type: 'bytes32',
-              name: '_proposalId'
-          }]
-      }, [proposalId]),
-      "0"
+              name: '_proposalId',
+            },
+          ],
+        },
+        [proposalId]
+      ),
+      '0'
     );
   }
 }

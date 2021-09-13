@@ -22,26 +22,31 @@ export default class ABIService {
   constructor(context: RootContext) {
     this.context = context;
   }
-  
+
   getAbi(contractType: string) {
     return schema[contractType];
   }
-  
+
   decodeCall(contractType: string, data: string) {
     const { providerStore } = this.context;
 
     const { library } = providerStore.getActiveWeb3React();
 
     const contractInterface = new Interface(this.getAbi(contractType));
-    const functionSignature = data.substring(0,10);
+    const functionSignature = data.substring(0, 10);
     for (const functionName in contractInterface.functions) {
-      if (contractInterface.functions[functionName].sighash === functionSignature){
+      if (
+        contractInterface.functions[functionName].sighash === functionSignature
+      ) {
         return {
           function: contractInterface.functions[functionName],
           args: library.eth.abi.decodeParameters(
-            contractInterface.functions[functionName].inputs.map((input) => {return input.type}), data.substring(10)
-          )
-        }
+            contractInterface.functions[functionName].inputs.map(input => {
+              return input.type;
+            }),
+            data.substring(10)
+          ),
+        };
       }
     }
     return undefined;

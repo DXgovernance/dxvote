@@ -7,8 +7,8 @@ BigNumber.config({
   FORMAT: {
     groupSize: 3,
     groupSeparator: ' ',
-    decimalSeparator: '.'
-  }
+    decimalSeparator: '.',
+  },
 });
 
 export { BigNumber };

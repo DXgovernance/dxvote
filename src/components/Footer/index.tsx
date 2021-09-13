@@ -12,7 +12,7 @@ const FooterWrapper = styled.div`
 `;
 
 const LeftFooter = styled.div`
-margin-top: auto;
+  margin-top: auto;
   display: flex;
   flex-direction: row;
 `;
@@ -45,27 +45,53 @@ const Footer = () => {
     <FooterWrapper>
       <LeftFooter>
         <FooterItem>
-          <a href="https://dxdao.eth.link/#/" target="_blank" > Website </a>
+          <a href="https://dxdao.eth.link/#/" target="_blank">
+            {' '}
+            Website{' '}
+          </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a onClick={() => { history.push('/forum')}}  target="_self" > Forum </a>
+          <a
+            onClick={() => {
+              history.push('/forum');
+            }}
+            target="_self"
+          >
+            {' '}
+            Forum{' '}
+          </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a href="https://github.com/AugustoL/dxvote" target="_blank" > Source Code </a>
+          <a href="https://github.com/AugustoL/dxvote" target="_blank">
+            {' '}
+            Source Code{' '}
+          </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a onClick={() => { history.push('/faq')}} > FAQ </a>
+          <a
+            onClick={() => {
+              history.push('/faq');
+            }}
+          >
+            {' '}
+            FAQ{' '}
+          </a>
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a href="https://github.com/AugustoL/dxvote/issues/new/choose" target="_blank" > Submit Issue </a>
+          <a
+            href="https://github.com/AugustoL/dxvote/issues/new/choose"
+            target="_blank"
+          >
+            {' '}
+            Submit Issue{' '}
+          </a>
         </FooterItem>
       </LeftFooter>
     </FooterWrapper>
-
   );
 };
 

@@ -11,11 +11,10 @@ export const timestampToDate = (timestamp: BigNumber) => {
 
 export const timeToTimestamp = (timestamp: BigNumber) => {
   if (timestamp.toNumber() > moment().unix())
-    return moment().to( moment.unix(timestamp.toNumber()) ).toString();
-  else
-    return "";
+    return moment().to(moment.unix(timestamp.toNumber())).toString();
+  else return '';
 };
 
-export const addZero = (value) => {
+export const addZero = value => {
   return value > 9 ? value : `0${value}`;
 };

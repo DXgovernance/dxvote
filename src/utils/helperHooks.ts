@@ -23,11 +23,14 @@ export function useInterval(callback, delay) {
     }
   }, [delay]);
 }
-// @ts-ignore
-export function useCopyClipboard(timeout = 500): [S, Dispatch<SetStateAction<S>>] {
+
+export function useCopyClipboard(
+  timeout = 500
+  // @ts-ignore
+): [S, Dispatch<SetStateAction<S>>] {
   const [isCopied, setIsCopied] = useState(false);
 
-  const staticCopy = useCallback((text) => {
+  const staticCopy = useCallback(text => {
     const didCopy = copy(text);
     setIsCopied(didCopy);
   }, []);
@@ -49,15 +52,15 @@ export function useCopyClipboard(timeout = 500): [S, Dispatch<SetStateAction<S>>
 
 // modified from https://usehooks.com/usePrevious/
 export function usePrevious(value) {
-    // The ref object is a generic container whose current property is mutable ...
-    // ... and can hold any value, similar to an instance property on a class
-    const ref = useRef();
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef();
 
-    // Store current value in ref
-    useEffect(() => {
-        ref.current = value;
-    }, [value]); // Only re-run if value changes
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
 
-    // Return previous value (happens before update in useEffect above)
-    return ref.current;
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
 }

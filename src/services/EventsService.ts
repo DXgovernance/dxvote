@@ -12,41 +12,51 @@ export interface EventCall {
 }
 
 export default class EventsService {
-  context: RootContext;  
+  context: RootContext;
 
   activeEventsCalls: EventCall[];
-    
+
   constructor(context: RootContext) {
     this.context = context;
     this.activeEventsCalls = [];
   }
-  
+
   async getEvents(
     contractType: ContractType,
     address: string,
     eventName: string,
     fromBlock: number,
     toBlock: number
-  ){
+  ) {
     const { providerStore } = this.context;
-    const contract = providerStore.getContract(providerStore.getActiveWeb3React(), contractType, address);
-    console.log('Getting event',eventName, fromBlock, toBlock);
-    return _.orderBy( 
-      await contract.getPastEvents(eventName, {fromBlock: fromBlock, toBlock: toBlock })
-      , ["blockNumber", "transactionIndex", "logIndex"], ["asc","asc","asc"]
+    const contract = providerStore.getContract(
+      providerStore.getActiveWeb3React(),
+      contractType,
+      address
+    );
+    console.log('Getting event', eventName, fromBlock, toBlock);
+    return _.orderBy(
+      await contract.getPastEvents(eventName, {
+        fromBlock: fromBlock,
+        toBlock: toBlock,
+      }),
+      ['blockNumber', 'transactionIndex', 'logIndex'],
+      ['asc', 'asc', 'asc']
     );
   }
-  
+
   async executeActiveEventCalls() {
-    return await Promise.all(this.activeEventsCalls.map(async (activeEventCall) => {
-      return await this.getEvents(
-        activeEventCall.contractType,
-        activeEventCall.address,
-        activeEventCall.eventName,
-        activeEventCall.fromBlock,
-        activeEventCall.toBlock
-      )
-    }));
+    return await Promise.all(
+      this.activeEventsCalls.map(async activeEventCall => {
+        return await this.getEvents(
+          activeEventCall.contractType,
+          activeEventCall.address,
+          activeEventCall.eventName,
+          activeEventCall.fromBlock,
+          activeEventCall.toBlock
+        );
+      })
+    );
   }
 
   addEventsCalls(events: EventCall[]) {
@@ -60,5 +70,4 @@ export default class EventsService {
   resetActiveEventCalls() {
     this.activeEventsCalls = [];
   }
-  
 }
