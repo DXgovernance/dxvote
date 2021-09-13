@@ -229,8 +229,10 @@ export const getNetworkConfig = async function (networkName) {
       avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ''),
       controller: process.env.REACT_APP_CONTROLLER_ADDRESS.replace(/["']/g, ''),
       reputation: process.env.REACT_APP_REPUTATION_ADDRESS.replace(/["']/g, ''),
-      permissionRegistry:
-        process.env.REACT_APP_PERMISSION_REGISTRY_ADDRESS.replace(/["']/g, ''),
+      permissionRegistry: process.env.REACT_APP_PERMISSION_REGISTRY_ADDRESS.replace(
+        /["']/g,
+        ''
+      ),
       utils: {
         multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ''),
       },
@@ -314,8 +316,8 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
         type: 'GenericMulticall',
         votingMachine: networkConfig.votingMachines.gen.address,
         contractToCall: ZERO_ADDRESS,
-        name: networkConfig.daostack.multicallSchemes.addresses[schemeAddress]
-          .name,
+        name:
+          networkConfig.daostack.multicallSchemes.addresses[schemeAddress].name,
         newProposalTopics:
           networkConfig.daostack.multicallSchemes.newProposalTopics,
         voteParams:
@@ -338,8 +340,8 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
         contractToCall:
           networkConfig.daostack.genericSchemes.addresses[schemeAddress]
             .contractToCall,
-        name: networkConfig.daostack.genericSchemes.addresses[schemeAddress]
-          .name,
+        name:
+          networkConfig.daostack.genericSchemes.addresses[schemeAddress].name,
         newProposalTopics:
           networkConfig.daostack.genericSchemes.newProposalTopics,
         voteParams:

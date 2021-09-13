@@ -207,8 +207,12 @@ const ProposalPage = observer(() => {
     .div(totalRepAtProposalCreation)
     .toFixed(4);
 
-  const { status, boostTime, finishTime, pendingAction } =
-    daoStore.getProposalStatus(proposalId);
+  const {
+    status,
+    boostTime,
+    finishTime,
+    pendingAction,
+  } = daoStore.getProposalStatus(proposalId);
 
   // @ts-ignore
   try {
@@ -269,16 +273,18 @@ const ProposalPage = observer(() => {
 
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
-  const { recommendedStakeToBoost, recommendedStakeToUnBoost } =
-    calculateStakes(
-      votingParameters.thresholdConst,
-      scheme.boostedProposals,
-      proposal.stateInVotingMachine === 4
-        ? daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address) - 1
-        : daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address),
-      proposal.positiveStakes,
-      proposal.negativeStakes
-    );
+  const {
+    recommendedStakeToBoost,
+    recommendedStakeToUnBoost,
+  } = calculateStakes(
+    votingParameters.thresholdConst,
+    scheme.boostedProposals,
+    proposal.stateInVotingMachine === 4
+      ? daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address) - 1
+      : daoStore.getAmountOfProposalsPreBoostedInScheme(scheme.address),
+    proposal.positiveStakes,
+    proposal.negativeStakes
+  );
 
   const boostedVoteRequiredPercentage =
     scheme.boostedVoteRequiredPercentage / 100;
