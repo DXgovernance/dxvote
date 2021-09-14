@@ -15,6 +15,7 @@ import {
   sleep,
   bnum,
   normalizeBalance,
+  denormalizeBalance,
   TXEvents,
 } from '../utils';
 
@@ -365,10 +366,12 @@ const NewProposalPage = observer(() => {
         schemeToUse.type === 'ContributionReward'
           ? {
               beneficiary: contributionRewardCalls.beneficiary,
-              reputationChange: normalizeBalance(
+              reputationChange: denormalizeBalance(
                 bnum(contributionRewardCalls.repChange)
               ).toString(),
-              ethValue: contributionRewardCalls.ethValue,
+              ethValue: denormalizeBalance(
+                bnum(contributionRewardCalls.ethValue)
+              ).toString(),
               externalToken: contributionRewardCalls.externalToken,
               tokenValue: contributionRewardCalls.tokenValue,
               descriptionHash: contentHash.fromIpfs(ipfsHash),
@@ -727,7 +730,7 @@ const NewProposalPage = observer(() => {
             </span>
             <span style={{ width: '20%', fontSize: '13px' }}>REP Change</span>
             <span style={{ width: '20%', fontSize: '13px' }}>
-              {networkAssetSymbol} Value (in WEI)
+              {networkAssetSymbol} Value
             </span>
             <span style={{ width: '20%', fontSize: '13px' }}>
               Address of Token
