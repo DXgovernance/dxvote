@@ -46,9 +46,8 @@ export default class CoingeckoService {
         this.prices = pricesResponse[0].data;
 
         Object.keys(this.prices).map(tokenAddress => {
-          this.prices[web3.utils.toChecksumAddress(tokenAddress)] = this.prices[
-            tokenAddress
-          ];
+          this.prices[web3.utils.toChecksumAddress(tokenAddress)] =
+            this.prices[tokenAddress];
           delete this.prices[tokenAddress];
         });
 

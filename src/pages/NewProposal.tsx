@@ -199,10 +199,8 @@ const NewProposalPage = observer(() => {
   if (proposalTemplates[0].name !== 'Custom')
     proposalTemplates.unshift({ name: 'Custom', title: '', description: '' });
 
-  const {
-    assetLimits: transferLimits,
-    recommendedCalls,
-  } = daoStore.getSchemeRecommendedCalls(schemeToUse.address);
+  const { assetLimits: transferLimits, recommendedCalls } =
+    daoStore.getSchemeRecommendedCalls(schemeToUse.address);
   console.debug('[PERMISSIONS]', schemeToUse, transferLimits, recommendedCalls);
 
   let allowedToCall = [];
@@ -306,9 +304,8 @@ const NewProposalPage = observer(() => {
             if (call.functionName.length === 0) {
               callDataFunctionSignature = '0x0';
             } else {
-              callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(
-                call.functionName
-              );
+              callDataFunctionSignature =
+                library.eth.abi.encodeFunctionSignature(call.functionName);
             }
 
             if (call.dataValues.length > 0) {
