@@ -1,20 +1,25 @@
-import { action, observable } from 'mobx';
-import RootStore from 'stores/Root';
+import { makeObservable, observable, action } from 'mobx';
+import RootContext from '../contexts';
 
 export default class ModalStore {
-    @observable walletModalVisible: boolean;
-    rootStore: RootStore;
+  walletModalVisible: boolean;
+  context: RootContext;
 
-    constructor(rootStore) {
-        this.rootStore = rootStore;
-        this.walletModalVisible = false;
-    }
+  constructor(context) {
+    this.context = context;
+    this.walletModalVisible = false;
+    makeObservable(this, {
+      walletModalVisible: observable,
+      toggleWalletModal: action,
+      setWalletModalVisible: action,
+    });
+  }
 
-    @action toggleWalletModal() {
-        this.walletModalVisible = !this.walletModalVisible;
-    }
+  @action toggleWalletModal() {
+    this.walletModalVisible = !this.walletModalVisible;
+  }
 
-    @action setWalletModalVisible(visible: boolean) {
-        this.walletModalVisible = visible;
-    }
+  @action setWalletModalVisible(visible: boolean) {
+    this.walletModalVisible = visible;
+  }
 }

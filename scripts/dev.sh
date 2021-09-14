@@ -21,10 +21,9 @@ ganache_running() {
 
 time=date
 
-start_ganache() {
+start-hardhat_node() {
 
-  # Using 9000000 as gas limit and 10Gwei as gas price
-  npx ganache-cli --gasLimit 0x895440 --gasPrice 0x2540BE400 -d -m "$mnemonic" -e 5000 --time `date +"%F"T"%T"` > /dev/null &
+  npx hardhat node > /dev/null &
 
   ganache_pid=$!
 
@@ -34,34 +33,67 @@ start_ganache() {
     sleep 0.1 # wait for 1/10 of the second before check again
   done
 
-  echo "Ganache launched!"
+  echo "Harhat node launched!"
 }
 
 if ganache_running; then
-  echo "Using existing ganache instance"
+  echo "Using existing hardhat node instance"
 else
-  echo "Starting our own ganache instance"
-  start_ganache
+  echo "Starting our own hardhat node instance"
+  start-hardhat_node
 fi
 
-npx truffle version
-npx truffle compile --network development
-cp contracts/build/DxAvatar.json src/contracts/DxAvatar.json
-cp contracts/build/DxReputation.json src/contracts/DxReputation.json
-cp contracts/build/DxController.json src/contracts/DxController.json
-cp contracts/build/DXDVotingMachine.json src/contracts/DXDVotingMachine.json
-cp contracts/build/Multicall.json src/contracts/Multicall.json
-cp contracts/build/ERC20.json src/contracts/ERC20.json
-cp contracts/build/WalletScheme.json src/contracts/WalletScheme.json
-node scripts/deployContracts.js -- --network development
+# Compile your contracts and copy the compiled code into the src
+yarn hardhat compile
+cp artifacts/dxdao-contracts/contracts/dxdao/DxAvatar.sol/DxAvatar.json src/contracts/DxAvatar.json
+cp artifacts/dxdao-contracts/contracts/dxdao/DxReputation.sol/DxReputation.json src/contracts/DxReputation.json
+cp artifacts/dxdao-contracts/contracts/dxdao/DxController.sol/DxController.json src/contracts/DxController.json
+cp artifacts/dxdao-contracts/contracts/dxvote/DXDVotingMachine.sol/DXDVotingMachine.json src/contracts/DXDVotingMachine.json
+cp artifacts/dxdao-contracts/contracts/utils/Multicall.sol/Multicall.json src/contracts/Multicall.json
+cp artifacts/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol/ERC20.json src/contracts/ERC20.json
+cp artifacts/dxdao-contracts/contracts/dxvote/WalletScheme.sol/WalletScheme.json src/contracts/WalletScheme.json
+cp artifacts/dxdao-contracts/contracts/dxvote/PermissionRegistry.sol/PermissionRegistry.json src/contracts/PermissionRegistry.json
+cp artifacts/dxdao-contracts/contracts/daostack/universalSchemes/ContributionReward.sol/ContributionReward.json src/contracts/ContributionReward.json
+cp artifacts/dxdao-contracts/contracts/daostack/universalSchemes/SchemeRegistrar.sol/SchemeRegistrar.json src/contracts/SchemeRegistrar.json
+cp artifacts/dxdao-contracts/contracts/daostack/utils/Redeemer.sol/Redeemer.json src/contracts/Redeemer.json
+cp artifacts/@daostack/infra/contracts/votingMachines/GenesisProtocol.sol/GenesisProtocol.json src/contracts/GenesisProtocol.json
+
+# Disable isolatedModules and use commonjs in tsconfig
+contents="$(jq '.compilerOptions.isolatedModules = false' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+
+# Deploy local contracts
+yarn hardhat run --network localhost scripts/deployDevContracts.ts
+
+# Copy dxdao contracts addresses in live networks
+# cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
+
+# Run build cache
+REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
+REACT_APP_CONTROLLER_ADDRESS=`jq .controller .developmentAddresses.json` \
+REACT_APP_REPUTATION_ADDRESS=`jq .reputation .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachines.dxd.address .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachines.dxd.token .developmentAddresses.json` \
+REACT_APP_PERMISSION_REGISTRY_ADDRESS=`jq .permissionRegistry .developmentAddresses.json` \
+REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
+yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
+
+# Enable isolatedModules and use esnext as module in tsconfig
+contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+contents="$(jq '.compilerOptions.module = "esnext"' tsconfig.json)" && \
+echo "${contents}" > tsconfig.json
+
+# Run dapp with localhost contracts
 FORCE_COLOR=true \
 REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
 REACT_APP_CONTROLLER_ADDRESS=`jq .controller .developmentAddresses.json` \
 REACT_APP_REPUTATION_ADDRESS=`jq .reputation .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachine .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachineToken .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachines.dxd.address .developmentAddresses.json` \
+REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachines.dxd.token .developmentAddresses.json` \
+REACT_APP_PERMISSION_REGISTRY_ADDRESS=`jq .permissionRegistry .developmentAddresses.json` \
 REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
-REACT_APP_MASTER_WALLET_SCHEME_ADDRESS=`jq .masterWalletScheme .developmentAddresses.json` \
-REACT_APP_QUICK_WALLET_SCHEME_ADDRESS=`jq .quickWalletScheme .developmentAddresses.json` \
 SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-app-rewired start | cat

@@ -1,5 +1,5 @@
 name: deploy to gh-pages
-  
+
 on:
   push:
     branches:
@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -22,13 +21,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-          
       - name: Install Dependencies
         run: yarn
-      
       - name: Build
-        run: CI=false REACT_APP_ETH_NETWORKS=rinkeby NODE_ENV=production REACT_APP_VERSION=$npm_package_version yarn build
-        
+        run: CI=false yarn build
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
@@ -36,4 +32,3 @@ jobs:
           BRANCH: gh-pages # The branch the action should deploy to.
           FOLDER: build # The folder the action should deploy.
           CLEAN: true # Automatically remove deleted files from the deploy branch
-

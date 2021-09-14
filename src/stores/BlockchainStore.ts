@@ -1,39 +1,34 @@
-import RootStore from 'stores/Root';
-import { Call } from '../services/MulticallService';
-import { action, observable } from 'mobx';
+import RootContext from '../contexts';
+import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
-import { ContractType } from './ETHProvider';
-
-export interface StoreEntry {
-  contractType: string;
-  address: string;
-  method: string;
-  params?: any[];
-}
-
-export interface Entry {
-  contractType: string;
-  address: string;
-  method: string;
-  params: any[];
-  value: any;
-  lastFetched: number;
-}
+import { ContractType } from './Provider';
+import { bnum } from '../utils';
+import { getUpdatedCache } from '../cache';
 
 export default class BlockchainStore {
-  @observable activeFetchLoop: any;
-  @observable initialLoadComplete: boolean;
-  @observable store: object;
-  rootStore: RootStore;
+  activeFetchLoop: boolean = false;
+  initialLoadComplete: boolean;
+  contractStorage: ContractStorage = {};
+  eventsStorage: EventStorage = {};
+  context: RootContext;
 
-  constructor(rootStore) {
-    this.rootStore = rootStore;
-    this.store = {};
+  constructor(context) {
+    this.context = context;
+    makeObservable(this, {
+      activeFetchLoop: observable,
+      initialLoadComplete: observable,
+      updateStore: action,
+      fetchData: action,
+    });
   }
 
-  reduceMulticall(calls: Call[], results: any, blockNumber: number): Entry[] {
-    const { multicallService } = this.rootStore;
+  reduceMulticall(
+    calls: Call[],
+    results: any,
+    blockNumber: number
+  ): CallEntry[] {
+    const { multicallService } = this.context;
     return calls.map((call, index) => {
       const value = multicallService.decodeCall(call, results[index]);
       return {
@@ -41,25 +36,40 @@ export default class BlockchainStore {
         address: call.address,
         method: call.method,
         params: call.params,
-        value: value,
-        lastFetched: blockNumber,
+        response: {
+          value: value,
+          lastFetched: blockNumber,
+        },
       };
     });
   }
 
-  has(entry: StoreEntry): boolean {
+  async executeAndUpdateMulticall(multicallService) {
+    const multicallResponse = await multicallService.executeCalls();
+    this.updateStore(
+      this.reduceMulticall(
+        multicallResponse.calls,
+        multicallResponse.results,
+        multicallResponse.blockNumber
+      ),
+      multicallResponse.blockNumber
+    );
+    multicallService.resetActiveCalls();
+  }
+
+  has(entry: Call): boolean {
     const params = entry.params ? entry.params : [];
     return (
-      !!this.store[entry.contractType] &&
-      !!this.store[entry.contractType][entry.address] &&
-      !!this.store[entry.contractType][entry.address][entry.method] &&
-      !!this.store[entry.contractType][entry.address][entry.method][
+      !!this.contractStorage[entry.contractType] &&
+      !!this.contractStorage[entry.contractType][entry.address] &&
+      !!this.contractStorage[entry.contractType][entry.address][entry.method] &&
+      !!this.contractStorage[entry.contractType][entry.address][entry.method][
         params.toString()
       ]
     );
   }
 
-  getCachedValue(entry: StoreEntry) {
+  getCachedValue(entry: Call) {
     if (this.has(entry)) {
       return this.get(entry).value.toString();
     } else {
@@ -67,409 +77,187 @@ export default class BlockchainStore {
     }
   }
 
-  get(entry: StoreEntry): Entry | undefined {
+  getCachedEvents(address: string, eventName: string) {
+    if (this.eventsStorage[address] && this.eventsStorage[address][eventName])
+      return this.eventsStorage[address][eventName].emitions;
+    else return [];
+  }
+
+  get(entry: Call): CallValue | undefined {
     if (this.has(entry)) {
       const params = entry.params ? entry.params : [];
-      return this.store[entry.contractType][entry.address][entry.method][
-        params.toString()
-      ];
+      return this.contractStorage[entry.contractType][entry.address][
+        entry.method
+      ][params.toString()];
     } else {
       return undefined;
     }
   }
 
-  @action updateStore(entries: Entry[], blockNumber: number) {
-    entries.forEach((entry) => {
+  updateStore(entries: CallEntry[], blockNumber: number) {
+    entries.forEach(entry => {
       const params = entry.params ? entry.params : [];
-      if (!this.store[entry.contractType]) {
-        this.store[entry.contractType] = {};
+      if (!this.contractStorage[entry.contractType]) {
+        this.contractStorage[entry.contractType] = {};
       }
 
-      if (!this.store[entry.contractType][entry.address]) {
-        this.store[entry.contractType][entry.address] = {};
-      }
-
-      if (!this.store[entry.contractType][entry.address][entry.method]) {
-        this.store[entry.contractType][entry.address][entry.method] = {};
+      if (!this.contractStorage[entry.contractType][entry.address]) {
+        this.contractStorage[entry.contractType][entry.address] = {};
       }
 
       if (
-        !this.store[entry.contractType][entry.address][entry.method][
-          params.toString()
-        ]
+        !this.contractStorage[entry.contractType][entry.address][entry.method]
       ) {
-        this.store[entry.contractType][entry.address][entry.method][
-          params.toString()
+        this.contractStorage[entry.contractType][entry.address][
+          entry.method
         ] = {};
       }
 
-      const oldEntry = this.store[entry.contractType][entry.address][entry.method][
-        params.toString()
-      ];
-
-      // Set if never fetched, or if the new data isn't stale
-      if (!oldEntry.lastFetched || (oldEntry.lastFetched && oldEntry.lastFetched <= blockNumber)) {
-        this.store[entry.contractType][entry.address][entry.method][
+      if (
+        !this.contractStorage[entry.contractType][entry.address][entry.method][
+          params.toString()
+        ]
+      ) {
+        this.contractStorage[entry.contractType][entry.address][entry.method][
           params.toString()
         ] = {
-          value: entry.value,
-          lastFetched: entry.lastFetched,
+          value: entry.response.value,
+          lastFetched: entry.response.lastFetched,
+        };
+      }
+
+      const oldEntry = this.contractStorage[entry.contractType][entry.address][
+        entry.method
+      ][params.toString()];
+
+      // Set if never fetched, or if the new data isn't stale
+      if (
+        !oldEntry.lastFetched ||
+        (oldEntry.lastFetched && oldEntry.lastFetched <= blockNumber)
+      ) {
+        this.contractStorage[entry.contractType][entry.address][entry.method][
+          params.toString()
+        ] = {
+          value: entry.response.value,
+          lastFetched: entry.response.lastFetched,
         };
       }
     });
   }
-    
-  @action fetchData(web3React: Web3ReactContextInterface) {
-    if (web3React && web3React.active && isChainIdSupported(web3React.chainId)) {
-      const { library, account, chainId } = web3React;
-      const {
-        providerStore,
-        configStore,
-        multicallService,
-        transactionStore,
-        ipfsService
-      } = this.rootStore;
 
-      library.eth.getBlockNumber().then((blockNumber) => {
-        const lastCheckedBlock = providerStore.getCurrentBlockNumber();
-
-        if (blockNumber !== lastCheckedBlock) {
-          console.debug('[Fetch Loop] Fetch Blockchain Data', { blockNumber, account, chainId });
-          
-          //------------------------
-          // First Multicall Round
-          //------------------------
-          
-          multicallService.addCalls([{
-            contractType: ContractType.WalletScheme,
-            address: configStore.getMasterWalletSchemeAddress(),
-            method: 'voteParams'
-          },{
-            contractType: ContractType.WalletScheme,
-            address: configStore.getMasterWalletSchemeAddress(),
-            method: 'getOrganizationProposals'
-          },{
-            contractType: ContractType.WalletScheme,
-            address: configStore.getQuickWalletSchemeAddress(),
-            method: 'voteParams'
-          },{
-            contractType: ContractType.WalletScheme,
-            address: configStore.getQuickWalletSchemeAddress(),
-            method: 'getOrganizationProposals'
-          }]);
-          
-
-          multicallService.executeCalls(
-            multicallService.activeCalls,
-            multicallService.activeCallsRaw
-          ).then(async (response) => {
-            
-            const { calls, results, blockNumber } = response;
-            const updates = this.reduceMulticall(calls, results, blockNumber);
-            this.updateStore(updates, blockNumber);
-            multicallService.resetActiveCalls();
-            
-            //------------------------
-            // Second Multicall Round
-            //------------------------
-            
-            // Get user-specific blockchain data
-            if (account) {
-              transactionStore.checkPendingTransactions(web3React, account);
-              multicallService.addCalls([{
-                contractType: ContractType.Multicall,
-                address: configStore.getMulticallAddress(),
-                method: 'getEthBalance',
-                params: [account],
-              },{
-                contractType: ContractType.Reputation,
-                address: configStore.getReputationAddress(),
-                method: 'balanceOf',
-                params: [account],
-              },{
-                contractType: ContractType.ERC20,
-                address: configStore.getVotingMachineTokenAddress(),
-                method: 'balanceOf',
-                params: [account],
-              },{
-                contractType: ContractType.ERC20,
-                address: configStore.getVotingMachineTokenAddress(),
-                method: 'allowance',
-                params: [account, configStore.getVotingMachineAddress()],
-              }]);
-            }
-
-            multicallService.addCalls([{
-              contractType: ContractType.Reputation,
-              address: configStore.getReputationAddress(),
-              method: 'totalSupply',
-              params: [],
-            },{
-              contractType: ContractType.Multicall,
-              address: configStore.getMulticallAddress(),
-              method: 'getEthBalance',
-              params: [configStore.getAvatarAddress()],
-            },{
-              contractType: ContractType.Multicall,
-              address: configStore.getMulticallAddress(),
-              method: 'getEthBalance',
-              params: [configStore.getVotingMachineAddress()],
-            },{
-              contractType: ContractType.Multicall,
-              address: configStore.getMulticallAddress(),
-              method: 'getEthBalance',
-              params: [configStore.getQuickWalletSchemeAddress()],
-            },{
-              contractType: ContractType.Multicall,
-              address: configStore.getMulticallAddress(),
-              method: 'getEthBalance',
-              params: [configStore.getMasterWalletSchemeAddress()],
-            },,{
-              contractType: ContractType.Controller,
-              address: configStore.getControllerAddress(),
-              method: 'getSchemePermissions',
-              params: [configStore.getQuickWalletSchemeAddress(), configStore.getAvatarAddress()],
-            },{
-              contractType: ContractType.Controller,
-              address: configStore.getControllerAddress(),
-              method: 'getSchemePermissions',
-              params: [configStore.getMasterWalletSchemeAddress(), configStore.getAvatarAddress()],
-            },{
-              contractType: ContractType.WalletScheme,
-              address: configStore.getMasterWalletSchemeAddress(),
-              method: 'votingMachine',
-              params: []
-            },{
-              contractType: ContractType.WalletScheme,
-              address: configStore.getMasterWalletSchemeAddress(),
-              method: 'toAddress',
-              params: []
-            },{
-              contractType: ContractType.WalletScheme,
-              address: configStore.getQuickWalletSchemeAddress(),
-              method: 'votingMachine',
-              params: []
-            },{
-              contractType: ContractType.WalletScheme,
-              address: configStore.getQuickWalletSchemeAddress(),
-              method: 'toAddress',
-              params: []
-            },{
-              contractType: ContractType.VotingMachine,
-              address: configStore.getVotingMachineAddress(),
-              method: 'orgBoostedProposalsCnt',
-              params: [library.utils.soliditySha3(configStore.getMasterWalletSchemeAddress(), configStore.getAvatarAddress())]
-            },{
-              contractType: ContractType.VotingMachine,
-              address: configStore.getVotingMachineAddress(),
-              method: 'orgBoostedProposalsCnt',
-              params: [library.utils.soliditySha3(configStore.getQuickWalletSchemeAddress(), configStore.getAvatarAddress())]
-            }]);
-            
-            const masterWalletSchemeProposalIds = this.getCachedValue({
-                contractType: ContractType.WalletScheme,
-                address: configStore.getMasterWalletSchemeAddress(),
-                method: 'getOrganizationProposals',
-            }).split(",")
-            for (let pIndex = 0; pIndex < masterWalletSchemeProposalIds.length; pIndex++) {
-              if (masterWalletSchemeProposalIds[pIndex] != "")
-                multicallService.addCalls([{
-                    contractType: ContractType.WalletScheme,
-                    address: configStore.getMasterWalletSchemeAddress(),
-                    method: 'getOrganizationProposal',
-                    params:[masterWalletSchemeProposalIds[pIndex]]
-                  },{
-                    contractType: ContractType.WalletScheme,
-                    address: configStore.getMasterWalletSchemeAddress(),
-                    method: 'proposalsInfo',
-                    params:[configStore.getVotingMachineAddress(), masterWalletSchemeProposalIds[pIndex]]
-                  },{
-                    contractType: ContractType.VotingMachine,
-                    address: configStore.getVotingMachineAddress(),
-                    method: 'proposals',
-                    params:[masterWalletSchemeProposalIds[pIndex]]
-                  },{
-                    contractType: ContractType.VotingMachine,
-                    address: configStore.getVotingMachineAddress(),
-                    method: 'getProposalTimes',
-                    params:[masterWalletSchemeProposalIds[pIndex]]
-                  },,{
-                    contractType: ContractType.VotingMachine,
-                    address: configStore.getVotingMachineAddress(),
-                    method: 'proposalStatusWithVotes',
-                    params:[masterWalletSchemeProposalIds[pIndex]]
-                  },{
-                    contractType: ContractType.VotingMachine,
-                    address: configStore.getVotingMachineAddress(),
-                    method: 'shouldBoost',
-                    params:[masterWalletSchemeProposalIds[pIndex]]
-                  }]);
-            }
-            
-            const quickWalletSchemeTotalProposalIds = this.getCachedValue({
-                contractType: ContractType.WalletScheme,
-                address: configStore.getQuickWalletSchemeAddress(),
-                method: 'getOrganizationProposals',
-            }).split(",")
-            for (let pIndex = 0; pIndex < quickWalletSchemeTotalProposalIds.length; pIndex++) {
-              if (quickWalletSchemeTotalProposalIds[pIndex] != "")
-                multicallService.addCalls([{
-                  contractType: ContractType.WalletScheme,
-                  address: configStore.getQuickWalletSchemeAddress(),
-                  method: 'getOrganizationProposal',
-                  params:[quickWalletSchemeTotalProposalIds[pIndex]]
-                },{
-                  contractType: ContractType.WalletScheme,
-                  address: configStore.getQuickWalletSchemeAddress(),
-                  method: 'proposalsInfo',
-                  params:[configStore.getVotingMachineAddress(), quickWalletSchemeTotalProposalIds[pIndex]]
-                },{
-                  contractType: ContractType.VotingMachine,
-                  address: configStore.getVotingMachineAddress(),
-                  method: 'proposals',
-                  params:[quickWalletSchemeTotalProposalIds[pIndex]]
-                },{
-                  contractType: ContractType.VotingMachine,
-                  address: configStore.getVotingMachineAddress(),
-                  method: 'getProposalTimes',
-                  params:[quickWalletSchemeTotalProposalIds[pIndex]]
-                },{
-                  contractType: ContractType.VotingMachine,
-                  address: configStore.getVotingMachineAddress(),
-                  method: 'proposalStatusWithVotes',
-                  params:[quickWalletSchemeTotalProposalIds[pIndex]]
-                },{
-                  contractType: ContractType.VotingMachine,
-                  address: configStore.getVotingMachineAddress(),
-                  method: 'shouldBoost',
-                  params:[quickWalletSchemeTotalProposalIds[pIndex]]
-                }]);
-            }
-            
-            // Get parameters information using the parameterHash from first multicall round
-            const masterWalletSchemeParamHash = this.getCachedValue({
-                contractType: ContractType.WalletScheme,
-                address: configStore.getMasterWalletSchemeAddress(),
-                method: 'voteParams',
-            })
-            if (masterWalletSchemeParamHash) {
-              multicallService.addCalls([{
-                contractType: ContractType.VotingMachine,
-                address: configStore.getVotingMachineAddress(),
-                method: 'parameters',
-                params: [masterWalletSchemeParamHash]
-              }])
-            }
-            const quickWalletSchemeParamHash = this.getCachedValue({
-                contractType: ContractType.WalletScheme,
-                address: configStore.getQuickWalletSchemeAddress(),
-                method: 'voteParams',
-            })
-            if (quickWalletSchemeParamHash) {
-              multicallService.addCalls([{
-                contractType: ContractType.VotingMachine,
-                address: configStore.getVotingMachineAddress(),
-                method: 'parameters',
-                params: [quickWalletSchemeParamHash]
-              }])
-            }
-
-            multicallService.executeCalls(
-              multicallService.activeCalls,
-              multicallService.activeCallsRaw
-            ).then(async (response) => {
-              const { calls, results, blockNumber } = response;
-              const updates = this.reduceMulticall(calls, results, blockNumber);
-              this.updateStore(updates, blockNumber);
-              
-              for (let pIndex = 0; pIndex < masterWalletSchemeProposalIds.length; pIndex++) {
-                const proposalInformation = this.getCachedValue({
-                    contractType: ContractType.WalletScheme,
-                    address: configStore.getMasterWalletSchemeAddress(),
-                    method: 'getOrganizationProposal',
-                    params: masterWalletSchemeProposalIds[pIndex]
-                });
-                if (proposalInformation && proposalInformation.split(",").length > 0)
-                  ipfsService.call(proposalInformation.split(",")[proposalInformation.split(",").length -1]);
-                  
-                const proposalCallBackInformation = this.getCachedValue({
-                    contractType: ContractType.WalletScheme,
-                    address: configStore.getMasterWalletSchemeAddress(),
-                    method: 'proposalsInfo',
-                    params: [configStore.getVotingMachineAddress(), masterWalletSchemeProposalIds[pIndex]]
-                });
-                multicallService.addCalls([{
-                  contractType: ContractType.Reputation,
-                  address: configStore.getReputationAddress(),
-                  method: 'totalSupplyAt',
-                  params: [proposalCallBackInformation.split(',')[0]]
-                }])
-              }
-              for (let pIndex = 0; pIndex < quickWalletSchemeTotalProposalIds.length; pIndex++) {
-                const proposalInformation = this.getCachedValue({
-                    contractType: ContractType.WalletScheme,
-                    address: configStore.getQuickWalletSchemeAddress(),
-                    method: 'getOrganizationProposal',
-                    params: quickWalletSchemeTotalProposalIds[pIndex]
-                });
-                if (proposalInformation && proposalInformation.split(",").length > 0)
-                  ipfsService.call(proposalInformation.split(",")[proposalInformation.split(",").length -1]);
-                  
-                const proposalCallBackInformation = this.getCachedValue({
-                    contractType: ContractType.WalletScheme,
-                    address: configStore.getQuickWalletSchemeAddress(),
-                    method: 'proposalsInfo',
-                    params: [configStore.getVotingMachineAddress(), quickWalletSchemeTotalProposalIds[pIndex]]
-                });
-                multicallService.addCalls([{
-                  contractType: ContractType.Reputation,
-                  address: configStore.getReputationAddress(),
-                  method: 'totalSupplyAt',
-                  params: [proposalCallBackInformation.split(',')[0]]
-                }])
-              }
-              multicallService.executeCalls(
-                multicallService.activeCalls,
-                multicallService.activeCallsRaw
-              ).then(async (response) => {
-                
-                const { calls, results, blockNumber } = response;
-                const updates = this.reduceMulticall(calls, results, blockNumber);
-                this.updateStore(updates, blockNumber);
-
-                if (!this.initialLoadComplete) {
-                  this.initialLoadComplete = true;
-                }
-                providerStore.setCurrentBlockNumber(blockNumber);
-                multicallService.resetActiveCalls();
-              })
-              .catch((e) => {
-                // TODO: Retry on failure, unless stale.
-                console.error(e);
-              });
-              
-            })
-            .catch((e) => {
-              // TODO: Retry on failure, unless stale.
-              console.error(e);
-            });
-          })
-          .catch((e) => {
-            // TODO: Retry on failure, unless stale.
-            console.error(e);
-          });
-        }
-      }).catch((error) => {
-        console.error('[Fetch Loop Failure]', {
-          web3React,
+  async fetchData(web3React: Web3ReactContextInterface, reset: boolean) {
+    if (
+      !this.activeFetchLoop ||
+      (reset &&
+        web3React &&
+        web3React.active &&
+        isChainIdSupported(web3React.chainId))
+    ) {
+      this.initialLoadComplete = reset ? false : this.initialLoadComplete;
+      this.activeFetchLoop = true;
+      try {
+        const { library, chainId } = web3React;
+        const {
           providerStore,
-          chainId,
-          account,
-          library,
-          error,
-        });
-        providerStore.setCurrentBlockNumber(undefined);
-      });
+          configStore,
+          multicallService,
+          ipfsService,
+          daoStore,
+        } = this.context;
+        const networkName = configStore.getActiveChainName();
+
+        if (!daoStore.getCache()) {
+          console.debug(
+            '[IPFS Cache Fetch]',
+            networkName,
+            configStore.getCacheIPFSHash(networkName)
+          );
+          daoStore.setCache(
+            daoStore.parseCache(
+              await ipfsService.getContentFromIPFS(
+                configStore.getCacheIPFSHash(networkName)
+              )
+            )
+          );
+        }
+        let networkCache = daoStore.getCache();
+
+        const blockNumber = (await library.eth.getBlockNumber()) - 1;
+        const lastCheckedBlockNumber = networkCache.l1BlockNumber;
+
+        if (blockNumber > lastCheckedBlockNumber) {
+          console.debug(
+            '[Fetch Loop] Fetch Blockchain Data',
+            blockNumber,
+            chainId
+          );
+
+          const fromBlock = lastCheckedBlockNumber + 1;
+          const toBlock = blockNumber;
+          const networkContracts = configStore.getNetworkContracts();
+          networkCache = await getUpdatedCache(
+            networkCache,
+            networkContracts,
+            fromBlock,
+            toBlock,
+            library
+          );
+
+          let tokensBalancesCalls = [];
+          const tokens = configStore.getTokensToFetchPrice();
+
+          tokens.map(token => {
+            if (!networkCache.daoInfo.tokenBalances[token.address])
+              tokensBalancesCalls.push({
+                contractType: ContractType.ERC20,
+                address: token.address,
+                method: 'balanceOf',
+                params: [networkContracts.avatar],
+              });
+            Object.keys(networkCache.schemes).map(schemeAddress => {
+              if (
+                networkCache.schemes[schemeAddress].controllerAddress !==
+                networkContracts.controller
+              )
+                tokensBalancesCalls.push({
+                  contractType: ContractType.ERC20,
+                  address: token.address,
+                  method: 'balanceOf',
+                  params: [schemeAddress],
+                });
+            });
+          });
+
+          if (tokensBalancesCalls.length > 0)
+            multicallService.addCalls(tokensBalancesCalls);
+          await this.executeAndUpdateMulticall(multicallService);
+
+          tokensBalancesCalls.map(tokensBalancesCall => {
+            if (tokensBalancesCall.params[0] === networkContracts.avatar) {
+              networkCache.daoInfo.tokenBalances[tokensBalancesCall.address] =
+                this.context.blockchainStore.getCachedValue(
+                  tokensBalancesCall
+                ) || bnum(0);
+            } else {
+              networkCache.schemes[tokensBalancesCall.params[0]].tokenBalances[
+                tokensBalancesCall.address
+              ] =
+                this.context.blockchainStore.getCachedValue(
+                  tokensBalancesCall
+                ) || bnum(0);
+            }
+          });
+
+          networkCache.l1BlockNumber = toBlock;
+          providerStore.setCurrentBlockNumber(toBlock);
+        }
+        daoStore.setCache(networkCache);
+
+        this.initialLoadComplete = true;
+        this.activeFetchLoop = false;
+      } catch (error) {
+        this.activeFetchLoop = false;
+      }
     }
   }
 }

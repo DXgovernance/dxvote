@@ -1,28 +1,97 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 import { createWeb3ReactRoot } from '@web3-react/core';
-import 'index.css';
-import App from 'App';
-import * as serviceWorker from './serviceWorker';
-import { web3ContextNames } from 'provider/connectors';
-import ThemeProvider, { GlobalStyle } from './theme';
+import Web3ReactManager from 'components/Web3ReactManager';
 import Web3 from 'web3';
+import moment from 'moment';
+
+import * as serviceWorker from './serviceWorker';
+
+import 'index.css';
+import ThemeProvider, { GlobalStyle } from './theme';
+
+import { web3ContextNames } from 'provider/connectors';
+
+import Header from './components/Header';
+import Footer from './components/Footer';
+import PageRouter from './PageRouter';
+
+import ProposalsPage from './pages/Proposals';
+import NewProposalPage from './pages/NewProposal';
+import UserPage from './pages/User';
+import ProposalPage from './pages/Proposal';
+import InfoPage from './pages/Info';
+import ConfigPage from './pages/Configuration';
+import FAQPage from './pages/FAQ';
+import ForumPage from './pages/Forum';
+
+moment.updateLocale('en', {
+  relativeTime: {
+    s: '1 second',
+    m: '1 minute',
+    h: '1 hour',
+    d: '1 day',
+  },
+});
 
 const Web3ProviderInjected = createWeb3ReactRoot(web3ContextNames.injected);
 
 function getLibrary(provider) {
-    return new Web3(provider);
+  return new Web3(provider);
 }
 
 const Root = (
-      <Web3ProviderInjected getLibrary={getLibrary}>
-          <ThemeProvider>
-              <>
-                  <GlobalStyle />
-                  <App />
-              </>
-          </ThemeProvider>
-      </Web3ProviderInjected>
+  <Web3ProviderInjected getLibrary={getLibrary}>
+    <ThemeProvider>
+      <GlobalStyle />
+      <HashRouter>
+        <Switch>
+          <Web3ReactManager>
+            <Header />
+            <PageRouter>
+              <Route exact path="/">
+                {' '}
+                <ProposalsPage />{' '}
+              </Route>
+              <Route exact path="/config">
+                {' '}
+                <ConfigPage />{' '}
+              </Route>
+              <Route exact path="/forum">
+                {' '}
+                <ForumPage />{' '}
+              </Route>
+              <Route exact path="/faq">
+                {' '}
+                <FAQPage />{' '}
+              </Route>
+              <Route exact path="/:network/proposals">
+                {' '}
+                <ProposalsPage />{' '}
+              </Route>
+              <Route exact path="/:network/new">
+                {' '}
+                <NewProposalPage />{' '}
+              </Route>
+              <Route exact path="/:network/info">
+                {' '}
+                <InfoPage />{' '}
+              </Route>
+              <Route exact path="/:network/user/:address">
+                {' '}
+                <UserPage />{' '}
+              </Route>
+              <Route exact path="/:network/proposal/:proposalId">
+                {' '}
+                <ProposalPage />{' '}
+              </Route>
+            </PageRouter>
+            <Footer />
+          </Web3ReactManager>
+        </Switch>
+      </HashRouter>
+    </ThemeProvider>
+  </Web3ProviderInjected>
 );
 ReactDOM.render(Root, document.getElementById('root'));
 

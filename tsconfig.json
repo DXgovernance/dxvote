@@ -4,8 +4,8 @@
     "noImplicitAny": false,
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es5",
-    "jsx": "react",
+    "target": "es2018",
+    "jsx": "react-jsx",
     "baseUrl": "src",
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -21,20 +21,28 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
     "noEmit": true,
     "declaration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": [
+      "./src/types"
+    ]
   },
   "include": [
-    "src/*"
+    "src",
+    "scritps"
   ],
   "exclude": [
     "node_modules",
-    "./node_modules",
-    "./node_modules/*"
+    "build",
+    "cache",
+    "artifacts",
+    "public"
   ]
 }
