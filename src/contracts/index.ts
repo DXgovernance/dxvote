@@ -35,11 +35,11 @@ export const getContracts = async function (
   );
   const vestingFactory = await new web3.eth.Contract(
     DXDVestingFactory.abi,
-    networkConfig.utils.DXDVestingFactory
+    networkConfig.utils.dxdVestingFactory
   );
   const NFT = await new web3.eth.Contract(
     DXdaoNFT.abi,
-    networkConfig.utils.DXdaoNFT
+    networkConfig.utils.dXDaoNFT
   );
 
   let votingMachines = {};
