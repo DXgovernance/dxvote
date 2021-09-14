@@ -108,9 +108,8 @@ export default class BlockchainStore {
       if (
         !this.contractStorage[entry.contractType][entry.address][entry.method]
       ) {
-        this.contractStorage[entry.contractType][entry.address][
-          entry.method
-        ] = {};
+        this.contractStorage[entry.contractType][entry.address][entry.method] =
+          {};
       }
 
       if (
@@ -126,9 +125,10 @@ export default class BlockchainStore {
         };
       }
 
-      const oldEntry = this.contractStorage[entry.contractType][entry.address][
-        entry.method
-      ][params.toString()];
+      const oldEntry =
+        this.contractStorage[entry.contractType][entry.address][entry.method][
+          params.toString()
+        ];
 
       // Set if never fetched, or if the new data isn't stale
       if (
@@ -165,24 +165,26 @@ export default class BlockchainStore {
           daoStore,
         } = this.context;
         const networkName = configStore.getActiveChainName();
+        const blockNumber = (await library.eth.getBlockNumber()) - 1;
+        let networkCache = JSON.parse(
+          localStorage.getItem(`dxvote--cache-${networkName}`)
+        );
 
-        if (!daoStore.getCache()) {
+        // Fetch cache from ipfs if not in localStorage or > ~4 days old
+        if (!networkCache || blockNumber - networkCache.l1BlockNumber > 25600) {
           console.debug(
             '[IPFS Cache Fetch]',
             networkName,
             configStore.getCacheIPFSHash(networkName)
           );
-          daoStore.setCache(
-            daoStore.parseCache(
-              await ipfsService.getContentFromIPFS(
-                configStore.getCacheIPFSHash(networkName)
-              )
+          networkCache = daoStore.parseCache(
+            await ipfsService.getContentFromIPFS(
+              configStore.getCacheIPFSHash(networkName)
             )
           );
+          daoStore.setCache(networkCache);
         }
-        let networkCache = daoStore.getCache();
 
-        const blockNumber = (await library.eth.getBlockNumber()) - 1;
         const lastCheckedBlockNumber = networkCache.l1BlockNumber;
 
         if (blockNumber > lastCheckedBlockNumber) {
@@ -251,7 +253,12 @@ export default class BlockchainStore {
           networkCache.l1BlockNumber = toBlock;
           providerStore.setCurrentBlockNumber(toBlock);
         }
+
         daoStore.setCache(networkCache);
+        localStorage.setItem(
+          `dxvote--cache-${networkName}`,
+          JSON.stringify(networkCache)
+        );
 
         this.initialLoadComplete = true;
         this.activeFetchLoop = false;
