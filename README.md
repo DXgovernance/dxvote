@@ -6,6 +6,20 @@
 
 With the requirements mentioned above DXdao built DXvote, an application that instead of trusting external and centralized services commonly used by other dapps DXvote brings complete control and maintenance responsibilities to the DXdao members, a huge responsibility that brings the decentralized freedom that DXdao needs.
 
+## Versions
+
+### Stable Release
+
+Hosted in https://dxvote.eth.link/ and under control of dxdao.
+
+### Release Candidate
+
+Source code of master branch built and hosted in github.io in https://dxgovernance.github.io/dxvote/ and under control of DXgovernance code owners.
+
+### Developer Version
+
+Source code of developer branch built and hosted in netlify in https://dxvote-dev.netlify.app/ and under control of DXgovernance developers.
+
 ## Maintenance
 
 Like we mention before the maintenance of the dapp is in charge of the users of it, this does not mean that they have to work full time to make the DAO worked, truth be told the maintenance of the application is not hard.
