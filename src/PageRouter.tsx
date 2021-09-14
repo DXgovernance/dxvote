@@ -58,7 +58,7 @@ const PageRouter = observer(({ children }) => {
         <LoadingBox>
           <div className="loader">
             {' '}
-            <FiZapOff /> <br /> Connect to metamask{' '}
+            <FiZapOff /> <br /> Connect to your wallet{' '}
           </div>
         </LoadingBox>
       </PageRouterWrapper>

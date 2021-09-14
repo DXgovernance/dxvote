@@ -31,7 +31,6 @@ const Web3ReactManager = ({ children }) => {
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect();
 
-  let walletInstalled = true;
   try {
     // @ts-ignore
     ethereum.on('chainChanged', chainId => {
@@ -51,8 +50,7 @@ const Web3ReactManager = ({ children }) => {
       if (networkActive) userStore.update(providerStore.getActiveWeb3React());
     });
   } catch (error) {
-    console.error(error);
-    walletInstalled = false;
+    console.debug('[Web3ReactManager] Render: Ethereum Provider not available.');
   }
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
@@ -97,21 +95,7 @@ const Web3ReactManager = ({ children }) => {
     return null;
   }
 
-  if (!walletInstalled) {
-    console.debug(
-      '[Web3ReactManager] Render: Metamask wallet not installed, showing modal error.'
-    );
-    return (
-      <div>
-        <OverBlurModal>
-          <div className="connectModalContent">
-            Metamask wallet not installed
-          </div>
-        </OverBlurModal>
-        <BlurWrapper>{children}</BlurWrapper>
-      </div>
-    );
-  } else if (networkError) {
+  if (networkError) {
     console.debug(
       '[Web3ReactManager] Render: Network error, showing modal error.'
     );
