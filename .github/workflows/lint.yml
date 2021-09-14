@@ -1,4 +1,4 @@
-name: CI
+name: code linter
 
 on: [push, pull_request]
   branches-ignore:
