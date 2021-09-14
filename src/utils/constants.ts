@@ -27,6 +27,15 @@ export const NETWORK_IDS = {
   localhost: 1337,
 };
 
+const INFURA_API_KEY = process.env.REACT_APP_KEY_INFURA_API_KEY;
+export const NETWORK_RPC_URLS = {
+  1: `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
+  4: `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,
+  100: 'https://rpc.xdaichain.com',
+  42161: `https://arbitrum-mainnet.infura.io/v3/${INFURA_API_KEY}`,
+  421611: `https://arbitrum-rinkeby.infura.io/v3/${INFURA_API_KEY}`,
+};
+
 export const NETWORK_ASSET_SYMBOL = {
   mainnet: 'ETH',
   rinkeby: 'ETH',

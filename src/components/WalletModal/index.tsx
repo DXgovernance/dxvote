@@ -186,6 +186,7 @@ const WalletModal = observer(() => {
                   tryActivation(option.connector);
               }}
               key={key}
+              icon={option.icon}
               active={option.connector && option.connector === connector}
               color={option.color}
               link={option.href}
@@ -206,6 +207,7 @@ const WalletModal = observer(() => {
               <Option
                 key={key}
                 color={'#E8831D'}
+                icon={option.icon}
                 header={'Install Metamask'}
                 subheader={null}
                 link={'https://metamask.io/'}
@@ -238,6 +240,7 @@ const WalletModal = observer(() => {
             key={key}
             active={option.connector === connector}
             color={option.color}
+            icon={option.icon}
             link={option.href}
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
