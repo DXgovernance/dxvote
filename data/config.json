@@ -1840,7 +1840,7 @@
         "decodeText": "Create new vesting contract with beneficiary [PARAM_0], start date  of [PARAM_1], cliff duration of [PARAMS_2], duration of [PARAM_3] and value of [PARAM_4]"
       },
       {
-        "asset": "0xDC50FE5862D5541C6D0b9B07f15Fe016Cdacb431",
+        "asset": "0x0000000000000000000000000000000000000000",
         "from": "0x6370B3Ba7D9bAd94b35dC9073540E562bDe5Fdc3",
         "to": "0xDC50FE5862D5541C6D0b9B07f15Fe016Cdacb431",
         "toName": "DXdao NFT",
