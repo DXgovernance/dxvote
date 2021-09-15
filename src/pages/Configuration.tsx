@@ -30,7 +30,7 @@ const InputBox = styled.input`
 
 const ConfigPage = observer(() => {
   const {
-    context: { configStore, pinataService, etherscanService },
+    context: { configStore, pinataService, etherscanService, infuraService },
   } = useContext();
 
   const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(
@@ -38,6 +38,9 @@ const ConfigPage = observer(() => {
   );
   const [pinataKeyStatus, setPinataKeyStatus] = React.useState(
     pinataService.auth
+  );
+  const [infuraKeyStatus, setInfuraKeyStatus] = React.useState(
+    infuraService.auth
   );
 
   const [localConfig, setLocalConfig] = React.useState(
@@ -58,8 +61,10 @@ const ConfigPage = observer(() => {
   async function testApis() {
     await pinataService.isAuthenticated();
     await etherscanService.isAuthenticated();
+    await infuraService.isAuthenticated();
     setPinataKeyStatus(pinataService.auth);
     setEtherscanApiStatus(etherscanService.auth);
+    setInfuraKeyStatus(infuraService.auth);
   }
 
   async function pinDXvoteHashes() {
@@ -105,6 +110,21 @@ const ConfigPage = observer(() => {
         ></InputBox>
         <span style={{ height: '34px', padding: '10px 0px' }}>
           {pinataKeyStatus ? <FiCheckCircle /> : <FiX />}
+        </span>
+      </Row>
+      <Row style={{ maxWidth: '500px' }}>
+        <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
+          Infura:
+        </span>
+        <InputBox
+          type="text"
+          serviceName="infura"
+          onChange={event => onApiKeyValueChange(event.target.value, 'infura')}
+          value={localConfig.infura}
+          style={{ width: '100%' }}
+        ></InputBox>
+        <span style={{ height: '34px', padding: '10px 0px' }}>
+          {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
         </span>
       </Row>
       <Row style={{ maxWidth: '500px' }}>
