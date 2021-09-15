@@ -18,6 +18,13 @@ export const NETWORK_NAMES = {
   '1337': 'localhost',
 };
 
+export const INFURA_NETWORK_NAMES = {
+  '1': 'mainnet',
+  '4': 'rinkeby',
+  '42161': 'arbitrum-mainnet',
+  '421611': 'arbitrum-rinkeby',
+};
+
 export const NETWORK_IDS = {
   mainnet: 1,
   rinkeby: 4,
@@ -25,15 +32,6 @@ export const NETWORK_IDS = {
   arbitrum: 42161,
   arbitrumTestnet: 421611,
   localhost: 1337,
-};
-
-const INFURA_API_KEY = process.env.REACT_APP_KEY_INFURA_API_KEY;
-export const NETWORK_RPC_URLS = {
-  1: `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
-  4: `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,
-  100: 'https://rpc.xdaichain.com',
-  42161: `https://arbitrum-mainnet.infura.io/v3/${INFURA_API_KEY}`,
-  421611: `https://arbitrum-rinkeby.infura.io/v3/${INFURA_API_KEY}`,
 };
 
 export const NETWORK_ASSET_SYMBOL = {

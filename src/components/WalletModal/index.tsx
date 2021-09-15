@@ -9,7 +9,7 @@ import Option from './Option';
 import { usePrevious } from 'utils';
 import Link from '../../components/common/Link';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
-import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
+import { injected, getWallets } from 'provider/connectors';
 import { useContext } from '../../contexts';
 import { isChainIdSupported } from '../../provider/connectors';
 import { useActiveWeb3React } from 'provider/providerHooks';
@@ -114,16 +114,10 @@ const WALLET_VIEWS = {
 
 const WalletModal = observer(() => {
   const {
-    context: { modalStore },
+    context: { modalStore, infuraService },
   } = useContext();
-  const {
-    active,
-    connector,
-    error,
-    activate,
-    account,
-    chainId,
-  } = useActiveWeb3React();
+  const { active, connector, error, activate, account, chainId } =
+    useActiveWeb3React();
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
   const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);
 
@@ -173,8 +167,10 @@ const WalletModal = observer(() => {
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask;
-    return Object.keys(SUPPORTED_WALLETS).map(key => {
-      const option = SUPPORTED_WALLETS[key];
+    const customRpcUrls = infuraService.getInfuraRpcUrls();
+    const wallets = getWallets(customRpcUrls);
+    return Object.keys(wallets).map(key => {
+      const option = wallets[key];
       // check for mobile options
       if (isMobile) {
         if (!window.ethereum && option.mobile) {

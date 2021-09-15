@@ -34,6 +34,7 @@ export default class ConfigStore {
       return {
         etherscan: '',
         pinata: '',
+        infura: '',
         pinOnStart: false,
       };
   }
@@ -122,9 +123,9 @@ export default class ConfigStore {
           type: 'GenericMulticall',
           votingMachine: networkContracts.votingMachines.gen.address,
           contractToCall: ZERO_ADDRESS,
-          name:
-            networkContracts.daostack.multicallSchemes.addresses[schemeAddress]
-              .name,
+          name: networkContracts.daostack.multicallSchemes.addresses[
+            schemeAddress
+          ].name,
           newProposalTopics:
             networkContracts.daostack.multicallSchemes.newProposalTopics,
           voteParams:
@@ -147,9 +148,9 @@ export default class ConfigStore {
           contractToCall:
             networkContracts.daostack.genericSchemes.addresses[schemeAddress]
               .contractToCall,
-          name:
-            networkContracts.daostack.genericSchemes.addresses[schemeAddress]
-              .name,
+          name: networkContracts.daostack.genericSchemes.addresses[
+            schemeAddress
+          ].name,
           newProposalTopics:
             networkContracts.daostack.genericSchemes.newProposalTopics,
           voteParams:

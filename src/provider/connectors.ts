@@ -1,6 +1,6 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
-import { NETWORK_IDS, NETWORK_RPC_URLS } from '../utils';
+import { NETWORK_IDS } from '../utils';
 import metamaskIcon from '../assets/images/metamask.png';
 import walletConnectIcon from '../assets/images/walletconnect.png';
 
@@ -23,15 +23,16 @@ export const injected = new InjectedConnector({
   supportedChainIds: ETH_NETWORKS_IDS,
 });
 
-export const walletConnect = new WalletConnectConnector({
-  rpc: ETH_NETWORKS_IDS.reduce((rpcs, chainId) => {
-    rpcs[chainId] = NETWORK_RPC_URLS[chainId];
-    return rpcs;
-  }, {}),
-  qrcode: true,
-});
+export function getWalletConnectConnector(customRpcUrls: {
+  [chainId: number]: string;
+}) {
+  return new WalletConnectConnector({
+    rpc: customRpcUrls,
+    qrcode: true,
+  });
+}
 
-export const SUPPORTED_WALLETS = {
+export const getWallets = (customRpcUrls: { [chainId: number]: string }) => ({
   INJECTED: {
     connector: injected,
     name: 'Injected',
@@ -50,14 +51,14 @@ export const SUPPORTED_WALLETS = {
     icon: metamaskIcon,
   },
   WALLETCONNECT: {
-    connector: walletConnect,
+    connector: getWalletConnectConnector(customRpcUrls),
     name: 'WalletConnect',
     description: 'Open protocol for connecting Wallets to Dapps.',
     href: null,
     color: '#E8831D',
     icon: walletConnectIcon,
   },
-};
+});
 
 export default {
   injected,
