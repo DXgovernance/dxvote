@@ -6,7 +6,8 @@ import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
 const Web3 = require('web3');
 const web3 = new Web3();
-const appConfig = require('../appConfig.json');
+const appConfig = require('../config.json');
+const ipfsConfigHash = "QmVjQt4qBKS3eFijwinpQUbxua5Lb2dQT47tyuusJzoDgT";
 
 export default class ConfigStore {
   darkMode: boolean;
@@ -51,14 +52,12 @@ export default class ConfigStore {
   }
 
   @action async loadConfig() {
-    const config = await this.context.ipfsService.getContentFromIPFS(
-      appConfig.configHash
-    );
-    this.appConfig = config;
+    const ipfsConfig = await this.context.ipfsService.getContentFromIPFS(ipfsConfigHash);
+    this.appConfig = Object.assign(appConfig, ipfsConfig);
   }
 
   getCacheIPFSHash(networkName) {
-    return appConfig.cacheHash[networkName];
+    return appConfig[networkName].cache.ipfsHash;
   }
 
   getSchemeTypeData(schemeAddress) {
