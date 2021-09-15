@@ -6,8 +6,6 @@ const DXDVotingMachine = require('./DXDVotingMachine');
 const GenesisProtocol = require('./GenesisProtocol');
 const ERC20 = require('./ERC20');
 const Multicall = require('./Multicall');
-const DXDVestingFactory = require('./DXDVestingFactory');
-const DXdaoNFT = require('./DXdaoNFT');
 
 export const getContracts = async function (
   networkConfig: NetworkContracts,
@@ -32,14 +30,6 @@ export const getContracts = async function (
   const multicall = await new web3.eth.Contract(
     Multicall.abi,
     networkConfig.utils.multicall
-  );
-  const vestingFactory = await new web3.eth.Contract(
-    DXDVestingFactory.abi,
-    networkConfig.utils.dxdVestingFactory
-  );
-  const NFT = await new web3.eth.Contract(
-    DXdaoNFT.abi,
-    networkConfig.utils.dXDaoNFT
   );
 
   let votingMachines = {};
@@ -90,7 +80,5 @@ export const getContracts = async function (
     reputation,
     permissionRegistry,
     multicall,
-    NFT,
-    vestingFactory,
   };
 };
