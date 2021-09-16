@@ -7,11 +7,11 @@ assignees: ''
 
 ---
 
-**Describe the task that needs to be done**
+**Description**
 A clear and concise description of what you what do you think it should be done.
 
-**Describe how you have considered doing it**
+**Proposed Solution**
 A clear and concise description of how do you think the task should be executed and implemented
 
-**Describe how do you expect to test the task resolution**
+**Expected Behavior**
 A clear and concise description of how do you would you test is the task was done or not.
