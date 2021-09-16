@@ -6,6 +6,8 @@ import ActiveButton from '../components/common/ActiveButton';
 import Question from '../components/common/Question';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
 import Box from '../components/common/Box';
+import { useActiveWeb3React } from 'provider/providerHooks';
+import { injected } from 'provider/connectors';
 
 const Row = styled.div`
   flex-direction: row;
@@ -52,6 +54,7 @@ const ConfigPage = observer(() => {
       customRpcService,
     },
   } = useContext();
+  const { connector } = useActiveWeb3React();
 
   const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(
     etherscanService.auth
@@ -143,78 +146,92 @@ const ConfigPage = observer(() => {
         </span>
       </Row>
 
-      <Row style={{ maxWidth: '500px' }}>
-        <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
-          RPC:
-        </span>
-        <Dropdown
-          onChange={event => onApiKeyValueChange(event.target.value, 'rpcType')}
-          value={localConfig.rpcType}
-          style={{ width: '100%' }}
-        >
-          <option value="">Default</option>
-          <option value="infura">Infura</option>
-          <option value="alchemy">Alchemy</option>
-          <option value="custom">Custom</option>
-        </Dropdown>
-      </Row>
+      {connector != injected && (
+        <>
+          <Row style={{ maxWidth: '500px' }}>
+            <span
+              style={{ width: '80px', height: '34px', padding: '10px 0px' }}
+            >
+              RPC:
+            </span>
+            <Dropdown
+              onChange={event =>
+                onApiKeyValueChange(event.target.value, 'rpcType')
+              }
+              value={localConfig.rpcType}
+              style={{ width: '100%' }}
+            >
+              <option value="">Default</option>
+              <option value="infura">Infura</option>
+              <option value="alchemy">Alchemy</option>
+              <option value="custom">Custom</option>
+            </Dropdown>
+          </Row>
 
-      {localConfig.rpcType === 'infura' && (
-        <Row style={{ maxWidth: '500px' }}>
-          <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
-            Infura:
-          </span>
-          <InputBox
-            type="text"
-            serviceName="infura"
-            onChange={event =>
-              onApiKeyValueChange(event.target.value, 'infura')
-            }
-            value={localConfig.infura}
-            style={{ width: '100%' }}
-          ></InputBox>
-          <span style={{ height: '34px', padding: '10px 0px' }}>
-            {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
-          </span>
-        </Row>
-      )}
-      {localConfig.rpcType === 'alchemy' && (
-        <Row style={{ maxWidth: '500px' }}>
-          <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
-            Alchemy:
-          </span>
-          <InputBox
-            type="text"
-            serviceName="alchemy"
-            onChange={event =>
-              onApiKeyValueChange(event.target.value, 'alchemy')
-            }
-            value={localConfig.alchemy}
-            style={{ width: '100%' }}
-          ></InputBox>
-          <span style={{ height: '34px', padding: '10px 0px' }}>
-            {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
-          </span>
-        </Row>
-      )}
-      {localConfig.rpcType === 'custom' && (
-        <Row style={{ maxWidth: '500px' }}>
-          <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
-            RPC URL:
-          </span>
-          <InputBox
-            type="text"
-            serviceName="customRpcUrl"
-            onChange={event =>
-              onApiKeyValueChange(event.target.value, 'customRpcUrl')
-            }
-            value={localConfig.customRpcUrl}
-            style={{ width: '100%' }}
-          ></InputBox>
-          <span style={{ height: '34px', padding: '10px 0px' }}>
-            {customRpcUrlStatus ? <FiCheckCircle /> : <FiX />}
-          </span>
-        </Row>
+          {localConfig.rpcType === 'infura' && (
+            <Row style={{ maxWidth: '500px' }}>
+              <span
+                style={{ width: '80px', height: '34px', padding: '10px 0px' }}
+              >
+                Infura:
+              </span>
+              <InputBox
+                type="text"
+                serviceName="infura"
+                onChange={event =>
+                  onApiKeyValueChange(event.target.value, 'infura')
+                }
+                value={localConfig.infura}
+                style={{ width: '100%' }}
+              ></InputBox>
+              <span style={{ height: '34px', padding: '10px 0px' }}>
+                {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
+              </span>
+            </Row>
+          )}
+          {localConfig.rpcType === 'alchemy' && (
+            <Row style={{ maxWidth: '500px' }}>
+              <span
+                style={{ width: '80px', height: '34px', padding: '10px 0px' }}
+              >
+                Alchemy:
+              </span>
+              <InputBox
+                type="text"
+                serviceName="alchemy"
+                onChange={event =>
+                  onApiKeyValueChange(event.target.value, 'alchemy')
+                }
+                value={localConfig.alchemy}
+                style={{ width: '100%' }}
+              ></InputBox>
+              <span style={{ height: '34px', padding: '10px 0px' }}>
+                {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
+              </span>
+            </Row>
+          )}
+          {localConfig.rpcType === 'custom' && (
+            <Row style={{ maxWidth: '500px' }}>
+              <span
+                style={{ width: '80px', height: '34px', padding: '10px 0px' }}
+              >
+                RPC URL:
+              </span>
+              <InputBox
+                type="text"
+                serviceName="customRpcUrl"
+                onChange={event =>
+                  onApiKeyValueChange(event.target.value, 'customRpcUrl')
+                }
+                value={localConfig.customRpcUrl}
+                style={{ width: '100%' }}
+              ></InputBox>
+              <span style={{ height: '34px', padding: '10px 0px' }}>
+                {customRpcUrlStatus ? <FiCheckCircle /> : <FiX />}
+              </span>
+            </Row>
+          )}
+        </>
       )}
       <Row style={{ maxWidth: '500px' }}>
         <span style={{ height: '34px', padding: '10px 10px' }}>
