@@ -114,7 +114,7 @@ const WALLET_VIEWS = {
 
 const WalletModal = observer(() => {
   const {
-    context: { modalStore, infuraService },
+    context: { modalStore, infuraService, alchemyService },
   } = useContext();
   const { active, connector, error, activate, account, chainId } =
     useActiveWeb3React();
@@ -167,7 +167,7 @@ const WalletModal = observer(() => {
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask;
-    const customRpcUrls = infuraService.getInfuraRpcUrls();
+    const customRpcUrls = infuraService.getRpcUrls() || alchemyService.getRpcUrls();
     const wallets = getWallets(customRpcUrls);
     return Object.keys(wallets).map(key => {
       const option = wallets[key];

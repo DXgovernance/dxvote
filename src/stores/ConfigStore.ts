@@ -35,6 +35,7 @@ export default class ConfigStore {
         etherscan: '',
         pinata: '',
         infura: '',
+        alchemy: '',
         pinOnStart: false,
       };
   }

@@ -30,7 +30,13 @@ const InputBox = styled.input`
 
 const ConfigPage = observer(() => {
   const {
-    context: { configStore, pinataService, etherscanService, infuraService },
+    context: {
+      configStore,
+      pinataService,
+      etherscanService,
+      infuraService,
+      alchemyService,
+    },
   } = useContext();
 
   const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(
@@ -41,6 +47,9 @@ const ConfigPage = observer(() => {
   );
   const [infuraKeyStatus, setInfuraKeyStatus] = React.useState(
     infuraService.auth
+  );
+  const [alchemyKeyStatus, setAlchemyKeyStatus] = React.useState(
+    alchemyService.auth
   );
 
   const [localConfig, setLocalConfig] = React.useState(
@@ -62,9 +71,11 @@ const ConfigPage = observer(() => {
     await pinataService.isAuthenticated();
     await etherscanService.isAuthenticated();
     await infuraService.isAuthenticated();
+    await alchemyService.isAuthenticated();
     setPinataKeyStatus(pinataService.auth);
     setEtherscanApiStatus(etherscanService.auth);
     setInfuraKeyStatus(infuraService.auth);
+    setAlchemyKeyStatus(alchemyService.auth);
   }
 
   async function pinDXvoteHashes() {
@@ -125,6 +136,21 @@ const ConfigPage = observer(() => {
         ></InputBox>
         <span style={{ height: '34px', padding: '10px 0px' }}>
           {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
+        </span>
+      </Row>
+      <Row style={{ maxWidth: '500px' }}>
+        <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
+          Alchemy:
+        </span>
+        <InputBox
+          type="text"
+          serviceName="alchemy"
+          onChange={event => onApiKeyValueChange(event.target.value, 'alchemy')}
+          value={localConfig.alchemy}
+          style={{ width: '100%' }}
+        ></InputBox>
+        <span style={{ height: '34px', padding: '10px 0px' }}>
+          {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
         </span>
       </Row>
       <Row style={{ maxWidth: '500px' }}>

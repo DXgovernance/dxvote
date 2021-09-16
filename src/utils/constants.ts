@@ -25,6 +25,13 @@ export const INFURA_NETWORK_NAMES = {
   '421611': 'arbitrum-rinkeby',
 };
 
+export const ALCHEMY_NETWORK_URLS = {
+  '1': 'eth-mainnet.alchemyapi.io',
+  '4': 'eth-rinkeby.alchemyapi.io',
+  '42161': 'arb-mainnet.g.alchemy.com',
+  '421611': 'arb-rinkeby.g.alchemy.com',
+};
+
 export const NETWORK_IDS = {
   mainnet: 1,
   rinkeby: 4,

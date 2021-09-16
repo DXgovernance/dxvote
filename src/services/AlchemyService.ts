@@ -1,9 +1,9 @@
 import RootContext from '../contexts';
 import axios from 'axios';
 import { ETH_NETWORKS_IDS, DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
-import { INFURA_NETWORK_NAMES } from 'utils';
+import { ALCHEMY_NETWORK_URLS } from 'utils';
 
-export default class InfuraService {
+export default class AlchemyService {
   context: RootContext;
   auth: Boolean = false;
 
@@ -12,14 +12,14 @@ export default class InfuraService {
   }
 
   async isAuthenticated() {
-    const infuraAPIKey = this.context.configStore.getLocalConfig().infura;
-    const networkName = INFURA_NETWORK_NAMES[DEFAULT_ETH_CHAIN_ID];
+    const alchemyAPIKey = this.context.configStore.getLocalConfig().alchemy;
+    const networkUrl = ALCHEMY_NETWORK_URLS[DEFAULT_ETH_CHAIN_ID];
 
-    if (infuraAPIKey && infuraAPIKey.length > 0) {
+    if (alchemyAPIKey && alchemyAPIKey.length > 0) {
       try {
         const auth = await axios({
           method: 'POST',
-          url: `https://${networkName}.infura.io/v3/${infuraAPIKey}`,
+          url: `https://${networkUrl}/v2/${alchemyAPIKey}`,
           data: {
             jsonrpc: '2.0',
             method: 'eth_blockNumber',
@@ -35,18 +35,18 @@ export default class InfuraService {
   }
 
   getRpcUrls() {
-    const infuraAPIKey = this.context.configStore.getLocalConfig().infura;
-    if (!infuraAPIKey) return null;
+    const alchemyAPIKey = this.context.configStore.getLocalConfig().alchemy;
+    if (!alchemyAPIKey) return null;
 
     return ETH_NETWORKS_IDS.reduce((prevUrls, chainId) => {
-      const infuraNetworkName = INFURA_NETWORK_NAMES[chainId];
+      const networkUrl = ALCHEMY_NETWORK_URLS[chainId];
 
-      let infuraUrl = null;
-      if (infuraNetworkName) {
-        infuraUrl = `https://${infuraNetworkName}.infura.io/v3/${infuraAPIKey}`;
+      let alchemyUrl = null;
+      if (networkUrl) {
+        alchemyUrl = `https://${networkUrl}/v2/${alchemyAPIKey}`;
       }
 
-      prevUrls[chainId] = infuraUrl;
+      prevUrls[chainId] = alchemyUrl;
       return prevUrls;
     }, {});
   }

@@ -9,6 +9,7 @@ import PinataService from '../services/PinataService';
 import EtherscanService from '../services/EtherscanService';
 import CoingeckoService from '../services/CoingeckoService';
 import InfuraService from 'services/InfuraService';
+import AlchemyService from 'services/AlchemyService';
 
 import ProviderStore from '../stores/Provider';
 import TransactionStore from '../stores/Transaction';
@@ -49,6 +50,7 @@ export default class RootContext {
   etherscanService: EtherscanService;
   coingeckoService: CoingeckoService;
   infuraService: InfuraService;
+  alchemyService: AlchemyService;
 
   constructor() {
     this.providerStore = new ProviderStore(this);
@@ -67,7 +69,8 @@ export default class RootContext {
     this.pinataService = new PinataService(this);
     this.etherscanService = new EtherscanService(this);
     this.coingeckoService = new CoingeckoService(this);
-    this.infuraService = new InfuraService(this)
+    this.infuraService = new InfuraService(this);
+    this.alchemyService = new AlchemyService(this);
   }
 }
 
