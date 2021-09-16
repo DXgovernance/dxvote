@@ -175,21 +175,17 @@ export default class BlockchainStore {
 
         const blockNumber = (await library.eth.getBlockNumber()) - 1;
 
-        // Fetch cache from ipfs if not in localStorage or > ~4 days old
+        // Fetch cache from ipfs if not in localStorage or newer hash is available
+        const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
         if (
           !networkCache ||
-          blockNumber - networkCache?.l1BlockNumber > 25600
+          !(newestCacheIpfsHash === networkCache.baseCacheIpfsHash)
         ) {
-          console.debug(
-            '[IPFS Cache Fetch]',
-            networkName,
-            configStore.getCacheIPFSHash(networkName)
-          );
+          console.debug('[IPFS Cache Fetch]', networkName, newestCacheIpfsHash);
           networkCache = daoStore.parseCache(
-            await ipfsService.getContentFromIPFS(
-              configStore.getCacheIPFSHash(networkName)
-            )
+            await ipfsService.getContentFromIPFS(newestCacheIpfsHash)
           );
+          networkCache.baseCacheIpfsHash = newestCacheIpfsHash;
           daoStore.setCache(networkCache);
         }
 
