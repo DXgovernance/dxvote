@@ -1,11 +1,6 @@
 import contentHash from 'content-hash';
 import _ from 'lodash';
-import axios from 'axios';
 import { ZERO_ADDRESS } from './index';
-
-const appConfig = require('../appConfig.json');
-
-const ipfsHashOfAppConfig = appConfig.configHash;
 
 const Web3 = require('web3');
 const web3 = new Web3();
@@ -219,43 +214,6 @@ export const ipfsHashToDescriptionHash = function (ipfsHash) {
   } catch (error) {
     console.error('Error encoding ipfsHash', ipfsHash);
     return '';
-  }
-};
-
-export const getNetworkConfig = async function (networkName) {
-  if (networkName === 'localhost') {
-    return {
-      fromBlock: 1,
-      avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ''),
-      controller: process.env.REACT_APP_CONTROLLER_ADDRESS.replace(/["']/g, ''),
-      reputation: process.env.REACT_APP_REPUTATION_ADDRESS.replace(/["']/g, ''),
-      permissionRegistry: process.env.REACT_APP_PERMISSION_REGISTRY_ADDRESS.replace(
-        /["']/g,
-        ''
-      ),
-      utils: {
-        multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ''),
-      },
-      votingMachines: {
-        dxd: {
-          address: process.env.REACT_APP_VOTING_MACHINE_ADDRESS.replace(
-            /["']/g,
-            ''
-          ),
-          token: process.env.REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS.replace(
-            /["']/g,
-            ''
-          ),
-        },
-      },
-    };
-  } else {
-    return (
-      await axios({
-        method: 'GET',
-        url: 'https://gateway.pinata.cloud/ipfs/' + ipfsHashOfAppConfig,
-      })
-    ).data[networkName];
   }
 };
 
