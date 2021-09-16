@@ -9,7 +9,7 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
   const {
-    context: { providerStore, blockchainStore, userStore, configStore },
+    context: { providerStore, blockchainStore, userStore },
   } = useContext();
 
   const web3ContextInjected = useWeb3React(web3ContextNames.injected);
@@ -20,8 +20,6 @@ const Web3ReactManager = ({ children }) => {
       web3ContextNames.injected,
       web3ContextInjected
     );
-
-  configStore.loadConfig();
 
   console.debug('[Web3ReactManager] Start of render', {
     injected: web3ContextInjected,

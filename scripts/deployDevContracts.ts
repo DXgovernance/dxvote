@@ -509,7 +509,6 @@ async function main() {
   );
     
   const contractsDeployed = {
-    fromBlock: 1,
     avatar: avatar.address,
     controller: controller.address,
     reputation: reputation.address,
@@ -520,14 +519,28 @@ async function main() {
       }
     },
     permissionRegistry: permissionRegistry.address,
-    multicall: multicall.address
+    utils: {
+      multicall: multicall.address
+    }
   };
   
   console.log("Contracts Deployed:", contractsDeployed);
 
-  fs.writeFileSync(
-    '.developmentAddresses.json',
-    JSON.stringify(contractsDeployed, null, 2),
+  const networkConfig = {
+    cache: {
+      fromBlock: 0,
+      toBlock: 2,
+      ipfsHash: ""
+    },
+    contracts: contractsDeployed,
+    recommendedCalls: [],
+    proposalTemplates: [],
+    tokens: []
+  };
+  
+  await fs.writeFileSync(
+    '.developmentNetwork.json',
+    JSON.stringify(networkConfig, null, 2),
     { encoding:'utf8', flag:'w' }
   )
 } 

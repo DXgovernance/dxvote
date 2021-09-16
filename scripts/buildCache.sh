@@ -19,6 +19,7 @@ yarn hardhat run --network rinkeby scripts/buildCache.ts
 yarn hardhat run --network arbitrumTestnet scripts/buildCache.ts
 EMPTY_CACHE=1 yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
+yarn upload-config
 
 # Enable isolatedModules and use esnext as module in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \
