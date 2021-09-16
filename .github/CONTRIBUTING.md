@@ -1,7 +1,8 @@
 # How to contribute
 
 There are many ways you can contribute to the dxdao governance dapp:
-- Use the developer dapp, the developer version is hosted in ([https://dxgovernance.github.io/dxvote](https://dxgovernance.github.io/dxvote). If you find any bug or have any feature request create an issue in [dxvote issues](https://github.com/dxgovernance/dxvote/issues). 
+
+- Use the developer dapp, the developer version is hosted in ([https://dxgovernance.github.io/dxvote](https://dxgovernance.github.io/dxvote). If you find any bug or have any feature request create an issue in [dxvote issues](https://github.com/dxgovernance/dxvote/issues).
 - If you are a developer and want to contribute go and check the issues in the [dxvote issues](https://github.com/dxgovernance/dxvote/issues).
 - If you are a member of dxdao and want to help developers go to the [dxvote issues](https://github.com/dxgovernance/dxvote/issues) and ask for issues to review.
 
