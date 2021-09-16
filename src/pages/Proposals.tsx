@@ -308,11 +308,11 @@ const ProposalsPage = observer(() => {
               const timeToFinish = timeToTimestamp(proposal.finishTime);
 
               const votingMachineTokenName =
-                votingMachines.gen &&
+                votingMachines.dxd &&
                 daoStore.getVotingMachineOfProposal(proposal.id) ===
-                  votingMachines.gen.address
-                  ? 'GEN'
-                  : 'DXD';
+                  votingMachines.dxd.address
+                  ? 'DXD'
+                  : 'GEN';
 
               const voted =
                 userEvents.votes.findIndex(
