@@ -233,38 +233,6 @@ export default class ConfigStore {
       decodeText: string;
     }[] = [
       {
-        asset: networkContracts.utils.dxdVestingFactory,
-        from: networkContracts.avatar,
-        to: networkContracts.utils.dxdVestingFactory,
-        toName: 'DXD Vesting Factory',
-        functionName: 'create(address, uint256, uint256, uint256, uint256)',
-        params: [
-          { type: 'address', name: 'beneficiary', defaultValue: '' },
-          { type: 'uint256', name: 'start', defaultValue: '' },
-          { type: 'uint256', name: 'cliffDuration', defaultValue: '' },
-          { type: 'uint256', name: 'duration', defaultValue: '' },
-          { type: 'uint256', name: 'value', defaultValue: '' },
-        ],
-        decodeText:
-          'Create new vesting contract with beneficiary [PARAM_0], start date  of [PARAM_1], cliff duration of [PARAMS_2], duration of [PARAM_3] and value of [PARAM_4]',
-      },
-      {
-        asset: ZERO_ADDRESS,
-        from: networkContracts.avatar,
-        to: networkContracts.utils.dxDaoNFT,
-        toName: 'DXdao NFT',
-        functionName: 'mint(address, string)',
-        params: [
-          {
-            type: 'address',
-            name: 'recipient',
-            defaultValue: networkContracts.avatar,
-          },
-          { type: 'string', name: 'tokenURI', defaultValue: '' },
-        ],
-        decodeText: 'Mint NFT to address [PARAM_0] with token URI [PARAM_1]',
-      },
-      {
         asset: ZERO_ADDRESS,
         from: networkContracts.avatar,
         to: networkContracts.controller,
@@ -402,6 +370,43 @@ export default class ConfigStore {
       },
     ];
 
+    if (networkContracts.utils.dxdVestingFactory) {
+      recommendedCalls.push({
+        asset: networkContracts.utils.dxdVestingFactory,
+        from: networkContracts.avatar,
+        to: networkContracts.utils.dxdVestingFactory,
+        toName: 'DXD Vesting Factory',
+        functionName: 'create(address, uint256, uint256, uint256, uint256)',
+        params: [
+          { type: 'address', name: 'beneficiary', defaultValue: '' },
+          { type: 'uint256', name: 'start', defaultValue: '' },
+          { type: 'uint256', name: 'cliffDuration', defaultValue: '' },
+          { type: 'uint256', name: 'duration', defaultValue: '' },
+          { type: 'uint256', name: 'value', defaultValue: '' },
+        ],
+        decodeText:
+          'Create new vesting contract with beneficiary [PARAM_0], start date  of [PARAM_1], cliff duration of [PARAMS_2], duration of [PARAM_3] and value of [PARAM_4]',
+      });
+      if (networkContracts.utils.dxDaoNFT) {
+        recommendedCalls.push({
+          asset: ZERO_ADDRESS,
+          from: networkContracts.avatar,
+          to: networkContracts.utils.dxDaoNFT,
+          toName: 'DXdao NFT',
+          functionName: 'mint(address, string)',
+          params: [
+            {
+              type: 'address',
+              name: 'recipient',
+              defaultValue: networkContracts.avatar,
+            },
+            { type: 'string', name: 'tokenURI', defaultValue: '' },
+          ],
+          decodeText: 'Mint NFT to address [PARAM_0] with token URI [PARAM_1]',
+        });
+      }
+    }
+
     if (
       this.appConfig[networkName].recommendedCalls &&
       this.appConfig[networkName].recommendedCalls.length > 0
@@ -449,7 +454,6 @@ export default class ConfigStore {
           'Approve [PARAM_1] ' + networkToken.symbol + ' to [PARAM_0]',
       });
     });
-    console.log(recommendedCalls);
 
     return recommendedCalls;
   }
