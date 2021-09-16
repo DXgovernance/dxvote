@@ -68,6 +68,7 @@ const ConfigPage = observer(() => {
 
   async function clearCache() {
     localStorage.clear();
+    caches.delete(`dxvote-cache`);
   }
 
   return (

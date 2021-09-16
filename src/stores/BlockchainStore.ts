@@ -165,13 +165,21 @@ export default class BlockchainStore {
           daoStore,
         } = this.context;
         const networkName = configStore.getActiveChainName();
+
+        const cache = await caches.open(`dxvote-cache`);
+        let match = await cache.match(networkName);
+        let networkCache = null;
+        if (match) {
+          networkCache = JSON.parse(await match.text());
+        }
+
         const blockNumber = (await library.eth.getBlockNumber()) - 1;
-        let networkCache = JSON.parse(
-          localStorage.getItem(`dxvote--cache-${networkName}`)
-        );
 
         // Fetch cache from ipfs if not in localStorage or > ~4 days old
-        if (!networkCache || blockNumber - networkCache.l1BlockNumber > 25600) {
+        if (
+          !networkCache ||
+          blockNumber - networkCache?.l1BlockNumber > 25600
+        ) {
           console.debug(
             '[IPFS Cache Fetch]',
             networkName,
@@ -187,14 +195,14 @@ export default class BlockchainStore {
 
         const lastCheckedBlockNumber = networkCache.l1BlockNumber;
 
-        if (blockNumber > lastCheckedBlockNumber) {
+        if (blockNumber > lastCheckedBlockNumber + 1) {
           console.debug(
             '[Fetch Loop] Fetch Blockchain Data',
             blockNumber,
             chainId
           );
 
-          const fromBlock = lastCheckedBlockNumber + 1;
+          const fromBlock = lastCheckedBlockNumber;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
           networkCache = await getUpdatedCache(
@@ -207,7 +215,6 @@ export default class BlockchainStore {
 
           let tokensBalancesCalls = [];
           const tokens = configStore.getTokensToFetchPrice();
-
           tokens.map(token => {
             if (!networkCache.daoInfo.tokenBalances[token.address])
               tokensBalancesCalls.push({
@@ -252,17 +259,17 @@ export default class BlockchainStore {
 
           networkCache.l1BlockNumber = toBlock;
           providerStore.setCurrentBlockNumber(toBlock);
+
+          daoStore.setCache(networkCache);
+          await cache.put(
+            networkName,
+            new Response(JSON.stringify(networkCache))
+          );
         }
-
-        daoStore.setCache(networkCache);
-        localStorage.setItem(
-          `dxvote--cache-${networkName}`,
-          JSON.stringify(networkCache)
-        );
-
         this.initialLoadComplete = true;
         this.activeFetchLoop = false;
       } catch (error) {
+        console.error((error as Error).message);
         this.activeFetchLoop = false;
       }
     }
