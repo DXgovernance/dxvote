@@ -274,8 +274,8 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
         type: 'GenericMulticall',
         votingMachine: networkConfig.votingMachines.gen.address,
         contractToCall: ZERO_ADDRESS,
-        name:
-          networkConfig.daostack.multicallSchemes.addresses[schemeAddress].name,
+        name: networkConfig.daostack.multicallSchemes.addresses[schemeAddress]
+          .name,
         newProposalTopics:
           networkConfig.daostack.multicallSchemes.newProposalTopics,
         voteParams:
@@ -298,8 +298,8 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
         contractToCall:
           networkConfig.daostack.genericSchemes.addresses[schemeAddress]
             .contractToCall,
-        name:
-          networkConfig.daostack.genericSchemes.addresses[schemeAddress].name,
+        name: networkConfig.daostack.genericSchemes.addresses[schemeAddress]
+          .name,
         newProposalTopics:
           networkConfig.daostack.genericSchemes.newProposalTopics,
         voteParams:

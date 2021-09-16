@@ -108,9 +108,8 @@ export default class BlockchainStore {
       if (
         !this.contractStorage[entry.contractType][entry.address][entry.method]
       ) {
-        this.contractStorage[entry.contractType][entry.address][
-          entry.method
-        ] = {};
+        this.contractStorage[entry.contractType][entry.address][entry.method] =
+          {};
       }
 
       if (
@@ -126,9 +125,10 @@ export default class BlockchainStore {
         };
       }
 
-      const oldEntry = this.contractStorage[entry.contractType][entry.address][
-        entry.method
-      ][params.toString()];
+      const oldEntry =
+        this.contractStorage[entry.contractType][entry.address][entry.method][
+          params.toString()
+        ];
 
       // Set if never fetched, or if the new data isn't stale
       if (
