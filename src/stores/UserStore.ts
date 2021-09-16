@@ -39,12 +39,8 @@ export default class UserStore {
   }
 
   async update(web3React: Web3ReactContextInterface) {
-    const {
-      configStore,
-      providerStore,
-      daoStore,
-      transactionStore,
-    } = this.context;
+    const { configStore, providerStore, daoStore, transactionStore } =
+      this.context;
     const networkContracts = configStore.getNetworkContracts();
     const account = web3React.account;
 

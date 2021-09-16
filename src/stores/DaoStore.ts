@@ -81,11 +81,11 @@ export default class DaoStore {
       unparsedCache.proposals[proposalId].confidenceThreshold = bnum(
         unparsedCache.proposals[proposalId].confidenceThreshold
       );
-      unparsedCache.proposals[
-        proposalId
-      ].secondsFromTimeOutTillExecuteBoosted = bnum(
-        unparsedCache.proposals[proposalId].secondsFromTimeOutTillExecuteBoosted
-      );
+      unparsedCache.proposals[proposalId].secondsFromTimeOutTillExecuteBoosted =
+        bnum(
+          unparsedCache.proposals[proposalId]
+            .secondsFromTimeOutTillExecuteBoosted
+        );
       unparsedCache.proposals[proposalId].submittedTime = bnum(
         unparsedCache.proposals[proposalId].submittedTime
       );
@@ -477,9 +477,7 @@ export default class DaoStore {
       .votingParameters[scheme.paramsHash];
   }
 
-  getProposalEvents(
-    proposalId
-  ): {
+  getProposalEvents(proposalId): {
     votes: Vote[];
     stakes: Stake[];
     redeems: Redeem[];
@@ -630,9 +628,7 @@ export default class DaoStore {
     };
   }
 
-  getUser(
-    userAddress
-  ): {
+  getUser(userAddress): {
     repBalance: BigNumber;
     repPercentage: string;
   } {
@@ -649,9 +645,7 @@ export default class DaoStore {
     };
   }
 
-  getUserEvents(
-    userAddress
-  ): {
+  getUserEvents(userAddress): {
     votes: Vote[];
     stakes: Stake[];
     redeems: Redeem[];
@@ -669,8 +663,8 @@ export default class DaoStore {
     }[] = [];
 
     const cache = this.getCache();
-    const votingMachines = this.context.configStore.getNetworkContracts()
-      .votingMachines;
+    const votingMachines =
+      this.context.configStore.getNetworkContracts().votingMachines;
     let proposalEvents = {
       votes: [],
       stakes: [],
@@ -836,9 +830,7 @@ export default class DaoStore {
     };
   }
 
-  getUserRedeemsLeft(
-    userAddress: string
-  ): {
+  getUserRedeemsLeft(userAddress: string): {
     rep: string[];
     stake: string[];
     bounty: string[];
@@ -1022,11 +1014,10 @@ export default class DaoStore {
           recommendedCalls[i].functionName
         )
       );
-      recommendedCalls[i][
-        'functionSignature'
-      ] = library.eth.abi.encodeFunctionSignature(
-        recommendedCalls[i].functionName
-      );
+      recommendedCalls[i]['functionSignature'] =
+        library.eth.abi.encodeFunctionSignature(
+          recommendedCalls[i].functionName
+        );
       recommendedCalls[i]['value'] = callAllowance.value;
       recommendedCalls[i]['fromTime'] = callAllowance.fromTime;
     }
