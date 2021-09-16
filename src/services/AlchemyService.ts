@@ -1,7 +1,7 @@
 import RootContext from '../contexts';
 import axios from 'axios';
 import { ETH_NETWORKS_IDS, DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
-import { ALCHEMY_NETWORK_URLS } from 'utils';
+import { ALCHEMY_NETWORK_URLS, DEFAULT_RPC_URLS } from 'utils';
 
 export default class AlchemyService {
   context: RootContext;
@@ -46,6 +46,8 @@ export default class AlchemyService {
       let alchemyUrl = null;
       if (networkUrl) {
         alchemyUrl = `https://${networkUrl}/v2/${alchemyAPIKey}`;
+      } else {
+        alchemyUrl = DEFAULT_RPC_URLS[chainId];
       }
 
       prevUrls[chainId] = alchemyUrl;

@@ -1,7 +1,7 @@
 import RootContext from '../contexts';
 import axios from 'axios';
 import { ETH_NETWORKS_IDS, DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
-import { INFURA_NETWORK_NAMES } from 'utils';
+import { DEFAULT_RPC_URLS, INFURA_NETWORK_NAMES } from 'utils';
 
 export default class InfuraService {
   context: RootContext;
@@ -46,6 +46,8 @@ export default class InfuraService {
       let infuraUrl = null;
       if (infuraNetworkName) {
         infuraUrl = `https://${infuraNetworkName}.infura.io/v3/${infuraAPIKey}`;
+      } else {
+        infuraUrl = DEFAULT_RPC_URLS[chainId];
       }
 
       prevUrls[chainId] = infuraUrl;
