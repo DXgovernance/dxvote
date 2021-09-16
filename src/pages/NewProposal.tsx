@@ -196,8 +196,6 @@ const NewProposalPage = observer(() => {
 
   const [errorMessage, setErrorMessage] = React.useState('');
   const proposalTemplates = configStore.getProposalTemplates();
-  if (proposalTemplates[0].name !== 'Custom')
-    proposalTemplates.unshift({ name: 'Custom', title: '', description: '' });
 
   const { assetLimits: transferLimits, recommendedCalls } =
     daoStore.getSchemeRecommendedCalls(schemeToUse.address);
