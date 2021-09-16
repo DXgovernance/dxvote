@@ -28,6 +28,19 @@ const InputBox = styled.input`
   margin: 5px;
 `;
 
+const Dropdown = styled.select`
+  background-color: white;
+  border: 1px solid var(--medium-gray);
+  border-radius: 4px;
+  height: 34px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  line-height: 32px;
+  text-align: left;
+  padding: 0px 10px;
+  margin: 5px;
+`;
+
 const ConfigPage = observer(() => {
   const {
     context: {
@@ -36,6 +49,7 @@ const ConfigPage = observer(() => {
       etherscanService,
       infuraService,
       alchemyService,
+      customRpcService,
     },
   } = useContext();
 
@@ -50,6 +64,9 @@ const ConfigPage = observer(() => {
   );
   const [alchemyKeyStatus, setAlchemyKeyStatus] = React.useState(
     alchemyService.auth
+  );
+  const [customRpcUrlStatus, setCustomRpcUrlStatus] = React.useState(
+    customRpcService.auth
   );
 
   const [localConfig, setLocalConfig] = React.useState(
@@ -72,10 +89,12 @@ const ConfigPage = observer(() => {
     await etherscanService.isAuthenticated();
     await infuraService.isAuthenticated();
     await alchemyService.isAuthenticated();
+    await customRpcService.isAuthenticated();
     setPinataKeyStatus(pinataService.auth);
     setEtherscanApiStatus(etherscanService.auth);
     setInfuraKeyStatus(infuraService.auth);
     setAlchemyKeyStatus(alchemyService.auth);
+    setCustomRpcUrlStatus(customRpcService.auth);
   }
 
   async function pinDXvoteHashes() {
@@ -123,36 +142,80 @@ const ConfigPage = observer(() => {
           {pinataKeyStatus ? <FiCheckCircle /> : <FiX />}
         </span>
       </Row>
+
       <Row style={{ maxWidth: '500px' }}>
         <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
-          Infura:
+          RPC:
         </span>
-        <InputBox
-          type="text"
-          serviceName="infura"
-          onChange={event => onApiKeyValueChange(event.target.value, 'infura')}
-          value={localConfig.infura}
+        <Dropdown
+          onChange={event => onApiKeyValueChange(event.target.value, 'rpcType')}
+          value={localConfig.rpcType}
           style={{ width: '100%' }}
-        ></InputBox>
-        <span style={{ height: '34px', padding: '10px 0px' }}>
-          {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
-        </span>
+        >
+          <option value="">Default</option>
+          <option value="infura">Infura</option>
+          <option value="alchemy">Alchemy</option>
+          <option value="custom">Custom</option>
+        </Dropdown>
       </Row>
-      <Row style={{ maxWidth: '500px' }}>
-        <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
-          Alchemy:
-        </span>
-        <InputBox
-          type="text"
-          serviceName="alchemy"
-          onChange={event => onApiKeyValueChange(event.target.value, 'alchemy')}
-          value={localConfig.alchemy}
-          style={{ width: '100%' }}
-        ></InputBox>
-        <span style={{ height: '34px', padding: '10px 0px' }}>
-          {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
-        </span>
-      </Row>
+
+      {localConfig.rpcType === 'infura' && (
+        <Row style={{ maxWidth: '500px' }}>
+          <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
+            Infura:
+          </span>
+          <InputBox
+            type="text"
+            serviceName="infura"
+            onChange={event =>
+              onApiKeyValueChange(event.target.value, 'infura')
+            }
+            value={localConfig.infura}
+            style={{ width: '100%' }}
+          ></InputBox>
+          <span style={{ height: '34px', padding: '10px 0px' }}>
+            {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
+          </span>
+        </Row>
+      )}
+      {localConfig.rpcType === 'alchemy' && (
+        <Row style={{ maxWidth: '500px' }}>
+          <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
+            Alchemy:
+          </span>
+          <InputBox
+            type="text"
+            serviceName="alchemy"
+            onChange={event =>
+              onApiKeyValueChange(event.target.value, 'alchemy')
+            }
+            value={localConfig.alchemy}
+            style={{ width: '100%' }}
+          ></InputBox>
+          <span style={{ height: '34px', padding: '10px 0px' }}>
+            {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
+          </span>
+        </Row>
+      )}
+      {localConfig.rpcType === 'custom' && (
+        <Row style={{ maxWidth: '500px' }}>
+          <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
+            RPC URL:
+          </span>
+          <InputBox
+            type="text"
+            serviceName="customRpcUrl"
+            onChange={event =>
+              onApiKeyValueChange(event.target.value, 'customRpcUrl')
+            }
+            value={localConfig.customRpcUrl}
+            style={{ width: '100%' }}
+          ></InputBox>
+          <span style={{ height: '34px', padding: '10px 0px' }}>
+            {customRpcUrlStatus ? <FiCheckCircle /> : <FiX />}
+          </span>
+        </Row>
+      )}
       <Row style={{ maxWidth: '500px' }}>
         <span style={{ height: '34px', padding: '10px 10px' }}>
           Pin DXdao hashes on start

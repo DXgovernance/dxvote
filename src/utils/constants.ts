@@ -18,6 +18,15 @@ export const NETWORK_NAMES = {
   '1337': 'localhost',
 };
 
+const defaultInfuraKey = process.env.REACT_APP_KEY_INFURA_API_KEY;
+export const DEFAULT_RPC_URLS = {
+  '1': `https://mainnet.infura.io/v3/${defaultInfuraKey}`,
+  '4': `https://rinkeby.infura.io/v3/${defaultInfuraKey}`,
+  '100': "https://rpc.xdaichain.com/",
+  '42161': `https://arbitrum-mainnet.infura.io/v3/${defaultInfuraKey}`,
+  '421611': `https://arbitrum-rinkeby.infura.io/v3/${defaultInfuraKey}`,
+};
+
 export const INFURA_NETWORK_NAMES = {
   '1': 'mainnet',
   '4': 'rinkeby',

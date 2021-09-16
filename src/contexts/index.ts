@@ -18,6 +18,7 @@ import ConfigStore from '../stores/ConfigStore';
 import DaoStore from '../stores/DaoStore';
 import UserStore from '../stores/UserStore';
 import BlockchainStore from '../stores/BlockchainStore';
+import CustomRpcService from 'services/CustomRpcService';
 
 /*
 https://reactjs.org/docs/context.html#reactcreatecontext
@@ -51,6 +52,7 @@ export default class RootContext {
   coingeckoService: CoingeckoService;
   infuraService: InfuraService;
   alchemyService: AlchemyService;
+  customRpcService: CustomRpcService;
 
   constructor() {
     this.providerStore = new ProviderStore(this);
@@ -71,6 +73,7 @@ export default class RootContext {
     this.coingeckoService = new CoingeckoService(this);
     this.infuraService = new InfuraService(this);
     this.alchemyService = new AlchemyService(this);
+    this.customRpcService = new CustomRpcService(this);
   }
 }
 

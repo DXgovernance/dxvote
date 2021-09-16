@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import Modal from '../Modal';
 import AccountDetails from '../AccountDetails';
 import Option from './Option';
-import { usePrevious } from 'utils';
+import { DEFAULT_RPC_URLS, usePrevious } from 'utils';
 import Link from '../../components/common/Link';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { injected, getWallets } from 'provider/connectors';
@@ -114,7 +114,13 @@ const WALLET_VIEWS = {
 
 const WalletModal = observer(() => {
   const {
-    context: { modalStore, infuraService, alchemyService },
+    context: {
+      modalStore,
+      infuraService,
+      alchemyService,
+      customRpcService,
+      configStore,
+    },
   } = useContext();
   const { active, connector, error, activate, account, chainId } =
     useActiveWeb3React();
@@ -167,8 +173,8 @@ const WalletModal = observer(() => {
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask;
-    const customRpcUrls = infuraService.getRpcUrls() || alchemyService.getRpcUrls();
-    const wallets = getWallets(customRpcUrls);
+    const rpcUrls = getRpcUrls();
+    const wallets = getWallets(rpcUrls);
     return Object.keys(wallets).map(key => {
       const option = wallets[key];
       // check for mobile options
@@ -244,6 +250,19 @@ const WalletModal = observer(() => {
         )
       );
     });
+  }
+
+  function getRpcUrls() {
+    const preferredRpc = configStore.getLocalConfig().rpcType;
+    if (preferredRpc == 'infura' && infuraService.auth) {
+      return infuraService.getRpcUrls();
+    } else if (preferredRpc == 'alchemy' && alchemyService.auth) {
+      return alchemyService.getRpcUrls();
+    } else if (preferredRpc == 'custom' && customRpcService.auth) {
+      return customRpcService.getRpcUrls();
+    } else {
+      return DEFAULT_RPC_URLS;
+    }
   }
 
   function getModalContent() {

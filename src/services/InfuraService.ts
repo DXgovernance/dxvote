@@ -31,6 +31,8 @@ export default class InfuraService {
       } catch (e) {
         this.auth = false;
       }
+    } else {
+      this.auth = false;
     }
   }
 

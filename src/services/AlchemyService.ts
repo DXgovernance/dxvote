@@ -31,6 +31,8 @@ export default class AlchemyService {
       } catch (e) {
         this.auth = false;
       }
+    } else {
+      this.auth = false;
     }
   }
 
