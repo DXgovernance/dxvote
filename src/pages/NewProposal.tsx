@@ -199,10 +199,8 @@ const NewProposalPage = observer(() => {
   if (proposalTemplates[0].name !== 'Custom')
     proposalTemplates.unshift({ name: 'Custom', title: '', description: '' });
 
-  const {
-    assetLimits: transferLimits,
-    recommendedCalls,
-  } = daoStore.getSchemeRecommendedCalls(schemeToUse.address);
+  const { assetLimits: transferLimits, recommendedCalls } =
+    daoStore.getSchemeRecommendedCalls(schemeToUse.address);
   console.debug('[PERMISSIONS]', schemeToUse, transferLimits, recommendedCalls);
 
   let allowedToCall = [];
@@ -306,9 +304,8 @@ const NewProposalPage = observer(() => {
             if (call.functionName.length === 0) {
               callDataFunctionSignature = '0x0';
             } else {
-              callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(
-                call.functionName
-              );
+              callDataFunctionSignature =
+                library.eth.abi.encodeFunctionSignature(call.functionName);
             }
 
             if (call.dataValues.length > 0) {
@@ -397,22 +394,22 @@ const NewProposalPage = observer(() => {
         .on(TXEvents.TX_ERROR, txerror => {
           console.error('[TX_ERROR]', txerror);
           setSubmitionState(2);
-          setErrorMessage(txerror.message);
+          setErrorMessage((txerror as Error).message);
         })
         .on(TXEvents.INVARIANT, error => {
           console.error('[ERROR]', error);
           setSubmitionState(2);
-          setErrorMessage(error.message);
+          setErrorMessage((error as Error).message);
         })
         .catch(error => {
           console.error('[ERROR]', error);
           setSubmitionState(2);
-          setErrorMessage(error.message);
+          setErrorMessage((error as Error).message);
         });
     } catch (error) {
       console.error('[PROPOSAL_ERROR]', error);
       setSubmitionState(2);
-      setErrorMessage(error.message);
+      setErrorMessage((error as Error).message);
     }
   };
 
