@@ -12,7 +12,6 @@ cleanup() {
     kill -9 $ganache_pid
   fi
 }
-set -o allexport; source .env; set +o allexport
 mnemonic="$REACT_APP_KEY_MNEMONIC"
 
 ganache_running() {
@@ -71,13 +70,6 @@ yarn hardhat run --network localhost scripts/deployDevContracts.ts
 # cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
 
 # Run build cache
-REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
-REACT_APP_CONTROLLER_ADDRESS=`jq .controller .developmentAddresses.json` \
-REACT_APP_REPUTATION_ADDRESS=`jq .reputation .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachines.dxd.address .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachines.dxd.token .developmentAddresses.json` \
-REACT_APP_PERMISSION_REGISTRY_ADDRESS=`jq .permissionRegistry .developmentAddresses.json` \
-REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
 yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
 
@@ -89,11 +81,4 @@ echo "${contents}" > tsconfig.json
 
 # Run dapp with localhost contracts
 FORCE_COLOR=true \
-REACT_APP_AVATAR_ADDRESS=`jq .avatar .developmentAddresses.json` \
-REACT_APP_CONTROLLER_ADDRESS=`jq .controller .developmentAddresses.json` \
-REACT_APP_REPUTATION_ADDRESS=`jq .reputation .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_ADDRESS=`jq .votingMachines.dxd.address .developmentAddresses.json` \
-REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS=`jq .votingMachines.dxd.token .developmentAddresses.json` \
-REACT_APP_PERMISSION_REGISTRY_ADDRESS=`jq .permissionRegistry .developmentAddresses.json` \
-REACT_APP_MULTICALL_ADDRESS=`jq .multicall .developmentAddresses.json` \
 SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-app-rewired start | cat
