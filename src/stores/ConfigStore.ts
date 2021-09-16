@@ -317,6 +317,90 @@ export default class ConfigStore {
       {
         asset: ZERO_ADDRESS,
         from: networkContracts.avatar,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'externalTokenTransfer(address,address,uint256,address)',
+        params: [
+          { type: 'address', name: '_externalToken', defaultValue: '' },
+          { type: 'address', name: '_to', defaultValue: '' },
+          { type: 'uint256', name: '_value', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText:
+          'External token transfer of token [PARAM_0] with value [PARAM_2] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName:
+          'externalTokenTransferFrom(address,address,address,uint256,address)',
+        params: [
+          { type: 'address', name: '_externalToken', defaultValue: '' },
+          { type: 'address', name: '_from', defaultValue: '' },
+          { type: 'address', name: '_to', defaultValue: '' },
+          { type: 'uint256', name: '_value', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText:
+          'External token transferFrom of token [PARAM_0] with value [PARAM_3] from [PARAM_1] to [PARAM_2]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'externalTokenApproval(address,address,uint256,address)',
+        params: [
+          { type: 'address', name: '_externalToken', defaultValue: '' },
+          { type: 'address', name: '_spender', defaultValue: '' },
+          { type: 'uint256', name: '_value', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText:
+          'External token approval of token [PARAM_0] from [PARAM_1] with value [PARAM_3] to [PARAM_2]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'sendEther(uint256,address,address)',
+        params: [
+          {
+            type: 'uint256',
+            name: '_amountInWei',
+            defaultValue: '',
+            decimals: 18,
+          },
+          { type: 'address', name: '_to', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText:
+          'Transfer of [PARAM_0] ' +
+          NETWORK_ASSET_SYMBOL[networkName] +
+          ' to [PARAM_1] ',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
         to: networkContracts.permissionRegistry,
         toName: 'Permission Registry',
         functionName: 'setTimeDelay(uint256)',

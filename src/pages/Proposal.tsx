@@ -435,7 +435,7 @@ const ProposalPage = observer(() => {
           {proposalCallTexts.map((proposalCallText, i) => {
             return (
               <div key={'proposalCallText' + i}>
-                <strong>Call #{i}</strong> -{' '}
+                <strong>Call #{i + 1}</strong> -{' '}
                 <span
                   style={{ whiteSpace: 'pre-line' }}
                   dangerouslySetInnerHTML={{ __html: proposalCallText }}
