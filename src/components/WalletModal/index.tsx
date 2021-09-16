@@ -116,14 +116,8 @@ const WalletModal = observer(() => {
   const {
     context: { modalStore },
   } = useContext();
-  const {
-    active,
-    connector,
-    error,
-    activate,
-    account,
-    chainId,
-  } = useActiveWeb3React();
+  const { active, connector, error, activate, account, chainId } =
+    useActiveWeb3React();
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
   const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);
 

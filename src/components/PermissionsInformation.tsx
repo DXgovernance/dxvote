@@ -160,9 +160,10 @@ const PermissionsInformation = observer(() => {
         for (const functionSignature in rawPermissions[assetAddress][
           fromAddress
         ][toAddress]) {
-          const value = rawPermissions[assetAddress][fromAddress][toAddress][
-            functionSignature
-          ].value.toString();
+          const value =
+            rawPermissions[assetAddress][fromAddress][toAddress][
+              functionSignature
+            ].value.toString();
           permissions.push({
             asset: addressesNames[assetAddress] || assetAddress,
             from: addressesNames[fromAddress] || fromAddress,
