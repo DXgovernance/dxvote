@@ -6,10 +6,10 @@ import { observer } from 'mobx-react';
 import Modal from '../Modal';
 import AccountDetails from '../AccountDetails';
 import Option from './Option';
-import { usePrevious } from 'utils';
+import { DEFAULT_RPC_URLS, usePrevious } from 'utils';
 import Link from '../../components/common/Link';
 import { ReactComponent as Close } from '../../assets/images/x.svg';
-import { injected, SUPPORTED_WALLETS } from 'provider/connectors';
+import { injected, getWallets } from 'provider/connectors';
 import { useContext } from '../../contexts';
 import { isChainIdSupported } from '../../provider/connectors';
 import { useActiveWeb3React } from 'provider/providerHooks';
@@ -114,7 +114,13 @@ const WALLET_VIEWS = {
 
 const WalletModal = observer(() => {
   const {
-    context: { modalStore },
+    context: {
+      modalStore,
+      infuraService,
+      alchemyService,
+      customRpcService,
+      configStore,
+    },
   } = useContext();
   const { active, connector, error, activate, account, chainId } =
     useActiveWeb3React();
@@ -167,8 +173,10 @@ const WalletModal = observer(() => {
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask;
-    return Object.keys(SUPPORTED_WALLETS).map(key => {
-      const option = SUPPORTED_WALLETS[key];
+    const rpcUrls = getRpcUrls();
+    const wallets = getWallets(rpcUrls);
+    return Object.keys(wallets).map(key => {
+      const option = wallets[key];
       // check for mobile options
       if (isMobile) {
         if (!window.ethereum && option.mobile) {
@@ -180,6 +188,7 @@ const WalletModal = observer(() => {
                   tryActivation(option.connector);
               }}
               key={key}
+              icon={option.icon}
               active={option.connector && option.connector === connector}
               color={option.color}
               link={option.href}
@@ -200,6 +209,7 @@ const WalletModal = observer(() => {
               <Option
                 key={key}
                 color={'#E8831D'}
+                icon={option.icon}
                 header={'Install Metamask'}
                 subheader={null}
                 link={'https://metamask.io/'}
@@ -232,6 +242,7 @@ const WalletModal = observer(() => {
             key={key}
             active={option.connector === connector}
             color={option.color}
+            icon={option.icon}
             link={option.href}
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
@@ -239,6 +250,19 @@ const WalletModal = observer(() => {
         )
       );
     });
+  }
+
+  function getRpcUrls() {
+    const preferredRpc = configStore.getLocalConfig().rpcType;
+    if (preferredRpc == 'infura' && infuraService.auth) {
+      return infuraService.getRpcUrls();
+    } else if (preferredRpc == 'alchemy' && alchemyService.auth) {
+      return alchemyService.getRpcUrls();
+    } else if (preferredRpc == 'custom' && customRpcService.auth) {
+      return customRpcService.getRpcUrls();
+    } else {
+      return DEFAULT_RPC_URLS;
+    }
   }
 
   function getModalContent() {
