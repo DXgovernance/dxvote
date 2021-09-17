@@ -1380,7 +1380,7 @@ export const updateProposals = async function (
 
           schemeEventsBatchsIndex++;
         } catch (error) {
-          console.error('Error:', error.message);
+          console.error('Error:', (error as Error).message);
           console.debug(
             'Trying again getting proposal info of schemeEventsBatchs index',
             schemeEventsBatchsIndex
@@ -1439,8 +1439,8 @@ export const updateProposals = async function (
           ipfsHash,
           'waiting 2 seconds and trying again..'
         );
-        console.error(error.message);
-        if (error.message === 'Request failed with status code 429')
+        console.error((error as Error).message);
+        if ((error as Error).message === 'Request failed with status code 429')
           await sleep(10000);
         if (isNode()) {
           proposalIndex--;

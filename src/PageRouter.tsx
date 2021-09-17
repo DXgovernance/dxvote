@@ -36,6 +36,9 @@ const PageRouter = observer(({ children }) => {
       etherscanService,
       pinataService,
       coingeckoService,
+      infuraService,
+      alchemyService,
+      customRpcService
     },
   } = useContext();
 
@@ -47,6 +50,9 @@ const PageRouter = observer(({ children }) => {
   ipfsService.start();
   etherscanService.isAuthenticated();
   pinataService.isAuthenticated();
+  alchemyService.isAuthenticated();
+  infuraService.isAuthenticated();
+  customRpcService.isAuthenticated();
 
   const { active: providerActive } = providerStore.getActiveWeb3React();
 
@@ -58,7 +64,7 @@ const PageRouter = observer(({ children }) => {
         <LoadingBox>
           <div className="loader">
             {' '}
-            <FiZapOff /> <br /> Connect to metamask{' '}
+            <FiZapOff /> <br /> Connect to your wallet{' '}
           </div>
         </LoadingBox>
       </PageRouterWrapper>

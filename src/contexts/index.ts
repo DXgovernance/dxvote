@@ -8,6 +8,8 @@ import IPFSService from '../services/IPFSService';
 import PinataService from '../services/PinataService';
 import EtherscanService from '../services/EtherscanService';
 import CoingeckoService from '../services/CoingeckoService';
+import InfuraService from 'services/InfuraService';
+import AlchemyService from 'services/AlchemyService';
 
 import ProviderStore from '../stores/Provider';
 import TransactionStore from '../stores/Transaction';
@@ -16,6 +18,7 @@ import ConfigStore from '../stores/ConfigStore';
 import DaoStore from '../stores/DaoStore';
 import UserStore from '../stores/UserStore';
 import BlockchainStore from '../stores/BlockchainStore';
+import CustomRpcService from 'services/CustomRpcService';
 
 /*
 https://reactjs.org/docs/context.html#reactcreatecontext
@@ -47,6 +50,9 @@ export default class RootContext {
   pinataService: PinataService;
   etherscanService: EtherscanService;
   coingeckoService: CoingeckoService;
+  infuraService: InfuraService;
+  alchemyService: AlchemyService;
+  customRpcService: CustomRpcService;
 
   constructor() {
     this.providerStore = new ProviderStore(this);
@@ -65,6 +71,9 @@ export default class RootContext {
     this.pinataService = new PinataService(this);
     this.etherscanService = new EtherscanService(this);
     this.coingeckoService = new CoingeckoService(this);
+    this.infuraService = new InfuraService(this);
+    this.alchemyService = new AlchemyService(this);
+    this.customRpcService = new CustomRpcService(this);
   }
 }
 
