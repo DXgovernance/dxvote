@@ -385,6 +385,9 @@ const ProposalPage = observer(() => {
   };
 
   const finishTimeReached = finishTime.toNumber() < moment().unix();
+  const autoBoost =
+    networkContracts.votingMachines.dxd &&
+    networkContracts.votingMachines.dxd.address === votingMachineUsed;
 
   return (
     <ProposalInformationWrapper>
@@ -435,7 +438,7 @@ const ProposalPage = observer(() => {
           {proposalCallTexts.map((proposalCallText, i) => {
             return (
               <div key={'proposalCallText' + i}>
-                <strong>Call #{i}</strong> -{' '}
+                <strong>Call #{i + 1}</strong> -{' '}
                 <span
                   style={{ whiteSpace: 'pre-line' }}
                   dangerouslySetInnerHTML={{ __html: proposalCallText }}
@@ -486,8 +489,12 @@ const ProposalPage = observer(() => {
           )}
           {finishTime.toNumber() > moment().unix() && (
             <span className="timeText">
-              {' '}
-              Finish in <Countdown date={finishTime.toNumber() * 1000} />{' '}
+              Finish in{' '}
+              <Countdown
+                autoStart={pendingAction === 1 && !autoBoost ? false : true}
+                date={finishTime.toNumber() * 1000}
+              />
+              {pendingAction === 1 && !autoBoost && ' after boost'}
             </span>
           )}
           {status === 'Pending Execution' &&
