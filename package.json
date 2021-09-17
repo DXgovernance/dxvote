@@ -6,19 +6,21 @@
     "start": "dotenv -e .env.production ./scripts/start.sh",
     "build": "dotenv -e .env.production ./scripts/build.sh",
     "build-cache": "dotenv -e .env.development ./scripts/buildCache.sh",
+    "upload-config": "yarn dotenv -e .env.development node scripts/uploadConfigFile.ts",
     "dev": "dotenv -e .env.development ./scripts/dev.sh",
     "lint": "eslint src/",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\""
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\"",
+    "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "engines": {
     "node": "^14.17.6"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AugustoL/dxvote.git"
+    "url": "git+https://github.com/DXgovernance/dxvote.git"
   },
   "bugs": {
-    "url": "https://github.com/AugustoL/dxvote/issues"
+    "url": "https://github.com/DXgovernance/dxvote/issues"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
@@ -39,7 +41,7 @@
     "depcheck": "^1.4.1",
     "dotenv": "^8.1.0",
     "dotenv-cli": "^4.0.0",
-    "dxdao-contracts": "git://github.com/AugustoL/dxdao-contracts.git#augustol-develop",
+    "dxdao-contracts": "git://github.com/DXgovernance/dxdao-contracts.git#augustol-develop",
     "ethers": "^4.0.45",
     "git-revision-webpack-plugin": "^3.0.6",
     "ipfs-core": "^0.3.0",

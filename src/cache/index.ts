@@ -64,8 +64,8 @@ export const getUpdatedCache = async function (
           async votingMachineAddress => {
             if (!networkCache.votingMachines[votingMachineAddress])
               networkCache.votingMachines[votingMachineAddress] = {
-                name:
-                  networkContracts.votingMachines[votingMachineAddress].name,
+                name: networkContracts.votingMachines[votingMachineAddress]
+                  .name,
                 events: {
                   votes: [],
                   stakes: [],
@@ -428,9 +428,8 @@ export const updateVotingMachine = async function (
     );
   }
 
-  networkCache.votingMachines[
-    votingMachine._address
-  ].events = votingMachineEventsInCache;
+  networkCache.votingMachines[votingMachine._address].events =
+    votingMachineEventsInCache;
 
   return networkCache;
 };
@@ -679,9 +678,8 @@ export const updateSchemes = async function (
       } else {
         networkCache.schemes[schemeAddress].paramsHash = paramsHash;
         networkCache.schemes[schemeAddress].permissions = permissions;
-        networkCache.schemes[
-          schemeAddress
-        ].boostedVoteRequiredPercentage = boostedVoteRequiredPercentage;
+        networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage =
+          boostedVoteRequiredPercentage;
       }
 
       // Mark scheme as not registered but save all previous data
@@ -736,9 +734,8 @@ export const updateSchemes = async function (
         callsResponse.decodedReturnData[0];
       networkCache.schemes[schemeAddress].boostedProposals =
         callsResponse.decodedReturnData[1];
-      networkCache.schemes[
-        schemeAddress
-      ].maxSecondsForExecution = maxSecondsForExecution;
+      networkCache.schemes[schemeAddress].maxSecondsForExecution =
+        maxSecondsForExecution;
       networkCache.schemes[schemeAddress].registered = false;
     }
   }
@@ -807,12 +804,10 @@ export const updateSchemes = async function (
           callsResponse.decodedReturnData[0];
         networkCache.schemes[schemeAddress].boostedProposals =
           callsResponse.decodedReturnData[1];
-        networkCache.schemes[
-          schemeAddress
-        ].maxSecondsForExecution = maxSecondsForExecution;
-        networkCache.schemes[
-          schemeAddress
-        ].boostedVoteRequiredPercentage = boostedVoteRequiredPercentage;
+        networkCache.schemes[schemeAddress].maxSecondsForExecution =
+          maxSecondsForExecution;
+        networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage =
+          boostedVoteRequiredPercentage;
       }
     })
   );
@@ -1038,9 +1033,10 @@ export const updateProposals = async function (
                     }
                   }
 
-                  const transactionReceipt = await web3.eth.getTransactionReceipt(
-                    schemeEvent.transactionHash
-                  );
+                  const transactionReceipt =
+                    await web3.eth.getTransactionReceipt(
+                      schemeEvent.transactionHash
+                    );
                   try {
                     schemeTypeData.newProposalTopics.map(
                       (newProposalTopic, i) => {
@@ -1070,9 +1066,10 @@ export const updateProposals = async function (
                               creationLogDecoded._descriptionHash.length > 0 &&
                               creationLogDecoded._descriptionHash !== ZERO_HASH
                             ) {
-                              schemeProposalInfo.descriptionHash = ipfsHashToDescriptionHash(
-                                creationLogDecoded._descriptionHash
-                              );
+                              schemeProposalInfo.descriptionHash =
+                                ipfsHashToDescriptionHash(
+                                  creationLogDecoded._descriptionHash
+                                );
                             }
                           }
                         });
@@ -1383,7 +1380,7 @@ export const updateProposals = async function (
 
           schemeEventsBatchsIndex++;
         } catch (error) {
-          console.error('Error:', error.message);
+          console.error('Error:', (error as Error).message);
           console.debug(
             'Trying again getting proposal info of schemeEventsBatchs index',
             schemeEventsBatchsIndex
@@ -1442,8 +1439,8 @@ export const updateProposals = async function (
           ipfsHash,
           'waiting 2 seconds and trying again..'
         );
-        console.error(error.message);
-        if (error.message === 'Request failed with status code 429')
+        console.error((error as Error).message);
+        if ((error as Error).message === 'Request failed with status code 429')
           await sleep(10000);
         if (isNode()) {
           proposalIndex--;

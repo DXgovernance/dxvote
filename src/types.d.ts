@@ -253,7 +253,6 @@ declare global {
   // Application Config
 
   interface NetworkContracts {
-    fromBlock: number;
     avatar: string;
     reputation: string;
     token: string;
@@ -270,6 +269,11 @@ declare global {
   }
 
   interface NetworkConfig {
+    cache: {
+      fromBlock: number;
+      toBlock: number;
+      ipfsHash: string;
+    };
     contracts: NetworkContracts;
     recommendedCalls: {
       asset: string;

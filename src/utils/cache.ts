@@ -1,11 +1,6 @@
 import contentHash from 'content-hash';
 import _ from 'lodash';
-import axios from 'axios';
 import { ZERO_ADDRESS } from './index';
-
-const appConfig = require('../appConfig.json');
-
-const ipfsHashOfAppConfig = appConfig.configHash;
 
 const Web3 = require('web3');
 const web3 = new Web3();
@@ -38,7 +33,7 @@ export const getEvents = async function (
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      console.error('Error fetching blocks:', error.message);
+      console.error('Error fetching blocks:', (error as Error).message);
       if (Math.trunc((to - from) / 2) > 100000) {
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 100000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
@@ -76,7 +71,7 @@ export const getRawEvents = async function (
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      console.error('Error fetching blocks:', error.message);
+      console.error('Error fetching blocks:', (error as Error).message);
       if (Math.trunc((to - from) / 2) > 100000) {
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 100000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
@@ -222,43 +217,6 @@ export const ipfsHashToDescriptionHash = function (ipfsHash) {
   }
 };
 
-export const getNetworkConfig = async function (networkName) {
-  if (networkName === 'localhost') {
-    return {
-      fromBlock: 1,
-      avatar: process.env.REACT_APP_AVATAR_ADDRESS.replace(/["']/g, ''),
-      controller: process.env.REACT_APP_CONTROLLER_ADDRESS.replace(/["']/g, ''),
-      reputation: process.env.REACT_APP_REPUTATION_ADDRESS.replace(/["']/g, ''),
-      permissionRegistry: process.env.REACT_APP_PERMISSION_REGISTRY_ADDRESS.replace(
-        /["']/g,
-        ''
-      ),
-      utils: {
-        multicall: process.env.REACT_APP_MULTICALL_ADDRESS.replace(/["']/g, ''),
-      },
-      votingMachines: {
-        dxd: {
-          address: process.env.REACT_APP_VOTING_MACHINE_ADDRESS.replace(
-            /["']/g,
-            ''
-          ),
-          token: process.env.REACT_APP_VOTING_MACHINE_TOKEN_ADDRESS.replace(
-            /["']/g,
-            ''
-          ),
-        },
-      },
-    };
-  } else {
-    return (
-      await axios({
-        method: 'GET',
-        url: 'https://gateway.pinata.cloud/ipfs/' + ipfsHashOfAppConfig,
-      })
-    ).data[networkName];
-  }
-};
-
 export const getSchemeTypeData = function (networkConfig, schemeAddress) {
   if (networkConfig.daostack) {
     if (
@@ -316,8 +274,8 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
         type: 'GenericMulticall',
         votingMachine: networkConfig.votingMachines.gen.address,
         contractToCall: ZERO_ADDRESS,
-        name:
-          networkConfig.daostack.multicallSchemes.addresses[schemeAddress].name,
+        name: networkConfig.daostack.multicallSchemes.addresses[schemeAddress]
+          .name,
         newProposalTopics:
           networkConfig.daostack.multicallSchemes.newProposalTopics,
         voteParams:
@@ -340,8 +298,8 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
         contractToCall:
           networkConfig.daostack.genericSchemes.addresses[schemeAddress]
             .contractToCall,
-        name:
-          networkConfig.daostack.genericSchemes.addresses[schemeAddress].name,
+        name: networkConfig.daostack.genericSchemes.addresses[schemeAddress]
+          .name,
         newProposalTopics:
           networkConfig.daostack.genericSchemes.newProposalTopics,
         voteParams:

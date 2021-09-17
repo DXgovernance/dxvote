@@ -48,7 +48,11 @@ module.exports = {
       throwOnCallFailures: true,
       allowUnlimitedContractSize: true,
       gasLimit: 9000000,
-      gasPrice: 10000000000, // 10 gwei
+      gasPrice: 10000000000, // 10 gwei,
+      mining: {
+        auto: true,
+        interval: 5000
+      }
     },
     mainnet: {
       url: ALCHEMY_API_KEY.length > 0

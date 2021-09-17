@@ -1,6 +1,9 @@
 name: deploy to netifly
 
 on:
+  push:
+    branches:
+      - develop
   workflow_dispatch:
 
 jobs:

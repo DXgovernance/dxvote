@@ -13,9 +13,10 @@
 # production
 /build
 /contracts/build
+/cache
 
 # config
-.developmentAddresses.json
+.developmentNetwork.json
 
 # misc
 .DS_Store

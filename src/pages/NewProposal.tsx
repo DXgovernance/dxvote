@@ -15,6 +15,7 @@ import {
   sleep,
   bnum,
   normalizeBalance,
+  denormalizeBalance,
   TXEvents,
 } from '../utils';
 
@@ -196,13 +197,9 @@ const NewProposalPage = observer(() => {
 
   const [errorMessage, setErrorMessage] = React.useState('');
   const proposalTemplates = configStore.getProposalTemplates();
-  if (proposalTemplates[0].name !== 'Custom')
-    proposalTemplates.unshift({ name: 'Custom', title: '', description: '' });
 
-  const {
-    assetLimits: transferLimits,
-    recommendedCalls,
-  } = daoStore.getSchemeRecommendedCalls(schemeToUse.address);
+  const { assetLimits: transferLimits, recommendedCalls } =
+    daoStore.getSchemeRecommendedCalls(schemeToUse.address);
   console.debug('[PERMISSIONS]', schemeToUse, transferLimits, recommendedCalls);
 
   let allowedToCall = [];
@@ -306,9 +303,8 @@ const NewProposalPage = observer(() => {
             if (call.functionName.length === 0) {
               callDataFunctionSignature = '0x0';
             } else {
-              callDataFunctionSignature = library.eth.abi.encodeFunctionSignature(
-                call.functionName
-              );
+              callDataFunctionSignature =
+                library.eth.abi.encodeFunctionSignature(call.functionName);
             }
 
             if (call.dataValues.length > 0) {
@@ -365,10 +361,12 @@ const NewProposalPage = observer(() => {
         schemeToUse.type === 'ContributionReward'
           ? {
               beneficiary: contributionRewardCalls.beneficiary,
-              reputationChange: normalizeBalance(
+              reputationChange: denormalizeBalance(
                 bnum(contributionRewardCalls.repChange)
               ).toString(),
-              ethValue: contributionRewardCalls.ethValue,
+              ethValue: denormalizeBalance(
+                bnum(contributionRewardCalls.ethValue)
+              ).toString(),
               externalToken: contributionRewardCalls.externalToken,
               tokenValue: contributionRewardCalls.tokenValue,
               descriptionHash: contentHash.fromIpfs(ipfsHash),
@@ -397,22 +395,22 @@ const NewProposalPage = observer(() => {
         .on(TXEvents.TX_ERROR, txerror => {
           console.error('[TX_ERROR]', txerror);
           setSubmitionState(2);
-          setErrorMessage(txerror.message);
+          setErrorMessage((txerror as Error).message);
         })
         .on(TXEvents.INVARIANT, error => {
           console.error('[ERROR]', error);
           setSubmitionState(2);
-          setErrorMessage(error.message);
+          setErrorMessage((error as Error).message);
         })
         .catch(error => {
           console.error('[ERROR]', error);
           setSubmitionState(2);
-          setErrorMessage(error.message);
+          setErrorMessage((error as Error).message);
         });
     } catch (error) {
       console.error('[PROPOSAL_ERROR]', error);
       setSubmitionState(2);
-      setErrorMessage(error.message);
+      setErrorMessage((error as Error).message);
     }
   };
 
@@ -727,7 +725,7 @@ const NewProposalPage = observer(() => {
             </span>
             <span style={{ width: '20%', fontSize: '13px' }}>REP Change</span>
             <span style={{ width: '20%', fontSize: '13px' }}>
-              {networkAssetSymbol} Value (in WEI)
+              {networkAssetSymbol} Value
             </span>
             <span style={{ width: '20%', fontSize: '13px' }}>
               Address of Token

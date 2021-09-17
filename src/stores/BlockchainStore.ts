@@ -108,9 +108,8 @@ export default class BlockchainStore {
       if (
         !this.contractStorage[entry.contractType][entry.address][entry.method]
       ) {
-        this.contractStorage[entry.contractType][entry.address][
-          entry.method
-        ] = {};
+        this.contractStorage[entry.contractType][entry.address][entry.method] =
+          {};
       }
 
       if (
@@ -126,9 +125,10 @@ export default class BlockchainStore {
         };
       }
 
-      const oldEntry = this.contractStorage[entry.contractType][entry.address][
-        entry.method
-      ][params.toString()];
+      const oldEntry =
+        this.contractStorage[entry.contractType][entry.address][entry.method][
+          params.toString()
+        ];
 
       // Set if never fetched, or if the new data isn't stale
       if (
@@ -166,33 +166,39 @@ export default class BlockchainStore {
         } = this.context;
         const networkName = configStore.getActiveChainName();
 
-        if (!daoStore.getCache()) {
-          console.debug(
-            '[IPFS Cache Fetch]',
-            networkName,
-            configStore.getCacheIPFSHash(networkName)
-          );
-          daoStore.setCache(
-            daoStore.parseCache(
-              await ipfsService.getContentFromIPFS(
-                configStore.getCacheIPFSHash(networkName)
-              )
-            )
-          );
+        const cache = await caches.open(`dxvote-cache`);
+        let match = await cache.match(networkName);
+        let networkCache = null;
+        if (match) {
+          networkCache = JSON.parse(await match.text());
         }
-        let networkCache = daoStore.getCache();
 
         const blockNumber = (await library.eth.getBlockNumber()) - 1;
+
+        // Fetch cache from ipfs if not in localStorage or newer hash is available
+        const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
+        if (
+          !networkCache ||
+          !(newestCacheIpfsHash === networkCache.baseCacheIpfsHash)
+        ) {
+          console.debug('[IPFS Cache Fetch]', networkName, newestCacheIpfsHash);
+          networkCache = daoStore.parseCache(
+            await ipfsService.getContentFromIPFS(newestCacheIpfsHash)
+          );
+          networkCache.baseCacheIpfsHash = newestCacheIpfsHash;
+          daoStore.setCache(networkCache);
+        }
+
         const lastCheckedBlockNumber = networkCache.l1BlockNumber;
 
-        if (blockNumber > lastCheckedBlockNumber) {
+        if (blockNumber > lastCheckedBlockNumber + 1) {
           console.debug(
             '[Fetch Loop] Fetch Blockchain Data',
             blockNumber,
             chainId
           );
 
-          const fromBlock = lastCheckedBlockNumber + 1;
+          const fromBlock = lastCheckedBlockNumber;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
           networkCache = await getUpdatedCache(
@@ -205,7 +211,6 @@ export default class BlockchainStore {
 
           let tokensBalancesCalls = [];
           const tokens = configStore.getTokensToFetchPrice();
-
           tokens.map(token => {
             if (!networkCache.daoInfo.tokenBalances[token.address])
               tokensBalancesCalls.push({
@@ -250,12 +255,17 @@ export default class BlockchainStore {
 
           networkCache.l1BlockNumber = toBlock;
           providerStore.setCurrentBlockNumber(toBlock);
-        }
-        daoStore.setCache(networkCache);
 
+          daoStore.setCache(networkCache);
+          await cache.put(
+            networkName,
+            new Response(JSON.stringify(networkCache))
+          );
+        }
         this.initialLoadComplete = true;
         this.activeFetchLoop = false;
       } catch (error) {
+        console.error((error as Error).message);
         this.activeFetchLoop = false;
       }
     }

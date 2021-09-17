@@ -149,13 +149,13 @@ const ProposalsPage = observer(() => {
   // This way we show the proposals that will finish soon first and the latest proposals that finished later
 
   const sortedProposals = allProposals
-    .filter(proposal => proposal.stateInVotingMachine > 2)
+    .filter(proposal => proposal.stateInVotingMachine > 4)
     .sort(function (a, b) {
       return a.finishTime - b.finishTime;
     })
     .concat(
       allProposals
-        .filter(proposal => proposal.stateInVotingMachine < 3)
+        .filter(proposal => proposal.stateInVotingMachine < 5)
         .sort(function (a, b) {
           return b.finishTime - a.finishTime;
         })
@@ -308,11 +308,11 @@ const ProposalsPage = observer(() => {
               const timeToFinish = timeToTimestamp(proposal.finishTime);
 
               const votingMachineTokenName =
-                votingMachines.gen &&
+                votingMachines.dxd &&
                 daoStore.getVotingMachineOfProposal(proposal.id) ===
-                  votingMachines.gen.address
-                  ? 'GEN'
-                  : 'DXD';
+                  votingMachines.dxd.address
+                  ? 'DXD'
+                  : 'GEN';
 
               const voted =
                 userEvents.votes.findIndex(
