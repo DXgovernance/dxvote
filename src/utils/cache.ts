@@ -33,7 +33,7 @@ export const getEvents = async function (
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      console.error('Error fetching blocks:', error.message);
+      console.error('Error fetching blocks:', (error as Error).message);
       if (Math.trunc((to - from) / 2) > 100000) {
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 100000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
@@ -71,7 +71,7 @@ export const getRawEvents = async function (
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      console.error('Error fetching blocks:', error.message);
+      console.error('Error fetching blocks:', (error as Error).message);
       if (Math.trunc((to - from) / 2) > 100000) {
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 100000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
