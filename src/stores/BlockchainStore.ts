@@ -186,7 +186,6 @@ export default class BlockchainStore {
             await ipfsService.getContentFromIPFS(newestCacheIpfsHash)
           );
           networkCache.baseCacheIpfsHash = newestCacheIpfsHash;
-          daoStore.setCache(networkCache);
         }
 
         const lastCheckedBlockNumber = networkCache.l1BlockNumber;
@@ -256,12 +255,12 @@ export default class BlockchainStore {
           networkCache.l1BlockNumber = toBlock;
           providerStore.setCurrentBlockNumber(toBlock);
 
-          daoStore.setCache(networkCache);
           await cache.put(
             networkName,
             new Response(JSON.stringify(networkCache))
           );
         }
+        daoStore.setCache(networkCache);
         this.initialLoadComplete = true;
         this.activeFetchLoop = false;
       } catch (error) {
