@@ -27,6 +27,7 @@ import {
   formatBalance,
   denormalizeBalance,
 } from '../utils';
+import { ConfirmVoteModal } from 'components/ConfirmVoteModal';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;
@@ -155,6 +156,7 @@ const ProposalPage = observer(() => {
   const scheme = daoStore.getScheme(proposal.scheme);
   const { dxdApproved, genApproved } = userStore.getUserInfo();
   const { account } = providerStore.getActiveWeb3React();
+  const [decision, setDecision] = React.useState(null);
   const [advancedCalls, setAdvancedCalls] = React.useState(false);
   const [votePercentage, setVotePercentage] = React.useState(0);
   const [stakeAmount, setStakeAmount] = React.useState(0);
@@ -692,6 +694,11 @@ const ProposalPage = observer(() => {
         Number(repPercentageAtCreation) > 0 &&
         proposal.stateInVotingMachine >= 3 ? (
           <SidebarRow>
+            <ConfirmVoteModal
+              voteDecision={decision}
+              onConfirm={submitVote}
+              onCancel={() => setDecision(null)}
+            />
             <AmountInput
               type="number"
               placeholder="REP"
@@ -715,7 +722,7 @@ const ProposalPage = observer(() => {
             <ActionButton
               style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
               color="green"
-              onClick={() => submitVote(1)}
+              onClick={() => setDecision(1)}
             >
               <FiThumbsUp />
             </ActionButton>

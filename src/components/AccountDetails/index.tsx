@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import Copy from '../common/Copy';
 import { injected } from 'provider/connectors';
-import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { getBlockchainLink } from '../../utils';
 
 import Link from '../../components/common/Link';
@@ -25,16 +24,6 @@ const OptionButton = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
       font-size: 12px;
-    `};
-`;
-
-const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 1.5rem 1.5rem;
-  font-weight: 500;
-  color: var(--header-text);
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-      padding: 1rem;
     `};
 `;
 
@@ -153,23 +142,6 @@ const StyledLink = styled(Link)`
   color: var(--turquois-text);
 `;
 
-const CloseIcon = styled.div`
-  position: absolute;
-  right: 1rem;
-  top: 14px;
-  color: var(--header-text);
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
-  }
-`;
-
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => theme.chaliceGray};
-  }
-`;
-
 const WalletAction = styled.div`
   color: ${({ theme }) => theme.chaliceGray};
   margin-left: 16px;
@@ -181,12 +153,11 @@ const WalletAction = styled.div`
 `;
 
 interface Props {
-  toggleWalletModal: any;
   openOptions: any;
 }
 
 export default function AccountDetails(props: Props) {
-  const { toggleWalletModal, openOptions } = props;
+  const { openOptions } = props;
   const {
     context: { providerStore, configStore },
   } = useContext();
@@ -196,10 +167,6 @@ export default function AccountDetails(props: Props) {
 
   return (
     <UpperSection>
-      <CloseIcon onClick={toggleWalletModal}>
-        <CloseColor alt={'close icon'} />
-      </CloseIcon>
-      <HeaderRow>Account</HeaderRow>
       <AccountSection>
         <YourAccount>
           <InfoCard>

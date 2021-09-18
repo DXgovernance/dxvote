@@ -122,6 +122,10 @@ const theme = darkMode => ({
     display: flex;
     flex-flow: row nowrap;
   `,
+  flexRowWrap: css`
+    display: flex;
+    flex-flow: row wrap;
+  `,
 });
 
 export const GlobalStyle = createGlobalStyle`

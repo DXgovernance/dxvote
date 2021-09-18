@@ -38,7 +38,7 @@ const PageRouter = observer(({ children }) => {
       coingeckoService,
       infuraService,
       alchemyService,
-      customRpcService
+      customRpcService,
     },
   } = useContext();
 
@@ -49,7 +49,7 @@ const PageRouter = observer(({ children }) => {
   // Start or auth services
   ipfsService.start();
   etherscanService.isAuthenticated();
-  pinataService.isAuthenticated();
+  // pinataService.isAuthenticated();
   alchemyService.isAuthenticated();
   infuraService.isAuthenticated();
   customRpcService.isAuthenticated();

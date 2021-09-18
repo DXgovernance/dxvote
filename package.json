@@ -22,8 +22,6 @@
     "url": "https://github.com/AugustoL/dxvote/issues"
   },
   "dependencies": {
-    "@material-ui/core": "^4.11.2",
-    "@reach/dialog": "^0.8.5",
     "@types/node": "^13.7.0",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.5",
