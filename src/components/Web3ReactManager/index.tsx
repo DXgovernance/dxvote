@@ -48,19 +48,25 @@ const Web3ReactManager = ({ children }) => {
       if (networkActive) userStore.update(providerStore.getActiveWeb3React());
     });
   } catch (error) {
-    console.debug('[Web3ReactManager] Render: Ethereum Provider not available.');
+    console.debug(
+      '[Web3ReactManager] Render: Ethereum Provider not available.'
+    );
   }
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager);
 
   // Fetch user blockchain data on an interval using current params
-  useInterval(async () => {
-    if (networkActive) {
-      userStore.update(providerStore.getActiveWeb3React());
-      blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
-    }
-  }, BLOKCHAIN_FETCH_INTERVAL);
+  useInterval(
+    async () => {
+      console.log({ networkActive });
+      if (networkActive) {
+        userStore.update(providerStore.getActiveWeb3React());
+        blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
+      }
+    },
+    networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10
+  );
 
   const BlurWrapper = styled.div`
     filter: blur(1px);

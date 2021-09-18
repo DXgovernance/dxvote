@@ -12,10 +12,14 @@ export function useInterval(callback, delay) {
   // Set up the interval.
   useEffect(() => {
     function tick() {
+      console.log('tick');
       // @ts-ignore
       savedCallback.current();
     }
     if (delay !== null) {
+      console.log('test');
+      console.log(savedCallback.current);
+      tick();
       let id = setInterval(tick, delay);
       return () => clearInterval(id);
     } else {

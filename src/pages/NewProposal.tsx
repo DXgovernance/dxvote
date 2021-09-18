@@ -197,8 +197,6 @@ const NewProposalPage = observer(() => {
 
   const [errorMessage, setErrorMessage] = React.useState('');
   const proposalTemplates = configStore.getProposalTemplates();
-  if (proposalTemplates[0].name !== 'Custom')
-    proposalTemplates.unshift({ name: 'Custom', title: '', description: '' });
 
   const { assetLimits: transferLimits, recommendedCalls } =
     daoStore.getSchemeRecommendedCalls(schemeToUse.address);
@@ -397,22 +395,22 @@ const NewProposalPage = observer(() => {
         .on(TXEvents.TX_ERROR, txerror => {
           console.error('[TX_ERROR]', txerror);
           setSubmitionState(2);
-          setErrorMessage(txerror.message);
+          setErrorMessage((txerror as Error).message);
         })
         .on(TXEvents.INVARIANT, error => {
           console.error('[ERROR]', error);
           setSubmitionState(2);
-          setErrorMessage(error.message);
+          setErrorMessage((error as Error).message);
         })
         .catch(error => {
           console.error('[ERROR]', error);
           setSubmitionState(2);
-          setErrorMessage(error.message);
+          setErrorMessage((error as Error).message);
         });
     } catch (error) {
       console.error('[PROPOSAL_ERROR]', error);
       setSubmitionState(2);
-      setErrorMessage(error.message);
+      setErrorMessage((error as Error).message);
     }
   };
 

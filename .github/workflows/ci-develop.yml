@@ -1,0 +1,23 @@
+name: code format check & linter
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.17.6]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: yarn
+      - name: Run code format check
+        run: yarn format-check
+      - name: Run code linter
+        run: yarn lint

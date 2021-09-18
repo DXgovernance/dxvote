@@ -320,6 +320,90 @@ export default class ConfigStore {
       {
         asset: ZERO_ADDRESS,
         from: networkContracts.avatar,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'externalTokenTransfer(address,address,uint256,address)',
+        params: [
+          { type: 'address', name: '_externalToken', defaultValue: '' },
+          { type: 'address', name: '_to', defaultValue: '' },
+          { type: 'uint256', name: '_value', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText:
+          'External token transfer of token [PARAM_0] with value [PARAM_2] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName:
+          'externalTokenTransferFrom(address,address,address,uint256,address)',
+        params: [
+          { type: 'address', name: '_externalToken', defaultValue: '' },
+          { type: 'address', name: '_from', defaultValue: '' },
+          { type: 'address', name: '_to', defaultValue: '' },
+          { type: 'uint256', name: '_value', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText:
+          'External token transferFrom of token [PARAM_0] with value [PARAM_3] from [PARAM_1] to [PARAM_2]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'externalTokenApproval(address,address,uint256,address)',
+        params: [
+          { type: 'address', name: '_externalToken', defaultValue: '' },
+          { type: 'address', name: '_spender', defaultValue: '' },
+          { type: 'uint256', name: '_value', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText:
+          'External token approval of token [PARAM_0] from [PARAM_1] with value [PARAM_3] to [PARAM_2]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'sendEther(uint256,address,address)',
+        params: [
+          {
+            type: 'uint256',
+            name: '_amountInWei',
+            defaultValue: '',
+            decimals: 18,
+          },
+          { type: 'address', name: '_to', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText:
+          'Transfer of [PARAM_0] ' +
+          NETWORK_ASSET_SYMBOL[networkName] +
+          ' to [PARAM_1] ',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
         to: networkContracts.permissionRegistry,
         toName: 'Permission Registry',
         functionName: 'setTimeDelay(uint256)',
@@ -365,6 +449,43 @@ export default class ConfigStore {
           'Set [PARAM_5] permission in asset [PARAM_0] from [FROM] to [PARAM_2] with function signature [PARAM_3] and value [PARAM_4]',
       },
     ];
+
+    if (networkContracts.utils.dxdVestingFactory) {
+      recommendedCalls.push({
+        asset: networkContracts.utils.dxdVestingFactory,
+        from: networkContracts.avatar,
+        to: networkContracts.utils.dxdVestingFactory,
+        toName: 'DXD Vesting Factory',
+        functionName: 'create(address, uint256, uint256, uint256, uint256)',
+        params: [
+          { type: 'address', name: 'beneficiary', defaultValue: '' },
+          { type: 'uint256', name: 'start', defaultValue: '' },
+          { type: 'uint256', name: 'cliffDuration', defaultValue: '' },
+          { type: 'uint256', name: 'duration', defaultValue: '' },
+          { type: 'uint256', name: 'value', defaultValue: '' },
+        ],
+        decodeText:
+          'Create new vesting contract with beneficiary [PARAM_0], start date  of [PARAM_1], cliff duration of [PARAMS_2], duration of [PARAM_3] and value of [PARAM_4]',
+      });
+      if (networkContracts.utils.dxDaoNFT) {
+        recommendedCalls.push({
+          asset: ZERO_ADDRESS,
+          from: networkContracts.avatar,
+          to: networkContracts.utils.dxDaoNFT,
+          toName: 'DXdao NFT',
+          functionName: 'mint(address, string)',
+          params: [
+            {
+              type: 'address',
+              name: 'recipient',
+              defaultValue: networkContracts.avatar,
+            },
+            { type: 'string', name: 'tokenURI', defaultValue: '' },
+          ],
+          decodeText: 'Mint NFT to address [PARAM_0] with token URI [PARAM_1]',
+        });
+      }
+    }
 
     if (
       this.appConfig[networkName].recommendedCalls &&
