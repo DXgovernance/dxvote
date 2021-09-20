@@ -653,7 +653,7 @@ const ProposalPage = observer(() => {
               })}
           </span>
           <span style={{ width: '50%', textAlign: 'center', color: 'red' }}>
-            {`${positiveVotes}%`}%
+            {`${positiveVotes}%`}
             <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
             <br />
             {proposalEvents &&
