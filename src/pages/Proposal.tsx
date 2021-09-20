@@ -321,25 +321,6 @@ const ProposalPage = observer(() => {
     );
   };
 
-  // if (scheme.type === "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
-  //   daoService.redeemContributionRewardCall(
-  //     networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
-  //   ).then((toRedeemResponse) => {
-  //     const web3 = providerStore.getActiveWeb3React().library;
-  //     const toRedeem = web3.eth.abi.decodeParameters([
-  //       "uint[3]", "uint[2]", "bool", "uint256", "int256", "uint256", "uint256", "uint256"
-  //     ],toRedeemResponse)
-  //     console.debug("To Redeem:",toRedeem);
-  //     if (
-  //       (toRedeem[0].findIndex(value => value !== "0") > -1) || (toRedeem[1].findIndex(value => value !== "0") > -1)
-  //       || (toRedeem[4] !== 0) || (toRedeem[5] > 0) || (toRedeem[6] > 0) || (toRedeem[7] > 0)
-  //     ) {
-  //       setCanRedeem(true)
-  //     } else {
-  //       setCanRedeem(false)
-  //     }
-  //   });
-  // }
 
   const redeem = function () {
     if (
