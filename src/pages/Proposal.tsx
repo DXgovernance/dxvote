@@ -209,6 +209,16 @@ const ProposalPage = observer(() => {
     .div(totalRepAtProposalCreation)
     .toFixed(4);
 
+  const positiveVotes = proposal.positiveVotes
+    .times('100')
+    .div(totalRepAtProposalCreation)
+    .toFixed(2);
+
+  const negativeVotes = proposal.positiveVotes
+    .times('100')
+    .div(totalRepAtProposalCreation)
+    .toFixed(2);
+
   const { status, boostTime, finishTime, pendingAction } =
     daoStore.getProposalStatus(proposalId);
 
@@ -313,6 +323,7 @@ const ProposalPage = observer(() => {
       .div('100')
       .toFixed(0);
     daoService.vote(decision, repAmount, proposalId);
+    setDecision(null);
   };
 
   const submitStake = function (decision) {
@@ -614,11 +625,8 @@ const ProposalPage = observer(() => {
         <SidebarRow style={{ margin: '0px 10px' }}>
           <span style={{ width: '50%', textAlign: 'center', color: 'green' }}>
             <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
-            {proposal.positiveVotes
-              .times('100')
-              .div(totalRepAtProposalCreation)
-              .toFixed(2)}{' '}
-            %
+            {`${positiveVotes}%`}
+
             <br />
             {proposalEvents.votes &&
               proposalEvents.votes.map(function (voteEvent, i) {
@@ -645,11 +653,8 @@ const ProposalPage = observer(() => {
               })}
           </span>
           <span style={{ width: '50%', textAlign: 'center', color: 'red' }}>
-            {proposal.negativeVotes
-              .times('100')
-              .div(totalRepAtProposalCreation)
-              .toFixed(2)}{' '}
-            %<AmountBadge color="red">{negativeVotesCount}</AmountBadge>
+            {`${positiveVotes}%`}%
+            <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
             <br />
             {proposalEvents &&
               proposalEvents.votes.map(function (voteEvent, i) {
@@ -703,6 +708,9 @@ const ProposalPage = observer(() => {
           <SidebarRow>
             <ConfirmVoteModal
               voteDecision={decision}
+              toAdd={votePercentage}
+              positive={parseFloat(positiveVotes)}
+              negative={parseFloat(negativeVotes)}
               onConfirm={submitVote}
               onCancel={() => setDecision(null)}
             />
@@ -736,7 +744,7 @@ const ProposalPage = observer(() => {
             <ActionButton
               style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
               color="red"
-              onClick={() => submitVote(2)}
+              onClick={() => setDecision(2)}
             >
               <FiThumbsDown />
             </ActionButton>
