@@ -43,6 +43,10 @@ export default class IPFSService {
 
   async getContent(hash: String) {
     let content = [];
+    if (!this.ipfs) {
+      await this.start();
+      console.log('here');
+    }
     for await (const file of this.ipfs.get(hash)) {
       console.debug('[IPFS FILE]', file.type, file.path);
       if (!file.content) continue;
