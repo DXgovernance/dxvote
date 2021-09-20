@@ -59,7 +59,6 @@ const Web3ReactManager = ({ children }) => {
   // Fetch user blockchain data on an interval using current params
   useInterval(
     async () => {
-      console.log({ networkActive });
       if (networkActive) {
         userStore.update(providerStore.getActiveWeb3React());
         blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);

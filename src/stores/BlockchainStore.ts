@@ -153,7 +153,6 @@ export default class BlockchainStore {
         web3React.active &&
         isChainIdSupported(web3React.chainId))
     ) {
-      console.log('fetch data');
       this.initialLoadComplete = reset ? false : this.initialLoadComplete;
       this.activeFetchLoop = true;
       try {
@@ -187,7 +186,6 @@ export default class BlockchainStore {
             await ipfsService.getContentFromIPFS(newestCacheIpfsHash)
           );
           networkCache.baseCacheIpfsHash = newestCacheIpfsHash;
-          // daoStore.setCache(networkCache);
         }
 
         const lastCheckedBlockNumber = networkCache.l1BlockNumber;
@@ -257,7 +255,6 @@ export default class BlockchainStore {
           networkCache.l1BlockNumber = toBlock;
           providerStore.setCurrentBlockNumber(toBlock);
 
-          console.log('finishs data');
           await cache.put(
             networkName,
             new Response(JSON.stringify(networkCache))

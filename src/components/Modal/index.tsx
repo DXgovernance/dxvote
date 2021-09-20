@@ -4,11 +4,6 @@ import ReactDOM from 'react-dom';
 import ActiveButton from '../common/ActiveButton';
 
 import { ReactComponent as Close } from '../../assets/images/x.svg';
-// import { animated } from 'react-spring';
-
-// import { DialogContent, DialogOverlay } from '@reach/dialog';
-// import { isMobile } from 'react-device-detect';
-// import { useGesture } from 'react-use-gesture';
 
 export const Wrapper = styled.div`
   position: fixed;
