@@ -9,6 +9,15 @@ const { getUpdatedCache } = require('../src/cache');
 const appConfig = require('../src/config.json');
 const FormData = require('form-data');
 
+const minimumAmountOfBlocksToUpdate = {
+  mainnet: 50000,
+  xdai: 150000,
+  rinkeby: 500000,
+  arbitrum: 500000,
+  arbitrumTestnet: 5000000,
+  localhost: 100,
+};
+
 const networkName = hre.network.name;
 const emptyCache: DaoNetworkCache = {
   networkId: NETWORK_IDS[networkName],
@@ -36,7 +45,7 @@ for (let i = 0; i < networks.length; i++) {
 async function main() {
   if (process.env.EMPTY_CACHE) {
     fs.writeFileSync(
-      './data/cache/' + networkName + '.json',
+      './cache/' + networkName + '.json',
       JSON.stringify(emptyCache, null, 2),
       { encoding: 'utf8', flag: 'w' }
     );
@@ -53,43 +62,49 @@ async function main() {
       console.log(networkConfig);
       networkCacheFile = emptyCache;
     } else {
-      emptyCache.l1BlockNumber = networkConfig.cache.fromBlock;
-      emptyCache.daoInfo.address = networkConfig.contracts.avatar;
-      const networkCacheFetch = await axios({
-        method: 'GET',
-        url:
-          'https://gateway.pinata.cloud/ipfs/' + networkConfig.cache.ipfsHash,
-      });
-      networkCacheFile =
-        networkCacheFetch.data && !process.env.RESET_CACHE
-          ? networkCacheFetch.data
-          : emptyCache;
+      if (process.env.RESET_CACHE) {
+        networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
+        networkConfig.cache.ipfsHash = '';
+        emptyCache.l1BlockNumber = networkConfig.cache.fromBlock;
+        emptyCache.daoInfo.address = networkConfig.contracts.avatar;
+        networkCacheFile = emptyCache;
+      } else {
+        const networkCacheFetch = await axios({
+          method: 'GET',
+          url:
+            'https://gateway.pinata.cloud/ipfs/' + networkConfig.cache.ipfsHash,
+        });
+        networkCacheFile = networkCacheFetch.data;
+      }
     }
 
-    // Set block range for the script to run, if cache to blcok is set that value is used, if not we use last block
+    // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
     const fromBlock = Math.max(
       networkCacheFile.l1BlockNumber + 1,
-      networkConfig.cache.fromBlock
+      networkConfig.cache.toBlock
     );
-    let toBlock = process.env.CACHE_TO_BLOCK || networkConfig.cache.toBlock;
+    const blockNumber = await web3.eth.getBlockNumber();
+    const toBlock = process.env.RESET_CACHE
+      ? fromBlock
+      : process.env.CACHE_TO_BLOCK ||
+        networkConfig.cache.toBlock +
+          minimumAmountOfBlocksToUpdate[networkName];
 
-    if (!toBlock || toBlock == 0) toBlock = await web3.eth.getBlockNumber();
-
-    if (fromBlock < toBlock) {
+    if (process.env.RESET_CACHE || toBlock < blockNumber) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug(
         'Runing cache script from block',
-        fromBlock,
+        networkConfig.cache.toBlock,
         'to block',
-        toBlock,
+        blockNumber,
         'in network',
         networkName
       );
       networkCacheFile = await getUpdatedCache(
         networkCacheFile,
         networkConfig.contracts,
-        fromBlock,
-        toBlock,
+        networkConfig.cache.toBlock,
+        blockNumber,
         web3
       );
     }
@@ -100,7 +115,7 @@ async function main() {
       { encoding: 'utf8', flag: 'w' }
     );
 
-    networkConfig.cache.toBlock = toBlock;
+    networkConfig.cache.toBlock = blockNumber;
     const newIpfsHash = (
       await ipfs.add(fs.readFileSync('./cache/' + networkName + '.json'), {
         pin: true,

@@ -2,8 +2,8 @@
   "mainnet": {
     "cache": {
       "fromBlock": 7219912,
-      "toBlock": 13224000,
-      "ipfsHash": "QmdNK2zZxw1GdgnKghkVXMyYWBtFDnHW6BbUgie8jjo5d7"
+      "toBlock": 13269308,
+      "ipfsHash": "QmXFUkjB9YM3LMF82KVadi1i5A61UnuAhC48QArnt7FrC5"
     },
     "contracts": {
       "avatar": "0x519b70055af55a007110b4ff99b0ea33071c720a",
@@ -687,8 +687,8 @@
   "xdai": {
     "cache": {
       "fromBlock": 13060713,
-      "toBlock": 18089000,
-      "ipfsHash": "QmbPniTyg3iXDr1fFEQXHP1wQ9qhc2MUQnPVWqsxWVFhca"
+      "toBlock": 18199047,
+      "ipfsHash": "QmYmZ4pAghnpq5n4DUo1dHuFoD6b6Hxz5fE21MVW1nhhrN"
     },
     "contracts": {
       "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
@@ -1222,8 +1222,8 @@
   "rinkeby": {
     "cache": {
       "fromBlock": 9234792,
-      "toBlock": 9291000,
-      "ipfsHash": "QmdvvxwjKEUCgEQUHm2NuhFD3aHuhLE8KCsQxXT9r423x7"
+      "toBlock": 9331588,
+      "ipfsHash": "QmSMyQrVKxbt6GxySJNSXWRZeWWJ7vNAMHNBfZezBJnrha"
     },
     "contracts": {
       "avatar": "0x1A639b50D807ce7e61Dc9eeB091e6Cea8EcB1595",
@@ -1639,8 +1639,8 @@
   "arbitrum": {
     "cache": {
       "fromBlock": 338923,
-      "toBlock": 828000,
-      "ipfsHash": "QmeD347j3TRxJJEuYb52mvjZdxkpWrYLdwFhZLFPSyxHKu"
+      "toBlock": 1406982,
+      "ipfsHash": "QmbmXzB98ct2DmDguoeW4ya7bsb6yDM2JHKsm98XABw6b1"
     },
     "contracts": {
       "avatar": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
@@ -2044,8 +2044,8 @@
   "arbitrumTestnet": {
     "cache": {
       "fromBlock": 3995726,
-      "toBlock": 3998000,
-      "ipfsHash": "QmPzMRxwduhbCTANTYApWZG6tGUHC6YP7BA1ECCJfDZ1Lq"
+      "toBlock": 4711018,
+      "ipfsHash": "QmStHwvDxXCnVXiJKt4WjLyNxBhxCE7be9PybDJ7syonPm"
     },
     "contracts": {
       "avatar": "0x6370B3Ba7D9bAd94b35dC9073540E562bDe5Fdc3",
