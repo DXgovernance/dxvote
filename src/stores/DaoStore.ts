@@ -13,6 +13,11 @@ import {
   VotingMachineProposalState,
   normalizeBalance,
   formatPercentage,
+  hasLostReputation,
+  isBoosted,
+  IsExpired,
+  isNotActive,
+  isWinningVote,
 } from '../utils';
 
 export default class DaoStore {
@@ -850,25 +855,13 @@ export default class DaoStore {
         vote.proposalId
       );
 
-      const IsExpired = (proposal: Proposal): boolean => {
-        return (
-          proposal.stateInVotingMachine ===
-          VotingMachineProposalState.ExpiredInQueue
-        );
-      };
-
       if (
-        ((IsExpired(proposal) &&
-          ((proposal.boostedPhaseTime.toNumber() > 0 &&
-            vote.timestamp < proposal.boostedPhaseTime.toNumber()) ||
-            proposal.boostedPhaseTime.toNumber() === 0)) ||
-          (voteParameters.votersReputationLossRatio.toNumber() > 0 &&
-            ((proposal.boostedPhaseTime.toNumber() > 0 &&
-              vote.timestamp < proposal.boostedPhaseTime.toNumber()) ||
-              proposal.boostedPhaseTime.toNumber() === 0) &&
-            proposal.winningVote === vote.vote &&
-            proposal.stateInVotingMachine < 3)) &&
-        redeemsLeft.rep.indexOf(vote.proposalId) < 0
+        (IsExpired(proposal) && isBoosted(proposal, vote)) ||
+        (hasLostReputation(voteParameters) &&
+          isBoosted(proposal, vote) &&
+          isWinningVote(proposal, vote) &&
+          isNotActive(proposal) &&
+          redeemsLeft.rep.indexOf(vote.proposalId) < 0)
       ) {
         redeemsLeft.rep.push(vote.proposalId);
       }
