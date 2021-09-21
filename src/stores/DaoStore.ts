@@ -850,7 +850,7 @@ export default class DaoStore {
         vote.proposalId
       );
 
-      const proposalIsExpired = (proposal: Proposal): boolean => {
+      const IsExpired = (proposal: Proposal): boolean => {
         return (
           proposal.stateInVotingMachine ===
           VotingMachineProposalState.ExpiredInQueue
@@ -858,7 +858,7 @@ export default class DaoStore {
       };
 
       if (
-        ((proposalIsExpired(proposal) &&
+        ((IsExpired(proposal) &&
           ((proposal.boostedPhaseTime.toNumber() > 0 &&
             vote.timestamp < proposal.boostedPhaseTime.toNumber()) ||
             proposal.boostedPhaseTime.toNumber() === 0)) ||
