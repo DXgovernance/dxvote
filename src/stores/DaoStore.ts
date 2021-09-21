@@ -816,7 +816,7 @@ export default class DaoStore {
     history = _.orderBy(
       history,
       ['event.timestamp', 'event.logIndex'],
-      ['asc', 'asc']
+      ['desc', 'asc']
     );
 
     return {
@@ -826,7 +826,7 @@ export default class DaoStore {
       redeems: proposalEvents.redeems,
       redeemsRep: proposalEvents.redeemsRep,
       redeemsDaoBounty: proposalEvents.redeemsDaoBounty,
-      history: history,
+      history,
     };
   }
 
