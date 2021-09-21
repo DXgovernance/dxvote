@@ -38,7 +38,7 @@ const PageRouter = observer(({ children }) => {
       coingeckoService,
       infuraService,
       alchemyService,
-      customRpcService
+      customRpcService,
     },
   } = useContext();
 

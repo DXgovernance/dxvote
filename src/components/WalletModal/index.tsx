@@ -3,33 +3,15 @@ import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
 import { observer } from 'mobx-react';
 
-import Modal from '../Modal';
+import { Modal } from '../Modal';
 import AccountDetails from '../AccountDetails';
 import Option from './Option';
 import { DEFAULT_RPC_URLS, usePrevious } from 'utils';
 import Link from '../../components/common/Link';
-import { ReactComponent as Close } from '../../assets/images/x.svg';
 import { injected, getWallets } from 'provider/connectors';
 import { useContext } from '../../contexts';
 import { isChainIdSupported } from '../../provider/connectors';
 import { useActiveWeb3React } from 'provider/providerHooks';
-
-const CloseIcon = styled.div`
-  position: absolute;
-  color: var(--header-text);
-  right: 1rem;
-  top: 14px;
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
-  }
-`;
-
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => theme.chaliceGray};
-  }
-`;
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -79,7 +61,7 @@ const UpperSection = styled.div`
 `;
 
 const Blurb = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
+  ${({ theme }) => theme.flexRowWrap}
   align-items: center;
   justify-content: center;
   margin-top: 2rem;
@@ -269,9 +251,6 @@ const WalletModal = observer(() => {
     if (connectionErrorMessage) {
       return (
         <UpperSection>
-          <CloseIcon onClick={toggleWalletModal}>
-            <CloseColor alt={'close icon'} />
-          </CloseIcon>
           <HeaderRow>
             {connectionErrorMessage
               .toString()
@@ -298,9 +277,6 @@ const WalletModal = observer(() => {
     ) {
       return (
         <UpperSection>
-          <CloseIcon onClick={toggleWalletModal}>
-            <CloseColor alt={'close icon'} />
-          </CloseIcon>
           <HeaderRow>{'Wrong Network'}</HeaderRow>
           <ContentWrapper>
             <h5>Please connect to a valid ethereum network.</h5>
@@ -311,31 +287,12 @@ const WalletModal = observer(() => {
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
       return (
         <AccountDetails
-          toggleWalletModal={toggleWalletModal}
           openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
         />
       );
     }
     return (
       <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
-          <CloseColor alt={'close icon'} />
-        </CloseIcon>
-        {walletView !== WALLET_VIEWS.ACCOUNT ? (
-          <HeaderRow color="blue">
-            <HoverText
-              onClick={() => {
-                setWalletView(WALLET_VIEWS.ACCOUNT);
-              }}
-            >
-              Back
-            </HoverText>
-          </HeaderRow>
-        ) : (
-          <HeaderRow>
-            <HoverText>Connect to a wallet</HoverText>
-          </HeaderRow>
-        )}
         <ContentWrapper>
           <OptionGrid>{getOptions()}</OptionGrid>
           {walletView !== WALLET_VIEWS.PENDING && (
@@ -351,12 +308,29 @@ const WalletModal = observer(() => {
     );
   }
 
+  const Header = (
+    <div>
+      {walletView !== WALLET_VIEWS.ACCOUNT ? (
+        <HoverText
+          onClick={() => {
+            setWalletView(WALLET_VIEWS.ACCOUNT);
+          }}
+        >
+          Back
+        </HoverText>
+      ) : walletView === WALLET_VIEWS.ACCOUNT ? (
+        'Account'
+      ) : (
+        'Connect to a wallet'
+      )}
+    </div>
+  );
+
   return (
     <Modal
+      header={Header}
       isOpen={walletModalOpen}
       onDismiss={toggleWalletModal}
-      minHeight={null}
-      maxHeight={90}
     >
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>

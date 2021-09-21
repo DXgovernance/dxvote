@@ -27,6 +27,7 @@ import {
   formatBalance,
   denormalizeBalance,
 } from '../utils';
+import { ConfirmVoteModal } from 'components/ConfirmVoteModal';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;
@@ -155,6 +156,7 @@ const ProposalPage = observer(() => {
   const scheme = daoStore.getScheme(proposal.scheme);
   const { dxdApproved, genApproved } = userStore.getUserInfo();
   const { account } = providerStore.getActiveWeb3React();
+  const [decision, setDecision] = React.useState(null);
   const [advancedCalls, setAdvancedCalls] = React.useState(false);
   const [votePercentage, setVotePercentage] = React.useState(0);
   const [stakeAmount, setStakeAmount] = React.useState(0);
@@ -206,6 +208,16 @@ const ProposalPage = observer(() => {
     .times(100)
     .div(totalRepAtProposalCreation)
     .toFixed(4);
+
+  const positiveVotes = proposal.positiveVotes
+    .times('100')
+    .div(totalRepAtProposalCreation)
+    .toFixed(2);
+
+  const negativeVotes = proposal.positiveVotes
+    .times('100')
+    .div(totalRepAtProposalCreation)
+    .toFixed(2);
 
   const { status, boostTime, finishTime, pendingAction } =
     daoStore.getProposalStatus(proposalId);
@@ -311,6 +323,7 @@ const ProposalPage = observer(() => {
       .div('100')
       .toFixed(0);
     daoService.vote(decision, repAmount, proposalId);
+    setDecision(null);
   };
 
   const submitStake = function (decision) {
@@ -612,11 +625,8 @@ const ProposalPage = observer(() => {
         <SidebarRow style={{ margin: '0px 10px' }}>
           <span style={{ width: '50%', textAlign: 'center', color: 'green' }}>
             <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
-            {proposal.positiveVotes
-              .times('100')
-              .div(totalRepAtProposalCreation)
-              .toFixed(2)}{' '}
-            %
+            {`${positiveVotes}%`}
+
             <br />
             {proposalEvents.votes &&
               proposalEvents.votes.map(function (voteEvent, i) {
@@ -643,11 +653,8 @@ const ProposalPage = observer(() => {
               })}
           </span>
           <span style={{ width: '50%', textAlign: 'center', color: 'red' }}>
-            {proposal.negativeVotes
-              .times('100')
-              .div(totalRepAtProposalCreation)
-              .toFixed(2)}{' '}
-            %<AmountBadge color="red">{negativeVotesCount}</AmountBadge>
+            {`${negativeVotes}%`}
+            <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
             <br />
             {proposalEvents &&
               proposalEvents.votes.map(function (voteEvent, i) {
@@ -699,6 +706,14 @@ const ProposalPage = observer(() => {
         Number(repPercentageAtCreation) > 0 &&
         proposal.stateInVotingMachine >= 3 ? (
           <SidebarRow>
+            <ConfirmVoteModal
+              voteDecision={decision}
+              toAdd={votePercentage}
+              positive={parseFloat(positiveVotes)}
+              negative={parseFloat(negativeVotes)}
+              onConfirm={submitVote}
+              onCancel={() => setDecision(null)}
+            />
             <AmountInput
               type="number"
               placeholder="REP"
@@ -722,14 +737,14 @@ const ProposalPage = observer(() => {
             <ActionButton
               style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
               color="green"
-              onClick={() => submitVote(1)}
+              onClick={() => setDecision(1)}
             >
               <FiThumbsUp />
             </ActionButton>
             <ActionButton
               style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
               color="red"
-              onClick={() => submitVote(2)}
+              onClick={() => setDecision(2)}
             >
               <FiThumbsDown />
             </ActionButton>
