@@ -39,7 +39,7 @@ The cache script will gather all immutable information from the ethereum network
 
 `yarn build-cache`
 
-To understand a bit better what the script will do you can see `scripts/builCache.sh` and `scripts/buildCache.ts`.
+To understand a bit better what the script will do you can see `scripts/buildCache.sh` and `scripts/buildCache.ts`.
 
 ### Configuration
 
