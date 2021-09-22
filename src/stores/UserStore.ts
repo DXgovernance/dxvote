@@ -44,6 +44,8 @@ export default class UserStore {
     const networkContracts = configStore.getNetworkContracts();
     const account = web3React.account;
 
+    if (!account) return;
+
     transactionStore.checkPendingTransactions(web3React, account);
     let callsToExecute = [
       [

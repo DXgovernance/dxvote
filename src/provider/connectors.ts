@@ -1,5 +1,6 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { NetworkConnector } from '@web3-react/network-connector';
 import { NETWORK_IDS } from '../utils';
 import metamaskIcon from '../assets/images/metamask.png';
 import walletConnectIcon from '../assets/images/walletconnect.png';
@@ -32,6 +33,15 @@ export function getWalletConnectConnector(customRpcUrls: {
   });
 }
 
+export function getNetworkConnector(customRpcUrls: {
+  [chainId: number]: string;
+}) {
+  return new NetworkConnector({
+    urls: customRpcUrls,
+    defaultChainId: 1,
+  });
+}
+
 export const getWallets = (customRpcUrls: { [chainId: number]: string }) => ({
   INJECTED: {
     connector: injected,
@@ -59,7 +69,3 @@ export const getWallets = (customRpcUrls: { [chainId: number]: string }) => ({
     icon: walletConnectIcon,
   },
 });
-
-export default {
-  injected,
-};

@@ -1,9 +1,15 @@
 import { useWeb3React } from '@web3-react/core';
 import styled from 'styled-components';
-import { web3ContextNames } from 'provider/connectors';
-import { useEagerConnect, useInactiveListener } from 'provider/providerHooks';
+import { getNetworkConnector, web3ContextNames } from 'provider/connectors';
+import {
+  useActiveWeb3React,
+  useEagerConnect,
+  useInactiveListener,
+  useRpcUrls,
+} from 'provider/providerHooks';
 import { useContext } from '../../contexts';
 import { useInterval } from 'utils';
+import { useEffect } from 'react';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -11,6 +17,8 @@ const Web3ReactManager = ({ children }) => {
   const {
     context: { providerStore, blockchainStore, userStore },
   } = useContext();
+  const { activate } = useActiveWeb3React();
+  const rpcUrls = useRpcUrls();
 
   const web3ContextInjected = useWeb3React(web3ContextNames.injected);
   const { active: networkActive, error: networkError } = web3ContextInjected;
@@ -28,6 +36,15 @@ const Web3ReactManager = ({ children }) => {
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect();
+
+  useEffect(() => {
+    if (triedEager && !networkActive) {
+      const networkConnector = getNetworkConnector(rpcUrls);
+      activate(networkConnector, undefined, true).catch(e => {
+        console.error('[Web3ReactManager] Unable to activate network connector.', e);
+      })
+    }
+  }, [triedEager, networkActive, activate, rpcUrls]);
 
   try {
     // @ts-ignore
