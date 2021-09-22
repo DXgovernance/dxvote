@@ -147,7 +147,7 @@ const ConfigPage = observer(() => {
         </span>
       </Row>
 
-      {connector != injected && (
+      {connector !== injected && (
         <>
           <Row style={{ maxWidth: '500px' }}>
             <span
