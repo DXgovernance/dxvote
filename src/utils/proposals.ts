@@ -29,7 +29,10 @@ export const hasLostReputation = (
   return voteParameters.votersReputationLossRatio.toNumber() > 0;
 };
 
-export const isWinningVote = (proposal: Proposal, vote: Vote): boolean => {
+export const isWinningVote = (
+  proposal: Proposal,
+  vote: Vote | Stake
+): boolean => {
   return proposal.winningVote === vote.vote;
 };
 export const calculateStakes = function (
