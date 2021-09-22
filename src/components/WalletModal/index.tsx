@@ -6,12 +6,12 @@ import { observer } from 'mobx-react';
 import { Modal } from '../Modal';
 import AccountDetails from '../AccountDetails';
 import Option from './Option';
-import { DEFAULT_RPC_URLS, usePrevious } from 'utils';
+import { usePrevious } from 'utils';
 import Link from '../../components/common/Link';
 import { injected, getWallets } from 'provider/connectors';
 import { useContext } from '../../contexts';
 import { isChainIdSupported } from '../../provider/connectors';
-import { useActiveWeb3React } from 'provider/providerHooks';
+import { useActiveWeb3React, useRpcUrls } from 'provider/providerHooks';
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -96,16 +96,11 @@ const WALLET_VIEWS = {
 
 const WalletModal = observer(() => {
   const {
-    context: {
-      modalStore,
-      infuraService,
-      alchemyService,
-      customRpcService,
-      configStore,
-    },
+    context: { modalStore },
   } = useContext();
   const { active, connector, error, activate, account, chainId } =
     useActiveWeb3React();
+  const rpcUrls = useRpcUrls();
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
   const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);
 
@@ -155,7 +150,6 @@ const WalletModal = observer(() => {
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask;
-    const rpcUrls = getRpcUrls();
     const wallets = getWallets(rpcUrls);
     return Object.keys(wallets).map(key => {
       const option = wallets[key];
@@ -232,19 +226,6 @@ const WalletModal = observer(() => {
         )
       );
     });
-  }
-
-  function getRpcUrls() {
-    const preferredRpc = configStore.getLocalConfig().rpcType;
-    if (preferredRpc == 'infura' && infuraService.auth) {
-      return infuraService.getRpcUrls();
-    } else if (preferredRpc == 'alchemy' && alchemyService.auth) {
-      return alchemyService.getRpcUrls();
-    } else if (preferredRpc == 'custom' && customRpcService.auth) {
-      return customRpcService.getRpcUrls();
-    } else {
-      return DEFAULT_RPC_URLS;
-    }
   }
 
   function getModalContent() {
