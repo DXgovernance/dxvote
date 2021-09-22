@@ -5,7 +5,7 @@ import {
 } from './index';
 import moment from 'moment';
 
-export const IsExpired = (proposal: Proposal): boolean => {
+export const isExpired = (proposal: Proposal): boolean => {
   return (
     proposal.stateInVotingMachine === VotingMachineProposalState.ExpiredInQueue
   );

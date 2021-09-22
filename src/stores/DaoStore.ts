@@ -15,7 +15,7 @@ import {
   formatPercentage,
   hasLostReputation,
   isBoosted,
-  IsExpired,
+  isExpired,
   isNotActive,
   isWinningVote,
 } from '../utils';
@@ -856,7 +856,7 @@ export default class DaoStore {
       );
 
       if (
-        (IsExpired(proposal) && isBoosted(proposal, vote)) ||
+        (isExpired(proposal) && isBoosted(proposal, vote)) ||
         (hasLostReputation(voteParameters) &&
           isBoosted(proposal, vote) &&
           isWinningVote(proposal, vote) &&
