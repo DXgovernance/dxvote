@@ -38,7 +38,7 @@ export function getNetworkConnector(customRpcUrls: {
 }) {
   return new NetworkConnector({
     urls: customRpcUrls,
-    defaultChainId: 1,
+    defaultChainId: DEFAULT_ETH_CHAIN_ID,
   });
 }
 
