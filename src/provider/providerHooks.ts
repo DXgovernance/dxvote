@@ -101,15 +101,28 @@ export function useRpcUrls() {
   const {
     context: { infuraService, alchemyService, customRpcService, configStore },
   } = useContext();
-
   const preferredRpc = configStore.getLocalConfig().rpcType;
-  if (preferredRpc === 'infura' && infuraService.auth) {
-    return infuraService.getRpcUrls();
-  } else if (preferredRpc === 'alchemy' && alchemyService.auth) {
-    return alchemyService.getRpcUrls();
-  } else if (preferredRpc === 'custom' && customRpcService.auth) {
-    return customRpcService.getRpcUrls();
-  } else {
-    return DEFAULT_RPC_URLS;
+  const [rpcUrls, setRpcUrls] = useState(null);
+
+  useEffect(() => {
+    getRpcUrls().then(urls => setRpcUrls(urls));
+  }, [preferredRpc]);
+
+  async function getRpcUrls() {
+    await alchemyService.isAuthenticated();
+    await infuraService.isAuthenticated();
+    await customRpcService.isAuthenticated();
+
+    if (preferredRpc === 'infura' && infuraService.auth) {
+      return infuraService.getRpcUrls();
+    } else if (preferredRpc === 'alchemy' && alchemyService.auth) {
+      return alchemyService.getRpcUrls();
+    } else if (preferredRpc === 'custom' && customRpcService.auth) {
+      return customRpcService.getRpcUrls();
+    } else {
+      return DEFAULT_RPC_URLS;
+    }
   }
+
+  return rpcUrls;
 }

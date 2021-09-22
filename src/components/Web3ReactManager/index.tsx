@@ -38,7 +38,7 @@ const Web3ReactManager = ({ children }) => {
   const triedEager = useEagerConnect();
 
   useEffect(() => {
-    if (triedEager && !networkActive) {
+    if (triedEager && !networkActive && rpcUrls) {
       const networkConnector = getNetworkConnector(rpcUrls);
       activate(networkConnector, undefined, true).catch(e => {
         console.error('[Web3ReactManager] Unable to activate network connector.', e);

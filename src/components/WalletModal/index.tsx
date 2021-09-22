@@ -149,6 +149,8 @@ const WalletModal = observer(() => {
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
+    if (!rpcUrls) return [];
+
     const isMetamask = window.ethereum && window.ethereum.isMetaMask;
     const wallets = getWallets(rpcUrls);
     return Object.keys(wallets).map(key => {
