@@ -18,6 +18,7 @@ import {
   isExpired,
   isNotActive,
   isWinningVote,
+  votedBeforeBoosted,
 } from '../utils';
 
 export default class DaoStore {
