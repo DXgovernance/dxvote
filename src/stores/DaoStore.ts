@@ -14,7 +14,6 @@ import {
   normalizeBalance,
   formatPercentage,
   hasLostReputation,
-  isBoosted,
   isExpired,
   isNotActive,
   isWinningVote,
