@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
+import { LinkButton } from '../components/common/Button';
 import Box from '../components/common/Box';
 import {
   ZERO_ADDRESS,
@@ -232,9 +232,7 @@ const ProposalsPage = observer(() => {
             justifyContent: 'space-between',
           }}
         >
-          <ActiveButton route={`/${networkName}/new`}>
-            + New Proposal
-          </ActiveButton>
+          <LinkButton route={`/${networkName}/new`}>+ New Proposal</LinkButton>
         </div>
       </ProposalTableHeaderActions>
       <ProposalTableHeaderWrapper>

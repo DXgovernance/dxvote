@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
+import { Button } from '../components/common/Button';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
 import MDEditor, { commands } from '@uiw/react-md-editor';
@@ -956,7 +956,7 @@ const NewProposalPage = observer(() => {
               alignItems: 'center',
             }}
           >
-            <ActiveButton onClick={addCall}>Add Call</ActiveButton>
+            <Button onClick={addCall}>Add Call</Button>
           </div>
         </div>
       )}
@@ -968,20 +968,7 @@ const NewProposalPage = observer(() => {
       ) : (
         <div />
       )}
-      {submitionState > 1 ? (
-        <TextActions>
-          <span>
-            Uploaded to IPFS:
-            <a href={`https://ipfs.io/ipfs/${ipfsHash}`} target="_blank">
-              https://ipfs.io/ipfs/{ipfsHash}
-            </a>
-            <br />
-            Check before submitting proposal
-          </span>
-        </TextActions>
-      ) : (
-        <div />
-      )}
+
       <div
         style={{
           display: 'flex',
@@ -991,30 +978,45 @@ const NewProposalPage = observer(() => {
           width: '100%',
           margin: '40px 10px',
         }}
-      ></div>
-      {!(submitionState === 5) ? (
-        <LinkedButtons
-          buttons={[
-            {
-              title: `Upload to IPFS`,
-              id: 0,
-              loadingId: 1,
-              onClick: uploadToIPFS,
-            },
-            {
-              title: `Submit Proposal`,
-              id: 2,
-              loadingId: 3,
-              typeSubmit: true,
-              onClick: createProposal,
-            },
-          ]}
-          active={submitionState}
-          disabled={false}
-        />
-      ) : (
-        <ActiveButton route="/">Back to Proposals</ActiveButton>
-      )}
+      >
+        {!(submitionState === 5) ? (
+          <LinkedButtons
+            buttons={[
+              {
+                title: `Upload to IPFS`,
+                id: 0,
+                loadingId: 1,
+                onClick: uploadToIPFS,
+              },
+              {
+                title: `Submit Proposal`,
+                id: 2,
+                loadingId: 3,
+                typeSubmit: true,
+                onClick: createProposal,
+              },
+            ]}
+            active={submitionState}
+            disabled={false}
+          />
+        ) : (
+          <Button route="/">Back to Proposals</Button>
+        )}
+        {submitionState > 1 ? (
+          <TextActions>
+            <span>
+              Uploaded to IPFS:
+              <a href={`https://ipfs.io/ipfs/${ipfsHash}`} target="_blank">
+                https://ipfs.io/ipfs/{ipfsHash}
+              </a>
+              <br />
+              Check before submitting proposal
+            </span>
+          </TextActions>
+        ) : (
+          <div />
+        )}
+      </div>
     </NewProposalFormWrapper>
   );
 });

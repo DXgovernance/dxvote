@@ -3,18 +3,18 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 // Components
-import ActiveButton from 'components/common/ActiveButton';
+import { Button } from 'components/common/Button';
 import PendingCircle from 'components/common/PendingCircle';
-import InactiveButton from 'components/common/InactiveButton';
 // import { Spinner } from 'src/components/Spinner'
 
 export const ColumnWrapper = styled.div(() => ({
   zIndex: 100,
-  width: '100%',
+  width: '60%',
   outline: '0',
   display: 'flex',
   flexDirection: 'column',
   marginBottom: '16px',
+  alignSelf: 'center',
 }));
 
 export const Wrapper = styled.div<ProgressLineProps>(props => ({
@@ -72,13 +72,13 @@ interface ButtonProps {
   buttonSize: string;
 }
 
-export const StyledButton = styled(ActiveButton)<ButtonProps>(props => ({
+export const StyledButton = styled(Button)<ButtonProps>(props => ({
   width: props.buttonSize,
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-around',
-  flexDirection: 'column',
-  height: '60px',
+  justifyContent: 'center',
+  flexDirection: 'row',
+  height: '40px',
 }));
 
 interface ButtonObject {
@@ -116,40 +116,45 @@ export const LinkedButtons: React.FC<LinkedButtonsProps> = ({
     let beforeActive = true;
 
     buttons.forEach((button, index) => {
-      console.log(button.id);
-      console.log(active);
       if (button.id === active) {
         beforeActive = false;
       }
       tempButtons.push(
-        <div>
-          {!(button.id === active || button.loadingId === active) ? (
-            <InactiveButton>{button.title}</InactiveButton>
-          ) : (
-            <StyledButton
-              buttonSize={`${buttonSize}%`}
-              onClick={button.onClick}
-              disabled={!(button.id === active) || disabled}
-              type={button.typeSubmit ? 'submit' : 'button'}
-            >
-              {button.title}
-              {button.loadingId === active && (
-                <PendingCircle height="10px" width="10px" />
-              )}
-            </StyledButton>
+        <StyledButton
+          buttonSize={`${buttonSize}%`}
+          onClick={button.onClick}
+          disabled={!(button.id === active) || disabled}
+          type={button.typeSubmit ? 'submit' : 'button'}
+        >
+          {button.title}
+          {button.loadingId === active && (
+            <PendingCircle height="10px" width="10px" />
           )}
-        </div>
+        </StyledButton>
       );
       if (numberOfButtons - 1 > index) {
         tempProgressBar.push(
-          <Dot active={button.id == active || beforeActive}>{index + 1}</Dot>
+          <Dot
+            active={
+              button.id === active ||
+              button.loadingId === active ||
+              beforeActive
+            }
+          >
+            {index + 1}
+          </Dot>
         );
         tempProgressBar.push(
-          <Line active={button.id == active} complete={beforeActive} />
+          <Line
+            active={button.id === active || button.loadingId === active}
+            complete={beforeActive}
+          />
         );
       } else {
         tempProgressBar.push(
-          <Dot active={button.id == active}>{numberOfButtons}</Dot>
+          <Dot active={button.id === active || button.loadingId === active}>
+            {numberOfButtons}
+          </Dot>
         );
       }
     });
@@ -164,9 +169,7 @@ export const LinkedButtons: React.FC<LinkedButtonsProps> = ({
 
   return (
     <ColumnWrapper>
-      <ProgressLineWrapper size={100 - buttonSize}>
-        {arrayOfButtons}
-      </ProgressLineWrapper>
+      <Wrapper>{arrayOfButtons}</Wrapper>
       <ProgressLineWrapper size={100 - buttonSize}>
         {progressLineArray}
       </ProgressLineWrapper>

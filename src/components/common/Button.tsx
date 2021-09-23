@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-const Button = styled.div`
+export const Button = styled.button`
   background-color: ${({ theme }) => theme.activeButtonBackground};
   border-radius: 4px;
   color: white;
@@ -14,9 +14,16 @@ const Button = styled.div`
   width: max-content;
   padding: 0px 10px;
   margin: 5px;
+  border: 0px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  :disabled {
+    opacity: 0.4;
+    cursor: auto;
+  }
 `;
 
-const ButtonWithRouter = withRouter(({ route, history, children }) => {
+export const LinkButton = withRouter(({ route, history, children }) => {
   return (
     <Button
       onClick={() => {
@@ -27,12 +34,3 @@ const ButtonWithRouter = withRouter(({ route, history, children }) => {
     </Button>
   );
 });
-const ActiveButton = ({ children, onClick = undefined, route = undefined }) => {
-  if (route) {
-    return <ButtonWithRouter route={route}>{children}</ButtonWithRouter>;
-  } else {
-    return <Button onClick={onClick}>{children}</Button>;
-  }
-};
-
-export default ActiveButton;
