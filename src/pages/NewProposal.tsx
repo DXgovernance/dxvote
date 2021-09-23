@@ -18,6 +18,7 @@ import {
   denormalizeBalance,
   TXEvents,
 } from '../utils';
+import { LinkedButtons } from 'components/LinkedButtons';
 
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
@@ -981,28 +982,39 @@ const NewProposalPage = observer(() => {
       ) : (
         <div />
       )}
-
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          margin: '40px 10px',
         }}
-      >
-        {submitionState === 0 ? (
-          <ActiveButton onClick={uploadToIPFS}> Upload to IPFS </ActiveButton>
-        ) : submitionState === 1 ? (
-          <ActiveButton> Uploading descritpion to IPFS.. </ActiveButton>
-        ) : submitionState === 2 ? (
-          <ActiveButton onClick={createProposal}>Submit Proposal</ActiveButton>
-        ) : submitionState === 3 ? (
-          <ActiveButton>Submiting TX...</ActiveButton>
-        ) : submitionState === 4 ? (
-          <ActiveButton>Waiting for TX...</ActiveButton>
-        ) : (
-          <ActiveButton route="/">Back to Proposals</ActiveButton>
-        )}
-      </div>
+      ></div>
+      {!(submitionState === 5) ? (
+        <LinkedButtons
+          buttons={[
+            {
+              title: `Upload to IPFS`,
+              id: 0,
+              loadingId: 1,
+              onClick: uploadToIPFS,
+            },
+            {
+              title: `Submit Proposal`,
+              id: 2,
+              loadingId: 3,
+              typeSubmit: true,
+              onClick: createProposal,
+            },
+          ]}
+          active={submitionState}
+          disabled={false}
+        />
+      ) : (
+        <ActiveButton route="/">Back to Proposals</ActiveButton>
+      )}
     </NewProposalFormWrapper>
   );
 });
