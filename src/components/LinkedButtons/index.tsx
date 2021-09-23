@@ -7,79 +7,67 @@ import { Button } from 'components/common/Button';
 import PendingCircle from 'components/common/PendingCircle';
 // import { Spinner } from 'src/components/Spinner'
 
-export const ColumnWrapper = styled.div(() => ({
-  zIndex: 100,
-  width: '60%',
-  outline: '0',
-  display: 'flex',
-  flexDirection: 'column',
-  marginBottom: '16px',
-  alignSelf: 'center',
-}));
+export const ColumnWrapper = styled.div`
+  z-index: 100;
+  width: 60%;
+  outline: 0;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  align-self: center;
+`;
 
-export const Wrapper = styled.div<ProgressLineProps>(props => ({
-  width: `${props.size + 4}%`,
-  outline: '0',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-}));
+export const Wrapper = styled.div`
+  width: ${props => `${props.size + 4}%`};
+  outline: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
 
-interface ProgressLineProps {
-  size: number;
-}
+export const ProgressLineWrapper = styled.div`
+  width: ${props => `${props.size + 4}%`};
+  outline: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px auto;
+`;
 
-export const ProgressLineWrapper = styled.div<ProgressLineProps>(props => ({
-  width: `${props.size + 4}%`,
-  outline: '0',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  margin: '10px auto',
-}));
+export const Dot = styled.div`
+  min-width: 20px;
+  min-height: 20px;
+  border-radius: 50%;
+  background: ${props => (props.active ? '#4B9E98' : `#DDDDE3`)};
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 8px;
+  font-size: 12px;
+`;
 
-interface StatusProps {
-  active: boolean;
-  complete?: boolean;
-}
+export const Line = styled.div`
+  width: 100%;
+  background: ${props =>
+    props.active
+      ? 'linear-gradient(90deg, #4b9e98 60%, #dddde3 100%);'
+      : props.complete
+      ? '#4b9e98'
+      : `#DDDDE3`};
+  height: 2px;
+`;
 
-export const Dot = styled.div<StatusProps>(props => ({
-  minWidth: '20px',
-  minHeight: '20px',
-  borderRadius: '50%',
-  background: props.active ? '#4B9E98' : `#DDDDE3`,
-  color: 'white',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  lineHeight: '8px',
-  fontSize: '12px',
-}));
-
-export const Line = styled.div<StatusProps>(props => ({
-  width: '100%',
-  background: props.active
-    ? 'linear-gradient(90deg, #4b9e98 60%, #dddde3 100%);'
-    : props.complete
-    ? '#4b9e98'
-    : `#DDDDE3`,
-  height: '2px',
-}));
-
-interface ButtonProps {
-  buttonSize: string;
-}
-
-export const StyledButton = styled(Button)<ButtonProps>(props => ({
-  width: props.buttonSize,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexDirection: 'row',
-  height: '40px',
-}));
+export const StyledButton = styled(Button)`
+  width: ${props => props.buttonSize};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  height: 40px;
+`;
 
 interface ButtonObject {
   title: string;
@@ -92,14 +80,11 @@ interface ButtonObject {
 interface LinkedButtonsProps {
   buttons: ButtonObject[];
   active: string | number;
-  disabled?: boolean;
-  loading?: boolean;
 }
 
 export const LinkedButtons: React.FC<LinkedButtonsProps> = ({
   buttons,
   active,
-  disabled = false,
 }) => {
   const [arrayOfButtons, setArrayOfButtons] = useState<Array<React.ReactNode>>(
     []
@@ -123,7 +108,7 @@ export const LinkedButtons: React.FC<LinkedButtonsProps> = ({
         <StyledButton
           buttonSize={`${buttonSize}%`}
           onClick={button.onClick}
-          disabled={!(button.id === active) || disabled}
+          disabled={!(button.id === active)}
           type={button.typeSubmit ? 'submit' : 'button'}
         >
           {button.title}

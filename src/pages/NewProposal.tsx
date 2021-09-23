@@ -997,7 +997,6 @@ const NewProposalPage = observer(() => {
               },
             ]}
             active={submitionState}
-            disabled={false}
           />
         ) : (
           <Button route="/">Back to Proposals</Button>
