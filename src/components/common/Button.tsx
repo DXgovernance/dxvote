@@ -8,7 +8,6 @@ export const Button = styled.button`
   height: 34px;
   letter-spacing: 1px;
   font-weight: 500;
-  line-height: 34px;
   text-align: center;
   cursor: pointer;
   width: max-content;
