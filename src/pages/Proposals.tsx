@@ -88,6 +88,15 @@ const TableRowsWrapper = styled.div`
   overflow-y: scroll;
   height: 60vh;
   min-height: 350px;
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 11px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid white;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 
   h3 {
     text-align: center;
