@@ -76,7 +76,7 @@ const SidebarWrapper = styled.div`
   top: 10%;
 `;
 const ProposalTableHeaderActions = styled.div`
-  padding: 0px 10px 10px 10px;
+  padding: 20px 10px 20px 10px;
   color: var(--dark-text-gray);
   font-weight: 500;
   font-size: 18px;
@@ -114,7 +114,6 @@ const TableHeader = styled.div`
 `;
 
 const TableRowsWrapper = styled.div`
-  /* overflow-y: scroll; */
   height: 100%;
   min-height: 350px;
   ::-webkit-scrollbar {
