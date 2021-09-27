@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import ActiveButton from '../components/common/ActiveButton';
-import Box from '../components/common/Box';
+import Footer from '../components/Footer';
 import {
   ZERO_ADDRESS,
   formatPercentage,
@@ -14,8 +14,19 @@ import {
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 
-const ProposalsTableWrapper = styled(Box)`
+const ProposalsWrapper = styled.div`
+  padding: 10px 0px;
+  background: white;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
   width: 100%;
+`;
+
+const NewProposalButton = styled.div`
+  align-self: flex-end;
+  margin-bottom: 100px;
 `;
 
 const ProposalsFilter = styled.select`
@@ -33,6 +44,7 @@ const ProposalsFilter = styled.select`
   margin: 5px;
   font-family: var(--roboto);
   border: 0px;
+  align-self: flex-end;
 `;
 
 const ProposalsNameFilter = styled.input`
@@ -50,18 +62,28 @@ const ProposalsNameFilter = styled.input`
   padding: 0px 10px;
   margin: 5px;
   font-family: var(--roboto);
+  align-self: flex-end;
 `;
 
+const SidebarWrapper = styled.div`
+  padding: 0px 10px 10px 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 90vh;
+  align-self: flex-start;
+  position: sticky;
+  top: 10%;
+`;
 const ProposalTableHeaderActions = styled.div`
   padding: 0px 10px 10px 10px;
   color: var(--dark-text-gray);
-  border-bottom: 1px solid var(--line-gray);
   font-weight: 500;
   font-size: 18px;
   letter-spacing: 1px;
   display: flex;
-  justify-content: space-between;
-  flex-direction: row;
+  justify-content: flex-start;
+  flex-direction: column;
 
   span {
     font-size: 20px;
@@ -69,7 +91,14 @@ const ProposalTableHeaderActions = styled.div`
   }
 `;
 
+const TableContentWrapper = styled.div`
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+`;
+
 const ProposalTableHeaderWrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -85,8 +114,8 @@ const TableHeader = styled.div`
 `;
 
 const TableRowsWrapper = styled.div`
-  overflow-y: scroll;
-  height: 60vh;
+  /* overflow-y: scroll; */
+  height: 100%;
   min-height: 350px;
   ::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -116,6 +145,7 @@ const TableRow = styled.div`
   color: var(--dark-text-gray);
   text-align: right;
   cursor: pointer;
+  width: 100%;
 `;
 
 const TableCell = styled.div`
@@ -127,6 +157,10 @@ const TableCell = styled.div`
   white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
   overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
   text-overflow: ${props => (props.wrapText ? 'ellipsis' : 'inherit')};
+`;
+
+const FooterWrap = styled.div`
+  align-self: flex-end;
 `;
 
 const ProposalsPage = observer(() => {
@@ -185,15 +219,14 @@ const ProposalsPage = observer(() => {
   console.debug('All Proposals', allProposals, allProposals.length, daoStore);
 
   return (
-    <ProposalsTableWrapper>
-      <ProposalTableHeaderActions>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
-        >
+    <ProposalsWrapper>
+      <SidebarWrapper>
+        <ProposalTableHeaderActions>
+          <NewProposalButton>
+            <ActiveButton route={`/${networkName}/new`}>
+              + New Proposal
+            </ActiveButton>
+          </NewProposalButton>
           <ProposalsNameFilter
             type="text"
             placeholder="Search by proposal title"
@@ -232,214 +265,213 @@ const ProposalsPage = observer(() => {
               );
             })}
           </ProposalsFilter>
-        </div>
+        </ProposalTableHeaderActions>
+        <FooterWrap>
+          <Footer />
+        </FooterWrap>
+      </SidebarWrapper>
+      <TableContentWrapper>
+        <ProposalTableHeaderWrapper>
+          <TableHeader width="35%" align="left">
+            {' '}
+            Title{' '}
+          </TableHeader>
+          <TableHeader width="15%" align="center">
+            {' '}
+            Scheme{' '}
+          </TableHeader>
+          <TableHeader width="15%" align="center">
+            {' '}
+            Status{' '}
+          </TableHeader>
+          <TableHeader width="17.5%" align="center">
+            {' '}
+            Stakes{' '}
+          </TableHeader>
+          <TableHeader width="17.5%" align="center">
+            {' '}
+            Votes{' '}
+          </TableHeader>
+        </ProposalTableHeaderWrapper>
+        {proposals.length === 0 ? (
+          <TableRowsWrapper>
+            <h3>No Proposals Found</h3>
+          </TableRowsWrapper>
+        ) : (
+          <TableRowsWrapper>
+            {proposals.map((proposal, i) => {
+              if (
+                proposal &&
+                (stateFilter === 'Any Status' ||
+                  (stateFilter !== 'Any Status' &&
+                    proposal.status === stateFilter)) &&
+                (titleFilter.length === 0 ||
+                  (titleFilter.length > 0 &&
+                    proposal.title.indexOf(titleFilter) >= 0)) &&
+                (schemeFilter === 'All Schemes' ||
+                  proposal.scheme === schemeFilter)
+              ) {
+                const minimumDaoBounty = daoStore.getVotingParametersOfProposal(
+                  proposal.id
+                ).minimumDaoBounty;
+                const positiveStake = formatNumberValue(
+                  normalizeBalance(proposal.positiveStakes, 18),
+                  1
+                );
+                const negativeStake = formatNumberValue(
+                  normalizeBalance(
+                    proposal.negativeStakes.plus(minimumDaoBounty),
+                    18
+                  ),
+                  1
+                );
+                const repAtCreation = daoStore.getRepAt(
+                  ZERO_ADDRESS,
+                  proposal.creationEvent.l1BlockNumber
+                ).totalSupply;
 
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
-        >
-          <ActiveButton route={`/${networkName}/new`}>
-            + New Proposal
-          </ActiveButton>
-        </div>
-      </ProposalTableHeaderActions>
-      <ProposalTableHeaderWrapper>
-        <TableHeader width="35%" align="left">
-          {' '}
-          Title{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Scheme{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Status{' '}
-        </TableHeader>
-        <TableHeader width="17.5%" align="center">
-          {' '}
-          Stakes{' '}
-        </TableHeader>
-        <TableHeader width="17.5%" align="center">
-          {' '}
-          Votes{' '}
-        </TableHeader>
-      </ProposalTableHeaderWrapper>
-      {proposals.length === 0 ? (
-        <TableRowsWrapper>
-          <h3>No Proposals Found</h3>
-        </TableRowsWrapper>
-      ) : (
-        <TableRowsWrapper>
-          {proposals.map((proposal, i) => {
-            if (
-              proposal &&
-              (stateFilter === 'Any Status' ||
-                (stateFilter !== 'Any Status' &&
-                  proposal.status === stateFilter)) &&
-              (titleFilter.length === 0 ||
-                (titleFilter.length > 0 &&
-                  proposal.title.indexOf(titleFilter) >= 0)) &&
-              (schemeFilter === 'All Schemes' ||
-                proposal.scheme === schemeFilter)
-            ) {
-              const minimumDaoBounty = daoStore.getVotingParametersOfProposal(
-                proposal.id
-              ).minimumDaoBounty;
-              const positiveStake = formatNumberValue(
-                normalizeBalance(proposal.positiveStakes, 18),
-                1
-              );
-              const negativeStake = formatNumberValue(
-                normalizeBalance(
-                  proposal.negativeStakes.plus(minimumDaoBounty),
-                  18
-                ),
-                1
-              );
-              const repAtCreation = daoStore.getRepAt(
-                ZERO_ADDRESS,
-                proposal.creationEvent.l1BlockNumber
-              ).totalSupply;
+                const positiveVotesPercentage = formatPercentage(
+                  proposal.positiveVotes.div(repAtCreation),
+                  2
+                );
+                const negativeVotesPercentage = formatPercentage(
+                  proposal.negativeVotes.div(repAtCreation),
+                  2
+                );
+                const timeToBoost = timeToTimestamp(proposal.boostTime);
+                const timeToFinish = timeToTimestamp(proposal.finishTime);
 
-              const positiveVotesPercentage = formatPercentage(
-                proposal.positiveVotes.div(repAtCreation),
-                2
-              );
-              const negativeVotesPercentage = formatPercentage(
-                proposal.negativeVotes.div(repAtCreation),
-                2
-              );
-              const timeToBoost = timeToTimestamp(proposal.boostTime);
-              const timeToFinish = timeToTimestamp(proposal.finishTime);
+                const votingMachineTokenName =
+                  votingMachines.dxd &&
+                  daoStore.getVotingMachineOfProposal(proposal.id) ===
+                    votingMachines.dxd.address
+                    ? 'DXD'
+                    : 'GEN';
 
-              const votingMachineTokenName =
-                votingMachines.dxd &&
-                daoStore.getVotingMachineOfProposal(proposal.id) ===
-                  votingMachines.dxd.address
-                  ? 'DXD'
-                  : 'GEN';
-
-              const voted =
-                userEvents.votes.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              const staked =
-                userEvents.stakes.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              const created =
-                userEvents.newProposal.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              return (
-                <Link
-                  key={'proposal' + i}
-                  to={`/${networkName}/proposal/${proposal.id}`}
-                  style={{ textDecoration: 'none' }}
-                >
-                  <TableRow>
-                    <TableCell
-                      width="35%"
-                      align="left"
-                      weight="500"
-                      wrapText="true"
-                    >
-                      {created && (
-                        <FiFeather
-                          style={{ minWidth: '15px', margin: '0px 2px' }}
-                        />
-                      )}
-                      {voted && (
-                        <FiCheckCircle
-                          style={{ minWidth: '15px', margin: '0px 2px' }}
-                        />
-                      )}
-                      {staked && (
-                        <FiCheckSquare
-                          style={{ minWidth: '15px', margin: '0px 2px' }}
-                        />
-                      )}
-                      {proposal.title.length > 0 ? proposal.title : proposal.id}
-                    </TableCell>
-                    <TableCell width="15%" align="center">
-                      {daoStore.getCache().schemes[proposal.scheme].name}
-                    </TableCell>
-                    <TableCell width="15%" align="center">
-                      <span style={{ textAlign: 'center' }}>
-                        {proposal.status} <br />
-                        {timeToBoost !== '' ? (
-                          <small>
-                            Boost {timeToBoost} <br />
-                          </small>
-                        ) : (
-                          <span></span>
+                const voted =
+                  userEvents.votes.findIndex(
+                    event => event.proposalId === proposal.id
+                  ) > -1;
+                const staked =
+                  userEvents.stakes.findIndex(
+                    event => event.proposalId === proposal.id
+                  ) > -1;
+                const created =
+                  userEvents.newProposal.findIndex(
+                    event => event.proposalId === proposal.id
+                  ) > -1;
+                return (
+                  <Link
+                    key={'proposal' + i}
+                    to={`/${networkName}/proposal/${proposal.id}`}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <TableRow>
+                      <TableCell
+                        width="35%"
+                        align="left"
+                        weight="500"
+                        wrapText="true"
+                      >
+                        {created && (
+                          <FiFeather
+                            style={{ minWidth: '15px', margin: '0px 2px' }}
+                          />
                         )}
-                        {timeToFinish !== '' ? (
-                          <small>Finish {timeToFinish} </small>
-                        ) : (
-                          <span></span>
+                        {voted && (
+                          <FiCheckCircle
+                            style={{ minWidth: '15px', margin: '0px 2px' }}
+                          />
                         )}
-                        {proposal.pendingAction === 3 ? (
-                          <small> Pending Finish Execution </small>
-                        ) : (
-                          <span></span>
+                        {staked && (
+                          <FiCheckSquare
+                            style={{ minWidth: '15px', margin: '0px 2px' }}
+                          />
                         )}
-                      </span>
-                    </TableCell>
-                    <TableCell
-                      width="17.5%"
-                      align="space-evenly"
-                      style={{ minWidth: '15px', margin: '0px 2px' }}
-                    >
-                      <span
-                        style={{
-                          color: 'green',
-                          flex: '5',
-                          textAlign: 'right',
-                        }}
+                        {proposal.title.length > 0
+                          ? proposal.title
+                          : proposal.id}
+                      </TableCell>
+                      <TableCell width="15%" align="center">
+                        {daoStore.getCache().schemes[proposal.scheme].name}
+                      </TableCell>
+                      <TableCell width="15%" align="center">
+                        <span style={{ textAlign: 'center' }}>
+                          {proposal.status} <br />
+                          {timeToBoost !== '' ? (
+                            <small>
+                              Boost {timeToBoost} <br />
+                            </small>
+                          ) : (
+                            <span></span>
+                          )}
+                          {timeToFinish !== '' ? (
+                            <small>Finish {timeToFinish} </small>
+                          ) : (
+                            <span></span>
+                          )}
+                          {proposal.pendingAction === 3 ? (
+                            <small> Pending Finish Execution </small>
+                          ) : (
+                            <span></span>
+                          )}
+                        </span>
+                      </TableCell>
+                      <TableCell
+                        width="17.5%"
+                        align="space-evenly"
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
                       >
-                        {positiveStake.toString()} {votingMachineTokenName}{' '}
-                      </span>
-                      <span style={{ flex: '1', textAlign: 'center' }}>|</span>
-                      <span
-                        style={{ color: 'red', flex: '5', textAlign: 'left' }}
-                      >
-                        {' '}
-                        {negativeStake.toString()} {votingMachineTokenName}
-                      </span>
-                    </TableCell>
-                    <TableCell width="17.5%" align="space-evenly">
-                      <span
-                        style={{
-                          color: 'green',
-                          flex: '3',
-                          textAlign: 'right',
-                        }}
-                      >
-                        {positiveVotesPercentage}{' '}
-                      </span>
-                      <span style={{ flex: '1', textAlign: 'center' }}>|</span>
-                      <span
-                        style={{ color: 'red', flex: '3', textAlign: 'left' }}
-                      >
-                        {' '}
-                        {negativeVotesPercentage}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                </Link>
-              );
-            } else {
-              return null;
-            }
-          })}
-        </TableRowsWrapper>
-      )}
-    </ProposalsTableWrapper>
+                        <span
+                          style={{
+                            color: 'green',
+                            flex: '5',
+                            textAlign: 'right',
+                          }}
+                        >
+                          {positiveStake.toString()} {votingMachineTokenName}{' '}
+                        </span>
+                        <span style={{ flex: '1', textAlign: 'center' }}>
+                          |
+                        </span>
+                        <span
+                          style={{ color: 'red', flex: '5', textAlign: 'left' }}
+                        >
+                          {' '}
+                          {negativeStake.toString()} {votingMachineTokenName}
+                        </span>
+                      </TableCell>
+                      <TableCell width="17.5%" align="space-evenly">
+                        <span
+                          style={{
+                            color: 'green',
+                            flex: '3',
+                            textAlign: 'right',
+                          }}
+                        >
+                          {positiveVotesPercentage}{' '}
+                        </span>
+                        <span style={{ flex: '1', textAlign: 'center' }}>
+                          |
+                        </span>
+                        <span
+                          style={{ color: 'red', flex: '3', textAlign: 'left' }}
+                        >
+                          {' '}
+                          {negativeVotesPercentage}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  </Link>
+                );
+              } else {
+                return null;
+              }
+            })}
+          </TableRowsWrapper>
+        )}
+      </TableContentWrapper>
+    </ProposalsWrapper>
   );
 });
 
