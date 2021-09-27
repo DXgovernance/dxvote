@@ -214,7 +214,7 @@ const ProposalPage = observer(() => {
     .div(totalRepAtProposalCreation)
     .toFixed(2);
 
-  const negativeVotes = proposal.positiveVotes
+  const negativeVotes = proposal.negativeVotes
     .times('100')
     .div(totalRepAtProposalCreation)
     .toFixed(2);
@@ -333,7 +333,6 @@ const ProposalPage = observer(() => {
       proposalId
     );
   };
-
 
   const redeem = function () {
     if (
