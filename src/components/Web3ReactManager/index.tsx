@@ -8,7 +8,7 @@ import {
   useRpcUrls,
 } from 'provider/providerHooks';
 import { useContext } from '../../contexts';
-import { useInterval } from 'utils';
+import { useInterval, usePrevious } from 'utils';
 import { useEffect } from 'react';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
@@ -21,7 +21,11 @@ const Web3ReactManager = ({ children }) => {
   const rpcUrls = useRpcUrls();
 
   const web3ContextInjected = useWeb3React(web3ContextNames.injected);
-  const { active: networkActive, error: networkError } = web3ContextInjected;
+  const {
+    active: networkActive,
+    error: networkError,
+    chainId,
+  } = web3ContextInjected;
 
   if (!providerStore.activeChainId)
     providerStore.setWeb3Context(
@@ -41,8 +45,11 @@ const Web3ReactManager = ({ children }) => {
     if (triedEager && !networkActive && rpcUrls) {
       const networkConnector = getNetworkConnector(rpcUrls);
       activate(networkConnector, undefined, true).catch(e => {
-        console.error('[Web3ReactManager] Unable to activate network connector.', e);
-      })
+        console.error(
+          '[Web3ReactManager] Unable to activate network connector.',
+          e
+        );
+      });
     }
   }, [triedEager, networkActive, activate, rpcUrls]);
 
@@ -69,6 +76,13 @@ const Web3ReactManager = ({ children }) => {
       '[Web3ReactManager] Render: Ethereum Provider not available.'
     );
   }
+
+  const prevChainId = usePrevious(chainId);
+  useEffect(() => {
+    if (prevChainId && chainId && prevChainId !== chainId) {
+      window.location.reload();
+    }
+  }, [chainId, prevChainId]);
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager);
