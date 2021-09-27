@@ -11,6 +11,8 @@ import {
   normalizeBalance,
   timeToTimestamp,
   formatNumberValue,
+  mapEnum,
+  VotingMachineProposalState,
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 
