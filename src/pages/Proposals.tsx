@@ -150,15 +150,11 @@ const ProposalsPage = observer(() => {
 
   const sortedProposals = allProposals
     .filter(proposal => proposal.stateInVotingMachine > 4)
-    .sort(function (a, b) {
-      return a.finishTime - b.finishTime;
-    })
+    .sort((a, b) => a.finishTime - b.finishTime)
     .concat(
       allProposals
         .filter(proposal => proposal.stateInVotingMachine < 5)
-        .sort(function (a, b) {
-          return b.finishTime - a.finishTime;
-        })
+        .sort( (a, b) => b.finishTime - a.finishTime)
     );
 
   if (sortedProposals.length > proposals.length) setProposals(sortedProposals);
