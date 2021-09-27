@@ -5,7 +5,6 @@ import styled from 'styled-components';
 // Components
 import { Button } from 'components/common/Button';
 import PendingCircle from 'components/common/PendingCircle';
-// import { Spinner } from 'src/components/Spinner'
 
 export const ColumnWrapper = styled.div`
   z-index: 100;
