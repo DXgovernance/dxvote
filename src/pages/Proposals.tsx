@@ -150,15 +150,19 @@ const ProposalsPage = observer(() => {
   // lower in the finish time.
   // This way we show the proposals that will finish soon first and the latest proposals that finished later
 
-  const sortedProposals = allProposals
-    .filter(proposal => proposal.stateInVotingMachine > 4)
-    .sort((a, b) => a.finishTime - b.finishTime)
-    .concat(
-      allProposals
-        .filter(proposal => proposal.stateInVotingMachine < 5)
-        .sort( (a, b) => b.finishTime - a.finishTime)
-    );
+  const seperateProposalArrays = mapEnum(VotingMachineProposalState,p => {
 
+   return allProposals
+  // loop over enum
+  // filter each enum value
+  // sort them
+  // concat next batch
+    .filter(proposal => proposal.stateInVotingMachine === p)
+    .sort((a, b) => a.boostTime.toNumber() > 0 ? b.boostTime.toNumber() - a.boostTime.toNumber()   : b.finishTime - a.finishTime)
+
+  })
+  const sortedProposals = seperateProposalArrays.flat(1).reverse()
+  console.log(sortedProposals)
   if (sortedProposals.length > proposals.length) setProposals(sortedProposals);
 
   function onStateFilterChange(newValue) {
