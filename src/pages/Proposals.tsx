@@ -25,7 +25,7 @@ const ProposalsWrapper = styled.div`
 `;
 
 const NewProposalButton = styled.div`
-  align-self: flex-end;
+  align-self: center;
   margin-bottom: 100px;
 `;
 
@@ -39,12 +39,12 @@ const ProposalsFilter = styled.select`
   line-height: 34px;
   text-align: center;
   cursor: pointer;
-  width: max-content;
+  width: 200px;
   padding: 0px 10px;
-  margin: 5px;
+  margin: 10px 0px;
   font-family: var(--roboto);
   border: 0px;
-  align-self: flex-end;
+  align-self: center;
 `;
 
 const ProposalsNameFilter = styled.input`
@@ -57,12 +57,12 @@ const ProposalsNameFilter = styled.input`
   font-weight: 500;
   line-height: 32px;
   text-align: left;
-  cursor: pointer;
-  width: max-content;
+  cursor: initial;
+  width: 100%;
   padding: 0px 10px;
-  margin: 5px;
+  margin: 5px 0px;
   font-family: var(--roboto);
-  align-self: flex-end;
+  align-self: center;
 `;
 
 const SidebarWrapper = styled.div`
@@ -71,6 +71,7 @@ const SidebarWrapper = styled.div`
   justify-content: space-between;
   flex-direction: column;
   height: 90vh;
+  width: 200px;
   align-self: flex-start;
   position: sticky;
   top: 10%;
@@ -95,6 +96,8 @@ const TableContentWrapper = styled.div`
   width: 75%;
   display: flex;
   flex-direction: column;
+
+  border-left: 1px solid #e1e3e7;
 `;
 
 const ProposalTableHeaderWrapper = styled.div`
@@ -145,14 +148,20 @@ const TableRow = styled.div`
   text-align: right;
   cursor: pointer;
   width: 100%;
+
+  &:hover {
+    background-color: #80808012;
+  }
 `;
 
 const TableCell = styled.div`
   display: flex;
+  margin-right: 2%;
   color: ${props => props.color};
   width: ${props => props.width || '25%'};
   justify-content: ${props => props.align};
   font-weight: ${props => props.weight};
+  font-size: ${props => (props.fontSize ? props.fontSize : 'smaller')};
   white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
   overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
   text-overflow: ${props => (props.wrapText ? 'ellipsis' : 'inherit')};
@@ -271,7 +280,7 @@ const ProposalsPage = observer(() => {
       </SidebarWrapper>
       <TableContentWrapper>
         <ProposalTableHeaderWrapper>
-          <TableHeader width="35%" align="left">
+          <TableHeader width="55%" align="left">
             {' '}
             Title{' '}
           </TableHeader>
@@ -283,11 +292,11 @@ const ProposalsPage = observer(() => {
             {' '}
             Status{' '}
           </TableHeader>
-          <TableHeader width="17.5%" align="center">
+          <TableHeader width="15%" align="center">
             {' '}
             Stakes{' '}
           </TableHeader>
-          <TableHeader width="17.5%" align="center">
+          <TableHeader width="10%" align="center">
             {' '}
             Votes{' '}
           </TableHeader>
@@ -367,10 +376,11 @@ const ProposalsPage = observer(() => {
                   >
                     <TableRow>
                       <TableCell
-                        width="35%"
+                        width="53%"
                         align="left"
-                        weight="500"
+                        weight="800"
                         wrapText="true"
+                        fontSize="inherit"
                       >
                         {created && (
                           <FiFeather
@@ -391,10 +401,10 @@ const ProposalsPage = observer(() => {
                           ? proposal.title
                           : proposal.id}
                       </TableCell>
-                      <TableCell width="15%" align="center">
+                      <TableCell width="13%" align="center">
                         {daoStore.getCache().schemes[proposal.scheme].name}
                       </TableCell>
-                      <TableCell width="15%" align="center">
+                      <TableCell width="13%" align="center">
                         <span style={{ textAlign: 'center' }}>
                           {proposal.status} <br />
                           {timeToBoost !== '' ? (
@@ -417,7 +427,7 @@ const ProposalsPage = observer(() => {
                         </span>
                       </TableCell>
                       <TableCell
-                        width="17.5%"
+                        width="13%"
                         align="space-evenly"
                         style={{ minWidth: '15px', margin: '0px 2px' }}
                       >
@@ -440,7 +450,7 @@ const ProposalsPage = observer(() => {
                           {negativeStake.toString()} {votingMachineTokenName}
                         </span>
                       </TableCell>
-                      <TableCell width="17.5%" align="space-evenly">
+                      <TableCell width="8%" align="space-evenly">
                         <span
                           style={{
                             color: 'green',
