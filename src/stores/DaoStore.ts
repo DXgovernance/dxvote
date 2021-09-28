@@ -14,10 +14,10 @@ import {
   normalizeBalance,
   formatPercentage,
   hasLostReputation,
-  isBoosted,
   isExpired,
   isNotActive,
   isWinningVote,
+  votedBeforeBoosted,
 } from '../utils';
 
 export default class DaoStore {
@@ -871,12 +871,11 @@ export default class DaoStore {
       );
 
       if (
-        (isExpired(proposal) && isBoosted(proposal, vote)) ||
-        (hasLostReputation(voteParameters) &&
-          isBoosted(proposal, vote) &&
-          isWinningVote(proposal, vote) &&
-          isNotActive(proposal) &&
-          redeemsLeft.rep.indexOf(vote.proposalId) < 0)
+        isExpired(proposal) &&
+        hasLostReputation(voteParameters) &&
+        votedBeforeBoosted(proposal, vote) &&
+        isWinningVote(proposal, vote) &&
+        redeemsLeft.rep.indexOf(vote.proposalId) < 0
       ) {
         redeemsLeft.rep.push(vote.proposalId);
       }

@@ -11,12 +11,11 @@ export const isExpired = (proposal: Proposal): boolean => {
   );
 };
 
-export const isBoosted = (proposal: Proposal, vote: Vote): boolean => {
+export const votedBeforeBoosted = (proposal: Proposal, vote: Vote): boolean => {
   const boosted = proposal.boostedPhaseTime.toNumber() > 0;
-  const notBoosted = proposal.boostedPhaseTime.toNumber() === 0;
   const votedBeforeBoosted =
     vote.timestamp < proposal.boostedPhaseTime.toNumber();
-  return (boosted && votedBeforeBoosted) || notBoosted;
+  return boosted && votedBeforeBoosted;
 };
 
 export const isNotActive = (proposal: Proposal): boolean => {
