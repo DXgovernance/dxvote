@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import Copy from './Copy';
-import { getBlockchainLink } from '../../utils';
+import { getBlockchainLink, getENSName, getERC20Token, getDxVoteContract, toAddressStub} from 'utils';
 import { useContext } from '../../contexts';
 import { FiExternalLink } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
 
 const AddressLink = styled.span`
   display: flex;
@@ -31,24 +32,25 @@ const BlockchainLink = ({
 
   const networkName = configStore.getActiveChainName();
 
-  function formarText(toFormat) {
-    const start = toFormat.slice(0, 6);
-    const end = toFormat.slice(-4);
-
-    switch (size) {
-      case 'short':
-        return `${start}..`;
-      case 'long':
-        return toFormat;
-      default:
-        return `${start}...${end}`;
+  const [ensName, setENSName] = useState(''); 
+  const erc20Token = getERC20Token(text);
+  const dxVoteContract = getDxVoteContract(text)
+  
+  useEffect(() => {
+    async function getENS() {
+      const response = await getENSName(text);
+      setENSName(response);
     }
-  }
-
+    getENS();
+  }, [])
+  
   return (
     <AddressLink>
       <a href={getBlockchainLink(text, networkName, type)} target="_blank">
-        {onlyIcon ? <FiExternalLink /> : formarText(text)}
+        {onlyIcon ? <FiExternalLink /> : toAddressStub(text, size)}
+        {ensName}
+        {erc20Token}
+        {dxVoteContract?.contract}
       </a>
       {toCopy ? <Copy toCopy={text} /> : <div />}
     </AddressLink>
@@ -56,3 +58,10 @@ const BlockchainLink = ({
 };
 
 export default BlockchainLink;
+
+
+/*
+If the address is an ERC20 token registered in the config show the token symbol instead with links to the token explorer, and the option to copy the token address.
+If the address is an ens domain show the ens domain name with a link to the blockchain explorer address and option to copy the address.
+If the address is an known dxvote contract (avatar,controller, etc) domain show the contract name with a link to the blockchain explorer address and option to copy the address.
+*/
