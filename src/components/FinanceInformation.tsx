@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import { BlockchainLink } from '../components/common';
+import { BlockchainLink, Subtitle} from '../components/common';
 import {
   bnum,
   parseCamelCase,
@@ -160,9 +160,7 @@ const FinanceInformation = observer(() => {
         const assetsOfHolder = assets[assetHolder];
         return (
           <div style={{ width: i > 0 ? '50%' : '100%' }}>
-            <h2 style={{ textAlign: 'center' }}>
-              {parseCamelCase(assetHolder)}
-            </h2>
+            <Subtitle centered> {parseCamelCase(assetHolder)} </Subtitle>
             <FinanceTableHeaderWrapper>
               <TableHeader width="33%" align="center">
                 {' '}

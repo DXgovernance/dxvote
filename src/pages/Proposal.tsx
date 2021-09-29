@@ -16,7 +16,7 @@ import {
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
-import { BlockchainLink, Question, Box } from '../components/common';
+import { BlockchainLink, Question, Box, Title } from '../components/common';
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
@@ -384,7 +384,7 @@ const ProposalPage = observer(() => {
     <ProposalInformationWrapper>
       <ProposalInfoSection>
         <ProposalInfoBox>
-          <h1 style={{ margin: '0px' }}> {proposalTitle} </h1>
+          <Title noMargin> {proposalTitle} </Title>
           <MDEditor.Markdown
             source={proposalDescription}
             style={{
@@ -440,7 +440,7 @@ const ProposalPage = observer(() => {
           })}
         </ProposalInfoBox>
         <ProposalInfoBox style={{ marginTop: '15px' }}>
-          <h1 style={{ margin: '0px' }}> History </h1>
+          <Title noMargin> History </Title>
           {proposalEvents.history.map((historyEvent, i) => {
             return (
               <div

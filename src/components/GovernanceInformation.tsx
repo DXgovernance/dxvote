@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import { BlockchainLink, InfoBox } from '../components/common';
+import { BlockchainLink, InfoBox, Title, Row } from '../components/common';
 import { FaTrophy, FaMedal } from 'react-icons/fa';
 import { bnum } from '../utils';
 import { Chart } from 'react-google-charts';
@@ -74,7 +74,7 @@ const GovernanceInformation = observer(() => {
   }
   return (
     <GovernanceInfoWrapper>
-      <h1 style={{ textAlign: 'center' }}>Stats</h1>
+      <Title centered>Stats</Title>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <InfoBox>{toNumber(daoInfo.totalRep)} REP</InfoBox>
         <InfoBox>{governanceInfo.totalPositiveVotes} Positive Votes</InfoBox>
@@ -82,8 +82,8 @@ const GovernanceInformation = observer(() => {
         <InfoBox>{governanceInfo.totalProposalsCreated} Proposals</InfoBox>
       </div>
 
-      <h1 style={{ textAlign: 'center' }}>Reputation Charts</h1>
-      <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+      <Title centered>Reputation Charts</Title>
+      <Row>
         <Chart
           chartType="PieChart"
           loader={<div>Loading Chart</div>}
@@ -108,9 +108,9 @@ const GovernanceInformation = observer(() => {
             legend: 'none',
           }}
         />
-      </div>
+      </Row>
 
-      <h1 style={{ textAlign: 'center' }}>Governance Ranking</h1>
+      <Title centered>Governance Ranking</Title>
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <InfoBox>
