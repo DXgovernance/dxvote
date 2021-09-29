@@ -23,13 +23,16 @@ const GovernanceTable = styled.table`
   min-width: 100%;
   margin-top: 20px;
 }
-
 `;
-const TableHeader = styled.th`
+
+const TableHead = styled.thead`
+  display: contents;
+`
+
+const HeaderCell = styled.th`
   text-align: ${props => props.align};
   padding: 10px 4px;
 `;
-
 
 const TableRow = styled.tr`
   font-size: 16px;
@@ -41,7 +44,11 @@ const TableRow = styled.tr`
   display: contents;
 `;
 
-const TableCell = styled.td`
+const TableBody = styled.tbody`
+  display: contents;
+`;
+
+const DataCell = styled.td`
   color: ${props => props.color};
   text-align: ${props => props.align};
   font-weight: ${props => props.weight};
@@ -134,78 +141,79 @@ const GovernanceInformation = observer(() => {
           <strong>1 Point</strong>
         </InfoBox>
       </Row>
+
       <GovernanceTable>
-        <thead style={{display: 'contents'}}>
-          <tr style={{display: 'contents'}}>
-            <TableHeader align="center">
+        <TableHead style={{display: 'contents'}}>
+          <TableRow>
+            <HeaderCell align="center">
               #
-            </TableHeader>  
-            <TableHeader align="center">
+            </HeaderCell>  
+            <HeaderCell align="center">
               Address
-            </TableHeader>
-            <TableHeader align="center">
+            </HeaderCell>
+            <HeaderCell align="center">
               Proposals Created
-            </TableHeader>
-            <TableHeader align="center">
+            </HeaderCell>
+            <HeaderCell align="center">
               Voted
-            </TableHeader>
-            <TableHeader align="center">
+            </HeaderCell>
+            <HeaderCell align="center">
               Staked
-            </TableHeader>
-            <TableHeader align="center">
+            </HeaderCell>
+            <HeaderCell align="center">
               Score
-            </TableHeader>
-          </tr>
-        </thead>
-        <tbody style={{display: 'contents'}}>
+            </HeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
         {governanceInfo.ranking.map((user, i) => {
           return (
             <TableRow key={`user${i}`}>
-              <TableCell align="center" weight="500">
+              <DataCell align="center" weight="500">
                 {' '}
                 {i + 1}
                 {i === 0 ? (
-                  <FaTrophy style={{ color: 'gold' }} />
+                  <FaTrophy color='gold'/>
                 ) : i === 1 ? (
-                  <FaTrophy style={{ color: 'silver' }} />
+                  <FaTrophy color='silver'/>
                 ) : i === 2 ? (
-                  <FaTrophy style={{ color: '#CD7F32' }} />
+                  <FaTrophy color='#CD7F32'/>
                 ) : i < 6 ? (
-                  <FaMedal style={{ color: 'gold' }} />
+                  <FaMedal color='gold'/>
                 ) : i < 9 ? (
-                  <FaMedal style={{ color: 'silver' }} />
+                  <FaMedal color='silver'/>
                 ) : i < 12 ? (
-                  <FaMedal style={{ color: '#CD7F32' }} />
+                  <FaMedal color='#CD7F32'/>
                 ) : (
                   <div />
                 )}
-              </TableCell>
-              <TableCell weight="500">
+              </DataCell>
+              <DataCell weight="500">
                 <BlockchainLink
                   size="long"
                   type="address"
                   text={user.address}
                   toCopy
                 />
-              </TableCell>
-              <TableCell>
+              </DataCell>
+              <DataCell>
                 {user.proposals}
-              </TableCell>
-              <TableCell>
+              </DataCell>
+              <DataCell>
                 <Positive>{user.correctVotes} </Positive>-
                 <Negative> {user.wrongVotes}</Negative>
-              </TableCell>
-              <TableCell>
+              </DataCell>
+              <DataCell>
                 <Positive>{user.correctStakes} </Positive>-
                 <Negative> {user.wrongStakes}</Negative>
-              </TableCell>
-              <TableCell align="center">
+              </DataCell>
+              <DataCell align="center">
                 {user.score.toFixed(0)}
-              </TableCell>
+              </DataCell>
             </TableRow>
           );
         })}
-        </tbody>
+        </TableBody>
       </GovernanceTable>
     </GovernanceInfoWrapper>
   );
