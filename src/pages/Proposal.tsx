@@ -16,9 +16,7 @@ import {
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
-import BlockchainLink from '../components/common/BlockchainLink';
-import Question from '../components/common/Question';
-import Box from '../components/common/Box';
+import { BlockchainLink, Question, Box } from '../components/common';
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,

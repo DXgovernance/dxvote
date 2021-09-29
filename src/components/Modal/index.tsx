@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import ReactDOM from 'react-dom';
 
-import ActiveButton from '../common/ActiveButton';
+import { ActiveButton } from '../common';
 
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 

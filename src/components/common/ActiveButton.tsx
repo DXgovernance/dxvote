@@ -27,7 +27,8 @@ const ButtonWithRouter = withRouter(({ route, history, children }) => {
     </Button>
   );
 });
-const ActiveButton = ({ children, onClick = undefined, route = undefined }) => {
+
+export const ActiveButton = ({ children, onClick = undefined, route = undefined }) => {
   if (route) {
     return <ButtonWithRouter route={route}>{children}</ButtonWithRouter>;
   } else {
@@ -35,4 +36,4 @@ const ActiveButton = ({ children, onClick = undefined, route = undefined }) => {
   }
 };
 
-export default ActiveButton;
+

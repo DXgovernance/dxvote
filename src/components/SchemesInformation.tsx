@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import BlockchainLink from '../components/common/BlockchainLink';
-import Question from '../components/common/Question';
+import { BlockchainLink, Question } from '../components/common';
 import { bnum } from '../utils';
 import moment from 'moment';
 

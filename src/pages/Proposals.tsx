@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
+import { ActiveButton } from '../components/common';
 import Footer from '../components/Footer';
 import {
   ZERO_ADDRESS,

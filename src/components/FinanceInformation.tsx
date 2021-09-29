@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import BlockchainLink from '../components/common/BlockchainLink';
+import { BlockchainLink } from '../components/common';
 import {
   bnum,
   parseCamelCase,

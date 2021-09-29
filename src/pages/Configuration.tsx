@@ -2,20 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
-import Question from '../components/common/Question';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
-import Box from '../components/common/Box';
+import { Row, Box, Question, ActiveButton } from '../components/common';
 import { useActiveWeb3React } from 'provider/providerHooks';
 import { injected } from 'provider/connectors';
-
-const Row = styled.div`
-  flex-direction: row;
-  flex: auto;
-  display: flex;
-  padding-top: 15px;
-  justify-content: space-around;
-`;
 
 const InputBox = styled.input`
   background-color: white;
@@ -110,7 +100,7 @@ const ConfigPage = observer(() => {
   }
 
   return (
-    <Box style={{ alignItems: 'center' }}>
+    <Box centered>
       <h2>
         API Keys <Question question="8" />
       </h2>

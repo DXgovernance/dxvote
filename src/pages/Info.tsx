@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
-import Box from '../components/common/Box';
+import {Box, ActiveButton } from '../components/common';
 
 import FinanceInformation from '../components/FinanceInformation';
 import SchemesInformation from '../components/SchemesInformation';

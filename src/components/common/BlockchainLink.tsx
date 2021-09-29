@@ -18,7 +18,7 @@ const AddressLink = styled.span`
   }
 `;
 
-const BlockchainLink = ({
+export const BlockchainLink = ({
   text,
   size = 'default',
   type = 'default',
@@ -54,5 +54,3 @@ const BlockchainLink = ({
     </AddressLink>
   );
 };
-
-export default BlockchainLink;

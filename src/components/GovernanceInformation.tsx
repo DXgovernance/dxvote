@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import BlockchainLink from '../components/common/BlockchainLink';
+import { BlockchainLink, InfoBox } from '../components/common';
 import { FaTrophy, FaMedal } from 'react-icons/fa';
 import { bnum } from '../utils';
 import { Chart } from 'react-google-charts';
@@ -15,17 +15,6 @@ const GovernanceInfoWrapper = styled.div`
   justify-content: center;
   flex-direction: column;
   color: var(--dark-text-gray);
-`;
-
-const InfoBox = styled.div`
-  flex: 1;
-  text-align: center;
-  padding: 2px 5px;
-  margin: 10px 5px;
-  font-size: 25px;
-  font-weight: 300;
-  border-radius: 3px;
-  color: var(--activeButtonBackground);
 `;
 
 const GovernanceTableHeaderWrapper = styled.div`

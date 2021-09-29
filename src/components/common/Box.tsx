@@ -11,4 +11,3 @@ export const Box = styled.div`
   box-shadow: ${({ theme }) => theme.borderStyle};
 `;
 
-export default Box;
