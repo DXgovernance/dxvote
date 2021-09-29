@@ -17,46 +17,46 @@ const GovernanceInfoWrapper = styled.div`
   color: var(--dark-text-gray);
 `;
 
-const GovernanceTableHeaderWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: var(--light-text-gray);
-  padding: 20px 40px 8px 24px;
-  font-size: 14px;
-  text-align: center;
-`;
+const GovernanceTable = styled.table`
+  display: grid;
+  grid-template-columns: minmax(auto, 6%) minmax(auto, 36%) minmax(auto,15%) minmax(auto, 15%) minmax(auto, 15%) minmax(auto,15%);
+  min-width: 100%;
+  margin-top: 20px;
+}
 
-const TableHeader = styled.div`
-  width: ${props => props.width};
+`;
+const TableHeader = styled.th`
   text-align: ${props => props.align};
+  padding: 10px 4px;
 `;
 
-const TableRowsWrapper = styled.div`
-  overflow-y: scroll;
-`;
 
-const TableRow = styled.div`
+const TableRow = styled.tr`
   font-size: 16px;
   line-height: 18px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   border-bottom: 1px solid var(--line-gray);
-  padding: 16px 24px;
   color: var(--dark-text-gray);
-  text-align: right;
+  text-align: center;
   cursor: pointer;
+  display: contents;
 `;
 
-const TableCell = styled.div`
+const TableCell = styled.td`
   color: ${props => props.color};
-  width: ${props => props.width};
   text-align: ${props => props.align};
   font-weight: ${props => props.weight};
   white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
   overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
-  text-overflow: ${props => (props.wrapText ? 'ellipsis' : 'inherit')};
+  text-overflow: ellipsis;
+  padding: 4px 14px;
+`;
+
+const Positive = styled.span`
+  color: green;
+`;
+
+const Negative = styled.span`
+  color: red;
 `;
 
 const GovernanceInformation = observer(() => {
@@ -134,37 +134,34 @@ const GovernanceInformation = observer(() => {
           <strong>1 Point</strong>
         </InfoBox>
       </Row>
-      <GovernanceTableHeaderWrapper>
-        <TableHeader width="5%" align="center">
-          {' '}
-          #{' '}
-        </TableHeader>
-        <TableHeader width="35%" align="center">
-          {' '}
-          Address{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Proposals Created{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Voted{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Staked{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Score{' '}
-        </TableHeader>
-      </GovernanceTableHeaderWrapper>
-      <TableRowsWrapper>
+      <GovernanceTable>
+        <thead style={{display: 'contents'}}>
+          <tr style={{display: 'contents'}}>
+            <TableHeader align="center">
+              #
+            </TableHeader>  
+            <TableHeader align="center">
+              Address
+            </TableHeader>
+            <TableHeader align="center">
+              Proposals Created
+            </TableHeader>
+            <TableHeader align="center">
+              Voted
+            </TableHeader>
+            <TableHeader align="center">
+              Staked
+            </TableHeader>
+            <TableHeader align="center">
+              Score
+            </TableHeader>
+          </tr>
+        </thead>
+        <tbody style={{display: 'contents'}}>
         {governanceInfo.ranking.map((user, i) => {
           return (
             <TableRow key={`user${i}`}>
-              <TableCell width="5%" align="center" weight="500">
+              <TableCell align="center" weight="500">
                 {' '}
                 {i + 1}
                 {i === 0 ? (
@@ -183,7 +180,7 @@ const GovernanceInformation = observer(() => {
                   <div />
                 )}
               </TableCell>
-              <TableCell width="35%" align="center" weight="500">
+              <TableCell weight="500">
                 <BlockchainLink
                   size="long"
                   type="address"
@@ -191,26 +188,25 @@ const GovernanceInformation = observer(() => {
                   toCopy
                 />
               </TableCell>
-              <TableCell width="15%" align="center">
-                {' '}
-                {user.proposals}{' '}
+              <TableCell>
+                {user.proposals}
               </TableCell>
-              <TableCell width="15%" align="center">
-                <span style={{ color: 'green' }}>{user.correctVotes} </span>-
-                <span style={{ color: 'red' }}> {user.wrongVotes}</span>
+              <TableCell>
+                <Positive>{user.correctVotes} </Positive>-
+                <Negative> {user.wrongVotes}</Negative>
               </TableCell>
-              <TableCell width="15%" align="center">
-                <span style={{ color: 'green' }}>{user.correctStakes} </span>-
-                <span style={{ color: 'red' }}> {user.wrongStakes}</span>
+              <TableCell>
+                <Positive>{user.correctStakes} </Positive>-
+                <Negative> {user.wrongStakes}</Negative>
               </TableCell>
-              <TableCell width="15%" align="center">
-                {' '}
-                {user.score.toFixed(0)}{' '}
+              <TableCell align="center">
+                {user.score.toFixed(0)}
               </TableCell>
             </TableRow>
           );
         })}
-      </TableRowsWrapper>
+        </tbody>
+      </GovernanceTable>
     </GovernanceInfoWrapper>
   );
 });
