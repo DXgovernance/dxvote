@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
 import { useContext } from '../contexts';
 import { useLocation } from 'react-router-dom';
-import { BlockchainLink, Row, Box, InfoBox } from '../components/common';
+import { BlockchainLink, Row, Box, InfoBox, Subtitle } from '../components/common';
 import { formatBalance } from '../utils';
 
 const UserPage = observer(() => {
@@ -19,9 +19,9 @@ const UserPage = observer(() => {
 
   return (
     <Box>
-        <h2 style={{ display: 'flex', alignItems: 'center' }}>
-          User: <BlockchainLink size="long" text={userAddress} toCopy />
-        </h2>
+      <Subtitle>
+        User: <BlockchainLink size="long" text={userAddress} toCopy />
+      </Subtitle>
       <Row>
         <InfoBox>
           {formatBalance(userInfo.repBalance, 18, 0)} REP (

@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
 export const Subtitle = styled.h2`
-  ${({ centered }) => centered && `text-align: center;`}
+  ${({ centered }) => centered && `justify-content: center;`}
+  display: flex;
+  align-items: baseline;
 `;

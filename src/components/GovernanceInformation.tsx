@@ -75,12 +75,12 @@ const GovernanceInformation = observer(() => {
   return (
     <GovernanceInfoWrapper>
       <Title centered>Stats</Title>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <Row>
         <InfoBox>{toNumber(daoInfo.totalRep)} REP</InfoBox>
         <InfoBox>{governanceInfo.totalPositiveVotes} Positive Votes</InfoBox>
         <InfoBox>{governanceInfo.totalNegativeVotes} Negative Votes</InfoBox>
         <InfoBox>{governanceInfo.totalProposalsCreated} Proposals</InfoBox>
-      </div>
+      </Row>
 
       <Title centered>Reputation Charts</Title>
       <Row>
@@ -112,7 +112,7 @@ const GovernanceInformation = observer(() => {
 
       <Title centered>Governance Ranking</Title>
 
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <Row>
         <InfoBox>
           Create Proposal
           <br />
@@ -133,7 +133,7 @@ const GovernanceInformation = observer(() => {
           <br />
           <strong>1 Point</strong>
         </InfoBox>
-      </div>
+      </Row>
       <GovernanceTableHeaderWrapper>
         <TableHeader width="5%" align="center">
           {' '}
