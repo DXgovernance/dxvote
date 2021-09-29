@@ -27,12 +27,15 @@ export default class ABIService {
     return schema[contractType];
   }
 
-  decodeCall(contractType: string, data: string) {
-    const { providerStore } = this.context;
+  async decodeCall(contractType: string, data: string, to?: string) {
+    const { providerStore, etherscanService } = this.context;
+    const etherscanABI = await etherscanService.getContractABI(to);
 
     const { library } = providerStore.getActiveWeb3React();
 
-    const contractInterface = new Interface(this.getAbi(contractType));
+    const contractInterface = new Interface(
+      to ? etherscanABI : this.getAbi(contractType)
+    );
     const functionSignature = data.substring(0, 10);
     for (const functionName in contractInterface.functions) {
       if (
