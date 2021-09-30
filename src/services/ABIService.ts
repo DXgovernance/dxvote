@@ -26,10 +26,18 @@ export default class ABIService {
   getAbi(contractType: string) {
     return schema[contractType];
   }
-
-  async decodeCall(contractType: string, data: string, to?: string) {
+  /**
+   * @todo prevent repeated etherscan API call
+   * @todo check if etherscan api token has been supplied
+   * @param data Transaction call data
+   * @param contractType e.g. controller/avatar/votingMachine etc
+   * @param to contract address
+   * @returns
+   */
+  async decodeCall(data: string, contractType?: string, to?: string) {
     const { providerStore, etherscanService } = this.context;
-    const etherscanABI = await etherscanService.getContractABI(to);
+    const etherscanABI = (await etherscanService.getContractABI(to)).data
+      .result;
 
     const { library } = providerStore.getActiveWeb3React();
 

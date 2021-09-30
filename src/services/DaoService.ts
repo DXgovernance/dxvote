@@ -43,7 +43,10 @@ export default class DaoService {
       .encodeABI();
   }
 
-  decodeWalletSchemeCall(
+  async decodeWalletSchemeCall(
+    // decode data by calling contract ABI from etherscan
+    // need address of contract
+
     from: string,
     to: string,
     data: string,
@@ -55,9 +58,24 @@ export default class DaoService {
     const recommendedCalls = configStore.getRecommendedCalls();
     let functionSignature = data.substring(0, 10);
     const controllerCallDecoded = await abiService.decodeCall(
-      ContractType.Controller,
-      data
+      data,
+      ContractType.Controller
     );
+    const decodeEtherscanCallData = await abiService.decodeCall(data, '_', to);
+    if (decodeEtherscanCallData) {
+      return `<strong>To</strong>: ${to} <small>${to}</small>
+        <strong>Function</strong>: ${
+          decodeEtherscanCallData.function.name
+        } <small>${library.eth.abi.encodeFunctionSignature(
+        decodeEtherscanCallData.function.name
+      )}</small>
+        <strong>Params</strong>: ${Object.keys(
+          decodeEtherscanCallData.args
+        ).map(item => {
+          return `<small>Param:${decodeEtherscanCallData.args[item]} </small>`;
+        })}
+        <strong>Data</strong>: ${data} `;
+    }
     let asset = ZERO_ADDRESS;
     if (
       controllerCallDecoded &&
@@ -145,10 +163,6 @@ export default class DaoService {
         return decodedCallText;
       }
     } else {
-      const decodeCallData = await abiService.decodeCall('lol', data, to);
-      console.log(decodeCallData);
-      console.log(decodeCallData);
-
       return `<strong>From</strong>: ${from}
       <strong>To</strong>: ${to}
       <strong>Data</strong>: 0x${data.substring(10)}
