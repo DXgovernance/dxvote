@@ -43,14 +43,19 @@ export default class IPFSService {
 
   async getContent(hash: String) {
     let content = [];
-    for await (const file of this.ipfs.get(hash)) {
-      console.debug('[IPFS FILE]', file.type, file.path);
-      if (!file.content) continue;
-      for await (const chunk of file.content) {
-        content = content.concat(chunk);
+    try {
+      for await (const file of this.ipfs.get(hash)) {
+        console.debug('[IPFS FILE]', file.type, file.path);
+        if (!file.content) continue;
+        for await (const chunk of file.content) {
+          content = content.concat(chunk);
+        }
       }
+      return content.toString();
+    } catch(e) {
+      console.error(e);
+      return 'error fetching IFPS'
     }
-    return content.toString();
   }
 
   async getContentFromIPFS(hash: string) {
