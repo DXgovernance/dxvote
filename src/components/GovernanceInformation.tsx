@@ -1,7 +1,18 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import { BlockchainLink, InfoBox, Title, Row } from '../components/common';
+import {
+  BlockchainLink,
+  InfoBox,
+  Title, 
+  Row, 
+  Table,
+  TableHeader,
+  HeaderCell,
+  TableBody,
+  TableRow,
+  DataCell
+} from '../components/common';
 import { FaTrophy, FaMedal } from 'react-icons/fa';
 import { bnum } from '../utils';
 import { Chart } from 'react-google-charts';
@@ -17,45 +28,10 @@ const GovernanceInfoWrapper = styled.div`
   color: var(--dark-text-gray);
 `;
 
-const GovernanceTable = styled.table`
-  display: grid;
+const GovernanceTable = styled(Table)`
   grid-template-columns: minmax(auto, 6%) minmax(auto, 36%) minmax(auto,15%) minmax(auto, 15%) minmax(auto, 15%) minmax(auto,15%);
   min-width: 100%;
   margin-top: 20px;
-}
-`;
-
-const TableHead = styled.thead`
-  display: contents;
-`
-
-const HeaderCell = styled.th`
-  text-align: ${props => props.align};
-  padding: 10px 4px;
-`;
-
-const TableRow = styled.tr`
-  font-size: 16px;
-  line-height: 18px;
-  border-bottom: 1px solid var(--line-gray);
-  color: var(--dark-text-gray);
-  text-align: center;
-  cursor: pointer;
-  display: contents;
-`;
-
-const TableBody = styled.tbody`
-  display: contents;
-`;
-
-const DataCell = styled.td`
-  color: ${props => props.color};
-  text-align: ${props => props.align};
-  font-weight: ${props => props.weight};
-  white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
-  overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
-  text-overflow: ellipsis;
-  padding: 4px 14px;
 `;
 
 const Positive = styled.span`
@@ -143,7 +119,7 @@ const GovernanceInformation = observer(() => {
       </Row>
 
       <GovernanceTable>
-        <TableHead style={{display: 'contents'}}>
+        <TableHeader>
           <TableRow>
             <HeaderCell align="center">
               #
@@ -164,7 +140,7 @@ const GovernanceInformation = observer(() => {
               Score
             </HeaderCell>
           </TableRow>
-        </TableHead>
+        </TableHeader>
         <TableBody>
         {governanceInfo.ranking.map((user, i) => {
           return (
