@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import { BlockchainLink, Subtitle, Table, TableHeader, HeaderCell, TableBody, TableRow, DataCell } from '../components/common';
+import { BlockchainLink, Subtitle, Row, Table, TableHeader, HeaderCell, TableBody, TableRow, DataCell } from '../components/common';
 import {
   bnum,
   parseCamelCase,
@@ -20,13 +20,14 @@ const FinanceInfoWrapper = styled.div`
   color: var(--dark-text-gray);
 `;
 
-const Row = styled.div`
-  display: flex;
-  justify-content: left;
-`;
-
 const FinanceTable = styled(Table)`
   grid-template-columns: 33% 33% 33%;
+`;
+
+const CenteredRow = styled(Row)`
+  justify-content: center;
+  align-items: center;
+  padding: 0;
 `;
 
 const FinanceInformation = observer(() => {
@@ -143,7 +144,7 @@ const FinanceInformation = observer(() => {
                     return (
                       <TableRow key={`asset${i}`}>
                         <DataCell align="left" weight="500">
-                          <Row>
+                          <CenteredRow>
                           {asset.name}{' '}
                           <BlockchainLink
                             size="long"
@@ -152,7 +153,7 @@ const FinanceInformation = observer(() => {
                             onlyIcon
                             toCopy
                           />
-                          </Row>
+                          </CenteredRow>
                         </DataCell>
                         <DataCell align="center">
                           {formatBalance(
