@@ -17,11 +17,11 @@ export const HeaderCell = styled.th`
 export const TableRow = styled.tr`
   font-size: 16px;
   line-height: 18px;
-  border-bottom: 1px solid red;
   color: var(--dark-text-gray);
   text-align: center;
   cursor: pointer;
   display: contents;
+  
 `;
 
 export const TableBody = styled.tbody`
@@ -35,7 +35,8 @@ export const DataCell = styled.td`
   white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
   overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
   text-overflow: ellipsis;
-  padding: 4px 14px;
+  border-bottom: 1px solid var(--line-gray);
+  padding: 14px;
 
   a {
     text-decoration: none;

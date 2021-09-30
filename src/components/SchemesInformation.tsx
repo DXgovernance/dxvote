@@ -35,7 +35,7 @@ const SchemesInformation = observer(() => {
     </TableHeader>
     <TableBody>
 
-    {schemes.map((scheme, i) => {
+    {schemes.map((scheme) => {
       const schemeProposals = daoStore.getSchemeProposals(scheme.address);
       const votingMachineParameters = daoStore.getVotingParametersOfScheme(
         scheme.address
@@ -206,6 +206,7 @@ const SchemesInformation = observer(() => {
               </DataCell>
             </TableRow>
         );
+      else return <></>;
     })}
     </TableBody>
   </ProposalTable>
