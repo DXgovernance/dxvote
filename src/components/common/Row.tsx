@@ -5,4 +5,5 @@ export const Row = styled.div`
   display: flex;
   padding-top: 15px;
   justify-content: space-around;
+  align-items: center;
 `;
