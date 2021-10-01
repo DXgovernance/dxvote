@@ -111,7 +111,7 @@ const StyledTableRow = styled(TableRow)`
     padding: 20px 5px;
     &:nth-child(1) {
       text-align: left;
-      font-size: 16px;
+      font-size: 14px;
     }
   }
 `;
@@ -126,7 +126,7 @@ const FooterWrap = styled.div`
 `;
 
 const TableProposal = styled(Table)`
-  grid-template-columns: 40% 20% 15% 17% 8%;
+  grid-template-columns: 35% 20% 15% 20% 10%;
 `;
 
 const ProposalsPage = observer(() => {
