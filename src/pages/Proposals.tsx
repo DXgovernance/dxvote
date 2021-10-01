@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-// import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import { ActiveButton, Positive, Negative, Separator, Table, TableHeader, HeaderCell, TableBody, TableRow, DataCell } from '../components/common';
@@ -20,6 +20,7 @@ const ProposalsWrapper = styled.div`
   border-radius: 4px;
   display: grid; 
   grid-template-columns: 20% 80%;
+  grid-gap: 10px;
 `;
 
 const NewProposalButton = styled.div`
@@ -96,106 +97,26 @@ const StyledTableRow = styled(TableRow)`
   color: var(--dark-text-gray);
   text-align: center;
   cursor: pointer;
-
   &:hover {
-    background-color: #80808012;
+    ${DataCell}{
+      background-color: #80808012;
+    }
   }
 
   ${DataCell}{
-    padding: 15px 2px;
     border-bottom: 1px solid var(--line-gray);
-    
+    padding: 20px 5px;
     &:nth-child(1) {
+      text-align: left;
       font-size: 16px;
     }
   }
 `;
 
-/*
-const TableContentWrapper = styled.div`
-  width: 75%;
-  display: flex;
-  flex-direction: column;
-
-  border-left: 1px solid #e1e3e7;
-`;
-
-const ProposalTableHeaderWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+const StyledTableHeader = styled(TableHeader)`
   color: var(--light-text-gray);
-  padding: 20px 24px 8px 24px;
   font-size: 14px;
-  text-align: center;
 `;
-
-
-const TableHeader = styled.div`
-  width: ${props => props.width || '25%'};
-  text-align: ${props => props.align};
-`;
-
-const TableRowsWrapper = styled.div`
-  height: 100%;
-  min-height: 350px;
-  ::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 11px;
-  }
-  ::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    border: 2px solid white;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-
-  h3 {
-    text-align: center;
-    margin-top: 30px;
-    color: var(--dark-text-gray);
-  }
-`;
-
-const TableRow = styled.div`
-  font-size: 16px;
-  line-height: 18px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line-gray);
-  padding: 16px 24px;
-  color: var(--dark-text-gray);
-  text-align: right;
-  cursor: pointer;
-  width: 100%;
-
-  &:hover {
-    background-color: #80808012;
-  }
-`;
-
-
-const TableCell = styled.div`
-  display: flex;
-  margin-right: 2%;
-  color: ${props => props.color};
-  width: ${props => props.width || '25%'};
-  justify-content: ${props => props.align};
-  font-weight: ${props => props.weight};
-  font-size: ${props => (props.fontSize ? props.fontSize : 'smaller')};
-  white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
-  overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
-  text-overflow: ${props => (props.wrapText ? 'ellipsis' : 'inherit')};
-`;
-
-
-<Link
-  key={'proposal' + i}
-  to={`/${networkName}/proposal/${proposal.id}`}
-  style={{ textDecoration: 'none' }}
->
-*/
 
 const FooterWrap = styled.div`
   align-self: flex-end;
@@ -260,6 +181,8 @@ const ProposalsPage = observer(() => {
     setSchemeFilter(newValue.target.value);
   }
 
+  const history = useHistory();
+
   console.debug('All Proposals', allProposals, allProposals.length, daoStore);
 
   return (
@@ -315,7 +238,7 @@ const ProposalsPage = observer(() => {
         </FooterWrap>
       </SidebarWrapper>
       <TableProposal>
-        <TableHeader>
+        <StyledTableHeader>
           <HeaderCell>
             Title
           </HeaderCell>
@@ -331,7 +254,7 @@ const ProposalsPage = observer(() => {
           <HeaderCell>
             Votes
           </HeaderCell>
-        </TableHeader>
+        </StyledTableHeader>
         <TableBody>
         { proposals.length === 0 && <h3>No Proposals Found</h3> }       
           
@@ -398,7 +321,7 @@ const ProposalsPage = observer(() => {
                 event => event.proposalId === proposal.id
               ) > -1;
             return (
-            <StyledTableRow>
+            <StyledTableRow onClick={() => history.push(`/${networkName}/proposal/${proposal.id}`)}>
               <DataCell
                 weight="800"
                 wrapText="true"
