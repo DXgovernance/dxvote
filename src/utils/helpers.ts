@@ -88,3 +88,21 @@ export function getBlockchainLink(text, networkName, type) {
       else return `https://${networkName}.etherscan.io/tx/${text}`;
   }
 }
+
+export const memoize = fn => {
+  // temp helper to reduce API calls
+  // remove when services are re-written to use useMemo
+  let cache = {};
+  return (...args) => {
+    let n = args[0];
+    if (n in cache) {
+      console.log('Fetching from cache');
+      return cache[n];
+    } else {
+      console.log('Calculating result');
+      let result = fn(n);
+      cache[n] = result;
+      return result;
+    }
+  };
+};

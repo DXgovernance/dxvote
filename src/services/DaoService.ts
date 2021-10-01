@@ -58,23 +58,29 @@ export default class DaoService {
       data,
       ContractType.Controller
     );
-    const decodeEtherscanCallData = await abiService.decodeCall(data, '_', to);
+    const decodeEtherscanCallData = await abiService.decodeCall(
+      data,
+      ContractType.Controller,
+      to
+    );
 
     if (decodeEtherscanCallData) {
       return `
-     <string>From</strong>: ${from} 
-      <strong>To</strong>: ${to}
-        <strong>Function</strong>: ${decodeEtherscanCallData.function.name} 
-        <small>${library.eth.abi.encodeFunctionSignature(
-          decodeEtherscanCallData.function.name
-        )}
-      </small>
-        <strong>Params</strong>: ${Object.keys(decodeEtherscanCallData.args)
+     <strong>From</strong>: ${from} \n 
+      <strong>To</strong>: ${to} \n
+        <strong>Function</strong>: ${decodeEtherscanCallData.function.name} \n
+      </small> 
+        <strong>Params</strong>: \n ${Object.keys(decodeEtherscanCallData.args)
           .filter(item => item != '__length__')
           .map((item, i) => {
-            return `<small>${decodeEtherscanCallData.function.inputs[i]?.name}:${decodeEtherscanCallData.args[item]} </small>`;
-          })}
-        <strong>Data</strong>: ${data} `;
+            return `<bold>${decodeEtherscanCallData.function.inputs[
+              i
+            ].name.replace(/[^a-zA-Z0-9]/g, '')}</bold>: \n <small>${
+              decodeEtherscanCallData.args[item]
+            } </small> \n\n`;
+          })
+          .join('')}
+           `;
     }
     let asset = ZERO_ADDRESS;
     if (

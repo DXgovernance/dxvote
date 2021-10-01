@@ -34,13 +34,15 @@ export default class ABIService {
    * @param to contract address
    * @returns
    */
-  async decodeCall(data: string, contractType?: string, to?: string) {
+  async decodeCall(data: string, contractType: string, to?: string) {
     const { providerStore, etherscanService } = this.context;
     let etherscanABI;
+    let contractInterface = new Interface(this.getAbi(contractType));
 
     try {
-      if (to) {
+      if (to && etherscanService.isAuthenticated()) {
         etherscanABI = (await etherscanService.getContractABI(to)).data.result;
+        contractInterface = new Interface(etherscanABI);
       }
     } catch (error) {
       console.log(error);
@@ -48,9 +50,6 @@ export default class ABIService {
 
     const { library } = providerStore.getActiveWeb3React();
 
-    const contractInterface = new Interface(
-      etherscanABI ? etherscanABI : this.getAbi(contractType)
-    );
     const functionSignature = data.substring(0, 10);
     for (const functionName in contractInterface.functions) {
       if (

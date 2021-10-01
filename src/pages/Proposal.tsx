@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
@@ -264,7 +264,7 @@ const ProposalPage = observer(() => {
       ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
       : bnum(0);
   
-const proposalCall = useCallback(async () => {
+const proposalCall = async () => {
   const proposalCallArray = []
   for (var p = 0; p < proposal.to.length; p++) {
     
@@ -280,7 +280,7 @@ const proposalCall = useCallback(async () => {
     );
   }
   setProposalCallTexts(proposalCallArray)
-}, [])
+}
 
     proposalCall()
 
