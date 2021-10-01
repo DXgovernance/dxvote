@@ -44,9 +44,6 @@ export default class DaoService {
   }
 
   async decodeWalletSchemeCall(
-    // decode data by calling contract ABI from etherscan
-    // need address of contract
-
     from: string,
     to: string,
     data: string,
@@ -62,18 +59,21 @@ export default class DaoService {
       ContractType.Controller
     );
     const decodeEtherscanCallData = await abiService.decodeCall(data, '_', to);
+
     if (decodeEtherscanCallData) {
-      return `<strong>To</strong>: ${to} <small>${to}</small>
-        <strong>Function</strong>: ${
+      return `
+     <string>From</strong>: ${from} 
+      <strong>To</strong>: ${to}
+        <strong>Function</strong>: ${decodeEtherscanCallData.function.name} 
+        <small>${library.eth.abi.encodeFunctionSignature(
           decodeEtherscanCallData.function.name
-        } <small>${library.eth.abi.encodeFunctionSignature(
-        decodeEtherscanCallData.function.name
-      )}</small>
-        <strong>Params</strong>: ${Object.keys(
-          decodeEtherscanCallData.args
-        ).map(item => {
-          return `<small>Param:${decodeEtherscanCallData.args[item]} </small>`;
-        })}
+        )}
+      </small>
+        <strong>Params</strong>: ${Object.keys(decodeEtherscanCallData.args)
+          .filter(item => item != '__length__')
+          .map((item, i) => {
+            return `<small>${decodeEtherscanCallData.function.inputs[i]?.name}:${decodeEtherscanCallData.args[item]} </small>`;
+          })}
         <strong>Data</strong>: ${data} `;
     }
     let asset = ZERO_ADDRESS;
