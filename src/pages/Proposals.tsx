@@ -174,8 +174,9 @@ const ProposalsPage = observer(() => {
             : b.finishTime - a.finishTime
         )
     );
-  });
-  const sortedProposals = seperateProposalArrays.flat(1).reverse();
+  })
+    .flat(1)
+    .reverse();
   if (sortedProposals.length > proposals.length) setProposals(sortedProposals);
 
   function onStateFilterChange(newValue) {
