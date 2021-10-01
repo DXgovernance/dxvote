@@ -9,7 +9,11 @@ export const TableHeader = styled.thead`
   display: contents;
 `
 
-export const HeaderCell = styled.th`
+interface HeaderCellProps {
+  align?: string
+}
+
+export const HeaderCell = styled.th<HeaderCellProps>`
   text-align: ${props => props.align};
   padding: 10px 4px;
 `;
