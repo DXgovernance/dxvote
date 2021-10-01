@@ -11,7 +11,9 @@ import {
   HeaderCell,
   TableBody,
   TableRow,
-  DataCell
+  DataCell,
+  Positive,
+  Negative
 } from '../components/common';
 import { FaTrophy, FaMedal } from 'react-icons/fa';
 import { bnum } from '../utils';
@@ -32,14 +34,6 @@ const GovernanceTable = styled(Table)`
   grid-template-columns: minmax(auto, 6%) minmax(auto, 36%) minmax(auto,15%) minmax(auto, 15%) minmax(auto, 15%) minmax(auto,15%);
   min-width: 100%;
   margin-top: 20px;
-`;
-
-const Positive = styled.span`
-  color: green;
-`;
-
-const Negative = styled.span`
-  color: red;
 `;
 
 const GovernanceInformation = observer(() => {

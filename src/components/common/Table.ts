@@ -28,7 +28,13 @@ export const TableBody = styled.tbody`
   display: contents;
 `;
 
-export const DataCell = styled.td`
+interface DataCellProps {
+    color?: string;
+    align?: string;
+    weight?: string;
+    wrapText?: boolean;
+}
+export const DataCell = styled.td<DataCellProps>`
   color: ${props => props.color};
   text-align: ${props => props.align};
   font-weight: ${props => props.weight};
