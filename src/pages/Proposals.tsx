@@ -144,19 +144,29 @@ const ProposalsPage = observer(() => {
     );
   });
 
-  // First show the proposals that still have an active status in teh boting machine and order them from lower
-  // to higher based on the finish time.
-  // Then show the proposals who finished based on the statte in the voting machine and order them from higher to
-  // lower in the finish time.
-  // This way we show the proposals that will finish soon first and the latest proposals that finished later
-
-  const seperateProposalArrays = mapEnum(VotingMachineProposalState, p => {
+  /**
+   * proposals are ordered:
+   *  QuietEndingPeriod
+   *  Boosted
+   *  PreBoosted
+   *  Queued
+   *  Executed
+   *  ExpiredInQueue
+   *  None
+   * Preboosted are ordered in boostTime and not in Finish Time.
+   *
+   */
+  const sortedProposals = mapEnum(VotingMachineProposalState, p => {
     return (
       allProposals
-        // loop over enum
-        // filter each enum value
-        // sort them
-        // concat next batch
+
+        /**
+         * loop over the enum
+         * filter each enum value
+         * sort them
+         * flatten array
+         * reverse order of array from ascending to descending
+         */
         .filter(proposal => proposal.stateInVotingMachine === p)
         .sort((a, b) =>
           a.boostTime.toNumber() > 0
