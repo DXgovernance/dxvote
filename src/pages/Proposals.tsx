@@ -3,7 +3,10 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import { ActiveButton, Positive, Negative, Separator, Table, TableHeader, HeaderCell, TableBody, TableRow, DataCell } from '../components/common';
+import {
+  ActiveButton, Positive, Negative, Separator, Table, 
+  TableHeader, HeaderCell, TableBody, TableRow, DataCell
+} from '../components/common';
 import Footer from '../components/Footer';
 import {
   ZERO_ADDRESS,
@@ -125,8 +128,6 @@ const FooterWrap = styled.div`
 const TableProposal = styled(Table)`
   grid-template-columns: 40% 20% 15% 17% 8%;
 `;
-
-
 
 const ProposalsPage = observer(() => {
   const {
@@ -351,7 +352,7 @@ const ProposalsPage = observer(() => {
                 {daoStore.getCache().schemes[proposal.scheme].name}
               </DataCell>
               <DataCell>
-                <span style={{ textAlign: 'center' }}>
+                <span>
                   {proposal.status} <br />
                   {timeToBoost !== '' ? (
                     <small>
