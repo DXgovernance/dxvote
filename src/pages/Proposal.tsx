@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useCallback} from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
@@ -149,6 +149,7 @@ const ProposalPage = observer(() => {
   const votingMachines = networkContracts.votingMachines;
   const proposalId = useLocation().pathname.split('/')[3];
   const proposal = daoStore.getProposal(proposalId);
+  const [proposalCallTexts, setProposalCallTexts] = useState(new Array(proposal.to.length))
 
   if (!proposal) history.push('/');
 
@@ -262,10 +263,12 @@ const ProposalPage = observer(() => {
     scheme.type === 'WalletScheme'
       ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
       : bnum(0);
-
-  let proposalCallTexts = new Array(proposal.to.length);
+  
+const proposalCall = useCallback(async () => {
+  const proposalCallArray = []
   for (var p = 0; p < proposal.to.length; p++) {
-    proposalCallTexts[p] = daoService.decodeWalletSchemeCall(
+    
+    proposalCallArray[p] =   await daoService.decodeWalletSchemeCall(
       scheme.type === 'WalletScheme' &&
         scheme.controllerAddress !== networkContracts.controller
         ? scheme.address
@@ -276,6 +279,10 @@ const ProposalPage = observer(() => {
       advancedCalls
     );
   }
+  setProposalCallTexts(proposalCallArray)
+}, [])
+
+    proposalCall()
 
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
