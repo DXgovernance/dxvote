@@ -102,6 +102,7 @@ const StyledTableRow = styled(TableRow)`
   }
 
   ${DataCell}{
+    padding: 15px 2px;
     border-bottom: 1px solid var(--line-gray);
     
     &:nth-child(1) {
@@ -201,7 +202,7 @@ const FooterWrap = styled.div`
 `;
 
 const TableProposal = styled(Table)`
-  grid-template-columns: 50% 20% 10% 10% 10%;
+  grid-template-columns: 40% 20% 15% 17% 8%;
 `;
 
 
