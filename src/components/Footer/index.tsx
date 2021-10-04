@@ -15,6 +15,7 @@ const LeftFooter = styled.div`
   margin-top: auto;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 `;
 
 const FooterItem = styled.div`
@@ -26,7 +27,7 @@ const FooterItem = styled.div`
   a:hover {
     color: var(--text-gray-onHover);
   }a
-    
+
 `;
 
 const FooterDivider = styled.div`
@@ -35,7 +36,7 @@ const FooterDivider = styled.div`
   height: 4px;
   border-radius: 2px;
   line-height: 24px;
-  margin: 7px;
+  margin: auto 7px;
 `;
 
 const Footer = () => {

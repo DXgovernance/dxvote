@@ -818,7 +818,6 @@ const NewProposalPage = observer(() => {
               ) : (
                 schemeToUse.type !== 'ContributionReward' && (
                   <TextInput
-                    value={calls[i].to || ''}
                     onChange={e => {
                       onToSelectChange(i, e.target.value);
                     }}

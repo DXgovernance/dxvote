@@ -40,15 +40,14 @@ body {
   --gridLine: rgba(232, 234, 246, 0.5);
 
   --roboto: 'Roboto', sans-serif;
-  
+
   height: 100%;
   width: 100%;
 }
 
 #root{
   height: 100%;
-  width: 95%;
-  max-width: 1168px;
+  width: 85%;
   margin: auto;
   height: 100%;
   display: flex;

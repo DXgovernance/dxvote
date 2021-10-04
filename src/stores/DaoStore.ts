@@ -13,6 +13,11 @@ import {
   VotingMachineProposalState,
   normalizeBalance,
   formatPercentage,
+  hasLostReputation,
+  isExpired,
+  isNotActive,
+  isWinningVote,
+  votedBeforeBoosted,
 } from '../utils';
 
 export default class DaoStore {
@@ -816,7 +821,7 @@ export default class DaoStore {
     history = _.orderBy(
       history,
       ['event.timestamp', 'event.logIndex'],
-      ['asc', 'asc']
+      ['desc', 'asc']
     );
 
     return {
@@ -826,7 +831,7 @@ export default class DaoStore {
       redeems: proposalEvents.redeems,
       redeemsRep: proposalEvents.redeemsRep,
       redeemsDaoBounty: proposalEvents.redeemsDaoBounty,
-      history: history,
+      history,
     };
   }
 
@@ -843,23 +848,33 @@ export default class DaoStore {
       bounty: [],
     };
 
+    // Adds user created proposals that have ended
+    userEvents.newProposal.map(newProposal => {
+      const proposal = this.getProposal(newProposal.proposalId);
+      const votingParameters = this.getVotingParametersOfProposal(
+        newProposal.proposalId
+      );
+
+      if (
+        votingParameters.proposingRepReward.toNumber() > 0 &&
+        isNotActive(proposal)
+      ) {
+        redeemsLeft.rep.push(newProposal.proposalId);
+      }
+    });
+
     // Add possible redeems
     userEvents.votes.map(vote => {
       const proposal = this.getProposal(vote.proposalId);
       const voteParameters = this.getVotingParametersOfProposal(
         vote.proposalId
       );
+
       if (
-        ((proposal.stateInVotingMachine === 1 &&
-          ((proposal.boostedPhaseTime.toNumber() > 0 &&
-            vote.timestamp < proposal.boostedPhaseTime.toNumber()) ||
-            proposal.boostedPhaseTime.toNumber() === 0)) ||
-          (voteParameters.votersReputationLossRatio.toNumber() > 0 &&
-            ((proposal.boostedPhaseTime.toNumber() > 0 &&
-              vote.timestamp < proposal.boostedPhaseTime.toNumber()) ||
-              proposal.boostedPhaseTime.toNumber() === 0) &&
-            proposal.winningVote === vote.vote &&
-            proposal.stateInVotingMachine < 3)) &&
+        isExpired(proposal) &&
+        hasLostReputation(voteParameters) &&
+        votedBeforeBoosted(proposal, vote) &&
+        isWinningVote(proposal, vote) &&
         redeemsLeft.rep.indexOf(vote.proposalId) < 0
       ) {
         redeemsLeft.rep.push(vote.proposalId);
@@ -868,13 +883,18 @@ export default class DaoStore {
     userEvents.stakes.map(stake => {
       const proposal = this.getProposal(stake.proposalId);
       if (
-        proposal.stateInVotingMachine === 1 ||
-        (proposal.stateInVotingMachine < 3 &&
+        proposal.stateInVotingMachine ===
+          VotingMachineProposalState.ExpiredInQueue ||
+        (isNotActive(proposal) &&
           redeemsLeft.stake.indexOf(stake.proposalId) < 0 &&
-          proposal.winningVote === stake.vote)
+          isWinningVote(proposal, stake))
       ) {
         redeemsLeft.stake.push(stake.proposalId);
-        if (proposal.stateInVotingMachine === 2 && proposal.winningVote === 1) {
+        if (
+          proposal.stateInVotingMachine ===
+            VotingMachineProposalState.Executed &&
+          proposal.winningVote === 1
+        ) {
           redeemsLeft.bounty.push(stake.proposalId);
         }
       }

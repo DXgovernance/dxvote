@@ -1,4 +1,4 @@
-name: code format check & linter
+name: code format check
 
 on:
   push:
@@ -19,5 +19,3 @@ jobs:
         run: yarn
       - name: Run code format check
         run: yarn format-check
-      - name: Run code linter
-        run: yarn lint

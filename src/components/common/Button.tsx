@@ -10,7 +10,7 @@ export const Button = styled.button`
   font-weight: 500;
   text-align: center;
   cursor: pointer;
-  width: max-content;
+  width: ${props => (props.width ? props.width : 'max-content')};
   padding: 0px 10px;
   margin: 5px;
   border: 0px;
@@ -22,14 +22,17 @@ export const Button = styled.button`
   }
 `;
 
-export const LinkButton = withRouter(({ route, history, children }) => {
-  return (
-    <Button
-      onClick={() => {
-        history.push(route);
-      }}
-    >
-      {children}
-    </Button>
-  );
-});
+export const LinkButton = withRouter(
+  ({ route, history, children, ...rest }) => {
+    return (
+      <Button
+        onClick={() => {
+          history.push(route);
+        }}
+        {...rest}
+      >
+        {children}
+      </Button>
+    );
+  }
+);

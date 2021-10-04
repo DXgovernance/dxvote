@@ -5,6 +5,35 @@ import {
 } from './index';
 import moment from 'moment';
 
+export const isExpired = (proposal: Proposal): boolean => {
+  return (
+    proposal.stateInVotingMachine === VotingMachineProposalState.ExpiredInQueue
+  );
+};
+
+export const votedBeforeBoosted = (proposal: Proposal, vote: Vote): boolean => {
+  const boosted = proposal.boostedPhaseTime.toNumber() > 0;
+  const votedBeforeBoosted =
+    vote.timestamp < proposal.boostedPhaseTime.toNumber();
+  return boosted && votedBeforeBoosted;
+};
+
+export const isNotActive = (proposal: Proposal): boolean => {
+  return proposal.stateInVotingMachine < 3;
+};
+
+export const hasLostReputation = (
+  voteParameters: VotingMachineParameters
+): boolean => {
+  return voteParameters.votersReputationLossRatio.toNumber() > 0;
+};
+
+export const isWinningVote = (
+  proposal: Proposal,
+  vote: Vote | Stake
+): boolean => {
+  return proposal.winningVote === vote.vote;
+};
 export const calculateStakes = function (
   thresholdConst,
   boostedProposals,
