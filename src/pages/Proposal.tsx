@@ -131,6 +131,20 @@ const ActionButton = styled.div`
   }
 `;
 
+const ProposalHistoryEvent = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 4px 0px;
+  border-bottom: 1px var(--medium-gray);
+  &:last-of-type {
+    border-bottom: none;
+  }
+`;
+
+const ProposalCallText = styled.span`
+  white-space: pre-line;
+`;
+
 const ProposalPage = observer(() => {
   let history = useHistory();
 
@@ -432,8 +446,7 @@ const ProposalPage = observer(() => {
             return (
               <div key={'proposalCallText' + i}>
                 <strong>Call #{i + 1}</strong> -{' '}
-                <span
-                  style={{ whiteSpace: 'pre-line' }}
+                <ProposalCallText
                   dangerouslySetInnerHTML={{ __html: proposalCallText }}
                 />
                 {i < proposalCallTexts.length - 1 ? <hr /> : <div />}
@@ -445,17 +458,8 @@ const ProposalPage = observer(() => {
           <h1 style={{ margin: '0px' }}> History </h1>
           {proposalEvents.history.map((historyEvent, i) => {
             return (
-              <div
+              <ProposalHistoryEvent
                 key={'proposalHistoryEvent' + i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '4px 0px',
-                  borderBottom:
-                    i < proposalEvents.history.length - 1
-                      ? ' 1px --medium-gray'
-                      : '',
-                }}
               >
                 <span> {historyEvent.text} </span>
                 <BlockchainLink
@@ -465,7 +469,7 @@ const ProposalPage = observer(() => {
                   onlyIcon
                 />
                 {i < proposalEvents.history.length - 1 ? <hr /> : <div />}
-              </div>
+              </ProposalHistoryEvent>
             );
           })}
         </ProposalInfoBox>
