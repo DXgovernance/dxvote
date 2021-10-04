@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
+import { LinkButton } from '../components/common/Button';
 import Footer from '../components/Footer';
 import {
   ZERO_ADDRESS,
@@ -247,9 +247,9 @@ const ProposalsPage = observer(() => {
       <SidebarWrapper>
         <ProposalTableHeaderActions>
           <NewProposalButton>
-            <ActiveButton route={`/${networkName}/new`}>
+            <LinkButton route={`/${networkName}/new`} width="200px">
               + New Proposal
-            </ActiveButton>
+            </LinkButton>
           </NewProposalButton>
           <ProposalsNameFilter
             type="text"

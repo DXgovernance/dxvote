@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
+import { Button } from '../components/common/Button';
 import Question from '../components/common/Question';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
 import Box from '../components/common/Box';
@@ -248,10 +248,10 @@ const ConfigPage = observer(() => {
         ></InputBox>
       </Row>
       <Row style={{ maxWidth: '500px' }}>
-        <ActiveButton onClick={saveConfig}>Save</ActiveButton>
-        <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
-        <ActiveButton onClick={clearCache}>Clear Cache</ActiveButton>
-        <ActiveButton onClick={pinDXvoteHashes}>Pin DXVote Hashes</ActiveButton>
+        <Button onClick={saveConfig}>Save</Button>
+        <Button onClick={testApis}>Test Apis</Button>
+        <Button onClick={clearCache}>Clear Cache</Button>
+        <Button onClick={pinDXvoteHashes}>Pin DXVote Hashes</Button>
       </Row>
     </Box>
   );
