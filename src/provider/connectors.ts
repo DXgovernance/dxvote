@@ -1,15 +1,15 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { NetworkConnector } from '@web3-react/network-connector';
-import { NETWORK_IDS } from '../utils';
+import { NETWORKS } from '../utils';
 import metamaskIcon from '../assets/images/metamask.png';
 import walletConnectIcon from '../assets/images/walletconnect.png';
 
-export const ETH_NETWORKS = process.env.REACT_APP_ETH_NETWORKS.split(',');
-export const ETH_NETWORKS_IDS = ETH_NETWORKS.map(network => {
-  return NETWORK_IDS[network];
-});
-export const DEFAULT_ETH_CHAIN_ID = NETWORK_IDS[ETH_NETWORKS[0]];
+export const ACTIVE_NETWORK_NAMES = process.env.REACT_APP_ETH_NETWORKS.split(',');
+export const ACTIVE_NETWORKS = NETWORKS.filter(network => ACTIVE_NETWORK_NAMES.includes(network.name))
+
+export const ETH_NETWORKS_IDS = ACTIVE_NETWORKS.map(network => network.id);
+export const DEFAULT_ETH_CHAIN_ID = ACTIVE_NETWORKS[0].id;
 
 export const web3ContextNames = {
   injected: 'INJECTED',
@@ -71,9 +71,8 @@ export const getWallets = (customRpcUrls: { [chainId: number]: string }) => ({
 });
 
 export const getChains = (customRpcUrls: { [chainId: number]: string }) => {
-  return ETH_NETWORKS.map(name => ({
-    name: name,
-    chainId: NETWORK_IDS[name],
-    rpcUrls: customRpcUrls[NETWORK_IDS[name]]
+  return NETWORKS.map(network => ({
+    ...network,
+    rpcUrl: customRpcUrls[network.id] || network.defaultRpc
   }))
 }

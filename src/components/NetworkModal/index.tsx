@@ -81,7 +81,7 @@ const NetworkModal = observer(() => {
     if (!rpcUrls) return [];
 
     const chains = getChains(rpcUrls);
-    return Object.entries(chains).map(([key, option]) => {
+    return chains.map(chain => {
       return (
         <Option
           // onClick={() => {
@@ -89,11 +89,11 @@ const NetworkModal = observer(() => {
           //     !option.href &&
           //     tryActivation(option.connector);
           // }}
-          key={key}
-          icon={null}
-          active={option.chainId === chainId}
-          color={"red"}
-          header={option.name}
+          key={chain.name}
+          icon={chain.icon || null}
+          active={chain.id === chainId}
+          color={""}
+          header={chain.name}
         />
       );
     });
