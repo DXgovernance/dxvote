@@ -54,11 +54,11 @@ export default class DaoService {
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();
     let functionSignature = data.substring(0, 10);
-    const controllerCallDecoded = await abiService.decodeCall(
+    const controllerCallDecoded = abiService.decodeCall(
       data,
       ContractType.Controller
     );
-    const decodeEtherscanCallData = await abiService.decodeCall(
+    const decodeEtherscanCallData = abiService.decodeCall(
       data,
       ContractType.Controller,
       to

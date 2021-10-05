@@ -1,4 +1,5 @@
 import { Interface } from 'ethers/utils';
+import { ContractType } from 'stores/Provider';
 import RootContext from '../contexts';
 
 export const schema = {
@@ -23,20 +24,19 @@ export default class ABIService {
     this.context = context;
   }
 
-  getAbi(contractType: string) {
+  getAbi(contractType: ContractType) {
     return schema[contractType];
   }
   /**
-   * @todo prevent repeated etherscan API call
-   * @todo check if etherscan api token has been supplied
    * @param data Transaction call data
    * @param contractType e.g. controller/avatar/votingMachine etc
-   * @param to contract address
    * @returns
    */
-  async decodeCall(data: string, contractType: string, to?: string) {
+  decodeCall(data: string, contractType?: ContractType, ABI?: string) {
     const { providerStore } = this.context;
-    let contractInterface = new Interface(this.getAbi(contractType));
+    let contractInterface = new Interface(
+      ABI ? ABI : this.getAbi(contractType)
+    );
 
     const { library } = providerStore.getActiveWeb3React();
 
