@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Box from '../components/common/Box';
+import { Box } from '../components/common';
 import { FiZap } from 'react-icons/fi';
 
 const ForumPage = () => {
@@ -62,7 +62,7 @@ const ForumPage = () => {
   }
 
   return (
-    <Box style={{ padding: '0px' }}>
+    <Box noPadding>
       {loading ? (
         <LoadingBox>
           <div className="loader">

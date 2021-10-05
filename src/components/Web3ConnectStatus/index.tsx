@@ -4,7 +4,7 @@ import { shortenAddress, toCamelCaseString } from '../../utils';
 import WalletModal from 'components/WalletModal';
 import { isChainIdSupported } from 'provider/connectors';
 import { useContext } from '../../contexts';
-import Box from '../../components/common/Box';
+import { Box } from '../../components/common';
 import NetworkModal from 'components/NetworkModal';
 
 const WrongNetworkButton = styled(Box)`

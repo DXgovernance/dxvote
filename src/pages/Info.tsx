@@ -1,9 +1,7 @@
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { useContext } from '../contexts';
-import { LinkButton } from '../components/common/Button';
-import Box from '../components/common/Box';
-
+import {Box, LinkButton } from '../components/common';
 import FinanceInformation from '../components/FinanceInformation';
 import SchemesInformation from '../components/SchemesInformation';
 import GovernanceInformation from '../components/GovernanceInformation';
