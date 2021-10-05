@@ -43,7 +43,7 @@ export default class DaoService {
       .encodeABI();
   }
 
-  async decodeWalletSchemeCall(
+  decodeWalletSchemeCall(
     from: string,
     to: string,
     data: string,
