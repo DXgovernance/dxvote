@@ -2,9 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import { Button } from '../components/common/Button';
-import Question from '../components/common/Question';
-import Box from '../components/common/Box';
+import {Box, Question, Button } from '../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 import { NETWORK_ASSET_SYMBOL } from '../utils';
@@ -565,8 +563,7 @@ const NewProposalPage = observer(() => {
       setCallsInState(calls);
     }
   }
-  if (calls[0] && calls[0].allowedFunctions.length === 0 && allowedToCall[0])
-    onToSelectChange(0, allowedToCall[0].value);
+
 
   return (
     <NewProposalFormWrapper>
