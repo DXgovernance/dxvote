@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
+import { LinkButton } from '../components/common/Button';
 import Footer from '../components/Footer';
 import {
   ZERO_ADDRESS,
@@ -11,6 +11,8 @@ import {
   normalizeBalance,
   timeToTimestamp,
   formatNumberValue,
+  mapEnum,
+  VotingMachineProposalState,
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 
@@ -193,25 +195,39 @@ const ProposalsPage = observer(() => {
     );
   });
 
-  // First show the proposals that still have an active status in teh boting machine and order them from lower
-  // to higher based on the finish time.
-  // Then show the proposals who finished based on the statte in the voting machine and order them from higher to
-  // lower in the finish time.
-  // This way we show the proposals that will finish soon first and the latest proposals that finished later
-
-  const sortedProposals = allProposals
-    .filter(proposal => proposal.stateInVotingMachine > 4)
-    .sort(function (a, b) {
-      return a.finishTime - b.finishTime;
-    })
-    .concat(
+  /**
+   * proposals are ordered:
+   *  QuietEndingPeriod
+   *  Boosted
+   *  PreBoosted
+   *  Queued
+   *  Executed
+   *  ExpiredInQueue
+   *  None
+   * Preboosted are ordered in boostTime and not in Finish Time.
+   *
+   */
+  const sortedProposals = mapEnum(VotingMachineProposalState, p => {
+    return (
       allProposals
-        .filter(proposal => proposal.stateInVotingMachine < 5)
-        .sort(function (a, b) {
-          return b.finishTime - a.finishTime;
-        })
-    );
 
+        /**
+         * loop over the enum
+         * filter each enum value
+         * sort them
+         * flatten array
+         * reverse order of array from ascending to descending
+         */
+        .filter(proposal => proposal.stateInVotingMachine === p)
+        .sort((a, b) =>
+          a.boostTime.toNumber() > 0
+            ? b.boostTime.toNumber() - a.boostTime.toNumber()
+            : b.finishTime - a.finishTime
+        )
+    );
+  })
+    .flat(1)
+    .reverse();
   if (sortedProposals.length > proposals.length) setProposals(sortedProposals);
 
   function onStateFilterChange(newValue) {
@@ -231,9 +247,9 @@ const ProposalsPage = observer(() => {
       <SidebarWrapper>
         <ProposalTableHeaderActions>
           <NewProposalButton>
-            <ActiveButton route={`/${networkName}/new`}>
+            <LinkButton route={`/${networkName}/new`} width="200px">
               + New Proposal
-            </ActiveButton>
+            </LinkButton>
           </NewProposalButton>
           <ProposalsNameFilter
             type="text"

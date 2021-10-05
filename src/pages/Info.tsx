@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
+import { LinkButton } from '../components/common/Button';
 import Box from '../components/common/Box';
 
 import FinanceInformation from '../components/FinanceInformation';
@@ -33,18 +33,18 @@ const InfoPage = () => {
   return (
     <InfoPageWrapper>
       <InfoNavigation>
-        <ActiveButton route={`/${networkName}/info?view=governance`}>
+        <LinkButton route={`/${networkName}/info?view=governance`}>
           Governance
-        </ActiveButton>
-        <ActiveButton route={`/${networkName}/info?view=finance`}>
+        </LinkButton>
+        <LinkButton route={`/${networkName}/info?view=finance`}>
           Finance
-        </ActiveButton>
-        <ActiveButton route={`/${networkName}/info?view=schemes`}>
+        </LinkButton>
+        <LinkButton route={`/${networkName}/info?view=schemes`}>
           Schemes
-        </ActiveButton>
-        <ActiveButton route={`/${networkName}/info?view=permissions`}>
+        </LinkButton>
+        <LinkButton route={`/${networkName}/info?view=permissions`}>
           Permissions
-        </ActiveButton>
+        </LinkButton>
       </InfoNavigation>
       <div>
         {searchPath === `?view=schemes` ? (
