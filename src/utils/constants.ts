@@ -20,7 +20,11 @@ export const NETWORKS: {
   name: string,
   displayName: string,
   defaultRpc: string,
-  nativeAsset: string,
+  nativeAsset: {
+    name: string,
+    symbol: string,
+    decimals: number
+  },
   blockExplorer?: string,
   icon?: string
 }[] = [
@@ -29,7 +33,11 @@ export const NETWORKS: {
     name: 'mainnet',
     displayName: 'Ethereum Mainnet',
     defaultRpc: `https://mainnet.infura.io/v3/${defaultInfuraKey}`,
-    nativeAsset: 'ETH',
+    nativeAsset: {
+      name: "Ethereum",
+      symbol: 'ETH',
+      decimals: 18
+    },
     blockExplorer: 'https://etherscan.io',
     icon: ethereumIcon
   },
@@ -38,7 +46,11 @@ export const NETWORKS: {
     name: 'rinkeby',
     displayName: 'Rinkeby Testnet',
     defaultRpc: `https://rinkeby.infura.io/v3/${defaultInfuraKey}`,
-    nativeAsset: 'ETH',
+    nativeAsset: {
+      name: "Ethereum",
+      symbol: 'ETH',
+      decimals: 18
+    },
     blockExplorer: 'https://rinkeby.etherscan.io/',
     icon: ethereumIcon
   },
@@ -47,7 +59,11 @@ export const NETWORKS: {
     name: 'xdai',
     displayName: 'xDai Chain',
     defaultRpc: `https://rpc.xdaichain.com/`,
-    nativeAsset: 'XDAI',
+    nativeAsset: {
+      name: "xDai",
+      symbol: 'xDAI',
+      decimals: 18
+    },
     blockExplorer: 'https://blockscout.com/xdai/mainnet/',
     icon: xdaiIcon
   },
@@ -56,7 +72,11 @@ export const NETWORKS: {
     name: 'arbitrum',
     displayName: 'Arbitrum One',
     defaultRpc: `https://arbitrum-mainnet.infura.io/v3/${defaultInfuraKey}`,
-    nativeAsset: 'ETH',
+    nativeAsset: {
+      name: "Ethereum",
+      symbol: 'ETH',
+      decimals: 18
+    },
     blockExplorer: 'https://arbiscan.io/',
     icon: arbitrumIcon
   },
@@ -65,7 +85,11 @@ export const NETWORKS: {
     name: 'arbitrumTestnet',
     displayName: 'Arbitrum Testnet',
     defaultRpc: `https://arbitrum-rinkeby.infura.io/v3/${defaultInfuraKey}`,
-    nativeAsset: 'ETH',
+    nativeAsset: {
+      name: "Ethereum",
+      symbol: 'ETH',
+      decimals: 18
+    },
     blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
     icon: arbitrumIcon
   },
@@ -74,7 +98,11 @@ export const NETWORKS: {
     name: 'localhost',
     displayName: 'Localhost',
     defaultRpc: `http://localhost:8545`,
-    nativeAsset: 'ETH',
+    nativeAsset: {
+      name: "Ethereum",
+      symbol: 'ETH',
+      decimals: 18
+    },
   },
 ];
 
@@ -96,7 +124,7 @@ export const DEFAULT_RPC_URLS: { [chainId: string]: string } = NETWORKS.reduce(
 
 export const NETWORK_ASSET_SYMBOL: { [name: string]: string } = NETWORKS.reduce(
   (acc, network) => {
-    acc[network.name] = network.nativeAsset;
+    acc[network.name] = network.nativeAsset.symbol;
     return acc;
   },
   {}

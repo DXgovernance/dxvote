@@ -36,6 +36,7 @@ const OptionCardLeft = styled.div`
 
 const OptionCardClickable = styled(OptionCard)`
   margin-top: 0;
+  margin-bottom: 0.75rem;
   &:hover {
     cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};
     border: ${({ clickable, theme }) =>
@@ -67,10 +68,6 @@ const CircleWrapper = styled.div`
 
 const HeaderText = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
-  color: ${props =>
-    props.color === 'blue'
-      ? ({ theme }) => theme.royalBlue
-      : ({ theme }) => theme.textColor};
   font-size: 1rem;
   font-weight: 500;
 `;
@@ -100,7 +97,6 @@ export default function Option({
   clickable = true,
   size = null,
   onClick = null,
-  color,
   icon,
   header,
   subheader = null,
@@ -113,7 +109,7 @@ export default function Option({
       active={active}
     >
       <OptionCardLeft>
-        <HeaderText color={color}>
+        <HeaderText>
           {' '}
           {active ? (
             <CircleWrapper>

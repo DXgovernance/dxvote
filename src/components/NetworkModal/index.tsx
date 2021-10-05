@@ -6,7 +6,9 @@ import { Modal } from '../Modal';
 import Option from './Option';
 import { getChains } from 'provider/connectors';
 import { useContext } from '../../contexts';
-import { useActiveWeb3React, useRpcUrls } from 'provider/providerHooks';
+import { useRpcUrls } from 'provider/providerHooks';
+import { InjectedConnector } from '@web3-react/injected-connector';
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -46,21 +48,17 @@ const UpperSection = styled.div`
 `;
 
 const OptionGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `};
+  display: flex;
+  flex-direction: column;
 `;
 
 const NetworkModal = observer(() => {
   const {
-    context: { modalStore },
+    context: { modalStore, providerStore },
   } = useContext();
-  const { chainId } = useActiveWeb3React();
+  const { chainId, connector } = providerStore.getActiveWeb3React();
   const rpcUrls = useRpcUrls();
+  const history = useHistory()
   const [networkErrorMessage, setNetworkErrorMessage] = useState(false);
 
   const networkModalOpen = modalStore.networkModalVisible;
@@ -76,6 +74,31 @@ const NetworkModal = observer(() => {
     }
   }, [networkModalOpen]);
 
+  const trySwitching = async chain => {
+    if (connector instanceof InjectedConnector) {
+      const chainIdHex = `0x${chain.id.toString(16)}`;
+      try {
+        await window.ethereum?.send('wallet_switchEthereumChain', [
+          { chainId: chainIdHex },
+        ]);
+      } catch (e: any) {
+        if (e?.code == 4902) {
+          window.ethereum?.send('wallet_addEthereumChain', [
+            {
+              chainId: chainIdHex,
+              chainName: chain.displayName,
+              nativeCurrency: chain.nativeAsset,
+              rpcUrls: [chain.rpcUrl, chain.defaultRpc],
+              blockExplorerUrls: [chain.blockExplorer],
+            },
+          ]);
+        }
+      }
+    } else {
+      history.push(`/${chain.name}/proposals`);
+    }
+  };
+
   // get networks user can switch to
   function getOptions() {
     if (!rpcUrls) return [];
@@ -84,16 +107,11 @@ const NetworkModal = observer(() => {
     return chains.map(chain => {
       return (
         <Option
-          // onClick={() => {
-          //   option.connector !== connector &&
-          //     !option.href &&
-          //     tryActivation(option.connector);
-          // }}
+          onClick={() => trySwitching(chain)}
           key={chain.name}
           icon={chain.icon || null}
           active={chain.id === chainId}
-          color={""}
-          header={chain.name}
+          header={chain.displayName}
         />
       );
     });

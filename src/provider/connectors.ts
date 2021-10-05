@@ -71,7 +71,7 @@ export const getWallets = (customRpcUrls: { [chainId: number]: string }) => ({
 });
 
 export const getChains = (customRpcUrls: { [chainId: number]: string }) => {
-  return NETWORKS.map(network => ({
+  return ACTIVE_NETWORKS.map(network => ({
     ...network,
     rpcUrl: customRpcUrls[network.id] || network.defaultRpc
   }))
