@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import BlockchainLink from '../components/common/BlockchainLink';
+import { BlockchainLink, Subtitle, Row, Table, TableHeader, HeaderCell, TableBody, TableRow, DataCell } from '../components/common';
 import {
   bnum,
   parseCamelCase,
@@ -16,56 +16,18 @@ const FinanceInfoWrapper = styled.div`
   padding: 0px 10px;
   font-weight: 400;
   border-radius: 4px;
-  display: flex;
   justify-content: center;
-  flex-direction: row;
   color: var(--dark-text-gray);
-  flex-wrap: wrap;
 `;
 
-const FinanceTableHeaderWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: var(--light-text-gray);
-  padding: 20px 40px 8px 24px;
-  font-size: 14px;
-  text-align: center;
+const FinanceTable = styled(Table)`
+  grid-template-columns: 33% 33% 33%;
 `;
 
-const TableHeader = styled.div`
-  width: ${props => props.width};
-  text-align: ${props => props.align};
-`;
-
-const TableRowsWrapper = styled.div`
-  overflow-y: scroll;
-`;
-
-const TableRow = styled.div`
-  font-size: 16px;
-  line-height: 18px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line-gray);
-  padding: 16px 24px;
-  color: var(--dark-text-gray);
-  text-align: right;
-  cursor: pointer;
-`;
-
-const TableCell = styled.div`
-  display: flex;
-  flex-direction: row;
+const CenteredRow = styled(Row)`
+  justify-content: center;
   align-items: center;
-  justify-content: ${props => props.align};
-  color: ${props => props.color};
-  width: ${props => props.width};
-  font-weight: ${props => props.weight};
-  white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
-  overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
-  text-overflow: ${props => (props.wrapText ? 'ellipsis' : 'inherit')};
+  padding: 0;
 `;
 
 const FinanceInformation = observer(() => {
@@ -156,70 +118,68 @@ const FinanceInformation = observer(() => {
 
   return (
     <FinanceInfoWrapper>
-      {Object.keys(assets).map((assetHolder, i) => {
+      {Object.keys(assets).map((assetHolder) => {
         const assetsOfHolder = assets[assetHolder];
         return (
-          <div style={{ width: i > 0 ? '50%' : '100%' }}>
-            <h2 style={{ textAlign: 'center' }}>
-              {parseCamelCase(assetHolder)}
-            </h2>
-            <FinanceTableHeaderWrapper>
-              <TableHeader width="33%" align="center">
-                {' '}
-                Asset{' '}
+          <div>
+            <Subtitle centered> {parseCamelCase(assetHolder)} </Subtitle>
+            <FinanceTable>
+              <TableHeader>
+                <HeaderCell>
+                  Asset
+                </HeaderCell>
+                <HeaderCell align="center">
+                  Balance
+                </HeaderCell>
+                <HeaderCell align="center">
+                  USD Value
+                </HeaderCell>
               </TableHeader>
-              <TableHeader width="34%" align="center">
-                {' '}
-                Balance{' '}
-              </TableHeader>
-              <TableHeader width="33%" align="center">
-                {' '}
-                USD Value{' '}
-              </TableHeader>
-            </FinanceTableHeaderWrapper>
-            <TableRowsWrapper>
-              {assetsOfHolder.map((asset, i) => {
-                if (
-                  asset &&
-                  Number(formatBalance(asset.amount, asset.decimals, 2)) > 0
-                ) {
-                  return (
-                    <TableRow key={`asset${i}`}>
-                      <TableCell width="33%" align="center" weight="500">
-                        {asset.name}{' '}
-                        <BlockchainLink
-                          size="long"
-                          type="address"
-                          text={asset.address}
-                          onlyIcon
-                          toCopy
-                        />
-                      </TableCell>
-                      <TableCell width="34%" align="center">
-                        {formatBalance(
-                          asset.amount,
-                          asset.decimals,
-                          2
-                        ).toString()}
-                      </TableCell>
-                      <TableCell width="33%" align="center">
-                        {prices[asset.address] && prices[asset.address].usd
-                          ? formatCurrency(
-                              bnum(
-                                Number(
-                                  formatBalance(asset.amount, asset.decimals, 2)
-                                ) * prices[asset.address].usd
+              <TableBody>
+                {assetsOfHolder.map((asset, i) => {
+                  if (
+                    asset &&
+                    Number(formatBalance(asset.amount, asset.decimals, 2)) > 0
+                  ) {
+                    return (
+                      <TableRow key={`asset${i}`}>
+                        <DataCell align="left" weight="500">
+                          <CenteredRow>
+                          {asset.name}{' '}
+                          <BlockchainLink
+                            size="long"
+                            type="address"
+                            text={asset.address}
+                            onlyIcon
+                            toCopy
+                          />
+                          </CenteredRow>
+                        </DataCell>
+                        <DataCell align="center">
+                          {formatBalance(
+                            asset.amount,
+                            asset.decimals,
+                            2
+                          ).toString()}
+                        </DataCell>
+                        <DataCell align="center">
+                          {prices[asset.address] && prices[asset.address].usd
+                            ? formatCurrency(
+                                bnum(
+                                  Number(
+                                    formatBalance(asset.amount, asset.decimals, 2)
+                                  ) * prices[asset.address].usd
+                                )
                               )
-                            )
-                          : '-'}
-                      </TableCell>
-                    </TableRow>
-                  );
-                } else {
-                  return <div key={`asset${i}`} />;
-                }
-              })}
-            </TableRowsWrapper>
+                            : '-'}
+                        </DataCell>
+                      </TableRow>
+                    );
+                  }
+                  else return(<></>);
+                })}
+              </TableBody>
+             </FinanceTable>
           </div>
         );
       })}
