@@ -497,31 +497,34 @@ const ProposalPage = observer(() => {
               </span>
             )}
         </SidebarRow>
-        <SidebarRow style={{ flexDirection: 'column', alignItems: 'center' }}>
-          {pendingAction === 1 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiFastForward /> Boost{' '}
-            </ActionButton>
-          ) : pendingAction === 2 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiPlayCircle /> Execute{' '}
-            </ActionButton>
-          ) : pendingAction === 3 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiPlayCircle /> Finish{' '}
-            </ActionButton>
-          ) : pendingAction === 4 ? (
-            <ActionButton color="blue" onClick={redeemBeneficiary}>
-              <FiPlayCircle /> Redeem 4 Beneficiary{' '}
-            </ActionButton>
-          ) : (
-            pendingAction === 5 && (
-              <ActionButton color="blue" onClick={executeMulticall}>
-                <FiPlayCircle /> Execute Multicall{' '}
+
+        {account && (
+          <SidebarRow style={{ flexDirection: 'column', alignItems: 'center' }}>
+            {pendingAction === 1 ? (
+              <ActionButton color="blue" onClick={executeProposal}>
+                <FiFastForward /> Boost{' '}
               </ActionButton>
-            )
-          )}
-        </SidebarRow>
+            ) : pendingAction === 2 ? (
+              <ActionButton color="blue" onClick={executeProposal}>
+                <FiPlayCircle /> Execute{' '}
+              </ActionButton>
+            ) : pendingAction === 3 ? (
+              <ActionButton color="blue" onClick={executeProposal}>
+                <FiPlayCircle /> Finish{' '}
+              </ActionButton>
+            ) : pendingAction === 4 ? (
+              <ActionButton color="blue" onClick={redeemBeneficiary}>
+                <FiPlayCircle /> Redeem 4 Beneficiary{' '}
+              </ActionButton>
+            ) : (
+              pendingAction === 5 && (
+                <ActionButton color="blue" onClick={executeMulticall}>
+                  <FiPlayCircle /> Execute Multicall{' '}
+                </ActionButton>
+              )
+            )}
+          </SidebarRow>
+        )}
 
         <SidebarDivider />
 
@@ -679,7 +682,8 @@ const ProposalPage = observer(() => {
           <div />
         )}
 
-        {!finishTimeReached &&
+        {account &&
+        !finishTimeReached &&
         votedAmount.toNumber() === 0 &&
         Number(repPercentageAtCreation) > 0 &&
         proposal.stateInVotingMachine >= 3 ? (
@@ -812,7 +816,8 @@ const ProposalPage = observer(() => {
           <div></div>
         )}
 
-        {!finishTimeReached &&
+        {account &&
+        !finishTimeReached &&
         (proposal.stateInVotingMachine === 3 ||
           proposal.stateInVotingMachine === 4) &&
         votingMachineTokenApproved.toString() === '0' ? (
@@ -825,7 +830,8 @@ const ProposalPage = observer(() => {
               Approve {votingMachineTokenName}
             </ActionButton>
           </SidebarRow>
-        ) : !finishTimeReached &&
+        ) : account &&
+          !finishTimeReached &&
           (proposal.stateInVotingMachine === 3 ||
             proposal.stateInVotingMachine === 4) ? (
           <div>
@@ -907,7 +913,7 @@ const ProposalPage = observer(() => {
           <div></div>
         )}
 
-        {proposal.stateInVotingMachine < 3 &&
+        {account && proposal.stateInVotingMachine < 3 &&
         redeemsLeft.bounty.indexOf(proposalId) > -1 ? (
           <SidebarRow
             style={{

@@ -563,8 +563,7 @@ const NewProposalPage = observer(() => {
       setCallsInState(calls);
     }
   }
-  if (calls[0] && calls[0].allowedFunctions.length === 0 && allowedToCall[0])
-    onToSelectChange(0, allowedToCall[0].value);
+
 
   return (
     <NewProposalFormWrapper>

@@ -131,17 +131,21 @@ const Header = observer(() => {
         </NavSection>
         {blockchainStore.initialLoadComplete ? (
           <NavSection>
-            {votingMachines.dxd ? (
-              <ItemBox> {dxdBalance} DXD </ItemBox>
-            ) : (
-              <div />
+            {account && (
+              <>
+                {votingMachines.dxd ? (
+                  <ItemBox> {dxdBalance} DXD </ItemBox>
+                ) : (
+                  <div />
+                )}
+                {votingMachines.gen ? (
+                  <ItemBox> {genBalance} GEN </ItemBox>
+                ) : (
+                  <div />
+                )}
+                <ItemBox> {repPercentage.toString()} % REP </ItemBox>
+              </>
             )}
-            {votingMachines.gen ? (
-              <ItemBox> {genBalance} GEN </ItemBox>
-            ) : (
-              <div />
-            )}
-            <ItemBox> {repPercentage.toString()} % REP </ItemBox>
             <Web3ConnectStatus text="Connect Wallet" />
             <NavItem route={`/${networkName}/info`}>
               <a>
@@ -153,11 +157,13 @@ const Header = observer(() => {
                 <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
               </a>
             </NavItem>
-            <NavItem route={`/${networkName}/user/${account}`}>
-              <a>
-                <FiUser style={{ margin: '0px 10px', color: '#616161' }} />
-              </a>
-            </NavItem>
+            {account && (
+              <NavItem route={`/${networkName}/user/${account}`}>
+                <a>
+                  <FiUser style={{ margin: '0px 10px', color: '#616161' }} />
+                </a>
+              </NavItem>
+            )}
           </NavSection>
         ) : (
           <NavSection>
