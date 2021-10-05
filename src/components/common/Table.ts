@@ -7,6 +7,8 @@ export const Table = styled.table`
 
 export const TableHeader = styled.thead`
   display: contents;
+  color: var(--light-text-gray);
+  font-size: 14px;
 `
 
 interface HeaderCellProps {
@@ -25,7 +27,6 @@ export const TableRow = styled.tr`
   text-align: center;
   cursor: pointer;
   display: contents;
-  
 `;
 
 export const TableBody = styled.tbody`

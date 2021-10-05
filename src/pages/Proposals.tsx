@@ -118,11 +118,6 @@ const StyledTableRow = styled(TableRow)`
   }
 `;
 
-const StyledTableHeader = styled(TableHeader)`
-  color: var(--light-text-gray);
-  font-size: 14px;
-`;
-
 const FooterWrap = styled.div`
   align-self: flex-end;
 `;
@@ -255,7 +250,7 @@ const ProposalsPage = observer(() => {
         </FooterWrap>
       </SidebarWrapper>
       <TableProposal>
-        <StyledTableHeader>
+        <TableHeader>
           <HeaderCell>
             Title
           </HeaderCell>
@@ -271,7 +266,7 @@ const ProposalsPage = observer(() => {
           <HeaderCell>
             Votes
           </HeaderCell>
-        </StyledTableHeader>
+        </TableHeader>
         <TableBody>
         { proposals.length === 0 && <h3>No Proposals Found</h3> }       
           

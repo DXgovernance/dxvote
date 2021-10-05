@@ -1,78 +1,30 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useContext } from '../contexts';
 import { FiX } from 'react-icons/fi';
 
+import {
+  Table,
+  TableRow,
+  DataCell,
+  TableBody,
+  HeaderCell,
+  TableHeader,
+} from './common';
+
+import { useContext } from '../contexts';
 import { NETWORK_ASSET_SYMBOL } from '../utils';
 import {
-  ZERO_ADDRESS,
-  ERC20_TRANSFER_SIGNATURE,
-  ERC20_APPROVE_SIGNATURE,
   ANY_ADDRESS,
+  ZERO_ADDRESS,
   ANY_FUNC_SIGNATURE,
-  timestampToDate,
+  ERC20_APPROVE_SIGNATURE,
+  ERC20_TRANSFER_SIGNATURE,
   bnum,
+  timestampToDate,
 } from '../utils';
 
-const PermissionsInfoWrapper = styled.div`
-  background: white;
-  padding: 0px 10px;
-  font-weight: 400;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  color: var(--dark-text-gray);
-  flex-wrap: wrap;
-`;
-
-const TableHeaderWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: var(--light-text-gray);
-  padding: 20px 0px 8px 0px;
-  font-size: 14px;
-  text-align: center;
-`;
-
-const TableHeader = styled.div`
-  width: ${props => props.width};
-  text-align: ${props => props.align};
-`;
-
-const TableRowsWrapper = styled.div`
-  width: 100%;
-  overflow-y: scroll;
-`;
-
-const TableRow = styled.div`
-  font-size: 16px;
-  line-height: 18px;
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line-gray);
-  color: var(--dark-text-gray);
-  text-align: right;
-  cursor: pointer;
-  padding: 5px 0px;
-`;
-
-const TableCell = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px 5px;
-  justify-content: ${props => props.align};
-  color: ${props => props.color};
-  width: ${props => props.width};
-  font-weight: ${props => props.weight};
-  white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
-  overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
-  text-overflow: ${props => (props.wrapText ? 'ellipsis' : 'inherit')};
+const PermissionsTable = styled(Table)`
+  grid-template-columns: 10% 20% 20% 20% 10% 20%;
 `;
 
 const PermissionsInformation = observer(() => {
@@ -186,67 +138,58 @@ const PermissionsInformation = observer(() => {
       }
     }
   }
-
   return (
-    <PermissionsInfoWrapper>
-      <TableHeaderWrapper>
-        <TableHeader width="10%" align="left">
-          {' '}
-          Asset{' '}
-        </TableHeader>
-        <TableHeader width="20%" align="left">
-          {' '}
-          From{' '}
-        </TableHeader>
-        <TableHeader width="20%" align="left">
-          {' '}
-          To{' '}
-        </TableHeader>
-        <TableHeader width="20%" align="left">
-          {' '}
-          Function{' '}
-        </TableHeader>
-        <TableHeader width="10%" align="left">
-          {' '}
-          Value{' '}
-        </TableHeader>
-        <TableHeader width="20%" align="center">
-          {' '}
-          From Time{' '}
-        </TableHeader>
-      </TableHeaderWrapper>
-      <TableRowsWrapper>
-        {permissions.map((permission, i) => {
-          return (
-            <TableRow key={`permission${i}`}>
-              <TableCell width="10%" align="left">
-                {permission.asset}
-              </TableCell>
-              <TableCell width="20%" align="left">
-                {permission.from}
-              </TableCell>
-              <TableCell width="20%" align="left">
-                {permission.to}
-              </TableCell>
-              <TableCell width="20%" align="left">
-                {functionNames[permission.functionSignature] ||
-                  permission.functionSignature}
-              </TableCell>
-              <TableCell width="10%" align="left">
-                {permission.value}
-              </TableCell>
-              <TableCell width="20%" align="center">
-                {permission.fromTime === 0 ? (
-                  <FiX />
-                ) : (
-                  timestampToDate(bnum(permission.fromTime))
-                )}
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableRowsWrapper>
-    </PermissionsInfoWrapper>
+    <PermissionsTable>
+      <TableHeader>
+        <HeaderCell>
+          Asset
+        </HeaderCell>
+        <HeaderCell>
+          From
+        </HeaderCell>
+        <HeaderCell>
+          To
+        </HeaderCell>
+        <HeaderCell>
+          Function
+        </HeaderCell>
+        <HeaderCell>
+          Value
+        </HeaderCell>
+        <HeaderCell>
+          From Time
+        </HeaderCell>
+      </TableHeader>
+      <TableBody>
+      {permissions.map((permission, i) => (
+        <TableRow key={`permission${i}`}>
+          <DataCell>
+            {permission.asset}
+          </DataCell>
+          <DataCell>
+            {permission.from}
+          </DataCell>
+          <DataCell>
+            {permission.to}
+          </DataCell>
+          <DataCell>
+            {functionNames[permission.functionSignature] ||
+              permission.functionSignature}
+          </DataCell>
+          <DataCell>
+            {permission.value}
+          </DataCell>
+          <DataCell>
+            {permission.fromTime === 0 ? (
+              <FiX />
+            ) : (
+              timestampToDate(bnum(permission.fromTime))
+            )}
+          </DataCell>
+        </TableRow>
+      ))}
+      </TableBody>
+    </PermissionsTable>
   );
 });
 

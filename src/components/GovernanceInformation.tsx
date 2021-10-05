@@ -114,26 +114,24 @@ const GovernanceInformation = observer(() => {
 
       <GovernanceTable>
         <TableHeader>
-          <TableRow>
-            <HeaderCell align="center">
-              #
-            </HeaderCell>  
-            <HeaderCell align="center">
-              Address
-            </HeaderCell>
-            <HeaderCell align="center">
-              Proposals Created
-            </HeaderCell>
-            <HeaderCell align="center">
-              Voted
-            </HeaderCell>
-            <HeaderCell align="center">
-              Staked
-            </HeaderCell>
-            <HeaderCell align="center">
-              Score
-            </HeaderCell>
-          </TableRow>
+          <HeaderCell align="center">
+            #
+          </HeaderCell>  
+          <HeaderCell align="center">
+            Address
+          </HeaderCell>
+          <HeaderCell align="center">
+            Proposals Created
+          </HeaderCell>
+          <HeaderCell align="center">
+            Voted
+          </HeaderCell>
+          <HeaderCell align="center">
+            Staked
+          </HeaderCell>
+          <HeaderCell align="center">
+            Score
+          </HeaderCell>
         </TableHeader>
         <TableBody>
         {governanceInfo.ranking.map((user, i) => {
