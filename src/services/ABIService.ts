@@ -35,18 +35,8 @@ export default class ABIService {
    * @returns
    */
   async decodeCall(data: string, contractType: string, to?: string) {
-    const { providerStore, etherscanService } = this.context;
-    let etherscanABI;
+    const { providerStore } = this.context;
     let contractInterface = new Interface(this.getAbi(contractType));
-
-    try {
-      if (to && etherscanService.isAuthenticated()) {
-        etherscanABI = (await etherscanService.getContractABI(to)).data.result;
-        contractInterface = new Interface(etherscanABI);
-      }
-    } catch (error) {
-      console.log(error);
-    }
 
     const { library } = providerStore.getActiveWeb3React();
 
