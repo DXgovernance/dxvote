@@ -1,15 +1,15 @@
-import { useWeb3React } from "@web3-react/core";
-import styled from "styled-components";
-import { getNetworkConnector, web3ContextNames } from "provider/connectors";
+import { useWeb3React } from '@web3-react/core';
+import styled from 'styled-components';
+import { getNetworkConnector, web3ContextNames } from 'provider/connectors';
 import {
   useActiveWeb3React,
   useEagerConnect,
   useInactiveListener,
   useRpcUrls,
-} from "provider/providerHooks";
-import { useContext } from "../../contexts";
-import { useInterval, usePrevious } from "utils";
-import { useEffect } from "react";
+} from 'provider/providerHooks';
+import { useContext } from '../../contexts';
+import { useInterval, usePrevious } from 'utils';
+import { useEffect } from 'react';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -33,7 +33,7 @@ const Web3ReactManager = ({ children }) => {
       web3ContextInjected
     );
 
-  console.debug("[Web3ReactManager] Start of render", {
+  console.debug('[Web3ReactManager] Start of render', {
     injected: web3ContextInjected,
     web3React: providerStore.getActiveWeb3React(),
   });
@@ -44,9 +44,9 @@ const Web3ReactManager = ({ children }) => {
   useEffect(() => {
     if (triedEager && !networkActive && rpcUrls) {
       const networkConnector = getNetworkConnector(rpcUrls);
-      activate(networkConnector, undefined, true).catch((e) => {
+      activate(networkConnector, undefined, true).catch(e => {
         console.error(
-          "[Web3ReactManager] Unable to activate network connector.",
+          '[Web3ReactManager] Unable to activate network connector.',
           e
         );
       });
@@ -55,7 +55,7 @@ const Web3ReactManager = ({ children }) => {
 
   try {
     // @ts-ignore
-    ethereum.on("chainChanged", (chainId) => {
+    ethereum.on('chainChanged', chainId => {
       // Handle the new chain.
       // Correctly handling chain changes can be complicated.
       // We recommend reloading the page unless you have good reason not to.
@@ -65,7 +65,7 @@ const Web3ReactManager = ({ children }) => {
     });
 
     // @ts-ignore
-    ethereum.on("accountsChanged", (accounts) => {
+    ethereum.on('accountsChanged', accounts => {
       // Handle the new accounts, or lack thereof.
       // "accounts" will always be an array, but it can be empty.
       // blockchainStore.fetchData(web3React, false);
@@ -73,7 +73,7 @@ const Web3ReactManager = ({ children }) => {
     });
   } catch (error) {
     console.debug(
-      "[Web3ReactManager] Render: Ethereum Provider not available."
+      '[Web3ReactManager] Render: Ethereum Provider not available.'
     );
   }
 
@@ -128,12 +128,12 @@ const Web3ReactManager = ({ children }) => {
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
-    console.debug("[Web3ReactManager] Render: Eager load not tried");
+    console.debug('[Web3ReactManager] Render: Eager load not tried');
     return null;
   }
   if (networkError) {
     console.debug(
-      "[Web3ReactManager] Render: Network error, showing modal error."
+      '[Web3ReactManager] Render: Network error, showing modal error.'
     );
     return (
       <div>
@@ -145,20 +145,20 @@ const Web3ReactManager = ({ children }) => {
     );
   } else if (prevChainId && chainId && prevChainId !== chainId) {
     // Stop rendering if networks are being switched
-    console.debug("[Web3ReactManager] Render: Switching network", {
+    console.debug('[Web3ReactManager] Render: Switching network', {
       chainId,
       prevChainId,
     });
     return null;
   } else if (!chainId) {
-    console.debug("[Web3ReactManager] Render: No chain ID");
+    console.debug('[Web3ReactManager] Render: No chain ID');
     return null;
   } else if (!networkActive) {
-    console.debug("[Web3ReactManager] Render: No active network");
+    console.debug('[Web3ReactManager] Render: No active network');
     return children;
   } else {
     console.debug(
-      "[Web3ReactManager] Render: Active network, render children",
+      '[Web3ReactManager] Render: Active network, render children',
       { networkActive }
     );
     return children;
