@@ -66,7 +66,7 @@ const theme = darkMode => ({
   shadowColor: darkMode ? '#000' : '#2F80ED',
 
   borderStyle:
-    'rgba(14, 0, 135, 0.1) 0px 2px 10px, rgba(14, 0, 135, 0.05) 0px 12px 32px',
+    'rgba(14, 0, 135, 0.1) 0px 2px 10px, rgba(14, 0, 135, 0.05) 0px 2px 15px',
 
   // grays
   concreteGray: darkMode ? '#292C2F' : '#FAFAFA',

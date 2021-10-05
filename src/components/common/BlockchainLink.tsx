@@ -19,7 +19,7 @@ const AddressLink = styled.span`
   }
 `;
 
-const BlockchainLink = ({
+export const BlockchainLink = ({
   text,
   size = 'default',
   type = 'default',
@@ -56,6 +56,7 @@ const BlockchainLink = ({
     </AddressLink>
   );
 };
+<<<<<<< HEAD
 
 export default BlockchainLink;
 
@@ -65,3 +66,5 @@ If the address is an ERC20 token registered in the config show the token symbol 
 If the address is an ens domain show the ens domain name with a link to the blockchain explorer address and option to copy the address.
 If the address is an known dxvote contract (avatar,controller, etc) domain show the contract name with a link to the blockchain explorer address and option to copy the address.
 */
+=======
+>>>>>>> c83f1fa4d0fb3d453f929e4fcc9668ea51220613

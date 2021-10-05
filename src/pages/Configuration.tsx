@@ -2,19 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import ActiveButton from '../components/common/ActiveButton';
-import Question from '../components/common/Question';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
-import Box from '../components/common/Box';
+import { Row, Box, Question, Button } from '../components/common';
 import { useActiveWeb3React } from 'provider/providerHooks';
 import { injected } from 'provider/connectors';
 
-const Row = styled.div`
-  flex-direction: row;
-  flex: auto;
-  display: flex;
-  padding-top: 15px;
-  justify-content: space-around;
+const FormLabel = styled.label`
+  padding: 10px 0px;
 `;
 
 const InputBox = styled.input`
@@ -41,6 +35,13 @@ const Dropdown = styled.select`
   text-align: left;
   padding: 0px 10px;
   margin: 5px;
+`;
+
+const FormContainer = styled.div`
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 `;
 
 const ConfigPage = observer(() => {
@@ -110,149 +111,136 @@ const ConfigPage = observer(() => {
   }
 
   return (
-    <Box style={{ alignItems: 'center' }}>
+    <Box centered>
       <h2>
         API Keys <Question question="8" />
       </h2>
-      <Row style={{ maxWidth: '500px' }}>
-        <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
-          Etherscan:
-        </span>
-        <InputBox
-          type="text"
-          serviceName="etherscan"
-          onChange={event =>
-            onApiKeyValueChange(event.target.value, 'etherscan')
-          }
-          value={localConfig.etherscan}
-          style={{ width: '100%' }}
-        ></InputBox>
-        <span style={{ height: '34px', padding: '10px 0px' }}>
-          {etherscanApiStatus ? <FiCheckCircle /> : <FiX />}
-        </span>
-      </Row>
-      <Row style={{ maxWidth: '500px' }}>
-        <span style={{ width: '80px', height: '34px', padding: '10px 0px' }}>
-          Pinata:
-        </span>
-        <InputBox
-          type="text"
-          serviceName="pinata"
-          onChange={event => onApiKeyValueChange(event.target.value, 'pinata')}
-          value={localConfig.pinata}
-          style={{ width: '100%' }}
-        ></InputBox>
-        <span style={{ height: '34px', padding: '10px 0px' }}>
-          {pinataKeyStatus ? <FiCheckCircle /> : <FiX />}
-        </span>
-      </Row>
+      <FormContainer>
+        <Row>
+          <FormLabel>
+            Etherscan:
+          </FormLabel>
+          <InputBox
+            type="text"
+            serviceName="etherscan"
+            onChange={event =>
+              onApiKeyValueChange(event.target.value, 'etherscan')
+            }
+            value={localConfig.etherscan}
+          ></InputBox>
+          <FormLabel>
+            {etherscanApiStatus ? <FiCheckCircle /> : <FiX />}
+          </FormLabel>
+        </Row>
+        <Row>
+          <FormLabel>
+            Pinata:
+          </FormLabel>
+          <InputBox
+            type="text"
+            serviceName="pinata"
+            onChange={event => onApiKeyValueChange(event.target.value, 'pinata')}
+            value={localConfig.pinata}
+          ></InputBox>
+          <FormLabel>
+            {pinataKeyStatus ? <FiCheckCircle /> : <FiX />}
+          </FormLabel>
+        </Row>
 
-      {connector != injected && (
-        <>
-          <Row style={{ maxWidth: '500px' }}>
-            <span
-              style={{ width: '80px', height: '34px', padding: '10px 0px' }}
-            >
-              RPC:
-            </span>
-            <Dropdown
-              onChange={event =>
-                onApiKeyValueChange(event.target.value, 'rpcType')
-              }
-              value={localConfig.rpcType}
-              style={{ width: '100%' }}
-            >
-              <option value="">Default</option>
-              <option value="infura">Infura</option>
-              <option value="alchemy">Alchemy</option>
-              <option value="custom">Custom</option>
-            </Dropdown>
-          </Row>
+        {connector != injected && (
+          <>
+            <Row>
+              <FormLabel>
+                RPC:
+              </FormLabel>
+              <Dropdown
+                onChange={event =>
+                  onApiKeyValueChange(event.target.value, 'rpcType')
+                }
+                value={localConfig.rpcType}
+              >
+                <option value="">Default</option>
+                <option value="infura">Infura</option>
+                <option value="alchemy">Alchemy</option>
+                <option value="custom">Custom</option>
+              </Dropdown>
+            </Row>
 
-          {localConfig.rpcType === 'infura' && (
-            <Row style={{ maxWidth: '500px' }}>
-              <span
-                style={{ width: '80px', height: '34px', padding: '10px 0px' }}
-              >
-                Infura:
-              </span>
-              <InputBox
-                type="text"
-                serviceName="infura"
-                onChange={event =>
-                  onApiKeyValueChange(event.target.value, 'infura')
-                }
-                value={localConfig.infura}
-                style={{ width: '100%' }}
-              ></InputBox>
-              <span style={{ height: '34px', padding: '10px 0px' }}>
-                {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
-              </span>
-            </Row>
-          )}
-          {localConfig.rpcType === 'alchemy' && (
-            <Row style={{ maxWidth: '500px' }}>
-              <span
-                style={{ width: '80px', height: '34px', padding: '10px 0px' }}
-              >
-                Alchemy:
-              </span>
-              <InputBox
-                type="text"
-                serviceName="alchemy"
-                onChange={event =>
-                  onApiKeyValueChange(event.target.value, 'alchemy')
-                }
-                value={localConfig.alchemy}
-                style={{ width: '100%' }}
-              ></InputBox>
-              <span style={{ height: '34px', padding: '10px 0px' }}>
-                {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
-              </span>
-            </Row>
-          )}
-          {localConfig.rpcType === 'custom' && (
-            <Row style={{ maxWidth: '500px' }}>
-              <span
-                style={{ width: '80px', height: '34px', padding: '10px 0px' }}
-              >
-                RPC URL:
-              </span>
-              <InputBox
-                type="text"
-                serviceName="customRpcUrl"
-                onChange={event =>
-                  onApiKeyValueChange(event.target.value, 'customRpcUrl')
-                }
-                value={localConfig.customRpcUrl}
-                style={{ width: '100%' }}
-              ></InputBox>
-              <span style={{ height: '34px', padding: '10px 0px' }}>
-                {customRpcUrlStatus ? <FiCheckCircle /> : <FiX />}
-              </span>
-            </Row>
-          )}
-        </>
-      )}
-      <Row style={{ maxWidth: '500px' }}>
-        <span style={{ height: '34px', padding: '10px 10px' }}>
-          Pin DXdao hashes on start
-        </span>
-        <InputBox
-          type="checkbox"
-          checked={localConfig.pinOnStart}
-          onChange={event =>
-            onApiKeyValueChange(event.target.checked, 'pinOnStart')
-          }
-          style={{ width: '20px' }}
-        ></InputBox>
-      </Row>
-      <Row style={{ maxWidth: '500px' }}>
-        <ActiveButton onClick={saveConfig}>Save</ActiveButton>
-        <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
-        <ActiveButton onClick={clearCache}>Clear Cache</ActiveButton>
-        <ActiveButton onClick={pinDXvoteHashes}>Pin DXVote Hashes</ActiveButton>
-      </Row>
+            {localConfig.rpcType === 'infura' && (
+              <Row>
+                <FormLabel>
+                  Infura:
+                </FormLabel>
+                <InputBox
+                  type="text"
+                  serviceName="infura"
+                  onChange={event =>
+                    onApiKeyValueChange(event.target.value, 'infura')
+                  }
+                  value={localConfig.infura}
+                ></InputBox>
+                <FormLabel>
+                  {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
+                </FormLabel>
+              </Row>
+            )}
+            {localConfig.rpcType === 'alchemy' && (
+              <Row>
+                <FormLabel>
+                  Alchemy:
+                </FormLabel>
+                <InputBox
+                  type="text"
+                  serviceName="alchemy"
+                  onChange={event =>
+                    onApiKeyValueChange(event.target.value, 'alchemy')
+                  }
+                  value={localConfig.alchemy}
+                ></InputBox>
+                <FormLabel>
+                  {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
+                </FormLabel>
+              </Row>
+            )}
+            {localConfig.rpcType === 'custom' && (
+              <Row>
+                <FormLabel>
+                  RPC URL:
+                </FormLabel>
+                <InputBox
+                  type="text"
+                  serviceName="customRpcUrl"
+                  onChange={event =>
+                    onApiKeyValueChange(event.target.value, 'customRpcUrl')
+                  }
+                  value={localConfig.customRpcUrl}
+                ></InputBox>
+                <FormLabel>
+                  {customRpcUrlStatus ? <FiCheckCircle /> : <FiX />}
+                </FormLabel>
+              </Row>
+            )}
+          </>
+        )}
+        </FormContainer>
+        <Row>
+          <FormLabel>
+            Pin DXdao hashes on start
+          </FormLabel>
+          <InputBox
+            type="checkbox"
+            checked={localConfig.pinOnStart}
+            onChange={event =>
+              onApiKeyValueChange(event.target.checked, 'pinOnStart')
+            }
+          ></InputBox>
+        </Row>
+        <Row>
+          <Button onClick={saveConfig}>Save</Button>
+          <Button onClick={testApis}>Test Apis</Button>
+          <Button onClick={clearCache}>Clear Cache</Button>
+          <Button onClick={pinDXvoteHashes}>Pin DXVote Hashes</Button>
+        </Row>
     </Box>
   );
 });

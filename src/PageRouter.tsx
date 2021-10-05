@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { useContext } from './contexts';
 import { FiZapOff, FiZap } from 'react-icons/fi';
 import { useLocation, useHistory } from 'react-router-dom';
-import Box from './components/common/Box';
+import { Box } from './components/common';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;
@@ -36,9 +36,6 @@ const PageRouter = observer(({ children }) => {
       etherscanService,
       pinataService,
       coingeckoService,
-      infuraService,
-      alchemyService,
-      customRpcService,
     },
   } = useContext();
 
@@ -50,9 +47,6 @@ const PageRouter = observer(({ children }) => {
   ipfsService.start();
   etherscanService.isAuthenticated();
   pinataService.isAuthenticated();
-  alchemyService.isAuthenticated();
-  infuraService.isAuthenticated();
-  customRpcService.isAuthenticated();
 
   const { active: providerActive } = providerStore.getActiveWeb3React();
 

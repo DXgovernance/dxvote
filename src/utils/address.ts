@@ -67,7 +67,7 @@ export async function getENSName(address) {
   let name = null;
   try {
     const provider = ethers.getDefaultProvider();
-    let checksumed = ethers.utils.getAddress(address);
+    const checksumed = ethers.utils.getAddress(address);
     name = provider.lookupAddress(checksumed);
   }
   catch (e) {
