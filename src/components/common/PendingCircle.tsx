@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const SpinningCircle = styled.div`
   height: ${props => props.height || '16px'};
   width: ${props => props.width || '16px'};
-  color: blue;
+  color: white;
   top: 50%;
   left: 50%;
   margin: -(9px) 0 0 - (9px);
@@ -11,7 +11,7 @@ const SpinningCircle = styled.div`
   -moz-animation: rotation 1s infinite linear;
   -o-animation: rotation 1s infinite linear;
   animation: rotation 1s infinite linear;
-  border: 2px solid rgba(83, 109, 254, 0.2);
+  border: 2px solid rgba(83, 109, 254, 0);
   border-radius: 100%;
 
   :before {
@@ -22,9 +22,9 @@ const SpinningCircle = styled.div`
     top: -2px;
     height: 100%;
     width: 100%;
-    border-top: 2px solid #758afe;
-    border-left: 2px solid #758afe;
-    border-bottom: 2px solid #758afe;
+    border-top: 2px solid #feffff94;
+    border-left: 2px solid #feffff94;
+    border-bottom: 2px solid #feffff94;
     border-right: 2px solid transparent;
     border-radius: 100%;
   }

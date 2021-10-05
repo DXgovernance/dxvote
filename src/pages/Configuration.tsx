@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
-import { Row, Box, Question, ActiveButton } from '../components/common';
+import { Row, Box, Question, Button } from '../components/common';
 import { useActiveWeb3React } from 'provider/providerHooks';
 import { injected } from 'provider/connectors';
 
@@ -236,10 +236,10 @@ const ConfigPage = observer(() => {
           ></InputBox>
         </Row>
         <Row>
-          <ActiveButton onClick={saveConfig}>Save</ActiveButton>
-          <ActiveButton onClick={testApis}>Test Apis</ActiveButton>
-          <ActiveButton onClick={clearCache}>Clear Cache</ActiveButton>
-          <ActiveButton onClick={pinDXvoteHashes}>Pin DXVote Hashes</ActiveButton>
+          <Button onClick={saveConfig}>Save</Button>
+          <Button onClick={testApis}>Test Apis</Button>
+          <Button onClick={clearCache}>Clear Cache</Button>
+          <Button onClick={pinDXvoteHashes}>Pin DXVote Hashes</Button>
         </Row>
     </Box>
   );

@@ -5,6 +5,6 @@ export { Subtitle } from './Subtitle';
 export { InfoBox } from './InfoBox';
 export { Question } from './Question'
 export { BlockchainLink } from './BlockchainLink';
-export { ActiveButton } from './ActiveButton';
+export { Button, LinkButton } from './Button';
 export { Table, TableHeader, HeaderCell, TableBody, TableRow, DataCell } from './Table';
 export { Positive, Negative, Separator } from './Votes';

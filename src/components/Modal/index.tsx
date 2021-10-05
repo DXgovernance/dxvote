@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import ReactDOM from 'react-dom';
 
-import { ActiveButton } from '../common';
+import { Button } from '../common';
 
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 
@@ -83,7 +83,7 @@ export interface ModalProps {
   children: JSX.Element;
 }
 
-export const ModalButton = styled(ActiveButton)`
+export const ModalButton = styled(Button)`
   margin: 8px;
   flex: 1;
 `;
