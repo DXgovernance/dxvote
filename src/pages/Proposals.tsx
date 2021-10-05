@@ -335,9 +335,6 @@ const ProposalsPage = observer(() => {
                 (schemeFilter === 'All Schemes' ||
                   proposal.scheme === schemeFilter)
               ) {
-                // const minimumDaoBounty = daoStore.getVotingParametersOfProposal(
-                //   proposal.id
-                // ).minimumDaoBounty;
                 const positiveStake = formatNumberValue(
                   normalizeBalance(proposal.positiveStakes, 18),
                   1
