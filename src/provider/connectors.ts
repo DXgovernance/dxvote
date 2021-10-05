@@ -69,3 +69,11 @@ export const getWallets = (customRpcUrls: { [chainId: number]: string }) => ({
     icon: walletConnectIcon,
   },
 });
+
+export const getChains = (customRpcUrls: { [chainId: number]: string }) => {
+  return ETH_NETWORKS.map(name => ({
+    name: name,
+    chainId: NETWORK_IDS[name],
+    rpcUrls: customRpcUrls[NETWORK_IDS[name]]
+  }))
+}
