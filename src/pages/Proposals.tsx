@@ -62,7 +62,7 @@ const ProposalsNameFilter = styled.input`
   line-height: 32px;
   text-align: left;
   cursor: initial;
-  width: 100%;
+  width: 180px;
   padding: 0px 10px;
   margin: 5px 0px;
   font-family: var(--roboto);
@@ -128,7 +128,7 @@ const FooterWrap = styled.div`
 `;
 
 const TableProposal = styled(Table)`
-  grid-template-columns: 35% 20% 15% 20% 10%;
+  grid-template-columns: 33% 20% 15% 20% 12%;
 `;
 
 const ProposalsPage = observer(() => {
