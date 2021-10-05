@@ -335,18 +335,15 @@ const ProposalsPage = observer(() => {
                 (schemeFilter === 'All Schemes' ||
                   proposal.scheme === schemeFilter)
               ) {
-                const minimumDaoBounty = daoStore.getVotingParametersOfProposal(
-                  proposal.id
-                ).minimumDaoBounty;
+                // const minimumDaoBounty = daoStore.getVotingParametersOfProposal(
+                //   proposal.id
+                // ).minimumDaoBounty;
                 const positiveStake = formatNumberValue(
                   normalizeBalance(proposal.positiveStakes, 18),
                   1
                 );
                 const negativeStake = formatNumberValue(
-                  normalizeBalance(
-                    proposal.negativeStakes.plus(minimumDaoBounty),
-                    18
-                  ),
+                  normalizeBalance(proposal.negativeStakes, 18),
                   1
                 );
                 const repAtCreation = daoStore.getRepAt(
