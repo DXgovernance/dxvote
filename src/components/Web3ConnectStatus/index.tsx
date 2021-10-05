@@ -51,38 +51,13 @@ const Web3ConnectStatus = observer(props => {
     modalStore.toggleWalletModal();
   };
 
-  function getWeb3Status() {
-    console.debug('[GetWeb3Status]', {
-      account,
-      chainId: chainId,
-      error,
-    });
-    // Wrong network
-    if (account && chainId && !isChainIdSupported(chainId)) {
+  function getWalletStatus() {
+    console.debug('[GetWalletStatus]', { account });
+    if (account) {
       return (
-        <WrongNetworkButton onClick={toggleWalletModal}>
-          Wrong Network
-        </WrongNetworkButton>
-      );
-    } else if (account) {
-      return (
-        <div style={{ display: 'flex' }}>
-          <AccountButton onClick={toggleWalletModal}>
-            {shortenAddress(account)}
-          </AccountButton>
-          <AccountButton
-            onClick={toggleWalletModal}
-            style={{ fontSize: '14px' }}
-          >
-            {toCamelCaseString(configStore.getActiveChainName())}
-          </AccountButton>
-        </div>
-      );
-    } else if (error) {
-      return (
-        <WrongNetworkButton onClick={toggleWalletModal}>
-          Wrong Network
-        </WrongNetworkButton>
+        <AccountButton onClick={toggleWalletModal}>
+          {shortenAddress(account)}
+        </AccountButton>
       );
     } else {
       return (
@@ -93,9 +68,39 @@ const Web3ConnectStatus = observer(props => {
     }
   }
 
+  function getNetworkStatus() {
+    console.debug('[GetNetworkStatus]', { chainId, error });
+    // Wrong network
+    if ((chainId && !isChainIdSupported(chainId)) || error) {
+      return (
+        <WrongNetworkButton onClick={toggleWalletModal}>
+          Wrong Network
+        </WrongNetworkButton>
+      );
+    } else if (chainId) {
+      return (
+        <div style={{ display: 'flex' }}>
+          <AccountButton
+            onClick={toggleWalletModal}
+            style={{ fontSize: '14px' }}
+          >
+            {toCamelCaseString(configStore.getActiveChainName())}
+          </AccountButton>
+        </div>
+      );
+    } else {
+      return (
+        <ConnectButton onClick={toggleWalletModal} active={true}>
+          Not Connected
+        </ConnectButton>
+      );
+    }
+  }
+
   return (
     <>
-      {getWeb3Status()}
+      {getNetworkStatus()}
+      {getWalletStatus()}
       <WalletModal />
     </>
   );
