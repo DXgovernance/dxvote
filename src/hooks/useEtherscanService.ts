@@ -1,31 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useContext } from '../contexts';
 
-interface UseEtherscanService {
-  contractABI: string | null;
-  contractSource: string | null;
+interface UseEtherscanServiceReturns {
+  contractABI: string;
+  contractSource: string;
+  error: Error | null;
+  loading: boolean;
 }
 
-export const useEtherscanService = (address: string): UseEtherscanService => {
+export const useEtherscanService = (
+  address: string
+): UseEtherscanServiceReturns => {
   const {
     context: { etherscanService },
   } = useContext();
 
-  const [contractABI, setContractABI] = useState<string | null>(null);
-  const [contractSource, setContractSource] = useState<string | null>(null);
+  const [contractABI, setContractABI] = useState<string>();
+  const [contractSource, setContractSource] = useState<string>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const getContractABI = async (address: string) => {
-    const ABI = await (
-      await etherscanService.getContractABI(address)
-    ).data.result;
-    setContractABI(ABI);
+    try {
+      setLoading(true);
+      const ABI = await (
+        await etherscanService.getContractABI(address)
+      ).data.result;
+      setContractABI(ABI);
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setError(error);
+      setLoading(false);
+    }
   };
 
   const getContractSource = async (address: string) => {
-    const source = await (
-      await etherscanService.getContractSource(address)
-    ).data.result;
-    setContractSource(source);
+    try {
+      setLoading(true);
+
+      const source = await (
+        await etherscanService.getContractSource(address)
+      ).data.result;
+      setContractSource(source);
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setError(error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -36,5 +61,7 @@ export const useEtherscanService = (address: string): UseEtherscanService => {
   return {
     contractABI,
     contractSource,
+    loading,
+    error,
   };
 };
