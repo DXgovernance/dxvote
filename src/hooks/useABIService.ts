@@ -1,20 +1,48 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ContractType } from 'stores/Provider';
+import { bnum, normalizeBalance } from 'utils';
+import {
+  ANY_ADDRESS,
+  ERC20_APPROVE_SIGNATURE,
+  ERC20_TRANSFER_SIGNATURE,
+  ZERO_ADDRESS,
+  BigNumber,
+} from 'utils';
 import { useContext } from '../contexts';
 import { useEtherscanService } from './useEtherscanService';
 
-interface decodeABIParams {
+interface DecodeABI {
   data: string;
   contractType?: ContractType;
 }
 interface UseABIServiceReturns {
   ABI: string;
-  decodeABI: (params: decodeABIParams) => DecodedABI
+  decodedCallData: (
+    from: string,
+    to: string,
+    data: string,
+    value: BigNumber,
+    fullDescription: boolean
+  ) => {
+    from: string;
+    to: string;
+    data: string;
+    value: BigNumber;
+    args?: any;
+    functions?: any;
+    functionName?: string | undefined;
+    description?: string | undefined;
+    toName?: string | undefined;
+    encodedFunctionName?: string | undefined;
+    callParamaters?: string | undefined;
+  };
+  loading: boolean;
+  error: Error | null;
 }
 
 interface DecodedABI {
-    function: any;
-    args: any;
+  function: any;
+  args: any;
 }
 /**
  * parse's ABI and returns a react component detailing the to, from, and functions calls
@@ -23,22 +51,118 @@ export const useABIService = (address: string): UseABIServiceReturns => {
   const [ABI, setABI] = useState<DecodedABI>();
   const { contractABI, loading, error } = useEtherscanService(address);
   const {
-    context: { abiService },
+    context: { abiService, providerStore, configStore },
   } = useContext();
 
-  const decodeABI = (data:string, contractType: ContractType) =>
-    abiService.decodeCall(data, contractType, contractABI);
+  const decodeABI = (params: DecodeABI) => {
+    let contract: ContractType | undefined;
+    const { data, contractType } = params;
+    if (contractType) {
+      contract = contractType;
+    }
+    const abi = abiService.decodeCall(data, contract, contractABI);
+    setABI(abi);
+  };
 
-  useEffect(() => {
-    setABI(
-    decodeABI(data, contractType);
+  const decodedCallData = (
+    from: string,
+    to: string,
+    data: string,
+    value: BigNumber,
+    fullDescription: boolean
+  ) => {
+    const { library } = providerStore.getActiveWeb3React();
+    const recommendedCalls = configStore.getRecommendedCalls();
+    let functionSignature = data.substring(0, 10);
+
+    const controllerCallDecoded = abiService.decodeCall(
+      data,
+      ContractType.Controller
     );
-  }, []);
+    decodeABI({ data });
+
+    if (ABI) {
+      return {
+        from: from,
+        to: to,
+        args: ABI.args,
+        functions: ABI.function,
+        data: data,
+        value: value,
+      };
+    }
+    if (
+      controllerCallDecoded &&
+      controllerCallDecoded.function.name === 'genericCall'
+    ) {
+      to = controllerCallDecoded.args[0];
+      data = '0x' + controllerCallDecoded.args[1].substring(10);
+      value = bnum(controllerCallDecoded.args[3]);
+      functionSignature = controllerCallDecoded.args[1].substring(0, 10);
+    } else {
+      data = '0x' + data.substring(10);
+    }
+
+    let asset = ZERO_ADDRESS;
+    if (
+      functionSignature === ERC20_TRANSFER_SIGNATURE ||
+      functionSignature === ERC20_APPROVE_SIGNATURE
+    ) {
+      asset = to;
+    }
+    const recommendedCallUsed = recommendedCalls.find(recommendedCall => {
+      return (
+        asset === recommendedCall.asset &&
+        (ANY_ADDRESS === recommendedCall.from ||
+          from === recommendedCall.from) &&
+        to === recommendedCall.to &&
+        functionSignature ===
+          library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
+      );
+    });
+
+    if (recommendedCallUsed) {
+      const callParameters = library.eth.abi.decodeParameters(
+        recommendedCallUsed.params.map(param => param.type),
+        data
+      );
+
+      if (callParameters.__length__) delete callParameters.__length__;
+
+      let decodedCallText = '';
+
+      let encodeFunctionName = library.eth.abi.encodeFunctionSignature(
+        recommendedCallUsed.functionName
+      );
+
+      if (fullDescription) {
+        return {
+          from: from,
+          description: decodedCallText,
+          toName: recommendedCallUsed.toName,
+          to: recommendedCallUsed.to,
+          functionName: recommendedCallUsed.functionName,
+          encodedFunctionName: encodeFunctionName,
+          callParamaters: callParameters,
+          data: data,
+          value: value,
+        };
+      }
+    }
+
+    return {
+      from: from,
+      to: to,
+      data: data,
+      value: value,
+      functionSignature: functionSignature,
+    };
+  };
 
   return {
     ABI,
-    decodeABI,
-    loading, 
-    error
+    loading,
+    error,
+    decodedCallData,
   };
 };
