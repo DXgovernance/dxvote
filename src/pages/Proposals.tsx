@@ -237,7 +237,7 @@ const ProposalsPage = observer(() => {
           </HeaderCell>
         </TableHeader>
         <TableBody>
-          {proposals.length === 0 && <h3>No Proposals Found</h3>}       
+          { proposals.length === 0 && <h3>No Proposals Found</h3> }       
             
           {proposals.map((proposal, i) => {
             console.log(i)
