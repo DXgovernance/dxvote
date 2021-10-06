@@ -11,11 +11,14 @@ export const isExpired = (proposal: Proposal): boolean => {
   );
 };
 
+// Checks for whether vote was made before boosting activated
+// Returns false if proposal was not boosted at all
 export const votedBeforeBoosted = (proposal: Proposal, vote: Vote): boolean => {
   const boosted = proposal.boostedPhaseTime.toNumber() > 0;
   const votedBeforeBoosted =
     vote.timestamp < proposal.boostedPhaseTime.toNumber();
-  return boosted && votedBeforeBoosted;
+  const notBoosted = proposal.boostedPhaseTime.toNumber() === 0;
+  return (boosted && votedBeforeBoosted) || notBoosted;
 };
 
 export const isNotActive = (proposal: Proposal): boolean => {

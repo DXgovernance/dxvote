@@ -56,19 +56,10 @@ const InfoCard = styled.div`
 
 const AccountGroupingRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   font-weight: 500;
   color: ${({ theme }) => theme.textColor};
-
-  div {
-    ${({ theme }) => theme.flexRowNoWrap}
-    align-items: center;
-  }
-
-  &:first-of-type {
-    margin-bottom: 20px;
-  }
 `;
 
 const AccountSection = styled.div`
@@ -171,24 +162,20 @@ export default function AccountDetails(props: Props) {
         <YourAccount>
           <InfoCard>
             <AccountGroupingRow>
-              <div>
-                {connector !== injected && (
-                  <WalletAction
-                    onClick={() => {
-                      //@ts-ignore
-                      connector.close();
-                    }}
-                  >
-                    Disconnect
-                  </WalletAction>
-                )}
-                <CircleWrapper>
-                  {' '}
-                  <GreenCircle />{' '}
-                </CircleWrapper>
-              </div>
-            </AccountGroupingRow>
-            <AccountGroupingRow>
+              {connector !== injected && (
+                <WalletAction
+                  onClick={() => {
+                    //@ts-ignore
+                    connector.close();
+                  }}
+                >
+                  Disconnect
+                </WalletAction>
+              )}
+              <CircleWrapper>
+                {' '}
+                <GreenCircle />{' '}
+              </CircleWrapper>
               <AccountControl>
                 <StyledLink
                   href={getBlockchainLink(account, networkName, 'address')}

@@ -869,13 +869,13 @@ export default class DaoStore {
       const voteParameters = this.getVotingParametersOfProposal(
         vote.proposalId
       );
-
       if (
-        isExpired(proposal) &&
-        hasLostReputation(voteParameters) &&
-        votedBeforeBoosted(proposal, vote) &&
-        isWinningVote(proposal, vote) &&
-        redeemsLeft.rep.indexOf(vote.proposalId) < 0
+        (isExpired(proposal) && votedBeforeBoosted(proposal, vote)) ||
+        (hasLostReputation(voteParameters) &&
+          votedBeforeBoosted(proposal, vote) &&
+          isWinningVote(proposal, vote) &&
+          isNotActive(proposal) &&
+          redeemsLeft.rep.indexOf(vote.proposalId) < 0)
       ) {
         redeemsLeft.rep.push(vote.proposalId);
       }
@@ -899,7 +899,6 @@ export default class DaoStore {
         }
       }
     });
-
     // Remove already redeemed
     userEvents.redeemsRep.map(redeemRep => {
       if (redeemsLeft.rep.indexOf(redeemRep.proposalId) > -1)

@@ -79,6 +79,8 @@ const theme = darkMode => ({
   buttonOutlineGrey: darkMode ? '#FAFAFA' : '#F2F2F2',
   tokenRowHover: darkMode ? '#404040' : '#F2F2F2',
 
+  
+
   //blacks
   charcoalBlack: darkMode ? '#F2F2F2' : '#404040',
   // blues
@@ -126,6 +128,7 @@ const theme = darkMode => ({
     display: flex;
     flex-flow: row wrap;
   `,
+  
 });
 
 export const GlobalStyle = createGlobalStyle`
