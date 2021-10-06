@@ -1,22 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ContractType } from 'stores/Provider';
-import { bnum, normalizeBalance } from 'utils';
 import {
   ANY_ADDRESS,
+  bnum,
   ERC20_APPROVE_SIGNATURE,
   ERC20_TRANSFER_SIGNATURE,
   ZERO_ADDRESS,
   BigNumber,
+  normalizeBalance,
 } from 'utils';
 import { useContext } from '../contexts';
 import { useEtherscanService } from './useEtherscanService';
 
+interface RecommendedCallsUsed {
+  asset: string;
+  from: string;
+  to: string;
+  toName: string;
+  functionName: string;
+  params: {
+    type: string;
+    name: string;
+    defaultValue: string;
+    decimals?: number;
+  }[];
+  decodeText: string;
+}
+
+interface DecodedABI {
+  function: any;
+  args: any;
+}
 interface DecodeABI {
   data: string;
   contractType?: ContractType;
 }
 interface UseABIServiceReturns {
-  ABI: string;
+  ABI: DecodedABI | undefined;
+  loading: boolean;
+  error: Error | null;
   decodedCallData: (
     from: string,
     to: string,
@@ -30,19 +52,10 @@ interface UseABIServiceReturns {
     value: BigNumber;
     args?: any;
     functions?: any;
-    functionName?: string | undefined;
-    description?: string | undefined;
-    toName?: string | undefined;
-    encodedFunctionName?: string | undefined;
+    recommendedCallsUsed?: RecommendedCallsUsed | undefined;
     callParamaters?: string | undefined;
+    decodedCallText?: string | undefined;
   };
-  loading: boolean;
-  error: Error | null;
-}
-
-interface DecodedABI {
-  function: any;
-  args: any;
 }
 /**
  * parse's ABI and returns a react component detailing the to, from, and functions calls
@@ -129,23 +142,57 @@ export const useABIService = (address: string): UseABIServiceReturns => {
 
       if (callParameters.__length__) delete callParameters.__length__;
 
-      let decodedCallText = '';
-
       let encodeFunctionName = library.eth.abi.encodeFunctionSignature(
         recommendedCallUsed.functionName
       );
 
+      let decodedCallText = '';
+
+      if (
+        recommendedCallUsed.decodeText &&
+        recommendedCallUsed.decodeText.length > 0
+      ) {
+        decodedCallText = recommendedCallUsed.decodeText;
+
+        for (
+          let paramIndex = 0;
+          paramIndex < recommendedCallUsed.params.length;
+          paramIndex++
+        )
+          if (recommendedCallUsed.params[paramIndex].decimals)
+            decodedCallText = decodedCallText.replaceAll(
+              '[PARAM_' + paramIndex + ']',
+              '<italic>' +
+                normalizeBalance(
+                  callParameters[paramIndex],
+                  recommendedCallUsed.params[paramIndex].decimals
+                ) +
+                '</italic>'
+            );
+          else
+            decodedCallText = decodedCallText.replaceAll(
+              '[PARAM_' + paramIndex + ']',
+              '<italic>' + callParameters[paramIndex] + '</italic>'
+            );
+      }
+
       if (fullDescription) {
         return {
           from: from,
-          description: decodedCallText,
-          toName: recommendedCallUsed.toName,
-          to: recommendedCallUsed.to,
-          functionName: recommendedCallUsed.functionName,
+          to: to,
+          recommendedCallUsed: recommendedCallUsed,
           encodedFunctionName: encodeFunctionName,
           callParamaters: callParameters,
           data: data,
           value: value,
+        };
+      } else {
+        return {
+          from: from,
+          to: to,
+          data: data,
+          value: value,
+          decodedCallText: decodedCallText,
         };
       }
     }
