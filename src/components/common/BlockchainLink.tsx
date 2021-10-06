@@ -19,6 +19,11 @@ const AddressLink = styled.span`
   }
 `;
 
+const Icon = styled.img`
+  width: 15px;
+  height: 15px;
+`;
+
 export const BlockchainLink = ({
   text,
   size = 'default',
@@ -44,27 +49,34 @@ export const BlockchainLink = ({
     getENS();
   }, [])
   
+  
+  let formatedAddress;
+  if (!ensName && !dxVoteContract && !erc20Token) {
+    if (onlyIcon) formatedAddress = <FiExternalLink />
+    else formatedAddress = toAddressStub(text, size)
+  }
+  
+  /*
+  If the address is an ens domain show the ens domain name with a link to the blockchain explorer address and option to copy the address.
+  If the address is an ERC20 token registered in the config show the token symbol instead with links to the token explorer, and the option to copy the token address.
+  If the address is an known dxvote contract (avatar,controller, etc) domain show the contract name with a link to the blockchain explorer address and option to copy the address.
+  else show formatted address
+  */
+
   return (
     <AddressLink>
       <a href={getBlockchainLink(text, networkName, type)} target="_blank">
-        {onlyIcon ? <FiExternalLink /> : toAddressStub(text, size)}
         {ensName}
-        {erc20Token}
-        {dxVoteContract?.contract}
+        {!ensName && erc20Token && <Icon src={erc20Token.logoURI} />}
+        {!ensName && dxVoteContract && dxVoteContract?.contract}
+        {formatedAddress}
       </a>
       {toCopy ? <Copy toCopy={text} /> : <div />}
     </AddressLink>
   );
 };
-<<<<<<< HEAD
 
 export default BlockchainLink;
 
 
-/*
-If the address is an ERC20 token registered in the config show the token symbol instead with links to the token explorer, and the option to copy the token address.
-If the address is an ens domain show the ens domain name with a link to the blockchain explorer address and option to copy the address.
-If the address is an known dxvote contract (avatar,controller, etc) domain show the contract name with a link to the blockchain explorer address and option to copy the address.
-*/
-=======
->>>>>>> c83f1fa4d0fb3d453f929e4fcc9668ea51220613
+

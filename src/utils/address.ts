@@ -1,4 +1,6 @@
 import { ethers, utils } from 'ethers';
+import { NETWORK_EXPLORERS } from 'utils';
+
 const appConfig = require('../config.json');
 
 export function shortenAddress(address, digits = 4) {
@@ -41,25 +43,9 @@ export function getBlockchainLink(address, networkName, type) {
     case 'user':
       return `${window.location.pathname}#/user/${address}`;
     case 'address':
-      if (networkName === 'arbitrum')
-        return `https://explorer.arbitrum.io/#/address/${address}`;
-      else if (networkName === 'arbitrumTestnet')
-        return `https://rinkeby-explorer.arbitrum.io/#/address/${address}`;
-      else if (networkName === 'mainnet')
-        return `https://etherscan.io/address/${address}`;
-      else if (networkName === 'xdai')
-        return `https://blockscout.com/xdai/mainnet/address/${address}`;
-      else return `https://${networkName}.etherscan.io/address/${address}`;
-    default: // investigate DRY here
-      if (networkName === 'arbitrum')
-        return `https://explorer.arbitrum.io/#/tx/${address}`;
-      else if (networkName === 'arbitrumTestnet')
-        return `https://rinkeby-explorer.arbitrum.io/#/tx/${address}`;
-      else if (networkName === 'mainnet')
-        return `https://etherscan.io/tx/${address}`;
-      else if (networkName === 'xdai')
-        return `https://blockscout.com/xdai/mainnet/tx/${address}`;
-      else return `https://${networkName}.etherscan.io/tx/${address}`;
+      return `${NETWORK_EXPLORERS[networkName]}/address/${address}`
+    default:
+      return `${NETWORK_EXPLORERS[networkName]}/tx/${address}`;
   }
 }
 
@@ -78,24 +64,24 @@ export async function getENSName(address) {
 
 export function getERC20Token(address) {
   let tokenObject;
-  Object.keys(appConfig).forEach((network => {
-    tokenObject = appConfig[network]?.tokens?.filter(token => token.address === address)
-    if (tokenObject) return;
-  }));
+  let networks = Object.keys(appConfig)
+  for (let i = 0; (i < networks.length && !tokenObject); i++) {
+    tokenObject = appConfig[networks[i]]?.tokens?.find(token => token.address === address);
+  }
   return tokenObject;
 }
 
 export function getDxVoteContract(address) {
-  let obj = null;
-  Object.keys(appConfig).forEach(network => {
-    let contracts = appConfig[network]?.contracts
+  let contract;
+  let networks = Object.keys(appConfig);
+  for (let i = 0; (i < networks.length && !contract); i++) {
+    let contracts = appConfig[networks[i]]?.contracts;
     for (let [key, value] of Object.entries(contracts)) {
       if (value === address) {
-        obj = {contract: key, address: value}
+        contract = { contract: key, address: value }
         return;
       }
     }
-    return;
-  });
-  return obj;
+  }
+  return contract;
 }

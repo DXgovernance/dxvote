@@ -114,6 +114,16 @@ export const NETWORK_NAMES: { [chainId: string]: string } = NETWORKS.reduce(
   {}
 );
 
+export const NETWORK_EXPLORERS: { [name: string]: string } = NETWORKS.reduce(
+  (acc, network) => {
+    if (network?.blockExplorer) {
+      acc[network.name] = network.blockExplorer;
+    }
+    return acc;
+  },
+  {}
+);
+
 export const DEFAULT_RPC_URLS: { [chainId: string]: string } = NETWORKS.reduce(
   (acc, network) => {
     acc[network.id] = network.defaultRpc;
