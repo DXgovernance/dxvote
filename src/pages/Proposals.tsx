@@ -4,8 +4,16 @@ import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import {
-  LinkButton, Positive, Negative, Separator, Table, 
-  TableHeader, HeaderCell, TableBody, TableRow, DataCell
+  LinkButton,
+  Positive,
+  Negative,
+  Separator,
+  Table,
+  TableHeader,
+  HeaderCell,
+  TableBody,
+  TableRow,
+  DataCell,
 } from '../components/common';
 import Footer from '../components/Footer';
 import {
@@ -23,7 +31,7 @@ const ProposalsWrapper = styled.div`
   padding: 10px 0px;
   background: white;
   border-radius: 4px;
-  display: grid; 
+  display: grid;
   grid-template-columns: 20% 80%;
   grid-gap: 10px;
 `;
@@ -103,12 +111,12 @@ const StyledTableRow = styled(TableRow)`
   text-align: center;
   cursor: pointer;
   &:hover {
-    ${DataCell}{
+    ${DataCell} {
       background-color: #80808012;
     }
   }
 
-  ${DataCell}{
+  ${DataCell} {
     border-bottom: 1px solid var(--line-gray);
     padding: 20px 5px;
     &:nth-child(1) {
@@ -251,166 +259,145 @@ const ProposalsPage = observer(() => {
       </SidebarWrapper>
       <TableProposal>
         <TableHeader>
-          <HeaderCell>
-            Title
-          </HeaderCell>
-          <HeaderCell>
-            Scheme
-          </HeaderCell>
-          <HeaderCell>
-            Status
-          </HeaderCell>
-          <HeaderCell>
-            Stakes
-          </HeaderCell>
-          <HeaderCell>
-            Votes
-          </HeaderCell>
+          <HeaderCell>Title</HeaderCell>
+          <HeaderCell>Scheme</HeaderCell>
+          <HeaderCell>Status</HeaderCell>
+          <HeaderCell>Stakes</HeaderCell>
+          <HeaderCell>Votes</HeaderCell>
         </TableHeader>
         <TableBody>
-        { proposals.length === 0 && <h3>No Proposals Found</h3> }       
-          
-        {proposals.map((proposal, i) => {
-          console.log(i)
-          if (
-            proposal &&
-            (stateFilter === 'Any Status' ||
-              (stateFilter !== 'Any Status' &&
-                proposal.status === stateFilter)) &&
-            (titleFilter.length === 0 ||
-              (titleFilter.length > 0 &&
-                proposal.title.indexOf(titleFilter) >= 0)) &&
-            (schemeFilter === 'All Schemes' ||
-              proposal.scheme === schemeFilter)
-          ) {
-            const minimumDaoBounty = daoStore.getVotingParametersOfProposal(
-              proposal.id
-            ).minimumDaoBounty;
-            const positiveStake = formatNumberValue(
-              normalizeBalance(proposal.positiveStakes, 18),
-              1
-            );
-            const negativeStake = formatNumberValue(
-              normalizeBalance(
-                proposal.negativeStakes.plus(minimumDaoBounty),
-                18
-              ),
-              1
-            );
-            const repAtCreation = daoStore.getRepAt(
-              ZERO_ADDRESS,
-              proposal.creationEvent.l1BlockNumber
-            ).totalSupply;
+          {proposals.length === 0 && <h3>No Proposals Found</h3>}
 
-            const positiveVotesPercentage = formatPercentage(
-              proposal.positiveVotes.div(repAtCreation),
-              2
-            );
-            const negativeVotesPercentage = formatPercentage(
-              proposal.negativeVotes.div(repAtCreation),
-              2
-            );
-            const timeToBoost = timeToTimestamp(proposal.boostTime);
-            const timeToFinish = timeToTimestamp(proposal.finishTime);
+          {proposals.map((proposal, i) => {
+            console.log(i);
+            if (
+              proposal &&
+              (stateFilter === 'Any Status' ||
+                (stateFilter !== 'Any Status' &&
+                  proposal.status === stateFilter)) &&
+              (titleFilter.length === 0 ||
+                (titleFilter.length > 0 &&
+                  proposal.title.indexOf(titleFilter) >= 0)) &&
+              (schemeFilter === 'All Schemes' ||
+                proposal.scheme === schemeFilter)
+            ) {
+              const positiveStake = formatNumberValue(
+                normalizeBalance(proposal.positiveStakes, 18),
+                1
+              );
+              const negativeStake = formatNumberValue(
+                normalizeBalance(proposal.negativeStakes, 18),
+                1
+              );
+              const repAtCreation = daoStore.getRepAt(
+                ZERO_ADDRESS,
+                proposal.creationEvent.l1BlockNumber
+              ).totalSupply;
 
-            const votingMachineTokenName =
-              votingMachines.dxd &&
-              daoStore.getVotingMachineOfProposal(proposal.id) ===
-                votingMachines.dxd.address
-                ? 'DXD'
-                : 'GEN';
+              const positiveVotesPercentage = formatPercentage(
+                proposal.positiveVotes.div(repAtCreation),
+                2
+              );
+              const negativeVotesPercentage = formatPercentage(
+                proposal.negativeVotes.div(repAtCreation),
+                2
+              );
+              const timeToBoost = timeToTimestamp(proposal.boostTime);
+              const timeToFinish = timeToTimestamp(proposal.finishTime);
 
-            const voted =
-              userEvents.votes.findIndex(
-                event => event.proposalId === proposal.id
-              ) > -1;
-            const staked =
-              userEvents.stakes.findIndex(
-                event => event.proposalId === proposal.id
-              ) > -1;
-            const created =
-              userEvents.newProposal.findIndex(
-                event => event.proposalId === proposal.id
-              ) > -1;
-            return (
-            <StyledTableRow onClick={() => history.push(`/${networkName}/proposal/${proposal.id}`)}>
-              <DataCell
-                weight="800"
-                wrapText="true"
-                fontSize="inherit"
-                align="left"
-              >
-                {created && (
-                  <FiFeather
-                    style={{ minWidth: '15px', margin: '0px 2px' }}
-                  />
-                )}
-                {voted && (
-                  <FiCheckCircle
-                    style={{ minWidth: '15px', margin: '0px 2px' }}
-                  />
-                )}
-                {staked && (
-                  <FiCheckSquare
-                    style={{ minWidth: '15px', margin: '0px 2px' }}
-                  />
-                )}
-                {proposal.title.length > 0
-                  ? proposal.title
-                  : proposal.id}
-              </DataCell>
-              <DataCell >
-                {daoStore.getCache().schemes[proposal.scheme].name}
-              </DataCell>
-              <DataCell>
-                <span>
-                  {proposal.status} <br />
-                  {timeToBoost !== '' ? (
-                    <small>
-                      Boost {timeToBoost} <br />
-                    </small>
-                  ) : (
-                    <span></span>
-                  )}
-                  {timeToFinish !== '' ? (
-                    <small>Finish {timeToFinish} </small>
-                  ) : (
-                    <span></span>
-                  )}
-                  {proposal.pendingAction === 3 ? (
-                    <small> Pending Finish Execution </small>
-                  ) : (
-                    <span></span>
-                  )}
-                </span>
-              </DataCell>
-              <DataCell>
-                <Positive>
-                  {positiveStake.toString()} {votingMachineTokenName}{' '}
-                </Positive>
-                <Separator>
-                  |
-                </Separator>
-                <Negative>
-                  {negativeStake.toString()} {votingMachineTokenName}
-                </Negative>
-              </DataCell>
-              <DataCell>
-                <Positive>
-                  {positiveVotesPercentage}{' '}
-                </Positive>
-                <Separator>
-                  |
-                </Separator>
-                <Negative>
-                  {negativeVotesPercentage}
-                </Negative>
-              </DataCell>
-            </StyledTableRow>
-          )} else {
-            return null;
-          }
-        })}
+              const votingMachineTokenName =
+                votingMachines.dxd &&
+                daoStore.getVotingMachineOfProposal(proposal.id) ===
+                  votingMachines.dxd.address
+                  ? 'DXD'
+                  : 'GEN';
+
+              const voted =
+                userEvents.votes.findIndex(
+                  event => event.proposalId === proposal.id
+                ) > -1;
+              const staked =
+                userEvents.stakes.findIndex(
+                  event => event.proposalId === proposal.id
+                ) > -1;
+              const created =
+                userEvents.newProposal.findIndex(
+                  event => event.proposalId === proposal.id
+                ) > -1;
+              return (
+                <StyledTableRow
+                  onClick={() =>
+                    history.push(`/${networkName}/proposal/${proposal.id}`)
+                  }
+                >
+                  <DataCell
+                    weight="800"
+                    wrapText="true"
+                    fontSize="inherit"
+                    align="left"
+                  >
+                    {created && (
+                      <FiFeather
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {voted && (
+                      <FiCheckCircle
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {staked && (
+                      <FiCheckSquare
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {proposal.title.length > 0 ? proposal.title : proposal.id}
+                  </DataCell>
+                  <DataCell>
+                    {daoStore.getCache().schemes[proposal.scheme].name}
+                  </DataCell>
+                  <DataCell>
+                    <span>
+                      {proposal.status} <br />
+                      {timeToBoost !== '' ? (
+                        <small>
+                          Boost {timeToBoost} <br />
+                        </small>
+                      ) : (
+                        <span></span>
+                      )}
+                      {timeToFinish !== '' ? (
+                        <small>Finish {timeToFinish} </small>
+                      ) : (
+                        <span></span>
+                      )}
+                      {proposal.pendingAction === 3 ? (
+                        <small> Pending Finish Execution </small>
+                      ) : (
+                        <span></span>
+                      )}
+                    </span>
+                  </DataCell>
+                  <DataCell>
+                    <Positive>
+                      {positiveStake.toString()} {votingMachineTokenName}{' '}
+                    </Positive>
+                    <Separator>|</Separator>
+                    <Negative>
+                      {negativeStake.toString()} {votingMachineTokenName}
+                    </Negative>
+                  </DataCell>
+                  <DataCell>
+                    <Positive>{positiveVotesPercentage} </Positive>
+                    <Separator>|</Separator>
+                    <Negative>{negativeVotesPercentage}</Negative>
+                  </DataCell>
+                </StyledTableRow>
+              );
+            } else {
+              return null;
+            }
+          })}
         </TableBody>
       </TableProposal>
     </ProposalsWrapper>
