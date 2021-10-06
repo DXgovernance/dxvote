@@ -64,17 +64,25 @@ const FilterByProperty = styled.select`
   margin-right: 10px;
 `;
 
-const ProposalsTable = styled(Table)`
-  grid-template-columns: 33% 20% 15% 20% 12%;
-  padding: 20px 10px 20px 10px;
-  overflow-y: scroll;
-  height: 65vh;
-`;
-
 const NewProposalButton = styled(LinkButton)`
   padding: 0px;
   margin: 0px;
   margin-left: auto;
+`;
+
+const ProposalsTable = styled(Table)`
+  grid-template-columns: 33% 20% 15% 20% 12%;
+  padding: 0px 10px 20px 10px;
+  overflow-y: scroll;
+  height: 65vh;
+  
+  ${TableHeader}{
+    ${HeaderCell} {
+      position: sticky;
+      top: 0;
+      background: var(--white);
+    }
+  }
 `;
 
 const StyledTableRow = styled(TableRow)`
@@ -83,6 +91,7 @@ const StyledTableRow = styled(TableRow)`
   color: var(--dark-text-gray);
   text-align: center;
   cursor: pointer;
+
   &:hover {
     ${DataCell}{
       background-color: #80808012;
@@ -97,6 +106,8 @@ const StyledTableRow = styled(TableRow)`
       font-size: 14px;
     }
   }
+
+  
 `;
 
 
