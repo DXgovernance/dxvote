@@ -311,7 +311,7 @@ export default class DaoStore {
             users[vote.voter].totalVoted = users[vote.voter].totalVoted.plus(
               bnum(vote.amount)
             );
-            users[vote.voter].score += 3;
+            users[vote.voter].score += 2;
           } else {
             users[vote.voter].wrongVotes++;
             users[vote.voter].totalVoted = users[vote.voter].totalVoted.plus(
@@ -388,7 +388,7 @@ export default class DaoStore {
           .times('10')
           .toFixed(2);
         users[proposalCreator].score += Math.min(
-          Math.min(Number(score), 1),
+          Math.min(Number(score), 3),
           30
         );
         users[proposalCreator].proposals++;
