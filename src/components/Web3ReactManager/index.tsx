@@ -70,8 +70,12 @@ const Web3ReactManager = ({ children }) => {
 
   function switchChainAndReload(chainId) {
     const chains = getChains(rpcUrls);
-    const chain = chains.find(chain => chain.id == chainId) || chains[0];
-    history.push(`/${chain.name}/proposals`);
+    const chain = chains.find(chain => chain.id == chainId);
+
+    if (chain) {
+      history.push(`/${chain.name}/proposals`);
+    }
+    
     window.location.reload();
   }
 
