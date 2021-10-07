@@ -14,14 +14,14 @@ export const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 export const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
-const defaultInfuraKey = process.env.REACT_APP_KEY_INFURA_API_KEY;
+const defaultAlchemyKey = process.env.REACT_APP_KEY_ALCHEMY_API_KEY;
 
 export const NETWORKS: ChainConfig[] = [
   {
     id: 1,
     name: 'mainnet',
     displayName: 'Ethereum Mainnet',
-    defaultRpc: `https://mainnet.infura.io/v3/${defaultInfuraKey}`,
+    defaultRpc: `https://eth-mainnet.alchemyapi.io/v2/${defaultAlchemyKey}`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -34,7 +34,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 4,
     name: 'rinkeby',
     displayName: 'Rinkeby Testnet',
-    defaultRpc: `https://rinkeby.infura.io/v3/${defaultInfuraKey}`,
+    defaultRpc: `https://eth-rinkeby.alchemyapi.io/v2/${defaultAlchemyKey}`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -60,7 +60,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 42161,
     name: 'arbitrum',
     displayName: 'Arbitrum One',
-    defaultRpc: `https://arbitrum-mainnet.infura.io/v3/${defaultInfuraKey}`,
+    defaultRpc: `https://arb-mainnet.g.alchemy.com/v2/${defaultAlchemyKey}`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -73,7 +73,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 421611,
     name: 'arbitrumTestnet',
     displayName: 'Arbitrum Testnet',
-    defaultRpc: `https://arbitrum-rinkeby.infura.io/v3/${defaultInfuraKey}`,
+    defaultRpc: `https://arb-rinkeby.g.alchemy.com/v2/${defaultAlchemyKey}`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
