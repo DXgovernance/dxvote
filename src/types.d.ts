@@ -293,6 +293,7 @@ declare global {
       name: string;
       title: string;
       description: string;
+      calls?: array;
     }[];
     tokens: {
       address: string;

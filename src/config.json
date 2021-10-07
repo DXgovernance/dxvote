@@ -240,6 +240,25 @@
         "name": "Signal Proposal",
         "title": "Signal Proposal for [DAO_ACTION]",
         "description": "## Description \n\n## Proposition \n\n## Action Plan"
+      },
+      {
+        "name": "SWPR Farming Campaign",
+        "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]",
+        "description": "Simple description",
+        "calls": [
+          {
+            "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+            "params": [
+              {"id": "rewardsTokenAddresses", "defaultValue": "0xecA7F78d59D16812948849663b26FE10E320f80C"},
+              null,
+              null,
+              null,
+              null,
+              {"id": "locked", "defaultValue": "false"},
+              {"id": "stakingCap", "defaultValue": "0"}
+            ]
+          }
+        ]
       }
     ],
     "tokens": [
@@ -2012,6 +2031,31 @@
         "name": "Signal Proposal",
         "title": "Signal Proposal for [DAO_ACTION]",
         "description": "## Description \n\n## Proposition \n\n## Action Plan"
+      },
+      {
+        "name": "SWPR Farming Campaign",
+        "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]",
+        "description": "Simple description",
+        "calls": [
+          {
+            "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
+            "functionName": "approve(address,uint256)",
+            "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C",""]
+          },
+          {
+            "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+            "params": [
+              "0xecA7F78d59D16812948849663b26FE10E320f80C",
+              "",
+              "",
+              "",
+              "",
+              "false",
+              "0"
+            ]
+          }
+        ]
       }
     ],
     "tokens": [
