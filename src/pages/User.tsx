@@ -2,7 +2,13 @@ import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
 import { useContext } from '../contexts';
 import { useLocation } from 'react-router-dom';
-import { BlockchainLink, Row, Box, InfoBox, Subtitle } from '../components/common';
+import {
+  BlockchainLink,
+  Row,
+  Box,
+  InfoBox,
+  Subtitle,
+} from '../components/common';
 import { formatBalance } from '../utils';
 
 const UserPage = observer(() => {

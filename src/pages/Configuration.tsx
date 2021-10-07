@@ -117,9 +117,7 @@ const ConfigPage = observer(() => {
       </h2>
       <FormContainer>
         <Row>
-          <FormLabel>
-            Etherscan:
-          </FormLabel>
+          <FormLabel>Etherscan:</FormLabel>
           <InputBox
             type="text"
             serviceName="etherscan"
@@ -133,26 +131,22 @@ const ConfigPage = observer(() => {
           </FormLabel>
         </Row>
         <Row>
-          <FormLabel>
-            Pinata:
-          </FormLabel>
+          <FormLabel>Pinata:</FormLabel>
           <InputBox
             type="text"
             serviceName="pinata"
-            onChange={event => onApiKeyValueChange(event.target.value, 'pinata')}
+            onChange={event =>
+              onApiKeyValueChange(event.target.value, 'pinata')
+            }
             value={localConfig.pinata}
           ></InputBox>
-          <FormLabel>
-            {pinataKeyStatus ? <FiCheckCircle /> : <FiX />}
-          </FormLabel>
+          <FormLabel>{pinataKeyStatus ? <FiCheckCircle /> : <FiX />}</FormLabel>
         </Row>
 
         {connector != injected && (
           <>
             <Row>
-              <FormLabel>
-                RPC:
-              </FormLabel>
+              <FormLabel>RPC:</FormLabel>
               <Dropdown
                 onChange={event =>
                   onApiKeyValueChange(event.target.value, 'rpcType')
@@ -168,9 +162,7 @@ const ConfigPage = observer(() => {
 
             {localConfig.rpcType === 'infura' && (
               <Row>
-                <FormLabel>
-                  Infura:
-                </FormLabel>
+                <FormLabel>Infura:</FormLabel>
                 <InputBox
                   type="text"
                   serviceName="infura"
@@ -186,9 +178,7 @@ const ConfigPage = observer(() => {
             )}
             {localConfig.rpcType === 'alchemy' && (
               <Row>
-                <FormLabel>
-                  Alchemy:
-                </FormLabel>
+                <FormLabel>Alchemy:</FormLabel>
                 <InputBox
                   type="text"
                   serviceName="alchemy"
@@ -204,9 +194,7 @@ const ConfigPage = observer(() => {
             )}
             {localConfig.rpcType === 'custom' && (
               <Row>
-                <FormLabel>
-                  RPC URL:
-                </FormLabel>
+                <FormLabel>RPC URL:</FormLabel>
                 <InputBox
                   type="text"
                   serviceName="customRpcUrl"
@@ -222,25 +210,23 @@ const ConfigPage = observer(() => {
             )}
           </>
         )}
-        </FormContainer>
-        <Row>
-          <FormLabel>
-            Pin DXdao hashes on start
-          </FormLabel>
-          <InputBox
-            type="checkbox"
-            checked={localConfig.pinOnStart}
-            onChange={event =>
-              onApiKeyValueChange(event.target.checked, 'pinOnStart')
-            }
-          ></InputBox>
-        </Row>
-        <Row>
-          <Button onClick={saveConfig}>Save</Button>
-          <Button onClick={testApis}>Test Apis</Button>
-          <Button onClick={clearCache}>Clear Cache</Button>
-          <Button onClick={pinDXvoteHashes}>Pin DXVote Hashes</Button>
-        </Row>
+      </FormContainer>
+      <Row>
+        <FormLabel>Pin DXdao hashes on start</FormLabel>
+        <InputBox
+          type="checkbox"
+          checked={localConfig.pinOnStart}
+          onChange={event =>
+            onApiKeyValueChange(event.target.checked, 'pinOnStart')
+          }
+        ></InputBox>
+      </Row>
+      <Row>
+        <Button onClick={saveConfig}>Save</Button>
+        <Button onClick={testApis}>Test Apis</Button>
+        <Button onClick={clearCache}>Clear Cache</Button>
+        <Button onClick={pinDXvoteHashes}>Pin DXVote Hashes</Button>
+      </Row>
     </Box>
   );
 });
