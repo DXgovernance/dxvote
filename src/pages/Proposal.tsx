@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
@@ -19,6 +19,7 @@ import contentHash from 'content-hash';
 import BlockchainLink from '../components/common/BlockchainLink';
 import Question from '../components/common/Question';
 import Box from '../components/common/Box';
+import CallDataInformation from 'components/CallDataInformation';
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
@@ -28,7 +29,6 @@ import {
   denormalizeBalance,
 } from '../utils';
 import { ConfirmVoteModal } from 'components/ConfirmVoteModal';
-import { useABIService } from 'hooks/useABIService';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;
@@ -150,10 +150,6 @@ const ProposalPage = observer(() => {
   const votingMachines = networkContracts.votingMachines;
   const proposalId = useLocation().pathname.split('/')[3];
   const proposal = daoStore.getProposal(proposalId);
-  const [proposalCallTexts, setProposalCallTexts] = useState(
-    new Array(proposal.to.length)
-  );
-  const { decodedCallData } = useABIService(proposalId);
 
   if (!proposal) history.push('/');
 
@@ -268,20 +264,6 @@ const ProposalPage = observer(() => {
       ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
       : bnum(0);
 
-  const proposalCallArray = [];
-  for (var p = 0; p < proposal.to.length; p++) {
-    proposalCallArray[p] = decodedCallData(
-      scheme.type === 'WalletScheme' &&
-        scheme.controllerAddress !== networkContracts.controller
-        ? scheme.address
-        : networkContracts.avatar,
-      proposal.to[p],
-      proposal.callData[p],
-      proposal.values[p],
-      advancedCalls
-    );
-  }
-  setProposalCallTexts(proposalCallArray);
 
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
@@ -434,18 +416,8 @@ const ProposalPage = observer(() => {
             )}
             <Question question="9" />
           </h2>
-          {proposalCallTexts.map((proposalCallText, i) => {
-            return (
-              <div key={'proposalCallText' + i}>
-                <strong>Call #{i + 1}</strong> -{' '}
-                <span
-                  style={{ whiteSpace: 'pre-line' }}
-                  dangerouslySetInnerHTML={{ __html: proposalCallText }}
-                />
-                {i < proposalCallTexts.length - 1 ? <hr /> : <div />}
-              </div>
-            );
-          })}
+          <CallDataInformation advancedCalls={advancedCalls}/>
+          
         </ProposalInfoBox>
         <ProposalInfoBox style={{ marginTop: '15px' }}>
           <h1 style={{ margin: '0px' }}> History </h1>

@@ -1,10 +1,10 @@
 import { useContext } from 'contexts';
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
 
-const CallDataInformation = observer((advancedCalls: boolean) => {
+const CallDataInformation = observer(({advancedCalls}) => {
   const {
     context: { daoStore, configStore },
   } = useContext();

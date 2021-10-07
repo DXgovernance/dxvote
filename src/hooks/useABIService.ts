@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ContractType } from 'stores/Provider';
 import {
   ANY_ADDRESS,
