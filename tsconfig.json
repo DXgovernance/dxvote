@@ -30,6 +30,7 @@
     "useDefineForClassFields": true,
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
+    "noUnusedLocals": true,
     "typeRoots": [
       "./src/types"
     ]
