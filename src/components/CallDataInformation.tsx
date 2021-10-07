@@ -40,31 +40,37 @@ const CallDataInformation = observer(({ advancedCalls }) => {
   };
   useEffect(() => {
     getProposalCalls();
-    console.log(proposalCallTexts);
   }, [proposal]);
 
   return (
     <div>
-      {proposalCallTexts.map(proposalCall => {
-        return (
-          <div>
-            <strong>From:{proposalCall.from}</strong>
-            <strong>To: {proposalCall.to}</strong>
-            <strong>Function Name: {proposalCall.function.name}</strong>
-            <strong>Params:</strong>
-            {proposalCall.args
-              .filter(item => item != '__length__')
-              .map((item, i) => {
-                return (
-                  <>
-                    <small>{proposalCall.function.inputs[i]}</small>
-                    <small>{proposalCall.args[item]}</small>
-                  </>
-                );
-              })}
-          </div>
-        );
-      })}
+      {loading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div>refresh page for call data...</div>
+      ) : (
+        proposalCallTexts.map(proposalCall => {
+          console.log(proposalCall)
+          return (
+            <div>
+              <strong>From:{proposalCall.from}</strong>
+              <strong>To: {proposalCall.to}</strong>
+              <strong>Function Name: {proposalCall.function.name}</strong>
+              <strong>Params:</strong>
+              {proposalCall.args
+                .filter(item => item != '__length__')
+                .map((item, i) => {
+                  return (
+                    <>
+                      <small>{proposalCall.function.inputs[i]}</small>
+                      <small>{proposalCall.args[item]}</small>
+                    </>
+                  );
+                })}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 });
