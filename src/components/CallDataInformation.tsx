@@ -1,10 +1,11 @@
 import { useContext } from 'contexts';
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
+import { useEtherscanService } from 'hooks/useEtherscanService';
 
-const CallDataInformation = observer(({advancedCalls}) => {
+const CallDataInformation = observer(({ advancedCalls }) => {
   const {
     context: { daoStore, configStore },
   } = useContext();
@@ -13,28 +14,34 @@ const CallDataInformation = observer(({advancedCalls}) => {
   const networkContracts = configStore.getNetworkContracts();
   const proposal = daoStore.getProposal(proposalId);
   const scheme = daoStore.getScheme(proposal.scheme);
-  const { decodedCallData } = useABIService(proposalId);
+  const { decodedCallData } = useABIService();
+  const { getContractABI, loading, error } = useEtherscanService();
   const [proposalCallTexts, setProposalCallTexts] = useState(
     new Array(proposal.to.length)
   );
 
-  useEffect(() => {
   const proposalCallArray = [];
-  for (var p = 0; p < proposal.to.length; p++) {
-    proposalCallArray[p] = decodedCallData(
-      scheme.type === 'WalletScheme' &&
-        scheme.controllerAddress !== networkContracts.controller
-        ? scheme.address
-        : networkContracts.avatar,
-      proposal.to[p],
-      proposal.callData[p],
-      proposal.values[p],
-      advancedCalls
-    );
-  }
-  setProposalCallTexts(proposalCallTexts);
-  console.log(proposalCallTexts)
-  }, [proposal])
+  const getProposalCalls = async () => {
+    for (var p = 0; p < proposal.to.length; p++) {
+      const ABI = await getContractABI(proposal.to[p]);
+      proposalCallArray[p] = decodedCallData(
+        scheme.type === 'WalletScheme' &&
+          scheme.controllerAddress !== networkContracts.controller
+          ? scheme.address
+          : networkContracts.avatar,
+        proposal.to[p],
+        proposal.callData[p],
+        proposal.values[p],
+        advancedCalls,
+        ABI
+      );
+      setProposalCallTexts(proposalCallTexts);
+    }
+  };
+  useEffect(() => {
+    getProposalCalls();
+    console.log(proposalCallTexts);
+  }, [proposal]);
 
   return (
     <div>
