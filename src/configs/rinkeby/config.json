@@ -1,0 +1,417 @@
+{
+  "cache": {
+    "fromBlock": 9234792,
+    "toBlock": 9390067,
+    "ipfsHash": "QmSMyQrVKxbt6GxySJNSXWRZeWWJ7vNAMHNBfZezBJnrha"
+  },
+  "contracts": {
+    "avatar": "0x1A639b50D807ce7e61Dc9eeB091e6Cea8EcB1595",
+    "reputation": "0xE20e1419910fa9cE9B71C48fF913e90D34dF7FDB",
+    "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
+    "controller": "0xb05d148c6A9d9C0eb3fE0A091a68d6DeDac63f3b",
+    "permissionRegistry": "0xB569239B6aCb8810a294d46F5E293Be08d8eB59E",
+    "schemes": {
+      "RegistrarWalletScheme": "0x236FB867B2114D0b0feE2cd48dadD354b361119A",
+      "QuickWalletScheme": "0x0D4Dca333E79DC32b02A0f3764A26C66657e6471",
+      "SWPRWalletScheme": "0xA84088AF10c5AD76Cca8f6728B877e156b454006",
+      "MasterWalletScheme": "0x2a1242E3ed3D369A731D6aee7Bb7d09b5199b000"
+    },
+    "utils": {
+      "multicall": "0x1FDD273e0B7E0d921Bda044Ebf64811428A79f15",
+      "dxDaoNFT": "0xF7A2f72E8f6aeb884905a1fE515c1BB5752D342f",
+      "dxdVestingFactory": "0xB5D42c8cA3B04479200E3782C41D99b46Cf8A6E1"
+    },
+    "votingMachines": {
+      "dxd": {
+        "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
+        "address": "0xBa51391385A6bD5ECA0217d7e843B29227E72508"
+      }
+    }
+  },
+  "recommendedCalls": [
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+      "to": "0xBa51391385A6bD5ECA0217d7e843B29227E72508",
+      "toName": "DXD Voting Machine",
+      "functionName": "setOrganizationRefund(uint256,uint256)",
+      "params": [
+        {
+          "type": "uint256",
+          "name": "_voteGas",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "_maxGasPrice",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Set vote refund to [PARAM_0] gas and [PARAM_1] max gas price"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+      "to": "0xBa51391385A6bD5ECA0217d7e843B29227E72508",
+      "toName": "DXD Voting Machine",
+      "functionName": "setBoostedVoteRequiredPercentage(address,bytes32,uint256)",
+      "params": [
+        {
+          "type": "address",
+          "name": "_scheme",
+          "defaultValue": ""
+        },
+        {
+          "type": "bytes32",
+          "name": "_paramsHash",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "_boostedVotePeriodLimit",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Set boosted required percentage for scheme [PARAM_0] to ([PARAM_2]/100) %"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+      "to": "0x236FB867B2114D0b0feE2cd48dadD354b361119A",
+      "toName": "RegistrarWalletScheme",
+      "functionName": "setMaxSecondsForExecution(uint256)",
+      "params": [
+        {
+          "type": "uint256",
+          "name": "_maxSecondsForExecution",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Set max seconds for execution in Registrar Wallet Scheme to [PARAM_0] seconds"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+      "to": "0x2a1242E3ed3D369A731D6aee7Bb7d09b5199b000",
+      "toName": "MasterWalletScheme",
+      "functionName": "setMaxSecondsForExecution(uint256)",
+      "params": [
+        {
+          "type": "uint256",
+          "name": "_maxSecondsForExecution",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Set max seconds for execution in Master Wallet Scheme to [PARAM_0] seconds"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+      "to": "0x0D4Dca333E79DC32b02A0f3764A26C66657e6471",
+      "toName": "QuickWalletScheme",
+      "functionName": "setMaxSecondsForExecution(uint256)",
+      "params": [
+        {
+          "type": "uint256",
+          "name": "_maxSecondsForExecution",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Set max seconds for execution in Quick Wallet Scheme to [PARAM_0] seconds"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xdDC7c74810c91909d6207f3f1759B0ffDAD4DF1D",
+      "to": "0xA84088AF10c5AD76Cca8f6728B877e156b454006",
+      "toName": "SWPRWalletScheme",
+      "functionName": "setMaxSecondsForExecution(uint256)",
+      "params": [
+        {
+          "type": "uint256",
+          "name": "_maxSecondsForExecution",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Set max seconds for execution in Quick Wallet Scheme to [PARAM_0] seconds"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
+      "to": "0x537210a7F926D09E4ef4b81a03f41819Db8D829f",
+      "toName": "Swpr Fee Setter",
+      "functionName": "transferPairOwnership(address,address)",
+      "params": [
+        {
+          "type": "address",
+          "name": "pair",
+          "defaultValue": ""
+        },
+        {
+          "type": "address",
+          "name": "newOwner",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Transfer swpr pair [PARAM_0] ownership to [PARAM_1]"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
+      "to": "0x537210a7F926D09E4ef4b81a03f41819Db8D829f",
+      "toName": "Swpr Fee Setter",
+      "functionName": "setProtocolFee(uint8)",
+      "params": [
+        {
+          "type": "uint8",
+          "name": "protocolFeeDenominator",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Set swpr protocol fee denominator to [PARAM_0]"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
+      "to": "0x537210a7F926D09E4ef4b81a03f41819Db8D829f",
+      "toName": "Swpr Fee Setter",
+      "functionName": "setSwapFee(address,uint32)",
+      "params": [
+        {
+          "type": "address",
+          "name": "pair",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint32",
+          "name": "swapFee",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Set swpr fee for pair [PARAM_0] to [PARAM_1]"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
+      "to": "0xA02411f12Ed2B31A53fe22D8d320A2dAe6051Dd1",
+      "toName": "Swpr Fee Receiver",
+      "functionName": "takeProtocolFee(address[])",
+      "params": [
+        {
+          "type": "address[]",
+          "name": "pairs",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Take protocol fee from swpr pairs [PARAM_0]"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
+      "to": "0x8DB401867458A7ec7b25eEEe6DEA26705237FCaF",
+      "toName": "Swpr Router",
+      "functionName": "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
+      "params": [
+        {
+          "type": "address",
+          "name": "tokenA",
+          "defaultValue": ""
+        },
+        {
+          "type": "address",
+          "name": "tokenB",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "amountADesired",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "amountBDesired",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "amountAMin",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "amountBMin",
+          "defaultValue": ""
+        },
+        {
+          "type": "address",
+          "name": "to",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "deadline",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Add liquidity with [PARAM_2] value of token [PARAM_0] and [PARAM_4] value of token [PARAM_1] to address [PARAM_6]"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
+      "to": "0x8DB401867458A7ec7b25eEEe6DEA26705237FCaF",
+      "toName": "Swpr Router",
+      "functionName": "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
+      "params": [
+        {
+          "type": "address",
+          "name": "tokenA",
+          "defaultValue": ""
+        },
+        {
+          "type": "address",
+          "name": "tokenB",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "liquidity",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "amountAMin",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "amountBMin",
+          "defaultValue": ""
+        },
+        {
+          "type": "address",
+          "name": "to",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "deadline",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Remove and send [PARAM_2] liquidity tokens from pool with tokens [PARAM_0] - [PARAM_1] to address [PARAM_5]"
+    },
+    {
+      "asset": "0x0000000000000000000000000000000000000000",
+      "from": "0xB7F6F30178d9598D158BFA046456cf27ACEdcECB",
+      "to": "0x0f9E49d473B813abe33F1BAB11fa9E16eE850EBa",
+      "toName": "Swapr liquidity mining campaigns factory",
+      "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+      "params": [
+        {
+          "type": "address[]",
+          "name": "rewardTokensAddresses",
+          "defaultValue": ""
+        },
+        {
+          "type": "address",
+          "name": "stakableTokenAddress",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256[]",
+          "name": "rewardAmounts",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint64",
+          "name": "startingTimestamp",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint64",
+          "name": "endingTimestamp",
+          "defaultValue": ""
+        },
+        {
+          "type": "bool",
+          "name": "locked",
+          "defaultValue": ""
+        },
+        {
+          "type": "uint256",
+          "name": "stakingCap",
+          "defaultValue": ""
+        }
+      ],
+      "decodeText": "Create liquidity mining campaign on pair [PARAM_1] starting at [PARAM_3] and ending at [PARAM_4], with reward tokens [PARAM_0], reward amounts [PARAM_2]. Cap put at [PARAM_6] and locked status [PARAM_5]"
+    }
+  ],
+  "proposalTemplates": [
+    {
+      "name": "Contributor Proposal",
+      "title": "[NAME] Contributor Proposal [DATE - DATE]",
+      "description": "# Background\n \n - If this is your first contributor proposal, state any context for making the proposal, including:\n - What position you will be filling – i.e. developer, marketing, governance, etc.\n - Who you have been in contact with regarding the position (add their DAOtalk usernames)\n - If you are a continuing contributor, state which products and areas you are working on / any other relevant background information\n # Timeframe\n \n - State the date range, typically 2 months (2.5 months for first-time workers)\n # Scope of Contribution\n \n - **Goals** :\n - State the products and /or strategy areas you will be working under. E.g. Omen and Governance. Include both short-term goals that you seek to accomplish during the working period and long-term goals.\n - **Responsibilities:**\n - List the specific deliverables you will be either completing and / or working on during the working period. Try to state which deliverables you intend to complete within the period and which are long-term or ongoing projects.\n \n # Reflection\n \n - If You Are A Returning Contributor, Write a Self-Reflection\n - State what you did well, what you did okay, and what you need to improve on\n # Compensation\n \n - Experience Level : 1-5\n - Time commitment :  Percent (%) of time\n - [ETH/DAI AMT] : For 2 months of work at level [LEVEL], to be sent half on the first payment proposal and half on the second payment proposal\n - [DXD AMT] : Vested for 2 years with a 1 year cliff starting the [DATE WORK PERIOD STARTS]\n - [% AMT REP] : For 2 months of work , to be sent half on the first payment proposal and half on the second payment proposal\n # Work Experience\n \n - Prior DXdao work proposals (if applicable)\n - Past Work for DXdao\n - If a developer, Github links\n - If a non-tech worker, doc links or described deliverables\n - If new, past relevant work experience\n - Developers : Github profile link\n - Non-tech : suggested Linkedin / other references\n"
+    },
+    {
+      "name": "Payment Proposal",
+      "title": "[NAME] Payment Proposal [DATE - DATE]",
+      "description": "# Timeframe\n \n - State the contributor proposal date range\n \n # Background\n \n - State the context for making the contributor payment proposal, including:\n - What position you will be filling – i.e. developer, marketing, governance, etc.\n - Proposed Scope of Contribution\n - Self-Reflection on Scope of Contribution\n - Include the URL to the original proposal forum post\n \n # Deliverables\n\n - Include information around deliverables that were completed during your worker period\n \n # Compensation\n\n - Experience Level : 1-5\n - Time commitment : Percent (%) of time\n - [ETH/DAI AMT] : For second half payment proposal\n - [DXD AMT] : Vested for 2 years with a 1 year cliff starting the [DATE WORK PERIOD STARTS]\n - [% AMT REP]: For 2 second half payment proposal\n \n # Work Experience\n \n - Prior DXdao work proposals (if applicable)\n - Past Work for DXdao\n - If a developer, Github links\n - If a non-tech worker, doc links or described\n - If new, past relevant work experience\n - Developers : Github profile link\n - Non-tech : suggested Linkedin / other references\n \n"
+    },
+    {
+      "name": "Signal Proposal",
+      "title": "Signal Proposal for [DAO_ACTION]",
+      "description": "## Description \n\n## Proposition \n\n## Action Plan"
+    }
+  ],
+  "tokens": [
+    {
+      "address": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
+      "name": "DXdao",
+      "decimals": 18,
+      "symbol": "DXD",
+      "fetchPrice": true,
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
+    },
+    {
+      "address": "0xaFF4481D10270F50f203E0763e2597776068CBc5",
+      "name": "Weenus",
+      "decimals": 18,
+      "symbol": "WEENUS",
+      "fetchPrice": true
+    },
+    {
+      "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+      "name": "Wrapped Ether",
+      "decimals": 18,
+      "symbol": "WETH",
+      "fetchPrice": true
+    },
+    {
+      "address": "0x022E292b44B5a146F2e8ee36Ff44D3dd863C915c",
+      "name": "Xeenus",
+      "decimals": 18,
+      "symbol": "XEENUS",
+      "fetchPrice": true
+    },
+    {
+      "address": "0xc6fDe3FD2Cc2b173aEC24cc3f267cb3Cd78a26B7",
+      "name": "Yeenus",
+      "decimals": 8,
+      "symbol": "YEENUS",
+      "fetchPrice": true
+    },
+    {
+      "address": "0x1f9061B953bBa0E36BF50F21876132DcF276fC6e",
+      "name": "Zeenus",
+      "decimals": 0,
+      "symbol": "ZEENUS",
+      "fetchPrice": true
+    },
+    {
+      "address": "0x5244b07C38C594b2E080cD591422195069cbCbF6",
+      "name": "Swpr",
+      "decimals": 18,
+      "symbol": "SWPR",
+      "fetchPrice": true
+    }
+  ]
+}

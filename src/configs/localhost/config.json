@@ -1,0 +1,25 @@
+{
+  "cache": {
+    "fromBlock": 0,
+    "toBlock": 2,
+    "ipfsHash": "QmdDK53AiMxugzWXKziZBw5CCnHunWc9Z41RiaE8Z4XCGL"
+  },
+  "contracts": {
+    "avatar": "0x1C469EDDcd7d058be7195B2b321675bd1521AECf",
+    "controller": "0xD98034E78C052C9B975E3D1C3d274e4ab54A8092",
+    "reputation": "0x70cC43912fAD6842E9dE9dfb1e8AaF92EDbBc40C",
+    "votingMachines": {
+      "dxd": {
+        "address": "0x742121cD0BB9784c1f17f25B8da1bF3445b93ED4",
+        "token": "0x64E15dFA18DDE38F4D4e27EFc00F4BCFCCe8144a"
+      }
+    },
+    "permissionRegistry": "0x845856776D110a200Cf41f35C9428C938e72E604",
+    "utils": {
+      "multicall": "0xb5577DD27eF3690f1fE0f5e3a46125f73aCe8Afa"
+    }
+  },
+  "recommendedCalls": [],
+  "proposalTemplates": [],
+  "tokens": []
+}

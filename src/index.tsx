@@ -18,6 +18,7 @@ import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/Proposals';
 import NewProposalPage from './pages/NewProposal';
+import { NewProposalTypePage } from './pages/NewProposalType';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
 import InfoPage from './pages/Info';
@@ -72,6 +73,10 @@ const Root = (
               <Route exact path="/:network/new">
                 {' '}
                 <NewProposalPage />{' '}
+              </Route>
+              <Route exact path="/:network/newProposalType">
+                {' '}
+                <NewProposalTypePage />{' '}
               </Route>
               <Route exact path="/:network/info">
                 {' '}
