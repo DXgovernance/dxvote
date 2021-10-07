@@ -582,7 +582,7 @@ const NewProposalPage = observer(() => {
       setCallsInState(calls);
     }
   }
-  console.log({ calls });
+
   return (
     <NewProposalFormWrapper>
       <div
