@@ -30,6 +30,7 @@
     "isolatedModules": true,
     "useDefineForClassFields": true,
     "noFallthroughCasesInSwitch": true,
+"useUnknownInCatchVariables": false,
     "typeRoots": [
       "./src/types"
     ]
