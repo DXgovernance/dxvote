@@ -32,11 +32,9 @@ export default class ABIService {
    * @param contractType e.g. controller/avatar/votingMachine etc
    * @returns
    */
-  decodeCall(data: string, contractType?: ContractType, ABI?: string) {
+  decodeCall(data: string, contractType?: ContractType, ABI?: any) {
     const { providerStore } = this.context;
-    let contractInterface = new Interface(
-      ABI ? ABI : this.getAbi(contractType)
-    );
+    let contractInterface = new Interface(ABI || this.getAbi(contractType));
 
     const { library } = providerStore.getActiveWeb3React();
 

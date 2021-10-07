@@ -1,3 +1,4 @@
+import { ContractType } from 'stores/Provider';
 import {
   BigNumber,
   WalletSchemeProposalState,
@@ -14,7 +15,7 @@ declare global {
   // Multicall Types
 
   interface Call {
-    contractType: string;
+    contractType: ContractType;
     address: string;
     method: string;
     params?: any[];

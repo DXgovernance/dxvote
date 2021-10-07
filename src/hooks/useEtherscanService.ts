@@ -1,34 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useContext } from '../contexts';
 
 interface UseEtherscanServiceReturns {
-  contractABI: string;
-  contractSource: string;
+  getContractABI: (address: string) => Promise<any>;
+  getContractSource: (address: string) => Promise<any>;
   error: Error | null;
   loading: boolean;
 }
 
-export const useEtherscanService = (
-  address: string
-): UseEtherscanServiceReturns => {
+export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const {
     context: { etherscanService },
   } = useContext();
 
-  const [contractABI, setContractABI] = useState<string>();
-  const [contractSource, setContractSource] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   const getContractABI = async (address: string) => {
     try {
       setLoading(true);
-      const ABI = await (
-        await etherscanService.getContractABI(address)
-      ).data.result;
-      setContractABI(ABI);
-
+      const ABI = (await etherscanService.getContractABI(address)).data.result;
       setLoading(false);
+      return ABI;
     } catch (error) {
       console.log(error);
       setError(error);
@@ -40,12 +33,10 @@ export const useEtherscanService = (
     try {
       setLoading(true);
 
-      const source = await (
-        await etherscanService.getContractSource(address)
-      ).data.result;
-      setContractSource(source);
-
+      const source = (await etherscanService.getContractSource(address)).data
+        .result;
       setLoading(false);
+      return source;
     } catch (error) {
       console.log(error);
       setError(error);
@@ -53,14 +44,9 @@ export const useEtherscanService = (
     }
   };
 
-  useEffect(() => {
-    getContractABI(address);
-    getContractSource(address);
-  }, [address]);
-
   return {
-    contractABI,
-    contractSource,
+    getContractABI,
+    getContractSource,
     loading,
     error,
   };

@@ -10,7 +10,6 @@ import {
   normalizeBalance,
 } from 'utils';
 import { useContext } from '../contexts';
-import { useEtherscanService } from './useEtherscanService';
 
 interface RecommendedCallsUsed {
   asset: string;
@@ -34,17 +33,17 @@ interface DecodedABI {
 interface DecodeABI {
   data: string;
   contractType?: ContractType;
+  ABI?: string;
 }
 interface UseABIServiceReturns {
   ABI: DecodedABI | undefined;
-  loading: boolean;
-  error: Error | null;
   decodedCallData: (
     from: string,
     to: string,
     data: string,
     value: BigNumber,
-    fullDescription: boolean
+    fullDescription: boolean,
+    ABI: any
   ) => {
     from: string;
     to: string;
@@ -60,20 +59,19 @@ interface UseABIServiceReturns {
 /**
  * parse's ABI and returns a react component detailing the to, from, and functions calls
  */
-export const useABIService = (address: string): UseABIServiceReturns => {
+export const useABIService = (): UseABIServiceReturns => {
   const [ABI, setABI] = useState<DecodedABI>();
-  const { contractABI, loading, error } = useEtherscanService(address);
   const {
     context: { abiService, providerStore, configStore },
   } = useContext();
 
   const decodeABI = (params: DecodeABI) => {
     let contract: ContractType | undefined;
-    const { data, contractType } = params;
+    const { data, contractType, ABI } = params;
     if (contractType) {
       contract = contractType;
     }
-    const abi = abiService.decodeCall(data, contract, contractABI);
+    const abi = abiService.decodeCall(data, contract, ABI);
     setABI(abi);
   };
 
@@ -82,7 +80,8 @@ export const useABIService = (address: string): UseABIServiceReturns => {
     to: string,
     data: string,
     value: BigNumber,
-    fullDescription: boolean
+    fullDescription: boolean,
+    ABI: any
   ) => {
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();
@@ -92,7 +91,7 @@ export const useABIService = (address: string): UseABIServiceReturns => {
       data,
       ContractType.Controller
     );
-    decodeABI({ data });
+    decodeABI({ data, ABI });
 
     if (ABI) {
       return {
@@ -208,8 +207,6 @@ export const useABIService = (address: string): UseABIServiceReturns => {
 
   return {
     ABI,
-    loading,
-    error,
     decodedCallData,
   };
 };

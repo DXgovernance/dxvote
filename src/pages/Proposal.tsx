@@ -264,7 +264,6 @@ const ProposalPage = observer(() => {
       ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
       : bnum(0);
 
-
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
@@ -416,8 +415,7 @@ const ProposalPage = observer(() => {
             )}
             <Question question="9" />
           </h2>
-          <CallDataInformation advancedCalls={advancedCalls}/>
-          
+          <CallDataInformation advancedCalls={advancedCalls} />
         </ProposalInfoBox>
         <ProposalInfoBox style={{ marginTop: '15px' }}>
           <h1 style={{ margin: '0px' }}> History </h1>
