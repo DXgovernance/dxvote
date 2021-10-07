@@ -472,7 +472,7 @@ const NewProposalPage = observer(() => {
   }
 
   function onToSelectChange(callIndex, toAddress) {
-    console.log(toAddress);
+    console.log({ toAddress });
     if (toAddress === ANY_ADDRESS) {
       changeCallType(callIndex);
     } else {
@@ -556,10 +556,29 @@ const NewProposalPage = observer(() => {
   }
 
   function onProposalTemplate(event) {
-    if (proposalTemplates[event.target.value].name !== 'Custom') {
-      setTitleText(proposalTemplates[event.target.value].title);
-      setDescriptionText(proposalTemplates[event.target.value].description);
+    const selectedTemplate = proposalTemplates[event.target.value];
+    if (selectedTemplate.name !== 'Custom') {
+      setTitleText(selectedTemplate.title);
+      setDescriptionText(selectedTemplate.description);
       calls.splice(0, calls.length);
+      if (selectedTemplate.calls) {
+        selectedTemplate.calls.forEach((call, index) => {
+          addCall();
+          onToSelectChange(index, call.to);
+          const selectedFunction = calls[index].allowedFunctions.find(
+            allowedFunction => {
+              return allowedFunction.functionName === call.functionName;
+            }
+          );
+          onFunctionSelectChange(
+            index,
+            call.functionName,
+            selectedFunction.params
+          );
+          calls[index].dataValues = call.params;
+        });
+      }
+
       setCallsInState(calls);
     }
   }
