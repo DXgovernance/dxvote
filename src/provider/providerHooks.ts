@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core';
 import { isMobile } from 'react-device-detect';
 import { injected, web3ContextNames } from 'provider/connectors';
+import { useContext } from 'contexts';
+import { DEFAULT_RPC_URLS } from 'utils';
 
 /*  Attempt to connect to & activate injected connector
     If we're on mobile and have an injected connector, attempt even if not authorized (legacy support)
@@ -93,4 +95,34 @@ export function useInactiveListener(suppress = false) {
 
     return () => {};
   }, [active, error, suppress, activate]);
+}
+
+export function useRpcUrls() {
+  const {
+    context: { infuraService, alchemyService, customRpcService, configStore },
+  } = useContext();
+  const preferredRpc = configStore.getLocalConfig().rpcType;
+  const [rpcUrls, setRpcUrls] = useState(null);
+
+  useEffect(() => {
+    getRpcUrls().then(urls => setRpcUrls(urls));
+  }, [preferredRpc]);
+
+  async function getRpcUrls() {
+    await alchemyService.isAuthenticated();
+    await infuraService.isAuthenticated();
+    await customRpcService.isAuthenticated();
+
+    if (preferredRpc === 'infura' && infuraService.auth) {
+      return infuraService.getRpcUrls();
+    } else if (preferredRpc === 'alchemy' && alchemyService.auth) {
+      return alchemyService.getRpcUrls();
+    } else if (preferredRpc === 'custom' && customRpcService.auth) {
+      return customRpcService.getRpcUrls();
+    } else {
+      return DEFAULT_RPC_URLS;
+    }
+  }
+
+  return rpcUrls;
 }

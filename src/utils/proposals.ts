@@ -5,6 +5,38 @@ import {
 } from './index';
 import moment from 'moment';
 
+export const isExpired = (proposal: Proposal): boolean => {
+  return (
+    proposal.stateInVotingMachine === VotingMachineProposalState.ExpiredInQueue
+  );
+};
+
+// Checks for whether vote was made before boosting activated
+// Returns false if proposal was not boosted at all
+export const votedBeforeBoosted = (proposal: Proposal, vote: Vote): boolean => {
+  const boosted = proposal.boostedPhaseTime.toNumber() > 0;
+  const votedBeforeBoosted =
+    vote.timestamp < proposal.boostedPhaseTime.toNumber();
+  const notBoosted = proposal.boostedPhaseTime.toNumber() === 0;
+  return (boosted && votedBeforeBoosted) || notBoosted;
+};
+
+export const isNotActive = (proposal: Proposal): boolean => {
+  return proposal.stateInVotingMachine < 3;
+};
+
+export const hasLostReputation = (
+  voteParameters: VotingMachineParameters
+): boolean => {
+  return voteParameters.votersReputationLossRatio.toNumber() > 0;
+};
+
+export const isWinningVote = (
+  proposal: Proposal,
+  vote: Vote | Stake
+): boolean => {
+  return proposal.winningVote === vote.vote;
+};
 export const calculateStakes = function (
   thresholdConst,
   boostedProposals,

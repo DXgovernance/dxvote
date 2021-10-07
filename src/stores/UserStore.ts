@@ -1,4 +1,4 @@
-import { makeObservable, observable, action } from 'mobx';
+import { makeObservable, observable, action, runInAction } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import RootContext from '../contexts';
 import { ContractType } from './Provider';
@@ -43,6 +43,8 @@ export default class UserStore {
       this.context;
     const networkContracts = configStore.getNetworkContracts();
     const account = web3React.account;
+
+    if (!account) return;
 
     transactionStore.checkPendingTransactions(web3React, account);
     let callsToExecute = [
@@ -148,6 +150,8 @@ export default class UserStore {
         ? bnum(callsResponse.decodedReturnData[2])
         : bnum(0);
 
-    this.userInfo = userInfo;
+    runInAction(() => {
+      this.userInfo = userInfo;
+    });
   }
 }

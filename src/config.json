@@ -2,8 +2,8 @@
   "mainnet": {
     "cache": {
       "fromBlock": 7219912,
-      "toBlock": 13269308,
-      "ipfsHash": "QmXFUkjB9YM3LMF82KVadi1i5A61UnuAhC48QArnt7FrC5"
+      "toBlock": 13334676,
+      "ipfsHash": "QmZnwY1LnEFdfjd6zVySVXwp3EffBWsw8mSf21HBv4FbYx"
     },
     "contracts": {
       "avatar": "0x519b70055af55a007110b4ff99b0ea33071c720a",
@@ -240,6 +240,31 @@
         "name": "Signal Proposal",
         "title": "Signal Proposal for [DAO_ACTION]",
         "description": "## Description \n\n## Proposition \n\n## Action Plan"
+      },
+      {
+        "name": "SWPR Farming Campaign",
+        "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]",
+        "description": "Simple description",
+        "calls": [
+          {
+            "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
+            "functionName": "approve(address,uint256)",
+            "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C",""]
+          },
+          {
+            "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+            "params": [
+              "0xecA7F78d59D16812948849663b26FE10E320f80C",
+              "",
+              "",
+              "",
+              "",
+              "false",
+              "0"
+            ]
+          }
+        ]
       }
     ],
     "tokens": [
@@ -687,8 +712,8 @@
   "xdai": {
     "cache": {
       "fromBlock": 13060713,
-      "toBlock": 18199047,
-      "ipfsHash": "QmYmZ4pAghnpq5n4DUo1dHuFoD6b6Hxz5fE21MVW1nhhrN"
+      "toBlock": 18366390,
+      "ipfsHash": "QmXRMSLNG3KYcoU1U7hEHvDzp8n8aJxnmtm6uXxKc74oeT"
     },
     "contracts": {
       "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
@@ -879,6 +904,31 @@
         "name": "Signal Proposal",
         "title": "Signal Proposal for [DAO_ACTION]",
         "description": "## Description \n\n## Proposition \n\n## Action Plan"
+      },
+      {
+        "name": "SWPR Farming Campaign",
+        "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]",
+        "description": "Simple description",
+        "calls": [
+          {
+            "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
+            "functionName": "approve(address,uint256)",
+            "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C",""]
+          },
+          {
+            "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+            "params": [
+              "0xecA7F78d59D16812948849663b26FE10E320f80C",
+              "",
+              "",
+              "",
+              "",
+              "false",
+              "0"
+            ]
+          }
+        ]
       }
     ],
     "tokens": [
@@ -1222,7 +1272,7 @@
   "rinkeby": {
     "cache": {
       "fromBlock": 9234792,
-      "toBlock": 9331588,
+      "toBlock": 9390067,
       "ipfsHash": "QmSMyQrVKxbt6GxySJNSXWRZeWWJ7vNAMHNBfZezBJnrha"
     },
     "contracts": {
@@ -1563,7 +1613,7 @@
             "defaultValue": ""
           }
         ],
-        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_6] and locked status [PARAM_5]"
+        "decodeText": "Create liquidity mining campaign on pair [PARAM_1] starting at [PARAM_3] and ending at [PARAM_4], with reward tokens [PARAM_0], reward amounts [PARAM_2]. Cap put at [PARAM_6] and locked status [PARAM_5]"
       }
     ],
     "proposalTemplates": [
@@ -1581,6 +1631,31 @@
         "name": "Signal Proposal",
         "title": "Signal Proposal for [DAO_ACTION]",
         "description": "## Description \n\n## Proposition \n\n## Action Plan"
+      },
+      {
+        "name": "SWPR Farming Campaign",
+        "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]",
+        "description": "Simple description",
+        "calls": [
+          {
+            "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
+            "functionName": "approve(address,uint256)",
+            "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C",""]
+          },
+          {
+            "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+            "params": [
+              "0xecA7F78d59D16812948849663b26FE10E320f80C",
+              "",
+              "",
+              "",
+              "",
+              "false",
+              "0"
+            ]
+          }
+        ]
       }
     ],
     "tokens": [
@@ -1639,8 +1714,8 @@
   "arbitrum": {
     "cache": {
       "fromBlock": 338923,
-      "toBlock": 1406982,
-      "ipfsHash": "QmbmXzB98ct2DmDguoeW4ya7bsb6yDM2JHKsm98XABw6b1"
+      "toBlock": 1828468,
+      "ipfsHash": "QmQe1SdWHubzsK45irKhmUc2Yr7nVXmm9EkP2MwFuEVmzG"
     },
     "contracts": {
       "avatar": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
@@ -1994,7 +2069,7 @@
             "defaultValue": ""
           }
         ],
-        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_6] and locked status [PARAM_5]"
+        "decodeText": "Create liquidity mining campaign on pair [PARAM_1] starting at [PARAM_3] and ending at [PARAM_4], with reward tokens [PARAM_0], reward amounts [PARAM_2]. Cap put at [PARAM_6] and locked status [PARAM_5]"
       }
     ],
     "proposalTemplates": [
@@ -2012,6 +2087,31 @@
         "name": "Signal Proposal",
         "title": "Signal Proposal for [DAO_ACTION]",
         "description": "## Description \n\n## Proposition \n\n## Action Plan"
+      },
+      {
+        "name": "SWPR Farming Campaign",
+        "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]",
+        "description": "Simple description",
+        "calls": [
+          {
+            "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
+            "functionName": "approve(address,uint256)",
+            "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C",""]
+          },
+          {
+            "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+            "params": [
+              "0xecA7F78d59D16812948849663b26FE10E320f80C",
+              "",
+              "",
+              "",
+              "",
+              "false",
+              "0"
+            ]
+          }
+        ]
       }
     ],
     "tokens": [
@@ -2044,7 +2144,7 @@
   "arbitrumTestnet": {
     "cache": {
       "fromBlock": 3995726,
-      "toBlock": 4711018,
+      "toBlock": 5143600,
       "ipfsHash": "QmStHwvDxXCnVXiJKt4WjLyNxBhxCE7be9PybDJ7syonPm"
     },
     "contracts": {
@@ -2385,7 +2485,7 @@
             "defaultValue": ""
           }
         ],
-        "decodeText": "Create liquidity mining campaign on pair [PARAM_2] starting at [PARAM_4] and ending at [PARAM_5], with reward tokens [PARAM_1], reward amounts [PARAM_3]. Cap put at [PARAM_6] and locked status [PARAM_5]"
+        "decodeText": "Create liquidity mining campaign on pair [PARAM_1] starting at [PARAM_3] and ending at [PARAM_4], with reward tokens [PARAM_0], reward amounts [PARAM_2]. Cap put at [PARAM_6] and locked status [PARAM_5]"
       }
     ],
     "proposalTemplates": [
@@ -2403,6 +2503,31 @@
         "name": "Signal Proposal",
         "title": "Signal Proposal for [DAO_ACTION]",
         "description": "## Description \n\n## Proposition \n\n## Action Plan"
+      },
+      {
+        "name": "SWPR Farming Campaign",
+        "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]",
+        "description": "Simple description",
+        "calls": [
+          {
+            "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
+            "functionName": "approve(address,uint256)",
+            "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C",""]
+          },
+          {
+            "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+            "params": [
+              "0xecA7F78d59D16812948849663b26FE10E320f80C",
+              "",
+              "",
+              "",
+              "",
+              "false",
+              "0"
+            ]
+          }
+        ]
       }
     ],
     "tokens": [

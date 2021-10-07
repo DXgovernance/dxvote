@@ -1,7 +1,20 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import BlockchainLink from '../components/common/BlockchainLink';
+import {
+  BlockchainLink,
+  InfoBox,
+  Title,
+  Row,
+  Table,
+  TableHeader,
+  HeaderCell,
+  TableBody,
+  TableRow,
+  DataCell,
+  Positive,
+  Negative,
+} from '../components/common';
 import { FaTrophy, FaMedal } from 'react-icons/fa';
 import { bnum } from '../utils';
 import { Chart } from 'react-google-charts';
@@ -17,57 +30,12 @@ const GovernanceInfoWrapper = styled.div`
   color: var(--dark-text-gray);
 `;
 
-const InfoBox = styled.div`
-  flex: 1;
-  text-align: center;
-  padding: 2px 5px;
-  margin: 10px 5px;
-  font-size: 25px;
-  font-weight: 300;
-  border-radius: 3px;
-  color: var(--activeButtonBackground);
-`;
-
-const GovernanceTableHeaderWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: var(--light-text-gray);
-  padding: 20px 40px 8px 24px;
-  font-size: 14px;
-  text-align: center;
-`;
-
-const TableHeader = styled.div`
-  width: ${props => props.width};
-  text-align: ${props => props.align};
-`;
-
-const TableRowsWrapper = styled.div`
-  overflow-y: scroll;
-`;
-
-const TableRow = styled.div`
-  font-size: 16px;
-  line-height: 18px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line-gray);
-  padding: 16px 24px;
-  color: var(--dark-text-gray);
-  text-align: right;
-  cursor: pointer;
-`;
-
-const TableCell = styled.div`
-  color: ${props => props.color};
-  width: ${props => props.width};
-  text-align: ${props => props.align};
-  font-weight: ${props => props.weight};
-  white-space: ${props => (props.wrapText ? 'nowrap' : 'inherit')};
-  overflow: ${props => (props.wrapText ? 'hidden' : 'inherit')};
-  text-overflow: ${props => (props.wrapText ? 'ellipsis' : 'inherit')};
+const GovernanceTable = styled(Table)`
+  grid-template-columns:
+    minmax(auto, 6%) minmax(auto, 36%) minmax(auto, 15%) minmax(auto, 15%)
+    minmax(auto, 15%) minmax(auto, 15%);
+  min-width: 100%;
+  margin-top: 20px;
 `;
 
 const GovernanceInformation = observer(() => {
@@ -85,16 +53,16 @@ const GovernanceInformation = observer(() => {
   }
   return (
     <GovernanceInfoWrapper>
-      <h1 style={{ textAlign: 'center' }}>Stats</h1>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <Title centered>Stats</Title>
+      <Row>
         <InfoBox>{toNumber(daoInfo.totalRep)} REP</InfoBox>
         <InfoBox>{governanceInfo.totalPositiveVotes} Positive Votes</InfoBox>
         <InfoBox>{governanceInfo.totalNegativeVotes} Negative Votes</InfoBox>
         <InfoBox>{governanceInfo.totalProposalsCreated} Proposals</InfoBox>
-      </div>
+      </Row>
 
-      <h1 style={{ textAlign: 'center' }}>Reputation Charts</h1>
-      <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+      <Title centered>Reputation Charts</Title>
+      <Row>
         <Chart
           chartType="PieChart"
           loader={<div>Loading Chart</div>}
@@ -119,11 +87,11 @@ const GovernanceInformation = observer(() => {
             legend: 'none',
           }}
         />
-      </div>
+      </Row>
 
-      <h1 style={{ textAlign: 'center' }}>Governance Ranking</h1>
+      <Title centered>Governance Ranking</Title>
 
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <Row>
         <InfoBox>
           Create Proposal
           <br />
@@ -144,84 +112,63 @@ const GovernanceInformation = observer(() => {
           <br />
           <strong>1 Point</strong>
         </InfoBox>
-      </div>
-      <GovernanceTableHeaderWrapper>
-        <TableHeader width="5%" align="center">
-          {' '}
-          #{' '}
+      </Row>
+
+      <GovernanceTable>
+        <TableHeader>
+          <HeaderCell align="center">#</HeaderCell>
+          <HeaderCell align="center">Address</HeaderCell>
+          <HeaderCell align="center">Proposals Created</HeaderCell>
+          <HeaderCell align="center">Voted</HeaderCell>
+          <HeaderCell align="center">Staked</HeaderCell>
+          <HeaderCell align="center">Score</HeaderCell>
         </TableHeader>
-        <TableHeader width="35%" align="center">
-          {' '}
-          Address{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Proposals Created{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Voted{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Staked{' '}
-        </TableHeader>
-        <TableHeader width="15%" align="center">
-          {' '}
-          Score{' '}
-        </TableHeader>
-      </GovernanceTableHeaderWrapper>
-      <TableRowsWrapper>
-        {governanceInfo.ranking.map((user, i) => {
-          return (
-            <TableRow key={`user${i}`}>
-              <TableCell width="5%" align="center" weight="500">
-                {' '}
-                {i + 1}
-                {i === 0 ? (
-                  <FaTrophy style={{ color: 'gold' }} />
-                ) : i === 1 ? (
-                  <FaTrophy style={{ color: 'silver' }} />
-                ) : i === 2 ? (
-                  <FaTrophy style={{ color: '#CD7F32' }} />
-                ) : i < 6 ? (
-                  <FaMedal style={{ color: 'gold' }} />
-                ) : i < 9 ? (
-                  <FaMedal style={{ color: 'silver' }} />
-                ) : i < 12 ? (
-                  <FaMedal style={{ color: '#CD7F32' }} />
-                ) : (
-                  <div />
-                )}
-              </TableCell>
-              <TableCell width="35%" align="center" weight="500">
-                <BlockchainLink
-                  size="long"
-                  type="address"
-                  text={user.address}
-                  toCopy
-                />
-              </TableCell>
-              <TableCell width="15%" align="center">
-                {' '}
-                {user.proposals}{' '}
-              </TableCell>
-              <TableCell width="15%" align="center">
-                <span style={{ color: 'green' }}>{user.correctVotes} </span>-
-                <span style={{ color: 'red' }}> {user.wrongVotes}</span>
-              </TableCell>
-              <TableCell width="15%" align="center">
-                <span style={{ color: 'green' }}>{user.correctStakes} </span>-
-                <span style={{ color: 'red' }}> {user.wrongStakes}</span>
-              </TableCell>
-              <TableCell width="15%" align="center">
-                {' '}
-                {user.score.toFixed(0)}{' '}
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableRowsWrapper>
+        <TableBody>
+          {governanceInfo.ranking.map((user, i) => {
+            return (
+              <TableRow key={`user${i}`}>
+                <DataCell align="center" weight="500">
+                  {' '}
+                  {i + 1}
+                  {i === 0 ? (
+                    <FaTrophy color="gold" />
+                  ) : i === 1 ? (
+                    <FaTrophy color="silver" />
+                  ) : i === 2 ? (
+                    <FaTrophy color="#CD7F32" />
+                  ) : i < 6 ? (
+                    <FaMedal color="gold" />
+                  ) : i < 9 ? (
+                    <FaMedal color="silver" />
+                  ) : i < 12 ? (
+                    <FaMedal color="#CD7F32" />
+                  ) : (
+                    <div />
+                  )}
+                </DataCell>
+                <DataCell weight="500">
+                  <BlockchainLink
+                    size="long"
+                    type="address"
+                    text={user.address}
+                    toCopy
+                  />
+                </DataCell>
+                <DataCell>{user.proposals}</DataCell>
+                <DataCell>
+                  <Positive>{user.correctVotes} </Positive>-
+                  <Negative> {user.wrongVotes}</Negative>
+                </DataCell>
+                <DataCell>
+                  <Positive>{user.correctStakes} </Positive>-
+                  <Negative> {user.wrongStakes}</Negative>
+                </DataCell>
+                <DataCell align="center">{user.score.toFixed(0)}</DataCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </GovernanceTable>
     </GovernanceInfoWrapper>
   );
 });

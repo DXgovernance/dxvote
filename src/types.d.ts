@@ -293,6 +293,7 @@ declare global {
       name: string;
       title: string;
       description: string;
+      calls?: array;
     }[];
     tokens: {
       address: string;
@@ -329,4 +330,18 @@ export interface DaoNetworkCache {
   callPermissions: CallPermissions;
   votingMachines: { [address: string]: VotingMachine };
   ipfsHashes: IPFSHash[];
+}
+
+export interface ChainConfig {
+  id: number,
+  name: string,
+  displayName: string,
+  defaultRpc: string,
+  nativeAsset: {
+    name: string,
+    symbol: string,
+    decimals: number
+  },
+  blockExplorer?: string,
+  icon?: string
 }

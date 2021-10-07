@@ -3,7 +3,8 @@ import { observer } from 'mobx-react';
 import { useContext } from './contexts';
 import { FiZapOff, FiZap } from 'react-icons/fi';
 import { useLocation, useHistory } from 'react-router-dom';
-import Box from './components/common/Box';
+import { Box } from './components/common';
+import { InjectedConnector } from '@web3-react/injected-connector';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;
@@ -36,9 +37,6 @@ const PageRouter = observer(({ children }) => {
       etherscanService,
       pinataService,
       coingeckoService,
-      infuraService,
-      alchemyService,
-      customRpcService,
     },
   } = useContext();
 
@@ -50,11 +48,8 @@ const PageRouter = observer(({ children }) => {
   ipfsService.start();
   etherscanService.isAuthenticated();
   pinataService.isAuthenticated();
-  alchemyService.isAuthenticated();
-  infuraService.isAuthenticated();
-  customRpcService.isAuthenticated();
 
-  const { active: providerActive } = providerStore.getActiveWeb3React();
+  const { active: providerActive, connector } = providerStore.getActiveWeb3React();
 
   if (noLoading.indexOf(location.pathname) > -1) {
     return <PageRouterWrapper> {children} </PageRouterWrapper>;
@@ -77,7 +72,8 @@ const PageRouter = observer(({ children }) => {
 
     if (
       location.pathname.split('/')[1] &&
-      location.pathname.split('/')[1] !== networkName
+      location.pathname.split('/')[1] !== networkName &&
+      connector instanceof InjectedConnector
     ) {
       history.push(`/${networkName}/proposals`);
     }

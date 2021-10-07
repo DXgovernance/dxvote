@@ -1,21 +1,15 @@
-import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
 import { useContext } from '../contexts';
 import { useLocation } from 'react-router-dom';
-import BlockchainLink from '../components/common/BlockchainLink';
-import Box from '../components/common/Box';
+import {
+  BlockchainLink,
+  Row,
+  Box,
+  InfoBox,
+  Subtitle,
+} from '../components/common';
 import { formatBalance } from '../utils';
-const InfoBox = styled.div`
-  flex: 1;
-  text-align: center;
-  padding: 2px 5px;
-  margin: 10px 5px;
-  font-size: 25px;
-  font-weight: 300;
-  border-radius: 3px;
-  color: var(--activeButtonBackground);
-`;
 
 const UserPage = observer(() => {
   let history = useHistory();
@@ -30,27 +24,11 @@ const UserPage = observer(() => {
   const redeemsLeft = daoStore.getUserRedeemsLeft(userAddress);
 
   return (
-    <Box style={{ padding: '10px 20px' }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
-        <h2 style={{ display: 'flex', alignItems: 'center' }}>
-          User: <BlockchainLink size="long" text={userAddress} toCopy />
-        </h2>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
-        ></div>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+    <Box>
+      <Subtitle>
+        User: <BlockchainLink size="long" text={userAddress} toCopy />
+      </Subtitle>
+      <Row>
         <InfoBox>
           {formatBalance(userInfo.repBalance, 18, 0)} REP (
           {userInfo.repPercentage})
@@ -64,7 +42,7 @@ const UserPage = observer(() => {
           Votes
         </InfoBox>
         <InfoBox>{userEvents.newProposal.length} Proposals</InfoBox>
-      </div>
+      </Row>
 
       <h2> Redeems Left </h2>
       {redeemsLeft.rep.map((proposalId, i) => {

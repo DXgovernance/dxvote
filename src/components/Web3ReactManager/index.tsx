@@ -1,9 +1,22 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import styled from 'styled-components';
-import { web3ContextNames } from 'provider/connectors';
-import { useEagerConnect, useInactiveListener } from 'provider/providerHooks';
-import { useContext } from '../../contexts';
-import { useInterval } from 'utils';
+import { useHistory } from 'react-router-dom';
+import {
+  DEFAULT_ETH_CHAIN_ID,
+  getChains,
+  getNetworkConnector,
+  web3ContextNames,
+} from 'provider/connectors';
+import {
+  useActiveWeb3React,
+  useEagerConnect,
+  useInactiveListener,
+  useRpcUrls,
+} from 'provider/providerHooks';
+import { useContext } from 'contexts';
+import { useInterval, usePrevious } from 'utils';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -11,9 +24,17 @@ const Web3ReactManager = ({ children }) => {
   const {
     context: { providerStore, blockchainStore, userStore },
   } = useContext();
+  const location = useLocation();
+  const { activate } = useActiveWeb3React();
+  const rpcUrls = useRpcUrls();
+  const history = useHistory();
 
   const web3ContextInjected = useWeb3React(web3ContextNames.injected);
-  const { active: networkActive, error: networkError } = web3ContextInjected;
+  const {
+    active: networkActive,
+    error: networkError,
+    chainId,
+  } = web3ContextInjected;
 
   if (!providerStore.activeChainId)
     providerStore.setWeb3Context(
@@ -29,6 +50,35 @@ const Web3ReactManager = ({ children }) => {
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect();
 
+  useEffect(() => {
+    if (triedEager && !networkActive && rpcUrls) {
+      const chains = getChains(rpcUrls);
+      const urlNetworkName = location.pathname.split('/')[1];
+      const chainId =
+        chains.find(chain => chain.name == urlNetworkName)?.id ||
+        DEFAULT_ETH_CHAIN_ID;
+      const networkConnector = getNetworkConnector(rpcUrls, chainId);
+
+      activate(networkConnector, undefined, true).catch(e => {
+        console.error(
+          '[Web3ReactManager] Unable to activate network connector.',
+          e
+        );
+      });
+    }
+  }, [triedEager, networkActive, activate, rpcUrls]);
+
+  function switchChainAndReload(chainId) {
+    const chains = getChains(rpcUrls);
+    const chain = chains.find(chain => chain.id == chainId);
+
+    if (chain) {
+      history.push(`/${chain.name}/proposals`);
+    }
+    
+    window.location.reload();
+  }
+
   try {
     // @ts-ignore
     ethereum.on('chainChanged', chainId => {
@@ -37,7 +87,7 @@ const Web3ReactManager = ({ children }) => {
       // We recommend reloading the page unless you have good reason not to.
       // providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
       // blockchainStore.fetchData(providerStore.getActiveWeb3React(), true);
-      window.location.reload();
+      switchChainAndReload(chainId);
     });
 
     // @ts-ignore
@@ -52,6 +102,16 @@ const Web3ReactManager = ({ children }) => {
       '[Web3ReactManager] Render: Ethereum Provider not available.'
     );
   }
+
+  const prevChainId = usePrevious(chainId);
+  useEffect(() => {
+    if (
+      (prevChainId && !chainId) ||
+      (prevChainId && chainId && prevChainId !== chainId)
+    ) {
+      switchChainAndReload(chainId);
+    }
+  }, [chainId, prevChainId]);
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager);
@@ -97,7 +157,6 @@ const Web3ReactManager = ({ children }) => {
     console.debug('[Web3ReactManager] Render: Eager load not tried');
     return null;
   }
-
   if (networkError) {
     console.debug(
       '[Web3ReactManager] Render: Network error, showing modal error.'
@@ -110,7 +169,16 @@ const Web3ReactManager = ({ children }) => {
         <BlurWrapper>{children}</BlurWrapper>
       </div>
     );
-    // If network is not active show blur content
+  } else if (prevChainId && chainId && prevChainId !== chainId) {
+    // Stop rendering if networks are being switched
+    console.debug('[Web3ReactManager] Render: Switching network', {
+      chainId,
+      prevChainId,
+    });
+    return null;
+  } else if (!chainId) {
+    console.debug('[Web3ReactManager] Render: No chain ID');
+    return null;
   } else if (!networkActive) {
     console.debug('[Web3ReactManager] Render: No active network');
     return children;

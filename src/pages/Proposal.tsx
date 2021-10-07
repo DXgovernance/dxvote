@@ -16,9 +16,7 @@ import {
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
-import BlockchainLink from '../components/common/BlockchainLink';
-import Question from '../components/common/Question';
-import Box from '../components/common/Box';
+import { BlockchainLink, Question, Box, Title } from '../components/common';
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
@@ -131,6 +129,20 @@ const ActionButton = styled.div`
   }
 `;
 
+const ProposalHistoryEvent = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 4px 0px;
+  border-bottom: 1px var(--medium-gray);
+  &:last-of-type {
+    border-bottom: none;
+  }
+`;
+
+const ProposalCallText = styled.span`
+  white-space: pre-line;
+`;
+
 const ProposalPage = observer(() => {
   let history = useHistory();
 
@@ -214,7 +226,7 @@ const ProposalPage = observer(() => {
     .div(totalRepAtProposalCreation)
     .toFixed(2);
 
-  const negativeVotes = proposal.positiveVotes
+  const negativeVotes = proposal.negativeVotes
     .times('100')
     .div(totalRepAtProposalCreation)
     .toFixed(2);
@@ -334,26 +346,6 @@ const ProposalPage = observer(() => {
     );
   };
 
-  // if (scheme.type === "ContributionReward" && networkContracts.daostack.contributionRewardRedeemer) {
-  //   daoService.redeemContributionRewardCall(
-  //     networkContracts.daostack.contributionRewardRedeemer, scheme.address, scheme.votingMachine, proposalId, account
-  //   ).then((toRedeemResponse) => {
-  //     const web3 = providerStore.getActiveWeb3React().library;
-  //     const toRedeem = web3.eth.abi.decodeParameters([
-  //       "uint[3]", "uint[2]", "bool", "uint256", "int256", "uint256", "uint256", "uint256"
-  //     ],toRedeemResponse)
-  //     console.debug("To Redeem:",toRedeem);
-  //     if (
-  //       (toRedeem[0].findIndex(value => value !== "0") > -1) || (toRedeem[1].findIndex(value => value !== "0") > -1)
-  //       || (toRedeem[4] !== 0) || (toRedeem[5] > 0) || (toRedeem[6] > 0) || (toRedeem[7] > 0)
-  //     ) {
-  //       setCanRedeem(true)
-  //     } else {
-  //       setCanRedeem(false)
-  //     }
-  //   });
-  // }
-
   const redeem = function () {
     if (
       scheme.type === 'ContributionReward' &&
@@ -406,7 +398,7 @@ const ProposalPage = observer(() => {
     <ProposalInformationWrapper>
       <ProposalInfoSection>
         <ProposalInfoBox>
-          <h1 style={{ margin: '0px' }}> {proposalTitle} </h1>
+          <Title noMargin> {proposalTitle} </Title>
           <MDEditor.Markdown
             source={proposalDescription}
             style={{
@@ -452,8 +444,7 @@ const ProposalPage = observer(() => {
             return (
               <div key={'proposalCallText' + i}>
                 <strong>Call #{i + 1}</strong> -{' '}
-                <span
-                  style={{ whiteSpace: 'pre-line' }}
+                <ProposalCallText
                   dangerouslySetInnerHTML={{ __html: proposalCallText }}
                 />
                 {i < proposalCallTexts.length - 1 ? <hr /> : <div />}
@@ -462,21 +453,10 @@ const ProposalPage = observer(() => {
           })}
         </ProposalInfoBox>
         <ProposalInfoBox style={{ marginTop: '15px' }}>
-          <h1 style={{ margin: '0px' }}> History </h1>
+          <Title noMargin> History </Title>
           {proposalEvents.history.map((historyEvent, i) => {
             return (
-              <div
-                key={'proposalHistoryEvent' + i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '4px 0px',
-                  borderBottom:
-                    i < proposalEvents.history.length - 1
-                      ? ' 1px --medium-gray'
-                      : '',
-                }}
-              >
+              <ProposalHistoryEvent key={'proposalHistoryEvent' + i}>
                 <span> {historyEvent.text} </span>
                 <BlockchainLink
                   type="transaction"
@@ -485,7 +465,7 @@ const ProposalPage = observer(() => {
                   onlyIcon
                 />
                 {i < proposalEvents.history.length - 1 ? <hr /> : <div />}
-              </div>
+              </ProposalHistoryEvent>
             );
           })}
         </ProposalInfoBox>
@@ -519,31 +499,34 @@ const ProposalPage = observer(() => {
               </span>
             )}
         </SidebarRow>
-        <SidebarRow style={{ flexDirection: 'column', alignItems: 'center' }}>
-          {pendingAction === 1 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiFastForward /> Boost{' '}
-            </ActionButton>
-          ) : pendingAction === 2 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiPlayCircle /> Execute{' '}
-            </ActionButton>
-          ) : pendingAction === 3 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiPlayCircle /> Finish{' '}
-            </ActionButton>
-          ) : pendingAction === 4 ? (
-            <ActionButton color="blue" onClick={redeemBeneficiary}>
-              <FiPlayCircle /> Redeem 4 Beneficiary{' '}
-            </ActionButton>
-          ) : (
-            pendingAction === 5 && (
-              <ActionButton color="blue" onClick={executeMulticall}>
-                <FiPlayCircle /> Execute Multicall{' '}
+
+        {account && (
+          <SidebarRow style={{ flexDirection: 'column', alignItems: 'center' }}>
+            {pendingAction === 1 ? (
+              <ActionButton color="blue" onClick={executeProposal}>
+                <FiFastForward /> Boost{' '}
               </ActionButton>
-            )
-          )}
-        </SidebarRow>
+            ) : pendingAction === 2 ? (
+              <ActionButton color="blue" onClick={executeProposal}>
+                <FiPlayCircle /> Execute{' '}
+              </ActionButton>
+            ) : pendingAction === 3 ? (
+              <ActionButton color="blue" onClick={executeProposal}>
+                <FiPlayCircle /> Finish{' '}
+              </ActionButton>
+            ) : pendingAction === 4 ? (
+              <ActionButton color="blue" onClick={redeemBeneficiary}>
+                <FiPlayCircle /> Redeem 4 Beneficiary{' '}
+              </ActionButton>
+            ) : (
+              pendingAction === 5 && (
+                <ActionButton color="blue" onClick={executeMulticall}>
+                  <FiPlayCircle /> Execute Multicall{' '}
+                </ActionButton>
+              )
+            )}
+          </SidebarRow>
+        )}
 
         <SidebarDivider />
 
@@ -701,7 +684,8 @@ const ProposalPage = observer(() => {
           <div />
         )}
 
-        {!finishTimeReached &&
+        {account &&
+        !finishTimeReached &&
         votedAmount.toNumber() === 0 &&
         Number(repPercentageAtCreation) > 0 &&
         proposal.stateInVotingMachine >= 3 ? (
@@ -834,7 +818,8 @@ const ProposalPage = observer(() => {
           <div></div>
         )}
 
-        {!finishTimeReached &&
+        {account &&
+        !finishTimeReached &&
         (proposal.stateInVotingMachine === 3 ||
           proposal.stateInVotingMachine === 4) &&
         votingMachineTokenApproved.toString() === '0' ? (
@@ -847,7 +832,8 @@ const ProposalPage = observer(() => {
               Approve {votingMachineTokenName}
             </ActionButton>
           </SidebarRow>
-        ) : !finishTimeReached &&
+        ) : account &&
+          !finishTimeReached &&
           (proposal.stateInVotingMachine === 3 ||
             proposal.stateInVotingMachine === 4) ? (
           <div>
@@ -929,7 +915,8 @@ const ProposalPage = observer(() => {
           <div></div>
         )}
 
-        {proposal.stateInVotingMachine < 3 &&
+        {account &&
+        proposal.stateInVotingMachine < 3 &&
         redeemsLeft.bounty.indexOf(proposalId) > -1 ? (
           <SidebarRow
             style={{
