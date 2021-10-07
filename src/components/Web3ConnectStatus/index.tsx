@@ -42,6 +42,10 @@ const ConnectButton = styled(Box)`
   cursor: pointer;
 `;
 
+const ChainButton = styled(AccountButton)`
+  font-size: 14px;
+`
+
 const Web3ConnectStatus = observer(props => {
   const {
     context: { modalStore, providerStore, configStore },
@@ -85,12 +89,9 @@ const Web3ConnectStatus = observer(props => {
     } else if (chainId) {
       return (
         <div style={{ display: 'flex' }}>
-          <AccountButton
-            onClick={toggleNetworkModal}
-            style={{ fontSize: '14px' }}
-          >
+          <ChainButton onClick={toggleNetworkModal}>
             {toCamelCaseString(configStore.getActiveChainName())}
-          </AccountButton>
+          </ChainButton>
         </div>
       );
     } else {
