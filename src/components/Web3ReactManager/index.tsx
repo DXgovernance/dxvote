@@ -1,15 +1,22 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import styled from 'styled-components';
-import { getNetworkConnector, web3ContextNames } from 'provider/connectors';
+import { useHistory } from 'react-router-dom';
+import {
+  DEFAULT_ETH_CHAIN_ID,
+  getChains,
+  getNetworkConnector,
+  web3ContextNames,
+} from 'provider/connectors';
 import {
   useActiveWeb3React,
   useEagerConnect,
   useInactiveListener,
   useRpcUrls,
 } from 'provider/providerHooks';
-import { useContext } from '../../contexts';
+import { useContext } from 'contexts';
 import { useInterval, usePrevious } from 'utils';
-import { useEffect } from 'react';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -17,8 +24,10 @@ const Web3ReactManager = ({ children }) => {
   const {
     context: { providerStore, blockchainStore, userStore },
   } = useContext();
+  const location = useLocation();
   const { activate } = useActiveWeb3React();
   const rpcUrls = useRpcUrls();
+  const history = useHistory();
 
   const web3ContextInjected = useWeb3React(web3ContextNames.injected);
   const {
@@ -43,7 +52,13 @@ const Web3ReactManager = ({ children }) => {
 
   useEffect(() => {
     if (triedEager && !networkActive && rpcUrls) {
-      const networkConnector = getNetworkConnector(rpcUrls);
+      const chains = getChains(rpcUrls);
+      const urlNetworkName = location.pathname.split('/')[1];
+      const chainId =
+        chains.find(chain => chain.name == urlNetworkName)?.id ||
+        DEFAULT_ETH_CHAIN_ID;
+      const networkConnector = getNetworkConnector(rpcUrls, chainId);
+
       activate(networkConnector, undefined, true).catch(e => {
         console.error(
           '[Web3ReactManager] Unable to activate network connector.',
@@ -53,6 +68,13 @@ const Web3ReactManager = ({ children }) => {
     }
   }, [triedEager, networkActive, activate, rpcUrls]);
 
+  function switchChainAndReload(chainId) {
+    const chains = getChains(rpcUrls);
+    const chain = chains.find(chain => chain.id == chainId) || chains[0];
+    history.push(`/${chain.name}/proposals`);
+    window.location.reload();
+  }
+
   try {
     // @ts-ignore
     ethereum.on('chainChanged', chainId => {
@@ -61,7 +83,7 @@ const Web3ReactManager = ({ children }) => {
       // We recommend reloading the page unless you have good reason not to.
       // providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
       // blockchainStore.fetchData(providerStore.getActiveWeb3React(), true);
-      window.location.reload();
+      switchChainAndReload(chainId);
     });
 
     // @ts-ignore
@@ -83,7 +105,7 @@ const Web3ReactManager = ({ children }) => {
       (prevChainId && !chainId) ||
       (prevChainId && chainId && prevChainId !== chainId)
     ) {
-      window.location.reload();
+      switchChainAndReload(chainId);
     }
   }, [chainId, prevChainId]);
 

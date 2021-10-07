@@ -95,6 +95,7 @@ const NetworkModal = observer(() => {
       }
     } else {
       history.push(`/${chain.name}/proposals`);
+      window.location.reload();
     }
   };
 

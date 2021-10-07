@@ -38,11 +38,12 @@ export function getWalletConnectConnector(
 }
 
 export function getNetworkConnector(
-  customRpcUrls: Record<ChainConfig['id'], string>
+  customRpcUrls: Record<ChainConfig['id'], string>,
+  defaultChainId: ChainConfig['id']
 ) {
   return new NetworkConnector({
     urls: customRpcUrls,
-    defaultChainId: DEFAULT_ETH_CHAIN_ID,
+    defaultChainId,
   });
 }
 
