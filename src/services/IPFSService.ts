@@ -52,9 +52,9 @@ export default class IPFSService {
         }
       }
       return content.toString();
-    } catch(e) {
+    } catch (e) {
       console.error(e);
-      return 'error fetching IFPS'
+      return 'error fetching IFPS';
     }
   }
 

@@ -1,7 +1,17 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import { BlockchainLink, Subtitle, Row, Table, TableHeader, HeaderCell, TableBody, TableRow, DataCell } from '../components/common';
+import {
+  BlockchainLink,
+  Subtitle,
+  Row,
+  Table,
+  TableHeader,
+  HeaderCell,
+  TableBody,
+  TableRow,
+  DataCell,
+} from '../components/common';
 import {
   bnum,
   parseCamelCase,
@@ -118,22 +128,16 @@ const FinanceInformation = observer(() => {
 
   return (
     <FinanceInfoWrapper>
-      {Object.keys(assets).map((assetHolder) => {
+      {Object.keys(assets).map(assetHolder => {
         const assetsOfHolder = assets[assetHolder];
         return (
           <div>
             <Subtitle centered> {parseCamelCase(assetHolder)} </Subtitle>
             <FinanceTable>
               <TableHeader>
-                <HeaderCell>
-                  Asset
-                </HeaderCell>
-                <HeaderCell align="center">
-                  Balance
-                </HeaderCell>
-                <HeaderCell align="center">
-                  USD Value
-                </HeaderCell>
+                <HeaderCell>Asset</HeaderCell>
+                <HeaderCell align="center">Balance</HeaderCell>
+                <HeaderCell align="center">USD Value</HeaderCell>
               </TableHeader>
               <TableBody>
                 {assetsOfHolder.map((asset, i) => {
@@ -145,14 +149,14 @@ const FinanceInformation = observer(() => {
                       <TableRow key={`asset${i}`}>
                         <DataCell align="left" weight="500">
                           <CenteredRow>
-                          {asset.name}{' '}
-                          <BlockchainLink
-                            size="long"
-                            type="address"
-                            text={asset.address}
-                            onlyIcon
-                            toCopy
-                          />
+                            {asset.name}{' '}
+                            <BlockchainLink
+                              size="long"
+                              type="address"
+                              text={asset.address}
+                              onlyIcon
+                              toCopy
+                            />
                           </CenteredRow>
                         </DataCell>
                         <DataCell align="center">
@@ -167,7 +171,11 @@ const FinanceInformation = observer(() => {
                             ? formatCurrency(
                                 bnum(
                                   Number(
-                                    formatBalance(asset.amount, asset.decimals, 2)
+                                    formatBalance(
+                                      asset.amount,
+                                      asset.decimals,
+                                      2
+                                    )
                                   ) * prices[asset.address].usd
                                 )
                               )
@@ -175,11 +183,10 @@ const FinanceInformation = observer(() => {
                         </DataCell>
                       </TableRow>
                     );
-                  }
-                  else return(<></>);
+                  } else return <></>;
                 })}
               </TableBody>
-             </FinanceTable>
+            </FinanceTable>
           </div>
         );
       })}
