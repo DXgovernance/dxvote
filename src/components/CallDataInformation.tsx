@@ -62,40 +62,6 @@ const CallDataInformation = observer(({ advancedCalls }) => {
           value,
           encodedFunctionName,
         }) => {
-          if (ABI) {
-            return (
-              <div>
-                <strong>From:</strong>
-                <small>{from}</small>
-                <strong>To: </strong>
-                <small>{to}</small>
-                <strong>Function Name: </strong>
-                <small>{ABI.function.name}</small>
-                <strong>Params:</strong>
-                {Object.values(ABI.args)
-                  .filter(item => item != '__length__')
-                  .map((item, i) => {
-                    const check = ABI.function.inputs[i];
-                    const functionName = check
-                      ? ABI.function.inputs[i].name.replace(/[^a-zA-Z0-9]/g, '')
-                      : undefined;
-                    console.log(functionName);
-                    const functionType = check
-                      ? ABI.function.inputs[i].type
-                      : undefined;
-                    return (
-                      <p>
-                        <small>Function Name: </small>{' '}
-                        <small>{functionName}</small>
-                        <small>Function Value: </small> <small>{item}</small>
-                        <small>Function type: </small>{' '}
-                        <small>{functionType}</small>
-                      </p>
-                    );
-                  })}
-              </div>
-            );
-          }
           if (recommendedCallUsed) {
             if (advancedCalls) {
               return (
@@ -131,6 +97,49 @@ const CallDataInformation = observer(({ advancedCalls }) => {
             return (
               <div>
                 <small>{decodedCallText}</small>
+              </div>
+            );
+          }
+          if (ABI) {
+            console.log(ABI)
+            return (
+              <div>
+                <p>
+
+                <strong>From:</strong>
+                <small>{from}</small>
+
+                </p>
+                <p>
+
+                <strong>To: </strong>
+                <small>{to}</small>
+                </p>
+                <p>
+
+                <strong>Function Name: </strong>
+                <small>{ABI.function.signature}</small>
+                </p>
+                <strong>Params:</strong>
+                {Object.keys(ABI.args)
+                  .filter(item => item != '__length__')
+                  .map((item) => {
+                    const check = ABI.function.inputs[item];
+                    const functionName = check
+                      ? ABI.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
+                      : 'failed';
+                    console.log(functionName);
+                    const functionType = check
+                      ? ABI.function.inputs[item].type
+                      : 'failed';
+                    return (
+                      <p>
+                        <small>{functionName} </small>
+                        <small>{functionType} </small>
+                         <small>{ABI.args[item]} </small>
+                      </p>
+                    );
+                  })}
               </div>
             );
           }

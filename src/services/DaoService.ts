@@ -3,16 +3,7 @@ import contentHash from 'content-hash';
 import PromiEvent from 'promievent';
 import RootContext from '../contexts';
 import { ContractType } from '../stores/Provider';
-import {
-  BigNumber,
-  bnum,
-  ZERO_ADDRESS,
-  ANY_ADDRESS,
-  ERC20_TRANSFER_SIGNATURE,
-  ERC20_APPROVE_SIGNATURE,
-  MAX_UINT,
-  normalizeBalance,
-} from '../utils';
+import { BigNumber, MAX_UINT } from '../utils';
 
 export default class DaoService {
   context: RootContext;
