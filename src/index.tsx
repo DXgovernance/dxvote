@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch, useLocation} from 'react-router-dom';
 import { createWeb3ReactRoot } from '@web3-react/core';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Web3 from 'web3';
@@ -40,6 +40,51 @@ function getLibrary(provider) {
   return new Web3(provider);
 }
 
+const Routes = () => {
+  const location = useLocation();
+  return (
+    <PageRouter>
+      <Route exact path="/">
+        {' '}
+        <ProposalsPage />{' '}
+      </Route>
+      <Route exact path="/config">
+        {' '}
+        <ConfigPage />{' '}
+      </Route>
+      <Route exact path="/forum">
+        {' '}
+        <ForumPage />{' '}
+      </Route>
+      <Route exact path="/faq">
+        {' '}
+        <FAQPage />{' '}
+      </Route>
+      <Route exact path="/:network/proposals">
+        {' '}
+        <ProposalsPage />{' '}
+      </Route>
+      <Route exact path="/:network/new">
+        {' '}
+        <NewProposalPage />{' '}
+      </Route>
+      <Route exact path="/:network/info">
+        {' '}
+        <InfoPage />{' '}
+      </Route>
+      <Route exact path="/:network/user/:address">
+        {' '}
+        <UserPage />{' '}
+      </Route>
+      <Route exact path="/:network/proposal/:proposalId">
+        {' '}
+        <ProposalPage />{' '}
+      </Route>
+      {location.pathname.indexOf('/proposals') < 0 && <Footer />}
+    </PageRouter>
+  )
+}
+
 const Root = (
   <Web3ProviderInjected getLibrary={getLibrary}>
     <ThemeProvider>
@@ -48,45 +93,7 @@ const Root = (
         <Switch>
           <Web3ReactManager>
             <Header />
-            <PageRouter>
-              <Route exact path="/">
-                {' '}
-                <ProposalsPage />{' '}
-              </Route>
-              <Route exact path="/config">
-                {' '}
-                <ConfigPage />{' '}
-              </Route>
-              <Route exact path="/forum">
-                {' '}
-                <ForumPage />{' '}
-              </Route>
-              <Route exact path="/faq">
-                {' '}
-                <FAQPage />{' '}
-              </Route>
-              <Route exact path="/:network/proposals">
-                {' '}
-                <ProposalsPage />{' '}
-              </Route>
-              <Route exact path="/:network/new">
-                {' '}
-                <NewProposalPage />{' '}
-              </Route>
-              <Route exact path="/:network/info">
-                {' '}
-                <InfoPage />{' '}
-              </Route>
-              <Route exact path="/:network/user/:address">
-                {' '}
-                <UserPage />{' '}
-              </Route>
-              <Route exact path="/:network/proposal/:proposalId">
-                {' '}
-                <ProposalPage />{' '}
-              </Route>
-            </PageRouter>
-            <Footer />
+            <Routes />
           </Web3ReactManager>
         </Switch>
       </HashRouter>

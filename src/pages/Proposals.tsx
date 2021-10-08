@@ -132,6 +132,7 @@ const FooterWrap = styled.div`
 
 const TableProposal = styled(Table)`
   grid-template-columns: 33% 20% 15% 20% 12%;
+  margin-bottom: auto;
 `;
 
 const ProposalsPage = observer(() => {
