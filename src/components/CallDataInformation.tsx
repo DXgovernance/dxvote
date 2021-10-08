@@ -62,52 +62,63 @@ const CallDataInformation = observer(({ advancedCalls }) => {
           value,
           encodedFunctionName,
         }) => {
-        console.log(
-          
-          to,
-          from,
-          functions,
-          args,
-          recommendedCallUsed,
-          callParamaters,
-          data,
-          decodedCallText,
-          value
-        )
-          if (args) {
+          if (ABI) {
+            console.log(ABI);
             return (
               <div>
-                <strong>From:{from}</strong>
-                <strong>To: {to}</strong>
-                <strong>Function Name: {functions.name}</strong>
+                <strong>From:</strong>
+                <small>{from}</small>
+                <strong>To: </strong>
+                <small>{to}</small>
+                <strong>Function Name: </strong>
+                <small>{ABI.function.name}</small>
                 <strong>Params:</strong>
-                {args
-                  .filter(item => item != '__length__')
-                  .map((item, i) => {
-                    return (
-                      <>
-                        <small>{functions.inputs[i]}</small>
-                        <small>{args[item]}</small>
-                      </>
-                    );
-                  })}
+                {Object.values(ABI.args).map((item, i) => {
+                  console.log(item);
+                  const functionName = ABI.function.inputs[i].name.replace(
+                    /[^a-zA-Z0-9]/g,
+                    ''
+                  );
+                  const functionType = ABI.function.inputs[i].type;
+                  console.log(functionName, functionType);
+                  return (
+                    <p>
+                      <small>Function Name: </small>{' '}
+                      <small>{functionName}</small>
+                      <small>Function Value: </small> <small>{item}</small>
+                      <small>Function type: </small>{' '}
+                      <small>{functionType}</small>
+                    </p>
+                  );
+                })}
               </div>
             );
           }
-          console.log(recommendedCallUsed)
           if (recommendedCallUsed) {
             if (advancedCalls) {
               return (
                 <div>
-                  <strong>From:{from}</strong>
-                  <strong>To: {to}</strong>
-                  <strong>Descriptions: {recommendedCallUsed.toName}</strong>
-                  <strong>Function: {recommendedCallUsed.functionName}</strong>
-                  <small>Function: {encodedFunctionName}</small>
+                  <p>
+                    <strong>From: </strong> <small>{from}</small>
+                  </p>
+                  <p>
+                    <strong>To: </strong> <small>{to}</small>
+                  </p>
+                  <p>
+                    <strong>Descriptions: </strong>{' '}
+                    <small>{recommendedCallUsed.toName}</small>
+                  </p>
+                  <p>
+                    <strong>Function: </strong>
+                    <small>{recommendedCallUsed.functionName}</small>
+                  </p>
+                  <p>
+                    <small>Function: </small>{' '}
+                    <small>{encodedFunctionName}</small>
+                  </p>
                   <strong>
                     Params:{' '}
-                    {
-                    Object.keys(callParamaters).map(
+                    {Object.keys(callParamaters).map(
                       paramIndex => callParamaters[paramIndex]
                     )}
                   </strong>
@@ -123,10 +134,22 @@ const CallDataInformation = observer(({ advancedCalls }) => {
           }
           return (
             <div>
-              <strong>From:{from}</strong>
-              <strong>To: {to}</strong>
-              <strong>data: {data}</strong>
-              <strong>Value: {value.toString()}</strong>
+              <p>
+                <strong>From: </strong>
+                <small>{from}</small>
+              </p>
+              <p>
+                <strong>To: </strong>
+                <small>{to}</small>
+              </p>
+              <p>
+                <strong>data: </strong>
+                <small>{data}</small>
+              </p>
+              <p>
+                <strong>Value: </strong>
+                <small>{value.toString()}</small>
+              </p>
             </div>
           );
         }
