@@ -18,12 +18,13 @@ export interface ProposalCalls {
   value: BigNumber;
   args?: any;
   functions?: any;
-  recommendedCallsUsed?: RecommendedCallsUsed | undefined;
+  recommendedCallUsed?: RecommendedCallUsed | undefined;
   callParamaters?: string | undefined;
   decodedCallText?: string | undefined;
+  encodedFunctionName?: string | undefined;
 }
 
-interface RecommendedCallsUsed {
+interface RecommendedCallUsed {
   asset: string;
   from: string;
   to: string;
@@ -54,7 +55,6 @@ interface UseABIServiceReturns {
     to: string,
     data: string,
     value: BigNumber,
-    fullDescription: boolean,
     ABI: any
   ) => ProposalCalls;
 }
@@ -82,7 +82,6 @@ export const useABIService = (): UseABIServiceReturns => {
     to: string,
     data: string,
     value: BigNumber,
-    fullDescription: boolean,
     contractABI: any
   ) => {
     const { library } = providerStore.getActiveWeb3React();
@@ -93,18 +92,8 @@ export const useABIService = (): UseABIServiceReturns => {
       data,
       ContractType.Controller
     );
-    decodeABI({ data, ABI });
+    decodeABI({ data, ABI: contractABI });
 
-    if (ABI) {
-      return {
-        from: from,
-        to: to,
-        args: ABI.args,
-        functions: ABI.function,
-        data: data,
-        value: value,
-      };
-    }
     if (
       controllerCallDecoded &&
       controllerCallDecoded.function.name === 'genericCall'
@@ -177,25 +166,27 @@ export const useABIService = (): UseABIServiceReturns => {
             );
       }
 
-      if (fullDescription) {
-        return {
-          from: from,
-          to: to,
-          recommendedCallUsed: recommendedCallUsed,
-          encodedFunctionName: encodeFunctionName,
-          callParamaters: callParameters,
-          data: data,
-          value: value,
-        };
-      } else {
-        return {
-          from: from,
-          to: to,
-          data: data,
-          value: value,
-          decodedCallText: decodedCallText,
-        };
-      }
+      return {
+        from: from,
+        to: to,
+        recommendedCallUsed: recommendedCallUsed,
+        encodedFunctionName: encodeFunctionName,
+        callParamaters: callParameters,
+        data: data,
+        value: value,
+        decodedCallText: decodedCallText,
+      };
+    }
+
+    if (ABI) {
+      return {
+        from: from,
+        to: to,
+        args: ABI.args,
+        functions: ABI.function,
+        data: data,
+        value: value,
+      };
     }
 
     return {

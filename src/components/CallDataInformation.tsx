@@ -1,7 +1,7 @@
 import { useContext } from 'contexts';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useABIService } from 'hooks/useABIService';
+import { ProposalCalls, useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
 import { useEtherscanService } from 'hooks/useEtherscanService';
 
@@ -16,7 +16,7 @@ const CallDataInformation = observer(({ advancedCalls }) => {
   const scheme = daoStore.getScheme(proposal.scheme);
   const { decodedCallData } = useABIService();
   const { getContractABI, loading, error } = useEtherscanService();
-  const [proposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
+  const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
     new Array(proposal.to.length)
   );
 
@@ -32,7 +32,6 @@ const CallDataInformation = observer(({ advancedCalls }) => {
         proposal.to[p],
         proposal.callData[p],
         proposal.values[p],
-        advancedCalls,
         ABI
       );
       setProposalCallTexts(proposalCallArray);
@@ -53,47 +52,88 @@ const CallDataInformation = observer(({ advancedCalls }) => {
 
   return (
     <div>
-      {proposalCallTexts.map(proposalCall => {
-        console.log(proposalCall);
-        if (proposalCall.args) {
+      {ProposalCallTexts.map(
+        ({
+          to,
+          from,
+          functions,
+          args,
+          recommendedCallUsed,
+          callParamaters,
+          data,
+          decodedCallText,
+          value,
+          encodedFunctionName,
+        }) => {
+        console.log(
+          
+          to,
+          from,
+          functions,
+          args,
+          recommendedCallUsed,
+          callParamaters,
+          data,
+          decodedCallText,
+          value
+        )
+          if (args) {
+            return (
+              <div>
+                <strong>From:{from}</strong>
+                <strong>To: {to}</strong>
+                <strong>Function Name: {functions.name}</strong>
+                <strong>Params:</strong>
+                {args
+                  .filter(item => item != '__length__')
+                  .map((item, i) => {
+                    return (
+                      <>
+                        <small>{functions.inputs[i]}</small>
+                        <small>{args[item]}</small>
+                      </>
+                    );
+                  })}
+              </div>
+            );
+          }
+          console.log(recommendedCallUsed)
+          if (recommendedCallUsed) {
+            if (advancedCalls) {
+              return (
+                <div>
+                  <strong>From:{from}</strong>
+                  <strong>To: {to}</strong>
+                  <strong>Descriptions: {recommendedCallUsed.toName}</strong>
+                  <strong>Function: {recommendedCallUsed.functionName}</strong>
+                  <small>Function: {encodedFunctionName}</small>
+                  <strong>
+                    Params:{' '}
+                    {
+                    Object.keys(callParamaters).map(
+                      paramIndex => callParamaters[paramIndex]
+                    )}
+                  </strong>
+                  <strong>data: {data}</strong>
+                </div>
+              );
+            }
+            return (
+              <div>
+                <small>{decodedCallText}</small>
+              </div>
+            );
+          }
           return (
             <div>
-              <strong>From:{proposalCall.from}</strong>
-              <strong>To: {proposalCall.to}</strong>
-              <strong>Function Name: {proposalCall.functions.name}</strong>
-              <strong>Params:</strong>
-              {proposalCall.args
-                .filter(item => item != '__length__')
-                .map((item, i) => {
-                  return (
-                    <>
-                      <small>{proposalCall.functions.inputs[i]}</small>
-                      <small>{proposalCall.args[item]}</small>
-                    </>
-                  );
-                })}
+              <strong>From:{from}</strong>
+              <strong>To: {to}</strong>
+              <strong>data: {data}</strong>
+              <strong>Value: {value.toString()}</strong>
             </div>
           );
         }
-        if (proposalCall.recommendedCallsUsed) {
-          <div>
-            <strong>From:{proposalCall.from}</strong>
-            <strong>To: {proposalCall.to}</strong>
-            <strong>Descriptions: {proposalCall.recommendedCallsUsed.toName}</strong>
-            <strong>Function: {proposalCall.recommendedCallsUsed.functionName}</strong>
-            <strong>Params: {Object.keys(proposalCall.callParamaters).map(paramIndex => proposalCall.callParamaters[paramIndex])}</strong>
-            <strong>data: {proposalCall.data}</strong>
-          </div>;
-        }
-        return (
-          <div>
-            <strong>From:{proposalCall.from}</strong>
-            <strong>To: {proposalCall.to}</strong>
-            <strong>decoded Text: {proposalCall.decodedCallText}</strong>
-            <strong>data: {proposalCall.data}</strong>
-          </div>
-        );
-      })}
+      )}
     </div>
   );
 });
