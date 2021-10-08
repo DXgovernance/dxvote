@@ -1,7 +1,9 @@
 // Externals
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
+import { useHistory } from 'react-router-dom';
+
 import { useContext } from '../contexts';
 
 const Wrapper = styled.div`
@@ -12,35 +14,40 @@ const Wrapper = styled.div`
 `;
 
 const ProposalType = styled.div`
-  width: 20%;
+  width: 10%;
   min-width: 100px;
   height: 100px;
-  box-shadow: 0px 1px 18px 11px rgba(169, 209, 255, 0.75);
+  box-shadow: 0px 0px 15px 11px #3a58fd47;
   margin: 5%;
   padding: 10px;
   cursor: pointer;
+  transition-duration: 1s;
+  :hover {
+    box-shadow: 0px 0px 20px 15px #3a57fd66;
+    transform: scale(1.05);
+  }
 `;
 
 export const NewProposalTypePage = observer(() => {
-
   const {
-    context: {
-      configStore,
-    },
+    context: { configStore },
   } = useContext();
+  const history = useHistory();
+  const [proposalTypes, setProposalTypes] = useState([]);
+
+  const options = [];
 
   useEffect(() => {
-    configStore.getProposalTypes();
+    setProposalTypes(configStore.getProposalTypes());
   }, []);
 
-  return (
-    <Wrapper>
-      <ProposalType>Contributor proposal</ProposalType>
-      <ProposalType>Swapr</ProposalType>
-      <ProposalType>Custom</ProposalType>
-      <ProposalType>Custom</ProposalType>
-      <ProposalType>Custom</ProposalType>
-      <ProposalType>Custom</ProposalType>
-    </Wrapper>
-  );
-};
+  proposalTypes.forEach(type => {
+    options.push(
+      <ProposalType onClick={() => history.push(type.id)}>
+        {type.title}
+      </ProposalType>
+    );
+  });
+
+  return <Wrapper>{options}</Wrapper>;
+});

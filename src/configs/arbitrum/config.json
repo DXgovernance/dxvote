@@ -382,12 +382,12 @@
       "title": "Contributor Proposal"
     },
     {
-      "id": "custom",
-      "title": "Custom"
-    },
-    {
       "id": "swaprCampaign",
       "title": "Swapr Campaign Creation"
+    },
+    {
+      "id": "new",
+      "title": "Custom"
     }
   ],
   "tokens": [
