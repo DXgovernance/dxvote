@@ -14,7 +14,7 @@ const CallDataInformation = observer(({ advancedCalls }) => {
   const networkContracts = configStore.getNetworkContracts();
   const proposal = daoStore.getProposal(proposalId);
   const scheme = daoStore.getScheme(proposal.scheme);
-  const { decodedCallData } = useABIService();
+  const { decodedCallData, ABI } = useABIService();
   const { getContractABI, loading, error } = useEtherscanService();
   const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
     new Array(proposal.to.length)
@@ -23,7 +23,7 @@ const CallDataInformation = observer(({ advancedCalls }) => {
   const proposalCallArray = [];
   const getProposalCalls = async () => {
     for (var p = 0; p < proposal.to.length; p++) {
-      const ABI = await getContractABI(proposal.to[p]);
+      const contractABI = await getContractABI(proposal.to[p]);
       proposalCallArray[p] = decodedCallData(
         scheme.type === 'WalletScheme' &&
           scheme.controllerAddress !== networkContracts.controller
@@ -32,15 +32,14 @@ const CallDataInformation = observer(({ advancedCalls }) => {
         proposal.to[p],
         proposal.callData[p],
         proposal.values[p],
-        ABI
+        contractABI
       );
       setProposalCallTexts(proposalCallArray);
     }
   };
   useEffect(() => {
     getProposalCalls();
-    console.log(proposalCallTexts);
-  }, [proposal]);
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -56,8 +55,6 @@ const CallDataInformation = observer(({ advancedCalls }) => {
         ({
           to,
           from,
-          functions,
-          args,
           recommendedCallUsed,
           callParamaters,
           data,

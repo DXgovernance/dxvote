@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useContext } from '../contexts';
 
 interface UseEtherscanServiceReturns {
-  getContractABI: (address: string) => Promise<any>;
-  getContractSource: (address: string) => Promise<any>;
+  getContractABI: (address: string) => Promise<string>;
+  getContractSource: (address: string) => Promise<string>;
   error: Error | null;
   loading: boolean;
 }
@@ -32,7 +32,6 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const getContractSource = async (address: string) => {
     try {
       setLoading(true);
-
       const source = (await etherscanService.getContractSource(address)).data
         .result;
       setLoading(false);

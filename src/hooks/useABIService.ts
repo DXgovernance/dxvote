@@ -16,8 +16,6 @@ export interface ProposalCalls {
   to: string;
   data: string;
   value: BigNumber;
-  args?: any;
-  functions?: any;
   recommendedCallUsed?: RecommendedCallUsed | undefined;
   callParamaters?: string | undefined;
   decodedCallText?: string | undefined;
@@ -46,7 +44,7 @@ interface DecodedABI {
 interface DecodeABI {
   data: string;
   contractType?: ContractType;
-  ABI?: string;
+  contractABI?: string;
 }
 interface UseABIServiceReturns {
   ABI: DecodedABI | undefined;
@@ -55,7 +53,7 @@ interface UseABIServiceReturns {
     to: string,
     data: string,
     value: BigNumber,
-    ABI: any
+    ABI: string
   ) => ProposalCalls;
 }
 /**
@@ -69,11 +67,11 @@ export const useABIService = (): UseABIServiceReturns => {
 
   const decodeABI = (params: DecodeABI) => {
     let contract: ContractType | undefined;
-    const { data, contractType, ABI } = params;
+    const { data, contractType, contractABI } = params;
     if (contractType) {
       contract = contractType;
     }
-    const abi = abiService.decodeCall(data, contract, ABI);
+    const abi = abiService.decodeCall(data, contract, contractABI);
     setABI(abi);
   };
 
@@ -92,7 +90,7 @@ export const useABIService = (): UseABIServiceReturns => {
       data,
       ContractType.Controller
     );
-    decodeABI({ data, ABI: contractABI });
+    decodeABI({ data, contractABI });
 
     if (
       controllerCallDecoded &&
@@ -175,17 +173,6 @@ export const useABIService = (): UseABIServiceReturns => {
         data: data,
         value: value,
         decodedCallText: decodedCallText,
-      };
-    }
-
-    if (ABI) {
-      return {
-        from: from,
-        to: to,
-        args: ABI.args,
-        functions: ABI.function,
-        data: data,
-        value: value,
       };
     }
 
