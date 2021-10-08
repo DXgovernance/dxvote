@@ -11,6 +11,18 @@ import {
 } from 'utils';
 import { useContext } from '../contexts';
 
+export interface ProposalCalls {
+  from: string;
+  to: string;
+  data: string;
+  value: BigNumber;
+  args?: any;
+  functions?: any;
+  recommendedCallsUsed?: RecommendedCallsUsed | undefined;
+  callParamaters?: string | undefined;
+  decodedCallText?: string | undefined;
+}
+
 interface RecommendedCallsUsed {
   asset: string;
   from: string;
@@ -44,17 +56,7 @@ interface UseABIServiceReturns {
     value: BigNumber,
     fullDescription: boolean,
     ABI: any
-  ) => {
-    from: string;
-    to: string;
-    data: string;
-    value: BigNumber;
-    args?: any;
-    functions?: any;
-    recommendedCallsUsed?: RecommendedCallsUsed | undefined;
-    callParamaters?: string | undefined;
-    decodedCallText?: string | undefined;
-  };
+  ) => ProposalCalls;
 }
 /**
  * parse's ABI and returns a react component detailing the to, from, and functions calls
@@ -81,7 +83,7 @@ export const useABIService = (): UseABIServiceReturns => {
     data: string,
     value: BigNumber,
     fullDescription: boolean,
-    ABI: any
+    contractABI: any
   ) => {
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();

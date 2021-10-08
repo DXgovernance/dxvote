@@ -16,7 +16,7 @@ const CallDataInformation = observer(({ advancedCalls }) => {
   const scheme = daoStore.getScheme(proposal.scheme);
   const { decodedCallData } = useABIService();
   const { getContractABI, loading, error } = useEtherscanService();
-  const [proposalCallTexts, setProposalCallTexts] = useState(
+  const [proposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
     new Array(proposal.to.length)
   );
 
@@ -35,42 +35,65 @@ const CallDataInformation = observer(({ advancedCalls }) => {
         advancedCalls,
         ABI
       );
-      setProposalCallTexts(proposalCallTexts);
+      setProposalCallTexts(proposalCallArray);
     }
   };
   useEffect(() => {
     getProposalCalls();
+    console.log(proposalCallTexts);
   }, [proposal]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>refresh page for call data...</div>;
+  }
 
   return (
     <div>
-      {loading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div>refresh page for call data...</div>
-      ) : (
-        proposalCallTexts.map(proposalCall => {
-          console.log(proposalCall)
+      {proposalCallTexts.map(proposalCall => {
+        console.log(proposalCall);
+        if (proposalCall.args) {
           return (
             <div>
               <strong>From:{proposalCall.from}</strong>
               <strong>To: {proposalCall.to}</strong>
-              <strong>Function Name: {proposalCall.function.name}</strong>
+              <strong>Function Name: {proposalCall.functions.name}</strong>
               <strong>Params:</strong>
               {proposalCall.args
                 .filter(item => item != '__length__')
                 .map((item, i) => {
                   return (
                     <>
-                      <small>{proposalCall.function.inputs[i]}</small>
+                      <small>{proposalCall.functions.inputs[i]}</small>
                       <small>{proposalCall.args[item]}</small>
                     </>
                   );
                 })}
             </div>
           );
-        })
-      )}
+        }
+        if (proposalCall.recommendedCallsUsed) {
+          <div>
+            <strong>From:{proposalCall.from}</strong>
+            <strong>To: {proposalCall.to}</strong>
+            <strong>Descriptions: {proposalCall.recommendedCallsUsed.toName}</strong>
+            <strong>Function: {proposalCall.recommendedCallsUsed.functionName}</strong>
+            <strong>Params: {Object.keys(proposalCall.callParamaters).map(paramIndex => proposalCall.callParamaters[paramIndex])}</strong>
+            <strong>data: {proposalCall.data}</strong>
+          </div>;
+        }
+        return (
+          <div>
+            <strong>From:{proposalCall.from}</strong>
+            <strong>To: {proposalCall.to}</strong>
+            <strong>decoded Text: {proposalCall.decodedCallText}</strong>
+            <strong>data: {proposalCall.data}</strong>
+          </div>
+        );
+      })}
     </div>
   );
 });
