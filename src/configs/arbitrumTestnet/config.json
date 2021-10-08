@@ -362,6 +362,20 @@
       "description": "## Description \n\n## Proposition \n\n## Action Plan"
     }
   ],
+  "proposalTypes": [
+    {
+      "id": "contributorProposal",
+      "title": "Contributor Proposal"
+    },
+    {
+      "id": "swaprCampaign",
+      "title": "Swapr Campaign Creation"
+    },
+    {
+      "id": "new",
+      "title": "Custom"
+    }
+  ],
   "tokens": [
     {
       "address": "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681",
