@@ -1,6 +1,8 @@
 // Externals
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { observer } from 'mobx-react';
+import { useContext } from '../contexts';
 
 const Wrapper = styled.div`
   display: flex;
@@ -19,7 +21,18 @@ const ProposalType = styled.div`
   cursor: pointer;
 `;
 
-export const NewProposalTypePage: React.FC = ({}) => {
+export const NewProposalTypePage = observer(() => {
+
+  const {
+    context: {
+      configStore,
+    },
+  } = useContext();
+
+  useEffect(() => {
+    configStore.getProposalTypes();
+  }, []);
+
   return (
     <Wrapper>
       <ProposalType>Contributor proposal</ProposalType>

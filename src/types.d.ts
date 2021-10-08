@@ -294,6 +294,10 @@ declare global {
       title: string;
       description: string;
     }[];
+    proposalTypes: {
+      id: string;
+      title: string;
+    }[];
     tokens: {
       address: string;
       name: string;
