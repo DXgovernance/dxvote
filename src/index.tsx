@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { HashRouter, Route, Switch, useLocation} from 'react-router-dom';
+import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
 import { createWeb3ReactRoot } from '@web3-react/core';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Web3 from 'web3';
@@ -82,8 +82,8 @@ const Routes = () => {
       </Route>
       {location.pathname.indexOf('/proposals') < 0 && <Footer />}
     </PageRouter>
-  )
-}
+  );
+};
 
 const Root = (
   <Web3ProviderInjected getLibrary={getLibrary}>
