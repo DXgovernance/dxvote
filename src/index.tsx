@@ -13,12 +13,13 @@ import ThemeProvider, { GlobalStyle } from './theme';
 import { web3ContextNames } from 'provider/connectors';
 
 import Header from './components/Header';
-import Footer from './components/Footer';
+// import Footer from './components/Footer';
 import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/Proposals';
 import NewProposalPage from './pages/NewProposal';
 import { NewProposalTypePage } from './pages/NewProposalType';
+import { CreateMetadataPage } from 'pages/Metadata';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
 import InfoPage from './pages/Info';
@@ -78,6 +79,10 @@ const Root = (
                 {' '}
                 <NewProposalTypePage />{' '}
               </Route>
+              <Route exact path="/:network/metadata">
+                {' '}
+                <CreateMetadataPage />{' '}
+              </Route>
               <Route exact path="/:network/info">
                 {' '}
                 <InfoPage />{' '}
@@ -91,7 +96,7 @@ const Root = (
                 <ProposalPage />{' '}
               </Route>
             </PageRouter>
-            <Footer />
+            {/* <Footer /> */}
           </Web3ReactManager>
         </Switch>
       </HashRouter>
