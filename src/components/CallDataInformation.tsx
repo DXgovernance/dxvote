@@ -63,7 +63,6 @@ const CallDataInformation = observer(({ advancedCalls }) => {
           encodedFunctionName,
         }) => {
           if (ABI) {
-            console.log(ABI);
             return (
               <div>
                 <strong>From:</strong>
@@ -73,24 +72,27 @@ const CallDataInformation = observer(({ advancedCalls }) => {
                 <strong>Function Name: </strong>
                 <small>{ABI.function.name}</small>
                 <strong>Params:</strong>
-                {Object.values(ABI.args).map((item, i) => {
-                  console.log(item);
-                  const functionName = ABI.function.inputs[i].name.replace(
-                    /[^a-zA-Z0-9]/g,
-                    ''
-                  );
-                  const functionType = ABI.function.inputs[i].type;
-                  console.log(functionName, functionType);
-                  return (
-                    <p>
-                      <small>Function Name: </small>{' '}
-                      <small>{functionName}</small>
-                      <small>Function Value: </small> <small>{item}</small>
-                      <small>Function type: </small>{' '}
-                      <small>{functionType}</small>
-                    </p>
-                  );
-                })}
+                {Object.values(ABI.args)
+                  .filter(item => item != '__length__')
+                  .map((item, i) => {
+                    const check = ABI.function.inputs[i];
+                    const functionName = check
+                      ? ABI.function.inputs[i].name.replace(/[^a-zA-Z0-9]/g, '')
+                      : undefined;
+                    console.log(functionName);
+                    const functionType = check
+                      ? ABI.function.inputs[i].type
+                      : undefined;
+                    return (
+                      <p>
+                        <small>Function Name: </small>{' '}
+                        <small>{functionName}</small>
+                        <small>Function Value: </small> <small>{item}</small>
+                        <small>Function type: </small>{' '}
+                        <small>{functionType}</small>
+                      </p>
+                    );
+                  })}
               </div>
             );
           }
