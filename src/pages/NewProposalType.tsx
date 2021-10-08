@@ -6,7 +6,40 @@ import { useHistory } from 'react-router-dom';
 
 import { useContext } from '../contexts';
 
-const Wrapper = styled.div`
+const VerticalLayout = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  flex-direction: column;
+  flex-wrap: wrap;
+`;
+
+const NavigationBar = styled.div`
+  display: flex;
+  width: 100%;
+  height: 10vh;
+`;
+
+const BackToProposals = styled.div`
+  flex: 1;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const Title = styled.h2`
+  text-align: center;
+  font-weight: 200;
+`;
+
+const Spacer = styled.div`
+  flex: 1;
+  text-align: center;
+  font-weight: 200;
+`;
+
+const OptionsWrapper = styled.div`
   display: flex;
   width: 100%;
   flex-wrap: wrap;
@@ -49,5 +82,16 @@ export const NewProposalTypePage = observer(() => {
     );
   });
 
-  return <Wrapper>{options}</Wrapper>;
+  return (
+    <VerticalLayout>
+      <NavigationBar>
+        <BackToProposals onClick={() => history.push('proposals')}>
+          {`< Back `}
+        </BackToProposals>
+        <Title>Choose Proposal Type</Title>
+        <Spacer />
+      </NavigationBar>
+      <OptionsWrapper>{options}</OptionsWrapper>
+    </VerticalLayout>
+  );
 });
