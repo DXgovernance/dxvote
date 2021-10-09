@@ -138,45 +138,14 @@ export const useABIService = (): UseABIServiceReturns => {
         recommendedCallUsed.functionName
       );
 
-      let decodedCallText = '';
-
-      if (
-        recommendedCallUsed.decodeText &&
-        recommendedCallUsed.decodeText.length > 0
-      ) {
-        decodedCallText = recommendedCallUsed.decodeText;
-
-        for (
-          let paramIndex = 0;
-          paramIndex < recommendedCallUsed.params.length;
-          paramIndex++
-        )
-          if (recommendedCallUsed.params[paramIndex].decimals)
-            decodedCallText = decodedCallText.replaceAll(
-              '[PARAM_' + paramIndex + ']',
-              '<italic>' +
-                normalizeBalance(
-                  callParameters[paramIndex],
-                  recommendedCallUsed.params[paramIndex].decimals
-                ) +
-                '</italic>'
-            );
-          else
-            decodedCallText = decodedCallText.replaceAll(
-              '[PARAM_' + paramIndex + ']',
-              '<italic>' + callParameters[paramIndex] + '</italic>'
-            );
-      }
-
       return {
         from: from,
         to: to,
         recommendedCallUsed: recommendedCallUsed,
         encodedFunctionName: encodeFunctionName,
-        callParamaters: callParameters,
+        callParameters: callParameters,
         data: data,
         value: value,
-        decodedCallText: decodedCallText,
       };
     }
 

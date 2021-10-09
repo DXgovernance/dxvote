@@ -1,9 +1,11 @@
 import { useContext } from 'contexts';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ProposalCalls, useABIService } from 'hooks/useABIService';
+import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
 import { useEtherscanService } from 'hooks/useEtherscanService';
+import { normalizeBalance } from 'utils';
+import { ProposalCalls } from 'types';
 
 const CallDataInformation = observer(({ advancedCalls }) => {
   const {
@@ -81,13 +83,38 @@ const CallDataInformation = observer(({ advancedCalls }) => {
           to,
           from,
           recommendedCallUsed,
-          callParamaters,
+          callParameters,
           data,
-          decodedCallText,
           value,
           encodedFunctionName,
         }) => {
           if (recommendedCallUsed) {
+            let decodedCallText = '';
+
+            if (
+              recommendedCallUsed.decodeText &&
+              recommendedCallUsed.decodeText.length > 0
+            ) {
+              decodedCallText = recommendedCallUsed.decodeText;
+
+              recommendedCallUsed.params.map((_, paramIndex) => {
+                if (recommendedCallUsed.params[paramIndex].decimals) {
+                  decodedCallText = decodedCallText.replaceAll(
+                    '[PARAM_' + paramIndex + ']',
+                    String(
+                      normalizeBalance(
+                        callParameters[paramIndex],
+                        recommendedCallUsed.params[paramIndex].decimals
+                      )
+                    )
+                  );
+                }
+                decodedCallText = decodedCallText.replaceAll(
+                  '[PARAM_' + paramIndex + ']',
+                  callParameters[paramIndex]
+                );
+              });
+            }
             if (advancedCalls) {
               return (
                 <div>
@@ -106,16 +133,19 @@ const CallDataInformation = observer(({ advancedCalls }) => {
                     <small>{recommendedCallUsed.functionName}</small>
                   </p>
                   <p>
-                    <small>Function: </small>{' '}
+                    <strong>Function Signature: </strong>{' '}
                     <small>{encodedFunctionName}</small>
                   </p>
-                  <strong>
-                    Params:{' '}
-                    {Object.keys(callParamaters).map(
-                      paramIndex => callParamaters[paramIndex]
-                    )}
-                  </strong>
-                  <strong>data: {data}</strong>
+                  <strong>Params: </strong>
+                  {Object.keys(callParameters).map(paramIndex => {
+                    return (
+                      <p>
+                        <small>{callParameters[paramIndex]} </small>
+                      </p>
+                    );
+                  })}
+                  <strong>data: </strong>
+                  <small>{data} </small>
                 </div>
               );
             }
@@ -126,7 +156,6 @@ const CallDataInformation = observer(({ advancedCalls }) => {
             );
           }
           if (ABI) {
-            console.log(ABI);
             return (
               <div>
                 <p>
