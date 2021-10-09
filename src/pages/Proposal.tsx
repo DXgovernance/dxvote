@@ -140,10 +140,6 @@ const ProposalHistoryEvent = styled.div`
   }
 `;
 
-const ProposalCallText = styled.span`
-  white-space: pre-line;
-`;
-
 const ProposalPage = observer(() => {
   let history = useHistory();
 

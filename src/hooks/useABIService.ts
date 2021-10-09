@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ContractType } from 'stores/Provider';
+import { ProposalCalls } from 'types';
 import {
   ANY_ADDRESS,
   bnum,
@@ -7,35 +8,8 @@ import {
   ERC20_TRANSFER_SIGNATURE,
   ZERO_ADDRESS,
   BigNumber,
-  normalizeBalance,
 } from 'utils';
 import { useContext } from '../contexts';
-
-export interface ProposalCalls {
-  from: string;
-  to: string;
-  data: string;
-  value: BigNumber;
-  recommendedCallUsed?: RecommendedCallUsed | undefined;
-  callParamaters?: string | undefined;
-  decodedCallText?: string | undefined;
-  encodedFunctionName?: string | undefined;
-}
-
-interface RecommendedCallUsed {
-  asset: string;
-  from: string;
-  to: string;
-  toName: string;
-  functionName: string;
-  params: {
-    type: string;
-    name: string;
-    defaultValue: string;
-    decimals?: number;
-  }[];
-  decodeText: string;
-}
 
 interface DecodedABI {
   function: any;
