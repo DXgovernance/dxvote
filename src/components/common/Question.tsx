@@ -12,12 +12,10 @@ const QuestionLink = styled.a`
   }
 `;
 
-const QuestionIcon = ({ question }) => {
+export const Question = ({ question }) => {
   return (
     <QuestionLink href={'/#/faq?question=' + question} target="_self">
       <FaQuestionCircle> </FaQuestionCircle>
     </QuestionLink>
   );
 };
-
-export default QuestionIcon;
