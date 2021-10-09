@@ -16,14 +16,7 @@ import {
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
-<<<<<<< HEAD
-import BlockchainLink from '../components/common/BlockchainLink';
-import Question from '../components/common/Question';
-import Box from '../components/common/Box';
-import CallDataInformation from 'components/CallDataInformation';
-=======
 import { BlockchainLink, Question, Box, Title } from '../components/common';
->>>>>>> develop
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
@@ -33,7 +26,7 @@ import {
   denormalizeBalance,
 } from '../utils';
 import { ConfirmVoteModal } from 'components/ConfirmVoteModal';
-import { Title } from 'components/common';
+import CallDataInformation from 'components/CallDataInformation';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;

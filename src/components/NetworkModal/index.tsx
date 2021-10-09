@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import { Modal } from '../Modal';
 import Option from './Option';
 import { useContext } from 'contexts';
@@ -57,7 +57,7 @@ const NetworkModal = observer(() => {
   } = useContext();
   const { chainId, connector } = providerStore.getActiveWeb3React();
   const rpcUrls = useRpcUrls();
-  const history = useHistory()
+  const history = useHistory();
   const [networkErrorMessage, setNetworkErrorMessage] = useState(false);
 
   const networkModalOpen = modalStore.networkModalVisible;

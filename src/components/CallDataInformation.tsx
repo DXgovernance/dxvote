@@ -46,7 +46,32 @@ const CallDataInformation = observer(({ advancedCalls }) => {
   }
 
   if (error) {
-    return <div>refresh page for call data...</div>;
+    return (
+      <div>
+        {ProposalCallTexts.map(({ to, from, data, value }) => {
+          return (
+            <div>
+              <p>
+                <strong>From: </strong>
+                <small>{from}</small>
+              </p>
+              <p>
+                <strong>To: </strong>
+                <small>{to}</small>
+              </p>
+              <p>
+                <strong>data: </strong>
+                <small>{data}</small>
+              </p>
+              <p>
+                <strong>Value: </strong>
+                <small>{value.toString()}</small>
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 
   return (
@@ -101,32 +126,31 @@ const CallDataInformation = observer(({ advancedCalls }) => {
             );
           }
           if (ABI) {
-            console.log(ABI)
+            console.log(ABI);
             return (
               <div>
                 <p>
-
-                <strong>From:</strong>
-                <small>{from}</small>
-
+                  <strong>From:</strong>
+                  <small>{from}</small>
                 </p>
                 <p>
-
-                <strong>To: </strong>
-                <small>{to}</small>
+                  <strong>To: </strong>
+                  <small>{to}</small>
                 </p>
                 <p>
-
-                <strong>Function Name: </strong>
-                <small>{ABI.function.signature}</small>
+                  <strong>Function Name: </strong>
+                  <small>{ABI.function.signature}</small>
                 </p>
                 <strong>Params:</strong>
                 {Object.keys(ABI.args)
                   .filter(item => item != '__length__')
-                  .map((item) => {
+                  .map(item => {
                     const check = ABI.function.inputs[item];
                     const functionName = check
-                      ? ABI.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
+                      ? ABI.function.inputs[item].name.replace(
+                          /[^a-zA-Z0-9]/g,
+                          ''
+                        )
                       : 'failed';
                     console.log(functionName);
                     const functionType = check
@@ -136,7 +160,7 @@ const CallDataInformation = observer(({ advancedCalls }) => {
                       <p>
                         <small>{functionName} </small>
                         <small>{functionType} </small>
-                         <small>{ABI.args[item]} </small>
+                        <small>{ABI.args[item]} </small>
                       </p>
                     );
                   })}

@@ -71,8 +71,12 @@ export const useABIService = (): UseABIServiceReturns => {
     if (contractType) {
       contract = contractType;
     }
-    const abi = abiService.decodeCall(data, contract, contractABI);
-    setABI(abi);
+    try {
+      const abi = abiService.decodeCall(data, contract, contractABI);
+      setABI(abi);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const decodedCallData = (
