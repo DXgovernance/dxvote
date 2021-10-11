@@ -43,10 +43,11 @@ const PageRouter = observer(({ children }) => {
   const history = useHistory();
   const location = useLocation();
   const noLoading = ['/faq', '/config', '/forum'];
+  const networkName = configStore.getActiveChainName()
 
   // Start or auth services
   ipfsService.start();
-  etherscanService.isAuthenticated();
+  etherscanService.isAuthenticated(networkName);
   pinataService.isAuthenticated();
 
   const { active: providerActive, connector } =

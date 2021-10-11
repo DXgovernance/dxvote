@@ -10,8 +10,10 @@ interface UseEtherscanServiceReturns {
 
 export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const {
-    context: { etherscanService },
+    context: { etherscanService, configStore },
   } = useContext();
+
+  const networkName = configStore.getActiveChainName();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -19,7 +21,7 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const getContractABI = async (address: string) => {
     try {
       setLoading(true);
-      const ABI = await etherscanService.getContractABI(address);
+      const ABI = await etherscanService.getContractABI(address, networkName);
 
       if (ABI.data.status == '0') {
         throw new Error(ABI.data.result);
@@ -36,7 +38,10 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const getContractSource = async (address: string) => {
     try {
       setLoading(true);
-      const source = await etherscanService.getContractSource(address);
+      const source = await etherscanService.getContractSource(
+        address,
+        networkName
+      );
       if (source.data.status == '0') {
         throw new Error(source.data.result);
       }

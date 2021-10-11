@@ -135,10 +135,10 @@ export const ALCHEMY_NETWORK_URLS = {
   '421611': 'arb-rinkeby.g.alchemy.com',
 };
 
-export const NETWORK_EXPLORERS: { [name: string]: string } = NETWORKS.reduce(
+export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(
   (acc, network) => {
     if (network?.blockExplorer) {
-      acc[network.name] = network.blockExplorer;
+      acc[network.name] = network.api;
     }
     return acc;
   },

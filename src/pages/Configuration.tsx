@@ -55,6 +55,7 @@ const ConfigPage = observer(() => {
       customRpcService,
     },
   } = useContext();
+  const networkName = configStore.getActiveChainName()
   const { connector } = useActiveWeb3React();
 
   const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(
@@ -90,7 +91,7 @@ const ConfigPage = observer(() => {
 
   async function testApis() {
     await pinataService.isAuthenticated();
-    await etherscanService.isAuthenticated();
+    await etherscanService.isAuthenticated(networkName);
     await infuraService.isAuthenticated();
     await alchemyService.isAuthenticated();
     await customRpcService.isAuthenticated();
