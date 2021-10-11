@@ -344,6 +344,7 @@ export interface ChainConfig {
     decimals: number;
   };
   blockExplorer?: string;
+  api?: string;
   icon?: string;
 }
 

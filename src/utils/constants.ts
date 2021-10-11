@@ -28,6 +28,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://etherscan.io',
+    api: 'https://api.etherscan.io',
     icon: ethereumIcon,
   },
   {
@@ -41,6 +42,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://rinkeby.etherscan.io/',
+    api: 'https://api-rinkeby.etherscan.io/',
     icon: ethereumIcon,
   },
   {
@@ -54,6 +56,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://blockscout.com/xdai/mainnet/',
+    api: 'https://blockscout.com/xdai/mainnet/api',
     icon: xdaiIcon,
   },
   {
@@ -67,6 +70,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://arbiscan.io/',
+    api: 'https://api.arbiscan.io/',
     icon: arbitrumIcon,
   },
   {
@@ -130,3 +134,13 @@ export const ALCHEMY_NETWORK_URLS = {
   '42161': 'arb-mainnet.g.alchemy.com',
   '421611': 'arb-rinkeby.g.alchemy.com',
 };
+
+export const NETWORK_EXPLORERS: { [name: string]: string } = NETWORKS.reduce(
+  (acc, network) => {
+    if (network?.blockExplorer) {
+      acc[network.name] = network.blockExplorer;
+    }
+    return acc;
+  },
+  {}
+);
