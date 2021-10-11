@@ -341,3 +341,14 @@ export const decodeProposalStatus = function (
       };
   }
 };
+
+//a: Proposal, b: Proposal but boostTIme is not in Proposal interface. 
+//is it added in Cache? 
+export const orverByNewestTimeToFinish = (a: any, b: any) =>
+    a.finishTime - b.finishTime;
+
+// finishTime is modified automatically to be TimeSinceFinished by 
+// the decodeProposalStatus function of utils/proposals.
+// so we may use the same function for everycase? 
+export const orderByNewestTimeSinceFinished = (a: any, b: any) =>
+   a.finishTime - b.finishTime;

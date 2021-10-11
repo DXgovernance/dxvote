@@ -22,8 +22,9 @@ import {
   normalizeBalance,
   timeToTimestamp,
   formatNumberValue,
-  mapEnum,
   VotingMachineProposalState,
+  orverByNewestTimeToFinish,
+  orderByNewestTimeSinceFinished,
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 
@@ -156,39 +157,61 @@ const ProposalsPage = observer(() => {
     );
   });
 
-  /**
-   * proposals are ordered:
-   *  QuietEndingPeriod
-   *  Boosted
-   *  PreBoosted
-   *  Queued
-   *  Executed
-   *  ExpiredInQueue
-   *  None
-   * Preboosted are ordered in boostTime and not in Finish Time.
-   *
-   */
-  const sortedProposals = mapEnum(VotingMachineProposalState, p => {
-    return (
-      allProposals
+  //--- beging filtering and sorting proposals
 
-        /**
-         * loop over the enum
-         * filter each enum value
-         * sort them
-         * flatten array
-         * reverse order of array from ascending to descending
-         */
-        .filter(proposal => proposal.stateInVotingMachine === p)
-        .sort((a, b) =>
-          a.boostTime.toNumber() > 0
-            ? b.boostTime.toNumber() - a.boostTime.toNumber()
-            : b.finishTime - a.finishTime
-        )
-    );
-  })
-    .flat(1)
-    .reverse();
+  // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
+  let earliestAbove10 = allProposals.filter(
+    (proposal: Proposal) => {
+      // is this necessary, can we get the positivePotes BigNumber 
+      // percentage somehow different ? I would do: 
+      const repAtCreation = daoStore.getRepAt(
+        ZERO_ADDRESS,
+        proposal.creationEvent.l1BlockNumber
+      ).totalSupply;
+      
+      return (
+        (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
+          || proposal.stateInVotingMachine === VotingMachineProposalState.Queued
+        ) && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).gte(10)
+      );
+    }  
+  );
+  earliestAbove10.sort(orverByNewestTimeToFinish);
+
+  // Proposals Boosted. (Ordered from time to finish, from lower to higher)
+  let boosted = allProposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
+  );
+  boosted.sort(orverByNewestTimeToFinish);
+
+  let preBoosted = allProposals.filter((proposal: Proposal):Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.PreBoosted);
+  preBoosted.sort(orverByNewestTimeToFinish);
+  
+  // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
+  let earliestUnder10 = allProposals.filter((proposal: Proposal): Boolean => {
+      
+      // is it necessary to all this datoSTore.getRepAt? 
+      // can we calculate the percentage somehow from the data in the proposal object ? Kinda 
+      // proposal.positiveVotes.div(porosal.positiveVotes + proposal.negativeVotes) ? 
+      const repAtCreation = daoStore.getRepAt(
+        ZERO_ADDRESS,
+        proposal.creationEvent.l1BlockNumber
+      ).totalSupply;
+      
+      return ( // ( QuietEndingPeriod OR Qeued ) with > 10% positive votes. 
+        (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
+          || proposal.stateInVotingMachine === VotingMachineProposalState.Queued)
+        && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).lt(10)
+      )
+    }
+  );
+  earliestUnder10.sort(orverByNewestTimeToFinish);
+
+  //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
+  let executed = allProposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Executed);
+  executed.sort(orderByNewestTimeSinceFinished);
+
+  //--- end filtering and sorting proposals
+  let sortedProposals = [...earliestAbove10, ...boosted, ...preBoosted, ...earliestUnder10, executed].flat(1);
   if (sortedProposals.length > proposals.length) setProposals(sortedProposals);
 
   function onStateFilterChange(newValue) {
