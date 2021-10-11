@@ -2,11 +2,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 
 import { Button } from '../components/common/Button';
-import { useContext } from '../contexts';
+// import { useContext } from '../contexts';
 
 const ProposalsWrapper = styled.div`
   padding: 10px 0px;
@@ -97,7 +97,7 @@ export const CreateMetadataPage = observer(() => {
           value={descriptionText}
           onChange={onDescriptionChange}
           preview="edit"
-          height="85vh"
+          minHeights={'10000'}
           commands={[
             commands.bold,
             commands.italic,
