@@ -403,7 +403,7 @@
   ],
   "proposalTypes": [
     {
-      "id": "new",
+      "id": "custom",
       "title": "Custom"
     }
   ],
