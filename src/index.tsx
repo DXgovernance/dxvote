@@ -18,6 +18,7 @@ import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/Proposals';
 import NewProposalPage from './pages/NewProposal';
+import { NewProposalTypePage } from './pages/NewProposalType';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
 import InfoPage from './pages/Info';
@@ -64,7 +65,11 @@ const Routes = () => {
         {' '}
         <ProposalsPage />{' '}
       </Route>
-      <Route exact path="/:network/new">
+      <Route exact path="/:network/create/type">
+        {' '}
+        <NewProposalTypePage />{' '}
+      </Route>
+      <Route path="/:network/create/submit/:proposalType">
         {' '}
         <NewProposalPage />{' '}
       </Route>

@@ -211,7 +211,7 @@ const ProposalsPage = observer(() => {
       <SidebarWrapper>
         <ProposalTableHeaderActions>
           <NewProposalButton>
-            <LinkButton route={`/${networkName}/new`} width="200px">
+            <LinkButton route={`/${networkName}/create/type`} width="200px">
               + New Proposal
             </LinkButton>
           </NewProposalButton>
