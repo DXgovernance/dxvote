@@ -1,21 +1,20 @@
-import { useContext } from 'contexts';
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
 import { useEtherscanService } from 'hooks/useEtherscanService';
 import { normalizeBalance } from 'utils';
 import { ProposalCalls } from 'types';
+import PendingCircle from './common/PendingCircle';
 
-const CallDataInformation = observer(({ advancedCalls }) => {
-  const {
-    context: { daoStore, configStore },
-  } = useContext();
+interface CallDataInformationParams {
+  advancedCalls: boolean,
+  scheme: Scheme,
+  proposal: Proposal,
+  networkContracts: NetworkContracts
+}
 
-  const proposalId = useLocation().pathname.split('/')[3];
-  const networkContracts = configStore.getNetworkContracts();
-  const proposal = daoStore.getProposal(proposalId);
-  const scheme = daoStore.getScheme(proposal.scheme);
+const CallDataInformation = observer(({ advancedCalls, scheme, proposal, networkContracts }: CallDataInformationParams) => {
+
   const { decodedCallData, ABI } = useABIService();
   const { getContractABI, loading, error } = useEtherscanService();
   const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
@@ -44,7 +43,7 @@ const CallDataInformation = observer(({ advancedCalls }) => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <PendingCircle height='44px' width='44px'/>
   }
 
   return (

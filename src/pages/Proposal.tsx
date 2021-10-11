@@ -423,7 +423,7 @@ const ProposalPage = observer(() => {
             )}
             <Question question="9" />
           </h2>
-          <CallDataInformation advancedCalls={advancedCalls} />
+          <CallDataInformation advancedCalls={advancedCalls}   scheme={scheme} proposal={proposal} networkContracts={networkContracts} />
         </ProposalInfoBox>
         <ProposalInfoBox style={{ marginTop: '15px' }}>
           <Title noMargin> History </Title>
