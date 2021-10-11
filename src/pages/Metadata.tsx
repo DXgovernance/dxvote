@@ -86,8 +86,10 @@ export const CreateMetadataPage = observer(() => {
           value={title}
         />
         <ButtonsWrapper>
-          <Button onClick={() => history.push()}>Back</Button>
-          <Button onClick={() => history.push(proposalType)}>Next</Button>
+          <Button onClick={() => history.push(`../../new`)}>Back</Button>
+          <Button onClick={() => history.push(`../${proposalType}`)}>
+            Next
+          </Button>
         </ButtonsWrapper>
       </SidebarWrapper>
       <MarkdownWrapper>
