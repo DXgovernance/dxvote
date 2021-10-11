@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-// import { useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 
 import { Button } from '../components/common/Button';
@@ -61,10 +61,8 @@ const Preview = styled(MDEditor.Markdown)`
 `;
 
 export const CreateMetadataPage = observer(() => {
-  // const {
-  //   context: { configStore },
-  // } = useContext();
-  // const history = useHistory();
+  const history = useHistory();
+  const { proposalType } = useParams();
 
   const [descriptionText, setDescriptionText] = useState(
     localStorage.getItem('dxvote-newProposal-description') || ''
@@ -77,7 +75,6 @@ export const CreateMetadataPage = observer(() => {
     setDescriptionText(newValue);
     localStorage.setItem('dxvote-newProposal-description', newValue);
   };
-  console.log(window.innerHeight);
 
   return (
     <ProposalsWrapper>
@@ -89,8 +86,8 @@ export const CreateMetadataPage = observer(() => {
           value={title}
         />
         <ButtonsWrapper>
-          <Button>Back</Button>
-          <Button>Next</Button>
+          <Button onClick={() => history.push()}>Back</Button>
+          <Button onClick={() => history.push(proposalType)}>Next</Button>
         </ButtonsWrapper>
       </SidebarWrapper>
       <MarkdownWrapper>

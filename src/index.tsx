@@ -79,7 +79,7 @@ const Root = (
                 {' '}
                 <NewProposalTypePage />{' '}
               </Route>
-              <Route exact path="/:network/metadata">
+              <Route path="/:network/create/metadata/:proposalType">
                 {' '}
                 <CreateMetadataPage />{' '}
               </Route>
