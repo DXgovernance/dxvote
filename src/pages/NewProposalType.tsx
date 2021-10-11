@@ -76,7 +76,7 @@ export const NewProposalTypePage = observer(() => {
 
   proposalTypes.forEach(type => {
     options.push(
-      <ProposalType onClick={() => history.push(type.id)}>
+      <ProposalType onClick={() => history.push(`submit/${type.id}`)}>
         {type.title}
       </ProposalType>
     );

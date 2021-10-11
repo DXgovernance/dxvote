@@ -71,13 +71,13 @@ const Root = (
                 {' '}
                 <ProposalsPage />{' '}
               </Route>
-              <Route exact path="/:network/new">
-                {' '}
-                <NewProposalPage />{' '}
-              </Route>
-              <Route exact path="/:network/newProposalType">
+              <Route exact path="/:network/create/type">
                 {' '}
                 <NewProposalTypePage />{' '}
+              </Route>
+              <Route path="/:network/create/submit/:proposalType">
+                {' '}
+                <NewProposalPage />{' '}
               </Route>
               <Route path="/:network/create/metadata/:proposalType">
                 {' '}

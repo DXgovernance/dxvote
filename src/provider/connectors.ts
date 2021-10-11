@@ -1,22 +1,26 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { NetworkConnector } from '@web3-react/network-connector';
-import { NETWORK_IDS } from '../utils';
-import metamaskIcon from '../assets/images/metamask.png';
-import walletConnectIcon from '../assets/images/walletconnect.png';
+import { NETWORKS } from 'utils';
+import metamaskIcon from 'assets/images/metamask.png';
+import walletConnectIcon from 'assets/images/walletconnect.png';
+import { ChainConfig } from 'types';
 
-export const ETH_NETWORKS = process.env.REACT_APP_ETH_NETWORKS.split(',');
-export const ETH_NETWORKS_IDS = ETH_NETWORKS.map(network => {
-  return NETWORK_IDS[network];
-});
-export const DEFAULT_ETH_CHAIN_ID = NETWORK_IDS[ETH_NETWORKS[0]];
+export const ACTIVE_NETWORK_NAMES =
+  process.env.REACT_APP_ETH_NETWORKS.split(',');
+export const ACTIVE_NETWORKS = NETWORKS.filter(network =>
+  ACTIVE_NETWORK_NAMES.includes(network.name)
+);
+
+export const ETH_NETWORKS_IDS = ACTIVE_NETWORKS.map(network => network.id);
+export const DEFAULT_ETH_CHAIN_ID = ACTIVE_NETWORKS[0].id;
 
 export const web3ContextNames = {
   injected: 'INJECTED',
   metamask: 'METAMASK',
 };
 
-export const isChainIdSupported = (chainId: number): boolean => {
+export const isChainIdSupported = (chainId: ChainConfig['id']): boolean => {
   return ETH_NETWORKS_IDS ? ETH_NETWORKS_IDS.indexOf(chainId) >= 0 : false;
 };
 
@@ -24,25 +28,28 @@ export const injected = new InjectedConnector({
   supportedChainIds: ETH_NETWORKS_IDS,
 });
 
-export function getWalletConnectConnector(customRpcUrls: {
-  [chainId: number]: string;
-}) {
+export function getWalletConnectConnector(
+  customRpcUrls: Record<ChainConfig['id'], string>
+) {
   return new WalletConnectConnector({
     rpc: customRpcUrls,
     qrcode: true,
   });
 }
 
-export function getNetworkConnector(customRpcUrls: {
-  [chainId: number]: string;
-}) {
+export function getNetworkConnector(
+  customRpcUrls: Record<ChainConfig['id'], string>,
+  defaultChainId: ChainConfig['id']
+) {
   return new NetworkConnector({
     urls: customRpcUrls,
-    defaultChainId: DEFAULT_ETH_CHAIN_ID,
+    defaultChainId,
   });
 }
 
-export const getWallets = (customRpcUrls: { [chainId: number]: string }) => ({
+export const getWallets = (
+  customRpcUrls: Record<ChainConfig['id'], string>
+) => ({
   INJECTED: {
     connector: injected,
     name: 'Injected',
@@ -69,3 +76,10 @@ export const getWallets = (customRpcUrls: { [chainId: number]: string }) => ({
     icon: walletConnectIcon,
   },
 });
+
+export const getChains = (customRpcUrls: Record<ChainConfig['id'], string>) => {
+  return ACTIVE_NETWORKS.map(network => ({
+    ...network,
+    rpcUrl: customRpcUrls[network.id] || network.defaultRpc,
+  }));
+};

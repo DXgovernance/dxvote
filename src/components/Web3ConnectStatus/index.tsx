@@ -5,6 +5,7 @@ import WalletModal from 'components/WalletModal';
 import { isChainIdSupported } from 'provider/connectors';
 import { useContext } from '../../contexts';
 import { Box } from '../../components/common';
+import NetworkModal from 'components/NetworkModal';
 
 const WrongNetworkButton = styled(Box)`
   color: var(--dark-text-gray);
@@ -41,6 +42,10 @@ const ConnectButton = styled(Box)`
   cursor: pointer;
 `;
 
+const ChainButton = styled(AccountButton)`
+  font-size: 14px;
+`
+
 const Web3ConnectStatus = observer(props => {
   const {
     context: { modalStore, providerStore, configStore },
@@ -51,38 +56,17 @@ const Web3ConnectStatus = observer(props => {
     modalStore.toggleWalletModal();
   };
 
-  function getWeb3Status() {
-    console.debug('[GetWeb3Status]', {
-      account,
-      chainId: chainId,
-      error,
-    });
-    // Wrong network
-    if (account && chainId && !isChainIdSupported(chainId)) {
+  const toggleNetworkModal = () => {
+    modalStore.toggleNetworkModal();
+  };
+
+  function getWalletStatus() {
+    console.debug('[GetWalletStatus]', { account });
+    if (account) {
       return (
-        <WrongNetworkButton onClick={toggleWalletModal}>
-          Wrong Network
-        </WrongNetworkButton>
-      );
-    } else if (account) {
-      return (
-        <div style={{ display: 'flex' }}>
-          <AccountButton onClick={toggleWalletModal}>
-            {shortenAddress(account)}
-          </AccountButton>
-          <AccountButton
-            onClick={toggleWalletModal}
-            style={{ fontSize: '14px' }}
-          >
-            {toCamelCaseString(configStore.getActiveChainName())}
-          </AccountButton>
-        </div>
-      );
-    } else if (error) {
-      return (
-        <WrongNetworkButton onClick={toggleWalletModal}>
-          Wrong Network
-        </WrongNetworkButton>
+        <AccountButton onClick={toggleWalletModal}>
+          {shortenAddress(account)}
+        </AccountButton>
       );
     } else {
       return (
@@ -93,10 +77,38 @@ const Web3ConnectStatus = observer(props => {
     }
   }
 
+  function getNetworkStatus() {
+    console.debug('[GetNetworkStatus]', { chainId, error });
+    // Wrong network
+    if ((chainId && !isChainIdSupported(chainId)) || error) {
+      return (
+        <WrongNetworkButton onClick={toggleNetworkModal}>
+          Wrong Network
+        </WrongNetworkButton>
+      );
+    } else if (chainId) {
+      return (
+        <div style={{ display: 'flex' }}>
+          <ChainButton onClick={toggleNetworkModal}>
+            {toCamelCaseString(configStore.getActiveChainName())}
+          </ChainButton>
+        </div>
+      );
+    } else {
+      return (
+        <ConnectButton onClick={toggleNetworkModal} active={true}>
+          Not Connected
+        </ConnectButton>
+      );
+    }
+  }
+
   return (
     <>
-      {getWeb3Status()}
+      {getNetworkStatus()}
+      {getWalletStatus()}
       <WalletModal />
+      <NetworkModal />
     </>
   );
 });
