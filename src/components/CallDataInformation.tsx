@@ -47,35 +47,6 @@ const CallDataInformation = observer(({ advancedCalls }) => {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return (
-      <div>
-        {ProposalCallTexts.map(({ to, from, data, value }) => {
-          return (
-            <div>
-              <p>
-                <strong>From: </strong>
-                <small>{from}</small>
-              </p>
-              <p>
-                <strong>To: </strong>
-                <small>{to}</small>
-              </p>
-              <p>
-                <strong>data: </strong>
-                <small>{data}</small>
-              </p>
-              <p>
-                <strong>Value: </strong>
-                <small>{value.toString()}</small>
-              </p>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
   return (
     <div>
       {ProposalCallTexts.map(
@@ -198,6 +169,7 @@ const CallDataInformation = observer(({ advancedCalls }) => {
           }
           return (
             <div>
+              {error && <p>{error.message}</p>}
               <p>
                 <strong>From: </strong>
                 <small>{from}</small>

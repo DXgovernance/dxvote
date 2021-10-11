@@ -24,7 +24,7 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
       const ABI = await etherscanService.getContractABI(address, networkName);
 
       if (ABI.data.status == '0') {
-        throw new Error(ABI.data.result);
+        throw new Error(ABI.data.message);
       }
       setLoading(false);
       return ABI.data.result;
@@ -43,7 +43,7 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
         networkName
       );
       if (source.data.status == '0') {
-        throw new Error(source.data.result);
+        throw new Error(source.data.message);
       }
       setLoading(false);
       return source.data.result;
