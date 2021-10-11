@@ -5,15 +5,17 @@ import { useContext } from '../contexts';
 import { Box, Question, Button } from '../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
-import { NETWORK_ASSET_SYMBOL } from '../utils';
 
 import {
+  NETWORK_ASSET_SYMBOL,
   ZERO_ADDRESS,
   ANY_ADDRESS,
+  ZERO_HASH,
   sleep,
   bnum,
   normalizeBalance,
   denormalizeBalance,
+  encodePermission,
   TXEvents,
 } from '../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
@@ -183,6 +185,19 @@ const NewProposalPage = observer(() => {
     externalToken: ZERO_ADDRESS,
     tokenValue: '0',
   });
+
+  const [schemeRegistrarProposalValues, setSchemeRegistrarProposalValues] =
+    React.useState({
+      register: true,
+      schemeAddress: ZERO_ADDRESS,
+      parametersHash: ZERO_HASH,
+      permissions: encodePermission({
+        canGenericCall: false,
+        canUpgrade: false,
+        canChangeConstraints: false,
+        canRegisterSchemes: false,
+      }),
+    });
 
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
@@ -370,6 +385,14 @@ const NewProposalPage = observer(() => {
               tokenValue: contributionRewardCalls.tokenValue,
               descriptionHash: contentHash.fromIpfs(ipfsHash),
             }
+          : schemeToUse.type === 'SchemeRegistrar'
+          ? {
+              register: schemeRegistrarProposalValues.register,
+              schemeAddress: schemeRegistrarProposalValues.schemeAddress,
+              parametersHash: schemeRegistrarProposalValues.parametersHash,
+              permissions: schemeRegistrarProposalValues.permissions,
+              descriptionHash: contentHash.fromIpfs(ipfsHash),
+            }
           : {
               to,
               data,
@@ -438,6 +461,11 @@ const NewProposalPage = observer(() => {
     forceUpdate();
   }
 
+  function setSchemeRegistrarValueInState(_schemeRegistrarProposalValues) {
+    setSchemeRegistrarProposalValues(_schemeRegistrarProposalValues);
+    forceUpdate();
+  }
+
   function addCall() {
     calls.push({
       callType: schemeToUse.type === 'WalletScheme' ? 'simple' : 'advanced',
@@ -472,7 +500,6 @@ const NewProposalPage = observer(() => {
   }
 
   function onToSelectChange(callIndex, toAddress) {
-    console.log({ toAddress });
     if (toAddress === ANY_ADDRESS) {
       changeCallType(callIndex);
     } else {
@@ -538,6 +565,11 @@ const NewProposalPage = observer(() => {
     setContributionRewardCallsInState(contributionRewardCalls);
   }
 
+  function onSchemeRegistrarValueChange(key, value) {
+    schemeRegistrarProposalValues[key] = value;
+    setSchemeRegistrarValueInState(schemeRegistrarProposalValues);
+  }
+
   function onSchemeChange(event) {
     setSchemeToUse(schemes[event.target.value]);
     localStorage.setItem(
@@ -582,7 +614,6 @@ const NewProposalPage = observer(() => {
       setCallsInState(calls);
     }
   }
-
   return (
     <NewProposalFormWrapper>
       <div
@@ -624,7 +655,8 @@ const NewProposalPage = observer(() => {
               if (
                 scheme.type === 'WalletScheme' ||
                 scheme.type === 'ContributionReward' ||
-                scheme.type === 'GenericMulticall'
+                scheme.type === 'GenericMulticall' ||
+                scheme.type === 'SchemeRegistrar'
               )
                 return (
                   <option key={scheme.address} value={i}>
@@ -688,6 +720,7 @@ const NewProposalPage = observer(() => {
       />
       {schemeToUse.type === 'ContributionReward' ||
       schemeToUse.type === 'GenericMulticall' ||
+      schemeToUse.type === 'SchemeRegistrar' ||
       (schemeToUse.type === 'WalletScheme' &&
         schemeToUse.controllerAddress === networkContracts.controller) ? (
         <h2>
@@ -798,6 +831,63 @@ const NewProposalPage = observer(() => {
                 )
               }
               value={contributionRewardCalls.tokenValue}
+              width="50%"
+            />
+          </CallRow>
+        </div>
+      ) : schemeToUse.type === 'SchemeRegistrar' ? (
+        // If scheme to use is SchemeRegistrar display a different form with less fields
+        <div>
+          <CallRow>
+            <span style={{ width: '20%', fontSize: '13px' }}>
+              Rergister Scheme
+            </span>
+            <span style={{ width: '20%', fontSize: '13px' }}>
+              Scheme Address
+            </span>
+            <span style={{ width: '40%', fontSize: '13px' }}>
+              {' '}
+              Parameters Hash{' '}
+            </span>
+            <span style={{ width: '20%', fontSize: '13px' }}>Permissions</span>
+          </CallRow>
+          <CallRow>
+            <TextInput
+              type="checkbox"
+              onChange={event =>
+                onSchemeRegistrarValueChange('register', event.target.checked)
+              }
+              checked={schemeRegistrarProposalValues.register}
+              width="50%"
+            />
+            <TextInput
+              type="text"
+              onChange={event =>
+                onSchemeRegistrarValueChange(
+                  'schemeAddress',
+                  event.target.value
+                )
+              }
+              value={schemeRegistrarProposalValues.schemeAddress}
+              width="50%"
+            />
+            <TextInput
+              type="text"
+              onChange={event =>
+                onSchemeRegistrarValueChange(
+                  'parametersHash',
+                  event.target.value
+                )
+              }
+              value={schemeRegistrarProposalValues.parametersHash}
+              width="50%"
+            />
+            <TextInput
+              type="text"
+              onChange={event =>
+                onSchemeRegistrarValueChange('permissions', event.target.value)
+              }
+              value={schemeRegistrarProposalValues.permissions}
               width="50%"
             />
           </CallRow>
@@ -1019,7 +1109,11 @@ const NewProposalPage = observer(() => {
           <TextActions>
             <span>
               Uploaded to IPFS:
-              <a href={`https://ipfs.io/ipfs/${ipfsHash}`} target="_blank">
+              <a
+                href={`https://ipfs.io/ipfs/${ipfsHash}`}
+                target="_blank"
+                rel="noreferrer"
+              >
                 https://ipfs.io/ipfs/{ipfsHash}
               </a>
               <br />
