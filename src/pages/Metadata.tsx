@@ -77,6 +77,7 @@ export const CreateMetadataPage = observer(() => {
     setDescriptionText(newValue);
     localStorage.setItem('dxvote-newProposal-description', newValue);
   };
+  console.log(window.innerHeight);
 
   return (
     <ProposalsWrapper>
@@ -97,7 +98,7 @@ export const CreateMetadataPage = observer(() => {
           value={descriptionText}
           onChange={onDescriptionChange}
           preview="edit"
-          minHeights={'10000'}
+          height={window.innerHeight * 0.85}
           commands={[
             commands.bold,
             commands.italic,
