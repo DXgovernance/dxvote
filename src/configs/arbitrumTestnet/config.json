@@ -364,14 +364,6 @@
   ],
   "proposalTypes": [
     {
-      "id": "contributorProposal",
-      "title": "Contributor Proposal"
-    },
-    {
-      "id": "swaprCampaign",
-      "title": "Swapr Campaign Creation"
-    },
-    {
       "id": "new",
       "title": "Custom"
     }
