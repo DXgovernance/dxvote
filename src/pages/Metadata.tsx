@@ -6,7 +6,6 @@ import { useParams, useHistory } from 'react-router-dom';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 
 import { Button } from '../components/common/Button';
-// import { useContext } from '../contexts';
 
 const ProposalsWrapper = styled.div`
   padding: 10px 0px;

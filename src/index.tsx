@@ -44,9 +44,6 @@ function getLibrary(provider) {
 
 const Routes = () => {
   const location = useLocation();
-  console.log(location.pathname);
-  console.log(location.pathname.indexOf('/create/metadata') > 0);
-  console.log(location.pathname.indexOf('/proposals') > 0);
   return (
     <PageRouter>
       <Route exact path="/">
