@@ -6,12 +6,24 @@ import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
 const Web3 = require('web3');
 const web3 = new Web3();
-const appConfig = require('../config.json');
+const arbitrum = require('../configs/arbitrum/config.json');
+const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
+const mainnet = require('../configs/mainnet/config.json');
+const xdai = require('../configs/xdai/config.json');
+const rinkeby = require('../configs/rinkeby/config.json');
+const localhost = require('../configs/localhost/config.json');
 
 export default class ConfigStore {
   darkMode: boolean;
   context: RootContext;
-  appConfig: AppConfig = appConfig;
+  appConfig: AppConfig = {
+    arbitrum,
+    arbitrumTestnet,
+    mainnet,
+    xdai,
+    rinkeby,
+    localhost,
+  };
 
   constructor(context) {
     this.context = context;
@@ -54,7 +66,7 @@ export default class ConfigStore {
   }
 
   getCacheIPFSHash(networkName) {
-    return appConfig[networkName].cache.ipfsHash;
+    return this.appConfig[networkName].cache.ipfsHash;
   }
 
   getSchemeTypeData(schemeAddress) {
@@ -207,6 +219,10 @@ export default class ConfigStore {
 
   getProposalTemplates() {
     return this.appConfig[this.getActiveChainName()].proposalTemplates;
+  }
+
+  getProposalTypes() {
+    return this.appConfig[this.getActiveChainName()].proposalTypes;
   }
 
   getRecommendedCalls() {
