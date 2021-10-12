@@ -8,6 +8,7 @@ jobs:
   cleanup:
     name: Remove test environment deployment
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/develop'
     steps:
       - name: Inject slug variables
         uses: rlespinasse/github-slug-action@3.5.1
