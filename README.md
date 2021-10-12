@@ -14,11 +14,11 @@ Hosted in https://dxvote.eth.link/ and under control of dxdao.
 
 ### Release Candidate
 
-Source code of master branch built and hosted in github.io in https://dxgovernance.github.io/dxvote/ and under control of DXgovernance code owners.
+Source code of `master` branch built and hosted on IPFS in https://dxvote.dev/ and under control of DXgovernance code owners.
 
 ### Developer Version
 
-Source code of developer branch built and hosted in netlify in https://dxvote-dev.netlify.app/ and under control of DXgovernance developers.
+Source code of `develop` branch built and hosted on IPFS in https://develop.dxvote.dev/ and under control of DXgovernance developers.
 
 ## Maintenance
 
