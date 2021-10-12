@@ -132,6 +132,7 @@ const FooterWrap = styled.div`
 
 const TableProposal = styled(Table)`
   grid-template-columns: 33% 20% 15% 20% 12%;
+  margin-bottom: auto;
 `;
 
 const ProposalsPage = observer(() => {
@@ -210,7 +211,7 @@ const ProposalsPage = observer(() => {
       <SidebarWrapper>
         <ProposalTableHeaderActions>
           <NewProposalButton>
-            <LinkButton route={`/${networkName}/new`} width="200px">
+            <LinkButton route={`/${networkName}/create/type`} width="200px">
               + New Proposal
             </LinkButton>
           </NewProposalButton>

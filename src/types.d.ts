@@ -296,6 +296,10 @@ declare global {
       description: string;
       calls?: array;
     }[];
+    proposalTypes: {
+      id: string;
+      title: string;
+    }[];
     tokens: {
       address: string;
       name: string;
