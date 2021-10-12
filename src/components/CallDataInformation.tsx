@@ -22,21 +22,21 @@ const CallDataInformation = observer(({ advancedCalls, scheme, proposal, network
   );
 
   const proposalCallArray = [];
-  const getProposalCalls = async () => {
-    for (var p = 0; p < proposal.to.length; p++) {
-      const contractABI = await getContractABI(proposal.to[p]);
-      proposalCallArray[p] = decodedCallData(
+  const getProposalCalls = () => {
+    proposal.to.forEach(async(to, index) => {
+      const contractABI = await getContractABI(to);
+      proposalCallArray[index] = decodedCallData(
         scheme.type === 'WalletScheme' &&
           scheme.controllerAddress !== networkContracts.controller
           ? scheme.address
           : networkContracts.avatar,
-        proposal.to[p],
-        proposal.callData[p],
-        proposal.values[p],
+        proposal.to[index],
+        proposal.callData[index],
+        proposal.values[index],
         contractABI
       );
+    })
       setProposalCallTexts(proposalCallArray);
-    }
   };
   useEffect(() => {
     getProposalCalls();
