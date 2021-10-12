@@ -293,7 +293,6 @@ const ProposalsPage = observer(() => {
           {proposals.length === 0 && <h3>No Proposals Found</h3>}
 
           {proposals.map((proposal, i) => {
-            console.log(i);
             if (
               proposal &&
               (stateFilter === 'Any Status' ||
