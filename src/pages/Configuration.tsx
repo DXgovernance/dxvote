@@ -55,7 +55,7 @@ const ConfigPage = observer(() => {
       customRpcService,
     },
   } = useContext();
-  const networkName = configStore.getActiveChainName()
+  const networkName = configStore.getActiveChainName();
   const { connector } = useActiveWeb3React();
 
   const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(

@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { useState } from 'react';
 import { useContext } from '../contexts';
 
@@ -18,14 +19,30 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const etherscanErrors = (etherscanResult: AxiosResponse<any>) => {
+    switch (etherscanResult.data.status) {
+      case '0':
+        throw new Error(etherscanResult.data.message);
+      case '1':
+        switch (etherscanResult.data.message) {
+          case 'OK-Missing/Invalid API Key, rate limit of 1/5sec applied':
+            throw new Error(etherscanResult.data.message);
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
   const getContractABI = async (address: string) => {
     try {
       setLoading(true);
       const ABI = await etherscanService.getContractABI(address, networkName);
 
-      if (ABI.data.status == '0') {
-        throw new Error(ABI.data.message);
-      }
+      etherscanErrors(ABI);
+
       setLoading(false);
       return ABI.data.result;
     } catch (error) {
@@ -42,9 +59,7 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
         address,
         networkName
       );
-      if (source.data.status == '0') {
-        throw new Error(source.data.message);
-      }
+      etherscanErrors(source);
       setLoading(false);
       return source.data.result;
     } catch (error) {
