@@ -17,8 +17,9 @@ import {
 } from '../components/common';
 import Footer from '../components/Footer';
 import {
-  enumKeys,
   ZERO_ADDRESS,
+  QUEUED_PRIORITY_THRESHOLD,
+  enumKeys,
   formatPercentage,
   normalizeBalance,
   timeToTimestamp,
@@ -173,7 +174,7 @@ const ProposalsPage = observer(() => {
         return (
           (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
             || proposal.stateInVotingMachine === VotingMachineProposalState.Queued
-          ) && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).gte(10)
+          ) && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).gte(QUEUED_PRIORITY_THRESHOLD)
         );
       }
     );
@@ -201,7 +202,7 @@ const ProposalsPage = observer(() => {
       return ( // ( QuietEndingPeriod OR Qeued ) with > 10% positive votes. 
         (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
           || proposal.stateInVotingMachine === VotingMachineProposalState.Queued)
-        && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).lt(10)
+        && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).lt(QUEUED_PRIORITY_THRESHOLD)
       )
     });
     earliestUnder10.sort(orderByNewestTimeToFinish);
@@ -214,10 +215,8 @@ const ProposalsPage = observer(() => {
   }
 
   React.useEffect(() => {
-    console.log("state filter: ", stateFilter);
-    console.log("scheme filter: ", schemeFilter);
-  
     let sortedProposals;
+
     if (stateFilter === 'Any Status') {
       sortedProposals = filterInitialCriteria(allProposals);
     } else {
@@ -227,7 +226,9 @@ const ProposalsPage = observer(() => {
     if (schemeFilter !== 'All Schemes') {
       sortedProposals = sortedProposals.filter((proposal) => proposal.scheme === schemeFilter)
     }
-  
+    
+    // TODO: when merged refactor based on still open MiniSearch PR
+    // https://github.com/DXgovernance/dxvote/pull/244
     if (titleFilter.length > 0) {
       sortedProposals = sortedProposals.filter((proposal) => proposal.title.indexOf(titleFilter) >= 0);
     }
