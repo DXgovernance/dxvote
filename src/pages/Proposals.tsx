@@ -164,8 +164,7 @@ const ProposalsPage = observer(() => {
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     let earliestAbove10 = proposals.filter(
       (proposal: Proposal) => {
-        // is this necessary, can we get the positivePotes BigNumber 
-        // percentage somehow different ? I would do: 
+        
         const repAtCreation = daoStore.getRepAt(
           ZERO_ADDRESS,
           proposal.creationEvent.l1BlockNumber
@@ -219,20 +218,15 @@ const ProposalsPage = observer(() => {
     console.log("scheme filter: ", schemeFilter);
   
     let sortedProposals;
-    if (stateFilter === 'Any Status' && schemeFilter === 'All Schemes') {
+    if (stateFilter === 'Any Status') {
       sortedProposals = getAllProposals(allProposals);
     } else {
-      if (stateFilter !== 'Any Status' && schemeFilter !== 'All Schemes') {
-        sortedProposals = allProposals.filter((proposal) => parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter) && proposal.scheme === schemeFilter)
-      } else if (stateFilter !== 'Any Status') {
-        console.log(stateFilter);
-        sortedProposals = allProposals.filter((proposal) => parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter))
-      } else {
-        sortedProposals = allProposals.filter((proposal) => proposal.scheme === schemeFilter)
-      }
-      sortedProposals.sort(orderByNewestTimeToFinish)
+      sortedProposals = allProposals.filter((proposal) => parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter))
     }
     
+    if (schemeFilter !== 'All Schemes') {
+      sortedProposals = sortedProposals.filter((proposal) => proposal.scheme === schemeFilter)
+    }
   
     if (titleFilter.length > 0) {
       sortedProposals = sortedProposals.filter((proposal) => proposal.title.indexOf(titleFilter) >= 0);
