@@ -17,13 +17,14 @@ import {
 } from '../components/common';
 import Footer from '../components/Footer';
 import {
+  enumKeys,
   ZERO_ADDRESS,
   formatPercentage,
   normalizeBalance,
   timeToTimestamp,
   formatNumberValue,
   VotingMachineProposalState,
-  orverByNewestTimeToFinish,
+  orderByNewestTimeToFinish,
   orderByNewestTimeSinceFinished,
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
@@ -158,38 +159,38 @@ const ProposalsPage = observer(() => {
     );
   });
 
-  //--- beging filtering and sorting proposals
+  //filtering and sorting proposals for All States criteria
+  const getAllProposals = (proposals) => {
+    // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
+    let earliestAbove10 = proposals.filter(
+      (proposal: Proposal) => {
+        // is this necessary, can we get the positivePotes BigNumber 
+        // percentage somehow different ? I would do: 
+        const repAtCreation = daoStore.getRepAt(
+          ZERO_ADDRESS,
+          proposal.creationEvent.l1BlockNumber
+        ).totalSupply;
+        
+        return (
+          (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
+            || proposal.stateInVotingMachine === VotingMachineProposalState.Queued
+          ) && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).gte(10)
+        );
+      }
+    );
+    earliestAbove10.sort(orderByNewestTimeToFinish);
 
-  // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
-  let earliestAbove10 = allProposals.filter(
-    (proposal: Proposal) => {
-      // is this necessary, can we get the positivePotes BigNumber 
-      // percentage somehow different ? I would do: 
-      const repAtCreation = daoStore.getRepAt(
-        ZERO_ADDRESS,
-        proposal.creationEvent.l1BlockNumber
-      ).totalSupply;
+    // Proposals Boosted. (Ordered from time to finish, from lower to higher)
+    let boosted = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
+    );
+    boosted.sort(orderByNewestTimeToFinish);
+
+    let preBoosted = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.PreBoosted);
+    preBoosted.sort(orderByNewestTimeToFinish);
       
-      return (
-        (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
-          || proposal.stateInVotingMachine === VotingMachineProposalState.Queued
-        ) && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).gte(10)
-      );
-    }  
-  );
-  earliestAbove10.sort(orverByNewestTimeToFinish);
-
-  // Proposals Boosted. (Ordered from time to finish, from lower to higher)
-  let boosted = allProposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
-  );
-  boosted.sort(orverByNewestTimeToFinish);
-
-  let preBoosted = allProposals.filter((proposal: Proposal):Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.PreBoosted);
-  preBoosted.sort(orverByNewestTimeToFinish);
-  
-  // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
-  let earliestUnder10 = allProposals.filter((proposal: Proposal): Boolean => {
-      
+    // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
+    let earliestUnder10 = proposals.filter((proposal: Proposal): Boolean => {
+          
       // is it necessary to all this datoSTore.getRepAt? 
       // can we calculate the percentage somehow from the data in the proposal object ? Kinda 
       // proposal.positiveVotes.div(porosal.positiveVotes + proposal.negativeVotes) ? 
@@ -197,23 +198,49 @@ const ProposalsPage = observer(() => {
         ZERO_ADDRESS,
         proposal.creationEvent.l1BlockNumber
       ).totalSupply;
-      
+          
       return ( // ( QuietEndingPeriod OR Qeued ) with > 10% positive votes. 
         (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
           || proposal.stateInVotingMachine === VotingMachineProposalState.Queued)
         && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).lt(10)
       )
+    });
+    earliestUnder10.sort(orderByNewestTimeToFinish);
+
+    //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
+    let executed = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Executed);
+    executed.sort(orderByNewestTimeSinceFinished);
+      
+    return [...earliestAbove10, ...boosted, ...preBoosted, ...earliestUnder10, ...executed]
+  }
+
+  React.useEffect(() => {
+    console.log("state filter: ", stateFilter);
+    console.log("scheme filter: ", schemeFilter);
+  
+    let sortedProposals;
+    if (stateFilter === 'Any Status' && schemeFilter === 'All Schemes') {
+      sortedProposals = getAllProposals(allProposals);
+    } else {
+      if (stateFilter !== 'Any Status' && schemeFilter !== 'All Schemes') {
+        sortedProposals = allProposals.filter((proposal) => parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter) && proposal.scheme === schemeFilter)
+      } else if (stateFilter !== 'Any Status') {
+        console.log(stateFilter);
+        sortedProposals = allProposals.filter((proposal) => parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter))
+      } else {
+        sortedProposals = allProposals.filter((proposal) => proposal.scheme === schemeFilter)
+      }
+      sortedProposals.sort(orderByNewestTimeToFinish)
     }
-  );
-  earliestUnder10.sort(orverByNewestTimeToFinish);
-
-  //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
-  let executed = allProposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Executed);
-  executed.sort(orderByNewestTimeSinceFinished);
-
-  //--- end filtering and sorting proposals
-  let sortedProposals = [...earliestAbove10, ...boosted, ...preBoosted, ...earliestUnder10, executed].flat(1);
-  if (sortedProposals.length > proposals.length) setProposals(sortedProposals);
+    
+  
+    if (titleFilter.length > 0) {
+      sortedProposals = sortedProposals.filter((proposal) => proposal.title.indexOf(titleFilter) >= 0);
+    }
+    
+    setProposals(sortedProposals);
+  }, [titleFilter, schemeFilter, stateFilter])
+  
 
   function onStateFilterChange(newValue) {
     setStateFilter(newValue.target.value);
@@ -251,16 +278,9 @@ const ProposalsPage = observer(() => {
             onChange={onStateFilterChange}
           >
             <option value="Any Status">Any Status</option>
-            <option value="Pending Boost">Pending Boost</option>
-            <option value="Pre Boosted">Pre Boosted</option>
-            <option value="Boosted">Boosted</option>
-            <option value="In Queue">Queue</option>
-            <option value="Quiet Ending Period">Quiet Ending Period</option>
-            <option value="Passed">Passed</option>
-            <option value="Pending Execution">Pending Execution</option>
-            <option value="Rejected">Rejected</option>
-            <option value="Executed">Executed</option>
-            <option value="Expired in Queue">Expired</option>
+            {enumKeys(VotingMachineProposalState).map((i) =>
+              i !== "None" && <option value={VotingMachineProposalState[i]}>{i}</option>
+            )}
           </ProposalsFilter>
           <ProposalsFilter
             name="schemeFilter"
@@ -293,133 +313,121 @@ const ProposalsPage = observer(() => {
           {proposals.length === 0 && <h3>No Proposals Found</h3>}
 
           {proposals.map((proposal, i) => {
-            if (
-              proposal &&
-              (stateFilter === 'Any Status' ||
-                (stateFilter !== 'Any Status' &&
-                  proposal.status === stateFilter)) &&
-              (titleFilter.length === 0 ||
-                (titleFilter.length > 0 &&
-                  proposal.title.indexOf(titleFilter) >= 0)) &&
-              (schemeFilter === 'All Schemes' ||
-                proposal.scheme === schemeFilter)
-            ) {
-              const positiveStake = formatNumberValue(
-                normalizeBalance(proposal.positiveStakes, 18),
-                1
-              );
-              const negativeStake = formatNumberValue(
-                normalizeBalance(proposal.negativeStakes, 18),
-                1
-              );
-              const repAtCreation = daoStore.getRepAt(
-                ZERO_ADDRESS,
-                proposal.creationEvent.l1BlockNumber
-              ).totalSupply;
+            
+            const positiveStake = formatNumberValue(
+              normalizeBalance(proposal.positiveStakes, 18),
+              1
+            );
+            const negativeStake = formatNumberValue(
+              normalizeBalance(proposal.negativeStakes, 18),
+              1
+            );
+            const repAtCreation = daoStore.getRepAt(
+              ZERO_ADDRESS,
+              proposal.creationEvent.l1BlockNumber
+            ).totalSupply;
 
-              const positiveVotesPercentage = formatPercentage(
-                proposal.positiveVotes.div(repAtCreation),
-                2
-              );
-              const negativeVotesPercentage = formatPercentage(
-                proposal.negativeVotes.div(repAtCreation),
-                2
-              );
-              const timeToBoost = timeToTimestamp(proposal.boostTime);
-              const timeToFinish = timeToTimestamp(proposal.finishTime);
+            const positiveVotesPercentage = formatPercentage(
+              proposal.positiveVotes.div(repAtCreation),
+              2
+            );
+            const negativeVotesPercentage = formatPercentage(
+              proposal.negativeVotes.div(repAtCreation),
+              2
+            );
+            const timeToBoost = timeToTimestamp(proposal.boostTime);
+            const timeToFinish = timeToTimestamp(proposal.finishTime);
 
-              const votingMachineTokenName =
-                votingMachines.dxd &&
-                daoStore.getVotingMachineOfProposal(proposal.id) ===
-                  votingMachines.dxd.address
-                  ? 'DXD'
-                  : 'GEN';
+            const votingMachineTokenName =
+              votingMachines.dxd &&
+              daoStore.getVotingMachineOfProposal(proposal.id) ===
+                votingMachines.dxd.address
+                ? 'DXD'
+                : 'GEN';
 
-              const voted =
-                userEvents.votes.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              const staked =
-                userEvents.stakes.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              const created =
-                userEvents.newProposal.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              return (
-                <StyledTableRow
-                  onClick={() =>
-                    history.push(`/${networkName}/proposal/${proposal.id}`)
-                  }
+            const voted =
+              userEvents.votes.findIndex(
+                event => event.proposalId === proposal.id
+              ) > -1;
+            const staked =
+              userEvents.stakes.findIndex(
+                event => event.proposalId === proposal.id
+              ) > -1;
+            const created =
+              userEvents.newProposal.findIndex(
+                event => event.proposalId === proposal.id
+              ) > -1;
+            return (
+              <StyledTableRow
+                onClick={() =>
+                  history.push(`/${networkName}/proposal/${proposal.id}`)
+                }
+                key={`row-${i}`}
+              >
+                <DataCell
+                  weight="800"
+                  wrapText="true"
+                  fontSize="inherit"
+                  align="left"
                 >
-                  <DataCell
-                    weight="800"
-                    wrapText="true"
-                    fontSize="inherit"
-                    align="left"
-                  >
-                    {created && (
-                      <FiFeather
-                        style={{ minWidth: '15px', margin: '0px 2px' }}
-                      />
+                  {created && (
+                    <FiFeather
+                      style={{ minWidth: '15px', margin: '0px 2px' }}
+                    />
+                  )}
+                  {voted && (
+                    <FiCheckCircle
+                      style={{ minWidth: '15px', margin: '0px 2px' }}
+                    />
+                  )}
+                  {staked && (
+                    <FiCheckSquare
+                      style={{ minWidth: '15px', margin: '0px 2px' }}
+                    />
+                  )}
+                  {proposal.title.length > 0 ? proposal.title : proposal.id}
+                </DataCell>
+                <DataCell>
+                  {daoStore.getCache().schemes[proposal.scheme].name}
+                </DataCell>
+                <DataCell>
+                  <span>
+                    {proposal.status} <br />
+                    {timeToBoost !== '' ? (
+                      <small>
+                        Boost {timeToBoost} <br />
+                      </small>
+                    ) : (
+                      <span></span>
                     )}
-                    {voted && (
-                      <FiCheckCircle
-                        style={{ minWidth: '15px', margin: '0px 2px' }}
-                      />
+                    {timeToFinish !== '' ? (
+                      <small>Finish {timeToFinish} </small>
+                    ) : (
+                      <span></span>
                     )}
-                    {staked && (
-                      <FiCheckSquare
-                        style={{ minWidth: '15px', margin: '0px 2px' }}
-                      />
+                    {proposal.pendingAction === 3 ? (
+                      <small> Pending Finish Execution </small>
+                    ) : (
+                      <span></span>
                     )}
-                    {proposal.title.length > 0 ? proposal.title : proposal.id}
-                  </DataCell>
-                  <DataCell>
-                    {daoStore.getCache().schemes[proposal.scheme].name}
-                  </DataCell>
-                  <DataCell>
-                    <span>
-                      {proposal.status} <br />
-                      {timeToBoost !== '' ? (
-                        <small>
-                          Boost {timeToBoost} <br />
-                        </small>
-                      ) : (
-                        <span></span>
-                      )}
-                      {timeToFinish !== '' ? (
-                        <small>Finish {timeToFinish} </small>
-                      ) : (
-                        <span></span>
-                      )}
-                      {proposal.pendingAction === 3 ? (
-                        <small> Pending Finish Execution </small>
-                      ) : (
-                        <span></span>
-                      )}
-                    </span>
-                  </DataCell>
-                  <DataCell>
-                    <Positive>
-                      {positiveStake.toString()} {votingMachineTokenName}{' '}
-                    </Positive>
-                    <Separator>|</Separator>
-                    <Negative>
-                      {negativeStake.toString()} {votingMachineTokenName}
-                    </Negative>
-                  </DataCell>
-                  <DataCell>
-                    <Positive>{positiveVotesPercentage} </Positive>
-                    <Separator>|</Separator>
-                    <Negative>{negativeVotesPercentage}</Negative>
-                  </DataCell>
-                </StyledTableRow>
-              );
-            } else {
-              return null;
-            }
+                  </span>
+                </DataCell>
+                <DataCell>
+                  <Positive>
+                    {positiveStake.toString()} {votingMachineTokenName}{' '}
+                  </Positive>
+                  <Separator>|</Separator>
+                  <Negative>
+                    {negativeStake.toString()} {votingMachineTokenName}
+                  </Negative>
+                </DataCell>
+                <DataCell>
+                  <Positive>{positiveVotesPercentage} </Positive>
+                  <Separator>|</Separator>
+                  <Negative>{negativeVotesPercentage}</Negative>
+                </DataCell>
+              </StyledTableRow>
+            );
           })}
         </TableBody>
       </TableProposal>
