@@ -352,6 +352,3 @@ export const orderByNewestTimeToFinish = (a: any, b: any) =>
 // so we may use the same function for everycase? 
 export const orderByNewestTimeSinceFinished = (a: any, b: any) =>
   a.finishTime - b.finishTime;
-   
-export const enumKeys = <O extends object, K extends keyof O = keyof O>(obj: O): K[]  =>
-  Object.keys(obj).filter(k => Number.isNaN(+k)) as K[];
