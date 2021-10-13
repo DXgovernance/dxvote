@@ -1,6 +1,7 @@
-import arbitrumIcon from '../assets/images/arbitrum.png';
-import ethereumIcon from '../assets/images/ethereum.svg';
-import xdaiIcon from '../assets/images/xdai.svg';
+import { ChainConfig } from 'types';
+import arbitrumIcon from 'assets/images/arbitrum.png';
+import ethereumIcon from 'assets/images/ethereum.svg';
+import xdaiIcon from 'assets/images/xdai.svg';
 
 export const MAX_UINT =
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
@@ -13,46 +14,34 @@ export const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 export const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
-const defaultInfuraKey = process.env.REACT_APP_KEY_INFURA_API_KEY;
+const defaultAlchemyKey = process.env.REACT_APP_KEY_ALCHEMY_API_KEY;
 
-export const NETWORKS: {
-  id: number,
-  name: string,
-  displayName: string,
-  defaultRpc: string,
-  nativeAsset: {
-    name: string,
-    symbol: string,
-    decimals: number
-  },
-  blockExplorer?: string,
-  icon?: string
-}[] = [
+export const NETWORKS: ChainConfig[] = [
   {
     id: 1,
     name: 'mainnet',
     displayName: 'Ethereum Mainnet',
-    defaultRpc: `https://mainnet.infura.io/v3/${defaultInfuraKey}`,
+    defaultRpc: `https://eth-mainnet.alchemyapi.io/v2/${defaultAlchemyKey}`,
     nativeAsset: {
-      name: "Ethereum",
+      name: 'Ethereum',
       symbol: 'ETH',
-      decimals: 18
+      decimals: 18,
     },
     blockExplorer: 'https://etherscan.io',
-    icon: ethereumIcon
+    icon: ethereumIcon,
   },
   {
     id: 4,
     name: 'rinkeby',
     displayName: 'Rinkeby Testnet',
-    defaultRpc: `https://rinkeby.infura.io/v3/${defaultInfuraKey}`,
+    defaultRpc: `https://eth-rinkeby.alchemyapi.io/v2/${defaultAlchemyKey}`,
     nativeAsset: {
-      name: "Ethereum",
+      name: 'Ethereum',
       symbol: 'ETH',
-      decimals: 18
+      decimals: 18,
     },
     blockExplorer: 'https://rinkeby.etherscan.io/',
-    icon: ethereumIcon
+    icon: ethereumIcon,
   },
   {
     id: 100,
@@ -60,38 +49,38 @@ export const NETWORKS: {
     displayName: 'xDai Chain',
     defaultRpc: `https://rpc.xdaichain.com/`,
     nativeAsset: {
-      name: "xDai",
+      name: 'xDai',
       symbol: 'xDAI',
-      decimals: 18
+      decimals: 18,
     },
     blockExplorer: 'https://blockscout.com/xdai/mainnet/',
-    icon: xdaiIcon
+    icon: xdaiIcon,
   },
   {
     id: 42161,
     name: 'arbitrum',
     displayName: 'Arbitrum One',
-    defaultRpc: `https://arbitrum-mainnet.infura.io/v3/${defaultInfuraKey}`,
+    defaultRpc: `https://arb-mainnet.g.alchemy.com/v2/${defaultAlchemyKey}`,
     nativeAsset: {
-      name: "Ethereum",
+      name: 'Ethereum',
       symbol: 'ETH',
-      decimals: 18
+      decimals: 18,
     },
     blockExplorer: 'https://arbiscan.io/',
-    icon: arbitrumIcon
+    icon: arbitrumIcon,
   },
   {
     id: 421611,
     name: 'arbitrumTestnet',
     displayName: 'Arbitrum Testnet',
-    defaultRpc: `https://arbitrum-rinkeby.infura.io/v3/${defaultInfuraKey}`,
+    defaultRpc: `https://arb-rinkeby.g.alchemy.com/v2/${defaultAlchemyKey}`,
     nativeAsset: {
-      name: "Ethereum",
+      name: 'Ethereum',
       symbol: 'ETH',
-      decimals: 18
+      decimals: 18,
     },
     blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
-    icon: arbitrumIcon
+    icon: arbitrumIcon,
   },
   {
     id: 1337,
@@ -99,46 +88,34 @@ export const NETWORKS: {
     displayName: 'Localhost',
     defaultRpc: `http://localhost:8545`,
     nativeAsset: {
-      name: "Ethereum",
+      name: 'Ethereum',
       symbol: 'ETH',
-      decimals: 18
+      decimals: 18,
     },
   },
 ];
 
-export const NETWORK_NAMES: { [chainId: string]: string } = NETWORKS.reduce(
-  (acc, network) => {
+export const NETWORK_NAMES: Record<ChainConfig['id'], ChainConfig['name']> =
+  NETWORKS.reduce((acc, network) => {
     acc[network.id] = network.name;
     return acc;
-  },
-  {}
-);
+  }, {});
 
-export const NETWORK_EXPLORERS: { [name: string]: string } = NETWORKS.reduce(
-  (acc, network) => {
-    if (network?.blockExplorer) {
-      acc[network.name] = network.blockExplorer;
-    }
-    return acc;
-  },
-  {}
-);
+export const DEFAULT_RPC_URLS: Record<
+  ChainConfig['id'],
+  ChainConfig['defaultRpc']
+> = NETWORKS.reduce((acc, network) => {
+  acc[network.id] = network.defaultRpc;
+  return acc;
+}, {});
 
-export const DEFAULT_RPC_URLS: { [chainId: string]: string } = NETWORKS.reduce(
-  (acc, network) => {
-    acc[network.id] = network.defaultRpc;
-    return acc;
-  },
-  {}
-);
-
-export const NETWORK_ASSET_SYMBOL: { [name: string]: string } = NETWORKS.reduce(
-  (acc, network) => {
-    acc[network.name] = network.nativeAsset.symbol;
-    return acc;
-  },
-  {}
-);
+export const NETWORK_ASSET_SYMBOL: Record<
+  ChainConfig['name'],
+  ChainConfig['nativeAsset']['symbol']
+> = NETWORKS.reduce((acc, network) => {
+  acc[network.name] = network.nativeAsset.symbol;
+  return acc;
+}, {});
 
 export const INFURA_NETWORK_NAMES = {
   '1': 'mainnet',

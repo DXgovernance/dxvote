@@ -4,8 +4,8 @@ import { useContext } from '../contexts';
 import {
   BlockchainLink,
   InfoBox,
-  Title, 
-  Row, 
+  Title,
+  Row,
   Table,
   TableHeader,
   HeaderCell,
@@ -13,7 +13,7 @@ import {
   TableRow,
   DataCell,
   Positive,
-  Negative
+  Negative,
 } from '../components/common';
 import { FaTrophy, FaMedal } from 'react-icons/fa';
 import { bnum } from '../utils';
@@ -31,7 +31,9 @@ const GovernanceInfoWrapper = styled.div`
 `;
 
 const GovernanceTable = styled(Table)`
-  grid-template-columns: minmax(auto, 6%) minmax(auto, 36%) minmax(auto,15%) minmax(auto, 15%) minmax(auto, 15%) minmax(auto,15%);
+  grid-template-columns:
+    minmax(auto, 6%) minmax(auto, 36%) minmax(auto, 15%) minmax(auto, 15%)
+    minmax(auto, 15%) minmax(auto, 15%);
   min-width: 100%;
   margin-top: 20px;
 `;
@@ -114,73 +116,57 @@ const GovernanceInformation = observer(() => {
 
       <GovernanceTable>
         <TableHeader>
-          <HeaderCell align="center">
-            #
-          </HeaderCell>  
-          <HeaderCell align="center">
-            Address
-          </HeaderCell>
-          <HeaderCell align="center">
-            Proposals Created
-          </HeaderCell>
-          <HeaderCell align="center">
-            Voted
-          </HeaderCell>
-          <HeaderCell align="center">
-            Staked
-          </HeaderCell>
-          <HeaderCell align="center">
-            Score
-          </HeaderCell>
+          <HeaderCell align="center">#</HeaderCell>
+          <HeaderCell align="center">Address</HeaderCell>
+          <HeaderCell align="center">Proposals Created</HeaderCell>
+          <HeaderCell align="center">Voted</HeaderCell>
+          <HeaderCell align="center">Staked</HeaderCell>
+          <HeaderCell align="center">Score</HeaderCell>
         </TableHeader>
         <TableBody>
-        {governanceInfo.ranking.map((user, i) => {
-          return (
-            <TableRow key={`user${i}`}>
-              <DataCell align="center" weight="500">
-                {' '}
-                {i + 1}
-                {i === 0 ? (
-                  <FaTrophy color='gold'/>
-                ) : i === 1 ? (
-                  <FaTrophy color='silver'/>
-                ) : i === 2 ? (
-                  <FaTrophy color='#CD7F32'/>
-                ) : i < 6 ? (
-                  <FaMedal color='gold'/>
-                ) : i < 9 ? (
-                  <FaMedal color='silver'/>
-                ) : i < 12 ? (
-                  <FaMedal color='#CD7F32'/>
-                ) : (
-                  <div />
-                )}
-              </DataCell>
-              <DataCell weight="500">
-                <BlockchainLink
-                  size="long"
-                  type="address"
-                  text={user.address}
-                  toCopy
-                />
-              </DataCell>
-              <DataCell>
-                {user.proposals}
-              </DataCell>
-              <DataCell>
-                <Positive>{user.correctVotes} </Positive>-
-                <Negative> {user.wrongVotes}</Negative>
-              </DataCell>
-              <DataCell>
-                <Positive>{user.correctStakes} </Positive>-
-                <Negative> {user.wrongStakes}</Negative>
-              </DataCell>
-              <DataCell align="center">
-                {user.score.toFixed(0)}
-              </DataCell>
-            </TableRow>
-          );
-        })}
+          {governanceInfo.ranking.map((user, i) => {
+            return (
+              <TableRow key={`user${i}`}>
+                <DataCell align="center" weight="500">
+                  {' '}
+                  {i + 1}
+                  {i === 0 ? (
+                    <FaTrophy color="gold" />
+                  ) : i === 1 ? (
+                    <FaTrophy color="silver" />
+                  ) : i === 2 ? (
+                    <FaTrophy color="#CD7F32" />
+                  ) : i < 6 ? (
+                    <FaMedal color="gold" />
+                  ) : i < 9 ? (
+                    <FaMedal color="silver" />
+                  ) : i < 12 ? (
+                    <FaMedal color="#CD7F32" />
+                  ) : (
+                    <div />
+                  )}
+                </DataCell>
+                <DataCell weight="500">
+                  <BlockchainLink
+                    size="long"
+                    type="address"
+                    text={user.address}
+                    toCopy
+                  />
+                </DataCell>
+                <DataCell>{user.proposals}</DataCell>
+                <DataCell>
+                  <Positive>{user.correctVotes} </Positive>-
+                  <Negative> {user.wrongVotes}</Negative>
+                </DataCell>
+                <DataCell>
+                  <Positive>{user.correctStakes} </Positive>-
+                  <Negative> {user.wrongStakes}</Negative>
+                </DataCell>
+                <DataCell align="center">{user.score.toFixed(0)}</DataCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </GovernanceTable>
     </GovernanceInfoWrapper>

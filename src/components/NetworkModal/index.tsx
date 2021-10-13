@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-
-import { Modal } from '../Modal';
-import Option from './Option';
-import { getChains } from 'provider/connectors';
-import { useContext } from '../../contexts';
-import { useRpcUrls } from 'provider/providerHooks';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { useHistory } from "react-router-dom";
+import { Modal } from '../Modal';
+import Option from './Option';
+import { useContext } from 'contexts';
+import { useRpcUrls } from 'provider/providerHooks';
+import { getChains } from 'provider/connectors';
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -96,6 +95,7 @@ const NetworkModal = observer(() => {
       }
     } else {
       history.push(`/${chain.name}/proposals`);
+      window.location.reload();
     }
   };
 

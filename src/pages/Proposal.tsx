@@ -456,9 +456,7 @@ const ProposalPage = observer(() => {
           <Title noMargin> History </Title>
           {proposalEvents.history.map((historyEvent, i) => {
             return (
-              <ProposalHistoryEvent
-                key={'proposalHistoryEvent' + i}
-              >
+              <ProposalHistoryEvent key={'proposalHistoryEvent' + i}>
                 <span> {historyEvent.text} </span>
                 <BlockchainLink
                   type="transaction"
@@ -917,7 +915,8 @@ const ProposalPage = observer(() => {
           <div></div>
         )}
 
-        {account && proposal.stateInVotingMachine < 3 &&
+        {account &&
+        proposal.stateInVotingMachine < 3 &&
         redeemsLeft.bounty.indexOf(proposalId) > -1 ? (
           <SidebarRow
             style={{

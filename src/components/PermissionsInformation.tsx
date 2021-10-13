@@ -141,53 +141,33 @@ const PermissionsInformation = observer(() => {
   return (
     <PermissionsTable>
       <TableHeader>
-        <HeaderCell>
-          Asset
-        </HeaderCell>
-        <HeaderCell>
-          From
-        </HeaderCell>
-        <HeaderCell>
-          To
-        </HeaderCell>
-        <HeaderCell>
-          Function
-        </HeaderCell>
-        <HeaderCell>
-          Value
-        </HeaderCell>
-        <HeaderCell>
-          From Time
-        </HeaderCell>
+        <HeaderCell>Asset</HeaderCell>
+        <HeaderCell>From</HeaderCell>
+        <HeaderCell>To</HeaderCell>
+        <HeaderCell>Function</HeaderCell>
+        <HeaderCell>Value</HeaderCell>
+        <HeaderCell>From Time</HeaderCell>
       </TableHeader>
       <TableBody>
-      {permissions.map((permission, i) => (
-        <TableRow key={`permission${i}`}>
-          <DataCell>
-            {permission.asset}
-          </DataCell>
-          <DataCell>
-            {permission.from}
-          </DataCell>
-          <DataCell>
-            {permission.to}
-          </DataCell>
-          <DataCell>
-            {functionNames[permission.functionSignature] ||
-              permission.functionSignature}
-          </DataCell>
-          <DataCell>
-            {permission.value}
-          </DataCell>
-          <DataCell>
-            {permission.fromTime === 0 ? (
-              <FiX />
-            ) : (
-              timestampToDate(bnum(permission.fromTime))
-            )}
-          </DataCell>
-        </TableRow>
-      ))}
+        {permissions.map((permission, i) => (
+          <TableRow key={`permission${i}`}>
+            <DataCell>{permission.asset}</DataCell>
+            <DataCell>{permission.from}</DataCell>
+            <DataCell>{permission.to}</DataCell>
+            <DataCell>
+              {functionNames[permission.functionSignature] ||
+                permission.functionSignature}
+            </DataCell>
+            <DataCell>{permission.value}</DataCell>
+            <DataCell>
+              {permission.fromTime === 0 ? (
+                <FiX />
+              ) : (
+                timestampToDate(bnum(permission.fromTime))
+              )}
+            </DataCell>
+          </TableRow>
+        ))}
       </TableBody>
     </PermissionsTable>
   );

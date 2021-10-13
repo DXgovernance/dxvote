@@ -9,10 +9,10 @@ export const TableHeader = styled.thead`
   display: contents;
   color: var(--light-text-gray);
   font-size: 14px;
-`
+`;
 
 interface HeaderCellProps {
-  align?: string
+  align?: string;
 }
 
 export const HeaderCell = styled.th<HeaderCellProps>`
@@ -34,10 +34,10 @@ export const TableBody = styled.tbody`
 `;
 
 interface DataCellProps {
-    color?: string;
-    align?: string;
-    weight?: string;
-    wrapText?: boolean;
+  color?: string;
+  align?: string;
+  weight?: string;
+  wrapText?: boolean;
 }
 export const DataCell = styled.td<DataCellProps>`
   color: ${props => props.color};

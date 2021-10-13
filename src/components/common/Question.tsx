@@ -19,5 +19,3 @@ export const Question = ({ question }) => {
     </QuestionLink>
   );
 };
-
-
