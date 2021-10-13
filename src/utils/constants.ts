@@ -109,6 +109,16 @@ export const DEFAULT_RPC_URLS: Record<
   return acc;
 }, {});
 
+export const NETWORK_EXPLORERS: { [name: string]: string } = NETWORKS.reduce(
+  (acc, network) => {
+    if (network?.blockExplorer) {
+      acc[network.name] = network.blockExplorer;
+    }
+    return acc;
+  },
+  {}
+);
+
 export const NETWORK_ASSET_SYMBOL: Record<
   ChainConfig['name'],
   ChainConfig['nativeAsset']['symbol']
