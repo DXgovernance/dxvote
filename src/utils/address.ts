@@ -1,7 +1,21 @@
 import { ethers, utils } from 'ethers';
 import { NETWORK_EXPLORERS } from 'utils';
 
-const appConfig = require('../config.json');
+const arbitrum = require('../configs/arbitrum/config.json');
+const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
+const mainnet = require('../configs/mainnet/config.json');
+const xdai = require('../configs/xdai/config.json');
+const rinkeby = require('../configs/rinkeby/config.json');
+const localhost = require('../configs/localhost/config.json');
+
+const appConfig: AppConfig = {
+  arbitrum,
+  arbitrumTestnet,
+  mainnet,
+  xdai,
+  rinkeby,
+  localhost,
+};
 
 export function shortenAddress(address, digits = 4) {
   if (!isAddress(address)) {
