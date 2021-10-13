@@ -85,8 +85,6 @@ export const CreateMetadataPage = observer(() => {
     setProposalConfig(proposalTypes.find(type => type.id === proposalType));
   }, []);
 
-  console.log({ proposalConfig });
-
   const [descriptionText, setDescriptionText] = useState(
     localStorage.getItem('dxvote-newProposal-description') || ''
   );
