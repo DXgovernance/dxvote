@@ -1,0 +1,21 @@
+name: IPFS Preview Deploy - Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    name: Remove test environment deployment
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/develop'
+    steps:
+      - name: Inject slug variables
+        uses: rlespinasse/github-slug-action@3.5.1
+
+      - name: Mark deployment as deactivated
+        uses: bobheadxi/deployments@v0.6.0
+        with:
+          step: deactivate-env
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ env.GITHUB_HEAD_REF_SLUG_URL }}
