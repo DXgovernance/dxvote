@@ -160,7 +160,7 @@ const ProposalsPage = observer(() => {
     );
   });
 
-  //filtering and sorting proposals for All States criteria
+  /// filtering and sorting proposals for All States criteria
   const filterInitialCriteria = (proposals) => {
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     let earliestAbove10 = proposals.filter(
@@ -190,16 +190,12 @@ const ProposalsPage = observer(() => {
       
     // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     let earliestUnder10 = proposals.filter((proposal: Proposal): Boolean => {
-          
-      // is it necessary to all this datoSTore.getRepAt? 
-      // can we calculate the percentage somehow from the data in the proposal object ? Kinda 
-      // proposal.positiveVotes.div(porosal.positiveVotes + proposal.negativeVotes) ? 
       const repAtCreation = daoStore.getRepAt(
         ZERO_ADDRESS,
         proposal.creationEvent.l1BlockNumber
       ).totalSupply;
           
-      return ( // ( QuietEndingPeriod OR Qeued ) with > 10% positive votes. 
+      return (
         (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
           || proposal.stateInVotingMachine === VotingMachineProposalState.Queued)
         && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).lt(QUEUED_PRIORITY_THRESHOLD)
