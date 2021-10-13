@@ -160,7 +160,7 @@ const ProposalsPage = observer(() => {
   });
 
   //filtering and sorting proposals for All States criteria
-  const getAllProposals = (proposals) => {
+  const filterInitialCriteria = (proposals) => {
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     let earliestAbove10 = proposals.filter(
       (proposal: Proposal) => {
@@ -219,7 +219,7 @@ const ProposalsPage = observer(() => {
   
     let sortedProposals;
     if (stateFilter === 'Any Status') {
-      sortedProposals = getAllProposals(allProposals);
+      sortedProposals = filterInitialCriteria(allProposals);
     } else {
       sortedProposals = allProposals.filter((proposal) => parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter))
     }
