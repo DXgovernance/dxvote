@@ -144,13 +144,14 @@ const ProposalCallText = styled.span`
 const Vote = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.votes.fontSize};
-
+  justify-content: space-between;
   > * {
     margin-left: 4px;
   }
 `;
 
 const Summary = styled.div`
+  
 `;
 const PositiveSummary = styled(Summary)`
   color: ${({ theme }) => theme.votes.positive.color};
