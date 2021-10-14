@@ -2,10 +2,12 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { shortenAddress, toCamelCaseString } from '../../utils';
 import WalletModal from 'components/WalletModal';
-import { isChainIdSupported } from 'provider/connectors';
+import { getChains, injected, isChainIdSupported } from 'provider/connectors';
 import { useContext } from '../../contexts';
 import { Box } from '../../components/common';
 import NetworkModal from 'components/NetworkModal';
+import { useEffect, useState } from 'react';
+import { useRpcUrls } from 'provider/providerHooks';
 
 const WrongNetworkButton = styled(Box)`
   color: var(--dark-text-gray);
@@ -44,12 +46,22 @@ const ConnectButton = styled(Box)`
 
 const ChainButton = styled(AccountButton)`
   font-size: 14px;
-`
+`;
 
 const Web3ConnectStatus = observer(props => {
   const {
     context: { modalStore, providerStore, configStore },
   } = useContext();
+  const [injectedWalletAuthorized, setInjectedWalletAuthorized] =
+    useState(false);
+  const rpcUrls = useRpcUrls();
+
+  useEffect(() => {
+    injected.isAuthorized().then(isAuthorized => {
+      setInjectedWalletAuthorized(isAuthorized);
+    });
+  }, [injected]);
+
   const { chainId, account, error } = providerStore.getActiveWeb3React();
 
   const toggleWalletModal = () => {
@@ -60,9 +72,44 @@ const Web3ConnectStatus = observer(props => {
     modalStore.toggleNetworkModal();
   };
 
+  const switchNetwork = async chain => {
+    const chainIdHex = `0x${chain.id.toString(16)}`;
+    try {
+      await window.ethereum?.send('wallet_switchEthereumChain', [
+        { chainId: chainIdHex },
+      ]);
+    } catch (e: any) {
+      if (e?.code == 4902) {
+        window.ethereum?.send('wallet_addEthereumChain', [
+          {
+            chainId: chainIdHex,
+            chainName: chain.displayName,
+            nativeCurrency: chain.nativeAsset,
+            rpcUrls: [chain.rpcUrl, chain.defaultRpc],
+            blockExplorerUrls: [chain.blockExplorer],
+          },
+        ]);
+      }
+    }
+  };
+
   function getWalletStatus() {
     console.debug('[GetWalletStatus]', { account });
-    if (account) {
+    if (injectedWalletAuthorized && !account) {
+      const chains = getChains(rpcUrls);
+      const activeChain =
+        chains.find(chain => chain.id == chainId) || chains[0];
+      const isMetamask = window.ethereum && window.ethereum.isMetaMask;
+      return (
+        <ConnectButton
+          onClick={() => switchNetwork(activeChain)}
+          active={true}
+        >
+          Switch {isMetamask ? 'MetaMask' : 'Wallet'} to{' '}
+          {activeChain.displayName}
+        </ConnectButton>
+      );
+    } else if (account) {
       return (
         <AccountButton onClick={toggleWalletModal}>
           {shortenAddress(account)}
