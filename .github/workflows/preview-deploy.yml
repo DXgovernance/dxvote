@@ -1,12 +1,13 @@
 name: IPFS Preview Deploy
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
       - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [synchronize, edited, opened, converted_to_draft, ready_for_review, reopened]
 
 jobs:
   develop-ci:
@@ -47,7 +48,7 @@ jobs:
         with:
           web3_token: ${{ secrets.WEB3_STORAGE_TOKEN }}
           path_to_add: 'build'
-
+ 
       - name: Update DNS Record for Develop Branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink.develop --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
