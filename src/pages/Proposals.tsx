@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
+import MiniSearch from 'minisearch';
 import { useContext } from '../contexts';
 import {
   LinkButton,
@@ -139,6 +140,7 @@ const ProposalsPage = observer(() => {
   const {
     context: { daoStore, configStore, providerStore },
   } = useContext();
+  const history = useHistory();
 
   const schemes = daoStore.getAllSchemes();
   const votingMachines = configStore.getNetworkContracts().votingMachines;
@@ -146,65 +148,105 @@ const ProposalsPage = observer(() => {
   const [schemeFilter, setSchemeFilter] = React.useState('All Schemes');
   const [titleFilter, setTitleFilter] = React.useState('');
   const [proposals, setProposals] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const miniSearchRef = React.useRef(
+    new MiniSearch({
+      fields: ['title'],
+      storeFields: ['id'],
+      searchOptions: {
+        fuzzy: 0.3,
+        prefix: true,
+        combineWith: 'AND',
+      },
+    })
+  );
   const networkName = configStore.getActiveChainName();
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
 
-  const allProposals = daoStore.getAllProposals().map(cacheProposal => {
-    return Object.assign(
-      cacheProposal,
-      daoStore.getProposalStatus(cacheProposal.id)
-    );
-  });
+  const miniSearch = miniSearchRef.current;
 
-  /**
-   * proposals are ordered:
-   *  QuietEndingPeriod
-   *  Boosted
-   *  PreBoosted
-   *  Queued
-   *  Executed
-   *  ExpiredInQueue
-   *  None
-   * Preboosted are ordered in boostTime and not in Finish Time.
-   *
-   */
-  const sortedProposals = mapEnum(VotingMachineProposalState, p => {
-    return (
-      allProposals
+  useEffect(() => {
+    setIsLoading(true);
 
-        /**
-         * loop over the enum
-         * filter each enum value
-         * sort them
-         * flatten array
-         * reverse order of array from ascending to descending
-         */
+    const allProposals = daoStore.getAllProposals().map(cacheProposal => {
+      return Object.assign(
+        cacheProposal,
+        daoStore.getProposalStatus(cacheProposal.id)
+      );
+    });
+    const sortedProposals = sortProposals(allProposals);
+    setProposals(sortedProposals);
+    setIsLoading(false);
+
+    console.debug('All Proposals', allProposals, allProposals.length, daoStore);
+  }, [daoStore.daoCache]);
+
+  // Rebuild search index when proposals list changes
+  useEffect(() => {
+    miniSearch.removeAll();
+    miniSearch.addAll(proposals);
+  }, [proposals]);
+
+  function sortProposals(proposals) {
+    /**
+     * proposals are ordered:
+     *  QuietEndingPeriod
+     *  Boosted
+     *  PreBoosted
+     *  Queued
+     *  Executed
+     *  ExpiredInQueue
+     *  None
+     * Preboosted are ordered in boostTime and not in Finish Time.
+     *
+     */
+    return mapEnum(VotingMachineProposalState, p => {
+      /**
+       * loop over the enum
+       * filter each enum value
+       * sort them
+       * flatten array
+       * reverse order of array from ascending to descending
+       */
+      return proposals
         .filter(proposal => proposal.stateInVotingMachine === p)
         .sort((a, b) =>
           a.boostTime.toNumber() > 0
             ? b.boostTime.toNumber() - a.boostTime.toNumber()
             : b.finishTime - a.finishTime
-        )
-    );
-  })
-    .flat(1)
-    .reverse();
-  if (sortedProposals.length > proposals.length) setProposals(sortedProposals);
-
-  function onStateFilterChange(newValue) {
-    setStateFilter(newValue.target.value);
-  }
-  function onTitleFilterChange(newValue) {
-    setTitleFilter(newValue.target.value);
-  }
-  function onSchemeFilterChange(newValue) {
-    setSchemeFilter(newValue.target.value);
+        );
+    })
+      .flat(1)
+      .reverse();
   }
 
-  const history = useHistory();
+  function filterProposals() {
+    let searchHits = proposals;
+    if (titleFilter) {
+      searchHits = miniSearch.search(titleFilter).map(searchResult => {
+        return proposals.find(proposal => proposal.id == searchResult.id);
+      });
+    }
+    return searchHits.filter(proposal => {
+      const filterByState =
+        stateFilter === 'Any Status' || proposal.status === stateFilter;
+      const filterByScheme =
+        schemeFilter === 'All Schemes' || proposal.scheme === schemeFilter;
 
-  console.debug('All Proposals', allProposals, allProposals.length, daoStore);
+      return filterByState && filterByScheme;
+    });
+  }
+
+  function onStateFilterChange(event) {
+    setStateFilter(event.target.value);
+  }
+  function onTitleFilterChange(event) {
+    setTitleFilter(event.target.value);
+  }
+  function onSchemeFilterChange(event) {
+    setSchemeFilter(event.target.value);
+  }
 
   return (
     <ProposalsWrapper>
@@ -220,11 +262,13 @@ const ProposalsPage = observer(() => {
             placeholder="Search by proposal title"
             name="titleFilter"
             id="titleFilter"
+            value={titleFilter}
             onChange={onTitleFilterChange}
           ></ProposalsNameFilter>
           <ProposalsFilter
             name="stateFilter"
             id="stateSelector"
+            value={stateFilter}
             onChange={onStateFilterChange}
           >
             <option value="Any Status">Any Status</option>
@@ -242,6 +286,7 @@ const ProposalsPage = observer(() => {
           <ProposalsFilter
             name="schemeFilter"
             id="schemeSelector"
+            value={schemeFilter}
             onChange={onSchemeFilterChange}
           >
             <option value="All Schemes">All Schemes</option>
@@ -267,137 +312,124 @@ const ProposalsPage = observer(() => {
           <HeaderCell>Votes</HeaderCell>
         </TableHeader>
         <TableBody>
-          {proposals.length === 0 && <h3>No Proposals Found</h3>}
+          {isLoading && <h3>Loading proposals...</h3>}
 
-          {proposals.map((proposal, i) => {
-            console.log(i);
-            if (
-              proposal &&
-              (stateFilter === 'Any Status' ||
-                (stateFilter !== 'Any Status' &&
-                  proposal.status === stateFilter)) &&
-              (titleFilter.length === 0 ||
-                (titleFilter.length > 0 &&
-                  proposal.title.indexOf(titleFilter) >= 0)) &&
-              (schemeFilter === 'All Schemes' ||
-                proposal.scheme === schemeFilter)
-            ) {
-              const positiveStake = formatNumberValue(
-                normalizeBalance(proposal.positiveStakes, 18),
-                1
-              );
-              const negativeStake = formatNumberValue(
-                normalizeBalance(proposal.negativeStakes, 18),
-                1
-              );
-              const repAtCreation = daoStore.getRepAt(
-                ZERO_ADDRESS,
-                proposal.creationEvent.l1BlockNumber
-              ).totalSupply;
+          {!isLoading && proposals.length === 0 && <h3>No Proposals Found</h3>}
 
-              const positiveVotesPercentage = formatPercentage(
-                proposal.positiveVotes.div(repAtCreation),
-                2
-              );
-              const negativeVotesPercentage = formatPercentage(
-                proposal.negativeVotes.div(repAtCreation),
-                2
-              );
-              const timeToBoost = timeToTimestamp(proposal.boostTime);
-              const timeToFinish = timeToTimestamp(proposal.finishTime);
+          {filterProposals().map(proposal => {
+            const positiveStake = formatNumberValue(
+              normalizeBalance(proposal.positiveStakes, 18),
+              1
+            );
+            const negativeStake = formatNumberValue(
+              normalizeBalance(proposal.negativeStakes, 18),
+              1
+            );
+            const repAtCreation = daoStore.getRepAt(
+              ZERO_ADDRESS,
+              proposal.creationEvent.l1BlockNumber
+            ).totalSupply;
 
-              const votingMachineTokenName =
-                votingMachines.dxd &&
-                daoStore.getVotingMachineOfProposal(proposal.id) ===
-                  votingMachines.dxd.address
-                  ? 'DXD'
-                  : 'GEN';
+            const positiveVotesPercentage = formatPercentage(
+              proposal.positiveVotes.div(repAtCreation),
+              2
+            );
+            const negativeVotesPercentage = formatPercentage(
+              proposal.negativeVotes.div(repAtCreation),
+              2
+            );
+            const timeToBoost = timeToTimestamp(proposal.boostTime);
+            const timeToFinish = timeToTimestamp(proposal.finishTime);
 
-              const voted =
-                userEvents.votes.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              const staked =
-                userEvents.stakes.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              const created =
-                userEvents.newProposal.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              return (
-                <StyledTableRow
-                  onClick={() =>
-                    history.push(`/${networkName}/proposal/${proposal.id}`)
-                  }
+            const votingMachineTokenName =
+              votingMachines.dxd &&
+              daoStore.getVotingMachineOfProposal(proposal.id) ===
+                votingMachines.dxd.address
+                ? 'DXD'
+                : 'GEN';
+
+            const voted =
+              userEvents.votes.findIndex(
+                event => event.proposalId === proposal.id
+              ) > -1;
+            const staked =
+              userEvents.stakes.findIndex(
+                event => event.proposalId === proposal.id
+              ) > -1;
+            const created =
+              userEvents.newProposal.findIndex(
+                event => event.proposalId === proposal.id
+              ) > -1;
+            return (
+              <StyledTableRow
+                onClick={() =>
+                  history.push(`/${networkName}/proposal/${proposal.id}`)
+                }
+              >
+                <DataCell
+                  weight="800"
+                  wrapText="true"
+                  fontSize="inherit"
+                  align="left"
                 >
-                  <DataCell
-                    weight="800"
-                    wrapText="true"
-                    fontSize="inherit"
-                    align="left"
-                  >
-                    {created && (
-                      <FiFeather
-                        style={{ minWidth: '15px', margin: '0px 2px' }}
-                      />
+                  {created && (
+                    <FiFeather
+                      style={{ minWidth: '15px', margin: '0px 2px' }}
+                    />
+                  )}
+                  {voted && (
+                    <FiCheckCircle
+                      style={{ minWidth: '15px', margin: '0px 2px' }}
+                    />
+                  )}
+                  {staked && (
+                    <FiCheckSquare
+                      style={{ minWidth: '15px', margin: '0px 2px' }}
+                    />
+                  )}
+                  {proposal.title.length > 0 ? proposal.title : proposal.id}
+                </DataCell>
+                <DataCell>
+                  {daoStore.getCache().schemes[proposal.scheme].name}
+                </DataCell>
+                <DataCell>
+                  <span>
+                    {proposal.status} <br />
+                    {timeToBoost !== '' ? (
+                      <small>
+                        Boost {timeToBoost} <br />
+                      </small>
+                    ) : (
+                      <span></span>
                     )}
-                    {voted && (
-                      <FiCheckCircle
-                        style={{ minWidth: '15px', margin: '0px 2px' }}
-                      />
+                    {timeToFinish !== '' ? (
+                      <small>Finish {timeToFinish} </small>
+                    ) : (
+                      <span></span>
                     )}
-                    {staked && (
-                      <FiCheckSquare
-                        style={{ minWidth: '15px', margin: '0px 2px' }}
-                      />
+                    {proposal.pendingAction === 3 ? (
+                      <small> Pending Finish Execution </small>
+                    ) : (
+                      <span></span>
                     )}
-                    {proposal.title.length > 0 ? proposal.title : proposal.id}
-                  </DataCell>
-                  <DataCell>
-                    {daoStore.getCache().schemes[proposal.scheme].name}
-                  </DataCell>
-                  <DataCell>
-                    <span>
-                      {proposal.status} <br />
-                      {timeToBoost !== '' ? (
-                        <small>
-                          Boost {timeToBoost} <br />
-                        </small>
-                      ) : (
-                        <span></span>
-                      )}
-                      {timeToFinish !== '' ? (
-                        <small>Finish {timeToFinish} </small>
-                      ) : (
-                        <span></span>
-                      )}
-                      {proposal.pendingAction === 3 ? (
-                        <small> Pending Finish Execution </small>
-                      ) : (
-                        <span></span>
-                      )}
-                    </span>
-                  </DataCell>
-                  <DataCell>
-                    <Positive>
-                      {positiveStake.toString()} {votingMachineTokenName}{' '}
-                    </Positive>
-                    <Separator>|</Separator>
-                    <Negative>
-                      {negativeStake.toString()} {votingMachineTokenName}
-                    </Negative>
-                  </DataCell>
-                  <DataCell>
-                    <Positive>{positiveVotesPercentage} </Positive>
-                    <Separator>|</Separator>
-                    <Negative>{negativeVotesPercentage}</Negative>
-                  </DataCell>
-                </StyledTableRow>
-              );
-            } else {
-              return null;
-            }
+                  </span>
+                </DataCell>
+                <DataCell>
+                  <Positive>
+                    {positiveStake.toString()} {votingMachineTokenName}{' '}
+                  </Positive>
+                  <Separator>|</Separator>
+                  <Negative>
+                    {negativeStake.toString()} {votingMachineTokenName}
+                  </Negative>
+                </DataCell>
+                <DataCell>
+                  <Positive>{positiveVotesPercentage} </Positive>
+                  <Separator>|</Separator>
+                  <Negative>{negativeVotesPercentage}</Negative>
+                </DataCell>
+              </StyledTableRow>
+            );
           })}
         </TableBody>
       </TableProposal>

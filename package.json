@@ -45,6 +45,7 @@
     "ipfs-core": "^0.3.0",
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "0.8.0",
+    "minisearch": "^3.1.0",
     "mobx": "^6.3.0",
     "mobx-react": "^7.1.0",
     "moment": "^2.24.0",
