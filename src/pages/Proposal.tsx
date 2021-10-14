@@ -189,6 +189,15 @@ const Detail = styled.div`
   }
 `;
 
+const ActionArea = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TextCenter = styled.div`
+  text-align: center;
+`;
+
 const HistoryEventText = styled.span`
   margin-right: 5px;
 `;
@@ -716,12 +725,12 @@ const ProposalPage = observer(() => {
           proposal.stateInVotingMachine === 4) &&
         votingParameters.votersReputationLossRatio.toNumber() > 0 &&
         finishTime.toNumber() > 0 ? (
-          <div style={{ textAlign: 'center' }}>
+          <TextCenter>
             <small>
               Voter REP Loss Ratio:{' '}
               {votingParameters.votersReputationLossRatio.toString()}%
             </small>
-          </div>
+          </TextCenter>
         ) : (
           <div />
         )}
@@ -873,7 +882,7 @@ const ProposalPage = observer(() => {
           proposal.stateInVotingMachine === 4) &&
         votingMachineTokenApproved.toString() === '0' ? (
           <SidebarRow>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <ActionArea>
               <small>Approve {votingMachineTokenName} to stake</small>
               <ActionButton
                 color="blue"
@@ -881,7 +890,7 @@ const ProposalPage = observer(() => {
               >
                 Approve {votingMachineTokenName}
               </ActionButton>
-            </div>
+            </ActionArea>
           </SidebarRow>
         ) : account &&
           !finishTimeReached &&
