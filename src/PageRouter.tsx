@@ -49,7 +49,8 @@ const PageRouter = observer(({ children }) => {
   etherscanService.isAuthenticated();
   pinataService.isAuthenticated();
 
-  const { active: providerActive, connector } = providerStore.getActiveWeb3React();
+  const { active: providerActive, connector } =
+    providerStore.getActiveWeb3React();
 
   if (noLoading.indexOf(location.pathname) > -1) {
     return <PageRouterWrapper> {children} </PageRouterWrapper>;

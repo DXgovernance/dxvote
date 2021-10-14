@@ -369,7 +369,7 @@
       "name": "Payment Proposal",
       "title": "[NAME] Payment Proposal [DATE - DATE]",
       "description": "# Timeframe\n \n - State the contributor proposal date range\n \n # Background\n \n - State the context for making the contributor payment proposal, including:\n - What position you will be filling – i.e. developer, marketing, governance, etc.\n - Proposed Scope of Contribution\n - Self-Reflection on Scope of Contribution\n - Include the URL to the original proposal forum post\n \n # Deliverables\n\n - Include information around deliverables that were completed during your worker period\n \n # Compensation\n\n - Experience Level : 1-5\n - Time commitment : Percent (%) of time\n - [ETH/DAI AMT] : For second half payment proposal\n - [DXD AMT] : Vested for 2 years with a 1 year cliff starting the [DATE WORK PERIOD STARTS]\n - [% AMT REP]: For 2 second half payment proposal\n \n # Work Experience\n \n - Prior DXdao work proposals (if applicable)\n - Past Work for DXdao\n - If a developer, Github links\n - If a non-tech worker, doc links or described\n - If new, past relevant work experience\n - Developers : Github profile link\n - Non-tech : suggested Linkedin / other references\n \n"
-    } ,
+    },
     {
       "name": "Signal Proposal",
       "title": "Signal Proposal for [DAO_ACTION]",
@@ -383,7 +383,7 @@
         {
           "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
           "functionName": "approve(address,uint256)",
-          "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C",""]
+          "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C", ""]
         },
         {
           "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
