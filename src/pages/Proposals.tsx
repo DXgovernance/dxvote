@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
@@ -146,13 +146,13 @@ const ProposalsPage = observer(() => {
 
   const schemes = daoStore.getAllSchemes();
   const votingMachines = configStore.getNetworkContracts().votingMachines;
-  const [stateFilter, setStateFilter] = React.useState('Any Status');
-  const [schemeFilter, setSchemeFilter] = React.useState('All Schemes');
-  const [titleFilter, setTitleFilter] = React.useState('');
-  const [proposals, setProposals] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  //const [resetTitleFilter, setResetTitleFilter] = React.useState(false);
-  const miniSearchRef = React.useRef(
+  const [stateFilter, setStateFilter] = useState('Any Status');
+  const [schemeFilter, setSchemeFilter] = useState('All Schemes');
+  const [titleFilter, setTitleFilter] = useState('');
+  const [proposals, setProposals] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  //const [resetTitleFilter, setResetTitleFilter] = useState(false);
+  const miniSearchRef = useRef(
     new MiniSearch({
       fields: ['title'],
       storeFields: ['id'],
@@ -167,6 +167,7 @@ const ProposalsPage = observer(() => {
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
   
+
   const allProposals = daoStore.getAllProposals().map(cacheProposal => {
     return Object.assign(
       cacheProposal,
@@ -174,6 +175,22 @@ const ProposalsPage = observer(() => {
     );
   });
   const miniSearch = miniSearchRef.current;
+  
+  //a inState cache for repAt memoization.
+  const [cachecita, setCachecita] = useState({});
+  const getRepMemoized = (block) => {
+    if (cachecita[block]) {
+      return cachecita[block]
+    } else {
+      let obj = cachecita;
+      obj[block] = daoStore.getRepAt(
+        ZERO_ADDRESS,
+        block
+      ).totalSupply;
+      setCachecita(cachecita);
+      return obj[block];
+    }
+  }
 
   /// filtering and sorting proposals for All States criteria
   const filterInitialCriteria = (proposals) => {
@@ -181,10 +198,7 @@ const ProposalsPage = observer(() => {
     let earliestAbove10 = proposals.filter(
       (proposal: Proposal) => {
         
-        const repAtCreation = daoStore.getRepAt(
-          ZERO_ADDRESS,
-          proposal.creationEvent.l1BlockNumber
-        ).totalSupply;
+        const repAtCreation = getRepMemoized(proposal.creationEvent.l1BlockNumber)
         
         return (
           (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
@@ -205,10 +219,7 @@ const ProposalsPage = observer(() => {
       
     // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     let earliestUnder10 = proposals.filter((proposal: Proposal): Boolean => {
-      const repAtCreation = daoStore.getRepAt(
-        ZERO_ADDRESS,
-        proposal.creationEvent.l1BlockNumber
-      ).totalSupply;
+      const repAtCreation = getRepMemoized( proposal.creationEvent.l1BlockNumber)
           
       return (
         (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
@@ -227,7 +238,6 @@ const ProposalsPage = observer(() => {
   
   
   useEffect(() => {
-    debugger;
     let sortedProposals;
     setIsLoading(true);
     
@@ -248,32 +258,11 @@ const ProposalsPage = observer(() => {
       sortedProposals = sortedProposals.filter(proposal => search.find(elem => elem.id === proposal.id))
     }
     
-    setProposals(sortedProposals); //triggers reindex
+    setProposals(sortedProposals); 
     setIsLoading(false);
     
   }, [schemeFilter, stateFilter, titleFilter])
   
-
-/*
-  useEffect(() => {
-    console.log('changed titleFilter')
-    if (titleFilter) {
-      
-      searchHits = miniSearch.search(titleFilter).map(searchResult => {
-        return proposals.find(proposal => proposal.id == searchResult.id);
-      });
-      searchHits = searchHits.flat(1).filter(elem => elem !== undefined)
-      if (searchHits.length > 0) {
-        setNoResults(searchHits)
-      }
-      else setProposals([]);
-      
-      setProposals(proposals.filter((proposal => proposal.title.indexOf(titleFilter) > 0)))
-    }
-    // if (!titleFilter) setProposals(allProposals);
-    
-  }, [titleFilter]);
-  */
   
 
   function onStateFilterChange(event) {
@@ -285,7 +274,18 @@ const ProposalsPage = observer(() => {
   function onSchemeFilterChange(event) {
     setSchemeFilter(event.target.value);
   }
-
+  /*
+  const getRepMemoized = useMemo((l1BlockNumber) => {
+      const obj = daoStore.getRepAt(
+        ZERO_ADDRESS,
+        l1BlockNumber
+      )
+      return obj
+    },
+      [proposal.creationEvent.l1BlockNumber]
+  );
+  */
+  
   return (
     <ProposalsWrapper>
       <SidebarWrapper>
@@ -355,10 +355,9 @@ const ProposalsPage = observer(() => {
               normalizeBalance(proposal.negativeStakes, 18),
               1
             );
-            const repAtCreation = daoStore.getRepAt(
-              ZERO_ADDRESS,
-              proposal.creationEvent.l1BlockNumber
-            ).totalSupply;
+            
+            // const repAtCreation = 
+            const repAtCreation = getRepMemoized(proposal.creationEvent.l1BlockNumber)
 
             const positiveVotesPercentage = formatPercentage(
               proposal.positiveVotes.div(repAtCreation),

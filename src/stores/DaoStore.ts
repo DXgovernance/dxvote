@@ -1114,7 +1114,7 @@ export default class DaoStore {
       };
     }
   }
-
+  
   getRepAt(
     userAddress: string = ZERO_ADDRESS,
     atBlock: number = 0
