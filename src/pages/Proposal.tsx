@@ -151,9 +151,7 @@ const Vote = styled.div`
   }
 `;
 
-const Summary = styled.div`
-  
-`;
+const Summary = styled.div``;
 const PositiveSummary = styled(Summary)`
   color: ${({ theme }) => theme.votes.positive.color};
 `;
@@ -165,11 +163,18 @@ const SummaryTotal = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 15px;
 `;
 const SummaryDetails = styled.div`
   font-size: 13px;
   flex: 1;
+`;
+
+const ProposalDescription = styled.div`
+  margin: 0px 10px;
+  padding: 10px 0px;
+  flex-direction: column;
+  font-size: 14px;
 `;
 
 const Detail = styled.div`
@@ -178,6 +183,7 @@ const Detail = styled.div`
   line-height: 20px;
   align-content: center;
   justify-items: center;
+  flex-wrap: no-wrap;
   > * {
     margin-right: 5px;
   }
@@ -574,69 +580,65 @@ const ProposalPage = observer(() => {
 
         <SidebarDivider />
 
-        <SidebarRow
-          style={{
-            margin: '0px 10px',
-            padding: '10px 0px',
-            flexDirection: 'column',
-          }}
-        >
-          <Detail>
-            <strong>Proposer</strong>{' '}
-            <small>
-              <BlockchainLink type="user" text={proposal.proposer} toCopy />
-            </small>
-          </Detail>
-           <Detail>
-            <strong>Scheme</strong> <small>{scheme.name}</small>
-          </Detail>
-          <Detail>
-            <strong>State in Voting Machine </strong>
-            <small>
-              {VotingMachineProposalState[proposal.stateInVotingMachine]}
-            </small>
-          </Detail>
-          <Detail>
-            <strong>State in Scheme </strong>
-            <small>{WalletSchemeProposalState[proposal.stateInScheme]}</small>
-          </Detail>
-          <Detail>
-            {' '}
-            <strong>Submitted Date</strong>{' '}
-            <small>
-              {moment
-                .unix(proposal.submittedTime.toNumber())
-                .format('MMMM Do YYYY, h:mm:ss')}
-            </small>{' '}
-          </Detail>
-          <Detail>
-            {' '}
-            <strong>Boost Date</strong>{' '}
-            <small>
-              {boostTime.toNumber() > 0
-                ? moment
-                    .unix(boostTime.toNumber())
-                    .format('MMMM Do YYYY, h:mm:ss')
-                : '-'}
-            </small>{' '}
-          </Detail>
-          <Detail>
-            {' '}
-            <strong>Finish Date</strong>{' '}
-            <small>
-              {moment
-                .unix(finishTime.toNumber())
-                .format('MMMM Do YYYY, h:mm:ss')}
-            </small>{' '}
-          </Detail>
-
-          {boostedVoteRequiredPercentage > 0 &&
+        <SidebarRow>
+          <ProposalDescription>
+            <Detail>
+              <strong>Proposer</strong>{' '}
+              <small>
+                <BlockchainLink type="user" text={proposal.proposer} toCopy />
+              </small>
+            </Detail>
+            <Detail>
+              <strong>Scheme</strong> <small>{scheme.name}</small>
+            </Detail>
+            <Detail>
+              <strong>State in Voting Machine </strong>
+              <small>
+                {VotingMachineProposalState[proposal.stateInVotingMachine]}
+              </small>
+            </Detail>
+            <Detail>
+              <strong>State in Scheme </strong>
+              <small>{WalletSchemeProposalState[proposal.stateInScheme]}</small>
+            </Detail>
             <Detail>
               {' '}
-              <strong> Required Boosted Vote: </strong>{' '}
-              <small>{boostedVoteRequiredPercentage}%</small>{' '}
+              <strong>Submitted Date</strong>{' '}
+              <small>
+                {moment
+                  .unix(proposal.submittedTime.toNumber())
+                  .format('MMMM Do YYYY, h:mm:ss')}
+              </small>{' '}
             </Detail>
-          }
+            <Detail>
+              {' '}
+              <strong>Boost Date</strong>{' '}
+              <small>
+                {boostTime.toNumber() > 0
+                  ? moment
+                      .unix(boostTime.toNumber())
+                      .format('MMMM Do YYYY, h:mm:ss')
+                  : '-'}
+              </small>{' '}
+            </Detail>
+            <Detail>
+              {' '}
+              <strong>Finish Date</strong>{' '}
+              <small>
+                {moment
+                  .unix(finishTime.toNumber())
+                  .format('MMMM Do YYYY, h:mm:ss')}
+              </small>{' '}
+            </Detail>
+
+            {boostedVoteRequiredPercentage > 0 && (
+              <Detail>
+                {' '}
+                <strong> Required Boosted Vote: </strong>{' '}
+                <small>{boostedVoteRequiredPercentage}%</small>{' '}
+              </Detail>
+            )}
+          </ProposalDescription>
         </SidebarRow>
 
         <SidebarDivider />
@@ -714,12 +716,12 @@ const ProposalPage = observer(() => {
           proposal.stateInVotingMachine === 4) &&
         votingParameters.votersReputationLossRatio.toNumber() > 0 &&
         finishTime.toNumber() > 0 ? (
-            <div style={{textAlign: 'center' }}>
-          <small>
+          <div style={{ textAlign: 'center' }}>
+            <small>
               Voter REP Loss Ratio:{' '}
               {votingParameters.votersReputationLossRatio.toString()}%
             </small>
-            </div>
+          </div>
         ) : (
           <div />
         )}
@@ -801,20 +803,23 @@ const ProposalPage = observer(() => {
               {votingMachineTokenName}
             </SummaryTotal>
             <HorizontalSeparator />
-            <SummaryDetails >
+            <SummaryDetails>
               {proposalEvents &&
                 proposalEvents.stakes
                   .filter(stakeEvent => stakeEvent?.vote?.toString() === '1')
                   .map((stakeEvent, i) => (
-                    <Vote key={`stakeUp${i}`} style={{'flex-direction': 'column'}}>
+                    <Vote
+                      key={`stakeUp${i}`}
+                      style={{ 'flex-direction': 'column' }}
+                    >
                       <BlockchainLink
                         size="short"
                         type="user"
                         text={stakeEvent.staker}
                       />
                       <span>
-                      {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
-                      {votingMachineTokenName}
+                        {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
+                        {votingMachineTokenName}
                       </span>
                     </Vote>
                   ))}
@@ -833,7 +838,10 @@ const ProposalPage = observer(() => {
                 proposalEvents.stakes
                   .filter(stakeEvent => stakeEvent?.vote?.toString() === '2')
                   .map((stakeEvent, i) => (
-                    <Vote key={`stakeDown${i}`} style={{ 'flex-direction': 'column'}}>
+                    <Vote
+                      key={`stakeDown${i}`}
+                      style={{ 'flex-direction': 'column' }}
+                    >
                       <BlockchainLink
                         size="short"
                         type="user"
@@ -864,15 +872,15 @@ const ProposalPage = observer(() => {
         (proposal.stateInVotingMachine === 3 ||
           proposal.stateInVotingMachine === 4) &&
         votingMachineTokenApproved.toString() === '0' ? (
-            <SidebarRow>
-              <div style={{ display: 'flex', flexDirection: 'column', }}>
-                <small>Approve {votingMachineTokenName} to stake</small>
-                <ActionButton
-                  color="blue"
-                  onClick={() => approveVotingMachineToken()}
-                >
-                  Approve {votingMachineTokenName}
-                </ActionButton>
+          <SidebarRow>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <small>Approve {votingMachineTokenName} to stake</small>
+              <ActionButton
+                color="blue"
+                onClick={() => approveVotingMachineToken()}
+              >
+                Approve {votingMachineTokenName}
+              </ActionButton>
             </div>
           </SidebarRow>
         ) : account &&
