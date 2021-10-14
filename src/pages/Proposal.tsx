@@ -21,6 +21,7 @@ import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
   bnum,
+  toPercentage,
   calculateStakes,
   formatBalance,
   denormalizeBalance,
@@ -216,20 +217,17 @@ const ProposalPage = observer(() => {
       ? daoStore.getRepAt(account, proposal.creationEvent.l2BlockNumber)
       : daoStore.getRepAt(account, proposal.creationEvent.l1BlockNumber);
 
-  const repPercentageAtCreation = userRepAtProposalCreation
-    .times(100)
-    .div(totalRepAtProposalCreation)
-    .toFixed(4);
+  const repPercentageAtCreation = toPercentage(
+    userRepAtProposalCreation.div(totalRepAtProposalCreation)
+  ).toFixed(2);
 
-  const positiveVotes = proposal.positiveVotes
-    .times('100')
-    .div(totalRepAtProposalCreation)
-    .toFixed(2);
+  const positiveVotes = toPercentage(
+    proposal.positiveVotes.div(totalRepAtProposalCreation)
+  ).toFixed(2);
 
-  const negativeVotes = proposal.negativeVotes
-    .times('100')
-    .div(totalRepAtProposalCreation)
-    .toFixed(2);
+  const negativeVotes = toPercentage(
+    proposal.negativeVotes.div(totalRepAtProposalCreation)
+  ).toFixed(2);
 
   const { status, boostTime, finishTime, pendingAction } =
     daoStore.getProposalStatus(proposalId);
@@ -416,6 +414,7 @@ const ProposalPage = observer(() => {
                   href={`https://ipfs.io/ipfs/${contentHash.decode(
                     proposal.descriptionHash
                   )}`}
+                  rel="noreferrer"
                 >
                   ipfs://{contentHash.decode(proposal.descriptionHash)}
                 </a>
