@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         node-version: [14.17.6]
+    permissions: write-all
     steps:
       - name: Inject slug variables
         uses: rlespinasse/github-slug-action@3.5.1
@@ -48,7 +49,7 @@ jobs:
         with:
           web3_token: ${{ secrets.WEB3_STORAGE_TOKEN }}
           path_to_add: 'build'
-
+ 
       - name: Update DNS Record for Develop Branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink.develop --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
