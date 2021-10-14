@@ -8,17 +8,34 @@ on:
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [14.17.6]
     steps:
-      - name: Download build artifact
-        uses: dawidd6/action-download-artifact@v2
+      - name: Setup deploy workflow
+        uses: haya14busa/action-workflow_run-status@v1
+
+      - name: Get build workflow details
+        uses: potiuk/get-workflow-origin@v1_3
+        id: source-run-info
         with:
-          workflow: preview-build.yml
-          workflow_conclusion: success
-          path: 'build'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
+
+      - name: Start Deployment
+        uses: bobheadxi/deployments@v0.6.0
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ steps.source-run-info.outputs.sourceHeadBranch }}
+
+      - name: Download artifact from build workflow
+        uses: synergy-au/download-workflow-artifacts-action@v1
+        with:
+          workflow-run-id: ${{ github.event.workflow_run.id }}
 
       - name: Deploy to IPFS
         uses: web3-storage/add-to-web3@v1
@@ -31,10 +48,19 @@ jobs:
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink.develop --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        if: github.ref == 'refs/heads/develop'
+        if: steps.source-run-info.outputs.targetBranch == 'refs/heads/develop'
 
       - name: Update DNS record for Master branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        if: github.ref == 'refs/heads/master'
+        if: steps.source-run-info.outputs.targetBranch == 'refs/heads/master'
+
+      - name: Update Deployment Status
+        uses: bobheadxi/deployments@v0.6.0
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: 'https://${{ steps.web3.outputs.cid }}.ipfs.dweb.link'
