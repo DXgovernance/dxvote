@@ -78,24 +78,18 @@ export async function getENSName(address) {
 
 export function getERC20Token(address) {
   let tokenObject;
-  let networks = Object.keys(appConfig)
-  for (let i = 0; (i < networks.length && !tokenObject); i++) {
-    tokenObject = appConfig[networks[i]]?.tokens?.find(token => token.address === address);
-  }
+  Object.entries(appConfig).forEach(([_, value]) => {
+    if (!tokenObject) tokenObject = value?.tokens?.find(token => token.address === address);
+  });
   return tokenObject;
 }
 
 export function getDxVoteContract(address) {
   let contract;
-  let networks = Object.keys(appConfig);
-  for (let i = 0; (i < networks.length && !contract); i++) {
-    let contracts = appConfig[networks[i]]?.contracts;
-    for (let [key, value] of Object.entries(contracts)) {
-      if (value === address) {
-        contract = { contract: key, address: value }
-        return;
-      }
-    }
-  }
+  Object.entries(appConfig).forEach(([_, value]) => {
+    Object.entries(value?.contracts).forEach(([name, value]) => {
+      if (!contract && value === address) contract = { contract: name, address: value };
+    })
+  })
   return contract;
 }

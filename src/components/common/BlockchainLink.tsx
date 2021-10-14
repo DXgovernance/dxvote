@@ -35,7 +35,6 @@ export const BlockchainLink = ({
   } = useContext();
 
   const networkName = configStore.getActiveChainName();
-
   const [ensName, setENSName] = useState(''); 
   const erc20Token = getERC20Token(text);
   const dxVoteContract = getDxVoteContract(text)
