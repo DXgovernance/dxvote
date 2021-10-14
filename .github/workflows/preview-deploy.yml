@@ -24,13 +24,13 @@ jobs:
           web3_token: ${{ secrets.WEB3_STORAGE_TOKEN }}
           path_to_add: 'build'
  
-      - name: Update DNS Record for Develop Branch
+      - name: Update DNS record for Develop branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink.develop --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         if: github.ref == 'refs/heads/develop'
 
-      - name: Update DNS Record for Master Branch
+      - name: Update DNS record for Master branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
