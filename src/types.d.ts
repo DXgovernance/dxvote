@@ -337,15 +337,15 @@ export interface DaoNetworkCache {
 }
 
 export interface ChainConfig {
-  id: number,
-  name: string,
-  displayName: string,
-  defaultRpc: string,
+  id: number;
+  name: string;
+  displayName: string;
+  defaultRpc: string;
   nativeAsset: {
-    name: string,
-    symbol: string,
-    decimals: number
-  },
-  blockExplorer?: string,
-  icon?: string
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  blockExplorer?: string;
+  icon?: string;
 }

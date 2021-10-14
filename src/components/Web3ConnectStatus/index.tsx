@@ -44,7 +44,7 @@ const ConnectButton = styled(Box)`
 
 const ChainButton = styled(AccountButton)`
   font-size: 14px;
-`
+`;
 
 const Web3ConnectStatus = observer(props => {
   const {
