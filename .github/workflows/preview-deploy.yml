@@ -13,9 +13,12 @@ jobs:
       matrix:
         node-version: [14.17.6]
     steps:
-      - uses: actions/download-artifact@v2
+      - name: Download build artifact
+        uses: dawidd6/action-download-artifact@v2
         with:
-          name: build-artifact
+          workflow: preview-build.yml
+          workflow_conclusion: success
+          path: 'build'
 
       - name: Deploy to IPFS
         uses: web3-storage/add-to-web3@v1
