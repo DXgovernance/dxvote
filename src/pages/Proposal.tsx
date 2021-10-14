@@ -16,7 +16,14 @@ import {
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
-import { BlockchainLink, Question, Box, Title } from '../components/common';
+import {
+  Box,
+  Title,
+  Question,
+  AmountBadge,
+  BlockchainLink,
+  HorizontalSeparator,
+} from '../components/common';
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
@@ -65,7 +72,7 @@ const SidebarDivider = styled.div`
 
 const SidebarRow = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   flex-direction: row;
   padding: 5px 0px;
 
@@ -96,15 +103,6 @@ const AmountInput = styled.input`
   padding: 0px 10px;
   margin: 5px;
   font-family: var(--roboto);
-`;
-
-const AmountBadge = styled.span`
-  background-color: ${props => props.color || 'inherit'};
-  border-radius: 50%;
-  color: white;
-  padding: 2px 6px;
-  text-align: center;
-  margin: 5px;
 `;
 
 const ActionButton = styled.div`
@@ -141,6 +139,35 @@ const ProposalHistoryEvent = styled.div`
 
 const ProposalCallText = styled.span`
   white-space: pre-line;
+`;
+
+const Vote = styled.div`
+  display: flex;
+  font-size: ${({ theme }) => theme.votes.fontSize};
+
+  > * {
+    margin-left: 4px;
+  }
+`;
+
+const Summary = styled.div`
+`;
+const PositiveSummary = styled(Summary)`
+  color: ${({ theme }) => theme.votes.positive.color};
+`;
+const NegativeSummary = styled(Summary)`
+  color: ${({ theme }) => theme.votes.negative.color};
+`;
+
+const SummaryTotal = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+`;
+const SummaryDetails = styled.div`
+  font-size: 13px;
+  flex: 1;
 `;
 
 const ProposalPage = observer(() => {
@@ -605,65 +632,62 @@ const ProposalPage = observer(() => {
             Votes <Question question="4" />
           </strong>
         </SidebarRow>
-        <SidebarRow style={{ margin: '0px 10px' }}>
-          <span style={{ width: '50%', textAlign: 'center', color: 'green' }}>
-            <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
-            {`${positiveVotes}%`}
-
-            <br />
-            {proposalEvents.votes &&
-              proposalEvents.votes.map(function (voteEvent, i) {
-                if (voteEvent.vote.toString() === '1')
-                  return (
-                    <small
-                      color="green"
-                      key={`voteUp${i}`}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                    >
-                      <BlockchainLink
-                        size="short"
-                        type="user"
-                        text={voteEvent.voter}
-                      />
+        <SidebarRow>
+          <PositiveSummary>
+            <SummaryTotal>
+              <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
+              {`${positiveVotes}%`}
+            </SummaryTotal>
+            <HorizontalSeparator />
+            <SummaryDetails>
+              {proposalEvents?.votes
+                .filter(voteEvent => voteEvent?.vote.toString() === '1')
+                .map((voteEvent, i) => (
+                  <Vote key={`vote-pos-${i}`}>
+                    <BlockchainLink
+                      size="short"
+                      type="user"
+                      text={voteEvent.voter}
+                    />
+                    <span>
                       {bnum(voteEvent.amount)
                         .times('100')
                         .div(totalRepAtProposalCreation)
                         .toFixed(2)}{' '}
                       %
-                    </small>
-                  );
-                else return undefined;
-              })}
-          </span>
-          <span style={{ width: '50%', textAlign: 'center', color: 'red' }}>
-            {`${negativeVotes}%`}
-            <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
-            <br />
-            {proposalEvents &&
-              proposalEvents.votes.map(function (voteEvent, i) {
-                if (voteEvent.vote.toString() === '2')
-                  return (
-                    <small
-                      color="red"
-                      key={`voteDown${i}`}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                    >
-                      <BlockchainLink
-                        size="short"
-                        type="user"
-                        text={voteEvent.voter}
-                      />
+                    </span>
+                  </Vote>
+                ))}
+            </SummaryDetails>
+          </PositiveSummary>
+          <NegativeSummary>
+            <SummaryTotal>
+              <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
+              <span>{`${negativeVotes}%`}</span>
+            </SummaryTotal>
+            <HorizontalSeparator />
+            <SummaryDetails>
+              {proposalEvents?.votes
+                ?.filter(voteEvent => voteEvent.vote.toString() === '2')
+                .map((voteEvent, i) => (
+                  <Vote key={`vote-neg-${i}`}>
+                    <BlockchainLink
+                      size="short"
+                      type="user"
+                      text={voteEvent.voter}
+                    />
+                    <span>
                       {bnum(voteEvent.amount)
                         .times('100')
                         .div(totalRepAtProposalCreation)
                         .toNumber()
                         .toFixed(2)}{' '}
                       %
-                    </small>
-                  );
-                else return undefined;
-              })}
-          </span>
+                    </span>
+                  </Vote>
+                ))}
+            </SummaryDetails>
+          </NegativeSummary>
         </SidebarRow>
 
         {Number(repPercentageAtCreation) > 0 ? (
@@ -753,59 +777,60 @@ const ProposalPage = observer(() => {
             Stakes <Question question="5" />
           </strong>
         </SidebarRow>
-        <SidebarRow style={{ margin: '0px 10px' }}>
-          <span style={{ width: '50%', textAlign: 'center', color: 'green' }}>
-            <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
-            {formatBalance(proposal.positiveStakes).toString()}{' '}
-            {votingMachineTokenName}
-            <br />
-            {proposalEvents &&
-              proposalEvents.stakes.map(function (stakeEvent, i) {
-                if (stakeEvent.vote.toString() === '1')
-                  return (
-                    <small
-                      color="green"
-                      key={`stakeUp${i}`}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                    >
+        <SidebarRow>
+          <PositiveSummary>
+            <SummaryTotal>
+              <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
+              {formatBalance(proposal.positiveStakes).toString()}{' '}
+              {votingMachineTokenName}
+            </SummaryTotal>
+            <HorizontalSeparator />
+            <SummaryDetails >
+              {proposalEvents &&
+                proposalEvents.stakes
+                  .filter(stakeEvent => stakeEvent?.vote?.toString() === '1')
+                  .map((stakeEvent, i) => (
+                    <Vote key={`stakeUp${i}`} style={{'flex-direction': 'column'}}>
                       <BlockchainLink
                         size="short"
                         type="user"
                         text={stakeEvent.staker}
                       />
+                      <span>
                       {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
                       {votingMachineTokenName}
-                    </small>
-                  );
-                else return undefined;
-              })}
-          </span>
-          <span style={{ width: '50%', textAlign: 'center', color: 'red' }}>
-            {formatBalance(proposal.negativeStakes).toString()}{' '}
-            {votingMachineTokenName}
-            <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
-            <br />
-            {proposalEvents &&
-              proposalEvents.stakes.map(function (stakeEvent, i) {
-                if (stakeEvent.vote.toString() === '2')
-                  return (
-                    <small
-                      color="red"
-                      key={`stakeDown${i}`}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                    >
+                      </span>
+                    </Vote>
+                  ))}
+            </SummaryDetails>
+          </PositiveSummary>
+
+          <NegativeSummary>
+            <SummaryTotal>
+              <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
+              {formatBalance(proposal.negativeStakes).toString()}{' '}
+              {votingMachineTokenName}
+            </SummaryTotal>
+            <HorizontalSeparator />
+            <SummaryDetails>
+              {proposalEvents &&
+                proposalEvents.stakes
+                  .filter(stakeEvent => stakeEvent?.vote?.toString() === '2')
+                  .map((stakeEvent, i) => (
+                    <Vote key={`stakeDown${i}`} style={{ 'flex-direction': 'column'}}>
                       <BlockchainLink
                         size="short"
                         type="user"
                         text={stakeEvent.staker}
                       />
-                      {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
-                      {votingMachineTokenName}
-                    </small>
-                  );
-                else return undefined;
-              })}
-          </span>
+                      <span>
+                        {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
+                        {votingMachineTokenName}
+                      </span>
+                    </Vote>
+                  ))}
+            </SummaryDetails>
+          </NegativeSummary>
         </SidebarRow>
 
         {stakedAmount.toNumber() > 0 ? (

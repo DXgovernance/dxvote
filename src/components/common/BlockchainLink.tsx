@@ -5,16 +5,10 @@ import { useContext } from '../../contexts';
 import { FiExternalLink } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 
-const AddressLink = styled.span`
+const AddressLink = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
   a {
-    padding: 2px 5px;
-    font-family: var(--roboto);
-    line-height: 17px;
-    letter-spacing: 0.2px;
-    text-decoration: none;
     color: inherit;
   }
 `;
@@ -34,6 +28,10 @@ export const BlockchainLink = ({
   const {
     context: { configStore },
   } = useContext();
+
+  // 'feriefernie.eth', 
+  const testText = ['0xd8b42c9d76be8b3dd52145e166a1b3f8e60a64b3']
+  text = testText[0];
 
   const networkName = configStore.getActiveChainName();
 
