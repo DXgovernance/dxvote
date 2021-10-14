@@ -27,7 +27,6 @@ import {
   formatNumberValue,
   VotingMachineProposalState,
   orderByNewestTimeToFinish,
-  orderByNewestTimeSinceFinished,
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 
@@ -221,7 +220,7 @@ const ProposalsPage = observer(() => {
 
     //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
     let executed = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Executed);
-    executed.sort(orderByNewestTimeSinceFinished);
+    executed.sort(orderByNewestTimeToFinish);
       
     return [...earliestAbove10, ...boosted, ...preBoosted, ...earliestUnder10, ...executed]
   }

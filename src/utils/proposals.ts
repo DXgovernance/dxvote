@@ -349,10 +349,3 @@ export const decodeProposalStatus = function (
 //is it added in Cache? 
 export const orderByNewestTimeToFinish = (a: any, b: any) =>
   a.finishTime - b.finishTime;
-
-// finishTime is modified automatically to be TimeSinceFinished by 
-// the decodeProposalStatus function of utils/proposals.
-// so we may use the same function for everycase? 
-export const orderByNewestTimeSinceFinished = (a: any, b: any) =>
-  a.finishTime - b.finishTime;
-
