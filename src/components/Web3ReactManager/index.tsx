@@ -75,7 +75,7 @@ const Web3ReactManager = ({ children }) => {
     if (chain) {
       history.push(`/${chain.name}/proposals`);
     }
-    
+
     window.location.reload();
   }
 
