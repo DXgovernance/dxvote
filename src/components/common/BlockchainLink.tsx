@@ -29,10 +29,6 @@ export const BlockchainLink = ({
     context: { configStore },
   } = useContext();
 
-  // 'feriefernie.eth', 
-  const testText = ['0xd8b42c9d76be8b3dd52145e166a1b3f8e60a64b3']
-  text = testText[0];
-
   const networkName = configStore.getActiveChainName();
 
   const [ensName, setENSName] = useState(''); 

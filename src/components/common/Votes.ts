@@ -20,6 +20,7 @@ export const AmountBadge = styled.span`
   padding: 2px 6px;
   text-align: center;
   margin: 5px;
+  
 `;
 
 export const HorizontalSeparator = styled.div`

@@ -700,10 +700,12 @@ const ProposalPage = observer(() => {
           proposal.stateInVotingMachine === 4) &&
         votingParameters.votersReputationLossRatio.toNumber() > 0 &&
         finishTime.toNumber() > 0 ? (
+            <div style={{textAlign: 'center' }}>
           <small>
-            Voter REP Loss Ratio:{' '}
-            {votingParameters.votersReputationLossRatio.toString()}%
-          </small>
+              Voter REP Loss Ratio:{' '}
+              {votingParameters.votersReputationLossRatio.toString()}%
+            </small>
+            </div>
         ) : (
           <div />
         )}
@@ -848,14 +850,16 @@ const ProposalPage = observer(() => {
         (proposal.stateInVotingMachine === 3 ||
           proposal.stateInVotingMachine === 4) &&
         votingMachineTokenApproved.toString() === '0' ? (
-          <SidebarRow>
-            <small>Approve {votingMachineTokenName} to stake</small>
-            <ActionButton
-              color="blue"
-              onClick={() => approveVotingMachineToken()}
-            >
-              Approve {votingMachineTokenName}
-            </ActionButton>
+            <SidebarRow>
+              <div style={{ display: 'flex', flexDirection: 'column', }}>
+                <small>Approve {votingMachineTokenName} to stake</small>
+                <ActionButton
+                  color="blue"
+                  onClick={() => approveVotingMachineToken()}
+                >
+                  Approve {votingMachineTokenName}
+                </ActionButton>
+            </div>
           </SidebarRow>
         ) : account &&
           !finishTimeReached &&
