@@ -170,6 +170,17 @@ const SummaryDetails = styled.div`
   flex: 1;
 `;
 
+const Detail = styled.div`
+  display: flex;
+  align-items: baseline;
+  line-height: 20px;
+  align-content: center;
+  justify-items: center;
+  > * {
+    margin-right: 5px;
+  }
+`;
+
 const ProposalPage = observer(() => {
   let history = useHistory();
 
@@ -564,27 +575,26 @@ const ProposalPage = observer(() => {
             flexDirection: 'column',
           }}
         >
-          <span style={{ display: 'flex', height: '17px ' }}>
+          <Detail>
             <strong>Proposer</strong>{' '}
             <small>
               <BlockchainLink type="user" text={proposal.proposer} toCopy />
             </small>
-          </span>
-          <span>
-            {' '}
+          </Detail>
+           <Detail>
             <strong>Scheme</strong> <small>{scheme.name}</small>
-          </span>
-          <span>
+          </Detail>
+          <Detail>
             <strong>State in Voting Machine </strong>
             <small>
               {VotingMachineProposalState[proposal.stateInVotingMachine]}
             </small>
-          </span>
-          <span>
+          </Detail>
+          <Detail>
             <strong>State in Scheme </strong>
             <small>{WalletSchemeProposalState[proposal.stateInScheme]}</small>
-          </span>
-          <span>
+          </Detail>
+          <Detail>
             {' '}
             <strong>Submitted Date</strong>{' '}
             <small>
@@ -592,8 +602,8 @@ const ProposalPage = observer(() => {
                 .unix(proposal.submittedTime.toNumber())
                 .format('MMMM Do YYYY, h:mm:ss')}
             </small>{' '}
-          </span>
-          <span>
+          </Detail>
+          <Detail>
             {' '}
             <strong>Boost Date</strong>{' '}
             <small>
@@ -603,8 +613,8 @@ const ProposalPage = observer(() => {
                     .format('MMMM Do YYYY, h:mm:ss')
                 : '-'}
             </small>{' '}
-          </span>
-          <span>
+          </Detail>
+          <Detail>
             {' '}
             <strong>Finish Date</strong>{' '}
             <small>
@@ -612,17 +622,15 @@ const ProposalPage = observer(() => {
                 .unix(finishTime.toNumber())
                 .format('MMMM Do YYYY, h:mm:ss')}
             </small>{' '}
-          </span>
+          </Detail>
 
-          {boostedVoteRequiredPercentage > 0 ? (
-            <span>
+          {boostedVoteRequiredPercentage > 0 &&
+            <Detail>
               {' '}
               <strong> Required Boosted Vote: </strong>{' '}
               <small>{boostedVoteRequiredPercentage}%</small>{' '}
-            </span>
-          ) : (
-            <div />
-          )}
+            </Detail>
+          }
         </SidebarRow>
 
         <SidebarDivider />

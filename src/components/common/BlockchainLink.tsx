@@ -10,6 +10,11 @@ const AddressLink = styled.div`
   flex-direction: row;
   a {
     color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 `;
 
