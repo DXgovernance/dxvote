@@ -6,8 +6,8 @@ on:
     branches:
       - master
       - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [synchronize, edited, opened, converted_to_draft, ready_for_review, reopened]
 
 jobs:
   develop-ci:
@@ -15,7 +15,6 @@ jobs:
     strategy:
       matrix:
         node-version: [14.17.6]
-    permissions: write-all
     steps:
       - name: Inject slug variables
         uses: rlespinasse/github-slug-action@3.5.1
