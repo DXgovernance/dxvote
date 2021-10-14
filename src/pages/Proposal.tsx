@@ -145,6 +145,7 @@ const Vote = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.votes.fontSize};
   justify-content: space-between;
+
   > * {
     margin-left: 4px;
   }
@@ -180,6 +181,10 @@ const Detail = styled.div`
   > * {
     margin-right: 5px;
   }
+`;
+
+const HistoryEventText = styled.span`
+  margin-right: 5px;
 `;
 
 const ProposalPage = observer(() => {
@@ -496,7 +501,7 @@ const ProposalPage = observer(() => {
           {proposalEvents.history.map((historyEvent, i) => {
             return (
               <ProposalHistoryEvent key={'proposalHistoryEvent' + i}>
-                <span> {historyEvent.text} </span>
+                <HistoryEventText> {historyEvent.text} </HistoryEventText>
                 <BlockchainLink
                   type="transaction"
                   size="short"
