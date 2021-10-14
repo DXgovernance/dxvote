@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
 import { useEtherscanService } from 'hooks/useEtherscanService';
-import { normalizeBalance } from 'utils';
+import { BigNumber, normalizeBalance } from 'utils';
 import { ProposalCalls } from 'types';
 import PendingCircle from './common/PendingCircle';
 
@@ -26,8 +26,8 @@ const CallDataInformation = observer(
       new Array(proposal.to.length)
     );
 
-    const proposalCallArray = [];
-    const getProposalCalls = () => {
+    useEffect(() => {
+      const proposalCallArray = [];
       proposal.to.forEach(async (to, index) => {
         const contractABI = await getContractABI(to);
         proposalCallArray[index] = decodedCallData(
@@ -40,11 +40,8 @@ const CallDataInformation = observer(
           proposal.values[index],
           contractABI
         );
+        setProposalCallTexts(proposalCallArray);
       });
-      setProposalCallTexts(proposalCallArray);
-    };
-    useEffect(() => {
-      getProposalCalls();
     }, []);
 
     if (loading) {
@@ -125,7 +122,7 @@ const CallDataInformation = observer(
         </div>
       );
     };
-    const etherscanCallDisplay = ({ to, from }: ProposalCalls) => {
+    const etherscanCallDisplay = (to: string, from: string) => {
       return (
         <div>
           <p>
@@ -162,6 +159,45 @@ const CallDataInformation = observer(
         </div>
       );
     };
+
+    const baseDisplay = (
+      to: string,
+      from: string,
+      data: string,
+      value: BigNumber,
+      advancedCalls: boolean
+    ) => {
+      return (
+        <div>
+          {error && (
+            <p>
+              {error.message ==
+              `OK-Missing/Invalid API Key, rate limit of 1/5sec applied`
+                ? `Missing API key, Please provide the appropriate blockexplorer Api Key`
+                : error.message}
+            </p>
+          )}
+          <p>
+            <strong>From: </strong>
+            <small>{from}</small>
+          </p>
+          <p>
+            <strong>To: </strong>
+            <small>{to}</small>
+          </p>
+          <p>
+            <strong>Value: </strong>
+            <small>{value.toString()}</small>
+          </p>
+          {advancedCalls ? (
+            <p>
+              <strong>data: </strong>
+              <small>{data}</small>
+            </p>
+          ) : null}
+        </div>
+      );
+    };
     return (
       <div>
         {ProposalCallTexts.map(
@@ -186,44 +222,9 @@ const CallDataInformation = observer(
               });
             }
             if (ABI) {
-              return etherscanCallDisplay({
-                to,
-                from,
-                recommendedCallUsed,
-                callParameters,
-                data,
-                encodedFunctionName,
-                value,
-              });
+              return etherscanCallDisplay(to, from);
             }
-            return (
-              <div>
-                {error && (
-                  <p>
-                    {error.message ==
-                    `OK-Missing/Invalid API Key, rate limit of 1/5sec applied`
-                      ? `Missing API key, Please provide the appropriate blockexplorer Api Key`
-                      : error.message}
-                  </p>
-                )}
-                <p>
-                  <strong>From: </strong>
-                  <small>{from}</small>
-                </p>
-                <p>
-                  <strong>To: </strong>
-                  <small>{to}</small>
-                </p>
-                <p>
-                  <strong>data: </strong>
-                  <small>{data}</small>
-                </p>
-                <p>
-                  <strong>Value: </strong>
-                  <small>{value.toString()}</small>
-                </p>
-              </div>
-            );
+            return baseDisplay(to, from, data, value, advancedCalls);
           }
         )}
       </div>
