@@ -20,10 +20,9 @@ export const AmountBadge = styled.span`
   padding: 2px 6px;
   text-align: center;
   margin: 5px;
-  
 `;
 
 export const HorizontalSeparator = styled.div`
   margin: 5px;
-  border-bottom: ${({theme}) => theme.votes.horizontalSeparatorBorder};
+  border-bottom: ${({ theme }) => theme.votes.horizontalSeparatorBorder};
 `;

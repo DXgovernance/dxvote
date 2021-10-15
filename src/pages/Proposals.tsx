@@ -138,13 +138,13 @@ const TableProposal = styled(Table)`
   margin-bottom: auto;
   overflow-y: scroll;
   max-height: 90vh;
-  ${TableHeader}{
-   ${HeaderCell} {
-    background: white;
-    position: sticky;
-    top: 0;
+  ${TableHeader} {
+    ${HeaderCell} {
+      background: white;
+      position: sticky;
+      top: 0;
+    }
   }
-}
 `;
 
 const ProposalsPage = observer(() => {
@@ -154,13 +154,13 @@ const ProposalsPage = observer(() => {
   const history = useHistory();
 
   const schemes = daoStore.getAllSchemes();
-  
+
   const [stateFilter, setStateFilter] = React.useState('Any Status');
   const [schemeFilter, setSchemeFilter] = React.useState('All Schemes');
   const [titleFilter, setTitleFilter] = React.useState('');
   const [proposals, setProposals] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  
+
   const miniSearchRef = React.useRef(
     new MiniSearch({
       fields: ['title'],
@@ -177,7 +177,7 @@ const ProposalsPage = observer(() => {
   const networkName = configStore.getActiveChainName();
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
-  
+
   const allProposals = daoStore.getAllProposals().map(cacheProposal => {
     return Object.assign(
       cacheProposal,
@@ -187,81 +187,109 @@ const ProposalsPage = observer(() => {
   const miniSearch = miniSearchRef.current;
 
   /// filtering and sorting proposals for All States criteria
-  const filterInitialCriteria = (proposals) => {
+  const filterInitialCriteria = proposals => {
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
-    let earliestAbove10 = proposals.filter(
-      (proposal: Proposal) => {
-        
-        const repAtCreation = daoStore.getRepAt(
-          ZERO_ADDRESS,
-          proposal.creationEvent.l1BlockNumber
-        ).totalSupply;
-        
-        return (
-          (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
-            || proposal.stateInVotingMachine === VotingMachineProposalState.Queued
-          ) && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).gte(QUEUED_PRIORITY_THRESHOLD)
-        );
-      }
-    );
+    let earliestAbove10 = proposals.filter((proposal: Proposal) => {
+      const repAtCreation = daoStore.getRepAt(
+        ZERO_ADDRESS,
+        proposal.creationEvent.l1BlockNumber
+      ).totalSupply;
+
+      return (
+        (proposal.stateInVotingMachine ===
+          VotingMachineProposalState.QuietEndingPeriod ||
+          proposal.stateInVotingMachine ===
+            VotingMachineProposalState.Queued) &&
+        proposal.positiveVotes
+          .div(repAtCreation)
+          .times(100)
+          .decimalPlaces(2)
+          .gte(QUEUED_PRIORITY_THRESHOLD)
+      );
+    });
     earliestAbove10.sort(orderByNewestTimeToFinish);
 
     // Proposals Boosted. (Ordered from time to finish, from lower to higher)
-    let boosted = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
+    let boosted = proposals.filter(
+      (proposal: Proposal): Boolean =>
+        proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
     );
     boosted.sort(orderByNewestTimeToFinish);
 
-    let preBoosted = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.PreBoosted);
+    let preBoosted = proposals.filter(
+      (proposal: Proposal): Boolean =>
+        proposal.stateInVotingMachine === VotingMachineProposalState.PreBoosted
+    );
     preBoosted.sort(orderByNewestTimeToFinish);
-      
+
     // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     let earliestUnder10 = proposals.filter((proposal: Proposal): Boolean => {
       const repAtCreation = daoStore.getRepAt(
         ZERO_ADDRESS,
         proposal.creationEvent.l1BlockNumber
       ).totalSupply;
-          
+
       return (
-        (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
-          || proposal.stateInVotingMachine === VotingMachineProposalState.Queued)
-        && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).lt(QUEUED_PRIORITY_THRESHOLD)
-      )
+        (proposal.stateInVotingMachine ===
+          VotingMachineProposalState.QuietEndingPeriod ||
+          proposal.stateInVotingMachine ===
+            VotingMachineProposalState.Queued) &&
+        proposal.positiveVotes
+          .div(repAtCreation)
+          .times(100)
+          .decimalPlaces(2)
+          .lt(QUEUED_PRIORITY_THRESHOLD)
+      );
     });
     earliestUnder10.sort(orderByNewestTimeToFinish);
 
     //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
-    let executed = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Executed);
+    let executed = proposals.filter(
+      (proposal: Proposal): Boolean =>
+        proposal.stateInVotingMachine === VotingMachineProposalState.Executed
+    );
     executed.sort(orderByNewestTimeToFinish);
-      
-    return [...earliestAbove10, ...boosted, ...preBoosted, ...earliestUnder10, ...executed]
-  }
-  
-  
+
+    return [
+      ...earliestAbove10,
+      ...boosted,
+      ...preBoosted,
+      ...earliestUnder10,
+      ...executed,
+    ];
+  };
+
   useEffect(() => {
     let sortedProposals;
     setIsLoading(true);
-    
+
     if (stateFilter === 'Any Status') {
       sortedProposals = filterInitialCriteria(allProposals);
     } else {
-      sortedProposals = allProposals.filter((proposal) => parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter))
+      sortedProposals = allProposals.filter(
+        proposal =>
+          parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter)
+      );
     }
-    
+
     if (schemeFilter !== 'All Schemes') {
-      sortedProposals = sortedProposals.filter((proposal) => proposal.scheme === schemeFilter)
+      sortedProposals = sortedProposals.filter(
+        proposal => proposal.scheme === schemeFilter
+      );
     }
     miniSearch.removeAll();
     miniSearch.addAll(sortedProposals);
-    
+
     if (titleFilter) {
-      let search = miniSearch.search(titleFilter)
-      sortedProposals = sortedProposals.filter(proposal => search.find(elem => elem.id === proposal.id))
+      let search = miniSearch.search(titleFilter);
+      sortedProposals = sortedProposals.filter(proposal =>
+        search.find(elem => elem.id === proposal.id)
+      );
     }
-    
+
     setProposals(sortedProposals); //triggers reindex
     setIsLoading(false);
-    
-  }, [schemeFilter, stateFilter, titleFilter])
+  }, [schemeFilter, stateFilter, titleFilter]);
 
   function onStateFilterChange(event) {
     setStateFilter(event.target.value);
@@ -297,8 +325,11 @@ const ProposalsPage = observer(() => {
             onChange={onStateFilterChange}
           >
             <option value="Any Status">Any Status</option>
-            {enumKeys(VotingMachineProposalState).map((i) =>
-              i !== "None" && <option value={VotingMachineProposalState[i]}>{i}</option>
+            {enumKeys(VotingMachineProposalState).map(
+              i =>
+                i !== 'None' && (
+                  <option value={VotingMachineProposalState[i]}>{i}</option>
+                )
             )}
           </ProposalsFilter>
           <ProposalsFilter
@@ -333,7 +364,6 @@ const ProposalsPage = observer(() => {
           {isLoading && <h3>Loading proposals...</h3>}
 
           {proposals.map((proposal, i) => {
-            
             const positiveStake = formatNumberValue(
               normalizeBalance(proposal.positiveStakes, 18),
               1
