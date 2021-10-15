@@ -1019,7 +1019,7 @@ const NewProposalPage = observer(() => {
           <TextActions>
             <span>
               Uploaded to IPFS:
-              <a href={`https://ipfs.io/ipfs/${ipfsHash}`} target="_blank">
+              <a href={`https://ipfs.io/ipfs/${ipfsHash}`} target="_blank" rel="noreferrer">
                 https://ipfs.io/ipfs/{ipfsHash}
               </a>
               <br />
