@@ -491,7 +491,7 @@ export default class DaoStore {
     stateChanges: ProposalStateChange[];
     history: {
       text: string[];
-      text_params: string[];
+      text_params: string
       event: any;
     }[];
   } {
@@ -1138,7 +1138,7 @@ export default class DaoStore {
     const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1;
 
     for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
+      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] < atBlock) {
         if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount);
           if (repEvents[i].account === userAddress)
