@@ -200,7 +200,11 @@ const TextCenter = styled.div`
 `;
 
 const HistoryEventText = styled.span`
+  display: flex;
   margin-right: 5px;
+  > * {
+    margin-right: 5px;
+  }
 `;
 
 const ProposalPage = observer(() => {
@@ -532,7 +536,9 @@ const ProposalPage = observer(() => {
           {proposalEvents.history.map((historyEvent, i) => {
             return (
               <ProposalHistoryEvent key={'proposalHistoryEvent' + i}>
-                <HistoryEventText> {historyEvent.text} </HistoryEventText>
+                <HistoryEventText>
+                  {renderEvents(historyEvent)}
+                </HistoryEventText>
                 <BlockchainLink
                   type="transaction"
                   size="short"
