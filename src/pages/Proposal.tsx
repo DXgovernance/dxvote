@@ -139,10 +139,6 @@ const ProposalHistoryEvent = styled.div`
   }
 `;
 
-const ProposalCallText = styled.span`
-  white-space: pre-line;
-`;
-
 const Vote = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.votes.fontSize};

@@ -38,7 +38,7 @@ export function useEagerConnect() {
         setTried(true);
         return;
       }
-      
+
       if (isAuthorized) {
         activate(injected, undefined, true).catch(() => {
           setTried(true);

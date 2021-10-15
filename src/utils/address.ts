@@ -57,7 +57,7 @@ export function getBlockchainLink(address, networkName, type) {
     case 'user':
       return `${window.location.pathname}#/user/${address}`;
     case 'address':
-      return `${NETWORK_EXPLORERS[networkName]}/address/${address}`
+      return `${NETWORK_EXPLORERS[networkName]}/address/${address}`;
     default:
       return `${NETWORK_EXPLORERS[networkName]}/tx/${address}`;
   }
@@ -69,17 +69,17 @@ export async function getENSName(address) {
     const provider = ethers.getDefaultProvider();
     const checksumed = ethers.utils.getAddress(address);
     name = provider.lookupAddress(checksumed);
-  }
-  catch (e) {
+  } catch (e) {
     console.error(e);
   }
   return name;
-} 
+}
 
 export function getERC20Token(address) {
   let tokenObject;
   Object.entries(appConfig).forEach(([_, value]) => {
-    if (!tokenObject) tokenObject = value?.tokens?.find(token => token.address === address);
+    if (!tokenObject)
+      tokenObject = value?.tokens?.find(token => token.address === address);
   });
   return tokenObject;
 }
@@ -88,8 +88,9 @@ export function getDxVoteContract(address) {
   let contract;
   Object.entries(appConfig).forEach(([_, value]) => {
     Object.entries(value?.contracts).forEach(([name, value]) => {
-      if (!contract && value === address) contract = { contract: name, address: value };
-    })
-  })
+      if (!contract && value === address)
+        contract = { contract: name, address: value };
+    });
+  });
   return contract;
 }

@@ -18,7 +18,6 @@ const UserAddress = ({ address, size = 'default', type = 'default' }) => {
 
   const networkName = configStore.getActiveChainName();
 
-  
   function href() {
     switch (type) {
       case 'user':
@@ -30,7 +29,9 @@ const UserAddress = ({ address, size = 'default', type = 'default' }) => {
     }
   }
 
-  return <AddressLink href={href()}>{toAddressStub(address, size)}</AddressLink>;
+  return (
+    <AddressLink href={href()}>{toAddressStub(address, size)}</AddressLink>
+  );
 };
 
 export default UserAddress;
