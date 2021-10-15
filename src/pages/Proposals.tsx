@@ -19,12 +19,14 @@ import {
 import Footer from '../components/Footer';
 import {
   ZERO_ADDRESS,
+  QUEUED_PRIORITY_THRESHOLD,
+  enumKeys,
   formatPercentage,
   normalizeBalance,
   timeToTimestamp,
   formatNumberValue,
-  mapEnum,
   VotingMachineProposalState,
+  orderByNewestTimeToFinish,
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 
@@ -149,6 +151,7 @@ const ProposalsPage = observer(() => {
   const [titleFilter, setTitleFilter] = React.useState('');
   const [proposals, setProposals] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  //const [resetTitleFilter, setResetTitleFilter] = React.useState(false);
   const miniSearchRef = React.useRef(
     new MiniSearch({
       fields: ['title'],
@@ -163,80 +166,115 @@ const ProposalsPage = observer(() => {
   const networkName = configStore.getActiveChainName();
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
-
+  
+  const allProposals = daoStore.getAllProposals().map(cacheProposal => {
+    return Object.assign(
+      cacheProposal,
+      daoStore.getProposalStatus(cacheProposal.id)
+    );
+  });
   const miniSearch = miniSearchRef.current;
 
-  useEffect(() => {
-    setIsLoading(true);
-
-    const allProposals = daoStore.getAllProposals().map(cacheProposal => {
-      return Object.assign(
-        cacheProposal,
-        daoStore.getProposalStatus(cacheProposal.id)
-      );
-    });
-    const sortedProposals = sortProposals(allProposals);
-    setProposals(sortedProposals);
-    setIsLoading(false);
-
-    console.debug('All Proposals', allProposals, allProposals.length, daoStore);
-  }, [daoStore.daoCache]);
-
-  // Rebuild search index when proposals list changes
-  useEffect(() => {
-    miniSearch.removeAll();
-    miniSearch.addAll(proposals);
-  }, [proposals]);
-
-  function sortProposals(proposals) {
-    /**
-     * proposals are ordered:
-     *  QuietEndingPeriod
-     *  Boosted
-     *  PreBoosted
-     *  Queued
-     *  Executed
-     *  ExpiredInQueue
-     *  None
-     * Preboosted are ordered in boostTime and not in Finish Time.
-     *
-     */
-    return mapEnum(VotingMachineProposalState, p => {
-      /**
-       * loop over the enum
-       * filter each enum value
-       * sort them
-       * flatten array
-       * reverse order of array from ascending to descending
-       */
-      return proposals
-        .filter(proposal => proposal.stateInVotingMachine === p)
-        .sort((a, b) =>
-          a.boostTime.toNumber() > 0
-            ? b.boostTime.toNumber() - a.boostTime.toNumber()
-            : b.finishTime - a.finishTime
+  /// filtering and sorting proposals for All States criteria
+  const filterInitialCriteria = (proposals) => {
+    // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
+    let earliestAbove10 = proposals.filter(
+      (proposal: Proposal) => {
+        
+        const repAtCreation = daoStore.getRepAt(
+          ZERO_ADDRESS,
+          proposal.creationEvent.l1BlockNumber
+        ).totalSupply;
+        
+        return (
+          (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
+            || proposal.stateInVotingMachine === VotingMachineProposalState.Queued
+          ) && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).gte(QUEUED_PRIORITY_THRESHOLD)
         );
-    })
-      .flat(1)
-      .reverse();
-  }
+      }
+    );
+    earliestAbove10.sort(orderByNewestTimeToFinish);
 
-  function filterProposals() {
-    let searchHits = proposals;
+    // Proposals Boosted. (Ordered from time to finish, from lower to higher)
+    let boosted = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
+    );
+    boosted.sort(orderByNewestTimeToFinish);
+
+    let preBoosted = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.PreBoosted);
+    preBoosted.sort(orderByNewestTimeToFinish);
+      
+    // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
+    let earliestUnder10 = proposals.filter((proposal: Proposal): Boolean => {
+      const repAtCreation = daoStore.getRepAt(
+        ZERO_ADDRESS,
+        proposal.creationEvent.l1BlockNumber
+      ).totalSupply;
+          
+      return (
+        (proposal.stateInVotingMachine === VotingMachineProposalState.QuietEndingPeriod
+          || proposal.stateInVotingMachine === VotingMachineProposalState.Queued)
+        && proposal.positiveVotes.div(repAtCreation).times(100).decimalPlaces(2).lt(QUEUED_PRIORITY_THRESHOLD)
+      )
+    });
+    earliestUnder10.sort(orderByNewestTimeToFinish);
+
+    //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
+    let executed = proposals.filter((proposal: Proposal): Boolean => proposal.stateInVotingMachine === VotingMachineProposalState.Executed);
+    executed.sort(orderByNewestTimeToFinish);
+      
+    return [...earliestAbove10, ...boosted, ...preBoosted, ...earliestUnder10, ...executed]
+  }
+  
+  
+  useEffect(() => {
+    debugger;
+    let sortedProposals;
+    setIsLoading(true);
+    
+    if (stateFilter === 'Any Status') {
+      sortedProposals = filterInitialCriteria(allProposals);
+    } else {
+      sortedProposals = allProposals.filter((proposal) => parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter))
+    }
+    
+    if (schemeFilter !== 'All Schemes') {
+      sortedProposals = sortedProposals.filter((proposal) => proposal.scheme === schemeFilter)
+    }
+    miniSearch.removeAll();
+    miniSearch.addAll(sortedProposals);
+    
     if (titleFilter) {
+      let search = miniSearch.search(titleFilter)
+      sortedProposals = sortedProposals.filter(proposal => search.find(elem => elem.id === proposal.id))
+    }
+    
+    setProposals(sortedProposals); //triggers reindex
+    setIsLoading(false);
+    
+  }, [schemeFilter, stateFilter, titleFilter])
+  
+
+/*
+  useEffect(() => {
+    console.log('changed titleFilter')
+    if (titleFilter) {
+      
       searchHits = miniSearch.search(titleFilter).map(searchResult => {
         return proposals.find(proposal => proposal.id == searchResult.id);
       });
+      searchHits = searchHits.flat(1).filter(elem => elem !== undefined)
+      if (searchHits.length > 0) {
+        setNoResults(searchHits)
+      }
+      else setProposals([]);
+      
+      setProposals(proposals.filter((proposal => proposal.title.indexOf(titleFilter) > 0)))
     }
-    return searchHits.filter(proposal => {
-      const filterByState =
-        stateFilter === 'Any Status' || proposal.status === stateFilter;
-      const filterByScheme =
-        schemeFilter === 'All Schemes' || proposal.scheme === schemeFilter;
-
-      return filterByState && filterByScheme;
-    });
-  }
+    // if (!titleFilter) setProposals(allProposals);
+    
+  }, [titleFilter]);
+  */
+  
 
   function onStateFilterChange(event) {
     setStateFilter(event.target.value);
@@ -272,16 +310,9 @@ const ProposalsPage = observer(() => {
             onChange={onStateFilterChange}
           >
             <option value="Any Status">Any Status</option>
-            <option value="Pending Boost">Pending Boost</option>
-            <option value="Pre Boosted">Pre Boosted</option>
-            <option value="Boosted">Boosted</option>
-            <option value="In Queue">Queue</option>
-            <option value="Quiet Ending Period">Quiet Ending Period</option>
-            <option value="Passed">Passed</option>
-            <option value="Pending Execution">Pending Execution</option>
-            <option value="Rejected">Rejected</option>
-            <option value="Executed">Executed</option>
-            <option value="Expired in Queue">Expired</option>
+            {enumKeys(VotingMachineProposalState).map((i) =>
+              i !== "None" && <option value={VotingMachineProposalState[i]}>{i}</option>
+            )}
           </ProposalsFilter>
           <ProposalsFilter
             name="schemeFilter"
@@ -314,9 +345,8 @@ const ProposalsPage = observer(() => {
         <TableBody>
           {isLoading && <h3>Loading proposals...</h3>}
 
-          {!isLoading && proposals.length === 0 && <h3>No Proposals Found</h3>}
-
-          {filterProposals().map(proposal => {
+          {proposals.map((proposal, i) => {
+            
             const positiveStake = formatNumberValue(
               normalizeBalance(proposal.positiveStakes, 18),
               1
@@ -365,6 +395,7 @@ const ProposalsPage = observer(() => {
                 onClick={() =>
                   history.push(`/${networkName}/proposal/${proposal.id}`)
                 }
+                key={`row-${i}`}
               >
                 <DataCell
                   weight="800"
