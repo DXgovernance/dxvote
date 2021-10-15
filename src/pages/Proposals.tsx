@@ -145,13 +145,13 @@ const ProposalsPage = observer(() => {
   const history = useHistory();
 
   const schemes = daoStore.getAllSchemes();
-  const votingMachines = configStore.getNetworkContracts().votingMachines;
+  
   const [stateFilter, setStateFilter] = React.useState('Any Status');
   const [schemeFilter, setSchemeFilter] = React.useState('All Schemes');
   const [titleFilter, setTitleFilter] = React.useState('');
   const [proposals, setProposals] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  //const [resetTitleFilter, setResetTitleFilter] = React.useState(false);
+  
   const miniSearchRef = React.useRef(
     new MiniSearch({
       fields: ['title'],
@@ -163,6 +163,8 @@ const ProposalsPage = observer(() => {
       },
     })
   );
+
+  const votingMachines = configStore.getNetworkContracts().votingMachines;
   const networkName = configStore.getActiveChainName();
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
@@ -227,7 +229,6 @@ const ProposalsPage = observer(() => {
   
   
   useEffect(() => {
-    debugger;
     let sortedProposals;
     setIsLoading(true);
     
@@ -252,29 +253,6 @@ const ProposalsPage = observer(() => {
     setIsLoading(false);
     
   }, [schemeFilter, stateFilter, titleFilter])
-  
-
-/*
-  useEffect(() => {
-    console.log('changed titleFilter')
-    if (titleFilter) {
-      
-      searchHits = miniSearch.search(titleFilter).map(searchResult => {
-        return proposals.find(proposal => proposal.id == searchResult.id);
-      });
-      searchHits = searchHits.flat(1).filter(elem => elem !== undefined)
-      if (searchHits.length > 0) {
-        setNoResults(searchHits)
-      }
-      else setProposals([]);
-      
-      setProposals(proposals.filter((proposal => proposal.title.indexOf(titleFilter) > 0)))
-    }
-    // if (!titleFilter) setProposals(allProposals);
-    
-  }, [titleFilter]);
-  */
-  
 
   function onStateFilterChange(event) {
     setStateFilter(event.target.value);
