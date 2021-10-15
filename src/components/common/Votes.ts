@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
 export const Positive = styled.span`
-  color: ${({ theme }) => theme.votes.positive.textColor};
+  color: ${({ theme }) => theme.votes.positive.color};
 `;
 
 export const Negative = styled.span`
-  color: ${({ theme }) => theme.votes.negative.textColor};
+  color: ${({ theme }) => theme.votes.negative.color};
 `;
 
 export const Separator = styled.span`
