@@ -50,6 +50,25 @@ export default function ThemeProvider({ children }) {
 }
 
 const theme = darkMode => ({
+  votes: {
+    // fonts
+    fontSize: '13px',
+    horizontalSeparatorBorder: darkMode ? '1px solid lightgrey;' : '1px solid #ccc',
+    negative: {
+      color: darkMode ? 'lightred' : 'red',
+      // badges  
+      foregroundColor: darkMode ? 'lightred' : 'red',
+      backgroundColor: darkMode ? '#333639' : 'white',
+    },
+    positive: {
+      color: darkMode ? 'lightgreen' : 'green',
+      // badges  
+      foregroundColor: darkMode ? 'lightgreen' : 'green',
+      backgroundColor: darkMode ? '#333639' : 'white',
+    }
+    //
+  },
+  //colors
   white,
   black,
   textColor: darkMode ? white : '#010101',
