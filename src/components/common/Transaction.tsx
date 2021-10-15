@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useContext } from '../../contexts';
+import { toAddressStub } from 'utils';
 
 const AddressLink = styled.a`
   padding: 2px 5px;
@@ -17,20 +18,7 @@ const UserAddress = ({ address, size = 'default', type = 'default' }) => {
 
   const networkName = configStore.getActiveChainName();
 
-  function toAddressStub(address) {
-    const start = address.slice(0, 6);
-    const end = address.slice(-4);
-
-    switch (size) {
-      case 'short':
-        return `${start}..`;
-      case 'long':
-        return address;
-      default:
-        return `${start}...${end}`;
-    }
-  }
-
+  
   function href() {
     switch (type) {
       case 'user':
@@ -42,7 +30,7 @@ const UserAddress = ({ address, size = 'default', type = 'default' }) => {
     }
   }
 
-  return <AddressLink href={href()}>{toAddressStub(address)}</AddressLink>;
+  return <AddressLink href={href()}>{toAddressStub(address, size)}</AddressLink>;
 };
 
 export default UserAddress;
