@@ -490,7 +490,8 @@ export default class DaoStore {
     redeemsDaoBounty: RedeemDaoBounty[];
     stateChanges: ProposalStateChange[];
     history: {
-      text: string;
+      text: string[];
+      text_params: string[];
       event: any;
     }[];
   } {
@@ -509,10 +510,11 @@ export default class DaoStore {
     let history = proposalEvents.votes
       .map(event => {
         return {
-          text: `Vote from ${event.voter} of ${bnum(event.amount)
+          text: [`Vote from `,`of ${bnum(event.amount)
             .times('100')
             .div(totalRep)
-            .toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`,
+            .toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`],
+          text_params: [event.voter],
           event: {
             proposalId: event.proposalId,
             tx: event.tx,
@@ -526,11 +528,12 @@ export default class DaoStore {
       .concat(
         proposalEvents.stakes.map(event => {
           return {
-            text: `Stake from ${event.staker} of ${normalizeBalance(
+            text: [`Stake from `, `of ${normalizeBalance(
               event.amount
             ).toString()} staking token on decision ${
               VoteDecision[event.vote]
-            }`,
+              }`],
+            text_params:[event.staker],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -545,7 +548,8 @@ export default class DaoStore {
       .concat(
         proposalEvents.redeems.map(event => {
           return {
-            text: `Staking token Redeem from ${event.beneficiary} of ${event.amount}`,
+            text: [`Staking token Redeem from `, ` of ${event.amount}`],
+            text_params: [event.beneficiary],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -560,7 +564,8 @@ export default class DaoStore {
       .concat(
         proposalEvents.redeemsRep.map(event => {
           return {
-            text: `REP Redeem from ${event.beneficiary} of ${event.amount}`,
+            text: [`REP Redeem from `, ` of ${event.amount}`],
+            text_params:[event.beneficiary],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -575,7 +580,8 @@ export default class DaoStore {
       .concat(
         proposalEvents.redeemsDaoBounty.map(event => {
           return {
-            text: `Staking token Redeem from ${event.beneficiary} of ${event.amount}`,
+            text: [`Staking token Redeem from `, ` of ${event.amount}`],
+            text_params: [event.beneficiary],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -590,9 +596,10 @@ export default class DaoStore {
       .concat(
         proposalEvents.stateChanges.map(event => {
           return {
-            text: `Proposal change to state ${
+            text: [`Proposal change to state ${
               VotingMachineProposalState[event.state]
-            }`,
+              }`],
+            text_params: [],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -605,7 +612,8 @@ export default class DaoStore {
         })
       );
     history.push({
-      text: `Proposal created by ${proposal.proposer}`,
+      text: [`Proposal created by`],
+      text_params: [proposal.proposer],
       event: {
         proposalId: proposal.id,
         tx: proposal.creationEvent.tx,
@@ -1130,7 +1138,7 @@ export default class DaoStore {
     const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1;
 
     for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] < atBlock) {
+      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
         if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount);
           if (repEvents[i].account === userAddress)

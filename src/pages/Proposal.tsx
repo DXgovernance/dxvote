@@ -392,6 +392,20 @@ const ProposalPage = observer(() => {
     networkContracts.votingMachines.dxd &&
     networkContracts.votingMachines.dxd.address === votingMachineUsed;
 
+  const renderEvents = ({ text, text_params }) => {
+    let components_list = []
+    if (text.length === 1 && text_params.length === 0) components_list.push(<span>{text[0]}</span>);
+    else {
+      components_list = text.map((phrase, key) => {
+        let components = [];
+        components.push(<span>{phrase}</span>);
+        if (text_params[key]) components.push(<BlockchainLink text={text_params} toCopy={false} size='short' />);
+        return components;
+      })
+    }
+    return components_list;
+    
+  }
   return (
     <ProposalInformationWrapper>
       <ProposalInfoSection>
@@ -456,7 +470,7 @@ const ProposalPage = observer(() => {
           {proposalEvents.history.map((historyEvent, i) => {
             return (
               <ProposalHistoryEvent key={'proposalHistoryEvent' + i}>
-                <span> {historyEvent.text} </span>
+                {renderEvents(historyEvent)}
                 <BlockchainLink
                   type="transaction"
                   size="short"
