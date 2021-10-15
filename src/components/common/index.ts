@@ -14,4 +14,4 @@ export {
   TableRow,
   DataCell,
 } from './Table';
-export { Positive, Negative, Separator } from './Votes';
+export { Positive, Negative, Separator, AmountBadge, HorizontalSeparator } from './Votes';
