@@ -491,7 +491,7 @@ export default class DaoStore {
     stateChanges: ProposalStateChange[];
     history: {
       text: string[];
-      text_params: string
+      text_params: string[];
       event: any;
     }[];
   } {
