@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import Copy from './Copy';
-import { getBlockchainLink, getENSName, getERC20Token, getDxVoteContract, toAddressStub} from 'utils';
+import {
+  getBlockchainLink,
+  getENSName,
+  getERC20Token,
+  getDxVoteContract,
+  toAddressStub,
+} from 'utils';
 import { useContext } from '../../contexts';
 import { FiExternalLink } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
@@ -35,25 +41,24 @@ export const BlockchainLink = ({
   } = useContext();
 
   const networkName = configStore.getActiveChainName();
-  const [ensName, setENSName] = useState(''); 
+  const [ensName, setENSName] = useState('');
   const erc20Token = getERC20Token(text);
-  const dxVoteContract = getDxVoteContract(text)
-  
+  const dxVoteContract = getDxVoteContract(text);
+
   useEffect(() => {
     async function getENS() {
       const response = await getENSName(text);
       setENSName(response);
     }
     getENS();
-  }, [])
-  
-  
+  }, []);
+
   let formatedAddress;
   if (!ensName && !dxVoteContract && !erc20Token) {
-    if (onlyIcon) formatedAddress = <FiExternalLink />
-    else formatedAddress = toAddressStub(text, size)
+    if (onlyIcon) formatedAddress = <FiExternalLink />;
+    else formatedAddress = toAddressStub(text, size);
   }
-  
+
   /*
   If the address is an ens domain show the ens domain name with a link to the blockchain explorer address and option to copy the address.
   If the address is an ERC20 token registered in the config show the token symbol instead with links to the token explorer, and the option to copy the token address.
@@ -75,6 +80,3 @@ export const BlockchainLink = ({
 };
 
 export default BlockchainLink;
-
-
-
