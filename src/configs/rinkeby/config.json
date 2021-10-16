@@ -391,6 +391,43 @@
     {
       "id": "custom",
       "title": "Custom"
+    },
+    {
+      "id": "contributor",
+      "title": "Contributor",
+      "scheme": "QuickWalletScheme"
+    }
+  ],
+  "contributionLevels": [
+    {
+      "id": "1",
+      "dxd": 2000,
+      "stable": 4000,
+      "rep": 0.1667
+    },
+    {
+      "id": "2",
+      "dxd": 3000,
+      "stable": 5000,
+      "rep": 0.1667
+    },
+    {
+      "id": "3",
+      "dxd": 4000,
+      "stable": 6000,
+      "rep": 0.1667
+    },
+    {
+      "id": "4",
+      "dxd": 5000,
+      "stable": 7000,
+      "rep": 0.1667
+    },
+    {
+      "id": "5",
+      "dxd": 6000,
+      "stable": 8000,
+      "rep": 0.1667
     }
   ],
   "tokens": [

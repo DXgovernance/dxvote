@@ -75,8 +75,10 @@ export const NewProposalTypePage = observer(() => {
   }, []);
 
   proposalTypes.forEach(type => {
+    const path =
+      type.id === 'custom' ? `submit/${type.id}` : `metadata/${type.id}`;
     options.push(
-      <ProposalType onClick={() => history.push(`submit/${type.id}`)}>
+      <ProposalType onClick={() => history.push(path)}>
         {type.title}
       </ProposalType>
     );

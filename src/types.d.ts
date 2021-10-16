@@ -295,9 +295,16 @@ declare global {
       description: string;
       calls?: array;
     }[];
+    contributionLevels: {
+      id: string;
+      dxd: number;
+      stable: number;
+      rep: number;
+    }[];
     proposalTypes: {
       id: string;
       title: string;
+      scheme?: string;
     }[];
     tokens: {
       address: string;
@@ -337,15 +344,15 @@ export interface DaoNetworkCache {
 }
 
 export interface ChainConfig {
-  id: number,
-  name: string,
-  displayName: string,
-  defaultRpc: string,
+  id: number;
+  name: string;
+  displayName: string;
+  defaultRpc: string;
   nativeAsset: {
-    name: string,
-    symbol: string,
-    decimals: number
-  },
-  blockExplorer?: string,
-  icon?: string
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  blockExplorer?: string;
+  icon?: string;
 }

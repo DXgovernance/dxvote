@@ -61,4 +61,13 @@ export default class CoingeckoService {
   getPrices() {
     return this.prices;
   }
+
+  async getDxdData() {
+    return (
+      await axios({
+        method: 'GET',
+        url: `https://api.coingecko.com/api/v3/coins/dxdao`,
+      })
+    ).data;
+  }
 }

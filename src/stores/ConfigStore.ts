@@ -225,6 +225,10 @@ export default class ConfigStore {
     return this.appConfig[this.getActiveChainName()].proposalTypes;
   }
 
+  getContributorLevels() {
+    return this.appConfig[this.getActiveChainName()].contributionLevels;
+  }
+
   getRecommendedCalls() {
     const networkName = this.getActiveChainName();
     const networkContracts = this.getNetworkContracts();

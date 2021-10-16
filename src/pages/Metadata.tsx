@@ -9,6 +9,8 @@ import { useContext } from '../contexts';
 import { Button } from '../components/common/Button';
 import { Box } from '../components/common';
 
+import { sleep } from '../utils';
+
 const ProposalsWrapper = styled.div`
   padding: 10px 0px;
   background: white;
@@ -72,7 +74,7 @@ const Error = styled.div`
 
 export const CreateMetadataPage = observer(() => {
   const {
-    context: { configStore },
+    context: { configStore, ipfsService, pinataService },
   } = useContext();
 
   const history = useHistory();
@@ -91,6 +93,7 @@ export const CreateMetadataPage = observer(() => {
   const [title, setTitle] = useState(
     localStorage.getItem('dxvote-newProposal-title') || ''
   );
+  const [error, setError] = useState(null);
 
   const onTitleChange = newValue => {
     setTitle(newValue);
@@ -100,6 +103,42 @@ export const CreateMetadataPage = observer(() => {
   const onDescriptionChange = newValue => {
     setDescriptionText(newValue);
     localStorage.setItem('dxvote-newProposal-description', newValue);
+  };
+
+  const uploadToIPFS = async function () {
+    if (title.length < 10) {
+      setError('Title has to be at mimimum 10 characters length');
+    } else if (descriptionText.length === 0) {
+      setError('Description has to be at mimimum 100 characters length');
+    } else {
+      setError(null);
+      const bodyTextToUpload = JSON.stringify({
+        description: descriptionText,
+        title: title,
+        tags: ['dxvote', 'contributorProposal'],
+        url: '',
+      });
+
+      const hash = await ipfsService.add(bodyTextToUpload);
+      localStorage.setItem('dxvote-newProposal-hash', hash);
+
+      if (pinataService.auth) {
+        const pinataPin = await pinataService.pin(hash);
+        console.debug('[PINATA PIN]', pinataPin.data);
+      }
+      const ipfsPin = await ipfsService.pin(hash);
+      console.debug('[IPFS PIN]', ipfsPin);
+
+      let uploaded = false;
+      while (!uploaded) {
+        const ipfsContent = await ipfsService.getContent(hash);
+        console.debug('[IPFS CONTENT]', ipfsContent);
+        if (ipfsContent === bodyTextToUpload) uploaded = true;
+        await sleep(1000);
+      }
+
+      history.push(`../submit/${proposalType}`);
+    }
   };
 
   return (
@@ -113,9 +152,14 @@ export const CreateMetadataPage = observer(() => {
               onChange={event => onTitleChange(event.target.value)}
               value={title}
             />
+            {error}
             <ButtonsWrapper>
               <Button onClick={() => history.push(`../../new`)}>Back</Button>
-              <Button onClick={() => history.push(`../${proposalType}`)}>
+              <Button
+                onClick={async () => {
+                  await uploadToIPFS();
+                }}
+              >
                 Next
               </Button>
             </ButtonsWrapper>
