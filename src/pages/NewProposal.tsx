@@ -1,4 +1,4 @@
-import React from 'react';
+import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
@@ -149,14 +149,14 @@ const NewProposalPage = observer(() => {
     ? schemes.findIndex(scheme => scheme.address === schemeInLocalStorage)
     : schemes.findIndex(scheme => scheme.name === 'MasterWalletScheme');
 
-  const [schemeToUse, setSchemeToUse] = React.useState(
+  const [schemeToUse, setSchemeToUse] = useState(
     defaultSchemeToUse > -1 ? schemes[defaultSchemeToUse] : schemes[0]
   );
-  const [titleText, setTitleText] = React.useState(
+  const [titleText, setTitleText] = useState(
     localStorage.getItem('dxvote-newProposal-title') || ''
   );
-  const [ipfsHash, setIpfsHash] = React.useState('');
-  const [descriptionText, setDescriptionText] = React.useState(
+  const [ipfsHash, setIpfsHash] = useState('');
+  const [descriptionText, setDescriptionText] = useState(
     localStorage.getItem('dxvote-newProposal-description') || ''
   );
 
@@ -176,9 +176,9 @@ const NewProposalPage = observer(() => {
   } catch (error) {
     callsInStorage = [];
   }
-  const [calls, setCalls] = React.useState(callsInStorage);
+  const [calls, setCalls] = useState(callsInStorage);
 
-  const [contributionRewardCalls, setContributionRewardCalls] = React.useState({
+  const [contributionRewardCalls, setContributionRewardCalls] = useState({
     beneficiary: 'ZERO_ADDRESS',
     repChange: '0',
     ethValue: '0',
@@ -187,7 +187,7 @@ const NewProposalPage = observer(() => {
   });
 
   const [schemeRegistrarProposalValues, setSchemeRegistrarProposalValues] =
-    React.useState({
+    useState({
       register: true,
       schemeAddress: ZERO_ADDRESS,
       parametersHash: ZERO_HASH,
@@ -199,9 +199,9 @@ const NewProposalPage = observer(() => {
       }),
     });
 
-  const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const [submitionState, setSubmitionState] = React.useState(0);
+  const [submitionState, setSubmitionState] = useState(0);
   // 0 = Proposal Description not uploaded
   // 1 = Uploading proposal description
   // 2 = Proposal description uploaded
@@ -209,7 +209,7 @@ const NewProposalPage = observer(() => {
   // 4 = Proposal creation tx submited
   // 5 = Proposal creation tx receipt received
 
-  const [errorMessage, setErrorMessage] = React.useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const proposalTemplates = configStore.getProposalTemplates();
 
   const { assetLimits: transferLimits, recommendedCalls } =
