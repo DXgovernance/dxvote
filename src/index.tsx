@@ -25,6 +25,7 @@ import InfoPage from './pages/Info';
 import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
+import { CreateMetadataPage } from 'pages/Metadata';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -73,6 +74,10 @@ const Routes = () => {
         {' '}
         <NewProposalPage />{' '}
       </Route>
+      <Route path="/:network/create/metadata/:proposalType">
+        {' '}
+        <CreateMetadataPage />{' '}
+      </Route>
       <Route exact path="/:network/info">
         {' '}
         <InfoPage />{' '}
@@ -85,7 +90,8 @@ const Routes = () => {
         {' '}
         <ProposalPage />{' '}
       </Route>
-      {location.pathname.indexOf('/proposals') < 0 && <Footer />}
+      {location.pathname.indexOf('/proposals') < 0 &&
+        location.pathname.indexOf('/create/metadata') < 0 && <Footer />}
     </PageRouter>
   );
 };
