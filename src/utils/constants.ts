@@ -25,6 +25,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://etherscan.io',
+    api: 'https://api.etherscan.io',
   },
   {
     id: 4,
@@ -36,7 +37,8 @@ export const NETWORKS: ChainConfig[] = [
       symbol: 'ETH',
       decimals: 18,
     },
-    blockExplorer: 'https://rinkeby.etherscan.io/'
+    blockExplorer: 'https://rinkeby.etherscan.io/',
+    api: 'https://api-rinkeby.etherscan.io/',
   },
   {
     id: 100,
@@ -48,7 +50,8 @@ export const NETWORKS: ChainConfig[] = [
       symbol: 'xDAI',
       decimals: 18,
     },
-    blockExplorer: 'https://blockscout.com/xdai/mainnet/'
+    blockExplorer: 'https://blockscout.com/xdai/mainnet/',
+    api: 'https://blockscout.com/xdai/mainnet/api',
   },
   {
     id: 42161,
@@ -60,7 +63,8 @@ export const NETWORKS: ChainConfig[] = [
       symbol: 'ETH',
       decimals: 18,
     },
-    blockExplorer: 'https://arbiscan.io/'
+    blockExplorer: 'https://arbiscan.io/',
+    api: 'https://api.arbiscan.io/',
   },
   {
     id: 421611,
@@ -72,7 +76,7 @@ export const NETWORKS: ChainConfig[] = [
       symbol: 'ETH',
       decimals: 18,
     },
-    blockExplorer: 'https://rinkeby-explorer.arbitrum.io/'
+    blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
   },
   {
     id: 1337,
@@ -132,3 +136,13 @@ export const ALCHEMY_NETWORK_URLS = {
   '42161': 'arb-mainnet.g.alchemy.com',
   '421611': 'arb-rinkeby.g.alchemy.com',
 };
+
+export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(
+  (acc, network) => {
+    if (network?.blockExplorer) {
+      acc[network.name] = network.api;
+    }
+    return acc;
+  },
+  {}
+);

@@ -68,7 +68,11 @@ export const BlockchainLink = ({
 
   return (
     <AddressLink>
-      <a href={getBlockchainLink(text, networkName, type)} target="_blank">
+      <a
+        href={getBlockchainLink(text, networkName, type)}
+        target="_blank"
+        rel="noreferrer"
+      >
         {ensName}
         {!ensName && erc20Token && <Icon src={erc20Token.logoURI} />}
         {!ensName && dxVoteContract && dxVoteContract?.contract}

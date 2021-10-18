@@ -34,6 +34,7 @@ import {
   denormalizeBalance,
 } from '../utils';
 import { ConfirmVoteModal } from 'components/ConfirmVoteModal';
+import CallDataInformation from 'components/CallDataInformation';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;
@@ -136,10 +137,6 @@ const ProposalHistoryEvent = styled.div`
   &:last-of-type {
     border-bottom: none;
   }
-`;
-
-const ProposalCallText = styled.span`
-  white-space: pre-line;
 `;
 
 const Vote = styled.div`
@@ -332,20 +329,6 @@ const ProposalPage = observer(() => {
       ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
       : bnum(0);
 
-  let proposalCallTexts = new Array(proposal.to.length);
-  for (var p = 0; p < proposal.to.length; p++) {
-    proposalCallTexts[p] = daoService.decodeWalletSchemeCall(
-      scheme.type === 'WalletScheme' &&
-        scheme.controllerAddress !== networkContracts.controller
-        ? scheme.address
-        : networkContracts.avatar,
-      proposal.to[p],
-      proposal.callData[p],
-      proposal.values[p],
-      advancedCalls
-    );
-  }
-
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
@@ -498,17 +481,12 @@ const ProposalPage = observer(() => {
             )}
             <Question question="9" />
           </h2>
-          {proposalCallTexts.map((proposalCallText, i) => {
-            return (
-              <div key={'proposalCallText' + i}>
-                <strong>Call #{i + 1}</strong> -{' '}
-                <ProposalCallText
-                  dangerouslySetInnerHTML={{ __html: proposalCallText }}
-                />
-                {i < proposalCallTexts.length - 1 ? <hr /> : <div />}
-              </div>
-            );
-          })}
+          <CallDataInformation
+            advancedCalls={advancedCalls}
+            scheme={scheme}
+            proposal={proposal}
+            networkContracts={networkContracts}
+          />
         </ProposalInfoBox>
         <ProposalInfoBox style={{ marginTop: '15px' }}>
           <Title noMargin> History </Title>

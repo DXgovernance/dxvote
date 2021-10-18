@@ -75,4 +75,3 @@ export function parseCamelCase(text) {
   const parsed = text.replace(/([a-z])([A-Z])/g, '$1 $2');
   return parsed[0].toUpperCase() + parsed.substring(1);
 }
-

@@ -53,19 +53,21 @@ const theme = darkMode => ({
   votes: {
     // fonts
     fontSize: '13px',
-    horizontalSeparatorBorder: darkMode ? '1px solid lightgrey;' : '1px solid #ccc',
+    horizontalSeparatorBorder: darkMode
+      ? '1px solid lightgrey;'
+      : '1px solid #ccc',
     negative: {
       color: darkMode ? 'lightred' : 'red',
-      // badges  
+      // badges
       foregroundColor: darkMode ? 'lightred' : 'red',
       backgroundColor: darkMode ? '#333639' : 'white',
     },
     positive: {
       color: darkMode ? 'lightgreen' : 'green',
-      // badges  
+      // badges
       foregroundColor: darkMode ? 'lightgreen' : 'green',
       backgroundColor: darkMode ? '#333639' : 'white',
-    }
+    },
     //
   },
   //colors
