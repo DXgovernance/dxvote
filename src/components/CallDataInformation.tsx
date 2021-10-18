@@ -199,6 +199,11 @@ const CallDataInformation = observer(
       );
     };
 
+    if(!loading){
+      return <PendingCircle height='44px' width='44px' color='blue'/>
+    }
+
+
     return (
       <div>
         {ProposalCallTexts.map(
