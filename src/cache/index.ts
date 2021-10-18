@@ -1425,7 +1425,7 @@ export const updateProposals = async function (
         const response = await axios.request({
           url: 'https://ipfs.io/ipfs/' + ipfsHash,
           method: 'GET',
-          timeout: isNode() ? 5000 : 1000,
+          timeout: isNode() ? 10000 : 1000,
         });
         if (response && response.data && response.data.title) {
           networkCache.proposals[proposal.id].title = response.data.title;

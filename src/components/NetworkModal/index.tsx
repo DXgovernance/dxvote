@@ -9,6 +9,17 @@ import { useContext } from 'contexts';
 import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
 
+import arbitrumIcon from '../../assets/images/arbitrum.png';
+import ethereumIcon from '../../assets/images/ethereum.svg';
+import xdaiIcon from '../../assets/images/xdai.svg';
+
+const iconsByChain = {
+  1: ethereumIcon,
+  4: ethereumIcon,
+  100: xdaiIcon,
+  42161: arbitrumIcon,
+  421611: arbitrumIcon
+}
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
@@ -109,7 +120,7 @@ const NetworkModal = observer(() => {
         <Option
           onClick={() => trySwitching(chain)}
           key={chain.name}
-          icon={chain.icon || null}
+          icon={iconsByChain[chain.id] || null}
           active={chain.id === chainId}
           header={chain.displayName}
         />
