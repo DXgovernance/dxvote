@@ -1,5 +1,5 @@
 import { ethers, utils } from 'ethers';
-import { NETWORK_EXPLORERS } from 'utils';
+import { NETWORK_EXPLORERS } from './index';
 
 const arbitrum = require('../configs/arbitrum/config.json');
 const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
