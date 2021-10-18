@@ -5,6 +5,7 @@ import { useEtherscanService } from 'hooks/useEtherscanService';
 import { BigNumber, normalizeBalance } from 'utils';
 import { ProposalCalls } from 'types';
 import PendingCircle from './common/PendingCircle';
+import { BlockchainLink } from './common';
 
 interface CallDataInformationParams {
   advancedCalls: boolean;
@@ -21,36 +22,35 @@ const CallDataInformation = observer(
     networkContracts,
   }: CallDataInformationParams) => {
     const { decodedCallData, ABI } = useABIService();
-    const { getContractABI,  loading, error } = useEtherscanService();
+    const { getContractABI, loading, error } = useEtherscanService();
     const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
       new Array(proposal.to.length)
     );
 
-      const proposalCallArray = [];
-      const getProposalCalls = async () => {
-        const result = await Promise.all(
-          proposal.to.map(item => getContractABI(item))
-        );
-        result.map((abi, i) =>
-          proposalCallArray.push(
-            decodedCallData(
-              scheme.type === 'WalletScheme' &&
-                scheme.controllerAddress !== networkContracts.controller
-                ? scheme.address
-                : networkContracts.avatar,
-              proposal.to[i],
-              proposal.callData[i],
-              proposal.values[i],
-              abi
-            )
+    const proposalCallArray = [];
+    const getProposalCalls = async () => {
+      const result = await Promise.all(
+        proposal.to.map(item => getContractABI(item))
+      );
+      result.map((abi, i) =>
+        proposalCallArray.push(
+          decodedCallData(
+            scheme.type === 'WalletScheme' &&
+              scheme.controllerAddress !== networkContracts.controller
+              ? scheme.address
+              : networkContracts.avatar,
+            proposal.to[i],
+            proposal.callData[i],
+            proposal.values[i],
+            abi
           )
-        );
-      };
+        )
+      );
+    };
     useEffect(() => {
-      getProposalCalls()
+      getProposalCalls();
       setProposalCallTexts(proposalCallArray);
     }, []);
-
 
     const recommendedCallDisplay = ({
       to,
@@ -90,10 +90,16 @@ const CallDataInformation = observer(
         return (
           <div>
             <p>
-              <strong>From: </strong> <small>{from}</small>
+              <strong>From: </strong>{' '}
+              <small>
+                <BlockchainLink text={from} toCopy={false} />
+              </small>
             </p>
             <p>
-              <strong>To: </strong> <small>{to}</small>
+              <strong>To: </strong>{' '}
+              <small>
+                <BlockchainLink text={to} toCopy={false} />
+              </small>
             </p>
             <p>
               <strong>Descriptions: </strong>{' '}
@@ -131,11 +137,15 @@ const CallDataInformation = observer(
         <div>
           <p>
             <strong>From:</strong>
-            <small>{from}</small>
+            <small>
+              <BlockchainLink text={from} toCopy={false} />
+            </small>
           </p>
           <p>
             <strong>To: </strong>
-            <small>{to}</small>
+            <small>
+              <BlockchainLink text={to} toCopy={false} />
+            </small>
           </p>
           <p>
             <strong>Function Name: </strong>
@@ -183,11 +193,15 @@ const CallDataInformation = observer(
           )}
           <p>
             <strong>From: </strong>
-            <small>{from}</small>
+            <small>
+              <BlockchainLink text={from} toCopy={false} />
+            </small>
           </p>
           <p>
             <strong>To: </strong>
-            <small>{to}</small>
+            <small>
+              <BlockchainLink text={to} toCopy={false} />
+            </small>
           </p>
           <p>
             <strong>Value: </strong>
@@ -203,10 +217,9 @@ const CallDataInformation = observer(
       );
     };
 
-    if(loading){
-      return <PendingCircle height='44px' width='44px' color='blue'/>
+    if (loading) {
+      return <PendingCircle height="44px" width="44px" color="blue" />;
     }
-
 
     return (
       <div>
