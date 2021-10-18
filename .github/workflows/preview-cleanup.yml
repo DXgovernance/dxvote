@@ -1,0 +1,25 @@
+name: IPFS Deploy - Cleanup
+
+on:
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  cleanup:
+    name: Remove test environment deployment
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/develop' || github.ref != 'refs/heads/master'
+    steps:
+      - name: Get build workflow details
+        uses: potiuk/get-workflow-origin@v1_3
+        id: source-run-info
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
+
+      - name: Mark deployment as deactivated
+        uses: bobheadxi/deployments@v0.6.0
+        with:
+          step: deactivate-env
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ steps.source-run-info.outputs.sourceHeadBranch }}
