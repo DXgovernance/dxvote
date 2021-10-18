@@ -455,22 +455,22 @@ const ProposalPage = observer(() => {
     networkContracts.votingMachines.dxd &&
     networkContracts.votingMachines.dxd.address === votingMachineUsed;
 
-  const renderEvents = ({ text, text_params }) => {
-    let components_list = [];
-    if (text.length === 1 && text_params.length === 0)
-      components_list.push(<span>{text[0]}</span>);
+  const renderEvents = ({ text, textParams }) => {
+    let componentsList = [];
+    if (text.length === 1 && textParams.length === 0)
+      componentsList.push(<span>{text[0]}</span>);
     else {
-      components_list = text.map((phrase, key) => {
+      componentsList = text.map((phrase, key) => {
         let components = [];
         components.push(<span>{phrase}</span>);
-        if (text_params[key])
+        if (textParams[key])
           components.push(
-            <BlockchainLink text={text_params} toCopy={false} size="short" />
+            <BlockchainLink text={textParams} toCopy={false} size="short" />
           );
         return components;
       });
     }
-    return components_list;
+    return componentsList;
   };
   return (
     <ProposalInformationWrapper>

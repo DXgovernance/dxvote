@@ -491,7 +491,7 @@ export default class DaoStore {
     stateChanges: ProposalStateChange[];
     history: {
       text: string[];
-      text_params: string[];
+      textParams: string[];
       event: any;
     }[];
   } {
@@ -510,11 +510,14 @@ export default class DaoStore {
     let history = proposalEvents.votes
       .map(event => {
         return {
-          text: [`Vote from `,`of ${bnum(event.amount)
-            .times('100')
-            .div(totalRep)
-            .toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`],
-          text_params: [event.voter],
+          text: [
+            `Vote from `,
+            `of ${bnum(event.amount)
+              .times('100')
+              .div(totalRep)
+              .toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`,
+          ],
+          textParams: [event.voter],
           event: {
             proposalId: event.proposalId,
             tx: event.tx,
@@ -528,12 +531,15 @@ export default class DaoStore {
       .concat(
         proposalEvents.stakes.map(event => {
           return {
-            text: [`Stake from `, `of ${normalizeBalance(
-              event.amount
-            ).toString()} staking token on decision ${
-              VoteDecision[event.vote]
-              }`],
-            text_params:[event.staker],
+            text: [
+              `Stake from `,
+              `of ${normalizeBalance(
+                event.amount
+              ).toString()} staking token on decision ${
+                VoteDecision[event.vote]
+              }`,
+            ],
+            textParams: [event.staker],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -549,7 +555,7 @@ export default class DaoStore {
         proposalEvents.redeems.map(event => {
           return {
             text: [`Staking token Redeem from `, ` of ${event.amount}`],
-            text_params: [event.beneficiary],
+            textParams: [event.beneficiary],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -565,7 +571,7 @@ export default class DaoStore {
         proposalEvents.redeemsRep.map(event => {
           return {
             text: [`REP Redeem from `, ` of ${event.amount}`],
-            text_params:[event.beneficiary],
+            textParams: [event.beneficiary],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -581,7 +587,7 @@ export default class DaoStore {
         proposalEvents.redeemsDaoBounty.map(event => {
           return {
             text: [`Staking token Redeem from `, ` of ${event.amount}`],
-            text_params: [event.beneficiary],
+            textParams: [event.beneficiary],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -596,10 +602,12 @@ export default class DaoStore {
       .concat(
         proposalEvents.stateChanges.map(event => {
           return {
-            text: [`Proposal change to state ${
-              VotingMachineProposalState[event.state]
-              }`],
-            text_params: [],
+            text: [
+              `Proposal change to state ${
+                VotingMachineProposalState[event.state]
+              }`,
+            ],
+            textParams: [],
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -613,7 +621,7 @@ export default class DaoStore {
       );
     history.push({
       text: [`Proposal created by`],
-      text_params: [proposal.proposer],
+      textParams: [proposal.proposer],
       event: {
         proposalId: proposal.id,
         tx: proposal.creationEvent.tx,
