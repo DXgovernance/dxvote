@@ -1,7 +1,4 @@
 import { ChainConfig } from 'types';
-import arbitrumIcon from 'assets/images/arbitrum.png';
-import ethereumIcon from 'assets/images/ethereum.svg';
-import xdaiIcon from 'assets/images/xdai.svg';
 
 export const MAX_UINT =
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
@@ -29,7 +26,6 @@ export const NETWORKS: ChainConfig[] = [
     },
     blockExplorer: 'https://etherscan.io',
     api: 'https://api.etherscan.io',
-    icon: ethereumIcon,
   },
   {
     id: 4,
@@ -43,7 +39,6 @@ export const NETWORKS: ChainConfig[] = [
     },
     blockExplorer: 'https://rinkeby.etherscan.io/',
     api: 'https://api-rinkeby.etherscan.io/',
-    icon: ethereumIcon,
   },
   {
     id: 100,
@@ -57,7 +52,6 @@ export const NETWORKS: ChainConfig[] = [
     },
     blockExplorer: 'https://blockscout.com/xdai/mainnet/',
     api: 'https://blockscout.com/xdai/mainnet/api',
-    icon: xdaiIcon,
   },
   {
     id: 42161,
@@ -71,7 +65,6 @@ export const NETWORKS: ChainConfig[] = [
     },
     blockExplorer: 'https://arbiscan.io/',
     api: 'https://api.arbiscan.io/',
-    icon: arbitrumIcon,
   },
   {
     id: 421611,
@@ -84,7 +77,6 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
-    icon: arbitrumIcon,
   },
   {
     id: 1337,

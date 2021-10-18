@@ -109,6 +109,66 @@ export default class DaoService {
         ),
         '0'
       );
+    } else if (schemeType === 'SchemeRegistrar') {
+      // function proposeScheme(
+      //     Avatar _avatar,
+      //     address _scheme,
+      //     bytes32 _parametersHash,
+      //     bytes4 _permissions,
+      //     string memory _descriptionHash
+      // )
+      if (proposalData.register) {
+        return providerStore.sendRawTransaction(
+          providerStore.getActiveWeb3React(),
+          scheme,
+          library.eth.abi.encodeFunctionCall(
+            {
+              name: 'proposeScheme',
+              type: 'function',
+              inputs: [
+                { type: 'address', name: '_avatar' },
+                { type: 'address', name: '_scheme' },
+                { type: 'bytes32', name: '_parametersHash' },
+                { type: 'bytes4', name: '_permissions' },
+                { type: 'string', name: '_descriptionHash' },
+              ],
+            },
+            [
+              networkContracts.avatar,
+              proposalData.schemeAddress,
+              proposalData.parametersHash,
+              proposalData.permissions,
+              contentHash.decode(proposalData.descriptionHash),
+            ]
+          ),
+          '0'
+        );
+        // function proposeToRemoveScheme(
+        //   Avatar _avatar, address _scheme, string memory _descriptionHash
+        // )
+      } else {
+        return providerStore.sendRawTransaction(
+          providerStore.getActiveWeb3React(),
+          scheme,
+          library.eth.abi.encodeFunctionCall(
+            {
+              name: 'proposeToRemoveScheme',
+              type: 'function',
+              inputs: [
+                { type: 'address', name: '_avatar' },
+                { type: 'address', name: '_scheme' },
+                { type: 'string', name: '_descriptionHash' },
+              ],
+            },
+            [
+              networkContracts.avatar,
+              proposalData.schemeAddress,
+              contentHash.decode(proposalData.descriptionHash),
+            ]
+          ),
+          '0'
+        );
+      }
     } else {
       return providerStore.sendTransaction(
         providerStore.getActiveWeb3React(),
