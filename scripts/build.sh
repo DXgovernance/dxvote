@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 
-SKIP_PREFLIGHT_CHECK=true npx react-app-rewired build
+# Pick git commit
+COMMIT=$(git rev-parse --short HEAD)
+
+SKIP_PREFLIGHT_CHECK=true REACT_APP_DXVOTE_COMMIT="$COMMIT" npx react-app-rewired build

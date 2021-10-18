@@ -2,4 +2,7 @@
 # Copy dxdao contracts addresses in live networks
 # cp node_modules/dxdao-contracts/.contracts.json src/config/contracts.json
 
-SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true  npx react-app-rewired start | cat
+# Pick git commit
+COMMIT=$(git rev-parse --short HEAD)
+
+SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true REACT_APP_DXVOTE_COMMIT="$COMMIT" npx react-app-rewired start | cat

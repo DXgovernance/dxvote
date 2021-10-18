@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import config from '../../utils/config';
 
 const FooterWrapper = styled.div`
   display: flex;
@@ -26,8 +27,10 @@ const FooterItem = styled.div`
   }
   a:hover {
     color: var(--text-gray-onHover);
-  }a
-
+  }
+  span {
+    color: var(--footer-text-gray);
+  }
 `;
 
 const FooterDivider = styled.div`
@@ -38,6 +41,15 @@ const FooterDivider = styled.div`
   line-height: 24px;
   margin: auto 7px;
 `;
+
+const appVersion: string | null =
+  config.version &&
+  config.env &&
+  `v${config.version}${
+    config.env === 'production' && config.commit
+      ? ''
+      : `-${config.env}-${config.commit}`
+  }`;
 
 const Footer = () => {
   let history = useHistory();
@@ -91,6 +103,14 @@ const Footer = () => {
             Submit Issue{' '}
           </a>
         </FooterItem>
+        {appVersion && (
+          <>
+            <FooterDivider></FooterDivider>
+            <FooterItem>
+              <span>{appVersion}</span>
+            </FooterItem>
+          </>
+        )}
       </LeftFooter>
     </FooterWrapper>
   );
