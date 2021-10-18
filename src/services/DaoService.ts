@@ -228,6 +228,7 @@ export default class DaoService {
         '0'
       );
     } else {
+      console.log({ proposalData });
       return providerStore.sendTransaction(
         providerStore.getActiveWeb3React(),
         ContractType.WalletScheme,
