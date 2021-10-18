@@ -21,32 +21,36 @@ const CallDataInformation = observer(
     networkContracts,
   }: CallDataInformationParams) => {
     const { decodedCallData, ABI } = useABIService();
-    const { getContractABI, loading, error } = useEtherscanService();
+    const { getContractABI,  loading, error } = useEtherscanService();
     const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
       new Array(proposal.to.length)
     );
 
-    useEffect(() => {
       const proposalCallArray = [];
-      proposal.to.forEach(async (to, index) => {
-        const contractABI = await getContractABI(to);
-        proposalCallArray[index] = decodedCallData(
-          scheme.type === 'WalletScheme' &&
-            scheme.controllerAddress !== networkContracts.controller
-            ? scheme.address
-            : networkContracts.avatar,
-          proposal.to[index],
-          proposal.callData[index],
-          proposal.values[index],
-          contractABI
+      const getProposalCalls = async () => {
+        const result = await Promise.all(
+          proposal.to.map(item => getContractABI(item))
         );
-        setProposalCallTexts(proposalCallArray);
-      });
+        result.map((abi, i) =>
+          proposalCallArray.push(
+            decodedCallData(
+              scheme.type === 'WalletScheme' &&
+                scheme.controllerAddress !== networkContracts.controller
+                ? scheme.address
+                : networkContracts.avatar,
+              proposal.to[i],
+              proposal.callData[i],
+              proposal.values[i],
+              abi
+            )
+          )
+        );
+      };
+    useEffect(() => {
+      getProposalCalls()
+      setProposalCallTexts(proposalCallArray);
     }, []);
 
-    if (loading) {
-      return <PendingCircle height="44px" width="44px" />;
-    }
 
     const recommendedCallDisplay = ({
       to,
@@ -173,7 +177,7 @@ const CallDataInformation = observer(
             <p>
               {error.message ==
               `OK-Missing/Invalid API Key, rate limit of 1/5sec applied`
-                ? `Missing API key, Please provide the appropriate blockexplorer Api Key`
+                ? `Missing API key, Please provide the appropriate blockexplorer API Key`
                 : error.message}
             </p>
           )}
@@ -199,7 +203,7 @@ const CallDataInformation = observer(
       );
     };
 
-    if(!loading){
+    if(loading){
       return <PendingCircle height='44px' width='44px' color='blue'/>
     }
 
@@ -221,7 +225,8 @@ const CallDataInformation = observer(
           ) => {
             return (
               <div>
-                <div> Call #{i + 1}</div>
+                {i > 0 ? <hr></hr> : null}
+                <strong> Call #{i + 1}</strong>
                 {recommendedCallUsed
                   ? recommendedCallDisplay({
                       to,
@@ -235,7 +240,6 @@ const CallDataInformation = observer(
                   : ABI
                   ? etherscanCallDisplay(to, from)
                   : baseDisplay(to, from, data, value, advancedCalls)}
-                <hr></hr>
               </div>
             );
           }

@@ -22,6 +22,12 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const etherscanErrors = (etherscanResult: AxiosResponse<any>) => {
     switch (etherscanResult.data.status) {
       case '0':
+        switch (etherscanResult.data.message) {
+          case 'NOTOK':
+            throw new Error(etherscanResult.data.result);
+          default:
+            break;
+        }
         throw new Error(etherscanResult.data.message);
       case '1':
         switch (etherscanResult.data.message) {
