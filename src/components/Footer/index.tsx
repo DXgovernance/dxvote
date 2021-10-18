@@ -65,7 +65,11 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a href="https://github.com/AugustoL/dxvote" target="_blank" rel="noreferrer">
+          <a
+            href="https://github.com/AugustoL/dxvote"
+            target="_blank"
+            rel="noreferrer"
+          >
             {' '}
             Source Code{' '}
           </a>
@@ -85,7 +89,8 @@ const Footer = () => {
         <FooterItem>
           <a
             href="https://github.com/AugustoL/dxvote/issues/new/choose"
-            target="_blank" rel="noreferrer"
+            target="_blank"
+            rel="noreferrer"
           >
             {' '}
             Submit Issue{' '}

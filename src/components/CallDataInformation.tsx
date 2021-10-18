@@ -198,33 +198,41 @@ const CallDataInformation = observer(
         </div>
       );
     };
+
     return (
       <div>
         {ProposalCallTexts.map(
-          ({
-            to,
-            from,
-            recommendedCallUsed,
-            callParameters,
-            data,
-            value,
-            encodedFunctionName,
-          }) => {
-            if (recommendedCallUsed) {
-              return recommendedCallDisplay({
-                to,
-                from,
-                recommendedCallUsed,
-                callParameters,
-                data,
-                encodedFunctionName,
-                value,
-              });
-            }
-            if (ABI) {
-              return etherscanCallDisplay(to, from);
-            }
-            return baseDisplay(to, from, data, value, advancedCalls);
+          (
+            {
+              to,
+              from,
+              recommendedCallUsed,
+              callParameters,
+              data,
+              value,
+              encodedFunctionName,
+            },
+            i
+          ) => {
+            return (
+              <div>
+                <div> Call #{i + 1}</div>
+                {recommendedCallUsed
+                  ? recommendedCallDisplay({
+                      to,
+                      from,
+                      recommendedCallUsed,
+                      callParameters,
+                      data,
+                      encodedFunctionName,
+                      value,
+                    })
+                  : ABI
+                  ? etherscanCallDisplay(to, from)
+                  : baseDisplay(to, from, data, value, advancedCalls)}
+                <hr></hr>
+              </div>
+            );
           }
         )}
       </div>
