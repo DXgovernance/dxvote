@@ -21,6 +21,10 @@ font-style: ${props => props.fontStyle || 'normal' };
 font-size: ${props => props.fontSize || '14px'};
 font-weight: ${props => props.fontWeight || 500};
 `
+const Divider = styled.div`
+  border-top: 1px solid gray;
+  margin: 10px 0;
+`;
 
 
 const CallDataInformation = observer(
@@ -141,6 +145,7 @@ const CallDataInformation = observer(
         </div>
       );
     };
+    // @todo create decoded text for each function
     const etherscanCallDisplay = (to: string, from: string) => {
       return (
         <div>
@@ -160,7 +165,7 @@ const CallDataInformation = observer(
             <strong>Function: </strong>
             <small>{ABI.function.signature}</small>
           </p>
-          {Object.keys(ABI.args)
+          {advancedCalls ? Object.keys(ABI.args)
             .filter(item => item != '__length__')
             .map((item, i) => {
               const check = ABI.function.inputs[item];
@@ -172,13 +177,13 @@ const CallDataInformation = observer(
                 : 'failed';
               return (
                 <p>
-                {i > 0 ? <hr></hr> : null}
+                {i > 0 ? <Divider></Divider> : null}
                   <CallParams fontSize='14px' fontWeight={700} >{functionName}: </CallParams>
                   <CallParams fontStyle='italic'>({functionType}) </CallParams>
                   <CallParams>{ABI.args[item]} </CallParams>
                 </p>
               );
-            })}
+            }): null}
         </div>
       );
     };
@@ -247,7 +252,7 @@ const CallDataInformation = observer(
           ) => {
             return (
               <div>
-                {i > 0 ? <hr></hr> : null}
+                {i > 0 ? <Divider></Divider> : null}
                 <strong> Call #{i + 1}</strong>
                 {recommendedCallUsed
                   ? recommendedCallDisplay({
