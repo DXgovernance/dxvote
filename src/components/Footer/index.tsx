@@ -42,11 +42,11 @@ const FooterDivider = styled.div`
   margin: auto 7px;
 `;
 
-const appVersion: string | null =
+const appVersion: string | undefined =
   config.version &&
   config.env &&
   `v${config.version}${
-    config.env === 'production' && config.commit
+    config.env === 'production' || !config.commit
       ? ''
       : `-${config.env}-${config.commit}`
   }`;
