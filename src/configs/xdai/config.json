@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 13060713,
-    "toBlock": 18366390,
-    "ipfsHash": "QmXRMSLNG3KYcoU1U7hEHvDzp8n8aJxnmtm6uXxKc74oeT"
+    "toBlock": 18654197,
+    "ipfsHash": "QmTrUrAy4pxGUi8ZjUpUqdLC5MCMyA96cNgzAxB6FmxQ9H"
   },
   "contracts": {
     "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
@@ -17,6 +17,10 @@
       "gen": {
         "address": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF",
         "token": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf"
+      },
+      "dxd": {
+        "token": "0xb90D6bec20993Be5d72A5ab353343f7a0281f158",
+        "address": "0x053f406aD40c9Eb8eB43aFf28DA0D0EC17dF8e44"
       }
     },
     "daostack": {
@@ -202,7 +206,10 @@
         {
           "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
           "functionName": "approve(address,uint256)",
-          "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C", ""]
+          "params": [
+            "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            ""
+          ]
         },
         {
           "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
