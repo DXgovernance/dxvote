@@ -153,8 +153,6 @@ export default class BlockchainStore {
         web3React.active &&
         isChainIdSupported(web3React.chainId))
     ) {
-      this.initialLoadComplete = reset ? false : this.initialLoadComplete;
-      this.activeFetchLoop = true;
       const {
         providerStore,
         configStore,
@@ -164,10 +162,13 @@ export default class BlockchainStore {
         notificationStore,
       } = this.context;
 
+      
+      this.initialLoadComplete = reset ? false : this.initialLoadComplete;
+      this.activeFetchLoop = true;
+      if (reset) notificationStore.reset();
+
       try {
         const { library, chainId } = web3React;
-
-        if (reset) notificationStore.reset();
 
         const networkName = configStore.getActiveChainName();
 
@@ -209,15 +210,13 @@ export default class BlockchainStore {
             blockNumber,
             chainId
           );
-          notificationStore.setGlobalLoading(
-            true,
-            `Fetching blocks ${lastCheckedBlockNumber} - ${blockNumber}`
-          );
 
           const fromBlock = lastCheckedBlockNumber;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
+
           networkCache = await getUpdatedCache(
+            this.context,
             networkCache,
             networkContracts,
             fromBlock,
@@ -281,7 +280,7 @@ export default class BlockchainStore {
         }
         daoStore.setCache(networkCache);
         this.initialLoadComplete = true;
-        notificationStore.setGlobalLoading(false);
+        notificationStore.setFirstLoadComplete();
         this.activeFetchLoop = false;
       } catch (error) {
         console.error((error as Error).message);

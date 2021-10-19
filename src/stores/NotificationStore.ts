@@ -8,6 +8,7 @@ export enum GlobalLoadingState {
 }
 
 export default class NotificationStore {
+  firstLoadComplete: boolean;
   globalLoadingState: GlobalLoadingState = GlobalLoadingState.HIDDEN;
   globalMessage: string;
 
@@ -16,15 +17,18 @@ export default class NotificationStore {
   constructor(context) {
     this.context = context;
     makeObservable(this, {
+      firstLoadComplete: observable,
       globalLoadingState: observable,
       globalMessage: observable,
       reset: action,
       setGlobalError: action,
       setGlobalLoading: action,
+      setFirstLoadComplete: action,
     });
   }
 
   reset() {
+    this.firstLoadComplete = false;
     this.globalLoadingState = GlobalLoadingState.LOADING;
     this.globalMessage = null;
   }
@@ -41,5 +45,10 @@ export default class NotificationStore {
       ? GlobalLoadingState.ERROR
       : GlobalLoadingState.HIDDEN;
     this.globalMessage = message;
+  }
+
+  setFirstLoadComplete() {
+    this.setGlobalLoading(false);
+    this.firstLoadComplete = true;
   }
 }

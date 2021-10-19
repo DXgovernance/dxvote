@@ -41,7 +41,6 @@ const PageRouter = observer(({ children }) => {
     context: {
       notificationStore,
       providerStore,
-      blockchainStore,
       configStore,
       ipfsService,
       etherscanService,
@@ -92,8 +91,8 @@ const PageRouter = observer(({ children }) => {
     }
 
     if (
-      !blockchainStore.initialLoadComplete ||
-      notificationStore.globalLoadingState != GlobalLoadingState.HIDDEN
+      !notificationStore.firstLoadComplete ||
+      notificationStore.globalLoadingState == GlobalLoadingState.ERROR
     ) {
       const hasError =
         notificationStore.globalLoadingState == GlobalLoadingState.ERROR;
