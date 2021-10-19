@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
@@ -13,6 +14,14 @@ interface CallDataInformationParams {
   proposal: Proposal;
   networkContracts: NetworkContracts;
 }
+
+const CallParams = styled.div`
+color: black;
+font-style: ${props => props.fontStyle || 'normal' };
+font-size: ${props => props.fontSize || '14px'};
+font-weight: ${props => props.fontWeight || 500};
+`
+
 
 const CallDataInformation = observer(
   ({
@@ -148,13 +157,12 @@ const CallDataInformation = observer(
             </small>
           </p>
           <p>
-            <strong>Function Name: </strong>
+            <strong>Function: </strong>
             <small>{ABI.function.signature}</small>
           </p>
-          <strong>Params:</strong>
           {Object.keys(ABI.args)
             .filter(item => item != '__length__')
-            .map(item => {
+            .map((item, i) => {
               const check = ABI.function.inputs[item];
               const functionName = check
                 ? ABI.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
@@ -164,9 +172,10 @@ const CallDataInformation = observer(
                 : 'failed';
               return (
                 <p>
-                  <small>{functionName} </small>
-                  <small>{functionType} </small>
-                  <small>{ABI.args[item]} </small>
+                {i > 0 ? <hr></hr> : null}
+                  <CallParams fontSize='14px' fontWeight={700} >{functionName}: </CallParams>
+                  <CallParams fontStyle='italic'>({functionType}) </CallParams>
+                  <CallParams>{ABI.args[item]} </CallParams>
                 </p>
               );
             })}
