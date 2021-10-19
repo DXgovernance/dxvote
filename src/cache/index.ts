@@ -22,7 +22,7 @@ import {
 import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import ContributionRewardJSON from '../contracts/ContributionReward.json';
 import { getContracts } from '../contracts';
-import RootContext from 'contexts';
+import RootContext from '../contexts';
 
 export const getUpdatedCache = async function (
   context: RootContext,

@@ -1,4 +1,4 @@
-import RootContext from 'contexts';
+import RootContext from '../contexts';
 import { action, makeObservable, observable } from 'mobx';
 
 export enum GlobalLoadingState {

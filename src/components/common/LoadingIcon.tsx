@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-import DXdaoIcon from 'assets/images/dxdao-icon.svg';
+import DXdaoIcon from '../../assets/images/dxdao-icon.svg';
 
 const pulseKeyframes = keyframes`
   from {

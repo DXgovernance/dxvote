@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core';
 import { isMobile } from 'react-device-detect';
-import { getChains, injected, web3ContextNames } from 'provider/connectors';
-import { useContext } from 'contexts';
-import { DEFAULT_RPC_URLS } from 'utils';
+import { getChains, injected, web3ContextNames } from '../provider/connectors';
+import { useContext } from '../contexts';
+import { DEFAULT_RPC_URLS } from '../utils';
 
 /*  Attempt to connect to & activate injected connector
     If we're on mobile and have an injected connector, attempt even if not authorized (legacy support)

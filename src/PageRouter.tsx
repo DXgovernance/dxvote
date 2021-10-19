@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useContext } from './contexts';
 import { useLocation, useHistory } from 'react-router-dom';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import PulsingIcon from 'components/common/LoadingIcon';
-import { GlobalLoadingState } from 'stores/NotificationStore';
+import { useContext } from './contexts';
+import PulsingIcon from './components/common/LoadingIcon';
+import { GlobalLoadingState } from './stores/NotificationStore';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;
