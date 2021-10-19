@@ -98,15 +98,13 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <small>
-            v
-            {`${process.env.REACT_APP_VERSION}${
-              process.env.NODE_ENV !== 'production'
-                ? `-${process.env.NODE_ENV}-${process.env.REACT_APP_GIT_SHA}`
-                : ''
-            }`}
-            {process.env.REACT_APP_GIT_SHA}
-          </small>
+          v
+          {`${process.env.REACT_APP_VERSION}${
+            process.env.NODE_ENV !== 'production'
+              ? `-${process.env.NODE_ENV}-${process.env.REACT_APP_GIT_SHA}`
+              : ''
+          }`}
+          {process.env.REACT_APP_GIT_SHA}
         </FooterItem>
       </LeftFooter>
     </FooterWrapper>
