@@ -1,6 +1,6 @@
 import RootContext from '../contexts';
 import axios from 'axios';
-import { NETWORK_APIS } from 'utils';
+import { etherumCheck, NETWORK_APIS } from 'utils';
 
 export default class EtherscanService {
   context: RootContext;
@@ -16,7 +16,13 @@ export default class EtherscanService {
     if (etherscanAPIKey && etherscanAPIKey.length > 0) {
       const auth = await axios({
         method: 'GET',
-        url: `${NETWORK_APIS[networkName]}/api?module=account&action=balance&address=${account}&tag=latest&apikey=${etherscanAPIKey}`,
+        url: `${
+          NETWORK_APIS[networkName]
+        }/api?module=account&action=balance&address=${account}&tag=latest
+        
+      ${etherumCheck(networkName, etherscanAPIKey)}
+        
+        `,
       });
       this.auth = auth.data.status === 1;
     }
@@ -26,7 +32,11 @@ export default class EtherscanService {
     const etherscanAPIKey = this.context.configStore.getLocalConfig().etherscan;
     return axios({
       method: 'GET',
-      url: `${NETWORK_APIS[networkName]}/api?module=contract&action=getabi&address=${address}&apikey=${etherscanAPIKey}`,
+      url: `${
+        NETWORK_APIS[networkName]
+      }/api?module=contract&action=getabi&address=${address}
+      ${etherumCheck(networkName, etherscanAPIKey)}
+      `,
     });
   }
 
@@ -34,7 +44,13 @@ export default class EtherscanService {
     const etherscanAPIKey = this.context.configStore.getLocalConfig().etherscan;
     return axios({
       method: 'GET',
-      url: `${NETWORK_APIS[networkName]}/api?module=contract&action=getsourcecode&address=${address}&apikey=${etherscanAPIKey}`,
+      url: `${
+        NETWORK_APIS[networkName]
+      }/api?module=contract&action=getsourcecode&address=${address}
+      
+      ${etherumCheck(networkName, etherscanAPIKey)}
+      
+      }`,
     });
   }
 }
