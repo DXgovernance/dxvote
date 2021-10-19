@@ -1,16 +1,22 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useContext } from './contexts';
-import { FiZapOff, FiZap } from 'react-icons/fi';
 import { useLocation, useHistory } from 'react-router-dom';
-import { Box } from './components/common';
 import { InjectedConnector } from '@web3-react/injected-connector';
+import { useContext } from './contexts';
+import PulsingIcon from './components/common/LoadingIcon';
+import { GlobalLoadingState } from './stores/NotificationStore';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;
+  flex: 1;
 `;
 
-const LoadingBox = styled(Box)`
+const LoadingBox = styled.div`
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+
   .loader {
     text-align: center;
     font-weight: 500;
@@ -19,19 +25,22 @@ const LoadingBox = styled(Box)`
     color: var(--dark-text-gray);
     padding: 25px 0px;
 
-    .svg {
-      height: 30px;
-      width: 30px;
+    svg {
       margin-bottom: 10px;
     }
   }
 `;
 
+const LoadingProgressText = styled.div`
+  font-size: 14px;
+  margin-top: 8px;
+`;
+
 const PageRouter = observer(({ children }) => {
   const {
     context: {
+      notificationStore,
       providerStore,
-      blockchainStore,
       configStore,
       ipfsService,
       etherscanService,
@@ -61,7 +70,8 @@ const PageRouter = observer(({ children }) => {
         <LoadingBox>
           <div className="loader">
             {' '}
-            <FiZapOff /> <br /> Connect to your wallet{' '}
+            <PulsingIcon size={80} inactive={true} /> <br /> Connect to your
+            wallet{' '}
           </div>
         </LoadingBox>
       </PageRouterWrapper>
@@ -80,13 +90,22 @@ const PageRouter = observer(({ children }) => {
       history.push(`/${networkName}/proposals`);
     }
 
-    if (!blockchainStore.initialLoadComplete) {
+    if (
+      !notificationStore.firstLoadComplete ||
+      notificationStore.globalLoadingState == GlobalLoadingState.ERROR
+    ) {
+      const hasError =
+        notificationStore.globalLoadingState == GlobalLoadingState.ERROR;
       return (
         <PageRouterWrapper>
           <LoadingBox>
             <div className="loader">
               {' '}
-              <FiZap /> <br /> Loading..{' '}
+              <PulsingIcon size={80} inactive={hasError} />
+              <div>{hasError ? 'Oops! Something broke.' : 'Loading'}</div>
+              <LoadingProgressText>
+                {notificationStore.globalMessage}
+              </LoadingProgressText>
             </div>
           </LoadingBox>
         </PageRouterWrapper>
