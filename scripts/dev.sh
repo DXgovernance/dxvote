@@ -79,6 +79,9 @@ echo "${contents}" > tsconfig.json
 contents="$(jq '.compilerOptions.module = "esnext"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
+#commit nr
+export REACT_APP_GIT_SHA=`git rev-parse --short HEAD`
+
 # Run dapp with localhost contracts
 FORCE_COLOR=true \
 SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-app-rewired start | cat
