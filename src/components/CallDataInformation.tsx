@@ -35,7 +35,7 @@ const CallDataInformation = observer(
     networkContracts,
   }: CallDataInformationParams) => {
     const { decodedCallData, ABI } = useABIService();
-    const { getContractABI, loading, error } = useEtherscanService();
+    const { getContractABI,  error } = useEtherscanService();
     const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
       new Array(proposal.to.length)
     );
@@ -231,7 +231,7 @@ const CallDataInformation = observer(
       );
     };
 
-    if (loading) {
+    if (ProposalCallTexts.length == 0) {
       return <PendingCircle height="44px" width="44px" color="blue" />;
     }
 
