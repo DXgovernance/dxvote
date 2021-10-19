@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const { NODE_ENV, REACT_APP_DXVOTE_COMMIT, REACT_APP_VERSION } = process.env;
 
 interface Config {
