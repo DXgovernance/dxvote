@@ -19,6 +19,7 @@ import DaoStore from '../stores/DaoStore';
 import UserStore from '../stores/UserStore';
 import BlockchainStore from '../stores/BlockchainStore';
 import CustomRpcService from 'services/CustomRpcService';
+import NotificationStore from 'stores/NotificationStore';
 
 /*
 https://reactjs.org/docs/context.html#reactcreatecontext
@@ -40,6 +41,7 @@ export default class RootContext {
   configStore: ConfigStore;
   daoStore: DaoStore;
   userStore: UserStore;
+  notificationStore: NotificationStore;
   blockchainStore: BlockchainStore;
 
   abiService: ABIService;
@@ -61,6 +63,7 @@ export default class RootContext {
     this.configStore = new ConfigStore(this);
     this.daoStore = new DaoStore(this);
     this.userStore = new UserStore(this);
+    this.notificationStore = new NotificationStore(this);
     this.blockchainStore = new BlockchainStore(this);
 
     this.abiService = new ABIService(this);

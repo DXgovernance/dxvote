@@ -4,6 +4,7 @@ import { useContext } from './contexts';
 import { useLocation, useHistory } from 'react-router-dom';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import PulsingIcon from 'components/common/LoadingIcon';
+import { GlobalLoadingState } from 'stores/NotificationStore';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;
@@ -30,9 +31,15 @@ const LoadingBox = styled.div`
   }
 `;
 
+const LoadingProgressText = styled.div`
+  font-size: 14px;
+  margin-top: 8px;
+`;
+
 const PageRouter = observer(({ children }) => {
   const {
     context: {
+      notificationStore,
       providerStore,
       blockchainStore,
       configStore,
@@ -64,7 +71,8 @@ const PageRouter = observer(({ children }) => {
         <LoadingBox>
           <div className="loader">
             {' '}
-            <PulsingIcon size={80} inactive={true} /> <br /> Connect to your wallet{' '}
+            <PulsingIcon size={80} inactive={true} /> <br /> Connect to your
+            wallet{' '}
           </div>
         </LoadingBox>
       </PageRouterWrapper>
@@ -83,14 +91,22 @@ const PageRouter = observer(({ children }) => {
       history.push(`/${networkName}/proposals`);
     }
 
-    if (!blockchainStore.initialLoadComplete) {
+    if (
+      !blockchainStore.initialLoadComplete ||
+      notificationStore.globalLoadingState != GlobalLoadingState.HIDDEN
+    ) {
+      const hasError =
+        notificationStore.globalLoadingState == GlobalLoadingState.ERROR;
       return (
         <PageRouterWrapper>
           <LoadingBox>
             <div className="loader">
               {' '}
-              <PulsingIcon size={80} inactive={false} />
-              <div>Loading</div>
+              <PulsingIcon size={80} inactive={hasError} />
+              <div>{hasError ? 'Oops! Something broke.' : 'Loading'}</div>
+              <LoadingProgressText>
+                {notificationStore.globalMessage}
+              </LoadingProgressText>
             </div>
           </LoadingBox>
         </PageRouterWrapper>
