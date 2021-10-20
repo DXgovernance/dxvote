@@ -1,6 +1,6 @@
 {
   "name": "dxvote",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "description": "dxvote application of DXdao.",
   "scripts": {
     "start": "dotenv -e .env.production ./scripts/start.sh",
