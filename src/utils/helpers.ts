@@ -76,9 +76,12 @@ export function parseCamelCase(text) {
   return parsed[0].toUpperCase() + parsed.substring(1);
 }
 
-export const etherumCheck = (networkName: string, etherscanAPIKey: string) => {
+export const appendEthAPIKey = (
+  networkName: string,
+  etherscanAPIKey: string
+) => {
   if (!['arbitrum', 'xdai', 'arbitrumTestnet'].includes(networkName)) {
-    return `&apikey=${etherscanAPIKey}`;
+    return etherscanAPIKey;
   }
   return '';
 };
