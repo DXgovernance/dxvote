@@ -1,5 +1,9 @@
 import styled from 'styled-components';
-
+interface PendingCircleType {
+  height: string
+  width: string
+  color?: string
+}
 const SpinningCircle = styled.div`
   height: ${props => props.height || '16px'};
   width: ${props => props.width || '16px'};
@@ -25,7 +29,7 @@ const SpinningCircle = styled.div`
     border-top: 2px solid #feffff94;
     border-left: 2px solid #feffff94;
     border-bottom: 2px solid #feffff94;
-    border-right: 2px solid transparent;
+    border-right: 2px solid ${props => props.color || 'transparent'};
     border-radius: 100%;
   }
 
@@ -63,8 +67,8 @@ const SpinningCircle = styled.div`
   }
 `;
 
-const PendingCircle = ({ height, width }) => {
-  return <SpinningCircle height={height} width={width} />;
+const PendingCircle = ({ height, width, color  }: PendingCircleType) => {
+  return <SpinningCircle height={height} width={width} color={color} />;
 };
 
 export default PendingCircle;

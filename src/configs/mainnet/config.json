@@ -1,0 +1,719 @@
+{
+  "cache": {
+    "fromBlock": 7219912,
+    "toBlock": 13449605,
+    "ipfsHash": "QmYMRX3kvgsPBHYTWJgy55CqDqnfWABprGt3p8qbd74ptQ"
+  },
+  "contracts": {
+    "avatar": "0x519b70055af55a007110b4ff99b0ea33071c720a",
+    "reputation": "0x7a927a93f221976aae26d5d077477307170f0b7c",
+    "token": "0x643b14f6ea235668278da5974930105852f2b7c4",
+    "controller": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
+    "permissionRegistry": "0x0000000000000000000000000000000000000000",
+    "utils": {
+      "multicall": "0x742121cD0BB9784c1f17f25B8da1bF3445b93ED4"
+    },
+    "votingMachines": {
+      "gen": {
+        "address": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+        "token": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf"
+      },
+      "gen2": {
+        "address": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055",
+        "token": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf"
+      }
+    },
+    "daostack": {
+      "contributionRewardRedeemer": "0x406bfD9cDb247432fEEA52edD218F2a4Bd238C9b",
+      "dxSchemes": {
+        "0x2E6FaE82c77e1D6433CCaAaF90281523b99D0D0a": "DxLockMgnForRep",
+        "0x4D8DB062dEFa0254d00a44aA1602C30594e47B12": "DxGenAuction4Rep",
+        "0x4564BFe303900178578769b2D76B1a13533E5fd5": "DxLockEth4Rep",
+        "0x1cb5B2BB4030220ad5417229A7A1E3c373cDD2F6": "DxLockWhitelisted4Rep"
+      },
+      "schemeRegistrar": {
+        "address": "0xf050F3C6772Ff35eB174A6900833243fcCD0261F",
+        "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
+        "voteParams": "0x9799ec39e42562c5ac7fbb104f1edcaa495e00b45e0db80cce1c0cdc863d0d0f",
+        "newProposalTopics": [
+          [
+            "0xcc9180a05805acc3615b472c3ba00cdc9cd2c6e0e0b3648d60eb58f2c1001b84",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ],
+          [
+            "0x504b6bd2558241a5f0532c970f3444e1fc24e1f7cf3d7c49a8d213bd612e9055",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ]
+        ],
+        "creationLogEncoding": [
+          [
+            {
+              "type": "address",
+              "name": "_scheme "
+            },
+            {
+              "type": "bytes32",
+              "name": "_parametersHash"
+            },
+            {
+              "type": "bytes4",
+              "name": "_permissions"
+            },
+            {
+              "type": "string",
+              "name": "_descriptionHash"
+            }
+          ],
+          [
+            {
+              "type": "address",
+              "name": "_scheme "
+            },
+            {
+              "type": "string",
+              "name": "_descriptionHash"
+            }
+          ]
+        ]
+      },
+      "contributionReward": {
+        "address": "0x08cC7BBa91b849156e9c44DEd51896B38400f55B",
+        "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
+        "voteParams": "0x399141801e9e265d79f1f1759dd67932980664ea28c2ba7e0e4dba8719e47118",
+        "newProposalTopics": [
+          [
+            "0xcbdcbf9aaeb1e9eff0f75d74e1c1e044bc87110164baec7d18d825b0450d97df",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ]
+        ],
+        "creationLogEncoding": [
+          [
+            {
+              "type": "string",
+              "name": "_descriptionHash"
+            },
+            {
+              "type": "int256",
+              "name": "_reputationChange"
+            },
+            {
+              "type": "uint256[5]",
+              "name": "_rewards"
+            },
+            {
+              "type": "address",
+              "name": "_externalToken"
+            },
+            {
+              "type": "address",
+              "name": "_beneficiary"
+            }
+          ]
+        ]
+      },
+      "genericSchemes": {
+        "addresses": {
+          "0x199719EE4d5DCF174B80b80afa1FE4a8e5b0E3A0": {
+            "name": "DutchXScheme",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0xff6155010292b35fb8daae8b4450cdc41a586bc591e9a76484e88ffba36f94a8",
+            "contractToCall": "0xb9812E2fA995EC53B5b6DF34d21f9304762C5497"
+          },
+          "0x46DF3EA38a680FBc84E744D92b0A8Ec717B2eA7E": {
+            "name": "GenericSchemeToENS",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
+            "contractToCall": "0x314159265dd8dbb310642f98f50c066173c1259b"
+          },
+          "0x9A543aeF934c21Da5814785E38f9A7892D3CDE6E": {
+            "name": "EnsPublicProviderScheme",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
+            "contractToCall": "0x226159d592e2b063810a10ebf6dcbada94ed68b8"
+          },
+          "0x973ce4e81BdC3bD39f46038f3AaA928B04558b08": {
+            "name": "EnsRegistrarScheme",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
+            "contractToCall": "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85"
+          },
+          "0x9CEA0DD05C4344A769B2F4C2f8890EDa8a700d64": {
+            "name": "EnsRegistryScheme",
+            "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
+            "voteParams": "0x0dc1fb4d230debe146613511601e0df83dd5ac323a7add833de82ead5a19db3a",
+            "contractToCall": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e"
+          },
+          "0xc072171dA83CCe311e37BC1d168f54E6A6536DF4": {
+            "name": "TokenRegistry",
+            "votingMachine": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055",
+            "voteParams": "0x8452e57c89dc78ec1b1ffc28786655279f9af4ac589dd5988c962e8cf6b4529b",
+            "contractToCall": "0x93db90445b76329e9ed96ecd74e76d8fbf2590d8"
+          },
+          "0xB3ec6089556CcA49549Be01fF446cF40fA81c84D": {
+            "name": "EnsPublicResolverScheme",
+            "votingMachine": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055",
+            "voteParams": "0xa81f982cb1c27eb142e5f602e7eb50d125dd6a7e52dac1af5f9decb88278f2fa",
+            "contractToCall": "0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41"
+          }
+        },
+        "newProposalTopics": [
+          [
+            "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ]
+        ],
+        "creationLogEncoding": [
+          [
+            {
+              "type": "bytes",
+              "name": "_data"
+            },
+            {
+              "type": "uint256",
+              "name": "_value"
+            },
+            {
+              "type": "string",
+              "name": "_descriptionHash"
+            }
+          ]
+        ]
+      },
+      "multicallSchemes": {
+        "addresses": {
+          "0xef9dC3c39CA40A2a3000ACc5ca0467CE1C250808": {
+            "name": "Multicall_1",
+            "voteParams": "0xe5e87e294b422b2aa711bd25a7e8ac59a06bbf723786560c53c50edce980f2fd"
+          },
+          "0x34C42c3ee81A03FD9ea773987b4a6eF62f3fc151": {
+            "name": "Multicall_2",
+            "voteParams": "0x8a8f5413c9b49a4ed4df33213f474a0ae29328a81b3c40c881e8a3fab0d12b44"
+          },
+          "0x0f4775722a72FA85230c63598e661eC52563Fb4E": {
+            "name": "Multicall_3",
+            "voteParams": "0xe5e87e294b422b2aa711bd25a7e8ac59a06bbf723786560c53c50edce980f2fd"
+          }
+        },
+        "newProposalTopics": [
+          [
+            "0xf5a0655bd7247f3a6fa97e71b57c61314566afb5aa8be8eea2c48f4d1b9bf190",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ]
+        ],
+        "creationLogEncoding": [
+          [
+            {
+              "type": "bytes[]",
+              "name": "_callsData"
+            },
+            {
+              "type": "uint256[]",
+              "name": "_values"
+            },
+            {
+              "type": "string",
+              "name": "_descriptionHash"
+            },
+            {
+              "type": "address[]",
+              "name": "_contractsToCall"
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "recommendedCalls": [],
+  "proposalTemplates": [
+    {
+      "name": "Contributor Proposal",
+      "title": "[NAME] Contributor Proposal [DATE - DATE]",
+      "description": "# Background\n \n - If this is your first contributor proposal, state any context for making the proposal, including:\n - What position you will be filling – i.e. developer, marketing, governance, etc.\n - Who you have been in contact with regarding the position (add their DAOtalk usernames)\n - If you are a continuing contributor, state which products and areas you are working on / any other relevant background information\n # Timeframe\n \n - State the date range, typically 2 months (2.5 months for first-time workers)\n # Scope of Contribution\n \n - **Goals** :\n - State the products and /or strategy areas you will be working under. E.g. Omen and Governance. Include both short-term goals that you seek to accomplish during the working period and long-term goals.\n - **Responsibilities:**\n - List the specific deliverables you will be either completing and / or working on during the working period. Try to state which deliverables you intend to complete within the period and which are long-term or ongoing projects.\n \n # Reflection\n \n - If You Are A Returning Contributor, Write a Self-Reflection\n - State what you did well, what you did okay, and what you need to improve on\n # Compensation\n \n - Experience Level : 1-5\n - Time commitment :  Percent (%) of time\n - [ETH/DAI AMT] : For 2 months of work at level [LEVEL], to be sent half on the first payment proposal and half on the second payment proposal\n - [DXD AMT] : Vested for 2 years with a 1 year cliff starting the [DATE WORK PERIOD STARTS]\n - [% AMT REP] : For 2 months of work , to be sent half on the first payment proposal and half on the second payment proposal\n # Work Experience\n \n - Prior DXdao work proposals (if applicable)\n - Past Work for DXdao\n - If a developer, Github links\n - If a non-tech worker, doc links or described deliverables\n - If new, past relevant work experience\n - Developers : Github profile link\n - Non-tech : suggested Linkedin / other references\n"
+    },
+    {
+      "name": "Payment Proposal",
+      "title": "[NAME] Payment Proposal [DATE - DATE]",
+      "description": "# Timeframe\n \n - State the contributor proposal date range\n \n # Background\n \n - State the context for making the contributor payment proposal, including:\n - What position you will be filling – i.e. developer, marketing, governance, etc.\n - Proposed Scope of Contribution\n - Self-Reflection on Scope of Contribution\n - Include the URL to the original proposal forum post\n \n # Deliverables\n\n - Include information around deliverables that were completed during your worker period\n \n # Compensation\n\n - Experience Level : 1-5\n - Time commitment : Percent (%) of time\n - [ETH/DAI AMT] : For second half payment proposal\n - [DXD AMT] : Vested for 2 years with a 1 year cliff starting the [DATE WORK PERIOD STARTS]\n - [% AMT REP]: For 2 second half payment proposal\n \n # Work Experience\n \n - Prior DXdao work proposals (if applicable)\n - Past Work for DXdao\n - If a developer, Github links\n - If a non-tech worker, doc links or described\n - If new, past relevant work experience\n - Developers : Github profile link\n - Non-tech : suggested Linkedin / other references\n \n"
+    },
+    {
+      "name": "Signal Proposal",
+      "title": "Signal Proposal for [DAO_ACTION]",
+      "description": "## Description \n\n## Proposition \n\n## Action Plan"
+    },
+    {
+      "name": "SWPR Farming Campaign",
+      "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]",
+      "description": "Simple description",
+      "calls": [
+        {
+          "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
+          "functionName": "approve(address,uint256)",
+          "params": [
+            "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            ""
+          ]
+        },
+        {
+          "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
+          "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+          "params": [
+            "[0xdE903E2712288A1dA82942DDdF2c20529565aC30]",
+            "",
+            "[]",
+            "",
+            "",
+            "false",
+            "0"
+          ]
+        }
+      ]
+    }
+  ],
+  "proposalTypes": [
+    {
+      "id": "custom",
+      "title": "Custom"
+    }
+  ],
+  "tokens": [
+    {
+      "address": "0x111111111117dc0aa78b770fa6a738034120c302",
+      "name": "1Inch",
+      "symbol": "1INCH",
+      "fetchPrice": false,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/13469/thumb/1inch-token.png?1608803028"
+    },
+    {
+      "address": "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
+      "name": "Aave Token",
+      "decimals": 18,
+      "symbol": "AAVE",
+      "fetchPrice": false,
+      "logoURI": "ipfs://QmWzL3TSmkMhbqGBEwyeFyWVvLmEo3F44HBMFnmTUiTfp1"
+    },
+    {
+      "address": "0x8185Bc4757572Da2a610f887561c32298f1A5748",
+      "name": "Aluna",
+      "decimals": 18,
+      "symbol": "ALN",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/14379/thumb/ALN-token-logo-200px.png?1615778759"
+    },
+    {
+      "address": "0xa117000000f279D81A1D3cc75430fAA017FA5A2e",
+      "name": "Aragon Network Token",
+      "decimals": 18,
+      "symbol": "ANT",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/681/thumb/JelZ58cv_400x400.png?1601449653"
+    },
+    {
+      "address": "0x0b38210ea11411557c13457D4dA7dC6ea731B88a",
+      "name": "API3",
+      "decimals": 18,
+      "symbol": "API3",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/13256/thumb/api3.jpg?1606751424"
+    },
+    {
+      "address": "0x374CB8C27130E2c9E04F44303f3c8351B9De61C1",
+      "name": "BaoToken",
+      "decimals": 18,
+      "symbol": "BAO",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/13547/thumb/BaoLogo.png?1615342483"
+    },
+    {
+      "address": "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c",
+      "name": "Bancor Network Token",
+      "symbol": "BNT",
+      "fetchPrice": false,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/736/thumb/bancor.png?1547034477"
+    },
+    {
+      "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+      "name": "Compound Dai",
+      "decimals": 8,
+      "symbol": "cDAI",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/9281/thumb/cDAI.png?1576467585"
+    },
+    {
+      "address": "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215",
+      "name": "Chai",
+      "decimals": 18,
+      "symbol": "CHAI",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/10147/thumb/CHAI.png?1576467289"
+    },
+    {
+      "address": "0xc00e94Cb662C3520282E6f5717214004A7f26888",
+      "name": "Compound",
+      "decimals": 18,
+      "symbol": "COMP",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/10775/thumb/COMP.png?1592625425"
+    },
+    {
+      "address": "0xD533a949740bb3306d119CC777fa900bA034cd52",
+      "name": "Curve DAO Token",
+      "decimals": 18,
+      "symbol": "CRV",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/12124/thumb/Curve.png?1597369484"
+    },
+    {
+      "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+      "name": "Dai Stablecoin",
+      "decimals": 18,
+      "symbol": "DAI",
+      "fetchPrice": true,
+      "logoURI": "https://assets.coingecko.com/coins/images/9956/thumb/dai-multi-collateral-mcd.png?1574218774"
+    },
+    {
+      "address": "0xEd91879919B71bB6905f23af0A68d231EcF87b14",
+      "name": "DMM: Governance",
+      "decimals": 18,
+      "symbol": "DMG",
+      "fetchPrice": true,
+      "logoURI": "https://assets.coingecko.com/coins/images/11677/thumb/dmm.png?1592674690"
+    },
+    {
+      "address": "0xca1207647Ff814039530D7d35df0e1Dd2e91Fa84",
+      "name": "dHedge DAO Token",
+      "decimals": 18,
+      "symbol": "DHT",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/12508/thumb/dht.png?1600752201"
+    },
+    {
+      "address": "0x84cA8bc7997272c7CfB4D0Cd3D55cd942B3c9419",
+      "name": "DIAToken",
+      "decimals": 18,
+      "symbol": "DIA",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/11955/thumb/DIA-icon-colour_%281%29.png?1596423488"
+    },
+    {
+      "address": "0x1494CA1F11D487c2bBe4543E90080AeBa4BA3C2b",
+      "name": "DefiPulse Index",
+      "decimals": 18,
+      "symbol": "DPI",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/12465/thumb/defi_pulse_index_set.png?1600051053"
+    },
+    {
+      "address": "0xa1d65E8fB6e87b60FECCBc582F7f97804B725521",
+      "name": "DXdao",
+      "decimals": 18,
+      "symbol": "DXD",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/11148/thumb/dxdao.png?1607999331"
+    },
+    {
+      "address": "0x970B9bB2C0444F5E81e9d0eFb84C8ccdcdcAf84d",
+      "name": "Fuse Token",
+      "decimals": 18,
+      "symbol": "FUSE",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/10347/thumb/vUXKHEe.png?1601523640"
+    },
+    {
+      "address": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf",
+      "name": "DAOstack",
+      "symbol": "GEN",
+      "fetchPrice": false,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/3479/thumb/gen.png?1547038215"
+    },
+    {
+      "address": "0xf6537FE0df7F0Cc0985Cf00792CC98249E73EFa0",
+      "name": "GIVToken",
+      "decimals": 8,
+      "symbol": "GIV",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/8996/thumb/giv.png?1596069222"
+    },
+    {
+      "address": "0x6810e776880C02933D47DB1b9fc05908e5386b96",
+      "name": "Gnosis Token",
+      "decimals": 18,
+      "symbol": "GNO",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/662/thumb/logo_square_simple_300px.png?1609402668"
+    },
+    {
+      "address": "0x12B19D3e2ccc14Da04FAe33e63652ce469b3F2FD",
+      "name": "GRID Token",
+      "decimals": 12,
+      "symbol": "GRID",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/1106/thumb/grid.png?1547743150"
+    },
+    {
+      "address": "0xc944e90c64b2c07662a292be6244bdf05cda44a7",
+      "name": "The Graph",
+      "decimals": 18,
+      "symbol": "GRT",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/13397/thumb/Graph_Token.png?1608145566"
+    },
+    {
+      "address": "0xde30da39c46104798bb5aa3fe8b9e0e1f348163f",
+      "name": "Gitcoin",
+      "symbol": "GTC",
+      "fetchPrice": false,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/15810/thumb/gitcoin.png?1621992929"
+    },
+    {
+      "address": "0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd",
+      "name": "Gemini dollar",
+      "decimals": 2,
+      "symbol": "GUSD",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/5992/thumb/gemini-dollar-gusd.png?1536745278"
+    },
+    {
+      "address": "0xc3589F56B6869824804A5EA29F2c9886Af1B0FcE",
+      "name": "Honey",
+      "decimals": 18,
+      "symbol": "HNY",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/12895/thumb/hnys.png?1614100588"
+    },
+    {
+      "address": "0x514910771af9ca656af840dff83e8264ecf986ca",
+      "name": "Chainlink",
+      "decimals": 18,
+      "symbol": "LINK",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/877/thumb/chainlink-new-logo.png?1547034700"
+    },
+    {
+      "address": "0x6dea81c8171d0ba574754ef6f8b412f2ed88c54d",
+      "name": "Liquity",
+      "symbol": "LQTY",
+      "fetchPrice": false,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/14665/thumb/200-lqty-icon.png?1617631180"
+    },
+    {
+      "address": "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",
+      "name": "Loopring",
+      "decimals": 18,
+      "symbol": "LRC",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/913/thumb/LRC.png?1572852344"
+    },
+    {
+      "address": "0x5f98805a4e8be255a32880fdec7f6728c6568ba0",
+      "name": "Liquity USD",
+      "symbol": "LUSD",
+      "fetchPrice": false,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/14666/thumb/Group_3.png?1617631327"
+    },
+    {
+      "address": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
+      "name": "MakerDAO",
+      "decimals": 18,
+      "symbol": "MKR",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/1364/small/Mark_Maker.png?1585191826"
+    },
+    {
+      "address": "0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2",
+      "name": "Meta",
+      "decimals": 18,
+      "symbol": "MTA",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/11846/thumb/mStable.png?1594950533"
+    },
+    {
+      "address": "0xe2f2a5C287993345a840Db3B0845fbC70f5935a5",
+      "name": "mStable USD",
+      "decimals": 18,
+      "symbol": "mUSD",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/11576/thumb/mStable_USD.png?1595591803"
+    },
+    {
+      "address": "0x1A5F9352Af8aF974bFC03399e3767DF6370d82e4",
+      "name": "OWL Token",
+      "decimals": 18,
+      "symbol": "OWL",
+      "fetchPrice": true,
+      "logoURI": "https://assets.coingecko.com/coins/images/11149/thumb/gnosis-owl_32.png?1589057849"
+    },
+    {
+      "address": "0xD56daC73A4d6766464b38ec6D91eB45Ce7457c44",
+      "name": "Panvala pan",
+      "decimals": 18,
+      "symbol": "PAN",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/9543/thumb/pan-logo.png?1568674599"
+    },
+    {
+      "address": "0x8E870D67F660D95d5be530380D0eC0bd388289E1",
+      "name": "Paxos Standard",
+      "decimals": 18,
+      "symbol": "PAX",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/6013/thumb/paxos_standard.png?1548386291"
+    },
+    {
+      "address": "0x93ED3FBe21207Ec2E8f2d3c3de6e058Cb73Bc04d",
+      "name": "Kleros",
+      "symbol": "PNK",
+      "fetchPrice": true,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/3833/thumb/kleros.png?1547975322"
+    },
+    {
+      "address": "0x31c8eacbffdd875c74b94b077895bd78cf1e64a3",
+      "name": "Radicle",
+      "decimals": 18,
+      "symbol": "RAD",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/14013/thumb/radicle.png?1614402918"
+    },
+    {
+      "address": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6",
+      "name": "Synth sBTC",
+      "decimals": 18,
+      "symbol": "sBTC",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/8838/thumb/sBTC.png?1616149734"
+    },
+    {
+      "address": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb",
+      "name": "Synth sETH",
+      "decimals": 18,
+      "symbol": "sETH",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/8843/thumb/sETH.png?1616150207"
+    },
+    {
+      "address": "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F",
+      "name": "Synthetix Network Token",
+      "decimals": 18,
+      "symbol": "SNX",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/3406/thumb/SNX.png?1598631139"
+    },
+    {
+      "address": "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
+      "name": "Synth sUSD",
+      "decimals": 18,
+      "symbol": "sUSD",
+      "fetchPrice": true,
+      "logoURI": "https://assets.coingecko.com/coins/images/5013/thumb/sUSD.png?1616150765"
+    },
+    {
+      "address": "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+      "name": "Sushi",
+      "decimals": 18,
+      "symbol": "SUSHI",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/12271/thumb/512x512_Logo_no_chop.png?1606986688"
+    },
+    {
+      "address": "0x679131F591B4f369acB8cd8c51E68596806c3916",
+      "name": "Trustlines Network Token",
+      "decimals": 18,
+      "symbol": "TLN",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/11562/thumb/Trustlines.png?1591152088"
+    },
+    {
+      "address": "0x77777feddddffc19ff86db637967013e6c6a116c",
+      "name": "Tornado Cash",
+      "symbol": "TORN",
+      "fetchPrice": false,
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/13496/thumb/ZINt8NSB_400x400.jpg?1609193407"
+    },
+    {
+      "address": "0x0000000000085d4780B73119b644AE5ecd22b376",
+      "name": "TrueUSD",
+      "decimals": 18,
+      "symbol": "TUSD",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/3449/thumb/tusd.png?1618395665"
+    },
+    {
+      "address": "0x1Fc31488f28ac846588FFA201cDe0669168471bD",
+      "name": "UAX",
+      "decimals": 2,
+      "symbol": "UAX",
+      "fetchPrice": false
+    },
+    {
+      "address": "0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828",
+      "name": "UMA Voting Token v1",
+      "decimals": 18,
+      "symbol": "UMA",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/10951/thumb/UMA.png?1586307916"
+    },
+    {
+      "address": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+      "name": "Uniswap",
+      "decimals": 18,
+      "symbol": "UNI",
+      "fetchPrice": false,
+      "logoURI": "ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg"
+    },
+    {
+      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "name": "USD Coin",
+      "decimals": 6,
+      "symbol": "USDC",
+      "fetchPrice": true,
+      "logoURI": "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389"
+    },
+    {
+      "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      "name": "Tether USD",
+      "decimals": 6,
+      "symbol": "USDT",
+      "fetchPrice": true,
+      "logoURI": "https://assets.coingecko.com/coins/images/325/thumb/Tether-logo.png?1598003707"
+    },
+    {
+      "address": "0xa47c8bf37f92aBed4A126BDA807A7b7498661acD",
+      "name": "Wrapped UST Token",
+      "decimals": 18,
+      "symbol": "UST",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/12681/thumb/UST.png?1601612407"
+    },
+    {
+      "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+      "name": "Wrapped BTC",
+      "decimals": 8,
+      "symbol": "WBTC",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/7598/thumb/wrapped_bitcoin_wbtc.png?1548822744"
+    },
+    {
+      "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      "name": "Wrapped Ether",
+      "decimals": 18,
+      "symbol": "WETH",
+      "fetchPrice": true,
+      "logoURI": "https://assets.coingecko.com/coins/images/2518/thumb/weth.png?1547036627"
+    },
+    {
+      "address": "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",
+      "name": "yearn.finance",
+      "decimals": 18,
+      "symbol": "YFI",
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/11849/thumb/yfi-192x192.png?1598325330"
+    }
+  ]
+}
