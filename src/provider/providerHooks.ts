@@ -33,10 +33,15 @@ export function useEagerConnect() {
         isAuthorized,
       });
 
-      const injectedChainId = await injected.getChainId();
-      if (injectedChainId != urlChainIdHex) {
+      try {
+        const injectedChainId = await injected.getChainId();
+        if (injectedChainId != urlChainIdHex) {
+          setTried(true);
+          return;
+        }
+      } catch (error) {
+        console.error(error);
         setTried(true);
-        return;
       }
 
       if (isAuthorized) {
