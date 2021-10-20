@@ -222,12 +222,13 @@
   ],
   "proposalTypes": [
     {
-      "id": "custom",
-      "title": "Custom"
+      "id": "contributor",
+      "title": "Contributor",
+      "scheme": "QuickWalletScheme"
     },
     {
-      "id": "contributor",
-      "title": "Contributor"
+      "id": "custom",
+      "title": "Custom"
     }
   ],
   "contributionLevels": [

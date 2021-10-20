@@ -1,8 +1,6 @@
-// Externals
 import React from 'react';
 import styled from 'styled-components';
 
-// Components
 import { Button } from 'components/common/Button';
 
 export const ColumnWrapper = styled.div`
@@ -24,7 +22,7 @@ export const Wrapper = styled.div`
   align-items: center;
 `;
 
-export const ProgressLineWrapper = styled.div`
+export const LineWrapper = styled.div`
   width: 100%;
   outline: 0;
   display: flex;
@@ -78,12 +76,12 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
   selected,
   onSelect,
 }) => {
-  const progressLineArray = [];
+  const optionsArray = [];
 
   const buildLevels = () => {
     // @ts-ignore
     new Array(numberOfLevels).fill(0).forEach((x, index) => {
-      progressLineArray.push(
+      optionsArray.push(
         <Dot
           active={selected === index}
           value={index}
@@ -95,14 +93,12 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
         </Dot>
       );
       if (numberOfLevels - 1 > index) {
-        progressLineArray.push(<Line />);
+        optionsArray.push(<Line />);
       }
     });
   };
 
   buildLevels();
 
-  return (
-    <ProgressLineWrapper size={100}>{progressLineArray}</ProgressLineWrapper>
-  );
+  return <LineWrapper size={100}>{optionsArray}</LineWrapper>;
 };

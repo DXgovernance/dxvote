@@ -389,13 +389,13 @@
   ],
   "proposalTypes": [
     {
-      "id": "custom",
-      "title": "Custom"
-    },
-    {
       "id": "contributor",
       "title": "Contributor",
       "scheme": "QuickWalletScheme"
+    },
+    {
+      "id": "custom",
+      "title": "Custom"
     }
   ],
   "contributionLevels": [
