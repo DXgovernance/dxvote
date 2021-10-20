@@ -2,14 +2,9 @@ import styled from 'styled-components';
 import Switch from 'react-switch';
 
 const Wrap = styled.section`
-  position: ${props => props.position};
   z-index: 99;
   margin: 10px;
   margin-right: 10px;
-  right: ${props => (props.right ? 0 : null)};
-  @media (pointer: coarse) {
-    bottom: ${props => (props.top ? 'auto' : 0)};
-  }
 `;
 
 const Icon = styled.section`
@@ -29,7 +24,7 @@ export default function Toggle({ onToggle, state, optionOne, optionTwo }) {
         checked={state}
         onChange={onToggle}
         height={50}
-        width={100}
+        width={120}
         offColor="#536DFE"
         onColor="#536DFE"
         uncheckedIcon={<Icon>{optionOne}</Icon>}

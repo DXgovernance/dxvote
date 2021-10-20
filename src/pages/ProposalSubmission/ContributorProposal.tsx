@@ -29,8 +29,7 @@ const VerticalLayout = styled.div`
 const ModalContent = styled.div`
   ${({ theme }) => theme.flexColumnWrap}
   margin: 16px 0px;
-  padding: 0;
-  width: 100%;
+  padding: 0 50px;
   background-color: ${({ theme }) => theme.backgroundColor};
   text-align: center;
 `;
@@ -61,9 +60,10 @@ const Center = styled.div`
 
 const Spacer = styled.div`
   flex: 1;
-  text-align: center;
-  font-weight: 200;
+  display: flex;
+  justify-content: center;
 `;
+
 const Values = styled.div`
   margin: 5% 0;
 `;
@@ -78,9 +78,25 @@ const ButtonsWrapper = styled.div`
   justify-content: space-around;
 `;
 
+const InputWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  font-size: xx-large;
+`;
+
 const WarningText = styled.p`
   color: red;
   font-size: smaller;
+`;
+
+const TextInput = styled.input`
+  width: 280px;
+  height: 50px;
+  border: 0;
+  border-bottom: 1px solid #10161a33;
+  margin-right: 5px;
+  font-size: xx-large;
+  text-align: center;
 `;
 
 export const ContributorProposalPage = observer(() => {
@@ -102,6 +118,12 @@ export const ContributorProposalPage = observer(() => {
   const [dxdAth, setDxdAth] = useState(null);
   const [periodEnd, setPeriodEnd] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [dxdAmount, setDxdAmount] = useState(null);
+  const [repReward, setRepReward] = useState(null);
+  const [advanced, setAdvanced] = useState(false);
+  const [percentage, setPercentage] = useState(null);
+  const [trialPeriod, setTrialPeriod] = useState(false);
+  const [discount, setDiscount] = useState(1);
 
   const proposalType = configStore
     .getProposalTypes()
@@ -125,25 +147,29 @@ export const ContributorProposalPage = observer(() => {
     getDXD();
   }, []);
 
-  const submitProposal = async () => {
-    try {
-      const hash = await ipfsService.uploadProposalMetadata(
-        localStorage.getItem('dxvote-newProposal-title'),
-        localStorage.getItem('dxvote-newProposal-description'),
-        [`Level ${selectedLevel}`, 'Contributor Proposal'],
-        pinataService
-      );
+  useEffect(() => {
+    setDiscount(
+      (percentage ? parseFloat(percentage) / 100 : 1) * (trialPeriod ? 0.8 : 1)
+    );
+  }, [trialPeriod, percentage]);
 
+  useEffect(() => {
+    if (confirm) {
       const { userRep, totalSupply } = daoStore.getRepEventsOfUser(
         account,
         providerStore.getCurrentBlockNumber()
       );
 
-      const dxdAmount = denormalizeBalance(
-        bnum(levels[selectedLevel]?.dxd / dxdAth)
-      ).toString();
+      setDxdAmount(
+        denormalizeBalance(
+          bnum((levels[selectedLevel]?.dxd / dxdAth) * discount)
+        ).toString()
+      );
 
-      let currentRepReward = formatNumberValue(totalSupply.times(0.001667), 0);
+      let currentRepReward = formatNumberValue(
+        totalSupply.times(0.001667).times(trialPeriod ? 0.8 : 1),
+        0
+      );
 
       if (periodEnd) {
         userRep.reverse().forEach(repEvent => {
@@ -153,13 +179,27 @@ export const ContributorProposalPage = observer(() => {
             repEvent.timestamp < loweLimit &&
             repEvent.timestamp > upperLimit
           ) {
-            currentRepReward = formatNumberValue(repEvent.amount, 0);
+            currentRepReward = formatNumberValue(
+              repEvent.amount.times(trialPeriod ? 0.8 : 1),
+              0
+            );
             console.debug('Matched previous REP amount');
           }
         });
       }
 
-      console.log({ currentRepReward });
+      setRepReward(currentRepReward);
+    }
+  }, [confirm]);
+
+  const submitProposal = async () => {
+    try {
+      const hash = await ipfsService.uploadProposalMetadata(
+        localStorage.getItem('dxvote-newProposal-title'),
+        localStorage.getItem('dxvote-newProposal-description'),
+        [`Level ${selectedLevel}`, 'Contributor Proposal'],
+        pinataService
+      );
 
       // Encode rep mint call
       const repFunctionEncoded = library.eth.abi.encodeFunctionSignature(
@@ -169,12 +209,12 @@ export const ContributorProposalPage = observer(() => {
       const repParamsEncoded = library.eth.abi
         .encodeParameters(
           ['uint256', 'address', 'address'],
-          [currentRepReward, account, contracts.avatar]
+          [repReward, account, contracts.avatar]
         )
         .substring(2);
 
       const repCallData = repFunctionEncoded + repParamsEncoded;
-
+      console.log({ repCallData });
       // Encode DXD approval
       const dxdApprovalFunctionEncoded =
         library.eth.abi.encodeFunctionSignature('approve(address,uint256)');
@@ -209,16 +249,20 @@ export const ContributorProposalPage = observer(() => {
 
       const vestingCallData = vestingFunctionEncoded + vestingParamsEncoded;
 
+      // Need additional token transfer on anything other than xdai
       const proposalData = {
         to: [
-          contracts.controller,
           account,
           tokens.find(token => token.name === 'DXdao').address,
           contracts.utils.dxdVestingFactory,
         ],
-        data: [repCallData, '0x0', dxdApprovalCallData, vestingCallData],
+        data: ['0x0', dxdApprovalCallData, vestingCallData],
         // Make native token use level value
-        value: [0, 2, 0, 0],
+        value: [
+          denormalizeBalance(bnum(levels[selectedLevel]?.stable * discount)),
+          0,
+          0,
+        ],
         titleText: 'Test contributor stuff',
         descriptionHash: contentHash.fromIpfs(hash),
       };
@@ -254,49 +298,82 @@ export const ContributorProposalPage = observer(() => {
         >
           {`< Back`}
         </BackToProposals>
-        <Center>
-          <div>
-            Select Level
-            <LevelSelect
-              numberOfLevels={levels.length}
-              selected={selectedLevel}
-              onSelect={index => {
-                console.log({ index });
-                setSelectedLevel(index);
-              }}
-            />
-          </div>
-          {selectedLevel >= 0 ? (
-            <Values>
-              <Value>${levels[selectedLevel]?.stable}</Value>
-              <Value>
-                {dxdAth
-                  ? (levels[selectedLevel]?.dxd / dxdAth).toFixed(2)
-                  : 'Loading ...'}{' '}
-                DXD
-              </Value>
-
-              <Value>{levels[selectedLevel]?.rep}% REP</Value>
-              <Toggle
-                onToggle={() => {
-                  setPeriodEnd(!periodEnd);
+        {!advanced ? (
+          <Center>
+            <div>
+              Select Level
+              <LevelSelect
+                numberOfLevels={levels.length}
+                selected={selectedLevel}
+                onSelect={index => {
+                  console.log({ index });
+                  setSelectedLevel(index);
                 }}
-                state={periodEnd}
-                optionOne={'First part'}
-                optionTwo={'Second part'}
               />
-            </Values>
-          ) : null}
-          <ButtonsWrapper>
-            <Button
-              disabled={selectedLevel < 0}
-              onClick={() => setConfirm(true)}
-            >
-              Submit Proposal
-            </Button>
-          </ButtonsWrapper>
-        </Center>
-        <Spacer />
+            </div>
+            {selectedLevel >= 0 ? (
+              <Values>
+                <Value>${levels[selectedLevel]?.stable * discount}</Value>
+                <Value>
+                  {dxdAth
+                    ? (
+                        (levels[selectedLevel]?.dxd / dxdAth) *
+                        discount
+                      ).toFixed(2)
+                    : 'Loading ...'}{' '}
+                  DXD
+                </Value>
+
+                <Value>
+                  {levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}% REP
+                </Value>
+                <Toggle
+                  onToggle={() => {
+                    setPeriodEnd(!periodEnd);
+                  }}
+                  state={periodEnd}
+                  optionOne={'Period 1/2'}
+                  optionTwo={'Period 2/2'}
+                />
+              </Values>
+            ) : null}
+            <ButtonsWrapper>
+              <Button
+                disabled={selectedLevel < 0}
+                onClick={() => setConfirm(true)}
+              >
+                Submit Proposal
+              </Button>
+            </ButtonsWrapper>
+          </Center>
+        ) : (
+          <Center>
+            <InputWrapper>
+              <TextInput
+                type="text"
+                placeholder="Time commitment"
+                onChange={event => setPercentage(event.target.value)}
+                value={percentage}
+              />
+              %
+            </InputWrapper>
+            <Toggle
+              onToggle={() => {
+                setTrialPeriod(!trialPeriod);
+              }}
+              state={trialPeriod}
+              optionOne={'Full worker'}
+              optionTwo={'Trial period'}
+            />
+            <ButtonsWrapper>
+              <Button onClick={() => setAdvanced(false)}>Save</Button>
+            </ButtonsWrapper>
+          </Center>
+        )}
+
+        <Spacer>
+          <Button onClick={() => setAdvanced(!advanced)}>More options</Button>
+        </Spacer>
       </NavigationBar>
 
       <Modal
@@ -308,7 +385,15 @@ export const ContributorProposalPage = observer(() => {
       >
         <ModalContent>
           <b>Payment:</b>
-          <div></div>
+          <Values>${levels[selectedLevel]?.stable * discount}</Values>
+          <Values>
+            {((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(2)} DXD
+            vested for 2 years and 1 year cliff
+          </Values>
+          <Values>
+            {levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}% -{' '}
+            {repReward} REP
+          </Values>
           <WarningText>
             {periodEnd
               ? 'If this is the second half of your payment then there is a chance DXD ATH changed and double check REP amount is accurate. If something is wrong please override the automatic values.'

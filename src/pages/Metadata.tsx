@@ -33,6 +33,7 @@ const TextInput = styled.input`
   margin-right: 5px;
   font-size: xx-large;
 `;
+
 const ButtonsWrapper = styled.div`
   display: flex;
   width: 100%;
