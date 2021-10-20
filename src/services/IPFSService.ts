@@ -79,7 +79,7 @@ export default class IPFSService {
     const bodyTextToUpload = JSON.stringify({
       description,
       title,
-      tags,
+      tags: [...tags, 'dxvote'],
       url: '',
     });
 

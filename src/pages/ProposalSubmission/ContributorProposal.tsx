@@ -62,6 +62,7 @@ const Spacer = styled.div`
   flex: 1;
   display: flex;
   justify-content: center;
+  flex-direction: column;
 `;
 
 const Values = styled.div`
@@ -197,7 +198,12 @@ export const ContributorProposalPage = observer(() => {
       const hash = await ipfsService.uploadProposalMetadata(
         localStorage.getItem('dxvote-newProposal-title'),
         localStorage.getItem('dxvote-newProposal-description'),
-        [`Level ${selectedLevel}`, 'Contributor Proposal'],
+        [
+          'Contributor Proposal',
+          `Level ${selectedLevel + 1}`,
+          `${trialPeriod ? 'Trial Period' : ''}`,
+          `${percentage && percentage < 100 ? '' : 'Full time worker'}`,
+        ],
         pinataService
       );
 
