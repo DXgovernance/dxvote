@@ -24,6 +24,7 @@ jobs:
       - name: Start Deployment
         uses: bobheadxi/deployments@v0.6.0
         id: deployment
+        if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote'
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -60,6 +61,7 @@ jobs:
 
       - name: Update Deployment Status
         uses: bobheadxi/deployments@v0.6.0
+        if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote'
         with:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}

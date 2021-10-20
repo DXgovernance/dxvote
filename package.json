@@ -1,10 +1,11 @@
 {
   "name": "dxvote",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "description": "dxvote application of DXdao.",
   "scripts": {
     "start": "dotenv -e .env.production ./scripts/start.sh",
     "build": "dotenv -e .env.production ./scripts/build.sh",
+    "build-ci": "dotenv -e .env.production ./scripts/build-ci.sh",
     "build-cache": "dotenv -e .env.development ./scripts/buildCache.sh",
     "upload-config": "yarn dotenv -e .env.development node scripts/uploadConfigFile.ts",
     "dev": "dotenv -e .env.development ./scripts/dev.sh",

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 interface PendingCircleType {
-  height: string
-  width: string
-  color?: string
+  height: string;
+  width: string;
+  color?: string;
 }
 const SpinningCircle = styled.div`
   height: ${props => props.height || '16px'};
@@ -67,7 +67,7 @@ const SpinningCircle = styled.div`
   }
 `;
 
-const PendingCircle = ({ height, width, color  }: PendingCircleType) => {
+const PendingCircle = ({ height, width, color }: PendingCircleType) => {
   return <SpinningCircle height={height} width={width} color={color} />;
 };
 

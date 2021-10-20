@@ -197,7 +197,11 @@ const TextCenter = styled.div`
 `;
 
 const HistoryEventText = styled.span`
+  display: flex;
   margin-right: 5px;
+  > * {
+    margin-right: 5px;
+  }
 `;
 
 const ProposalPage = observer(() => {
@@ -434,6 +438,23 @@ const ProposalPage = observer(() => {
     networkContracts.votingMachines.dxd &&
     networkContracts.votingMachines.dxd.address === votingMachineUsed;
 
+  const renderEvents = ({ text, textParams }) => {
+    let componentsList = [];
+    if (text.length === 1 && textParams.length === 0)
+      componentsList.push(<span>{text[0]}</span>);
+    else {
+      componentsList = text.map((phrase, key) => {
+        let components = [];
+        components.push(<span>{phrase}</span>);
+        if (textParams[key])
+          components.push(
+            <BlockchainLink text={textParams} toCopy={false} size="short" />
+          );
+        return components;
+      });
+    }
+    return componentsList;
+  };
   return (
     <ProposalInformationWrapper>
       <ProposalInfoSection>
@@ -493,7 +514,9 @@ const ProposalPage = observer(() => {
           {proposalEvents.history.map((historyEvent, i) => {
             return (
               <ProposalHistoryEvent key={'proposalHistoryEvent' + i}>
-                <HistoryEventText> {historyEvent.text} </HistoryEventText>
+                <HistoryEventText>
+                  {renderEvents(historyEvent)}
+                </HistoryEventText>
                 <BlockchainLink
                   type="transaction"
                   size="short"
@@ -626,9 +649,7 @@ const ProposalPage = observer(() => {
             )}
           </ProposalDescription>
         </SidebarRow>
-
         <SidebarDivider />
-
         <SidebarRow>
           <strong>
             Votes <Question question="4" />
