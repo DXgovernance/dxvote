@@ -26,7 +26,6 @@ const Divider = styled.div`
   margin: 10px 0;
 `;
 
-
 const CallDataInformation = observer(
   ({
     advancedCalls,
@@ -36,15 +35,17 @@ const CallDataInformation = observer(
   }: CallDataInformationParams) => {
     const { decodedCallData, ABI } = useABIService();
     const { getContractABI,  error } = useEtherscanService();
+    const [loading, setLoading] = useState(false)
     const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
       new Array(proposal.to.length)
     );
 
     const proposalCallArray = [];
     const getProposalCalls = async () => {
+      setLoading(true)
       const result = await Promise.all(
         proposal.to.map(item => getContractABI(item))
-      );
+      )
       result.map((abi, i) =>
         proposalCallArray.push(
           decodedCallData(
@@ -59,6 +60,7 @@ const CallDataInformation = observer(
           )
         )
       );
+      setLoading(false)
     };
     useEffect(() => {
       getProposalCalls();
@@ -145,8 +147,9 @@ const CallDataInformation = observer(
         </div>
       );
     };
-    // from X to X calling function X with params input of  X 
-    const decodedText = (from: string, to: string, functionName: string, params: unknown[]) => {
+
+    // function that creates a short description of "from X to X calling function X"
+    const decodedText = (from: string, to: string, functionName: string) => {
       return (
         <div>
           <CallParams>from </CallParams>
@@ -155,20 +158,10 @@ const CallDataInformation = observer(
           <CallParams fontStyle='italic'>{to} </CallParams>
           <CallParams>calling function </CallParams>
           <CallParams fontStyle='italic'>{functionName} </CallParams>
-          <CallParams>with parameters </CallParams>
-          {
-            params.map(param => {
-              return (
-                  <CallParams>{param} </CallParams>
-
-              )
-            })
-          }
         </div>
       )
     }
     const etherscanCallDisplay = (to: string, from: string) => {
-      const params = Object.values(ABI.args).slice(0,-1)
       if(advancedCalls){
       return (
         <div>
@@ -211,7 +204,7 @@ const CallDataInformation = observer(
         </div>
       );
       }
-      return decodedText(from,to, ABI.function.signature, params)
+      return decodedText(from,to, ABI.function.signature)
     };
 
     const baseDisplay = (
@@ -257,7 +250,7 @@ const CallDataInformation = observer(
       );
     };
 
-    if (ProposalCallTexts.length == 0) {
+    if (loading) {
       return <PendingCircle height="44px" width="44px" color="blue" />;
     }
 
