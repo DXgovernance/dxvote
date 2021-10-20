@@ -221,7 +221,7 @@ export const ContributorProposalPage = observer(() => {
         .substring(2);
 
       const repCallData = repFunctionEncoded + repParamsEncoded;
-      console.log({ repCallData });
+
       // Encode DXD approval
       const dxdApprovalFunctionEncoded =
         library.eth.abi.encodeFunctionSignature('approve(address,uint256)');
@@ -259,13 +259,15 @@ export const ContributorProposalPage = observer(() => {
       // Need additional token transfer on anything other than xdai
       const proposalData = {
         to: [
+          contracts.controller,
           account,
           tokens.find(token => token.name === 'DXdao').address,
           contracts.utils.dxdVestingFactory,
         ],
-        data: ['0x0', dxdApprovalCallData, vestingCallData],
+        data: [repCallData, '0x0', dxdApprovalCallData, vestingCallData],
         // Make native token use level value
         value: [
+          0,
           denormalizeBalance(bnum(levels[selectedLevel]?.stable * discount)),
           0,
           0,
