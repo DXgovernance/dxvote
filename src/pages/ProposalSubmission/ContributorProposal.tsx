@@ -9,7 +9,7 @@ import moment from 'moment';
 import { LevelSelect } from '../../components/LevelSelect';
 import { Button } from '../../components/common/Button';
 import { useContext } from '../../contexts';
-import { Modal } from '../Modal';
+import { Modal } from '../../components/Modal';
 import {
   TXEvents,
   formatNumberValue,
@@ -78,6 +78,11 @@ const ButtonsWrapper = styled.div`
   justify-content: space-around;
 `;
 
+const WarningText = styled.p`
+  color: red;
+  font-size: smaller;
+`;
+
 export const ContributorProposalPage = observer(() => {
   const {
     context: {
@@ -105,7 +110,6 @@ export const ContributorProposalPage = observer(() => {
   const scheme = daoStore
     .getAllSchemes()
     .find(scheme => scheme.name === proposalType.scheme);
-  console.log({ scheme });
 
   const levels = configStore.getContributorLevels();
 
@@ -116,6 +120,7 @@ export const ContributorProposalPage = observer(() => {
     const dxdData = await coingeckoService.getDxdData();
     setDxdAth(dxdData['market_data'].ath.usd);
   };
+
   useEffect(() => {
     getDXD();
   }, []);
@@ -265,7 +270,10 @@ export const ContributorProposalPage = observer(() => {
             <Values>
               <Value>${levels[selectedLevel]?.stable}</Value>
               <Value>
-                {(levels[selectedLevel]?.dxd / dxdAth).toFixed(2)} DXD
+                {dxdAth
+                  ? (levels[selectedLevel]?.dxd / dxdAth).toFixed(2)
+                  : 'Loading ...'}{' '}
+                DXD
               </Value>
 
               <Value>{levels[selectedLevel]?.rep}% REP</Value>
@@ -282,7 +290,7 @@ export const ContributorProposalPage = observer(() => {
           <ButtonsWrapper>
             <Button
               disabled={selectedLevel < 0}
-              onClick={() => submitProposal()}
+              onClick={() => setConfirm(true)}
             >
               Submit Proposal
             </Button>
@@ -301,6 +309,11 @@ export const ContributorProposalPage = observer(() => {
         <ModalContent>
           <b>Payment:</b>
           <div></div>
+          <WarningText>
+            {periodEnd
+              ? 'If this is the second half of your payment then there is a chance DXD ATH changed and double check REP amount is accurate. If something is wrong please override the automatic values.'
+              : null}
+          </WarningText>
         </ModalContent>
       </Modal>
     </VerticalLayout>
