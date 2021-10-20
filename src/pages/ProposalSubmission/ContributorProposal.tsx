@@ -20,8 +20,9 @@ import Toggle from 'components/Toggle';
 
 const VerticalLayout = styled.div`
   display: flex;
-  width: 100%;
+  width: 80%;
   height: 79vh;
+  margin: auto;
   flex-direction: column;
   flex-wrap: wrap;
 `;

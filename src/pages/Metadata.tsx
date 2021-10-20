@@ -129,7 +129,7 @@ export const CreateMetadataPage = observer(() => {
             />
             {error}
             <ButtonsWrapper>
-              <Button onClick={() => history.push(`../../new`)}>Back</Button>
+              <Button onClick={() => history.push(`../type`)}>Back</Button>
               <Button
                 onClick={async () => {
                   await uploadToIPFS();
