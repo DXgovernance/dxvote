@@ -2,7 +2,7 @@ import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-import { Box, Question, Button, InputDate } from '../components/common';
+import { Box, Question, Button } from '../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 
@@ -822,7 +822,6 @@ const NewProposalPage = observer(() => {
               value={contributionRewardCalls.externalToken}
               width="50%"
             />
-            <InputDate />
             <TextInput
               type="text"
               onChange={event =>
