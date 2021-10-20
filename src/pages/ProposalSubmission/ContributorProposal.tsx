@@ -9,6 +9,7 @@ import moment from 'moment';
 import { LevelSelect } from '../../components/LevelSelect';
 import { Button } from '../../components/common/Button';
 import { useContext } from '../../contexts';
+import { Modal } from '../Modal';
 import {
   TXEvents,
   formatNumberValue,
@@ -23,6 +24,15 @@ const VerticalLayout = styled.div`
   height: 79vh;
   flex-direction: column;
   flex-wrap: wrap;
+`;
+
+const ModalContent = styled.div`
+  ${({ theme }) => theme.flexColumnWrap}
+  margin: 16px 0px;
+  padding: 0;
+  width: 100%;
+  background-color: ${({ theme }) => theme.backgroundColor};
+  text-align: center;
 `;
 
 const NavigationBar = styled.div`
@@ -86,6 +96,7 @@ export const ContributorProposalPage = observer(() => {
   const [selectedLevel, setSelectedLevel] = useState(-1);
   const [dxdAth, setDxdAth] = useState(null);
   const [periodEnd, setPeriodEnd] = useState(false);
+  const [confirm, setConfirm] = useState(false);
 
   const proposalType = configStore
     .getProposalTypes()
@@ -201,7 +212,7 @@ export const ContributorProposalPage = observer(() => {
           contracts.utils.dxdVestingFactory,
         ],
         data: [repCallData, '0x0', dxdApprovalCallData, vestingCallData],
-        // Make native token
+        // Make native token use level value
         value: [0, 2, 0, 0],
         titleText: 'Test contributor stuff',
         descriptionHash: contentHash.fromIpfs(hash),
@@ -227,7 +238,9 @@ export const ContributorProposalPage = observer(() => {
       console.error('[PROPOSAL_ERROR]', error);
     }
   };
-  console.log(submitProposal);
+
+  const header = <div>Submit worker proposal</div>;
+
   return (
     <VerticalLayout>
       <NavigationBar>
@@ -277,6 +290,19 @@ export const ContributorProposalPage = observer(() => {
         </Center>
         <Spacer />
       </NavigationBar>
+
+      <Modal
+        header={header}
+        isOpen={confirm}
+        onDismiss={() => setConfirm(false)}
+        onCancel={() => setConfirm(false)}
+        onConfirm={() => submitProposal()}
+      >
+        <ModalContent>
+          <b>Payment:</b>
+          <div></div>
+        </ModalContent>
+      </Modal>
     </VerticalLayout>
   );
 });
