@@ -15,7 +15,7 @@ interface CallDataInformationParams {
   networkContracts: NetworkContracts;
 }
 
-const CallParams = styled.div`
+const CallParams = styled.span`
 color: black;
 font-style: ${props => props.fontStyle || 'normal' };
 font-size: ${props => props.fontSize || '14px'};
@@ -145,8 +145,31 @@ const CallDataInformation = observer(
         </div>
       );
     };
-    // @todo create decoded text for each function
+    // from X to X calling function X with params input of  X 
+    const decodedText = (from: string, to: string, functionName: string, params: unknown[]) => {
+      return (
+        <div>
+          <CallParams>from </CallParams>
+          <CallParams fontStyle='italic'>{from} </CallParams>
+          <CallParams>to </CallParams>
+          <CallParams fontStyle='italic'>{to} </CallParams>
+          <CallParams>calling function </CallParams>
+          <CallParams fontStyle='italic'>{functionName} </CallParams>
+          <CallParams>with parameters </CallParams>
+          {
+            params.map(param => {
+              return (
+                  <CallParams>{param} </CallParams>
+
+              )
+            })
+          }
+        </div>
+      )
+    }
     const etherscanCallDisplay = (to: string, from: string) => {
+      const params = Object.values(ABI.args).slice(0,-1)
+      if(advancedCalls){
       return (
         <div>
           <p>
@@ -165,7 +188,8 @@ const CallDataInformation = observer(
             <strong>Function: </strong>
             <small>{ABI.function.signature}</small>
           </p>
-          {advancedCalls ? Object.keys(ABI.args)
+          { 
+          Object.keys(ABI.args)
             .filter(item => item != '__length__')
             .map((item, i) => {
               const check = ABI.function.inputs[item];
@@ -183,9 +207,11 @@ const CallDataInformation = observer(
                   <CallParams>{ABI.args[item]} </CallParams>
                 </p>
               );
-            }): null}
+            })}
         </div>
       );
+      }
+      return decodedText(from,to, ABI.function.signature, params)
     };
 
     const baseDisplay = (
