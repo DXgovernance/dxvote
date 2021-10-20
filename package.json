@@ -40,7 +40,7 @@
     "depcheck": "^1.4.1",
     "dotenv": "^8.1.0",
     "dotenv-cli": "^4.0.0",
-    "dxdao-contracts": "git://github.com/DXgovernance/dxdao-contracts.git#augustol-develop",
+    "dxdao-contracts": "git://github.com/DXgovernance/dxdao-contracts.git#develop",
     "ethers": "^4.0.45",
     "git-revision-webpack-plugin": "^3.0.6",
     "ipfs-core": "^0.3.0",

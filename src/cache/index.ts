@@ -176,6 +176,7 @@ export const updateDaoInfo = async function (
     networkContracts.multicall,
     callsToExecute
   );
+
   networkCache.daoInfo.address = networkContracts.avatar._address;
   networkCache.daoInfo.repEvents = !networkCache.daoInfo.repEvents
     ? []
