@@ -4,11 +4,18 @@ import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
+import moment from 'moment';
 
 import { LevelSelect } from '../../components/LevelSelect';
 import { Button } from '../../components/common/Button';
 import { useContext } from '../../contexts';
-import { TXEvents } from '../../utils';
+import {
+  TXEvents,
+  formatNumberValue,
+  denormalizeBalance,
+  bnum,
+} from '../../utils';
+import Toggle from 'components/Toggle';
 
 const VerticalLayout = styled.div`
   display: flex;
@@ -69,6 +76,8 @@ export const ContributorProposalPage = observer(() => {
       daoStore,
       daoService,
       providerStore,
+      ipfsService,
+      pinataService,
     },
   } = useContext();
   const { library, account } = providerStore.getActiveWeb3React();
@@ -76,6 +85,7 @@ export const ContributorProposalPage = observer(() => {
   const history = useHistory();
   const [selectedLevel, setSelectedLevel] = useState(-1);
   const [dxdAth, setDxdAth] = useState(null);
+  const [periodEnd, setPeriodEnd] = useState(false);
 
   const proposalType = configStore
     .getProposalTypes()
@@ -89,58 +99,116 @@ export const ContributorProposalPage = observer(() => {
   const levels = configStore.getContributorLevels();
 
   const contracts = configStore.getNetworkContracts();
+  const tokens = configStore.getTokensOfNetwork();
 
   const getDXD = async () => {
     const dxdData = await coingeckoService.getDxdData();
-    console.log({ dxdData });
     setDxdAth(dxdData['market_data'].ath.usd);
   };
   useEffect(() => {
     getDXD();
   }, []);
 
-  const submitProposal = () => {
+  const submitProposal = async () => {
     try {
+      const hash = await ipfsService.uploadProposalMetadata(
+        localStorage.getItem('dxvote-newProposal-title'),
+        localStorage.getItem('dxvote-newProposal-description'),
+        [`Level ${selectedLevel}`, 'Contributor Proposal'],
+        pinataService
+      );
+
+      const { userRep, totalSupply } = daoStore.getRepEventsOfUser(
+        account,
+        providerStore.getCurrentBlockNumber()
+      );
+
+      const dxdAmount = denormalizeBalance(
+        bnum(levels[selectedLevel]?.dxd / dxdAth)
+      ).toString();
+
+      let currentRepReward = formatNumberValue(totalSupply.times(0.001667), 0);
+
+      if (periodEnd) {
+        userRep.reverse().forEach(repEvent => {
+          const loweLimit = moment().subtract(1.8, 'months').unix();
+          const upperLimit = moment().subtract(2.2, 'months').unix();
+          if (
+            repEvent.timestamp < loweLimit &&
+            repEvent.timestamp > upperLimit
+          ) {
+            currentRepReward = formatNumberValue(repEvent.amount, 0);
+            console.debug('Matched previous REP amount');
+          }
+        });
+      }
+
+      console.log({ currentRepReward });
+
+      // Encode rep mint call
       const repFunctionEncoded = library.eth.abi.encodeFunctionSignature(
         'mintReputation(uint256,address,address)'
       );
-      // Work out rep calculation
+
       const repParamsEncoded = library.eth.abi
         .encodeParameters(
           ['uint256', 'address', 'address'],
-          ['2', account, contracts.avatar]
+          [currentRepReward, account, contracts.avatar]
         )
         .substring(2);
 
       const repCallData = repFunctionEncoded + repParamsEncoded;
 
-      // const transferFunctionEncoded = library.eth.abi.encodeFunctionSignature(
-      //   'transfer(address,uint256)'
-      // );
+      // Encode DXD approval
+      const dxdApprovalFunctionEncoded =
+        library.eth.abi.encodeFunctionSignature('approve(address,uint256)');
 
-      // const transferParamsEncoded = library.eth.abi
-      //   .encodeParameters(
-      //     ['address', 'uint256'],
-      //     [account, '2']
-      //   )
-      //   .substring(2);
+      const dxdApprovalParamsEncoded = library.eth.abi
+        .encodeParameters(
+          ['address', 'uint256'],
+          [contracts.utils.dxdVestingFactory, dxdAmount]
+        )
+        .substring(2);
 
-      // const transferCallData =
-      // transferFunctionEncoded + transferParamsEncoded;
+      const dxdApprovalCallData =
+        dxdApprovalFunctionEncoded + dxdApprovalParamsEncoded;
+
+      // Encode vesting contract call
+      const vestingFunctionEncoded = library.eth.abi.encodeFunctionSignature(
+        'create(address, uint256, uint256, uint256, uint256)'
+      );
+
+      const vestingParamsEncoded = library.eth.abi
+        .encodeParameters(
+          ['address', 'uint256', 'uint256', 'uint256', 'uint256'],
+          [
+            account,
+            moment().unix(),
+            moment.duration(1, 'years').asSeconds(),
+            moment.duration(2, 'years').asSeconds(),
+            dxdAmount,
+          ]
+        )
+        .substring(2);
+
+      const vestingCallData = vestingFunctionEncoded + vestingParamsEncoded;
 
       const proposalData = {
-        to: [contracts.controller],
-        data: [repCallData],
-        value: ['0'],
-        title: 'Test contributor stuff',
-        descriptionHash: contentHash.fromIpfs(
-          localStorage.getItem('dxvote-newProposal-hash')
-        ),
+        to: [
+          contracts.controller,
+          account,
+          tokens.find(token => token.name === 'DXdao').address,
+          contracts.utils.dxdVestingFactory,
+        ],
+        data: [repCallData, '0x0', dxdApprovalCallData, vestingCallData],
+        // Make native token
+        value: [0, 2, 0, 0],
+        titleText: 'Test contributor stuff',
+        descriptionHash: contentHash.fromIpfs(hash),
       };
 
       console.debug('[PROPOSAL]', scheme.address, proposalData);
-      // "0xeaf994b200000000000000000000000000000000000000000000000000000000000000020000000000000000000000000b17cf48420400e1d71f8231d4a8e43b3566bb5b0000000000000000000000001a639b50d807ce7e61dc9eeb091e6cea8ecb1595"
-      // "0xeaf994b200000000000000000000000000000000000000000000000000000000000000020000000000000000000000000b17cf48420400e1d71f8231d4a8e43b3566bb5b0000000000000000000000001a639b50d807ce7e61dc9eeb091e6cea8ecb1595"
+
       daoService
         .createProposal(scheme.address, scheme.type, proposalData)
         .on(TXEvents.TX_HASH, hash => {
@@ -160,10 +228,6 @@ export const ContributorProposalPage = observer(() => {
     }
   };
   console.log(submitProposal);
-  // ["0xb05d148c6A9d9C0eb3fE0A091a68d6DeDac63f3b"]
-  // ["0xeaf994b200000000000000000000000000000000000000000000000000000000000f423f0000000000000000000000000b17cf48420400e1d71f8231d4a8e43b3566bb5b0000000000000000000000000b17cf48420400e1d71f8231d4a8e43b3566bb5b"]
-  // ["0"]
-
   return (
     <VerticalLayout>
       <NavigationBar>
@@ -192,6 +256,14 @@ export const ContributorProposalPage = observer(() => {
               </Value>
 
               <Value>{levels[selectedLevel]?.rep}% REP</Value>
+              <Toggle
+                onToggle={() => {
+                  setPeriodEnd(!periodEnd);
+                }}
+                state={periodEnd}
+                optionOne={'First part'}
+                optionTwo={'Second part'}
+              />
             </Values>
           ) : null}
           <ButtonsWrapper>

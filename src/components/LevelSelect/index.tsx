@@ -38,7 +38,7 @@ export const Dot = styled.div`
   min-width: 30px;
   min-height: 30px;
   border-radius: 50%;
-  background: ${props => (props.active ? '#4B9E98' : `#DDDDE3`)};
+  background: ${props => (props.active ? '#536DFE' : `#DDDDE3`)};
   color: white;
   display: flex;
   align-items: center;
@@ -51,9 +51,9 @@ export const Line = styled.div`
   width: 100%;
   background: ${props =>
     props.active
-      ? 'linear-gradient(90deg, #4b9e98 60%, #dddde3 100%);'
+      ? 'linear-gradient(90deg, #536DFE 60%, #dddde3 100%);'
       : props.complete
-      ? '#4b9e98'
+      ? '#536DFE'
       : `#DDDDE3`};
   height: 2px;
 `;

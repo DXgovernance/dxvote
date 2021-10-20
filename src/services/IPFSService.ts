@@ -1,6 +1,9 @@
 import RootContext from '../contexts';
 import axios from 'axios';
 import IPFS from 'ipfs-core';
+
+import { sleep } from '../utils';
+
 const CID = require('cids');
 
 export default class IPFSService {
@@ -65,5 +68,38 @@ export default class IPFSService {
         url: 'https://gateway.pinata.cloud/ipfs/' + hash,
       })
     ).data;
+  }
+
+  async uploadProposalMetadata(
+    title: string,
+    description: string,
+    tags: string[],
+    pinataService
+  ) {
+    const bodyTextToUpload = JSON.stringify({
+      description,
+      title,
+      tags,
+      url: '',
+    });
+
+    const hash = await this.add(bodyTextToUpload);
+    localStorage.setItem('dxvote-newProposal-hash', hash);
+
+    if (pinataService.auth) {
+      const pinataPin = await this.pin(hash);
+      console.debug('[PINATA PIN]', pinataPin.data);
+    }
+    const ipfsPin = await this.pin(hash);
+    console.debug('[IPFS PIN]', ipfsPin);
+
+    let uploaded = false;
+    while (!uploaded) {
+      const ipfsContent = await this.getContent(hash);
+      console.debug('[IPFS CONTENT]', ipfsContent);
+      if (ipfsContent === bodyTextToUpload) uploaded = true;
+      await sleep(1000);
+    }
+    return hash;
   }
 }

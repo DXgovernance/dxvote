@@ -9,8 +9,6 @@ import { useContext } from '../contexts';
 import { Button } from '../components/common/Button';
 import { Box } from '../components/common';
 
-import { sleep } from '../utils';
-
 const ProposalsWrapper = styled.div`
   padding: 10px 0px;
   background: white;
@@ -74,7 +72,7 @@ const Error = styled.div`
 
 export const CreateMetadataPage = observer(() => {
   const {
-    context: { configStore, ipfsService, pinataService },
+    context: { configStore },
   } = useContext();
 
   const history = useHistory();
@@ -112,30 +110,6 @@ export const CreateMetadataPage = observer(() => {
       setError('Description has to be at mimimum 100 characters length');
     } else {
       setError(null);
-      const bodyTextToUpload = JSON.stringify({
-        description: descriptionText,
-        title: title,
-        tags: ['dxvote', 'contributorProposal'],
-        url: '',
-      });
-
-      const hash = await ipfsService.add(bodyTextToUpload);
-      localStorage.setItem('dxvote-newProposal-hash', hash);
-
-      if (pinataService.auth) {
-        const pinataPin = await pinataService.pin(hash);
-        console.debug('[PINATA PIN]', pinataPin.data);
-      }
-      const ipfsPin = await ipfsService.pin(hash);
-      console.debug('[IPFS PIN]', ipfsPin);
-
-      let uploaded = false;
-      while (!uploaded) {
-        const ipfsContent = await ipfsService.getContent(hash);
-        console.debug('[IPFS CONTENT]', ipfsContent);
-        if (ipfsContent === bodyTextToUpload) uploaded = true;
-        await sleep(1000);
-      }
 
       history.push(`../submit/${proposalType}`);
     }

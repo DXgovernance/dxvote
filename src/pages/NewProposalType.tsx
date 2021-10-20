@@ -87,7 +87,7 @@ export const NewProposalTypePage = observer(() => {
   return (
     <VerticalLayout>
       <NavigationBar>
-        <BackToProposals onClick={() => history.push('proposals')}>
+        <BackToProposals onClick={() => history.push('../proposals')}>
           {`< Back `}
         </BackToProposals>
         <Title>Choose Proposal Type</Title>

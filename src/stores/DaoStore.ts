@@ -1145,6 +1145,31 @@ export default class DaoStore {
     return { userRep, totalSupply };
   }
 
+  getRepEventsOfUser(
+    userAddress: string = ZERO_ADDRESS,
+    atBlock: number = 0
+  ): {
+    userRep: RepEvent[];
+    totalSupply: BigNumber;
+  } {
+    const { daoStore, providerStore, configStore } = this.context;
+    const repEvents = daoStore.getCache().daoInfo.repEvents;
+    let userRep = [],
+      totalSupply = bnum(0);
+    if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
+    const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1;
+
+    for (let i = 0; i < repEvents.length; i++) {
+      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
+        if (repEvents[i].event === 'Mint') {
+          totalSupply = totalSupply.plus(repEvents[i].amount);
+          if (repEvents[i].account === userAddress) userRep.push(repEvents[i]);
+        }
+      }
+    }
+    return { userRep, totalSupply };
+  }
+
   getUsersRep(): {
     [userAddress: string]: BigNumber;
   } {
