@@ -72,10 +72,11 @@ const Web3ReactManager = ({ children }) => {
     const chains = getChains(rpcUrls);
     const chain = chains.find(chain => chain.id == chainId);
 
-    if (chain) {
+    const urlNetworkName = location.pathname.split('/')[1];
+    if (chain && chain.name != urlNetworkName) {
       history.push(`/${chain.name}/proposals`);
     }
-    
+
     window.location.reload();
   }
 

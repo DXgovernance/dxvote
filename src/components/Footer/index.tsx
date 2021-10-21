@@ -46,7 +46,7 @@ const Footer = () => {
     <FooterWrapper>
       <LeftFooter>
         <FooterItem>
-          <a href="https://dxdao.eth.link/#/" target="_blank">
+          <a href="https://dxdao.eth.link/#/" target="_blank" rel="noreferrer">
             {' '}
             Website{' '}
           </a>
@@ -65,7 +65,11 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
-          <a href="https://github.com/AugustoL/dxvote" target="_blank">
+          <a
+            href="https://github.com/AugustoL/dxvote"
+            target="_blank"
+            rel="noreferrer"
+          >
             {' '}
             Source Code{' '}
           </a>
@@ -86,10 +90,20 @@ const Footer = () => {
           <a
             href="https://github.com/AugustoL/dxvote/issues/new/choose"
             target="_blank"
+            rel="noreferrer"
           >
             {' '}
             Submit Issue{' '}
           </a>
+        </FooterItem>
+        <FooterDivider></FooterDivider>
+        <FooterItem>
+          v
+          {`${process.env.REACT_APP_VERSION}${
+            process.env.NODE_ENV !== 'production'
+              ? `-${process.env.NODE_ENV}-${process.env.REACT_APP_GIT_SHA}`
+              : ''
+          }`}
         </FooterItem>
       </LeftFooter>
     </FooterWrapper>

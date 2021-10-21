@@ -22,20 +22,28 @@ import {
 import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import ContributionRewardJSON from '../contracts/ContributionReward.json';
 import { getContracts } from '../contracts';
+import RootContext from '../contexts';
 
 export const getUpdatedCache = async function (
+  context: RootContext,
   networkCache: DaoNetworkCache,
   networkConfig: NetworkContracts,
   fromBlock: number,
   toBlock: number,
   web3: any
 ): Promise<DaoNetworkCache> {
+  const { notificationStore } = context;
+
   console.debug('[Cache Update]', fromBlock, toBlock);
   const networkContracts = await getContracts(networkConfig, web3);
 
   //// TODO: Improve this duplicated while conditions
   let retry = true;
   while (retry) {
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting reputation events for blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       (
         await Promise.all([
@@ -58,6 +66,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting voting machine data in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       await Promise.all(
         Object.keys(networkContracts.votingMachines).map(
@@ -100,6 +112,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
+    notificationStore.setGlobalLoading(
+      true,
+      `Updating scheme data in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       networkCache = await updateSchemes(
         networkCache,
@@ -115,6 +131,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       (
         await Promise.all([
@@ -1390,6 +1410,245 @@ export const updateProposals = async function (
     })
   );
 
+  // Update existent active proposals
+  await Promise.all(
+    Object.keys(networkCache.proposals).map(async proposalId => {
+      if (
+        networkCache.proposals[proposalId].stateInVotingMachine >
+          VotingMachineProposalState.Executed ||
+        networkCache.proposals[proposalId].stateInScheme ===
+          WalletSchemeProposalState.Submitted
+      ) {
+        let retry = true;
+        while (retry) {
+          try {
+            const schemeAddress = networkCache.proposals[proposalId].scheme;
+            const schemeTypeData = getSchemeTypeData(
+              networkConfig,
+              schemeAddress
+            );
+            const votingMachine =
+              networkContracts.votingMachines[schemeTypeData.votingMachine]
+                .contract;
+
+            // Get all the proposal information from the scheme and voting machine
+            let callsToExecute = [
+              [votingMachine, 'proposals', [proposalId]],
+              [votingMachine, 'voteStatus', [proposalId, 1]],
+              [votingMachine, 'voteStatus', [proposalId, 2]],
+              [votingMachine, 'proposalStatus', [proposalId]],
+              [votingMachine, 'getProposalTimes', [proposalId]],
+              [votingMachine, 'shouldBoost', [proposalId]],
+            ];
+
+            if (schemeTypeData.type === 'WalletScheme') {
+              callsToExecute.push([
+                await new web3.eth.Contract(
+                  WalletSchemeJSON.abi,
+                  schemeAddress
+                ),
+                'getOrganizationProposal',
+                [proposalId],
+              ]);
+            } else if (
+              schemeTypeData.type === 'ContributionReward' &&
+              networkCache.proposals[proposalId].stateInVotingMachine ===
+                VotingMachineProposalState.Executed &&
+              networkCache.proposals[proposalId].stateInScheme ===
+                WalletSchemeProposalState.Submitted
+            ) {
+              callsToExecute.push([
+                await new web3.eth.Contract(
+                  ContributionRewardJSON.abi,
+                  schemeAddress
+                ),
+                'getRedeemedPeriods',
+                [proposalId, networkContracts.avatar._address, 0],
+              ]);
+              callsToExecute.push([
+                await new web3.eth.Contract(
+                  ContributionRewardJSON.abi,
+                  schemeAddress
+                ),
+                'getRedeemedPeriods',
+                [proposalId, networkContracts.avatar._address, 1],
+              ]);
+              callsToExecute.push([
+                await new web3.eth.Contract(
+                  ContributionRewardJSON.abi,
+                  schemeAddress
+                ),
+                'getRedeemedPeriods',
+                [proposalId, networkContracts.avatar._address, 2],
+              ]);
+              callsToExecute.push([
+                await new web3.eth.Contract(
+                  ContributionRewardJSON.abi,
+                  schemeAddress
+                ),
+                'getRedeemedPeriods',
+                [proposalId, networkContracts.avatar._address, 3],
+              ]);
+            }
+
+            const callsResponse = await executeMulticall(
+              web3,
+              networkContracts.multicall,
+              callsToExecute
+            );
+
+            const votingMachineProposalInfo = web3.eth.abi.decodeParameters(
+              [
+                { type: 'bytes32', name: 'organizationId' },
+                { type: 'address', name: 'callbacks' },
+                { type: 'uint256', name: 'state' },
+                { type: 'uint256', name: 'winningVote' },
+                { type: 'address', name: 'proposer' },
+                { type: 'uint256', name: 'currentBoostedVotePeriodLimit' },
+                { type: 'bytes32', name: 'paramsHash' },
+                { type: 'uint256', name: 'daoBountyRemain' },
+                { type: 'uint256', name: 'daoBounty' },
+                { type: 'uint256', name: 'totalStakes' },
+                { type: 'uint256', name: 'confidenceThreshold' },
+                {
+                  type: 'uint256',
+                  name: 'secondsFromTimeOutTillExecuteBoosted',
+                },
+              ],
+              callsResponse.returnData[0]
+            );
+            const positiveVotes = callsResponse.returnData[1];
+            const negativeVotes = callsResponse.returnData[2];
+
+            const proposalStatusWithVotes = web3.eth.abi.decodeParameters(
+              ['uint256', 'uint256', 'uint256', 'uint256'],
+              callsResponse.returnData[3]
+            );
+            const proposalTimes = callsResponse.decodedReturnData[4];
+            const proposalShouldBoost = callsResponse.decodedReturnData[5];
+
+            if (schemeTypeData.type === 'WalletScheme') {
+              networkCache.proposals[proposalId].stateInScheme = Number(
+                web3.eth.abi.decodeParameters(
+                  [
+                    { type: 'address[]', name: 'to' },
+                    { type: 'bytes[]', name: 'callData' },
+                    { type: 'uint256[]', name: 'value' },
+                    { type: 'uint256', name: 'state' },
+                    { type: 'string', name: 'title' },
+                    { type: 'string', name: 'descriptionHash' },
+                    { type: 'uint256', name: 'submittedTime' },
+                  ],
+                  callsResponse.returnData[6]
+                ).state
+              );
+            } else if (
+              schemeTypeData.type === 'ContributionReward' &&
+              networkCache.proposals[proposalId].stateInVotingMachine ===
+                VotingMachineProposalState.Executed &&
+              networkCache.proposals[proposalId].stateInScheme ===
+                WalletSchemeProposalState.Submitted
+            ) {
+              if (schemeTypeData.type === 'ContributionReward') {
+                if (
+                  callsResponse.decodedReturnData[6] > 0 ||
+                  callsResponse.decodedReturnData[7] > 0 ||
+                  callsResponse.decodedReturnData[8] > 0 ||
+                  callsResponse.decodedReturnData[9] > 0
+                ) {
+                  networkCache.proposals[proposalId].stateInScheme =
+                    WalletSchemeProposalState.ExecutionSucceded;
+                } else if (
+                  votingMachineProposalInfo.state === '1' ||
+                  votingMachineProposalInfo.state === '2'
+                ) {
+                  networkCache.proposals[proposalId].stateInScheme =
+                    WalletSchemeProposalState.Rejected;
+                }
+              }
+            } else if (schemeTypeData.type === 'GenericMulticall') {
+              const executionEvent = await web3.eth.getPastLogs({
+                fromBlock:
+                  networkCache.proposals[proposalId].creationEvent
+                    .l1BlockNumber,
+                address: schemeAddress,
+                topics: [
+                  '0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe',
+                  avatarAddressEncoded,
+                  proposalId,
+                ],
+              });
+              if (executionEvent.length > 0)
+                networkCache.proposals[proposalId].stateInScheme =
+                  WalletSchemeProposalState.ExecutionSucceded;
+              else
+                networkCache.proposals[proposalId].stateInScheme =
+                  WalletSchemeProposalState.Submitted;
+            } else if (
+              networkCache.proposals[proposalId].stateInVotingMachine ===
+              VotingMachineProposalState.Executed
+            ) {
+              networkCache.proposals[proposalId].stateInScheme =
+                WalletSchemeProposalState.ExecutionSucceded;
+            }
+
+            networkCache.proposals[proposalId].stateInVotingMachine = Number(
+              votingMachineProposalInfo.state
+            );
+            networkCache.proposals[proposalId].winningVote =
+              votingMachineProposalInfo.winningVote;
+            networkCache.proposals[proposalId].currentBoostedVotePeriodLimit =
+              votingMachineProposalInfo.currentBoostedVotePeriodLimit;
+            networkCache.proposals[proposalId].daoBountyRemain = bnum(
+              votingMachineProposalInfo.daoBountyRemain
+            );
+            networkCache.proposals[proposalId].daoBounty = bnum(
+              votingMachineProposalInfo.daoBounty
+            );
+            networkCache.proposals[proposalId].totalStakes = bnum(
+              votingMachineProposalInfo.totalStakes
+            );
+            networkCache.proposals[proposalId].confidenceThreshold =
+              votingMachineProposalInfo.confidenceThreshold;
+            networkCache.proposals[
+              proposalId
+            ].secondsFromTimeOutTillExecuteBoosted =
+              votingMachineProposalInfo.secondsFromTimeOutTillExecuteBoosted;
+            networkCache.proposals[proposalId].boostedPhaseTime = bnum(
+              proposalTimes[1]
+            );
+            networkCache.proposals[proposalId].preBoostedPhaseTime = bnum(
+              proposalTimes[2]
+            );
+            networkCache.proposals[proposalId].daoRedeemItsWinnings =
+              votingMachineProposalInfo.daoRedeemItsWinnings;
+            networkCache.proposals[proposalId].shouldBoost =
+              proposalShouldBoost;
+            networkCache.proposals[proposalId].positiveVotes =
+              bnum(positiveVotes);
+            networkCache.proposals[proposalId].negativeVotes =
+              bnum(negativeVotes);
+            networkCache.proposals[proposalId].preBoostedPositiveVotes = bnum(
+              proposalStatusWithVotes[0]
+            );
+            networkCache.proposals[proposalId].preBoostedNegativeVotes = bnum(
+              proposalStatusWithVotes[1]
+            );
+            networkCache.proposals[proposalId].positiveStakes = bnum(
+              proposalStatusWithVotes[2]
+            );
+            networkCache.proposals[proposalId].negativeStakes = bnum(
+              proposalStatusWithVotes[3]
+            );
+          } finally {
+            retry = false;
+          }
+        }
+        retry = true;
+      }
+    })
+  );
+
   let retryIntent = 0;
   // Update proposals title
   for (
@@ -1425,7 +1684,7 @@ export const updateProposals = async function (
         const response = await axios.request({
           url: 'https://ipfs.io/ipfs/' + ipfsHash,
           method: 'GET',
-          timeout: isNode() ? 5000 : 1000,
+          timeout: isNode() ? 10000 : 1000,
         });
         if (response && response.data && response.data.title) {
           networkCache.proposals[proposal.id].title = response.data.title;
@@ -1449,225 +1708,6 @@ export const updateProposals = async function (
         }
       }
   }
-
-  // Update existent active proposals
-  await Promise.all(
-    Object.keys(networkCache.proposals).map(async proposalId => {
-      if (
-        isNode() ||
-        networkCache.proposals[proposalId].stateInVotingMachine >
-          VotingMachineProposalState.Executed ||
-        networkCache.proposals[proposalId].stateInScheme ===
-          WalletSchemeProposalState.Submitted
-      ) {
-        const schemeAddress = networkCache.proposals[proposalId].scheme;
-        const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
-        const votingMachine =
-          networkContracts.votingMachines[schemeTypeData.votingMachine]
-            .contract;
-
-        // Get all the proposal information from the scheme and voting machine
-        let callsToExecute = [
-          [votingMachine, 'proposals', [proposalId]],
-          [votingMachine, 'voteStatus', [proposalId, 1]],
-          [votingMachine, 'voteStatus', [proposalId, 2]],
-          [votingMachine, 'proposalStatus', [proposalId]],
-          [votingMachine, 'getProposalTimes', [proposalId]],
-          [votingMachine, 'shouldBoost', [proposalId]],
-        ];
-
-        if (schemeTypeData.type === 'WalletScheme') {
-          callsToExecute.push([
-            await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
-            'getOrganizationProposal',
-            [proposalId],
-          ]);
-        } else if (
-          schemeTypeData.type === 'ContributionReward' &&
-          networkCache.proposals[proposalId].stateInVotingMachine ===
-            VotingMachineProposalState.Executed &&
-          networkCache.proposals[proposalId].stateInScheme ===
-            WalletSchemeProposalState.Submitted
-        ) {
-          callsToExecute.push([
-            await new web3.eth.Contract(
-              ContributionRewardJSON.abi,
-              schemeAddress
-            ),
-            'getRedeemedPeriods',
-            [proposalId, networkContracts.avatar._address, 0],
-          ]);
-          callsToExecute.push([
-            await new web3.eth.Contract(
-              ContributionRewardJSON.abi,
-              schemeAddress
-            ),
-            'getRedeemedPeriods',
-            [proposalId, networkContracts.avatar._address, 1],
-          ]);
-          callsToExecute.push([
-            await new web3.eth.Contract(
-              ContributionRewardJSON.abi,
-              schemeAddress
-            ),
-            'getRedeemedPeriods',
-            [proposalId, networkContracts.avatar._address, 2],
-          ]);
-          callsToExecute.push([
-            await new web3.eth.Contract(
-              ContributionRewardJSON.abi,
-              schemeAddress
-            ),
-            'getRedeemedPeriods',
-            [proposalId, networkContracts.avatar._address, 3],
-          ]);
-        }
-
-        const callsResponse = await executeMulticall(
-          web3,
-          networkContracts.multicall,
-          callsToExecute
-        );
-
-        const votingMachineProposalInfo = web3.eth.abi.decodeParameters(
-          [
-            { type: 'bytes32', name: 'organizationId' },
-            { type: 'address', name: 'callbacks' },
-            { type: 'uint256', name: 'state' },
-            { type: 'uint256', name: 'winningVote' },
-            { type: 'address', name: 'proposer' },
-            { type: 'uint256', name: 'currentBoostedVotePeriodLimit' },
-            { type: 'bytes32', name: 'paramsHash' },
-            { type: 'uint256', name: 'daoBountyRemain' },
-            { type: 'uint256', name: 'daoBounty' },
-            { type: 'uint256', name: 'totalStakes' },
-            { type: 'uint256', name: 'confidenceThreshold' },
-            { type: 'uint256', name: 'secondsFromTimeOutTillExecuteBoosted' },
-          ],
-          callsResponse.returnData[0]
-        );
-        const positiveVotes = callsResponse.returnData[1];
-        const negativeVotes = callsResponse.returnData[2];
-
-        const proposalStatusWithVotes = web3.eth.abi.decodeParameters(
-          ['uint256', 'uint256', 'uint256', 'uint256'],
-          callsResponse.returnData[3]
-        );
-        const proposalTimes = callsResponse.decodedReturnData[4];
-        const proposalShouldBoost = callsResponse.decodedReturnData[5];
-
-        if (schemeTypeData.type === 'WalletScheme') {
-          networkCache.proposals[proposalId].stateInScheme = Number(
-            web3.eth.abi.decodeParameters(
-              [
-                { type: 'address[]', name: 'to' },
-                { type: 'bytes[]', name: 'callData' },
-                { type: 'uint256[]', name: 'value' },
-                { type: 'uint256', name: 'state' },
-                { type: 'string', name: 'title' },
-                { type: 'string', name: 'descriptionHash' },
-                { type: 'uint256', name: 'submittedTime' },
-              ],
-              callsResponse.returnData[6]
-            ).state
-          );
-        } else if (
-          schemeTypeData.type === 'ContributionReward' &&
-          networkCache.proposals[proposalId].stateInVotingMachine ===
-            VotingMachineProposalState.Executed &&
-          networkCache.proposals[proposalId].stateInScheme ===
-            WalletSchemeProposalState.Submitted
-        ) {
-          if (schemeTypeData.type === 'ContributionReward') {
-            if (
-              callsResponse.decodedReturnData[6] > 0 ||
-              callsResponse.decodedReturnData[7] > 0 ||
-              callsResponse.decodedReturnData[8] > 0 ||
-              callsResponse.decodedReturnData[9] > 0
-            ) {
-              networkCache.proposals[proposalId].stateInScheme =
-                WalletSchemeProposalState.ExecutionSucceded;
-            } else if (
-              votingMachineProposalInfo.state === '1' ||
-              votingMachineProposalInfo.state === '2'
-            ) {
-              networkCache.proposals[proposalId].stateInScheme =
-                WalletSchemeProposalState.Rejected;
-            }
-          }
-        } else if (schemeTypeData.type === 'GenericMulticall') {
-          const executionEvent = await web3.eth.getPastLogs({
-            fromBlock:
-              networkCache.proposals[proposalId].creationEvent.l1BlockNumber,
-            address: schemeAddress,
-            topics: [
-              '0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe',
-              avatarAddressEncoded,
-              proposalId,
-            ],
-          });
-          if (executionEvent.length > 0)
-            networkCache.proposals[proposalId].stateInScheme =
-              WalletSchemeProposalState.ExecutionSucceded;
-          else
-            networkCache.proposals[proposalId].stateInScheme =
-              WalletSchemeProposalState.Submitted;
-        } else if (
-          networkCache.proposals[proposalId].stateInVotingMachine ===
-          VotingMachineProposalState.Executed
-        ) {
-          networkCache.proposals[proposalId].stateInScheme =
-            WalletSchemeProposalState.ExecutionSucceded;
-        }
-
-        networkCache.proposals[proposalId].stateInVotingMachine = Number(
-          votingMachineProposalInfo.state
-        );
-        networkCache.proposals[proposalId].winningVote =
-          votingMachineProposalInfo.winningVote;
-        networkCache.proposals[proposalId].currentBoostedVotePeriodLimit =
-          votingMachineProposalInfo.currentBoostedVotePeriodLimit;
-        networkCache.proposals[proposalId].daoBountyRemain = bnum(
-          votingMachineProposalInfo.daoBountyRemain
-        );
-        networkCache.proposals[proposalId].daoBounty = bnum(
-          votingMachineProposalInfo.daoBounty
-        );
-        networkCache.proposals[proposalId].totalStakes = bnum(
-          votingMachineProposalInfo.totalStakes
-        );
-        networkCache.proposals[proposalId].confidenceThreshold =
-          votingMachineProposalInfo.confidenceThreshold;
-        networkCache.proposals[
-          proposalId
-        ].secondsFromTimeOutTillExecuteBoosted =
-          votingMachineProposalInfo.secondsFromTimeOutTillExecuteBoosted;
-        networkCache.proposals[proposalId].boostedPhaseTime = bnum(
-          proposalTimes[1]
-        );
-        networkCache.proposals[proposalId].preBoostedPhaseTime = bnum(
-          proposalTimes[2]
-        );
-        networkCache.proposals[proposalId].daoRedeemItsWinnings =
-          votingMachineProposalInfo.daoRedeemItsWinnings;
-        networkCache.proposals[proposalId].shouldBoost = proposalShouldBoost;
-        networkCache.proposals[proposalId].positiveVotes = bnum(positiveVotes);
-        networkCache.proposals[proposalId].negativeVotes = bnum(negativeVotes);
-        networkCache.proposals[proposalId].preBoostedPositiveVotes = bnum(
-          proposalStatusWithVotes[0]
-        );
-        networkCache.proposals[proposalId].preBoostedNegativeVotes = bnum(
-          proposalStatusWithVotes[1]
-        );
-        networkCache.proposals[proposalId].positiveStakes = bnum(
-          proposalStatusWithVotes[2]
-        );
-        networkCache.proposals[proposalId].negativeStakes = bnum(
-          proposalStatusWithVotes[3]
-        );
-      }
-    })
-  );
 
   return networkCache;
 };

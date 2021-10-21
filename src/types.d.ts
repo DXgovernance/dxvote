@@ -1,3 +1,4 @@
+import { ContractType } from 'stores/Provider';
 import {
   BigNumber,
   WalletSchemeProposalState,
@@ -14,7 +15,7 @@ declare global {
   // Multicall Types
 
   interface Call {
-    contractType: string;
+    contractType: ContractType;
     address: string;
     method: string;
     params?: any[];
@@ -354,5 +355,33 @@ export interface ChainConfig {
     decimals: number;
   };
   blockExplorer?: string;
+  api?: string;
   icon?: string;
+}
+
+// hook types
+
+export interface ProposalCalls {
+  from: string;
+  to: string;
+  data: string;
+  value: BigNumber;
+  recommendedCallUsed?: RecommendedCallUsed | undefined;
+  callParameters?: unknown | undefined;
+  encodedFunctionName?: string | undefined;
+}
+
+export interface RecommendedCallUsed {
+  asset: string;
+  from: string;
+  to: string;
+  toName: string;
+  functionName: string;
+  params: {
+    type: string;
+    name: string;
+    defaultValue: string;
+    decimals?: number;
+  }[];
+  decodeText: string;
 }
