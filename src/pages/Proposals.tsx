@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import MiniSearch from 'minisearch';
 import { useContext } from '../contexts';
@@ -145,6 +145,11 @@ const TableProposal = styled(Table)`
       top: 0;
     }
   }
+`;
+
+const UnstyledAnchor = styled.a`
+  color: inherit;
+  text-decoration: inherit;
 `;
 
 const ProposalsPage = observer(() => {
@@ -420,22 +425,24 @@ const ProposalsPage = observer(() => {
                   fontSize="inherit"
                   align="left"
                 >
-                  {created && (
-                    <FiFeather
-                      style={{ minWidth: '15px', margin: '0px 2px' }}
-                    />
-                  )}
-                  {voted && (
-                    <FiCheckCircle
-                      style={{ minWidth: '15px', margin: '0px 2px' }}
-                    />
-                  )}
-                  {staked && (
-                    <FiCheckSquare
-                      style={{ minWidth: '15px', margin: '0px 2px' }}
-                    />
-                  )}
-                  {proposal.title.length > 0 ? proposal.title : proposal.id}
+                  <Link to={`/${networkName}/proposal/${proposal.id}`} component={UnstyledAnchor}>
+                    {created && (
+                      <FiFeather
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {voted && (
+                      <FiCheckCircle
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {staked && (
+                      <FiCheckSquare
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {proposal.title.length > 0 ? proposal.title : proposal.id}
+                  </Link>
                 </DataCell>
                 <DataCell>
                   {daoStore.getCache().schemes[proposal.scheme].name}
