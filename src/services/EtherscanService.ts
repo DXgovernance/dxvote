@@ -46,7 +46,6 @@ export default class EtherscanService {
       '/api?' + params.toString(),
       NETWORK_APIS[networkName]
     );
-    console.log(getContractURL);
     return axios({
       method: 'GET',
       url: getContractURL.toString(),
