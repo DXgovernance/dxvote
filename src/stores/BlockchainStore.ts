@@ -283,7 +283,9 @@ export default class BlockchainStore {
         this.activeFetchLoop = false;
       } catch (error) {
         console.error((error as Error).message);
-        notificationStore.setGlobalError(true, (error as Error).message);
+        if (!this.initialLoadComplete) {
+          notificationStore.setGlobalError(true, (error as Error).message);
+        }
         this.activeFetchLoop = false;
       }
     }
