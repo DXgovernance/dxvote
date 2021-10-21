@@ -186,6 +186,7 @@ export default class BlockchainStore {
 
         // Fetch cache from ipfs if not in localStorage or newer hash is available
         const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
+
         if (
           !networkCache ||
           !(newestCacheIpfsHash === networkCache.baseCacheIpfsHash)

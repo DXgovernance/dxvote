@@ -37,8 +37,8 @@ const networkIds = {
 
 const emptyCache: DaoNetworkCache = {
   networkId: networkIds[networkName],
-  l1BlockNumber: 0,
-  l2BlockNumber: 0,
+  l1BlockNumber: 1,
+  l2BlockNumber: 1,
   daoInfo: {} as DaoInfo,
   schemes: {},
   proposals: {},
