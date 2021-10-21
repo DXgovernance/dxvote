@@ -66,7 +66,7 @@ const Footer = () => {
         <FooterDivider></FooterDivider>
         <FooterItem>
           <a
-            href="https://github.com/AugustoL/dxvote"
+            href="https://github.com/DXgovernance/dxvote"
             target="_blank"
             rel="noreferrer"
           >
@@ -88,13 +88,22 @@ const Footer = () => {
         <FooterDivider></FooterDivider>
         <FooterItem>
           <a
-            href="https://github.com/AugustoL/dxvote/issues/new/choose"
+            href="https://github.com/DXgovernance/dxvote/issues/new/choose"
             target="_blank"
             rel="noreferrer"
           >
             {' '}
             Submit Issue{' '}
           </a>
+        </FooterItem>
+        <FooterDivider></FooterDivider>
+        <FooterItem>
+          v
+          {`${process.env.REACT_APP_VERSION}${
+            process.env.NODE_ENV !== 'production'
+              ? `-${process.env.NODE_ENV}-${process.env.REACT_APP_GIT_SHA}`
+              : ''
+          }`}
         </FooterItem>
       </LeftFooter>
     </FooterWrapper>

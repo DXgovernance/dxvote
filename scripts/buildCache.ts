@@ -24,15 +24,6 @@ const appConfig: AppConfig = {
 
 const FormData = require('form-data');
 
-const minimumAmountOfBlocksToUpdate = {
-  mainnet: 50000,
-  xdai: 150000,
-  rinkeby: 500000,
-  arbitrum: 500000,
-  arbitrumTestnet: 5000000,
-  localhost: 100,
-};
-
 const networkName = hre.network.name;
 
 const networkIds = {
@@ -46,8 +37,8 @@ const networkIds = {
 
 const emptyCache: DaoNetworkCache = {
   networkId: networkIds[networkName],
-  l1BlockNumber: 0,
-  l2BlockNumber: 0,
+  l1BlockNumber: 1,
+  l2BlockNumber: 1,
   daoInfo: {} as DaoInfo,
   schemes: {},
   proposals: {},
@@ -102,8 +93,7 @@ async function main() {
     const toBlock = process.env.RESET_CACHE
       ? fromBlock
       : process.env.CACHE_TO_BLOCK ||
-        networkConfig.cache.toBlock +
-          minimumAmountOfBlocksToUpdate[networkName];
+        networkConfig.cache.toBlock;
 
     if (process.env.RESET_CACHE || toBlock < blockNumber) {
       // The cache file is updated with the data that had before plus new data in the network cache file

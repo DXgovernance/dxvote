@@ -22,20 +22,28 @@ import {
 import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import ContributionRewardJSON from '../contracts/ContributionReward.json';
 import { getContracts } from '../contracts';
+import RootContext from '../contexts';
 
 export const getUpdatedCache = async function (
+  context: RootContext,
   networkCache: DaoNetworkCache,
   networkConfig: NetworkContracts,
   fromBlock: number,
   toBlock: number,
   web3: any
 ): Promise<DaoNetworkCache> {
+  const { notificationStore } = context;
+
   console.debug('[Cache Update]', fromBlock, toBlock);
   const networkContracts = await getContracts(networkConfig, web3);
 
   //// TODO: Improve this duplicated while conditions
   let retry = true;
   while (retry) {
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting reputation events for blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       (
         await Promise.all([
@@ -58,6 +66,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting voting machine data in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       await Promise.all(
         Object.keys(networkContracts.votingMachines).map(
@@ -100,6 +112,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
+    notificationStore.setGlobalLoading(
+      true,
+      `Updating scheme data in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       networkCache = await updateSchemes(
         networkCache,
@@ -115,6 +131,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       (
         await Promise.all([
@@ -168,6 +188,7 @@ export const updateDaoInfo = async function (
     networkContracts.multicall,
     callsToExecute
   );
+
   networkCache.daoInfo.address = networkContracts.avatar._address;
   networkCache.daoInfo.repEvents = !networkCache.daoInfo.repEvents
     ? []
