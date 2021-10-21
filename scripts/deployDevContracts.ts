@@ -180,9 +180,9 @@ async function main() {
     },
     {
       name: 'QuickWalletScheme',
-      callToController: true,
+      callToController: false,
       maxSecondsForExecution: moment.duration(10, 'minutes').asSeconds(),
-      maxRepPercentageToMint: 10,
+      maxRepPercentageToMint: 100,
       controllerPermissions: {
         canGenericCall: false,
         canUpgrade: false,
@@ -359,6 +359,9 @@ async function main() {
     from: accounts[0],
   });
   await votingMachineToken.transfer(avatar.address, web3.utils.toWei('100'), {
+    from: accounts[0],
+  });
+  await votingMachineToken.transfer(schemes['QuickWalletScheme'].address, web3.utils.toWei('50'), {
     from: accounts[0],
   });
   await votingMachineToken.transfer(accounts[1], web3.utils.toWei('50'), {
@@ -565,14 +568,14 @@ async function main() {
   const repFunctionEncoded = web3.eth.abi.encodeFunctionSignature(
     'mintReputation(uint256,address,address)'
   );
-
+  
   const repParamsEncoded = web3.eth.abi
     .encodeParameters(
       ['uint256', 'address', 'address'],
-      ['99999', accounts[2], avatar.address]
+      ['100', accounts[2], avatar.address]
     )
     .substring(2);
-
+  
   const repCallData = repFunctionEncoded + repParamsEncoded;
 
   // Encode DXD approval
@@ -583,7 +586,7 @@ async function main() {
   const dxdApprovalParamsEncoded = web3.eth.abi
     .encodeParameters(
       ['address', 'uint256'],
-      [dxdVestingFactory.address, '9999999']
+      [dxdVestingFactory.address, '100']
     )
     .substring(2);
 
@@ -592,7 +595,7 @@ async function main() {
 
   // Encode vesting contract call
   const vestingFunctionEncoded = web3.eth.abi.encodeFunctionSignature(
-    'create(address, uint256, uint256, uint256, uint256)'
+    'create(address,uint256,uint256,uint256,uint256)'
   );
 
   const vestingParamsEncoded = web3.eth.abi
@@ -603,7 +606,7 @@ async function main() {
         moment().unix(),
         moment.duration(1, 'years').asSeconds(),
         moment.duration(2, 'years').asSeconds(),
-        '9999999',
+        '100',
       ]
     )
     .substring(2);
@@ -614,11 +617,12 @@ async function main() {
     await schemes['QuickWalletScheme'].proposeCalls(
       [
         controller.address,
+        accounts[2],
         votingMachineToken.address,
         dxdVestingFactory.address,
       ],
-      [repCallData, dxdApprovalCallData, vestingCallData],
-      [0, 0, 0],
+      [repCallData, "0x0", dxdApprovalCallData, vestingCallData],
+      [0, 100, 0, 0],
       'Test Proposal #4',
       await uploadAndGetContentHash('Send moneys for work'),
       { from: accounts[0] }
