@@ -7,12 +7,6 @@ import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 import * as Yup from 'yup';
 
-//pollifyil
-
-import 'core-js/es6/promise';
-import 'core-js/es6/set';
-import 'core-js/es6/map';
-
 import {
   NETWORK_ASSET_SYMBOL,
   ZERO_ADDRESS,
@@ -74,7 +68,6 @@ const PlaceHolders = styled.div`
   align-items: center;
   font-size: 20px;
   padding-bottom: 0px;
-  color: red;
 `;
 
 const TitleInput = styled.div`
