@@ -82,7 +82,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 1337,
     name: 'localhost',
     displayName: 'Localhost',
-    defaultRpc: `http://localhost:8545`,
+    defaultRpc: `http://127.0.0.1:8545`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
