@@ -180,9 +180,9 @@ async function main() {
     },
     {
       name: 'QuickWalletScheme',
-      callToController: false,
+      callToController: true,
       maxSecondsForExecution: moment.duration(10, 'minutes').asSeconds(),
-      maxRepPercentageToMint: 1,
+      maxRepPercentageToMint: 10,
       controllerPermissions: {
         canGenericCall: false,
         canUpgrade: false,
@@ -192,6 +192,13 @@ async function main() {
       permissions: [
         {
           asset: NULL_ADDRESS,
+          to: ANY_ADDRESS,
+          functionSignature: ANY_FUNC_SIGNATURE,
+          value: MAX_UINT_256,
+          allowed: true,
+        },
+        {
+          asset: votingMachineToken.address,
           to: ANY_ADDRESS,
           functionSignature: ANY_FUNC_SIGNATURE,
           value: MAX_UINT_256,
@@ -328,15 +335,16 @@ async function main() {
     avatar.address
   );
   await controller.burnReputation(100, accounts[0], avatar.address);
-  
+
   // Deploy dxDaoNFT
-  console.log("Deploying DXdaoNFT...");
+  console.log('Deploying DXdaoNFT...');
   const dxDaoNFT = await DXdaoNFT.new();
 
   // Deploy DXDVestingFactory
-  console.log("Deploying DXDVestingFactory...");
-  const dxdVestingFactory = await DXDVestingFactory.new( votingMachineToken.address );
-
+  console.log('Deploying DXDVestingFactory...');
+  const dxdVestingFactory = await DXDVestingFactory.new(
+    votingMachineToken.address
+  );
 
   await controller.unregisterScheme(accounts[0], avatar.address);
 
@@ -552,6 +560,76 @@ async function main() {
     }
   );
 
+  // Create contributor proposal in qws to acc 2 --------------------
+
+  const repFunctionEncoded = web3.eth.abi.encodeFunctionSignature(
+    'mintReputation(uint256,address,address)'
+  );
+
+  const repParamsEncoded = web3.eth.abi
+    .encodeParameters(
+      ['uint256', 'address', 'address'],
+      ['99999', accounts[2], avatar.address]
+    )
+    .substring(2);
+
+  const repCallData = repFunctionEncoded + repParamsEncoded;
+
+  // Encode DXD approval
+  const dxdApprovalFunctionEncoded = web3.eth.abi.encodeFunctionSignature(
+    'approve(address,uint256)'
+  );
+
+  const dxdApprovalParamsEncoded = web3.eth.abi
+    .encodeParameters(
+      ['address', 'uint256'],
+      [dxdVestingFactory.address, '9999999']
+    )
+    .substring(2);
+
+  const dxdApprovalCallData =
+    dxdApprovalFunctionEncoded + dxdApprovalParamsEncoded;
+
+  // Encode vesting contract call
+  const vestingFunctionEncoded = web3.eth.abi.encodeFunctionSignature(
+    'create(address, uint256, uint256, uint256, uint256)'
+  );
+
+  const vestingParamsEncoded = web3.eth.abi
+    .encodeParameters(
+      ['address', 'uint256', 'uint256', 'uint256', 'uint256'],
+      [
+        accounts[2],
+        moment().unix(),
+        moment.duration(1, 'years').asSeconds(),
+        moment.duration(2, 'years').asSeconds(),
+        '9999999',
+      ]
+    )
+    .substring(2);
+
+  const vestingCallData = vestingFunctionEncoded + vestingParamsEncoded;
+
+  const testProposalContributor = (
+    await schemes['QuickWalletScheme'].proposeCalls(
+      [
+        controller.address,
+        votingMachineToken.address,
+        dxdVestingFactory.address,
+      ],
+      [repCallData, dxdApprovalCallData, vestingCallData],
+      [0, 0, 0],
+      'Test Proposal #4',
+      await uploadAndGetContentHash('Send moneys for work'),
+      { from: accounts[0] }
+    )
+  ).logs[0].args[0];
+
+  // Pass proposal2 with majority vote
+  await dxdVotingMachine.vote(testProposalContributor, 1, 0, NULL_ADDRESS, {
+    from: accounts[2],
+  });
+
   // Create test proposal 3 in quick wallet scheme
   descriptionText = 'Tranfer 5 ETH to ' + accounts[2];
   await schemes['QuickWalletScheme'].proposeCalls(
@@ -658,7 +736,7 @@ async function main() {
     utils: {
       multicall: multicall.address,
       dxdVestingFactory: dxdVestingFactory.address,
-      dxDaoNFT: dxDaoNFT.address
+      dxDaoNFT: dxDaoNFT.address,
     },
   };
 
