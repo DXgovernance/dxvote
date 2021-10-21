@@ -372,8 +372,8 @@ export const ContributorProposalPage = observer(() => {
           <Center>
             <InputWrapper>
               <TextInput
-                type="text"
                 placeholder="Time commitment"
+                type="number"
                 onChange={event => setPercentage(event.target.value)}
                 value={percentage}
               />
@@ -387,6 +387,8 @@ export const ContributorProposalPage = observer(() => {
               optionOne={'Full worker'}
               optionTwo={'Trial period'}
             />
+            {/* Add REP snapshot date selector */}
+            {/* Edit DXD ATH */}
             <ButtonsWrapper>
               <Button onClick={() => setAdvanced(false)}>Save</Button>
             </ButtonsWrapper>
