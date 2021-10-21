@@ -11,7 +11,8 @@
     "controller": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
     "permissionRegistry": "0x757bbdC3dF870202f28e5cF92a0005158D5e0786",
     "utils": {
-      "multicall": "0xDD032cd0dfCB54050E1FA30Be59056403e292700"
+      "multicall": "0xDD032cd0dfCB54050E1FA30Be59056403e292700",
+      "dxdVestingFactory": "0x45734dB5C3342c66932db308Dbb23a5e2B159561"
     },
     "votingMachines": {
       "gen": {

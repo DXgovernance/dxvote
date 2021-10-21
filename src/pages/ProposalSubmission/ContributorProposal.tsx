@@ -173,21 +173,32 @@ export const ContributorProposalPage = observer(() => {
         0
       );
 
+      // Finds last period's rep amount
       if (periodEnd) {
+        const loweLimit = moment().subtract(1, 'months').unix();
+        const upperLimit = moment().subtract(3, 'months').unix();
+        let largestMatchedRepAward = bnum(0);
+
         userRep.reverse().forEach(repEvent => {
-          const loweLimit = moment().subtract(1.8, 'months').unix();
-          const upperLimit = moment().subtract(2.2, 'months').unix();
           if (
             repEvent.timestamp < loweLimit &&
-            repEvent.timestamp > upperLimit
+            repEvent.timestamp > upperLimit &&
+            repEvent.amount.gt(largestMatchedRepAward)
           ) {
-            currentRepReward = formatNumberValue(
-              repEvent.amount.times(trialPeriod ? 0.8 : 1),
-              0
-            );
+            largestMatchedRepAward = repEvent.amount;
             console.debug('Matched previous REP amount');
           }
         });
+        if (
+          largestMatchedRepAward.gt(bnum(0)) &&
+          bnum(currentRepReward).times(0.85).lt(largestMatchedRepAward)
+        ) {
+          currentRepReward = formatNumberValue(
+            largestMatchedRepAward.times(trialPeriod ? 0.8 : 1),
+            0
+          );
+          console.debug('Previous REP amount matches estimated inflation rate');
+        }
       }
 
       setRepReward(currentRepReward);
@@ -241,6 +252,8 @@ export const ContributorProposalPage = observer(() => {
         'create(address, uint256, uint256, uint256, uint256)'
       );
 
+      console.log(moment().unix());
+      console.log(moment.duration(1, 'years').asSeconds());
       const vestingParamsEncoded = library.eth.abi
         .encodeParameters(
           ['address', 'uint256', 'uint256', 'uint256', 'uint256'],
