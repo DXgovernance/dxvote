@@ -20,7 +20,7 @@ const iconsByChain = {
   42161: arbitrumIcon,
   421611: arbitrumIcon,
   1337: ethereumIcon
-}
+};
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;

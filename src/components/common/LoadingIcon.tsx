@@ -35,12 +35,7 @@ const PulsingIcon: React.FC<{ size: number; inactive: boolean }> = ({
   size,
   inactive,
 }) => (
-  <svg
-    className="button"
-    aria-expanded
-    height={size}
-    width={size}
-  >
+  <svg className="button" aria-expanded height={size} width={size}>
     <RotatingImage
       inactive={inactive}
       x="50%"

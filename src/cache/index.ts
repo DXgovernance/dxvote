@@ -40,7 +40,10 @@ export const getUpdatedCache = async function (
   //// TODO: Improve this duplicated while conditions
   let retry = true;
   while (retry) {
-    notificationStore.setGlobalLoading(true, `Collecting reputation events for blocks ${fromBlock} - ${toBlock}`)
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting reputation events for blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       (
         await Promise.all([
@@ -63,7 +66,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
-    notificationStore.setGlobalLoading(true, `Collecting voting machine data in blocks ${fromBlock} - ${toBlock}`)
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting voting machine data in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       await Promise.all(
         Object.keys(networkContracts.votingMachines).map(
@@ -106,7 +112,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
-    notificationStore.setGlobalLoading(true, `Updating scheme data in blocks ${fromBlock} - ${toBlock}`)
+    notificationStore.setGlobalLoading(
+      true,
+      `Updating scheme data in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       networkCache = await updateSchemes(
         networkCache,
@@ -122,7 +131,10 @@ export const getUpdatedCache = async function (
   retry = true;
 
   while (retry) {
-    notificationStore.setGlobalLoading(true, `Collecting proposals in blocks ${fromBlock} - ${toBlock}`)
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
+    );
     try {
       (
         await Promise.all([
@@ -1412,7 +1424,10 @@ export const updateProposals = async function (
         while (retry) {
           try {
             const schemeAddress = networkCache.proposals[proposalId].scheme;
-            const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
+            const schemeTypeData = getSchemeTypeData(
+              networkConfig,
+              schemeAddress
+            );
             const votingMachine =
               networkContracts.votingMachines[schemeTypeData.votingMachine]
                 .contract;
@@ -1429,7 +1444,10 @@ export const updateProposals = async function (
 
             if (schemeTypeData.type === 'WalletScheme') {
               callsToExecute.push([
-                await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
+                await new web3.eth.Contract(
+                  WalletSchemeJSON.abi,
+                  schemeAddress
+                ),
                 'getOrganizationProposal',
                 [proposalId],
               ]);
@@ -1493,7 +1511,10 @@ export const updateProposals = async function (
                 { type: 'uint256', name: 'daoBounty' },
                 { type: 'uint256', name: 'totalStakes' },
                 { type: 'uint256', name: 'confidenceThreshold' },
-                { type: 'uint256', name: 'secondsFromTimeOutTillExecuteBoosted' },
+                {
+                  type: 'uint256',
+                  name: 'secondsFromTimeOutTillExecuteBoosted',
+                },
               ],
               callsResponse.returnData[0]
             );
@@ -1549,7 +1570,8 @@ export const updateProposals = async function (
             } else if (schemeTypeData.type === 'GenericMulticall') {
               const executionEvent = await web3.eth.getPastLogs({
                 fromBlock:
-                  networkCache.proposals[proposalId].creationEvent.l1BlockNumber,
+                  networkCache.proposals[proposalId].creationEvent
+                    .l1BlockNumber,
                 address: schemeAddress,
                 topics: [
                   '0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe',
@@ -1601,9 +1623,12 @@ export const updateProposals = async function (
             );
             networkCache.proposals[proposalId].daoRedeemItsWinnings =
               votingMachineProposalInfo.daoRedeemItsWinnings;
-            networkCache.proposals[proposalId].shouldBoost = proposalShouldBoost;
-            networkCache.proposals[proposalId].positiveVotes = bnum(positiveVotes);
-            networkCache.proposals[proposalId].negativeVotes = bnum(negativeVotes);
+            networkCache.proposals[proposalId].shouldBoost =
+              proposalShouldBoost;
+            networkCache.proposals[proposalId].positiveVotes =
+              bnum(positiveVotes);
+            networkCache.proposals[proposalId].negativeVotes =
+              bnum(negativeVotes);
             networkCache.proposals[proposalId].preBoostedPositiveVotes = bnum(
               proposalStatusWithVotes[0]
             );
@@ -1624,7 +1649,7 @@ export const updateProposals = async function (
       }
     })
   );
-  
+
   let retryIntent = 0;
   // Update proposals title
   for (

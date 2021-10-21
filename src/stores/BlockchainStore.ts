@@ -162,7 +162,6 @@ export default class BlockchainStore {
         notificationStore,
       } = this.context;
 
-      
       this.initialLoadComplete = reset ? false : this.initialLoadComplete;
       this.activeFetchLoop = true;
       if (reset) notificationStore.reset();

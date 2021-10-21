@@ -66,7 +66,7 @@ const Footer = () => {
         <FooterDivider></FooterDivider>
         <FooterItem>
           <a
-            href="https://github.com/AugustoL/dxvote"
+            href="https://github.com/DXgovernance/dxvote"
             target="_blank"
             rel="noreferrer"
           >
@@ -88,7 +88,7 @@ const Footer = () => {
         <FooterDivider></FooterDivider>
         <FooterItem>
           <a
-            href="https://github.com/AugustoL/dxvote/issues/new/choose"
+            href="https://github.com/DXgovernance/dxvote/issues/new/choose"
             target="_blank"
             rel="noreferrer"
           >
