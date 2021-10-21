@@ -85,7 +85,7 @@ const SidebarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  height: 90vh;
+  height: calc(90vh - 20px);
   align-self: flex-start;
   position: sticky;
   top: 10%;
@@ -137,7 +137,7 @@ const TableProposal = styled(Table)`
   grid-template-columns: 33% 20% 15% 20% 12%;
   margin-bottom: auto;
   overflow-y: scroll;
-  max-height: 90vh;
+  max-height: calc(90vh - 20px);
   ${TableHeader} {
     ${HeaderCell} {
       background: white;
