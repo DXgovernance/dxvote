@@ -37,8 +37,7 @@ let ContributionRewardSchema = Yup.object().shape({
       'min',
       'ETH Value should be at least 0.',
       value => parseFloat(value) >= 0
-    )
-    .test('max', 'Be aware are is in ETH', value => parseFloat(value) < 9999),
+    ),
   externalToken: Yup.string().required(),
   tokenValue: Yup.string()
     .test('empty', 'Token Value is required', value => value !== '')
@@ -921,7 +920,7 @@ const NewProposalPage = observer(() => {
                 )}
               </label>
               <label>
-                <span>Token Amount (in WEI)</span>
+                <span>Token Amount (in ETH)</span>
                 <TextInput
                   type="text"
                   onChange={event =>
