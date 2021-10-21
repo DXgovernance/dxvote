@@ -5,6 +5,13 @@ import { useContext } from '../contexts';
 import { Box, Question, Button } from '../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
+import * as Yup from 'yup';
+
+//pollifyil
+
+import 'core-js/es6/promise';
+import 'core-js/es6/set';
+import 'core-js/es6/map';
 
 import {
   NETWORK_ASSET_SYMBOL,
@@ -20,6 +27,39 @@ import {
 } from '../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
 
+let ContributionRewardSchema = Yup.object().shape({
+  beneficiary: Yup.string().required(),
+  repChange: Yup.string()
+    .test('empty', 'Rep Change is required', value => value !== '')
+    .test(
+      'min',
+      'REP Change should be at least 0.',
+      value => parseInt(value) >= 0
+    )
+    .test('max', 'Max REP is 10', value => parseInt(value) < 10),
+  ethValue: Yup.string()
+    .test('empty', 'ETH Value is required', value => value !== '')
+    .test(
+      'min',
+      'ETH Value should be at least 0.',
+      value => parseFloat(value) >= 0
+    )
+    .test('max', 'Be aware are is in ETH', value => parseFloat(value) < 9999),
+  externalToken: Yup.string().required(),
+  tokenValue: Yup.string()
+    .test('empty', 'Token Value is required', value => value !== '')
+    .test(
+      'min',
+      'Token Value should be at least 0.',
+      value => parseFloat(value) >= 0
+    )
+    .test(
+      'max',
+      'Be aware are Token Value is in ETH',
+      value => parseFloat(value) < 9999
+    ),
+});
+
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
   display: flex;
@@ -34,6 +74,7 @@ const PlaceHolders = styled.div`
   align-items: center;
   font-size: 20px;
   padding-bottom: 0px;
+  color: red;
 `;
 
 const TitleInput = styled.div`
@@ -124,6 +165,29 @@ const SelectInput = styled.select`
   background-color: #fff;
 `;
 
+const FormattedForm = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  > label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  ${TextInput} {
+    width: 90%;
+  }
+`;
+const InputErrorMessage = styled.div`
+  align-self: flex-start;
+  margin-left: 8px;
+  font-size: 11px;
+  margin-top: 4px;
+  color: ${({ theme }) => theme.forms.error};
+`;
+
 const NewProposalPage = observer(() => {
   const {
     context: {
@@ -210,6 +274,7 @@ const NewProposalPage = observer(() => {
   // 5 = Proposal creation tx receipt received
 
   const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessageUI, setErrorMessageUI] = useState<any | undefined>({});
   const proposalTemplates = configStore.getProposalTemplates();
 
   const { assetLimits: transferLimits, recommendedCalls } =
@@ -561,8 +626,16 @@ const NewProposalPage = observer(() => {
   }
 
   function onContributionRewardValueChange(key, value) {
+    setErrorMessageUI(null);
     contributionRewardCalls[key] = value;
-    setContributionRewardCallsInState(contributionRewardCalls);
+
+    try {
+      ContributionRewardSchema.validateSync(contributionRewardCalls);
+      setErrorMessageUI(null);
+      setContributionRewardCallsInState(contributionRewardCalls);
+    } catch (error) {
+      setErrorMessageUI(error);
+    }
   }
 
   function onSchemeRegistrarValueChange(key, value) {
@@ -769,70 +842,111 @@ const NewProposalPage = observer(() => {
         // If scheme to use is Contribution Reward display a different form with less fields
         <div>
           <CallRow>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Beneficiary Account
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>REP Change</span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              {networkAssetSymbol} Value
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Address of Token
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Token Amount (in WEI)
-            </span>
-          </CallRow>
-          <CallRow>
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'beneficiary',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.beneficiary}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange('repChange', event.target.value)
-              }
-              value={contributionRewardCalls.repChange}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange('ethValue', event.target.value)
-              }
-              value={contributionRewardCalls.ethValue}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'externalToken',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.externalToken}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'tokenValue',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.tokenValue}
-              width="50%"
-            />
+            <FormattedForm>
+              <label>
+                <span>Beneficiary Account</span>
+
+                <TextInput
+                  type="text"
+                  onChange={event =>
+                    onContributionRewardValueChange(
+                      'beneficiary',
+                      event.target.value
+                    )
+                  }
+                  value={contributionRewardCalls.beneficiary}
+                  width="50%"
+                />
+                {errorMessageUI && errorMessageUI.path === 'beneficiary' && (
+                  <InputErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </InputErrorMessage>
+                )}
+              </label>
+              <label>
+                <span>REP Change</span>
+                <TextInput
+                  type="text"
+                  onChange={event =>
+                    onContributionRewardValueChange(
+                      'repChange',
+                      event.target.value
+                    )
+                  }
+                  value={contributionRewardCalls.repChange}
+                  width="50%"
+                />
+
+                {errorMessageUI && errorMessageUI.path === 'repChange' && (
+                  <InputErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </InputErrorMessage>
+                )}
+              </label>
+
+              <label>
+                <span>{networkAssetSymbol} Value</span>
+                <TextInput
+                  type="text"
+                  onChange={event =>
+                    onContributionRewardValueChange(
+                      'ethValue',
+                      event.target.value
+                    )
+                  }
+                  value={contributionRewardCalls.ethValue}
+                  width="50%"
+                />
+
+                {errorMessageUI && errorMessageUI.path === 'ethValue' && (
+                  <InputErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </InputErrorMessage>
+                )}
+              </label>
+
+              <label>
+                <span>Address of Token</span>
+                <TextInput
+                  aria-invalid="true"
+                  aria-describedby="error"
+                  type="text"
+                  onChange={event =>
+                    onContributionRewardValueChange(
+                      'externalToken',
+                      event.target.value
+                    )
+                  }
+                  value={contributionRewardCalls.externalToken}
+                  width="50%"
+                />
+
+                {errorMessageUI && errorMessageUI.path === 'externalToken' && (
+                  <InputErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </InputErrorMessage>
+                )}
+              </label>
+              <label>
+                <span>Token Amount (in WEI)</span>
+                <TextInput
+                  type="text"
+                  onChange={event =>
+                    onContributionRewardValueChange(
+                      'tokenValue',
+                      event.target.value
+                    )
+                  }
+                  value={contributionRewardCalls.tokenValue}
+                  width="50%"
+                />
+                {errorMessageUI && errorMessageUI.path === 'tokenValue' && (
+                  <InputErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </InputErrorMessage>
+                )}
+              </label>
+            </FormattedForm>
           </CallRow>
         </div>
       ) : schemeToUse.type === 'SchemeRegistrar' ? (
@@ -1065,12 +1179,10 @@ const NewProposalPage = observer(() => {
         </div>
       )}
 
-      {errorMessage.length > 0 ? (
+      {errorMessage && (
         <TextActions>
           <span>{errorMessage}</span>
         </TextActions>
-      ) : (
-        <div />
       )}
 
       <div
