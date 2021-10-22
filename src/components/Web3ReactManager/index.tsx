@@ -10,7 +10,6 @@ import {
   web3ContextNames,
 } from 'provider/connectors';
 import {
-  useActiveWeb3React,
   useEagerConnect,
   useInactiveListener,
   useRpcUrls,
@@ -25,7 +24,6 @@ const Web3ReactManager = ({ children }) => {
     context: { providerStore, blockchainStore, userStore },
   } = useContext();
   const location = useLocation();
-  const { activate } = useActiveWeb3React();
   const rpcUrls = useRpcUrls();
   const history = useHistory();
 
@@ -34,13 +32,11 @@ const Web3ReactManager = ({ children }) => {
     active: networkActive,
     error: networkError,
     chainId,
+    activate,
   } = web3Context;
 
   if (!providerStore.activeChainId)
-    providerStore.setWeb3Context(
-      web3ContextNames.default,
-      web3Context
-    );
+    providerStore.setWeb3Context(web3ContextNames.default, web3Context);
 
   console.debug('[Web3ReactManager] Start of render', {
     injected: web3Context,

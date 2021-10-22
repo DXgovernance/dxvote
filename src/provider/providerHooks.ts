@@ -10,10 +10,6 @@ import { DEFAULT_RPC_URLS } from '../utils';
     If we're on mobile and have an injected connector, attempt even if not authorized (legacy support)
     If we tried to connect, or it's active, return true;
  */
-export function useActiveWeb3React() {
-  return useWeb3React();
-}
-
 export function useEagerConnect() {
   const { activate, active } = useWeb3React();
   const [tried, setTried] = useState(false);
