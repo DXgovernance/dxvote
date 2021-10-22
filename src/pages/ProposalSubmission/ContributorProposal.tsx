@@ -287,7 +287,7 @@ export const ContributorProposalPage = observer(() => {
         to: [
           contracts.controller,
           account,
-          tokens.find(token => token.name === 'DXdao').address,
+          tokens.find(token => token.symbol === 'DXD').address,
           contracts.utils.dxdVestingFactory,
         ],
         data: [repCallData, '0x0', dxdApprovalCallData, vestingCallData],
@@ -308,6 +308,7 @@ export const ContributorProposalPage = observer(() => {
         .createProposal(scheme.address, scheme.type, proposalData)
         .on(TXEvents.TX_HASH, hash => {
           console.debug('[TX_SUBMITTED]', hash);
+          setConfirm(false);
         })
         .on(TXEvents.RECEIPT, hash => {
           console.debug('[TX_RECEIPT]', hash);
