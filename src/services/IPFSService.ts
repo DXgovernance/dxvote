@@ -5,7 +5,7 @@ import { sleep } from '../utils';
 import RootContext from '../contexts';
 
 export default class IPFSService {
-  private static SLEEP_MS = 5000;
+  private static SLEEP_MS = 1000;
 
   context: RootContext;
   starting: Boolean = false;
@@ -27,9 +27,10 @@ export default class IPFSService {
     if (!this.ipfs) {
       console.debug('[IPFS] Initializing IPFS instance...');
       await this.start();
+    } else {
+      console.debug('[IPFS] Reusing existing IPFS instance.');
     }
 
-    console.debug('[IPFS] Reusing existing IPFS instance.');
     return this.ipfs;
   }
 
@@ -62,7 +63,7 @@ export default class IPFSService {
       return content.toString();
     } catch (e) {
       console.error('[IPFS] Error getting content from IPFS', e);
-      return 'error getting content from IPFS';
+      return 'Error getting content from IPFS';
     }
   }
 
