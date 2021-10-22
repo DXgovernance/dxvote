@@ -5,7 +5,12 @@ import { useContext } from '../contexts';
 import { Box, Question, Button } from '../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
-import * as Yup from 'yup';
+
+import {
+  ContributionRewardFormSchema,
+  SchemeRegistrarFormSchema,
+  CallFormScheme,
+} from '../utils/yupSchemas';
 
 import {
   NETWORK_ASSET_SYMBOL,
@@ -20,38 +25,6 @@ import {
   TXEvents,
 } from '../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
-
-let ContributionRewardSchema = Yup.object().shape({
-  beneficiary: Yup.string().required(),
-  repChange: Yup.string()
-    .test('empty', 'Rep Change is required', value => value !== '')
-    .test(
-      'min',
-      'REP Change should be at least 0.',
-      value => parseInt(value) >= 0
-    )
-    .test('max', 'Max REP is 10', value => parseInt(value) < 10),
-  ethValue: Yup.string()
-    .test('empty', 'ETH Value is required', value => value !== '')
-    .test(
-      'min',
-      'ETH Value should be at least 0.',
-      value => parseFloat(value) >= 0
-    ),
-  externalToken: Yup.string().required(),
-  tokenValue: Yup.string()
-    .test('empty', 'Token Value is required', value => value !== '')
-    .test(
-      'min',
-      'Token Value should be at least 0.',
-      value => parseFloat(value) >= 0
-    )
-    .test(
-      'max',
-      'Be aware are Token Value is in ETH',
-      value => parseFloat(value) < 9999
-    ),
-});
 
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
@@ -161,23 +134,25 @@ const FormattedForm = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-
-  > label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  ${TextInput} {
-    width: 90%;
-  }
 `;
-const InputErrorMessage = styled.div`
+
+const FieldErrorMessage = styled.div`
   align-self: flex-start;
   margin-left: 8px;
   font-size: 11px;
   margin-top: 4px;
   color: ${({ theme }) => theme.forms.error};
+`;
+
+const Field = styled.label`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  ${TextInput} {
+    width: 90%;
+  }
 `;
 
 const NewProposalPage = observer(() => {
@@ -410,9 +385,7 @@ const NewProposalPage = observer(() => {
             return daoService.encodeControllerGenericCall(
               call.to,
               callData,
-              call.callType === 'simple'
-                ? library.utils.toWei(call.value).toString()
-                : call.value
+              call.value
             );
           } else {
             return callData;
@@ -614,7 +587,12 @@ const NewProposalPage = observer(() => {
 
   function onValueChange(callIndex, event) {
     calls[callIndex].value = event.target.value;
-    setCallsInState(calls);
+    try {
+      CallFormScheme.validateSync({ value: event.target.value });
+      setCallsInState(calls);
+    } catch (e) {
+      setErrorMessageUI(e);
+    }
   }
 
   function onContributionRewardValueChange(key, value) {
@@ -622,7 +600,7 @@ const NewProposalPage = observer(() => {
     contributionRewardCalls[key] = value;
 
     try {
-      ContributionRewardSchema.validateSync(contributionRewardCalls);
+      ContributionRewardFormSchema.validateSync(contributionRewardCalls);
       setErrorMessageUI(null);
       setContributionRewardCallsInState(contributionRewardCalls);
     } catch (error) {
@@ -631,8 +609,16 @@ const NewProposalPage = observer(() => {
   }
 
   function onSchemeRegistrarValueChange(key, value) {
+    setErrorMessageUI(null);
     schemeRegistrarProposalValues[key] = value;
-    setSchemeRegistrarValueInState(schemeRegistrarProposalValues);
+
+    try {
+      SchemeRegistrarFormSchema.validateSync(schemeRegistrarProposalValues);
+      setErrorMessageUI(null);
+      setSchemeRegistrarValueInState(schemeRegistrarProposalValues);
+    } catch (error) {
+      setErrorMessageUI(error);
+    }
   }
 
   function onSchemeChange(event) {
@@ -835,7 +821,7 @@ const NewProposalPage = observer(() => {
         <div>
           <CallRow>
             <FormattedForm>
-              <label>
+              <Field>
                 <span>Beneficiary Account</span>
 
                 <TextInput
@@ -850,12 +836,12 @@ const NewProposalPage = observer(() => {
                   width="50%"
                 />
                 {errorMessageUI && errorMessageUI.path === 'beneficiary' && (
-                  <InputErrorMessage>
+                  <FieldErrorMessage>
                     {errorMessageUI.errors[0]}
-                  </InputErrorMessage>
+                  </FieldErrorMessage>
                 )}
-              </label>
-              <label>
+              </Field>
+              <Field>
                 <span>REP Change</span>
                 <TextInput
                   type="text"
@@ -870,13 +856,13 @@ const NewProposalPage = observer(() => {
                 />
 
                 {errorMessageUI && errorMessageUI.path === 'repChange' && (
-                  <InputErrorMessage>
+                  <FieldErrorMessage>
                     {errorMessageUI.errors[0]}
-                  </InputErrorMessage>
+                  </FieldErrorMessage>
                 )}
-              </label>
+              </Field>
 
-              <label>
+              <Field>
                 <span>{networkAssetSymbol} Value</span>
                 <TextInput
                   type="text"
@@ -891,13 +877,13 @@ const NewProposalPage = observer(() => {
                 />
 
                 {errorMessageUI && errorMessageUI.path === 'ethValue' && (
-                  <InputErrorMessage>
+                  <FieldErrorMessage>
                     {errorMessageUI.errors[0]}
-                  </InputErrorMessage>
+                  </FieldErrorMessage>
                 )}
-              </label>
+              </Field>
 
-              <label>
+              <Field>
                 <span>Address of Token</span>
                 <TextInput
                   aria-invalid="true"
@@ -914,12 +900,12 @@ const NewProposalPage = observer(() => {
                 />
 
                 {errorMessageUI && errorMessageUI.path === 'externalToken' && (
-                  <InputErrorMessage>
+                  <FieldErrorMessage>
                     {errorMessageUI.errors[0]}
-                  </InputErrorMessage>
+                  </FieldErrorMessage>
                 )}
-              </label>
-              <label>
+              </Field>
+              <Field>
                 <span>Token Amount (in ETH)</span>
                 <TextInput
                   type="text"
@@ -933,11 +919,11 @@ const NewProposalPage = observer(() => {
                   width="50%"
                 />
                 {errorMessageUI && errorMessageUI.path === 'tokenValue' && (
-                  <InputErrorMessage>
+                  <FieldErrorMessage>
                     {errorMessageUI.errors[0]}
-                  </InputErrorMessage>
+                  </FieldErrorMessage>
                 )}
-              </label>
+              </Field>
             </FormattedForm>
           </CallRow>
         </div>
@@ -945,57 +931,85 @@ const NewProposalPage = observer(() => {
         // If scheme to use is SchemeRegistrar display a different form with less fields
         <div>
           <CallRow>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Rergister Scheme
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Scheme Address
-            </span>
-            <span style={{ width: '40%', fontSize: '13px' }}>
-              {' '}
-              Parameters Hash{' '}
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>Permissions</span>
-          </CallRow>
-          <CallRow>
-            <TextInput
-              type="checkbox"
-              onChange={event =>
-                onSchemeRegistrarValueChange('register', event.target.checked)
-              }
-              checked={schemeRegistrarProposalValues.register}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange(
-                  'schemeAddress',
-                  event.target.value
-                )
-              }
-              value={schemeRegistrarProposalValues.schemeAddress}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange(
-                  'parametersHash',
-                  event.target.value
-                )
-              }
-              value={schemeRegistrarProposalValues.parametersHash}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange('permissions', event.target.value)
-              }
-              value={schemeRegistrarProposalValues.permissions}
-              width="50%"
-            />
+            <FormattedForm>
+              <Field>
+                <span>Rergister Scheme</span>
+                <TextInput
+                  type="checkbox"
+                  onChange={event =>
+                    onSchemeRegistrarValueChange(
+                      'register',
+                      event.target.checked
+                    )
+                  }
+                  checked={schemeRegistrarProposalValues.register}
+                  width="50%"
+                />
+                {errorMessageUI && errorMessageUI.path === 'register' && (
+                  <FieldErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </FieldErrorMessage>
+                )}
+              </Field>
+
+              <Field>
+                <span>Scheme Address</span>
+                <TextInput
+                  type="text"
+                  onChange={event =>
+                    onSchemeRegistrarValueChange(
+                      'schemeAddress',
+                      event.target.value
+                    )
+                  }
+                  value={schemeRegistrarProposalValues.schemeAddress}
+                  width="50%"
+                />
+                {errorMessageUI && errorMessageUI.path === 'schemeAddress' && (
+                  <FieldErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </FieldErrorMessage>
+                )}
+              </Field>
+              <Field>
+                <span>Parameters Hash </span>
+                <TextInput
+                  type="text"
+                  onChange={event =>
+                    onSchemeRegistrarValueChange(
+                      'parametersHash',
+                      event.target.value
+                    )
+                  }
+                  value={schemeRegistrarProposalValues.parametersHash}
+                  width="50%"
+                />
+                {errorMessageUI && errorMessageUI.path === 'parametersHash' && (
+                  <FieldErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </FieldErrorMessage>
+                )}
+              </Field>
+              <Field>
+                <span>Permissions</span>
+                <TextInput
+                  type="text"
+                  onChange={event =>
+                    onSchemeRegistrarValueChange(
+                      'permissions',
+                      event.target.value
+                    )
+                  }
+                  value={schemeRegistrarProposalValues.permissions}
+                  width="50%"
+                />
+                {errorMessageUI && errorMessageUI.path === 'permissions' && (
+                  <FieldErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </FieldErrorMessage>
+                )}
+              </Field>
+            </FormattedForm>
           </CallRow>
         </div>
       ) : (
@@ -1126,17 +1140,23 @@ const NewProposalPage = observer(() => {
                 />
               )}
 
-              <TextInput
-                type="text"
-                onChange={value => onValueChange(i, value)}
-                value={calls[i].value || ''}
-                width="10%"
-                placeholder={
-                  calls[i].callType === 'advanced'
-                    ? 'WEI'
-                    : { networkAssetSymbol }
-                }
-              />
+              <Field>
+                <TextInput
+                  type="text"
+                  onChange={value => onValueChange(i, value)}
+                  value={calls[i].value || ''}
+                  placeholder={
+                    calls[i].callType === 'advanced'
+                      ? 'ETH'
+                      : { networkAssetSymbol }
+                  }
+                />
+                {errorMessageUI && errorMessageUI.path === 'value' && (
+                  <FieldErrorMessage>
+                    {errorMessageUI.errors[0]}
+                  </FieldErrorMessage>
+                )}
+              </Field>
 
               <RemoveButton
                 onClick={() => {
