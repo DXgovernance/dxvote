@@ -1,13 +1,10 @@
 import { makeObservable, observable, action } from 'mobx';
-import RootContext from '../contexts';
 import { ethers } from 'ethers';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import UncheckedJsonRpcSigner from 'provider/UncheckedJsonRpcSigner';
-import { sendAction } from './actions/actions';
-import { web3ContextNames } from '../provider/connectors';
 import PromiEvent from 'promievent';
+import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
+import RootContext from '../contexts';
+import { sendAction } from './actions/actions';
 import { TXEvents } from '../utils';
-import moment from 'moment';
 import { schema } from '../services/ABIService';
 
 export enum ContractType {
@@ -36,84 +33,31 @@ enum ERRORS {
 }
 
 export default class ProviderStore {
-  provider: any;
-  accounts: string[];
-  defaultAccount: string | null;
-  web3Contexts: object;
-  supportedNetworks: number[];
-  chainData: ChainData;
-  activeChainId: number;
-  activeFetchLoop: any;
-  activeAccount: string;
   context: RootContext;
+  web3Context: Web3ReactContextInterface;
+  chainData: ChainData;
 
-  constructor(context) {
+  constructor(context: RootContext) {
     this.context = context;
-    this.web3Contexts = {};
+    this.web3Context = null;
     this.chainData = { currentBlockNumber: -1 };
+    
     makeObservable(this, {
-      provider: observable,
-      accounts: observable,
-      defaultAccount: observable,
-      web3Contexts: observable,
+      web3Context: observable,
       chainData: observable,
-      activeChainId: observable,
-      activeFetchLoop: observable,
-      activeAccount: observable,
+      setWeb3Context: action,
+      sendTransaction: action,
+      sendRawTransaction: action,
       setCurrentBlockNumber: action,
-      setActiveAccount: action,
-      fetchUserBlockchainData: action,
     });
-  }
-
-  isFresh(blocknumber: number): boolean {
-    return blocknumber === this.getCurrentBlockNumber();
-  }
-
-  isFresher(newBlockNumber: number, oldBlockNumber: number): boolean {
-    return newBlockNumber > oldBlockNumber;
-  }
-
-  isBlockStale(blocknumber: number) {
-    return blocknumber < this.chainData.currentBlockNumber;
   }
 
   getCurrentBlockNumber(): number {
     return this.chainData.currentBlockNumber;
   }
 
-  setCurrentBlockNumber(blocknumber): void {
-    this.chainData.currentBlockNumber = blocknumber;
-  }
-
-  setActiveAccount(account: string) {
-    this.activeAccount = account;
-  }
-
-  fetchUserBlockchainData = async (
-    web3React: Web3ReactContextInterface,
-    account: string
-  ) => {
-    const { transactionStore } = this.context;
-
-    console.debug('[Fetch Start - User Blockchain Data]', {
-      account,
-    });
-
-    transactionStore.checkPendingTransactions(web3React, account);
-  };
-
-  // account is optional
-  getProviderOrSigner(library, account) {
-    console.debug('[getProviderOrSigner', {
-      library,
-      account,
-      signer: library.getSigner(account),
-    });
-
-    return account
-      ? new UncheckedJsonRpcSigner(library.getSigner(account))
-      : library;
+  setCurrentBlockNumber(blockNumber: number): void {
+    this.chainData.currentBlockNumber = blockNumber;
   }
 
   getContract(
@@ -133,39 +77,16 @@ export default class ProviderStore {
     return new library.eth.Contract(schema[type], address);
   }
 
-  // get blockTime from blocknumber
-  async getBlockTime(blocknumber) {
-    const context = this.getActiveWeb3React();
-    const blockData = await context.library.eth.getBlock(blocknumber);
-    const date = new Date(blockData.timestamp * 1000);
-    return moment(date).format('DD.MM - HH:mm');
-  }
-
-  // get blockHash from blocknumber
-  async getBlockHash(blocknumber) {
-    const context = this.getActiveWeb3React();
-    const blockData = await context.library.eth.getBlock(blocknumber);
-    return blockData.hash;
-  }
-
   getActiveWeb3React(): Web3ReactContextInterface {
-    const contextInjected = this.web3Contexts[web3ContextNames.default];
-    return contextInjected;
+    return this.web3Context;
   }
 
-  getWeb3React(name): Web3ReactContextInterface {
-    if (!this.web3Contexts[name]) {
-      throw new Error(ERRORS.ContextNotFound);
-    }
-    return this.web3Contexts[name];
+  setWeb3Context(context: Web3ReactContextInterface) {
+    console.debug('[setWeb3Context]', context);
+    this.web3Context = context;
   }
 
-  @action setWeb3Context(name, context: Web3ReactContextInterface) {
-    console.debug('[setWeb3Context]', name, context);
-    this.web3Contexts[name] = context;
-  }
-
-  @action sendTransaction = (
+  sendTransaction = (
     web3React: Web3ReactContextInterface,
     contractType: ContractType,
     contractAddress: string,
@@ -206,7 +127,7 @@ export default class ProviderStore {
     return response;
   };
 
-  @action sendRawTransaction = (
+  sendRawTransaction = (
     web3React: Web3ReactContextInterface,
     to: string,
     data: string,

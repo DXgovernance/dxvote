@@ -7,7 +7,6 @@ import {
   DEFAULT_ETH_CHAIN_ID,
   getChains,
   getNetworkConnector,
-  web3ContextNames,
 } from 'provider/connectors';
 import {
   useEagerConnect,
@@ -35,8 +34,7 @@ const Web3ReactManager = ({ children }) => {
     activate,
   } = web3Context;
 
-  if (!providerStore.activeChainId)
-    providerStore.setWeb3Context(web3ContextNames.default, web3Context);
+  providerStore.setWeb3Context(web3Context);
 
   console.debug('[Web3ReactManager] Start of render', {
     injected: web3Context,
@@ -82,7 +80,7 @@ const Web3ReactManager = ({ children }) => {
       // Handle the new chain.
       // Correctly handling chain changes can be complicated.
       // We recommend reloading the page unless you have good reason not to.
-      // providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
+      // providerStore.setWeb3Context(web3ContextInjected);
       // blockchainStore.fetchData(providerStore.getActiveWeb3React(), true);
       switchChainAndReload(chainId);
     });
