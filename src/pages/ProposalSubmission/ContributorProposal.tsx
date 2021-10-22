@@ -220,9 +220,16 @@ export const ContributorProposalPage = observer(() => {
   const submitProposal = async () => {
     try {
       setLoading(true);
+
       const hash = await ipfsService.uploadProposalMetadata(
         localStorage.getItem('dxvote-newProposal-title'),
-        localStorage.getItem('dxvote-newProposal-description'),
+        localStorage.getItem('dxvote-newProposal-description') +
+          `${'$' + levels[selectedLevel]?.stable * discount} \n ${(
+            (levels[selectedLevel]?.dxd / dxdAth) *
+            discount
+          ).toFixed(2)} DXD vested for 2 years and 1 year cliff \n ${
+            levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)
+          }% - ${repReward} REP \n `,
         [
           'Contributor Proposal',
           `Level ${selectedLevel + 1}`,
