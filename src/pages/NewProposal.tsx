@@ -393,11 +393,7 @@ const NewProposalPage = observer(() => {
         });
 
         value = calls.map(call => {
-          return callToController
-            ? '0'
-            : call.callType === 'simple'
-            ? library.utils.toWei(call.value).toString()
-            : call.value;
+          return callToController ? '0' : call.value;
         });
       }
 
