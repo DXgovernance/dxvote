@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import MiniSearch from 'minisearch';
 import { useContext } from '../contexts';
@@ -85,7 +85,7 @@ const SidebarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  height: 90vh;
+  height: calc(90vh - 20px);
   align-self: flex-start;
   position: sticky;
   top: 10%;
@@ -137,7 +137,7 @@ const TableProposal = styled(Table)`
   grid-template-columns: 33% 20% 15% 20% 12%;
   margin-bottom: auto;
   overflow-y: scroll;
-  max-height: 90vh;
+  max-height: calc(90vh - 20px);
   ${TableHeader} {
     ${HeaderCell} {
       background: white;
@@ -145,6 +145,11 @@ const TableProposal = styled(Table)`
       top: 0;
     }
   }
+`;
+
+const UnstyledAnchor = styled.a`
+  color: inherit;
+  text-decoration: inherit;
 `;
 
 const ProposalsPage = observer(() => {
@@ -420,22 +425,24 @@ const ProposalsPage = observer(() => {
                   fontSize="inherit"
                   align="left"
                 >
-                  {created && (
-                    <FiFeather
-                      style={{ minWidth: '15px', margin: '0px 2px' }}
-                    />
-                  )}
-                  {voted && (
-                    <FiCheckCircle
-                      style={{ minWidth: '15px', margin: '0px 2px' }}
-                    />
-                  )}
-                  {staked && (
-                    <FiCheckSquare
-                      style={{ minWidth: '15px', margin: '0px 2px' }}
-                    />
-                  )}
-                  {proposal.title.length > 0 ? proposal.title : proposal.id}
+                  <Link to={`/${networkName}/proposal/${proposal.id}`} component={UnstyledAnchor}>
+                    {created && (
+                      <FiFeather
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {voted && (
+                      <FiCheckCircle
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {staked && (
+                      <FiCheckSquare
+                        style={{ minWidth: '15px', margin: '0px 2px' }}
+                      />
+                    )}
+                    {proposal.title.length > 0 ? proposal.title : proposal.id}
+                  </Link>
                 </DataCell>
                 <DataCell>
                   {daoStore.getCache().schemes[proposal.scheme].name}

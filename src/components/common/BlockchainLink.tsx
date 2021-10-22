@@ -51,7 +51,7 @@ export const BlockchainLink = ({
       setENSName(response);
     }
     getENS();
-  }, []);
+  }, [text]);
 
   let formatedAddress;
   if (!ensName && !dxVoteContract && !erc20Token) {
