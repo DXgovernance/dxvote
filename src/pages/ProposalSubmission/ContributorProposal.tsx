@@ -8,6 +8,9 @@ import moment from 'moment';
 
 import { LevelSelect } from '../../components/LevelSelect';
 import { Button } from '../../components/common/Button';
+import PendingCircle from 'components/common/PendingCircle';
+import Toggle from 'components/Toggle';
+
 import { useContext } from '../../contexts';
 import { Modal } from '../../components/Modal';
 import {
@@ -16,7 +19,6 @@ import {
   denormalizeBalance,
   bnum,
 } from '../../utils';
-import Toggle from 'components/Toggle';
 
 const VerticalLayout = styled.div`
   display: flex;
@@ -85,6 +87,10 @@ const InputWrapper = styled.div`
   justify-content: center;
   font-size: xx-large;
 `;
+const ButtonContentWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 
 const WarningText = styled.p`
   color: red;
@@ -116,16 +122,22 @@ export const ContributorProposalPage = observer(() => {
   const { library, account } = providerStore.getActiveWeb3React();
 
   const history = useHistory();
-  const [selectedLevel, setSelectedLevel] = useState(-1);
-  const [dxdAth, setDxdAth] = useState(null);
-  const [periodEnd, setPeriodEnd] = useState(false);
+
+  // UI states
   const [confirm, setConfirm] = useState(false);
+  const [advanced, setAdvanced] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [periodEnd, setPeriodEnd] = useState(false);
+  // Amounts
+  const [dxdAth, setDxdAth] = useState(null);
   const [dxdAmount, setDxdAmount] = useState(null);
   const [repReward, setRepReward] = useState(null);
-  const [advanced, setAdvanced] = useState(false);
+  const [discount, setDiscount] = useState(1);
+  // Modifiers
+  const [selectedLevel, setSelectedLevel] = useState(-1);
   const [percentage, setPercentage] = useState(null);
   const [trialPeriod, setTrialPeriod] = useState(false);
-  const [discount, setDiscount] = useState(1);
 
   const proposalType = configStore
     .getProposalTypes()
@@ -207,6 +219,7 @@ export const ContributorProposalPage = observer(() => {
 
   const submitProposal = async () => {
     try {
+      setLoading(true);
       const hash = await ipfsService.uploadProposalMetadata(
         localStorage.getItem('dxvote-newProposal-title'),
         localStorage.getItem('dxvote-newProposal-description'),
@@ -249,7 +262,7 @@ export const ContributorProposalPage = observer(() => {
 
       // Encode vesting contract call
       const vestingFunctionEncoded = library.eth.abi.encodeFunctionSignature(
-        'create(address, uint256, uint256, uint256, uint256)'
+        'create(address,uint256,uint256,uint256,uint256)'
       );
 
       console.log(moment().unix());
@@ -278,14 +291,14 @@ export const ContributorProposalPage = observer(() => {
           contracts.utils.dxdVestingFactory,
         ],
         data: [repCallData, '0x0', dxdApprovalCallData, vestingCallData],
-        // Make native token use level value
+
         value: [
           0,
           denormalizeBalance(bnum(levels[selectedLevel]?.stable * discount)),
           0,
           0,
         ],
-        titleText: 'Test contributor stuff',
+        titleText: localStorage.getItem('dxvote-newProposal-title'),
         descriptionHash: contentHash.fromIpfs(hash),
       };
 
@@ -296,14 +309,24 @@ export const ContributorProposalPage = observer(() => {
         .on(TXEvents.TX_HASH, hash => {
           console.debug('[TX_SUBMITTED]', hash);
         })
+        .on(TXEvents.RECEIPT, hash => {
+          console.debug('[TX_RECEIPT]', hash);
+          setLoading(false);
+        })
         .on(TXEvents.TX_ERROR, txerror => {
           console.error('[TX_ERROR]', txerror);
+          setLoading(false);
+          setErrorMessage((txerror as Error).message);
         })
         .on(TXEvents.INVARIANT, error => {
           console.error('[ERROR]', error);
+          setLoading(false);
+          setErrorMessage((error as Error).message);
         })
         .catch(error => {
           console.error('[ERROR]', error);
+          setLoading(false);
+          setErrorMessage((error as Error).message);
         });
     } catch (error) {
       console.error('[PROPOSAL_ERROR]', error);
@@ -337,12 +360,13 @@ export const ContributorProposalPage = observer(() => {
               <Values>
                 <Value>${levels[selectedLevel]?.stable * discount}</Value>
                 <Value>
-                  {dxdAth
-                    ? (
-                        (levels[selectedLevel]?.dxd / dxdAth) *
-                        discount
-                      ).toFixed(2)
-                    : 'Loading ...'}{' '}
+                  {dxdAth ? (
+                    ((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(
+                      2
+                    )
+                  ) : (
+                    <PendingCircle height="10px" width="10px" />
+                  )}{' '}
                   DXD
                 </Value>
 
@@ -364,9 +388,15 @@ export const ContributorProposalPage = observer(() => {
                 disabled={selectedLevel < 0}
                 onClick={() => setConfirm(true)}
               >
-                Submit Proposal
+                <ButtonContentWrapper>
+                  Submit Proposal
+                  {loading ? (
+                    <PendingCircle height="10px" width="10px" />
+                  ) : null}
+                </ButtonContentWrapper>
               </Button>
             </ButtonsWrapper>
+            <WarningText>{errorMessage}</WarningText>
           </Center>
         ) : (
           <Center>
