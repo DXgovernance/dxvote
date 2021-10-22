@@ -16,8 +16,7 @@ export const ETH_NETWORKS_IDS = ACTIVE_NETWORKS.map(network => network.id);
 export const DEFAULT_ETH_CHAIN_ID = ACTIVE_NETWORKS[0].id;
 
 export const web3ContextNames = {
-  injected: 'INJECTED',
-  metamask: 'METAMASK',
+  default: 'DEFAULT',
 };
 
 export const isChainIdSupported = (chainId: ChainConfig['id']): boolean => {

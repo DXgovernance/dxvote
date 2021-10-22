@@ -149,7 +149,7 @@ export default class ProviderStore {
   }
 
   getActiveWeb3React(): Web3ReactContextInterface {
-    const contextInjected = this.web3Contexts[web3ContextNames.injected];
+    const contextInjected = this.web3Contexts[web3ContextNames.default];
     return contextInjected;
   }
 

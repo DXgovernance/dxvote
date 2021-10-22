@@ -29,21 +29,21 @@ const Web3ReactManager = ({ children }) => {
   const rpcUrls = useRpcUrls();
   const history = useHistory();
 
-  const web3ContextInjected = useWeb3React(web3ContextNames.injected);
+  const web3Context = useWeb3React();
   const {
     active: networkActive,
     error: networkError,
     chainId,
-  } = web3ContextInjected;
+  } = web3Context;
 
   if (!providerStore.activeChainId)
     providerStore.setWeb3Context(
-      web3ContextNames.injected,
-      web3ContextInjected
+      web3ContextNames.default,
+      web3Context
     );
 
   console.debug('[Web3ReactManager] Start of render', {
-    injected: web3ContextInjected,
+    injected: web3Context,
     web3React: providerStore.getActiveWeb3React(),
   });
 
