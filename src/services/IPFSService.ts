@@ -5,14 +5,9 @@ import { sleep } from '../utils';
 import RootContext from '../contexts';
 
 export default class IPFSService {
+  private static SLEEP_MS = 5000;
+
   context: RootContext;
-  calls: {
-    [hash: string]: {
-      time: Number;
-      content: String;
-      fetched: Boolean;
-    };
-  } = {};
   starting: Boolean = false;
   private ipfs: IPFS.IPFS = null;
 
@@ -22,8 +17,10 @@ export default class IPFSService {
 
   async getIpfs(): Promise<IPFS.IPFS> {
     if (this.starting) {
-      console.debug('[IPFS] IPFS is still starting. Sleeping for 5 seconds.');
-      await sleep(5000);
+      console.debug(
+        `[IPFS] IPFS is still starting. Sleeping for ${IPFSService.SLEEP_MS}ms.`
+      );
+      await sleep(IPFSService.SLEEP_MS);
       return this.getIpfs();
     }
 
