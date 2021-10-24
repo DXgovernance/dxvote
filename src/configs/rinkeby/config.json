@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 9234792,
-    "toBlock": 9390067,
-    "ipfsHash": "QmSMyQrVKxbt6GxySJNSXWRZeWWJ7vNAMHNBfZezBJnrha"
+    "toBlock": 9493631,
+    "ipfsHash": "QmUTJzfSLP6723JbNiMsQrejQQdUYnPTgAjuMYfLN2D7za"
   },
   "contracts": {
     "avatar": "0x1A639b50D807ce7e61Dc9eeB091e6Cea8EcB1595",

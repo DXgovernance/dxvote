@@ -21,3 +21,5 @@ export {
   AmountBadge,
   HorizontalSeparator,
 } from './Votes';
+
+export { InputDate } from './Forms';

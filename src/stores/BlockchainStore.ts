@@ -153,19 +153,28 @@ export default class BlockchainStore {
         web3React.active &&
         isChainIdSupported(web3React.chainId))
     ) {
+      const {
+        providerStore,
+        configStore,
+        multicallService,
+        ipfsService,
+        daoStore,
+        notificationStore,
+      } = this.context;
+
       this.initialLoadComplete = reset ? false : this.initialLoadComplete;
       this.activeFetchLoop = true;
+      if (reset) notificationStore.reset();
+
       try {
         const { library, chainId } = web3React;
-        const {
-          providerStore,
-          configStore,
-          multicallService,
-          ipfsService,
-          daoStore,
-        } = this.context;
+
         const networkName = configStore.getActiveChainName();
 
+        notificationStore.setGlobalLoading(
+          true,
+          'Looking for existing cache data'
+        );
         const cache = await caches.open(`dxvote-cache`);
         let match = await cache.match(networkName);
         let networkCache = null;
@@ -177,11 +186,16 @@ export default class BlockchainStore {
 
         // Fetch cache from ipfs if not in localStorage or newer hash is available
         const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
+
         if (
           !networkCache ||
           !(newestCacheIpfsHash === networkCache.baseCacheIpfsHash)
         ) {
           console.debug('[IPFS Cache Fetch]', networkName, newestCacheIpfsHash);
+          notificationStore.setGlobalLoading(
+            true,
+            'Fetching cached data from IPFS'
+          );
           networkCache = daoStore.parseCache(
             await ipfsService.getContentFromIPFS(newestCacheIpfsHash)
           );
@@ -200,7 +214,9 @@ export default class BlockchainStore {
           const fromBlock = lastCheckedBlockNumber;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
+
           networkCache = await getUpdatedCache(
+            this.context,
             networkCache,
             networkContracts,
             fromBlock,
@@ -208,6 +224,7 @@ export default class BlockchainStore {
             library
           );
 
+          notificationStore.setGlobalLoading(true, 'Fetching token balances');
           let tokensBalancesCalls = [];
           const tokens = configStore.getTokensToFetchPrice();
           tokens.map(token => {
@@ -255,6 +272,7 @@ export default class BlockchainStore {
           networkCache.l1BlockNumber = toBlock;
           providerStore.setCurrentBlockNumber(toBlock);
 
+          notificationStore.setGlobalLoading(true, 'Saving updated cache');
           await cache.put(
             networkName,
             new Response(JSON.stringify(networkCache))
@@ -262,9 +280,13 @@ export default class BlockchainStore {
         }
         daoStore.setCache(networkCache);
         this.initialLoadComplete = true;
+        notificationStore.setFirstLoadComplete();
         this.activeFetchLoop = false;
       } catch (error) {
         console.error((error as Error).message);
+        if (!this.initialLoadComplete) {
+          notificationStore.setGlobalError(true, (error as Error).message);
+        }
         this.activeFetchLoop = false;
       }
     }

@@ -25,6 +25,8 @@ const DxReputation = hre.artifacts.require('DxReputation');
 const DXDVotingMachine = hre.artifacts.require('DXDVotingMachine');
 const ERC20Mock = hre.artifacts.require('ERC20Mock');
 const Multicall = hre.artifacts.require('Multicall');
+const DXDVestingFactory = hre.artifacts.require('DXDVestingFactory');
+const DXdaoNFT = hre.artifacts.require('DXdaoNFT');
 
 async function main() {
   const accounts = await web3.eth.getAccounts();
@@ -326,6 +328,15 @@ async function main() {
     avatar.address
   );
   await controller.burnReputation(100, accounts[0], avatar.address);
+  
+  // Deploy dxDaoNFT
+  console.log("Deploying DXdaoNFT...");
+  const dxDaoNFT = await DXdaoNFT.new();
+
+  // Deploy DXDVestingFactory
+  console.log("Deploying DXDVestingFactory...");
+  const dxdVestingFactory = await DXDVestingFactory.new( votingMachineToken.address );
+
 
   await controller.unregisterScheme(accounts[0], avatar.address);
 
@@ -646,6 +657,8 @@ async function main() {
     permissionRegistry: permissionRegistry.address,
     utils: {
       multicall: multicall.address,
+      dxdVestingFactory: dxdVestingFactory.address,
+      dxDaoNFT: dxDaoNFT.address
     },
   };
 
