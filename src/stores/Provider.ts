@@ -41,7 +41,7 @@ export default class ProviderStore {
     this.context = context;
     this.web3Context = null;
     this.chainData = { currentBlockNumber: -1 };
-    
+
     makeObservable(this, {
       web3Context: observable,
       chainData: observable,
@@ -57,6 +57,7 @@ export default class ProviderStore {
   }
 
   setCurrentBlockNumber(blockNumber: number): void {
+    console.debug('[ProviderStore] Setting current block number', blockNumber);
     this.chainData.currentBlockNumber = blockNumber;
   }
 
@@ -82,7 +83,7 @@ export default class ProviderStore {
   }
 
   setWeb3Context(context: Web3ReactContextInterface) {
-    console.debug('[setWeb3Context]', context);
+    console.debug('[ProviderStore] Setting Web3 context', context);
     this.web3Context = context;
   }
 

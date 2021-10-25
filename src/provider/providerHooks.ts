@@ -16,7 +16,6 @@ export function useEagerConnect() {
   const location = useLocation();
 
   useEffect(() => {
-    console.debug('[Injected Eager Connect]', injected);
     const chains = getChains();
     const urlNetworkName = location.pathname.split('/')[1];
     const urlChainId =
@@ -25,7 +24,8 @@ export function useEagerConnect() {
 
     const tryConnecting = async () => {
       const isAuthorized = await injected.isAuthorized();
-      console.debug('[Eager Connect] Activate injected if authorized', {
+      console.debug('[EagerConnect] Activate injected if authorized', {
+        injected,
         isAuthorized,
       });
 

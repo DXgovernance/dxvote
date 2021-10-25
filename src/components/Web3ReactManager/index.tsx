@@ -16,6 +16,31 @@ import {
 import { useContext } from 'contexts';
 import { useInterval, usePrevious } from 'utils';
 
+const BlurWrapper = styled.div`
+  filter: blur(1px);
+`;
+
+const OverBlurModal = styled.div`
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+
+  .connectModalContent {
+    background-color: #fefefe;
+    max-width: 350px;
+    text-align: center;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 4px;
+  }
+`;
+
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
@@ -34,14 +59,16 @@ const Web3ReactManager = ({ children }) => {
     activate,
   } = web3Context;
 
-  providerStore.setWeb3Context(web3Context);
-
   console.debug('[Web3ReactManager] Start of render', {
-    injected: web3Context,
-    web3React: providerStore.getActiveWeb3React(),
+    web3Context,
   });
 
-  // try to eagerly connect to an injected provider, if it exists and has granted access already
+  // Make sure providerStore is synchronized with web3-react
+  useEffect(() => {
+    providerStore.setWeb3Context(web3Context);
+  }, [web3Context]);
+
+  // try to eagerly connect to a provider if possible
   const triedEager = useEagerConnect();
 
   useEffect(() => {
@@ -62,7 +89,7 @@ const Web3ReactManager = ({ children }) => {
     }
   }, [triedEager, networkActive, activate, rpcUrls]);
 
-  function switchChainAndReload(chainId) {
+  function switchChainAndReload(chainId: number) {
     const chains = getChains(rpcUrls);
     const chain = chains.find(chain => chain.id == chainId);
 
@@ -121,31 +148,6 @@ const Web3ReactManager = ({ children }) => {
     },
     networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10
   );
-
-  const BlurWrapper = styled.div`
-    filter: blur(1px);
-  `;
-
-  const OverBlurModal = styled.div`
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
-
-    .connectModalContent {
-      background-color: #fefefe;
-      max-width: 350px;
-      text-align: center;
-      margin: 15% auto;
-      padding: 20px;
-      border-radius: 4px;
-    }
-  `;
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
