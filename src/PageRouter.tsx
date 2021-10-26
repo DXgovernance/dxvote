@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useLocation, useHistory } from 'react-router-dom';
-import { InjectedConnector } from '@web3-react/injected-connector';
 import { useContext } from './contexts';
 import PulsingIcon from './components/common/LoadingIcon';
 import { GlobalLoadingState } from './stores/NotificationStore';
+import { useWeb3React } from '@web3-react/core';
+import { useEffect } from 'react';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;
@@ -40,7 +41,6 @@ const PageRouter = observer(({ children }) => {
   const {
     context: {
       notificationStore,
-      providerStore,
       configStore,
       ipfsService,
       etherscanService,
@@ -53,40 +53,31 @@ const PageRouter = observer(({ children }) => {
   const location = useLocation();
   const noLoading = ['/faq', '/config', '/forum'];
   const networkName = configStore.getActiveChainName();
+  const { active: providerActive } = useWeb3React();
 
-  // Start or auth services
-  ipfsService.start();
-  etherscanService.isAuthenticated(networkName);
-  pinataService.isAuthenticated();
-
-  const { active: providerActive, connector } =
-    providerStore.getActiveWeb3React();
+  useEffect(() => {
+    // Start or auth services
+    ipfsService.start();
+    etherscanService.isAuthenticated(networkName);
+    pinataService.isAuthenticated();
+  }, []);
 
   if (noLoading.indexOf(location.pathname) > -1) {
-    return <PageRouterWrapper> {children} </PageRouterWrapper>;
-  } else if (!providerActive)
+    return <PageRouterWrapper>{children}</PageRouterWrapper>;
+  } else if (!providerActive) {
     return (
       <PageRouterWrapper>
         <LoadingBox>
           <div className="loader">
-            {' '}
-            <PulsingIcon size={80} inactive={true} /> <br /> Connect to your
-            wallet{' '}
+            <PulsingIcon size={80} inactive={true} />
+            <div>Connect to a network to continue.</div>
           </div>
         </LoadingBox>
       </PageRouterWrapper>
     );
-  else {
+  } else {
     const networkName = configStore.getActiveChainName();
-    if (location.pathname === '/') {
-      history.push(`/${networkName}/proposals`);
-    }
-
-    if (
-      location.pathname.split('/')[1] &&
-      location.pathname.split('/')[1] !== networkName &&
-      connector instanceof InjectedConnector
-    ) {
+    if (!location.pathname.startsWith(`/${networkName}`)) {
       history.push(`/${networkName}/proposals`);
     }
 

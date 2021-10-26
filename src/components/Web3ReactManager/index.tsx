@@ -105,19 +105,6 @@ const Web3ReactManager = ({ children }) => {
       '[Web3ReactManager] Render: Network error, showing modal error.'
     );
     return null;
-  } else if (prevChainId && chainId && prevChainId !== chainId) {
-    // Stop rendering if networks are being switched
-    console.debug('[Web3ReactManager] Render: Switching network', {
-      chainId,
-      prevChainId,
-    });
-    return null;
-  } else if (!chainId) {
-    console.debug('[Web3ReactManager] Render: No chain ID');
-    return null;
-  } else if (!networkActive) {
-    console.debug('[Web3ReactManager] Render: No active network');
-    return children;
   } else {
     console.debug(
       '[Web3ReactManager] Render: Active network, render children',
