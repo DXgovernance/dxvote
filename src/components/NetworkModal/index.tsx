@@ -19,7 +19,7 @@ const iconsByChain = {
   100: xdaiIcon,
   42161: arbitrumIcon,
   421611: arbitrumIcon,
-  1337: ethereumIcon
+  1337: ethereumIcon,
 };
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -107,8 +107,9 @@ const NetworkModal = observer(() => {
       }
     } else {
       deactivate();
-      history.push(`/${chain.name}/proposals`);
     }
+
+    history.push(`/${chain.name}/proposals`);
   };
 
   // get networks user can switch to

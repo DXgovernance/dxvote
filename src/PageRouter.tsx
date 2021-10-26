@@ -5,6 +5,7 @@ import { useContext } from './contexts';
 import PulsingIcon from './components/common/LoadingIcon';
 import { GlobalLoadingState } from './stores/NotificationStore';
 import { useWeb3React } from '@web3-react/core';
+import { useEffect } from 'react';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;
@@ -53,6 +54,12 @@ const PageRouter = observer(({ children }) => {
   const networkName = configStore.getActiveChainName();
   const { active: providerActive } = useWeb3React();
 
+  useEffect(() => {
+    if (location.pathname == '/') {
+      history.push(`/${networkName}/proposals`);
+    }
+  }, [networkName]);
+
   // Start or auth services
   etherscanService.isAuthenticated(networkName);
   pinataService.isAuthenticated();
@@ -71,11 +78,6 @@ const PageRouter = observer(({ children }) => {
       </PageRouterWrapper>
     );
   } else {
-    const networkName = configStore.getActiveChainName();
-    if (!location.pathname.startsWith(`/${networkName}`)) {
-      history.push(`/${networkName}/proposals`);
-    }
-
     if (
       !notificationStore.firstLoadComplete ||
       notificationStore.globalLoadingState == GlobalLoadingState.ERROR
