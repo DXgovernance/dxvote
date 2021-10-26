@@ -5,7 +5,6 @@ import { useContext } from './contexts';
 import PulsingIcon from './components/common/LoadingIcon';
 import { GlobalLoadingState } from './stores/NotificationStore';
 import { useWeb3React } from '@web3-react/core';
-import { useEffect } from 'react';
 
 const PageRouterWrapper = styled.div`
   margin-top: 20px;
@@ -55,12 +54,10 @@ const PageRouter = observer(({ children }) => {
   const networkName = configStore.getActiveChainName();
   const { active: providerActive } = useWeb3React();
 
-  useEffect(() => {
-    // Start or auth services
-    ipfsService.start();
-    etherscanService.isAuthenticated(networkName);
-    pinataService.isAuthenticated();
-  }, []);
+  // Start or auth services
+  ipfsService.start();
+  etherscanService.isAuthenticated(networkName);
+  pinataService.isAuthenticated();
 
   if (noLoading.indexOf(location.pathname) > -1) {
     return <PageRouterWrapper>{children}</PageRouterWrapper>;

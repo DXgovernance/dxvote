@@ -69,7 +69,6 @@ const Web3ReactManager = ({ children }) => {
       (prevAccount !== account)
     ) {
       try {
-        console.log("Resetting Context");
         context.reset();
         blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
       } catch (e) {
@@ -78,9 +77,6 @@ const Web3ReactManager = ({ children }) => {
       }
     }
   }, [chainId, prevChainId, account, prevAccount]);
-
-  // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
-  // useInactiveListener(!triedEager);
 
   // Fetch user blockchain data on an interval using current params
   useInterval(
@@ -96,7 +92,6 @@ const Web3ReactManager = ({ children }) => {
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
     console.debug('[Web3ReactManager] Render: Eager load not tried');
-    context.notificationStore.setGlobalLoading(true, 'Connecting to wallet');
     return null;
   }
   if (networkError) {

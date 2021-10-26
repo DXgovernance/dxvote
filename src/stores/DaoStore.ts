@@ -169,7 +169,6 @@ export default class DaoStore {
   }
 
   setCache(newNetworkCache: DaoNetworkCache) {
-    console.debug('Cache newNetworkCache]', newNetworkCache);
     this.daoCache = this.parseCache(newNetworkCache);
     console.debug('Cache SET]', this.daoCache);
   }
