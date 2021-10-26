@@ -42,7 +42,6 @@ const PageRouter = observer(({ children }) => {
       notificationStore,
       providerStore,
       configStore,
-      ipfsService,
       etherscanService,
       pinataService,
       coingeckoService,
@@ -55,7 +54,6 @@ const PageRouter = observer(({ children }) => {
   const networkName = configStore.getActiveChainName();
 
   // Start or auth services
-  ipfsService.start();
   etherscanService.isAuthenticated(networkName);
   pinataService.isAuthenticated();
 
