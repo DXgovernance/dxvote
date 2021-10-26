@@ -3,12 +3,14 @@ const axios = require('axios');
 const FormData = require('form-data');
 
 async function main() {
-  
   let data;
   const networkNames = process.env.REACT_APP_ETH_NETWORKS.split(',');
   for (let i = 0; i < networkNames.length; i++) {
     data = new FormData();
-    data.append('file', fs.createReadStream('./src/configs/'+networkNames[i]+'/config.json'));
+    data.append(
+      'file',
+      fs.createReadStream('./src/configs/' + networkNames[i] + '/config.json')
+    );
     data.append(
       'pinataMetadata',
       JSON.stringify({
@@ -29,12 +31,14 @@ async function main() {
       })
       .then(function (response) {
         console.log(response.data);
-        console.debug(`IPFS hash for dxvote ${networkNames[i]} config: ${response.data.IpfsHash}`);
+        console.debug(
+          `IPFS hash for dxvote ${networkNames[i]} config: ${response.data.IpfsHash}`
+        );
       })
       .catch(function (error) {
         console.error(error);
       });
-    }
+  }
 }
 
 main()
