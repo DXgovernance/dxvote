@@ -41,7 +41,6 @@ const PageRouter = observer(({ children }) => {
     context: {
       notificationStore,
       configStore,
-      ipfsService,
       etherscanService,
       pinataService,
       coingeckoService,
@@ -55,7 +54,6 @@ const PageRouter = observer(({ children }) => {
   const { active: providerActive } = useWeb3React();
 
   // Start or auth services
-  ipfsService.start();
   etherscanService.isAuthenticated(networkName);
   pinataService.isAuthenticated();
 
