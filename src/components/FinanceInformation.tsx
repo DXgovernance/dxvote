@@ -71,6 +71,8 @@ const FinanceInformation = observer(() => {
   };
   Object.keys(daoInfo.tokenBalances).map(tokenAddress => {
     const tokenData = configStore.getTokenData(tokenAddress);
+    if (!tokenData) return;
+
     assets.avatar.push({
       address: tokenAddress,
       name: tokenData.name,
@@ -101,7 +103,8 @@ const FinanceInformation = observer(() => {
 
     Object.keys(tokenBalances).map(tokenAddress => {
       const tokenData = configStore.getTokenData(tokenAddress);
-
+      if (!tokenData) return;
+      
       assets[scheme.name].push({
         address: tokenAddress,
         name: tokenData.name,

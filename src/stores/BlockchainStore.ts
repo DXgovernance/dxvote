@@ -189,11 +189,7 @@ export default class BlockchainStore {
           networkCache = JSON.parse(await match.text());
         }
 
-        console.log('TEST Getting Block Number', {
-          chainId: web3React.chainId,
-        });
         const blockNumber = (await library.eth.getBlockNumber()) - 1;
-        console.log('TEST Got Block Number', blockNumber);
 
         // Fetch cache from ipfs if not in localStorage or newer hash is available
         const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
