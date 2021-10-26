@@ -37,7 +37,12 @@ export default class TransactionStore {
       txRecords: observable,
       checkPendingTransactions: action,
       addTransactionRecord: action,
+      reset: action,
     });
+  }
+
+  reset() {
+    this.txRecords = {};
   }
 
   // @dev Transactions are pending if we haven't seen their receipt yet

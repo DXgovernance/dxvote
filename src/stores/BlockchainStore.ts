@@ -20,7 +20,15 @@ export default class BlockchainStore {
       initialLoadComplete: observable,
       updateStore: action,
       fetchData: action,
+      reset: action,
     });
+  }
+
+  reset() {
+    this.activeFetchLoop = false;
+    this.initialLoadComplete = false;
+    this.contractStorage = {};
+    this.eventsStorage = {};
   }
 
   reduceMulticall(
