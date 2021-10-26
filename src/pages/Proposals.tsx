@@ -211,7 +211,7 @@ const ProposalsPage = observer(() => {
   });
   const miniSearch = miniSearchRef.current;
 
-  /// filtering and sorting proposals for All States criteria
+  /// filtering and sorting proposals for All States, All Schemas criteria
   const filterInitialCriteria = proposals => {
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     let earliestAbove10 = proposals.filter((proposal: Proposal) => {
@@ -311,6 +311,7 @@ const ProposalsPage = observer(() => {
     });
   }, []);
 
+  // Oberver to proposals filter changes
   useEffect(() => {
     let sortedProposals;
     setIsLoading(true);
@@ -343,6 +344,7 @@ const ProposalsPage = observer(() => {
     setIsLoading(false);
   }, [schemeFilter, stateFilter, titleFilter]);
 
+  // Filter changes handlers
   function onStateFilterChange(event) {
     params.delete('state');
     params.append('state', event.target.value);
@@ -360,7 +362,6 @@ const ProposalsPage = observer(() => {
       search: params.toString(),
     });
     setTitleFilter(event.target.value);
-    // localStorage.setItem('dxvote-filter-title', event.target.value);
   }
   function onSchemeFilterChange(event) {
     params.delete('scheme');
@@ -371,7 +372,6 @@ const ProposalsPage = observer(() => {
     });
     setSchemeFilter(event.target.value);
   }
-  // localStorage.setItem('dxvote-filter-scheme', event.target.value);
 
   return (
     <ProposalsWrapper>
