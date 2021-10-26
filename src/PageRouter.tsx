@@ -55,7 +55,7 @@ const PageRouter = observer(({ children }) => {
   const { active: providerActive } = useWeb3React();
 
   useEffect(() => {
-    if (location.pathname == '/') {
+    if (location.pathname == '/' && networkName) {
       history.push(`/${networkName}/proposals`);
     }
   }, [networkName]);
