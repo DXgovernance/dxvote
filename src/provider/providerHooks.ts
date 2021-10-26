@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useWeb3React as useWeb3ReactCore } from '@web3-react/core';
+import { useWeb3React } from '@web3-react/core';
 import { isMobile } from 'react-device-detect';
-import { getChains, injected, web3ContextNames } from '../provider/connectors';
+import { getChains, injected } from '../provider/connectors';
 import { useContext } from '../contexts';
 import { DEFAULT_RPC_URLS } from '../utils';
 
@@ -10,17 +10,12 @@ import { DEFAULT_RPC_URLS } from '../utils';
     If we're on mobile and have an injected connector, attempt even if not authorized (legacy support)
     If we tried to connect, or it's active, return true;
  */
-export function useActiveWeb3React() {
-  return useWeb3ReactCore(web3ContextNames.injected);
-}
-
 export function useEagerConnect() {
-  const { activate, active } = useWeb3ReactCore(web3ContextNames.injected);
+  const { activate, active } = useWeb3React();
   const [tried, setTried] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    console.debug('[Injected Eager Connect]', injected);
     const chains = getChains();
     const urlNetworkName = location.pathname.split('/')[1];
     const urlChainId =
@@ -29,7 +24,8 @@ export function useEagerConnect() {
 
     const tryConnecting = async () => {
       const isAuthorized = await injected.isAuthorized();
-      console.debug('[Eager Connect] Activate injected if authorized', {
+      console.debug('[EagerConnect] Activate injected if authorized', {
+        injected,
         isAuthorized,
       });
 
@@ -79,9 +75,7 @@ export function useEagerConnect() {
  * and out after checking what network they're on
  */
 export function useInactiveListener(suppress = false) {
-  const { active, error, activate } = useWeb3ReactCore(
-    web3ContextNames.injected
-  );
+  const { active, error, activate } = useWeb3React();
 
   useEffect(() => {
     const { ethereum } = window;

@@ -7,16 +7,39 @@ import {
   DEFAULT_ETH_CHAIN_ID,
   getChains,
   getNetworkConnector,
-  web3ContextNames,
 } from 'provider/connectors';
 import {
-  useActiveWeb3React,
   useEagerConnect,
   useInactiveListener,
   useRpcUrls,
 } from 'provider/providerHooks';
 import { useContext } from 'contexts';
 import { useInterval, usePrevious } from 'utils';
+
+const BlurWrapper = styled.div`
+  filter: blur(1px);
+`;
+
+const OverBlurModal = styled.div`
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+
+  .connectModalContent {
+    background-color: #fefefe;
+    max-width: 350px;
+    text-align: center;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 4px;
+  }
+`;
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -25,31 +48,31 @@ const Web3ReactManager = ({ children }) => {
     context: { providerStore, blockchainStore, userStore },
   } = useContext();
   const location = useLocation();
-  const { activate } = useActiveWeb3React();
   const rpcUrls = useRpcUrls();
   const history = useHistory();
 
-  const web3ContextInjected = useWeb3React(web3ContextNames.injected);
+  const web3Context = useWeb3React();
   const {
     active: networkActive,
     error: networkError,
     chainId,
-  } = web3ContextInjected;
-
-  if (!providerStore.activeChainId)
-    providerStore.setWeb3Context(
-      web3ContextNames.injected,
-      web3ContextInjected
-    );
+    activate,
+  } = web3Context;
 
   console.debug('[Web3ReactManager] Start of render', {
-    injected: web3ContextInjected,
-    web3React: providerStore.getActiveWeb3React(),
+    web3Context,
   });
 
-  // try to eagerly connect to an injected provider, if it exists and has granted access already
+  // Make sure providerStore is synchronized with web3-react
+  useEffect(() => {
+    providerStore.setWeb3Context(web3Context);
+  }, [web3Context]);
+
+  // try to eagerly connect to a provider if possible
   const triedEager = useEagerConnect();
 
+  // If eager-connect failed, try to connect to network in the URL
+  // If no chain in the URL, fallback to default chain
   useEffect(() => {
     if (triedEager && !networkActive && rpcUrls) {
       const chains = getChains(rpcUrls);
@@ -68,7 +91,7 @@ const Web3ReactManager = ({ children }) => {
     }
   }, [triedEager, networkActive, activate, rpcUrls]);
 
-  function switchChainAndReload(chainId) {
+  function switchChainAndReload(chainId: number) {
     const chains = getChains(rpcUrls);
     const chain = chains.find(chain => chain.id == chainId);
 
@@ -86,7 +109,7 @@ const Web3ReactManager = ({ children }) => {
       // Handle the new chain.
       // Correctly handling chain changes can be complicated.
       // We recommend reloading the page unless you have good reason not to.
-      // providerStore.setWeb3Context(web3ContextNames.injected, web3ContextInjected);
+      // providerStore.setWeb3Context(web3ContextInjected);
       // blockchainStore.fetchData(providerStore.getActiveWeb3React(), true);
       switchChainAndReload(chainId);
     });
@@ -127,31 +150,6 @@ const Web3ReactManager = ({ children }) => {
     },
     networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10
   );
-
-  const BlurWrapper = styled.div`
-    filter: blur(1px);
-  `;
-
-  const OverBlurModal = styled.div`
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
-
-    .connectModalContent {
-      background-color: #fefefe;
-      max-width: 350px;
-      text-align: center;
-      margin: 15% auto;
-      padding: 20px;
-      border-radius: 4px;
-    }
-  `;
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
