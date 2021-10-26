@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import MiniSearch from 'minisearch';
 import { useContext } from '../contexts';
@@ -157,7 +157,8 @@ const ProposalsPage = observer(() => {
     context: { daoStore, configStore, providerStore },
   } = useContext();
   const history = useHistory();
-
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
   const schemes = daoStore.getAllSchemes();
 
   const [stateFilter, setStateFilter] = React.useState('Any Status');
@@ -264,6 +265,13 @@ const ProposalsPage = observer(() => {
     ];
   };
 
+  // load filter from url if any
+  useEffect(() => {
+    if (params.get('title')) setTitleFilter(params.get('title'));
+    if (params.get('scheme')) setSchemeFilter(params.get('scheme'));
+    if (params.get('state')) setStateFilter(params.get('state'));
+  }, []);
+
   useEffect(() => {
     let sortedProposals;
     setIsLoading(true);
@@ -297,14 +305,34 @@ const ProposalsPage = observer(() => {
   }, [schemeFilter, stateFilter, titleFilter]);
 
   function onStateFilterChange(event) {
+    params.delete('state');
+    params.append('state', event.target.value);
+    history.push({
+      location: location.pathname,
+      search: params.toString(),
+    });
     setStateFilter(event.target.value);
   }
   function onTitleFilterChange(event) {
+    params.delete('title');
+    params.append('title', event.target.value);
+    history.push({
+      location: location.pathname,
+      search: params.toString(),
+    });
     setTitleFilter(event.target.value);
+    // localStorage.setItem('dxvote-filter-title', event.target.value);
   }
   function onSchemeFilterChange(event) {
+    params.delete('scheme');
+    params.append('scheme', event.target.value);
+    history.push({
+      location: location.pathname,
+      search: params.toString(),
+    });
     setSchemeFilter(event.target.value);
   }
+  // localStorage.setItem('dxvote-filter-scheme', event.target.value);
 
   return (
     <ProposalsWrapper>
@@ -425,7 +453,10 @@ const ProposalsPage = observer(() => {
                   fontSize="inherit"
                   align="left"
                 >
-                  <Link to={`/${networkName}/proposal/${proposal.id}`} component={UnstyledAnchor}>
+                  <Link
+                    to={`/${networkName}/proposal/${proposal.id}`}
+                    component={UnstyledAnchor}
+                  >
                     {created && (
                       <FiFeather
                         style={{ minWidth: '15px', margin: '0px 2px' }}
