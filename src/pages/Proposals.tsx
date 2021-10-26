@@ -177,9 +177,7 @@ const ProposalsPage = observer(() => {
   const {
     context: { daoStore, configStore, providerStore },
   } = useContext();
-  const history = useHistory();
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
+
   const schemes = daoStore.getAllSchemes();
 
   const [stateFilter, setStateFilter] = React.useState('Any Status');
@@ -286,7 +284,12 @@ const ProposalsPage = observer(() => {
     ];
   };
 
+  const history = useHistory();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+
   // load filter from url if any on initial load
+  // load filter from url  when back on history
   useEffect(() => {
     setIsLoading(true);
     if (params.get('title')) setTitleFilter(params.get('title'));
@@ -307,9 +310,6 @@ const ProposalsPage = observer(() => {
       }
     });
   }, []);
-
-  // load filter from url  when back on history
-  useEffect(() => {}, []);
 
   useEffect(() => {
     let sortedProposals;
