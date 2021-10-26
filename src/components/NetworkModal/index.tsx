@@ -67,7 +67,7 @@ const NetworkModal = observer(() => {
   const {
     context: { modalStore, providerStore },
   } = useContext();
-  const { chainId, connector } = providerStore.getActiveWeb3React();
+  const { chainId, connector, deactivate } = providerStore.getActiveWeb3React();
   const rpcUrls = useRpcUrls();
   const history = useHistory();
   const [networkErrorMessage, setNetworkErrorMessage] = useState(false);
@@ -106,8 +106,8 @@ const NetworkModal = observer(() => {
         }
       }
     } else {
+      deactivate();
       history.push(`/${chain.name}/proposals`);
-      window.location.reload();
     }
   };
 

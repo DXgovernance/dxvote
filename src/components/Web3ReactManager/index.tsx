@@ -65,14 +65,13 @@ const Web3ReactManager = ({ children }) => {
   useEffect(() => {
     // Listen to chain / account changes and reset the app
     if (
-      (prevChainId && !chainId) ||
-      (prevChainId && chainId && prevChainId !== chainId) ||
-      (prevAccount && !account) ||
-      (prevAccount && account && prevAccount !== account)
+      (prevChainId !== chainId) ||
+      (prevAccount !== account)
     ) {
       try {
+        console.log("Resetting Context");
         context.reset();
-        blockchainStore.fetchData(providerStore.getActiveWeb3React(), true);
+        blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
       } catch (e) {
         // Fallback if something goes wrong
         window.location.reload();
