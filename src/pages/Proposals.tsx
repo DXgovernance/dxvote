@@ -425,7 +425,10 @@ const ProposalsPage = observer(() => {
                   fontSize="inherit"
                   align="left"
                 >
-                  <Link to={`/${networkName}/proposal/${proposal.id}`} component={UnstyledAnchor}>
+                  <Link
+                    to={`/${networkName}/proposal/${proposal.id}`}
+                    component={UnstyledAnchor}
+                  >
                     {created && (
                       <FiFeather
                         style={{ minWidth: '15px', margin: '0px 2px' }}
