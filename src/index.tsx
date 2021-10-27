@@ -24,6 +24,7 @@ import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
 import { CreateMetadataPage } from 'pages/Metadata';
+import CardProposalView from 'pages/CardProposals';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -85,6 +86,11 @@ const Routes = () => {
       <Route exact path="/:network/proposal/:proposalId">
         {' '}
         <ProposalPage />{' '}
+      </Route>
+      <Route exact path='/cards'>
+        {' '}
+        <CardProposalView/>
+        {' '}
       </Route>
       {location.pathname.indexOf('/proposals') < 0 &&
         location.pathname.indexOf('/create/metadata') < 0 && <Footer />}

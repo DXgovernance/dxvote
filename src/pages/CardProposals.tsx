@@ -1,20 +1,33 @@
-import React from 'react'
-import { useContext } from 'contexts';
-import { Observer } from 'mobx-react-lite'
-import { useHistory } from 'react-router-dom';
+import { observer } from 'mobx-react'
+import { useContext } from '../contexts';
 
 
-
-const CardsProposals = Observer(() => {
+const CardProposalView = observer(() => {
   const {
-    context: { daoStore, configStore, providerStore },
+    context: {
+      providerStore,
+      daoStore,
+      configStore,
+      daoService,
+      ipfsService,
+      pinataService,
+    },
   } = useContext();
-  const history = useHistory();
-    return (
-        <div>
+  console.log(
+      providerStore,
+      daoStore,
+      configStore,
+      daoService,
+      ipfsService,
+      pinataService,
+  )
+  return (
+    <div>
+      Hi this is my first component
+    </div>
 
-        </div>
-    )
+  );
 })
 
-export default CardsProposals
+export default CardProposalView
+
