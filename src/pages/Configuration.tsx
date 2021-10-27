@@ -4,8 +4,8 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
 import { Row, Box, Question, Button } from '../components/common';
-import { useActiveWeb3React } from 'provider/providerHooks';
 import { injected } from 'provider/connectors';
+import { useWeb3React } from '@web3-react/core';
 
 const FormLabel = styled.label`
   padding: 10px 0px;
@@ -55,7 +55,8 @@ const ConfigPage = observer(() => {
       customRpcService,
     },
   } = useContext();
-  const { connector } = useActiveWeb3React();
+  const networkName = configStore.getActiveChainName();
+  const { connector } = useWeb3React();
 
   const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(
     etherscanService.auth
@@ -90,7 +91,7 @@ const ConfigPage = observer(() => {
 
   async function testApis() {
     await pinataService.isAuthenticated();
-    await etherscanService.isAuthenticated();
+    await etherscanService.isAuthenticated(networkName);
     await infuraService.isAuthenticated();
     await alchemyService.isAuthenticated();
     await customRpcService.isAuthenticated();

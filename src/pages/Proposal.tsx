@@ -16,16 +16,25 @@ import {
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
-import { BlockchainLink, Question, Box, Title } from '../components/common';
+import {
+  Box,
+  Title,
+  Question,
+  AmountBadge,
+  BlockchainLink,
+  HorizontalSeparator,
+} from '../components/common';
 import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
   bnum,
+  toPercentage,
   calculateStakes,
   formatBalance,
   denormalizeBalance,
 } from '../utils';
 import { ConfirmVoteModal } from 'components/ConfirmVoteModal';
+import CallDataInformation from 'components/CallDataInformation';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;
@@ -65,7 +74,7 @@ const SidebarDivider = styled.div`
 
 const SidebarRow = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   flex-direction: row;
   padding: 5px 0px;
 
@@ -96,15 +105,6 @@ const AmountInput = styled.input`
   padding: 0px 10px;
   margin: 5px;
   font-family: var(--roboto);
-`;
-
-const AmountBadge = styled.span`
-  background-color: ${props => props.color || 'inherit'};
-  border-radius: 50%;
-  color: white;
-  padding: 2px 6px;
-  text-align: center;
-  margin: 5px;
 `;
 
 const ActionButton = styled.div`
@@ -139,8 +139,69 @@ const ProposalHistoryEvent = styled.div`
   }
 `;
 
-const ProposalCallText = styled.span`
-  white-space: pre-line;
+const Vote = styled.div`
+  display: flex;
+  font-size: ${({ theme }) => theme.votes.fontSize};
+  justify-content: space-between;
+
+  > * {
+    margin-left: 4px;
+  }
+`;
+
+const Summary = styled.div``;
+const PositiveSummary = styled(Summary)`
+  color: ${({ theme }) => theme.votes.positive.color};
+`;
+const NegativeSummary = styled(Summary)`
+  color: ${({ theme }) => theme.votes.negative.color};
+`;
+
+const SummaryTotal = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+`;
+const SummaryDetails = styled.div`
+  font-size: 13px;
+  flex: 1;
+`;
+
+const ProposalDescription = styled.div`
+  margin: 0px 10px;
+  padding: 10px 0px;
+  flex-direction: column;
+  font-size: 14px;
+`;
+
+const Detail = styled.div`
+  display: flex;
+  align-items: baseline;
+  line-height: 20px;
+  align-content: center;
+  justify-items: center;
+  flex-wrap: no-wrap;
+  > * {
+    margin-right: 5px;
+  }
+`;
+
+const ActionArea = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TextCenter = styled.div`
+  text-align: center;
+`;
+
+const HistoryEventText = styled.span`
+  display: flex;
+  margin-right: 5px;
+  > * {
+    margin-right: 5px;
+  }
 `;
 
 const ProposalPage = observer(() => {
@@ -161,13 +222,6 @@ const ProposalPage = observer(() => {
   const votingMachines = networkContracts.votingMachines;
   const proposalId = useLocation().pathname.split('/')[3];
   const proposal = daoStore.getProposal(proposalId);
-
-  if (!proposal) history.push('/');
-
-  const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
-  const scheme = daoStore.getScheme(proposal.scheme);
-  const { dxdApproved, genApproved } = userStore.getUserInfo();
-  const { account } = providerStore.getActiveWeb3React();
   const [decision, setDecision] = React.useState(null);
   const [advancedCalls, setAdvancedCalls] = React.useState(false);
   const [votePercentage, setVotePercentage] = React.useState(0);
@@ -176,10 +230,20 @@ const ProposalPage = observer(() => {
     '## Getting proposal description from IPFS...'
   );
   const [proposalTitle, setProposalTitle] = React.useState(
-    proposal.title.length > 0
+    proposal?.title?.length > 0
       ? proposal.title
       : 'Getting proposal title from IPFS...'
   );
+
+  if (!proposal) {
+    history.push('/');
+    return null;
+  }
+
+  const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
+  const scheme = daoStore.getScheme(proposal.scheme);
+  const { dxdApproved, genApproved } = userStore.getUserInfo();
+  const { account } = providerStore.getActiveWeb3React();
 
   const votingMachineTokenName =
     votingMachines.gen && scheme.votingMachine === votingMachines.gen.address
@@ -216,20 +280,17 @@ const ProposalPage = observer(() => {
       ? daoStore.getRepAt(account, proposal.creationEvent.l2BlockNumber)
       : daoStore.getRepAt(account, proposal.creationEvent.l1BlockNumber);
 
-  const repPercentageAtCreation = userRepAtProposalCreation
-    .times(100)
-    .div(totalRepAtProposalCreation)
-    .toFixed(4);
+  const repPercentageAtCreation = toPercentage(
+    userRepAtProposalCreation.div(totalRepAtProposalCreation)
+  ).toFixed(2);
 
-  const positiveVotes = proposal.positiveVotes
-    .times('100')
-    .div(totalRepAtProposalCreation)
-    .toFixed(2);
+  const positiveVotes = toPercentage(
+    proposal.positiveVotes.div(totalRepAtProposalCreation)
+  ).toFixed(2);
 
-  const negativeVotes = proposal.negativeVotes
-    .times('100')
-    .div(totalRepAtProposalCreation)
-    .toFixed(2);
+  const negativeVotes = toPercentage(
+    proposal.negativeVotes.div(totalRepAtProposalCreation)
+  ).toFixed(2);
 
   const { status, boostTime, finishTime, pendingAction } =
     daoStore.getProposalStatus(proposalId);
@@ -274,20 +335,6 @@ const ProposalPage = observer(() => {
     scheme.type === 'WalletScheme'
       ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
       : bnum(0);
-
-  let proposalCallTexts = new Array(proposal.to.length);
-  for (var p = 0; p < proposal.to.length; p++) {
-    proposalCallTexts[p] = daoService.decodeWalletSchemeCall(
-      scheme.type === 'WalletScheme' &&
-        scheme.controllerAddress !== networkContracts.controller
-        ? scheme.address
-        : networkContracts.avatar,
-      proposal.to[p],
-      proposal.callData[p],
-      proposal.values[p],
-      advancedCalls
-    );
-  }
 
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
@@ -394,6 +441,23 @@ const ProposalPage = observer(() => {
     networkContracts.votingMachines.dxd &&
     networkContracts.votingMachines.dxd.address === votingMachineUsed;
 
+  const renderEvents = ({ text, textParams }) => {
+    let componentsList = [];
+    if (text.length === 1 && textParams.length === 0)
+      componentsList.push(<span>{text[0]}</span>);
+    else {
+      componentsList = text.map((phrase, key) => {
+        let components = [];
+        components.push(<span>{phrase}</span>);
+        if (textParams[key])
+          components.push(
+            <BlockchainLink text={textParams} toCopy={false} size="short" />
+          );
+        return components;
+      });
+    }
+    return componentsList;
+  };
   return (
     <ProposalInformationWrapper>
       <ProposalInfoSection>
@@ -416,6 +480,7 @@ const ProposalPage = observer(() => {
                   href={`https://ipfs.io/ipfs/${contentHash.decode(
                     proposal.descriptionHash
                   )}`}
+                  rel="noreferrer"
                 >
                   ipfs://{contentHash.decode(proposal.descriptionHash)}
                 </a>
@@ -440,24 +505,21 @@ const ProposalPage = observer(() => {
             )}
             <Question question="9" />
           </h2>
-          {proposalCallTexts.map((proposalCallText, i) => {
-            return (
-              <div key={'proposalCallText' + i}>
-                <strong>Call #{i + 1}</strong> -{' '}
-                <ProposalCallText
-                  dangerouslySetInnerHTML={{ __html: proposalCallText }}
-                />
-                {i < proposalCallTexts.length - 1 ? <hr /> : <div />}
-              </div>
-            );
-          })}
+          <CallDataInformation
+            advancedCalls={advancedCalls}
+            scheme={scheme}
+            proposal={proposal}
+            networkContracts={networkContracts}
+          />
         </ProposalInfoBox>
         <ProposalInfoBox style={{ marginTop: '15px' }}>
           <Title noMargin> History </Title>
           {proposalEvents.history.map((historyEvent, i) => {
             return (
               <ProposalHistoryEvent key={'proposalHistoryEvent' + i}>
-                <span> {historyEvent.text} </span>
+                <HistoryEventText>
+                  {renderEvents(historyEvent)}
+                </HistoryEventText>
                 <BlockchainLink
                   type="transaction"
                   size="short"
@@ -530,140 +592,128 @@ const ProposalPage = observer(() => {
 
         <SidebarDivider />
 
-        <SidebarRow
-          style={{
-            margin: '0px 10px',
-            padding: '10px 0px',
-            flexDirection: 'column',
-          }}
-        >
-          <span style={{ display: 'flex', height: '17px ' }}>
-            <strong>Proposer</strong>{' '}
-            <small>
-              <BlockchainLink type="user" text={proposal.proposer} toCopy />
-            </small>
-          </span>
-          <span>
-            {' '}
-            <strong>Scheme</strong> <small>{scheme.name}</small>
-          </span>
-          <span>
-            <strong>State in Voting Machine </strong>
-            <small>
-              {VotingMachineProposalState[proposal.stateInVotingMachine]}
-            </small>
-          </span>
-          <span>
-            <strong>State in Scheme </strong>
-            <small>{WalletSchemeProposalState[proposal.stateInScheme]}</small>
-          </span>
-          <span>
-            {' '}
-            <strong>Submitted Date</strong>{' '}
-            <small>
-              {moment
-                .unix(proposal.submittedTime.toNumber())
-                .format('MMMM Do YYYY, h:mm:ss')}
-            </small>{' '}
-          </span>
-          <span>
-            {' '}
-            <strong>Boost Date</strong>{' '}
-            <small>
-              {boostTime.toNumber() > 0
-                ? moment
-                    .unix(boostTime.toNumber())
-                    .format('MMMM Do YYYY, h:mm:ss')
-                : '-'}
-            </small>{' '}
-          </span>
-          <span>
-            {' '}
-            <strong>Finish Date</strong>{' '}
-            <small>
-              {moment
-                .unix(finishTime.toNumber())
-                .format('MMMM Do YYYY, h:mm:ss')}
-            </small>{' '}
-          </span>
-
-          {boostedVoteRequiredPercentage > 0 ? (
-            <span>
+        <SidebarRow>
+          <ProposalDescription>
+            <Detail>
+              <strong>Proposer</strong>{' '}
+              <small>
+                <BlockchainLink type="user" text={proposal.proposer} toCopy />
+              </small>
+            </Detail>
+            <Detail>
+              <strong>Scheme</strong> <small>{scheme.name}</small>
+            </Detail>
+            <Detail>
+              <strong>State in Voting Machine </strong>
+              <small>
+                {VotingMachineProposalState[proposal.stateInVotingMachine]}
+              </small>
+            </Detail>
+            <Detail>
+              <strong>State in Scheme </strong>
+              <small>{WalletSchemeProposalState[proposal.stateInScheme]}</small>
+            </Detail>
+            <Detail>
               {' '}
-              <strong> Required Boosted Vote: </strong>{' '}
-              <small>{boostedVoteRequiredPercentage}%</small>{' '}
-            </span>
-          ) : (
-            <div />
-          )}
+              <strong>Submitted Date</strong>{' '}
+              <small>
+                {moment
+                  .unix(proposal.submittedTime.toNumber())
+                  .format('MMMM Do YYYY, h:mm:ss')}
+              </small>{' '}
+            </Detail>
+            <Detail>
+              {' '}
+              <strong>Boost Date</strong>{' '}
+              <small>
+                {boostTime.toNumber() > 0
+                  ? moment
+                      .unix(boostTime.toNumber())
+                      .format('MMMM Do YYYY, h:mm:ss')
+                  : '-'}
+              </small>{' '}
+            </Detail>
+            <Detail>
+              {' '}
+              <strong>Finish Date</strong>{' '}
+              <small>
+                {moment
+                  .unix(finishTime.toNumber())
+                  .format('MMMM Do YYYY, h:mm:ss')}
+              </small>{' '}
+            </Detail>
+
+            {boostedVoteRequiredPercentage > 0 && (
+              <Detail>
+                {' '}
+                <strong> Required Boosted Vote: </strong>{' '}
+                <small>{boostedVoteRequiredPercentage}%</small>{' '}
+              </Detail>
+            )}
+          </ProposalDescription>
         </SidebarRow>
-
         <SidebarDivider />
-
         <SidebarRow>
           <strong>
             Votes <Question question="4" />
           </strong>
         </SidebarRow>
-        <SidebarRow style={{ margin: '0px 10px' }}>
-          <span style={{ width: '50%', textAlign: 'center', color: 'green' }}>
-            <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
-            {`${positiveVotes}%`}
-
-            <br />
-            {proposalEvents.votes &&
-              proposalEvents.votes.map(function (voteEvent, i) {
-                if (voteEvent.vote.toString() === '1')
-                  return (
-                    <small
-                      color="green"
-                      key={`voteUp${i}`}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                    >
-                      <BlockchainLink
-                        size="short"
-                        type="user"
-                        text={voteEvent.voter}
-                      />
+        <SidebarRow>
+          <PositiveSummary>
+            <SummaryTotal>
+              <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
+              {`${positiveVotes}%`}
+            </SummaryTotal>
+            <HorizontalSeparator />
+            <SummaryDetails>
+              {proposalEvents?.votes
+                .filter(voteEvent => voteEvent?.vote.toString() === '1')
+                .map((voteEvent, i) => (
+                  <Vote key={`vote-pos-${i}`}>
+                    <BlockchainLink
+                      size="short"
+                      type="user"
+                      text={voteEvent.voter}
+                    />
+                    <span>
                       {bnum(voteEvent.amount)
                         .times('100')
                         .div(totalRepAtProposalCreation)
                         .toFixed(2)}{' '}
                       %
-                    </small>
-                  );
-                else return undefined;
-              })}
-          </span>
-          <span style={{ width: '50%', textAlign: 'center', color: 'red' }}>
-            {`${negativeVotes}%`}
-            <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
-            <br />
-            {proposalEvents &&
-              proposalEvents.votes.map(function (voteEvent, i) {
-                if (voteEvent.vote.toString() === '2')
-                  return (
-                    <small
-                      color="red"
-                      key={`voteDown${i}`}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                    >
-                      <BlockchainLink
-                        size="short"
-                        type="user"
-                        text={voteEvent.voter}
-                      />
+                    </span>
+                  </Vote>
+                ))}
+            </SummaryDetails>
+          </PositiveSummary>
+          <NegativeSummary>
+            <SummaryTotal>
+              <AmountBadge color="red">{negativeVotesCount}</AmountBadge>
+              <span>{`${negativeVotes}%`}</span>
+            </SummaryTotal>
+            <HorizontalSeparator />
+            <SummaryDetails>
+              {proposalEvents?.votes
+                ?.filter(voteEvent => voteEvent.vote.toString() === '2')
+                .map((voteEvent, i) => (
+                  <Vote key={`vote-neg-${i}`}>
+                    <BlockchainLink
+                      size="short"
+                      type="user"
+                      text={voteEvent.voter}
+                    />
+                    <span>
                       {bnum(voteEvent.amount)
                         .times('100')
                         .div(totalRepAtProposalCreation)
                         .toNumber()
                         .toFixed(2)}{' '}
                       %
-                    </small>
-                  );
-                else return undefined;
-              })}
-          </span>
+                    </span>
+                  </Vote>
+                ))}
+            </SummaryDetails>
+          </NegativeSummary>
         </SidebarRow>
 
         {Number(repPercentageAtCreation) > 0 ? (
@@ -676,10 +726,12 @@ const ProposalPage = observer(() => {
           proposal.stateInVotingMachine === 4) &&
         votingParameters.votersReputationLossRatio.toNumber() > 0 &&
         finishTime.toNumber() > 0 ? (
-          <small>
-            Voter REP Loss Ratio:{' '}
-            {votingParameters.votersReputationLossRatio.toString()}%
-          </small>
+          <TextCenter>
+            <small>
+              Voter REP Loss Ratio:{' '}
+              {votingParameters.votersReputationLossRatio.toString()}%
+            </small>
+          </TextCenter>
         ) : (
           <div />
         )}
@@ -753,59 +805,66 @@ const ProposalPage = observer(() => {
             Stakes <Question question="5" />
           </strong>
         </SidebarRow>
-        <SidebarRow style={{ margin: '0px 10px' }}>
-          <span style={{ width: '50%', textAlign: 'center', color: 'green' }}>
-            <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
-            {formatBalance(proposal.positiveStakes).toString()}{' '}
-            {votingMachineTokenName}
-            <br />
-            {proposalEvents &&
-              proposalEvents.stakes.map(function (stakeEvent, i) {
-                if (stakeEvent.vote.toString() === '1')
-                  return (
-                    <small
-                      color="green"
+        <SidebarRow>
+          <PositiveSummary>
+            <SummaryTotal>
+              <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
+              {formatBalance(proposal.positiveStakes).toString()}{' '}
+              {votingMachineTokenName}
+            </SummaryTotal>
+            <HorizontalSeparator />
+            <SummaryDetails>
+              {proposalEvents &&
+                proposalEvents.stakes
+                  .filter(stakeEvent => stakeEvent?.vote?.toString() === '1')
+                  .map((stakeEvent, i) => (
+                    <Vote
                       key={`stakeUp${i}`}
-                      style={{ display: 'flex', alignItems: 'center' }}
+                      style={{ 'flex-direction': 'column' }}
                     >
                       <BlockchainLink
                         size="short"
                         type="user"
                         text={stakeEvent.staker}
                       />
-                      {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
-                      {votingMachineTokenName}
-                    </small>
-                  );
-                else return undefined;
-              })}
-          </span>
-          <span style={{ width: '50%', textAlign: 'center', color: 'red' }}>
-            {formatBalance(proposal.negativeStakes).toString()}{' '}
-            {votingMachineTokenName}
-            <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
-            <br />
-            {proposalEvents &&
-              proposalEvents.stakes.map(function (stakeEvent, i) {
-                if (stakeEvent.vote.toString() === '2')
-                  return (
-                    <small
-                      color="red"
+                      <span>
+                        {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
+                        {votingMachineTokenName}
+                      </span>
+                    </Vote>
+                  ))}
+            </SummaryDetails>
+          </PositiveSummary>
+
+          <NegativeSummary>
+            <SummaryTotal>
+              <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
+              {formatBalance(proposal.negativeStakes).toString()}{' '}
+              {votingMachineTokenName}
+            </SummaryTotal>
+            <HorizontalSeparator />
+            <SummaryDetails>
+              {proposalEvents &&
+                proposalEvents.stakes
+                  .filter(stakeEvent => stakeEvent?.vote?.toString() === '2')
+                  .map((stakeEvent, i) => (
+                    <Vote
                       key={`stakeDown${i}`}
-                      style={{ display: 'flex', alignItems: 'center' }}
+                      style={{ 'flex-direction': 'column' }}
                     >
                       <BlockchainLink
                         size="short"
                         type="user"
                         text={stakeEvent.staker}
                       />
-                      {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
-                      {votingMachineTokenName}
-                    </small>
-                  );
-                else return undefined;
-              })}
-          </span>
+                      <span>
+                        {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
+                        {votingMachineTokenName}
+                      </span>
+                    </Vote>
+                  ))}
+            </SummaryDetails>
+          </NegativeSummary>
         </SidebarRow>
 
         {stakedAmount.toNumber() > 0 ? (
@@ -824,13 +883,15 @@ const ProposalPage = observer(() => {
           proposal.stateInVotingMachine === 4) &&
         votingMachineTokenApproved.toString() === '0' ? (
           <SidebarRow>
-            <small>Approve {votingMachineTokenName} to stake</small>
-            <ActionButton
-              color="blue"
-              onClick={() => approveVotingMachineToken()}
-            >
-              Approve {votingMachineTokenName}
-            </ActionButton>
+            <ActionArea>
+              <small>Approve {votingMachineTokenName} to stake</small>
+              <ActionButton
+                color="blue"
+                onClick={() => approveVotingMachineToken()}
+              >
+                Approve {votingMachineTokenName}
+              </ActionButton>
+            </ActionArea>
           </SidebarRow>
         ) : account &&
           !finishTimeReached &&

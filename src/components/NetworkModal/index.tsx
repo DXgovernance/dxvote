@@ -2,13 +2,25 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import { Modal } from '../Modal';
 import Option from './Option';
 import { useContext } from 'contexts';
 import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
 
+import arbitrumIcon from '../../assets/images/arbitrum.png';
+import ethereumIcon from '../../assets/images/ethereum.svg';
+import xdaiIcon from '../../assets/images/xdai.svg';
+
+const iconsByChain = {
+  1: ethereumIcon,
+  4: ethereumIcon,
+  100: xdaiIcon,
+  42161: arbitrumIcon,
+  421611: arbitrumIcon,
+  1337: ethereumIcon,
+};
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
@@ -55,9 +67,9 @@ const NetworkModal = observer(() => {
   const {
     context: { modalStore, providerStore },
   } = useContext();
-  const { chainId, connector } = providerStore.getActiveWeb3React();
+  const { chainId, connector, deactivate } = providerStore.getActiveWeb3React();
   const rpcUrls = useRpcUrls();
-  const history = useHistory()
+  const history = useHistory();
   const [networkErrorMessage, setNetworkErrorMessage] = useState(false);
 
   const networkModalOpen = modalStore.networkModalVisible;
@@ -94,9 +106,10 @@ const NetworkModal = observer(() => {
         }
       }
     } else {
-      history.push(`/${chain.name}/proposals`);
-      window.location.reload();
+      deactivate();
     }
+
+    history.push(`/${chain.name}/proposals`);
   };
 
   // get networks user can switch to
@@ -109,7 +122,7 @@ const NetworkModal = observer(() => {
         <Option
           onClick={() => trySwitching(chain)}
           key={chain.name}
-          icon={chain.icon || null}
+          icon={iconsByChain[chain.id] || null}
           active={chain.id === chainId}
           header={chain.displayName}
         />

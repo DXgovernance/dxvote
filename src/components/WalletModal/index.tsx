@@ -11,7 +11,8 @@ import Link from '../../components/common/Link';
 import { injected, getWallets } from 'provider/connectors';
 import { useContext } from '../../contexts';
 import { isChainIdSupported } from '../../provider/connectors';
-import { useActiveWeb3React, useRpcUrls } from 'provider/providerHooks';
+import { useRpcUrls } from 'provider/providerHooks';
+import { useWeb3React } from '@web3-react/core';
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -99,7 +100,7 @@ const WalletModal = observer(() => {
     context: { modalStore },
   } = useContext();
   const { active, connector, error, activate, account, chainId } =
-    useActiveWeb3React();
+    useWeb3React();
   const rpcUrls = useRpcUrls();
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
   const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);

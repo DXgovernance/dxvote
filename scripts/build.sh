@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-SKIP_PREFLIGHT_CHECK=true npx react-app-rewired build
+export REACT_APP_GIT_SHA=`git rev-parse --short HEAD`
+SKIP_PREFLIGHT_CHECK=true npx react-scripts build

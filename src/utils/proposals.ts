@@ -5,6 +5,9 @@ import {
 } from './index';
 import moment from 'moment';
 
+// constant used to the initial order of the proposals (Any Status).
+export const QUEUED_PRIORITY_THRESHOLD = 10;
+
 export const isExpired = (proposal: Proposal): boolean => {
   return (
     proposal.stateInVotingMachine === VotingMachineProposalState.ExpiredInQueue
@@ -341,3 +344,8 @@ export const decodeProposalStatus = function (
       };
   }
 };
+
+//a: Proposal, b: Proposal but boostTIme is not in Proposal interface.
+//is it added in Cache?
+export const orderByNewestTimeToFinish = (a: any, b: any) =>
+  a.finishTime - b.finishTime;

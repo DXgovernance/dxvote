@@ -3,16 +3,7 @@ import contentHash from 'content-hash';
 import PromiEvent from 'promievent';
 import RootContext from '../contexts';
 import { ContractType } from '../stores/Provider';
-import {
-  BigNumber,
-  bnum,
-  ZERO_ADDRESS,
-  ANY_ADDRESS,
-  ERC20_TRANSFER_SIGNATURE,
-  ERC20_APPROVE_SIGNATURE,
-  MAX_UINT,
-  normalizeBalance,
-} from '../utils';
+import { BigNumber, MAX_UINT } from '../utils';
 
 export default class DaoService {
   context: RootContext;
@@ -41,115 +32,6 @@ export default class DaoService {
     return controller.methods
       .genericCall(to, callData, avatarAddress, value)
       .encodeABI();
-  }
-
-  decodeWalletSchemeCall(
-    from: string,
-    to: string,
-    data: string,
-    value: BigNumber,
-    fullDescription: boolean
-  ) {
-    const { abiService, providerStore, configStore } = this.context;
-    const { library } = providerStore.getActiveWeb3React();
-    const recommendedCalls = configStore.getRecommendedCalls();
-    let functionSignature = data.substring(0, 10);
-    const controllerCallDecoded = abiService.decodeCall(
-      ContractType.Controller,
-      data
-    );
-    let asset = ZERO_ADDRESS;
-    if (
-      controllerCallDecoded &&
-      controllerCallDecoded.function.name === 'genericCall'
-    ) {
-      to = controllerCallDecoded.args[0];
-      data = '0x' + controllerCallDecoded.args[1].substring(10);
-      value = bnum(controllerCallDecoded.args[3]);
-      functionSignature = controllerCallDecoded.args[1].substring(0, 10);
-    } else {
-      data = '0x' + data.substring(10);
-    }
-
-    if (
-      functionSignature === ERC20_TRANSFER_SIGNATURE ||
-      functionSignature === ERC20_APPROVE_SIGNATURE
-    ) {
-      asset = to;
-    }
-    const recommendedCallUsed = recommendedCalls.find(recommendedCall => {
-      return (
-        asset === recommendedCall.asset &&
-        (ANY_ADDRESS === recommendedCall.from ||
-          from === recommendedCall.from) &&
-        to === recommendedCall.to &&
-        functionSignature ===
-          library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
-      );
-    });
-
-    if (recommendedCallUsed) {
-      const callParameters = library.eth.abi.decodeParameters(
-        recommendedCallUsed.params.map(param => param.type),
-        data
-      );
-
-      if (callParameters.__length__) delete callParameters.__length__;
-
-      let decodedCallText = '';
-
-      if (
-        recommendedCallUsed.decodeText &&
-        recommendedCallUsed.decodeText.length > 0
-      ) {
-        decodedCallText = recommendedCallUsed.decodeText;
-        for (
-          let paramIndex = 0;
-          paramIndex < recommendedCallUsed.params.length;
-          paramIndex++
-        )
-          if (recommendedCallUsed.params[paramIndex].decimals)
-            decodedCallText = decodedCallText.replaceAll(
-              '[PARAM_' + paramIndex + ']',
-              '<italic>' +
-                normalizeBalance(
-                  callParameters[paramIndex],
-                  recommendedCallUsed.params[paramIndex].decimals
-                ) +
-                '</italic>'
-            );
-          else
-            decodedCallText = decodedCallText.replaceAll(
-              '[PARAM_' + paramIndex + ']',
-              '<italic>' + callParameters[paramIndex] + '</italic>'
-            );
-      }
-
-      if (fullDescription) {
-        return `<strong>Description</strong>:${decodedCallText}
-        <strong>To</strong>: ${recommendedCallUsed.toName} <small>${
-          recommendedCallUsed.to
-        }</small>
-        <strong>Function</strong>: ${
-          recommendedCallUsed.functionName
-        } <small>${library.eth.abi.encodeFunctionSignature(
-          recommendedCallUsed.functionName
-        )}</small>
-        <strong>Params</strong>: ${JSON.stringify(
-          Object.keys(callParameters).map(
-            paramIndex => callParameters[paramIndex]
-          )
-        )}
-        <strong>Data</strong>: ${data} `;
-      } else {
-        return decodedCallText;
-      }
-    } else {
-      return `<strong>From</strong>: ${from}
-      <strong>To</strong>: ${to}
-      <strong>Data</strong>: 0x${data.substring(10)}
-      <strong>Value</strong>: ${normalizeBalance(bnum(value))}`;
-    }
   }
 
   createProposal(
@@ -227,6 +109,66 @@ export default class DaoService {
         ),
         '0'
       );
+    } else if (schemeType === 'SchemeRegistrar') {
+      // function proposeScheme(
+      //     Avatar _avatar,
+      //     address _scheme,
+      //     bytes32 _parametersHash,
+      //     bytes4 _permissions,
+      //     string memory _descriptionHash
+      // )
+      if (proposalData.register) {
+        return providerStore.sendRawTransaction(
+          providerStore.getActiveWeb3React(),
+          scheme,
+          library.eth.abi.encodeFunctionCall(
+            {
+              name: 'proposeScheme',
+              type: 'function',
+              inputs: [
+                { type: 'address', name: '_avatar' },
+                { type: 'address', name: '_scheme' },
+                { type: 'bytes32', name: '_parametersHash' },
+                { type: 'bytes4', name: '_permissions' },
+                { type: 'string', name: '_descriptionHash' },
+              ],
+            },
+            [
+              networkContracts.avatar,
+              proposalData.schemeAddress,
+              proposalData.parametersHash,
+              proposalData.permissions,
+              contentHash.decode(proposalData.descriptionHash),
+            ]
+          ),
+          '0'
+        );
+        // function proposeToRemoveScheme(
+        //   Avatar _avatar, address _scheme, string memory _descriptionHash
+        // )
+      } else {
+        return providerStore.sendRawTransaction(
+          providerStore.getActiveWeb3React(),
+          scheme,
+          library.eth.abi.encodeFunctionCall(
+            {
+              name: 'proposeToRemoveScheme',
+              type: 'function',
+              inputs: [
+                { type: 'address', name: '_avatar' },
+                { type: 'address', name: '_scheme' },
+                { type: 'string', name: '_descriptionHash' },
+              ],
+            },
+            [
+              networkContracts.avatar,
+              proposalData.schemeAddress,
+              contentHash.decode(proposalData.descriptionHash),
+            ]
+          ),
+          '0'
+        );
+      }
     } else {
       return providerStore.sendTransaction(
         providerStore.getActiveWeb3React(),

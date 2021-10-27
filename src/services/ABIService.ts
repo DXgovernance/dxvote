@@ -1,4 +1,5 @@
 import { Interface } from 'ethers/utils';
+import { ContractType } from 'stores/Provider';
 import RootContext from '../contexts';
 
 export const schema = {
@@ -23,16 +24,20 @@ export default class ABIService {
     this.context = context;
   }
 
-  getAbi(contractType: string) {
+  getAbi(contractType: ContractType) {
     return schema[contractType];
   }
-
-  decodeCall(contractType: string, data: string) {
+  /**
+   * @param data Transaction call data
+   * @param contractType e.g. controller/avatar/votingMachine etc
+   * @returns
+   */
+  decodeCall(data: string, contractType?: ContractType, ABI?: any) {
     const { providerStore } = this.context;
+    let contractInterface = new Interface(ABI || this.getAbi(contractType));
 
     const { library } = providerStore.getActiveWeb3React();
 
-    const contractInterface = new Interface(this.getAbi(contractType));
     const functionSignature = data.substring(0, 10);
     for (const functionName in contractInterface.functions) {
       if (

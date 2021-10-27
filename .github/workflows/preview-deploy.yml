@@ -1,45 +1,44 @@
-name: IPFS Preview Deploy
+name: IPFS Deploy
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows: ["Code Build"]
+    types:
+      - completed
 
 jobs:
-  develop-ci:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [14.17.6]
     steps:
-      - name: Inject slug variables
-        uses: rlespinasse/github-slug-action@3.5.1
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Get build workflow details
+        uses: potiuk/get-workflow-origin@v1_3
+        id: source-run-info
         with:
-          node-version: ${{ matrix.node-version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
 
       - name: Start Deployment
         uses: bobheadxi/deployments@v0.6.0
         id: deployment
+        if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote'
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: ${{ env.GITHUB_HEAD_REF_SLUG_URL || env.GITHUB_REF_SLUG_URL }}
-          ref: ${{ github.head_ref }}
+          env: ${{ steps.source-run-info.outputs.sourceHeadBranch }}
+          no_override: false
+          ref: ${{ steps.source-run-info.outputs.sourceHeadBranch }}
 
-      - name: Install dependencies
-        run: yarn
-
-      - name: Build Dapp
-        run: CI=false yarn build
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: preview-build.yml
+          workflow_conclusion: success
+          name: ${{ steps.source-run-info.outputs.targetCommitSha }}
+          path: 'build'
 
       - name: Deploy to IPFS
         uses: web3-storage/add-to-web3@v1
@@ -47,25 +46,37 @@ jobs:
         with:
           web3_token: ${{ secrets.WEB3_STORAGE_TOKEN }}
           path_to_add: 'build'
-
-      - name: Update DNS Record for Develop Branch
+ 
+      - name: Update DNS record for Develop branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink.develop --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        if: github.ref == 'refs/heads/develop'
+        if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote' && steps.source-run-info.outputs.sourceHeadBranch == 'develop'
 
-      - name: Update DNS Record for Master Branch
+      - name: Update DNS record for Master branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        if: github.ref == 'refs/heads/master'
+        if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote' && steps.source-run-info.outputs.sourceHeadBranch == 'master'
 
       - name: Update Deployment Status
         uses: bobheadxi/deployments@v0.6.0
-        if: always()
+        if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote'
         with:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: 'https://${{ steps.web3.outputs.cid }}.ipfs.dweb.link'
+
+      - name: Create comment with status
+        uses: peter-evans/create-or-update-comment@v1
+        if: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+        with:
+          issue-number: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+          body: |
+            ✔️ Preview deployment is ready!
+
+            🔨 Explore the source changes: ${{ steps.source-run-info.outputs.mergeCommitSha }}
+
+            😎 Browse the preview: https://${{ steps.web3.outputs.cid }}.ipfs.dweb.link

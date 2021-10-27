@@ -8,8 +8,9 @@ import IPFSService from '../services/IPFSService';
 import PinataService from '../services/PinataService';
 import EtherscanService from '../services/EtherscanService';
 import CoingeckoService from '../services/CoingeckoService';
-import InfuraService from 'services/InfuraService';
-import AlchemyService from 'services/AlchemyService';
+import InfuraService from '../services/InfuraService';
+import AlchemyService from '../services/AlchemyService';
+import CustomRpcService from '../services/CustomRpcService';
 
 import ProviderStore from '../stores/Provider';
 import TransactionStore from '../stores/Transaction';
@@ -18,7 +19,7 @@ import ConfigStore from '../stores/ConfigStore';
 import DaoStore from '../stores/DaoStore';
 import UserStore from '../stores/UserStore';
 import BlockchainStore from '../stores/BlockchainStore';
-import CustomRpcService from 'services/CustomRpcService';
+import NotificationStore from '../stores/NotificationStore';
 
 /*
 https://reactjs.org/docs/context.html#reactcreatecontext
@@ -40,6 +41,7 @@ export default class RootContext {
   configStore: ConfigStore;
   daoStore: DaoStore;
   userStore: UserStore;
+  notificationStore: NotificationStore;
   blockchainStore: BlockchainStore;
 
   abiService: ABIService;
@@ -61,6 +63,7 @@ export default class RootContext {
     this.configStore = new ConfigStore(this);
     this.daoStore = new DaoStore(this);
     this.userStore = new UserStore(this);
+    this.notificationStore = new NotificationStore(this);
     this.blockchainStore = new BlockchainStore(this);
 
     this.abiService = new ABIService(this);
@@ -74,6 +77,15 @@ export default class RootContext {
     this.infuraService = new InfuraService(this);
     this.alchemyService = new AlchemyService(this);
     this.customRpcService = new CustomRpcService(this);
+  }
+
+  reset() {
+    this.notificationStore.reset();
+    this.transactionStore.reset();
+    this.modalStore.reset();
+    this.daoStore.reset();
+    this.userStore.reset();
+    this.blockchainStore.reset();
   }
 }
 

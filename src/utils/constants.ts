@@ -1,7 +1,4 @@
 import { ChainConfig } from 'types';
-import arbitrumIcon from 'assets/images/arbitrum.png';
-import ethereumIcon from 'assets/images/ethereum.svg';
-import xdaiIcon from 'assets/images/xdai.svg';
 
 export const MAX_UINT =
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
@@ -28,7 +25,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://etherscan.io',
-    icon: ethereumIcon,
+    api: 'https://api.etherscan.io',
   },
   {
     id: 4,
@@ -41,7 +38,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://rinkeby.etherscan.io/',
-    icon: ethereumIcon,
+    api: 'https://api-rinkeby.etherscan.io/',
   },
   {
     id: 100,
@@ -54,7 +51,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://blockscout.com/xdai/mainnet/',
-    icon: xdaiIcon,
+    api: 'https://blockscout.com/xdai/mainnet/api',
   },
   {
     id: 42161,
@@ -67,7 +64,7 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://arbiscan.io/',
-    icon: arbitrumIcon,
+    api: 'https://api.arbiscan.io/',
   },
   {
     id: 421611,
@@ -80,13 +77,12 @@ export const NETWORKS: ChainConfig[] = [
       decimals: 18,
     },
     blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
-    icon: arbitrumIcon,
   },
   {
     id: 1337,
     name: 'localhost',
     displayName: 'Localhost',
-    defaultRpc: `http://localhost:8545`,
+    defaultRpc: `http://127.0.0.1:8545`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -109,6 +105,16 @@ export const DEFAULT_RPC_URLS: Record<
   return acc;
 }, {});
 
+export const NETWORK_EXPLORERS: { [name: string]: string } = NETWORKS.reduce(
+  (acc, network) => {
+    if (network?.blockExplorer) {
+      acc[network.name] = network.blockExplorer;
+    }
+    return acc;
+  },
+  {}
+);
+
 export const NETWORK_ASSET_SYMBOL: Record<
   ChainConfig['name'],
   ChainConfig['nativeAsset']['symbol']
@@ -130,3 +136,13 @@ export const ALCHEMY_NETWORK_URLS = {
   '42161': 'arb-mainnet.g.alchemy.com',
   '421611': 'arb-rinkeby.g.alchemy.com',
 };
+
+export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(
+  (acc, network) => {
+    if (network?.blockExplorer) {
+      acc[network.name] = network.api;
+    }
+    return acc;
+  },
+  {}
+);
