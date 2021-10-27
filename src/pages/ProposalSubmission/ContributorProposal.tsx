@@ -18,6 +18,9 @@ import {
   formatNumberValue,
   denormalizeBalance,
   bnum,
+  encodeRepMint,
+  encodeErc20Approval,
+  encodeDxdVestingCreate,
 } from '../../utils';
 import { useTokenService } from 'hooks/useTokenService';
 
@@ -232,54 +235,26 @@ export const ContributorProposalPage = observer(() => {
       );
 
       // Encode rep mint call
-      const repFunctionEncoded = library.eth.abi.encodeFunctionSignature(
-        'mintReputation(uint256,address,address)'
+      const repCallData = encodeRepMint(
+        library,
+        repReward,
+        account,
+        contracts.avatar
       );
-
-      const repParamsEncoded = library.eth.abi
-        .encodeParameters(
-          ['uint256', 'address', 'address'],
-          [repReward, account, contracts.avatar]
-        )
-        .substring(2);
-
-      const repCallData = repFunctionEncoded + repParamsEncoded;
 
       // Encode DXD approval
-      const dxdApprovalFunctionEncoded =
-        library.eth.abi.encodeFunctionSignature('approve(address,uint256)');
-
-      const dxdApprovalParamsEncoded = library.eth.abi
-        .encodeParameters(
-          ['address', 'uint256'],
-          [contracts.utils.dxdVestingFactory, dxdAmount]
-        )
-        .substring(2);
-
-      const dxdApprovalCallData =
-        dxdApprovalFunctionEncoded + dxdApprovalParamsEncoded;
-
-      // Encode vesting contract call
-      const vestingFunctionEncoded = library.eth.abi.encodeFunctionSignature(
-        'create(address,uint256,uint256,uint256,uint256)'
+      const dxdApprovalCallData = encodeErc20Approval(
+        library,
+        contracts.utils.dxdVestingFactory,
+        dxdAmount
       );
 
-      console.log(moment().unix());
-      console.log(moment.duration(1, 'years').asSeconds());
-      const vestingParamsEncoded = library.eth.abi
-        .encodeParameters(
-          ['address', 'uint256', 'uint256', 'uint256', 'uint256'],
-          [
-            account,
-            moment().unix(),
-            moment.duration(1, 'years').asSeconds(),
-            moment.duration(2, 'years').asSeconds(),
-            dxdAmount,
-          ]
-        )
-        .substring(2);
-
-      const vestingCallData = vestingFunctionEncoded + vestingParamsEncoded;
+      // Encode vesting contract call
+      const vestingCallData = encodeDxdVestingCreate(
+        library,
+        account,
+        dxdAmount
+      );
 
       // Need additional token transfer on anything other than xdai
       const proposalData = {
