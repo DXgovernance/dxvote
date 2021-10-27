@@ -17,7 +17,13 @@ export default class ModalStore {
       networkModalVisible: observable,
       toggleNetworkModal: action,
       setNetworkModalVisible: action,
+      reset: action,
     });
+  }
+
+  reset() {
+    this.walletModalVisible = false;
+    this.networkModalVisible = false;
   }
 
   @action toggleWalletModal() {

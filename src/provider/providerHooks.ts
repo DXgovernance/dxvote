@@ -40,18 +40,12 @@ export function useEagerConnect() {
         setTried(true);
       }
 
-      if (isAuthorized) {
+      if (isAuthorized || (isMobile && window.ethereum)) {
         activate(injected, undefined, true).catch(() => {
           setTried(true);
         });
       } else {
-        if (isMobile && window.ethereum) {
-          activate(injected, undefined, true).catch(() => {
-            setTried(true);
-          });
-        } else {
-          setTried(true);
-        }
+        setTried(true);
       }
     };
 
@@ -68,51 +62,6 @@ export function useEagerConnect() {
   }, [active]);
 
   return tried;
-}
-
-/**
- * Use for network and injected - logs user in
- * and out after checking what network they're on
- */
-export function useInactiveListener(suppress = false) {
-  const { active, error, activate } = useWeb3React();
-
-  useEffect(() => {
-    const { ethereum } = window;
-
-    if (ethereum && ethereum.on && !active && !error && !suppress) {
-      const handleChainChanged = () => {
-        // eat errors
-        activate(injected, undefined, true).catch(() => {});
-      };
-
-      const handleAccountsChanged = accounts => {
-        if (accounts.length > 0) {
-          // eat errors
-          activate(injected, undefined, true).catch(() => {});
-        }
-      };
-
-      const handleNetworkChanged = () => {
-        // eat errors
-        activate(injected, undefined, true).catch(() => {});
-      };
-
-      ethereum.on('chainChanged', handleChainChanged);
-      ethereum.on('networkChanged', handleNetworkChanged);
-      ethereum.on('accountsChanged', handleAccountsChanged);
-
-      return () => {
-        if (ethereum.removeListener) {
-          ethereum.removeListener('chainChanged', handleChainChanged);
-          ethereum.removeListener('networkChanged', handleNetworkChanged);
-          ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        }
-      };
-    }
-
-    return () => {};
-  }, [active, error, suppress, activate]);
 }
 
 export function useRpcUrls() {

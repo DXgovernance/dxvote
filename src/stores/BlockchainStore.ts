@@ -20,7 +20,15 @@ export default class BlockchainStore {
       initialLoadComplete: observable,
       updateStore: action,
       fetchData: action,
+      reset: action,
     });
+  }
+
+  reset() {
+    this.activeFetchLoop = false;
+    this.initialLoadComplete = false;
+    this.contractStorage = {};
+    this.eventsStorage = {};
   }
 
   reduceMulticall(
@@ -147,11 +155,10 @@ export default class BlockchainStore {
 
   async fetchData(web3React: Web3ReactContextInterface, reset: boolean) {
     if (
-      !this.activeFetchLoop ||
-      (reset &&
-        web3React &&
-        web3React.active &&
-        isChainIdSupported(web3React.chainId))
+      (!this.activeFetchLoop || reset) &&
+      web3React &&
+      web3React.active &&
+      isChainIdSupported(web3React.chainId)
     ) {
       const {
         providerStore,
@@ -283,7 +290,7 @@ export default class BlockchainStore {
         notificationStore.setFirstLoadComplete();
         this.activeFetchLoop = false;
       } catch (error) {
-        console.error((error as Error).message);
+        console.error(error);
         if (!this.initialLoadComplete) {
           notificationStore.setGlobalError(true, (error as Error).message);
         }

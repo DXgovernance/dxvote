@@ -1,61 +1,33 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import {
   DEFAULT_ETH_CHAIN_ID,
   getChains,
   getNetworkConnector,
 } from 'provider/connectors';
-import {
-  useEagerConnect,
-  useInactiveListener,
-  useRpcUrls,
-} from 'provider/providerHooks';
+import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { useContext } from 'contexts';
 import { useInterval, usePrevious } from 'utils';
-
-const BlurWrapper = styled.div`
-  filter: blur(1px);
-`;
-
-const OverBlurModal = styled.div`
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
-
-  .connectModalContent {
-    background-color: #fefefe;
-    max-width: 350px;
-    text-align: center;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 4px;
-  }
-`;
+import { InjectedConnector } from '@web3-react/injected-connector';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
-  const {
-    context: { providerStore, blockchainStore, userStore },
-  } = useContext();
+  const { context } = useContext();
+  const { providerStore, blockchainStore, userStore } = context;
+
   const location = useLocation();
-  const rpcUrls = useRpcUrls();
   const history = useHistory();
+  const rpcUrls = useRpcUrls();
 
   const web3Context = useWeb3React();
   const {
     active: networkActive,
     error: networkError,
     chainId,
+    account,
+    connector,
     activate,
   } = web3Context;
 
@@ -89,56 +61,45 @@ const Web3ReactManager = ({ children }) => {
         );
       });
     }
-  }, [triedEager, networkActive, activate, rpcUrls]);
-
-  function switchChainAndReload(chainId: number) {
-    const chains = getChains(rpcUrls);
-    const chain = chains.find(chain => chain.id == chainId);
-
-    const urlNetworkName = location.pathname.split('/')[1];
-    if (chain && chain.name != urlNetworkName) {
-      history.push(`/${chain.name}/proposals`);
-    }
-
-    window.location.reload();
-  }
-
-  try {
-    // @ts-ignore
-    ethereum.on('chainChanged', chainId => {
-      // Handle the new chain.
-      // Correctly handling chain changes can be complicated.
-      // We recommend reloading the page unless you have good reason not to.
-      // providerStore.setWeb3Context(web3ContextInjected);
-      // blockchainStore.fetchData(providerStore.getActiveWeb3React(), true);
-      switchChainAndReload(chainId);
-    });
-
-    // @ts-ignore
-    ethereum.on('accountsChanged', accounts => {
-      // Handle the new accounts, or lack thereof.
-      // "accounts" will always be an array, but it can be empty.
-      // blockchainStore.fetchData(web3React, false);
-      if (networkActive) userStore.update(providerStore.getActiveWeb3React());
-    });
-  } catch (error) {
-    console.debug(
-      '[Web3ReactManager] Render: Ethereum Provider not available.'
-    );
-  }
+  }, [triedEager, networkActive, activate, rpcUrls, location]);
 
   const prevChainId = usePrevious(chainId);
+  const prevAccount = usePrevious(account);
   useEffect(() => {
-    if (
-      (prevChainId && !chainId) ||
-      (prevChainId && chainId && prevChainId !== chainId)
-    ) {
-      switchChainAndReload(chainId);
+    // Listen to chain / account changes and reset the app
+    if (prevChainId !== chainId || prevAccount !== account) {
+      try {
+        context.reset();
+        blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
+      } catch (e) {
+        // Fallback if something goes wrong
+        window.location.reload();
+      }
     }
-  }, [chainId, prevChainId]);
+  }, [chainId, prevChainId, account, prevAccount]);
 
-  // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
-  useInactiveListener(!triedEager);
+  // Setup listener to handle injected wallet events
+  useEffect(() => {
+    if (!window.ethereum) return null;
+
+    const handleChainChange = (chainId: string) => {
+      const chains = getChains();
+      const chain = chains.find(
+        chain => `0x${chain.id.toString(16)}` == chainId
+      );
+
+      // If currently connected to an injected wallet, keep synced with it
+      if (connector instanceof InjectedConnector) {
+        history.push(`/${chain.name}/proposals`);
+      }
+    };
+
+    window.ethereum.on('chainChanged', handleChainChange);
+
+    return () => {
+      window.ethereum?.removeListener('accountsChanged', handleChainChange);
+    };
+  }, [location, connector]);
 
   // Fetch user blockchain data on an interval using current params
   useInterval(
@@ -160,27 +121,7 @@ const Web3ReactManager = ({ children }) => {
     console.debug(
       '[Web3ReactManager] Render: Network error, showing modal error.'
     );
-    return (
-      <div>
-        <OverBlurModal>
-          <div className="connectModalContent">Ups, something broke :(</div>
-        </OverBlurModal>
-        <BlurWrapper>{children}</BlurWrapper>
-      </div>
-    );
-  } else if (prevChainId && chainId && prevChainId !== chainId) {
-    // Stop rendering if networks are being switched
-    console.debug('[Web3ReactManager] Render: Switching network', {
-      chainId,
-      prevChainId,
-    });
     return null;
-  } else if (!chainId) {
-    console.debug('[Web3ReactManager] Render: No chain ID');
-    return null;
-  } else if (!networkActive) {
-    console.debug('[Web3ReactManager] Render: No active network');
-    return children;
   } else {
     console.debug(
       '[Web3ReactManager] Render: Active network, render children',
