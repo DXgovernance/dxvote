@@ -212,6 +212,10 @@ export const ContributorProposalPage = observer(() => {
     }
   }, [confirm]);
 
+  const calculateDiscountedValue = (amount, discount) => {
+    return amount * discount;
+  };
+
   const submitProposal = async () => {
     try {
       setLoading(true);
@@ -219,12 +223,18 @@ export const ContributorProposalPage = observer(() => {
       const hash = await ipfsService.uploadProposalMetadata(
         localStorage.getItem('dxvote-newProposal-title'),
         localStorage.getItem('dxvote-newProposal-description') +
-          `${'$' + levels[selectedLevel]?.stable * discount} \n ${(
-            (levels[selectedLevel]?.dxd / dxdAth) *
+          `${
+            '$' +
+            calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
+          } \n ${calculateDiscountedValue(
+            levels[selectedLevel]?.dxd / dxdAth,
             discount
-          ).toFixed(2)} DXD vested for 2 years and 1 year cliff \n ${
-            levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)
-          }% - ${repReward} REP \n `,
+          ).toFixed(
+            2
+          )} DXD vested for 2 years and 1 year cliff \n ${calculateDiscountedValue(
+            levels[selectedLevel]?.rep,
+            discount
+          )}% - ${repReward} REP \n `,
         [
           'Contributor Proposal',
           `Level ${selectedLevel + 1}`,
@@ -268,7 +278,11 @@ export const ContributorProposalPage = observer(() => {
 
         value: [
           0,
-          denormalizeBalance(bnum(levels[selectedLevel]?.stable * discount)),
+          denormalizeBalance(
+            bnum(
+              calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
+            )
+          ),
           0,
           0,
         ],
@@ -313,14 +327,16 @@ export const ContributorProposalPage = observer(() => {
   const ModalContent = () => (
     <ModalContentWrap>
       <b>Payment:</b>
-      <Values>${levels[selectedLevel]?.stable * discount}</Values>
+      <Values>
+        ${calculateDiscountedValue(levels[selectedLevel]?.stable, discount)}
+      </Values>
       <Values>
         {((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(2)} DXD
         vested for 2 years and 1 year cliff
       </Values>
       <Values>
-        {levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}% - {repReward}{' '}
-        REP
+        {calculateDiscountedValue(levels[selectedLevel]?.rep, discount)}% -{' '}
+        {repReward} REP
       </Values>
       <WarningText>
         {periodEnd
@@ -353,7 +369,13 @@ export const ContributorProposalPage = observer(() => {
             </div>
             {selectedLevel >= 0 ? (
               <Values>
-                <Value>${levels[selectedLevel]?.stable * discount}</Value>
+                <Value>
+                  $
+                  {calculateDiscountedValue(
+                    levels[selectedLevel]?.stable,
+                    discount
+                  )}
+                </Value>
                 <Value>
                   {dxdAth ? (
                     ((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(
