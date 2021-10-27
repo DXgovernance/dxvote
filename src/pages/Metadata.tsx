@@ -52,11 +52,23 @@ const Editor = styled(MDEditor)`
   overflow: scroll;
 `;
 
-const Preview = styled(MDEditor.Markdown)`
+const PreviewWrapper = styled.div`
   width: 50%;
+  box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0),
+    0 1px 1px rgba(16, 22, 26, 0.2);
+  border-radius: 3px;
+`;
+const PreviewHeader = styled.div`
+  height: 28px;
+  background-color: #fbfbfb;
+  border-radius: 3px 3px 0 0;
+  padding-left: 10px;
+`;
+
+const Preview = styled(MDEditor.Markdown)`
   background-color: white;
   border: 1px solid #10161a33;
-  border-radius: 3px;
+  border-radius: 0 0 3px 3px;
   padding: 20px 10px;
   height: 80vh;
   overflow: scroll;
@@ -161,7 +173,10 @@ export const CreateMetadataPage = observer(() => {
                 commands.checkedListCommand,
               ]}
             />
-            <Preview source={descriptionText} />
+            <PreviewWrapper>
+              <PreviewHeader>Preview</PreviewHeader>
+              <Preview source={descriptionText} />
+            </PreviewWrapper>
           </MarkdownWrapper>
         </ProposalsWrapper>
       ) : (
