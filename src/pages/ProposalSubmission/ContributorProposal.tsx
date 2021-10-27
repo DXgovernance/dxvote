@@ -19,6 +19,7 @@ import {
   denormalizeBalance,
   bnum,
 } from '../../utils';
+import { useTokenService } from 'hooks/useTokenService';
 
 const VerticalLayout = styled.div`
   display: flex;
@@ -111,7 +112,6 @@ export const ContributorProposalPage = observer(() => {
   const {
     context: {
       configStore,
-      coingeckoService,
       daoStore,
       daoService,
       providerStore,
@@ -130,7 +130,6 @@ export const ContributorProposalPage = observer(() => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [periodEnd, setPeriodEnd] = useState(false);
   // Amounts
-  const [dxdAth, setDxdAth] = useState(null);
   const [dxdAmount, setDxdAmount] = useState(null);
   const [repReward, setRepReward] = useState(null);
   const [discount, setDiscount] = useState(1);
@@ -138,6 +137,8 @@ export const ContributorProposalPage = observer(() => {
   const [selectedLevel, setSelectedLevel] = useState(-1);
   const [percentage, setPercentage] = useState(null);
   const [trialPeriod, setTrialPeriod] = useState(false);
+
+  const { tokenAth: dxdAth } = useTokenService('dxdao');
 
   const proposalType = configStore
     .getProposalTypes()
@@ -151,15 +152,6 @@ export const ContributorProposalPage = observer(() => {
 
   const contracts = configStore.getNetworkContracts();
   const tokens = configStore.getTokensOfNetwork();
-
-  const getDXD = async () => {
-    const dxdData = await coingeckoService.getDxdData();
-    setDxdAth(dxdData['market_data'].ath.usd);
-  };
-
-  useEffect(() => {
-    getDXD();
-  }, []);
 
   useEffect(() => {
     setDiscount(
