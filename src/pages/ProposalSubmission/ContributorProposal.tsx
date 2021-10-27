@@ -33,7 +33,7 @@ const VerticalLayout = styled.div`
   flex-wrap: wrap;
 `;
 
-const ModalContent = styled.div`
+const ModalContentWrap = styled.div`
   ${({ theme }) => theme.flexColumnWrap}
   margin: 16px 0px;
   padding: 0 50px;
@@ -310,6 +310,26 @@ export const ContributorProposalPage = observer(() => {
 
   const header = <div>Submit worker proposal</div>;
 
+  const ModalContent = () => (
+    <ModalContentWrap>
+      <b>Payment:</b>
+      <Values>${levels[selectedLevel]?.stable * discount}</Values>
+      <Values>
+        {((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(2)} DXD
+        vested for 2 years and 1 year cliff
+      </Values>
+      <Values>
+        {levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}% - {repReward}{' '}
+        REP
+      </Values>
+      <WarningText>
+        {periodEnd
+          ? 'If this is the second half of your payment then there is a chance DXD ATH changed and double check REP amount is accurate. If something is wrong please override the automatic values.'
+          : null}
+      </WarningText>
+    </ModalContentWrap>
+  );
+
   return (
     <VerticalLayout>
       <NavigationBar>
@@ -412,23 +432,7 @@ export const ContributorProposalPage = observer(() => {
         onCancel={() => setConfirm(false)}
         onConfirm={() => submitProposal()}
       >
-        <ModalContent>
-          <b>Payment:</b>
-          <Values>${levels[selectedLevel]?.stable * discount}</Values>
-          <Values>
-            {((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(2)} DXD
-            vested for 2 years and 1 year cliff
-          </Values>
-          <Values>
-            {levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}% -{' '}
-            {repReward} REP
-          </Values>
-          <WarningText>
-            {periodEnd
-              ? 'If this is the second half of your payment then there is a chance DXD ATH changed and double check REP amount is accurate. If something is wrong please override the automatic values.'
-              : null}
-          </WarningText>
-        </ModalContent>
+        <ModalContent />
       </Modal>
     </VerticalLayout>
   );
