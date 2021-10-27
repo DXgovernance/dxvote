@@ -6,18 +6,19 @@ export default class EtherscanService {
   context: RootContext;
   auth: Boolean = false;
   etherscanAPIKey: string;
+  account: string;
 
   constructor(context: RootContext) {
     this.context = context;
     this.etherscanAPIKey = this.context.configStore.getLocalConfig().etherscan;
+    this.account = String(this.context.providerStore.getActiveWeb3React());
   }
 
   async isAuthenticated(networkName: string) {
-    const { account } = this.context.providerStore.getActiveWeb3React();
     const params = new URLSearchParams({
       module: 'account',
       action: 'balance',
-      address: account,
+      address: this.account,
       apikey: appendEthAPIKey(networkName, this.etherscanAPIKey),
       tag: 'latest',
     });
