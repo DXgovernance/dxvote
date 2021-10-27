@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import {
   DEFAULT_ETH_CHAIN_ID,
@@ -9,6 +9,7 @@ import {
 import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { useContext } from 'contexts';
 import { useInterval, usePrevious } from 'utils';
+import { InjectedConnector } from '@web3-react/injected-connector';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -17,6 +18,7 @@ const Web3ReactManager = ({ children }) => {
   const { providerStore, blockchainStore, userStore } = context;
 
   const location = useLocation();
+  const history = useHistory();
   const rpcUrls = useRpcUrls();
 
   const web3Context = useWeb3React();
@@ -25,6 +27,7 @@ const Web3ReactManager = ({ children }) => {
     error: networkError,
     chainId,
     account,
+    connector,
     activate,
   } = web3Context;
 
@@ -58,7 +61,7 @@ const Web3ReactManager = ({ children }) => {
         );
       });
     }
-  }, [triedEager, networkActive, activate, rpcUrls]);
+  }, [triedEager, networkActive, activate, rpcUrls, location]);
 
   const prevChainId = usePrevious(chainId);
   const prevAccount = usePrevious(account);
@@ -74,6 +77,29 @@ const Web3ReactManager = ({ children }) => {
       }
     }
   }, [chainId, prevChainId, account, prevAccount]);
+
+  // Setup listener to handle injected wallet events
+  useEffect(() => {
+    if (!window.ethereum) return null;
+
+    const handleChainChange = (chainId: string) => {
+      const chains = getChains();
+      const chain = chains.find(
+        chain => `0x${chain.id.toString(16)}` == chainId
+      );
+
+      // If currently connected to an injected wallet, keep synced with it
+      if (connector instanceof InjectedConnector) {
+        history.push(`/${chain.name}/proposals`);
+      }
+    };
+
+    window.ethereum.on('chainChanged', handleChainChange);
+
+    return () => {
+      window.ethereum?.removeListener('accountsChanged', handleChainChange);
+    };
+  }, [location, connector]);
 
   // Fetch user blockchain data on an interval using current params
   useInterval(

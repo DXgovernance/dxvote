@@ -222,13 +222,6 @@ const ProposalPage = observer(() => {
   const votingMachines = networkContracts.votingMachines;
   const proposalId = useLocation().pathname.split('/')[3];
   const proposal = daoStore.getProposal(proposalId);
-
-  if (!proposal) history.push('/');
-
-  const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
-  const scheme = daoStore.getScheme(proposal.scheme);
-  const { dxdApproved, genApproved } = userStore.getUserInfo();
-  const { account } = providerStore.getActiveWeb3React();
   const [decision, setDecision] = React.useState(null);
   const [advancedCalls, setAdvancedCalls] = React.useState(false);
   const [votePercentage, setVotePercentage] = React.useState(0);
@@ -237,10 +230,20 @@ const ProposalPage = observer(() => {
     '## Getting proposal description from IPFS...'
   );
   const [proposalTitle, setProposalTitle] = React.useState(
-    proposal.title.length > 0
+    proposal?.title?.length > 0
       ? proposal.title
       : 'Getting proposal title from IPFS...'
   );
+
+  if (!proposal) {
+    history.push('/');
+    return null;
+  }
+
+  const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
+  const scheme = daoStore.getScheme(proposal.scheme);
+  const { dxdApproved, genApproved } = userStore.getUserInfo();
+  const { account } = providerStore.getActiveWeb3React();
 
   const votingMachineTokenName =
     votingMachines.gen && scheme.votingMachine === votingMachines.gen.address

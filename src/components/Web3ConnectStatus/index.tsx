@@ -50,7 +50,7 @@ const ChainButton = styled(AccountButton)`
 
 const Web3ConnectStatus = observer(props => {
   const {
-    context: { modalStore, providerStore, configStore, blockchainStore },
+    context: { modalStore, providerStore, configStore },
   } = useContext();
   const [injectedWalletAuthorized, setInjectedWalletAuthorized] =
     useState(false);
@@ -149,7 +149,7 @@ const Web3ConnectStatus = observer(props => {
 
   return (
     <>
-      {blockchainStore.initialLoadComplete ? getNetworkStatus() : null}
+      {getNetworkStatus()}
       {getWalletStatus()}
       <WalletModal />
       <NetworkModal />

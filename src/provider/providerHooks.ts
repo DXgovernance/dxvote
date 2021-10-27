@@ -40,18 +40,12 @@ export function useEagerConnect() {
         setTried(true);
       }
 
-      if (isAuthorized) {
+      if (isAuthorized || (isMobile && window.ethereum)) {
         activate(injected, undefined, true).catch(() => {
           setTried(true);
         });
       } else {
-        if (isMobile && window.ethereum) {
-          activate(injected, undefined, true).catch(() => {
-            setTried(true);
-          });
-        } else {
-          setTried(true);
-        }
+        setTried(true);
       }
     };
 
