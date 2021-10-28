@@ -21,6 +21,7 @@ import {
   encodeRepMint,
   encodeErc20Approval,
   encodeDxdVestingCreate,
+  encodeErc20Transfer,
 } from '../../utils';
 import { useTokenService } from 'hooks/useTokenService';
 
@@ -252,6 +253,17 @@ export const ContributorProposalPage = observer(() => {
         contracts.avatar
       );
 
+      // Encode WXDAI transfer
+      const wxdaiTransferCallData = encodeErc20Transfer(
+        library,
+        account,
+        denormalizeBalance(
+          bnum(
+            calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
+          )
+        )
+      );
+
       // Encode DXD approval
       const dxdApprovalCallData = encodeErc20Approval(
         library,
@@ -266,26 +278,22 @@ export const ContributorProposalPage = observer(() => {
         dxdAmount
       );
 
-      // Need additional token transfer on anything other than xdai
       const proposalData = {
         to: [
           contracts.controller,
-          account,
+          // Needs new stables coin value in config for other networks
+          tokens.find(token => token.symbol === 'WXDAI').address,
           tokens.find(token => token.symbol === 'DXD').address,
           contracts.utils.dxdVestingFactory,
         ],
-        data: [repCallData, '0x0', dxdApprovalCallData, vestingCallData],
-
-        value: [
-          0,
-          denormalizeBalance(
-            bnum(
-              calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
-            )
-          ),
-          0,
-          0,
+        data: [
+          repCallData,
+          wxdaiTransferCallData,
+          dxdApprovalCallData,
+          vestingCallData,
         ],
+
+        value: [0, 0, 0, 0],
         titleText: localStorage.getItem('dxvote-newProposal-title'),
         descriptionHash: contentHash.fromIpfs(hash),
       };

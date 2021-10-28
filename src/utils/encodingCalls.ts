@@ -16,15 +16,26 @@ export const encodeRepMint = (library, repAmount, to, avatar) => {
 };
 
 export const encodeErc20Approval = (library, to, amount) => {
-  const dxdApprovalFunctionEncoded = library.eth.abi.encodeFunctionSignature(
+  const erc20ApprovalFunctionEncoded = library.eth.abi.encodeFunctionSignature(
     'approve(address,uint256)'
   );
 
-  const dxdApprovalParamsEncoded = library.eth.abi
+  const erc20ApprovalParamsEncoded = library.eth.abi
     .encodeParameters(['address', 'uint256'], [to, amount])
     .substring(2);
 
-  return dxdApprovalFunctionEncoded + dxdApprovalParamsEncoded;
+  return erc20ApprovalFunctionEncoded + erc20ApprovalParamsEncoded;
+};
+export const encodeErc20Transfer = (library, to, amount) => {
+  const erc20TransferFunctionEncoded = library.eth.abi.encodeFunctionSignature(
+    'transfer(address,uint256)'
+  );
+
+  const erc20TransferParamsEncoded = library.eth.abi
+    .encodeParameters(['address', 'uint256'], [to, amount])
+    .substring(2);
+
+  return erc20TransferFunctionEncoded + erc20TransferParamsEncoded;
 };
 
 export const encodeDxdVestingCreate = (library, to, dxdAmount) => {
