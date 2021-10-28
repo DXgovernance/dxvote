@@ -14,17 +14,21 @@ export default class EtherscanService {
 
   async isAuthenticated(networkName: string) {
     const { account } = this.context.providerStore.getActiveWeb3React();
-    const params = new URLSearchParams({
-      module: 'account',
-      action: 'balance',
-      address: account,
-      apikey: appendEthAPIKey(networkName, this.etherscanAPIKey),
-      tag: 'latest',
-    });
-    const getContractURL = new URL(
-      '/api?' + params.toString(),
-      NETWORK_APIS[networkName]
-    );
+    let getContractURL: URL | undefined;
+    if (account && this.etherscanAPIKey && this.etherscanAPIKey.length > 0) {
+      const params = new URLSearchParams({
+        module: 'account',
+        action: 'balance',
+        address: account,
+        apikey: appendEthAPIKey(networkName, this.etherscanAPIKey),
+        tag: 'latest',
+      });
+      getContractURL = new URL(
+        '/api?' + params.toString(),
+        NETWORK_APIS[networkName]
+      );
+      this.auth = false;
+    }
 
     if (this.etherscanAPIKey && this.etherscanAPIKey.length > 0) {
       const auth = await axios({
