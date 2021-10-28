@@ -20,7 +20,7 @@ export default class UserStore {
   constructor(context) {
     this.context = context;
     this.userInfo = {
-      address: context.providerStore.getActiveWeb3React(),
+      address: context.providerStore.getActiveWeb3React()?.account,
       ethBalance: bnum(0),
       repBalance: bnum(0),
       dxdBalance: bnum(0),
@@ -31,7 +31,20 @@ export default class UserStore {
     makeObservable(this, {
       userInfo: observable,
       update: action,
+      reset: action,
     });
+  }
+
+  reset() {
+    this.userInfo = {
+      address: this.context.providerStore.getActiveWeb3React()?.account,
+      ethBalance: bnum(0),
+      repBalance: bnum(0),
+      dxdBalance: bnum(0),
+      dxdApproved: bnum(0),
+      genBalance: bnum(0),
+      genApproved: bnum(0),
+    };
   }
 
   getUserInfo() {

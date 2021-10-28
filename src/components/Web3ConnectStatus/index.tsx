@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { toCamelCaseString } from '../../utils';
+import { toAddressStub, toCamelCaseString } from '../../utils';
 import WalletModal from 'components/WalletModal';
 import { getChains, injected, isChainIdSupported } from 'provider/connectors';
 import { useContext } from '../../contexts';
-import { Box, BlockchainLink } from '../../components/common';
+import { Box } from '../../components/common';
 import NetworkModal from 'components/NetworkModal';
 import { useEffect, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
@@ -109,7 +109,7 @@ const Web3ConnectStatus = observer(props => {
     } else if (account) {
       return (
         <AccountButton onClick={toggleWalletModal}>
-          <BlockchainLink text={account} />
+          {toAddressStub(account)}
         </AccountButton>
       );
     } else {

@@ -29,7 +29,12 @@ export default class DaoStore {
 
     makeObservable(this, {
       setCache: action,
+      reset: action,
     });
+  }
+
+  reset() {
+    this.daoCache = undefined;
   }
 
   // Parse bignnumbers
