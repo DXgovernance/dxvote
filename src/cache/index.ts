@@ -24,142 +24,117 @@ import ContributionRewardJSON from '../contracts/ContributionReward.json';
 import { getContracts } from '../contracts';
 import RootContext from '../contexts';
 
+async function tryWhile(promises, networkCache) {
+  let retry = true;
+  while (retry) {
+    try {
+      (await Promise.all(promises)).map(networkCacheUpdated => {
+        networkCache = networkCacheUpdated;
+      });
+    } finally {
+      retry = false;
+    }
+  }
+  return networkCache;
+}
+
 export const getUpdatedCache = async function (
   context: RootContext,
   networkCache: DaoNetworkCache,
-  networkConfig: NetworkContracts,
+  networkContractsConfig: NetworkContracts,
   fromBlock: number,
   toBlock: number,
   web3: any
 ): Promise<DaoNetworkCache> {
-  const { notificationStore } = context;
+  const notificationStore = isNode() ? null : context.notificationStore;
 
   console.debug('[Cache Update]', fromBlock, toBlock);
-  const networkContracts = await getContracts(networkConfig, web3);
+  const networkWeb3Contracts = await getContracts(networkContractsConfig, web3);
 
-  //// TODO: Improve this duplicated while conditions
-  let retry = true;
-  while (retry) {
+  if (notificationStore)
     notificationStore.setGlobalLoading(
       true,
       `Collecting reputation events for blocks ${fromBlock} - ${toBlock}`
     );
-    try {
-      (
-        await Promise.all([
-          updateDaoInfo(networkCache, networkContracts, web3),
-          updateReputationEvents(
-            networkCache,
-            networkContracts.reputation,
-            fromBlock,
-            toBlock,
-            web3
-          ),
-        ])
-      ).map(networkCacheUpdated => {
-        networkCache = networkCacheUpdated;
-      });
-    } finally {
-      retry = false;
-    }
-  }
-  retry = true;
 
-  while (retry) {
+  networkCache = await tryWhile(
+    [
+      updateDaoInfo(networkCache, networkWeb3Contracts, web3),
+      updateReputationEvents(
+        networkCache,
+        networkWeb3Contracts.reputation,
+        fromBlock,
+        toBlock,
+        web3
+      ),
+    ],
+    networkCache
+  );
+
+  if (notificationStore)
     notificationStore.setGlobalLoading(
       true,
       `Collecting voting machine data in blocks ${fromBlock} - ${toBlock}`
     );
-    try {
-      await Promise.all(
-        Object.keys(networkContracts.votingMachines).map(
-          async votingMachineAddress => {
-            if (!networkCache.votingMachines[votingMachineAddress])
-              networkCache.votingMachines[votingMachineAddress] = {
-                name: networkContracts.votingMachines[votingMachineAddress]
-                  .name,
-                events: {
-                  votes: [],
-                  stakes: [],
-                  redeems: [],
-                  redeemsRep: [],
-                  redeemsDaoBounty: [],
-                  proposalStateChanges: [],
-                  newProposal: [],
-                },
-                token:
-                  networkContracts.votingMachines[votingMachineAddress].token
-                    ._address,
-                votingParameters: {},
-              };
 
-            networkCache = await updateVotingMachine(
-              networkCache,
-              networkContracts.avatar._address,
-              networkContracts.votingMachines[votingMachineAddress].contract,
-              networkContracts.multicall,
-              fromBlock,
-              toBlock,
-              web3
-            );
-          }
-        )
-      );
-    } finally {
-      retry = false;
-    }
-  }
-  retry = true;
+  networkCache = await tryWhile(
+    [
+      updateVotingMachines(
+        networkCache,
+        networkContractsConfig,
+        networkWeb3Contracts.multicall,
+        fromBlock,
+        toBlock,
+        web3
+      ),
+    ],
+    networkCache
+  );
 
-  while (retry) {
+  if (notificationStore)
     notificationStore.setGlobalLoading(
       true,
       `Updating scheme data in blocks ${fromBlock} - ${toBlock}`
     );
-    try {
-      networkCache = await updateSchemes(
+
+  networkCache = await tryWhile(
+    [
+      updateSchemes(
         networkCache,
-        networkConfig,
+        networkContractsConfig,
         fromBlock,
         toBlock,
         web3
-      );
-    } finally {
-      retry = false;
-    }
-  }
-  retry = true;
+      ),
+    ],
+    networkCache
+  );
 
-  while (retry) {
+  if (notificationStore)
     notificationStore.setGlobalLoading(
       true,
       `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
     );
-    try {
-      (
-        await Promise.all([
-          updatePermissionRegistry(
-            networkCache,
-            networkConfig,
-            fromBlock,
-            toBlock,
-            web3
-          ),
-          updateProposals(
-            networkCache,
-            networkConfig,
-            fromBlock,
-            toBlock,
-            web3
-          ),
-        ])
-      ).map(networkCacheUpdated => {
-        networkCache = networkCacheUpdated;
-      });
-    } finally {
-      retry = false;
-    }
-  }
+
+  networkCache = await tryWhile(
+    [
+      updatePermissionRegistry(
+        networkCache,
+        networkContractsConfig,
+        fromBlock,
+        toBlock,
+        web3
+      ),
+      updateProposals(
+        networkCache,
+        networkContractsConfig,
+        fromBlock,
+        toBlock,
+        web3
+      ),
+    ],
+    networkCache
+  );
 
   networkCache.l1BlockNumber = Number(toBlock);
   networkCache.l2BlockNumber = 0;
@@ -172,24 +147,24 @@ export const getUpdatedCache = async function (
 // Update the DAOinfo field in cache
 export const updateDaoInfo = async function (
   networkCache: DaoNetworkCache,
-  networkContracts: any,
+  networkWeb3Contracts: any,
   web3: any
 ): Promise<DaoNetworkCache> {
   let callsToExecute = [
-    [networkContracts.reputation, 'totalSupply', []],
+    [networkWeb3Contracts.reputation, 'totalSupply', []],
     [
-      networkContracts.multicall,
+      networkWeb3Contracts.multicall,
       'getEthBalance',
-      [networkContracts.avatar._address],
+      [networkWeb3Contracts.avatar._address],
     ],
   ];
   const callsResponse = await executeMulticall(
     web3,
-    networkContracts.multicall,
+    networkWeb3Contracts.multicall,
     callsToExecute
   );
 
-  networkCache.daoInfo.address = networkContracts.avatar._address;
+  networkCache.daoInfo.address = networkWeb3Contracts.avatar._address;
   networkCache.daoInfo.repEvents = !networkCache.daoInfo.repEvents
     ? []
     : networkCache.daoInfo.repEvents;
@@ -252,10 +227,59 @@ export const updateReputationEvents = async function (
   return networkCache;
 };
 
+// Update all voting machines
+export const updateVotingMachines = async function (
+  networkCache: DaoNetworkCache,
+  networkContractsConfig: NetworkContracts,
+  multicall: any,
+  fromBlock: number,
+  toBlock: number,
+  web3: any
+): Promise<DaoNetworkCache> {
+  const networkWeb3Contracts = await getContracts(networkContractsConfig, web3);
+
+  await Promise.all(
+    Object.keys(networkWeb3Contracts.votingMachines).map(
+      async votingMachineName => {
+        const votingMachine =
+          networkWeb3Contracts.votingMachines[votingMachineName].contract;
+        if (!networkCache.votingMachines[votingMachine._address])
+          networkCache.votingMachines[votingMachine._address] = {
+            name: votingMachineName,
+            events: {
+              votes: [],
+              stakes: [],
+              redeems: [],
+              redeemsRep: [],
+              redeemsDaoBounty: [],
+              proposalStateChanges: [],
+              newProposal: [],
+            },
+            token:
+              networkWeb3Contracts.votingMachines[votingMachine._address].token
+                ._address,
+            votingParameters: {},
+          };
+
+        networkCache = await updateVotingMachine(
+          networkCache,
+          networkContractsConfig,
+          votingMachine,
+          multicall,
+          fromBlock,
+          toBlock,
+          web3
+        );
+      }
+    )
+  );
+
+  return networkCache;
+};
 // Update all voting machine information, events, token and voting parameters used.
 export const updateVotingMachine = async function (
   networkCache: DaoNetworkCache,
-  avatarAddress: string,
+  networkContractsConfig: NetworkContracts,
   votingMachine: any,
   multicall: any,
   fromBlock: number,
@@ -278,7 +302,8 @@ export const updateVotingMachine = async function (
       ) > -1;
 
     if (
-      votingMachineEvent.returnValues._organization === avatarAddress ||
+      votingMachineEvent.returnValues._organization ===
+        networkContractsConfig.avatar ||
       (votingMachineEvent.event === 'StateChange' && proposalCreated)
     )
       switch (votingMachineEvent.event) {
@@ -458,17 +483,17 @@ export const updateVotingMachine = async function (
 // Gets all teh events form the permission registry and stores the permissions set.
 export const updatePermissionRegistry = async function (
   networkCache: DaoNetworkCache,
-  networkConfig: NetworkContracts,
+  networkContractsConfig: NetworkContracts,
   fromBlock: number,
   toBlock: number,
   web3: any
 ): Promise<DaoNetworkCache> {
-  const networkContracts = await getContracts(networkConfig, web3);
-  if (networkContracts.permissionRegistry._address !== ZERO_ADDRESS) {
+  const networkWeb3Contracts = await getContracts(networkContractsConfig, web3);
+  if (networkWeb3Contracts.permissionRegistry._address !== ZERO_ADDRESS) {
     let permissionRegistryEvents = sortEvents(
       await getEvents(
         web3,
-        networkContracts.permissionRegistry,
+        networkWeb3Contracts.permissionRegistry,
         fromBlock,
         toBlock,
         'allEvents'
@@ -508,17 +533,17 @@ export const updatePermissionRegistry = async function (
 // Update all the schemes information
 export const updateSchemes = async function (
   networkCache: DaoNetworkCache,
-  networkConfig: NetworkContracts,
+  networkContractsConfig: NetworkContracts,
   fromBlock: number,
   toBlock: number,
   web3: any
 ): Promise<DaoNetworkCache> {
-  const networkContracts = await getContracts(networkConfig, web3);
+  const networkWeb3Contracts = await getContracts(networkContractsConfig, web3);
 
   let controllerEvents = sortEvents(
     await getEvents(
       web3,
-      networkContracts.controller,
+      networkWeb3Contracts.controller,
       fromBlock,
       toBlock,
       'allEvents'
@@ -536,9 +561,13 @@ export const updateSchemes = async function (
 
     // Add or update the scheme information, register scheme is used to add and updates scheme parametersHash
     if (controllerEvent.event === 'RegisterScheme') {
-      const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
+      const schemeTypeData = getSchemeTypeData(
+        networkContractsConfig,
+        schemeAddress
+      );
       const votingMachine =
-        networkContracts.votingMachines[schemeTypeData.votingMachine].contract;
+        networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
+          .contract;
 
       console.debug(
         'Register Scheme event for ',
@@ -547,16 +576,16 @@ export const updateSchemes = async function (
       );
 
       let callsToExecute = [
-        [networkContracts.multicall, 'getEthBalance', [schemeAddress]],
+        [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
         [
-          networkContracts.controller,
+          networkWeb3Contracts.controller,
           'getSchemePermissions',
-          [schemeAddress, networkContracts.avatar._address],
+          [schemeAddress, networkWeb3Contracts.avatar._address],
         ],
         [
-          networkContracts.controller,
+          networkWeb3Contracts.controller,
           'getSchemeParameters',
-          [schemeAddress, networkContracts.avatar._address],
+          [schemeAddress, networkWeb3Contracts.avatar._address],
         ],
       ];
 
@@ -581,7 +610,7 @@ export const updateSchemes = async function (
 
       const callsResponse1 = await executeMulticall(
         web3,
-        networkContracts.multicall,
+        networkWeb3Contracts.multicall,
         callsToExecute
       );
 
@@ -595,7 +624,7 @@ export const updateSchemes = async function (
       const controllerAddress =
         schemeTypeData.type === 'WalletScheme'
           ? callsResponse1.decodedReturnData[3]
-          : networkContracts.avatar._address;
+          : networkWeb3Contracts.avatar._address;
       const schemeName =
         schemeTypeData.type === 'WalletScheme'
           ? callsResponse1.decodedReturnData[4]
@@ -614,7 +643,7 @@ export const updateSchemes = async function (
         callsToExecute.push([
           votingMachine,
           'getBoostedVoteRequiredPercentage',
-          [schemeAddress, networkContracts.avatar._address, paramsHash],
+          [schemeAddress, networkWeb3Contracts.avatar._address, paramsHash],
         ]);
       }
 
@@ -629,7 +658,7 @@ export const updateSchemes = async function (
 
       const callsResponse2 = await executeMulticall(
         web3,
-        networkContracts.multicall,
+        networkWeb3Contracts.multicall,
         callsToExecute
       );
 
@@ -709,9 +738,13 @@ export const updateSchemes = async function (
       // This condition is added to skip the first scheme added (that is the dao creator account)
       controllerEvent.returnValues._sender !== schemeAddress
     ) {
-      const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
+      const schemeTypeData = getSchemeTypeData(
+        networkContractsConfig,
+        schemeAddress
+      );
       const votingMachine =
-        networkContracts.votingMachines[schemeTypeData.votingMachine].contract;
+        networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
+          .contract;
 
       console.debug(
         'Unregister scheme event',
@@ -719,14 +752,14 @@ export const updateSchemes = async function (
         schemeTypeData.name
       );
       let callsToExecute = [
-        [networkContracts.multicall, 'getEthBalance', [schemeAddress]],
+        [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
         [
           votingMachine,
           'orgBoostedProposalsCnt',
           [
             web3.utils.soliditySha3(
               schemeAddress,
-              networkContracts.avatar._address
+              networkWeb3Contracts.avatar._address
             ),
           ],
         ],
@@ -741,7 +774,7 @@ export const updateSchemes = async function (
       }
       const callsResponse = await executeMulticall(
         web3,
-        networkContracts.multicall,
+        networkWeb3Contracts.multicall,
         callsToExecute
       );
 
@@ -765,20 +798,23 @@ export const updateSchemes = async function (
   await Promise.all(
     Object.keys(networkCache.schemes).map(async schemeAddress => {
       if (networkCache.schemes[schemeAddress].registered) {
-        const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
+        const schemeTypeData = getSchemeTypeData(
+          networkContractsConfig,
+          schemeAddress
+        );
         const votingMachine =
-          networkContracts.votingMachines[schemeTypeData.votingMachine]
+          networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
             .contract;
 
         let callsToExecute = [
-          [networkContracts.multicall, 'getEthBalance', [schemeAddress]],
+          [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
           [
             votingMachine,
             'orgBoostedProposalsCnt',
             [
               web3.utils.soliditySha3(
                 schemeAddress,
-                networkContracts.avatar._address
+                networkWeb3Contracts.avatar._address
               ),
             ],
           ],
@@ -796,7 +832,7 @@ export const updateSchemes = async function (
             [
               web3.utils.soliditySha3(
                 schemeAddress,
-                networkContracts.avatar._address
+                networkWeb3Contracts.avatar._address
               ),
               networkCache.schemes[schemeAddress].paramsHash,
             ],
@@ -804,7 +840,7 @@ export const updateSchemes = async function (
         }
         const callsResponse = await executeMulticall(
           web3,
-          networkContracts.multicall,
+          networkWeb3Contracts.multicall,
           callsToExecute
         );
 
@@ -839,13 +875,13 @@ export const updateSchemes = async function (
 // Update all the proposals information
 export const updateProposals = async function (
   networkCache: DaoNetworkCache,
-  networkConfig: NetworkContracts,
+  networkContractsConfig: NetworkContracts,
   fromBlock: number,
   toBlock: number,
   web3: any
 ): Promise<DaoNetworkCache> {
-  const networkContracts = await getContracts(networkConfig, web3);
-  const avatarAddress = networkContracts.avatar._address;
+  const networkWeb3Contracts = await getContracts(networkContractsConfig, web3);
+  const avatarAddress = networkWeb3Contracts.avatar._address;
   const avatarAddressEncoded = web3.eth.abi.encodeParameter(
     'address',
     avatarAddress
@@ -854,9 +890,13 @@ export const updateProposals = async function (
   // Get new proposals
   await Promise.all(
     Object.keys(networkCache.schemes).map(async schemeAddress => {
-      const schemeTypeData = getSchemeTypeData(networkConfig, schemeAddress);
+      const schemeTypeData = getSchemeTypeData(
+        networkContractsConfig,
+        schemeAddress
+      );
       const votingMachine =
-        networkContracts.votingMachines[schemeTypeData.votingMachine].contract;
+        networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
+          .contract;
 
       let schemeEvents = [];
       for (let i = 0; i < schemeTypeData.newProposalTopics.length; i++) {
@@ -928,7 +968,7 @@ export const updateProposals = async function (
                       schemeAddress
                     ),
                     'getRedeemedPeriods',
-                    [proposalId, networkContracts.avatar._address, 0],
+                    [proposalId, networkWeb3Contracts.avatar._address, 0],
                   ]);
                   callsToExecute.push([
                     await new web3.eth.Contract(
@@ -936,7 +976,7 @@ export const updateProposals = async function (
                       schemeAddress
                     ),
                     'getRedeemedPeriods',
-                    [proposalId, networkContracts.avatar._address, 1],
+                    [proposalId, networkWeb3Contracts.avatar._address, 1],
                   ]);
                   callsToExecute.push([
                     await new web3.eth.Contract(
@@ -944,7 +984,7 @@ export const updateProposals = async function (
                       schemeAddress
                     ),
                     'getRedeemedPeriods',
-                    [proposalId, networkContracts.avatar._address, 2],
+                    [proposalId, networkWeb3Contracts.avatar._address, 2],
                   ]);
                   callsToExecute.push([
                     await new web3.eth.Contract(
@@ -952,13 +992,13 @@ export const updateProposals = async function (
                       schemeAddress
                     ),
                     'getRedeemedPeriods',
-                    [proposalId, networkContracts.avatar._address, 3],
+                    [proposalId, networkWeb3Contracts.avatar._address, 3],
                   ]);
                 }
 
                 const callsResponse = await executeMulticall(
                   web3,
-                  networkContracts.multicall,
+                  networkWeb3Contracts.multicall,
                   callsToExecute
                 );
 
@@ -1262,7 +1302,7 @@ export const updateProposals = async function (
                     }
                   } else if (schemeTypeData.type === 'GenericScheme') {
                     schemeProposalInfo.to = [
-                      networkContracts.controller._address,
+                      networkWeb3Contracts.controller._address,
                     ];
                     schemeProposalInfo.value = [0];
                     schemeProposalInfo.callData = [
@@ -1292,7 +1332,7 @@ export const updateProposals = async function (
                       callIndex++
                     ) {
                       schemeProposalInfo.to.push(
-                        networkContracts.controller._address
+                        networkWeb3Contracts.controller._address
                       );
                       schemeProposalInfo.value.push(0);
                       schemeProposalInfo.callData.push(
@@ -1425,11 +1465,11 @@ export const updateProposals = async function (
           try {
             const schemeAddress = networkCache.proposals[proposalId].scheme;
             const schemeTypeData = getSchemeTypeData(
-              networkConfig,
+              networkContractsConfig,
               schemeAddress
             );
             const votingMachine =
-              networkContracts.votingMachines[schemeTypeData.votingMachine]
+              networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
                 .contract;
 
             // Get all the proposal information from the scheme and voting machine
@@ -1464,7 +1504,7 @@ export const updateProposals = async function (
                   schemeAddress
                 ),
                 'getRedeemedPeriods',
-                [proposalId, networkContracts.avatar._address, 0],
+                [proposalId, networkWeb3Contracts.avatar._address, 0],
               ]);
               callsToExecute.push([
                 await new web3.eth.Contract(
@@ -1472,7 +1512,7 @@ export const updateProposals = async function (
                   schemeAddress
                 ),
                 'getRedeemedPeriods',
-                [proposalId, networkContracts.avatar._address, 1],
+                [proposalId, networkWeb3Contracts.avatar._address, 1],
               ]);
               callsToExecute.push([
                 await new web3.eth.Contract(
@@ -1480,7 +1520,7 @@ export const updateProposals = async function (
                   schemeAddress
                 ),
                 'getRedeemedPeriods',
-                [proposalId, networkContracts.avatar._address, 2],
+                [proposalId, networkWeb3Contracts.avatar._address, 2],
               ]);
               callsToExecute.push([
                 await new web3.eth.Contract(
@@ -1488,13 +1528,13 @@ export const updateProposals = async function (
                   schemeAddress
                 ),
                 'getRedeemedPeriods',
-                [proposalId, networkContracts.avatar._address, 3],
+                [proposalId, networkWeb3Contracts.avatar._address, 3],
               ]);
             }
 
             const callsResponse = await executeMulticall(
               web3,
-              networkContracts.multicall,
+              networkWeb3Contracts.multicall,
               callsToExecute
             );
 

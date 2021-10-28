@@ -17,7 +17,6 @@ yarn hardhat run --network xdai scripts/buildCache.ts
 yarn hardhat run --network arbitrum scripts/buildCache.ts
 yarn hardhat run --network rinkeby scripts/buildCache.ts
 yarn hardhat run --network arbitrumTestnet scripts/buildCache.ts
-EMPTY_CACHE=1 yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
 yarn upload-config
 

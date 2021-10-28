@@ -328,15 +328,16 @@ async function main() {
     avatar.address
   );
   await controller.burnReputation(100, accounts[0], avatar.address);
-  
+
   // Deploy dxDaoNFT
-  console.log("Deploying DXdaoNFT...");
+  console.log('Deploying DXdaoNFT...');
   const dxDaoNFT = await DXdaoNFT.new();
 
   // Deploy DXDVestingFactory
-  console.log("Deploying DXDVestingFactory...");
-  const dxdVestingFactory = await DXDVestingFactory.new( votingMachineToken.address );
-
+  console.log('Deploying DXDVestingFactory...');
+  const dxdVestingFactory = await DXDVestingFactory.new(
+    votingMachineToken.address
+  );
 
   await controller.unregisterScheme(accounts[0], avatar.address);
 
@@ -658,7 +659,7 @@ async function main() {
     utils: {
       multicall: multicall.address,
       dxdVestingFactory: dxdVestingFactory.address,
-      dxDaoNFT: dxDaoNFT.address
+      dxDaoNFT: dxDaoNFT.address,
     },
   };
 
