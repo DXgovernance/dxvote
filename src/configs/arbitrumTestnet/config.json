@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 3995726,
-    "toBlock": 6008008,
-    "ipfsHash": "Qmbzm3rHi2s6HkLyrxKsPrrarkVHcM65X9eKbXgHWR85Yt"
+    "toBlock": 6085908,
+    "ipfsHash": "QmViggheDiB2PRuSDK7AZdrfo4ZrXNstzwsLeGd5hVp1wt"
   },
   "contracts": {
     "avatar": "0x6370B3Ba7D9bAd94b35dC9073540E562bDe5Fdc3",
@@ -369,7 +369,10 @@
         {
           "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30",
           "functionName": "approve(address,uint256)",
-          "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C", ""]
+          "params": [
+            "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            ""
+          ]
         },
         {
           "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
