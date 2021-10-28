@@ -61,8 +61,8 @@ const PageRouter = observer(({ children }) => {
   }, [networkName]);
 
   // Start or auth services
-  etherscanService.isAuthenticated(networkName);
   pinataService.isAuthenticated();
+  etherscanService.isAuthenticated(networkName);
 
   if (noLoading.indexOf(location.pathname) > -1) {
     return <PageRouterWrapper>{children}</PageRouterWrapper>;
