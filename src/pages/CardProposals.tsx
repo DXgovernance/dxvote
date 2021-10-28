@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react'
 import { useContext } from '../contexts';
 import styled from 'styled-components';
-import {  Row } from 'components/common';
+import {  Row, Title } from 'components/common';
 
 
 
@@ -75,6 +75,11 @@ const CardProposalView = observer(() => {
   )
   return (
     <Grid>
+      <Row>
+        <Title>
+          Proposal Cards
+        </Title>
+      </Row>
       <Row>
         <Card size={3}>
           <TimeTitle>Boosted</TimeTitle>
