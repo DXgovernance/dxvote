@@ -87,10 +87,9 @@ const Routes = () => {
         {' '}
         <ProposalPage />{' '}
       </Route>
-      <Route exact path='/cards'>
+      <Route exact path="/cards">
         {' '}
-        <CardProposalView/>
-        {' '}
+        <CardProposalView />{' '}
       </Route>
       {location.pathname.indexOf('/proposals') < 0 &&
         location.pathname.indexOf('/create/metadata') < 0 && <Footer />}
