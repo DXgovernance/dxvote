@@ -59,6 +59,11 @@ const ProposalType = styled(Box)`
   padding: 5px 10px;
   font-weight: 500;
   font-size: 24px;
+  transition-duration: 0.5s;
+  :hover {
+    box-shadow: 0px 0px 15px 10px rgba(14, 0, 135, 0.1);
+    transform: scale(1.05);
+  }
 `;
 
 export const NewProposalTypePage = observer(() => {
