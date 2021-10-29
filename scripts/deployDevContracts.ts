@@ -29,6 +29,8 @@ const DXDVestingFactory = hre.artifacts.require('DXDVestingFactory');
 const DXdaoNFT = hre.artifacts.require('DXdaoNFT');
 
 async function main() {
+  await hre.network.provider.send("evm_setAutomine", [true]);
+
   const accounts = await web3.eth.getAccounts();
   const GAS_LIMIT = 9000000;
   const votingMachineToken = await ERC20Mock.new(
@@ -746,6 +748,14 @@ async function main() {
 
   console.log('Contracts Deployed:', contractsDeployed);
 
+  const wXdaiToken = await ERC20Mock.new(
+    accounts[0],
+    web3.utils.toWei('1000')
+  );
+  await wXdaiToken.transfer(avatar.address, web3.utils.toWei('1000'), {
+    from: accounts[0],
+  });
+  
   const networkConfig = {
     cache: {
       fromBlock: 0,
@@ -755,11 +765,71 @@ async function main() {
     contracts: contractsDeployed,
     recommendedCalls: [],
     proposalTemplates: [],
-    tokens: [],
+    proposalTypes: [
+      {
+        "id": "contributor",
+        "title": "Contributor",
+        "scheme": "QuickWalletScheme"
+      },
+      {
+        "id": "custom",
+        "title": "Custom"
+      }
+    ],
+    contributionLevels: [
+      {
+        "id": "1",
+        "dxd": 2000,
+        "stable": 4000,
+        "rep": 0.1667
+      },
+      {
+        "id": "2",
+        "dxd": 3000,
+        "stable": 5000,
+        "rep": 0.1667
+      },
+      {
+        "id": "3",
+        "dxd": 4000,
+        "stable": 6000,
+        "rep": 0.1667
+      },
+      {
+        "id": "4",
+        "dxd": 5000,
+        "stable": 7000,
+        "rep": 0.1667
+      },
+      {
+        "id": "5",
+        "dxd": 6000,
+        "stable": 8000,
+        "rep": 0.1667
+      }
+    ],
+    tokens: [
+      {
+        "address": contractsDeployed.votingMachines.dxd.token,
+        "name": "DXdao on Localhost",
+        "decimals": 18,
+        "symbol": "DXD",
+        "fetchPrice": true,
+        "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
+      },
+      {
+        "address": wXdaiToken.address,
+        "name": "Wrapped XDAI",
+        "decimals": 18,
+        "symbol": "WXDAI",
+        "fetchPrice": true,
+        "logoURI": "https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png"
+      },
+    ],
   };
 
   await fs.writeFileSync(
-    '.developmentNetwork.json',
+    'src/configs/localhost/config.json',
     JSON.stringify(networkConfig, null, 2),
     { encoding: 'utf8', flag: 'w' }
   );
