@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
-import { Web3ReactProvider } from '@web3-react/core';
+import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Web3 from 'web3';
 import moment from 'moment';
@@ -12,6 +12,9 @@ import ThemeProvider, { GlobalStyle } from './theme';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
+import MainnetWeb3Manager, {
+  MAINNET_WEB3_ROOT_KEY,
+} from './components/MainnetWeb3Manager';
 import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/Proposals';
@@ -92,19 +95,25 @@ const Routes = () => {
   );
 };
 
+const MainnetWeb3Provider: any = createWeb3ReactRoot(MAINNET_WEB3_ROOT_KEY);
+
 const Root = (
   <Web3ReactProvider getLibrary={getLibrary}>
-    <ThemeProvider>
-      <GlobalStyle />
-      <HashRouter>
-        <Switch>
-          <Web3ReactManager>
-            <Header />
-            <Routes />
-          </Web3ReactManager>
-        </Switch>
-      </HashRouter>
-    </ThemeProvider>
+    <MainnetWeb3Provider getLibrary={getLibrary}>
+      <ThemeProvider>
+        <GlobalStyle />
+        <HashRouter>
+          <Switch>
+            <MainnetWeb3Manager>
+              <Web3ReactManager>
+                <Header />
+                <Routes />
+              </Web3ReactManager>
+            </MainnetWeb3Manager>
+          </Switch>
+        </HashRouter>
+      </ThemeProvider>
+    </MainnetWeb3Provider>
   </Web3ReactProvider>
 );
 ReactDOM.render(Root, document.getElementById('root'));

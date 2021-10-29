@@ -3,7 +3,7 @@ import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
-import { bnum } from '../utils';
+import { bnum, CACHE_METADATA_ENS } from '../utils';
 import { getUpdatedCache } from '../cache';
 
 export default class BlockchainStore {
@@ -192,7 +192,9 @@ export default class BlockchainStore {
         const blockNumber = (await library.eth.getBlockNumber()) - 1;
 
         // Fetch cache from ipfs if not in localStorage or newer hash is available
-        const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
+        const newestCacheIpfsHash = await this.getNewestCacheIpfsHash(
+          networkName
+        );
 
         if (
           !networkCache ||
@@ -296,6 +298,38 @@ export default class BlockchainStore {
         }
         this.activeFetchLoop = false;
       }
+    }
+  }
+
+  async getNewestCacheIpfsHash(networkName: string) {
+    const { configStore, ensService, ipfsService } = this.context;
+
+    if (CACHE_METADATA_ENS) {
+      try {
+        const metadataHash = await ensService.resolveContentHash(
+          CACHE_METADATA_ENS
+        );
+        const cacheMetadataString = await ipfsService.getContent(metadataHash);
+        const cacheMetadata = JSON.parse(cacheMetadataString);
+        const cacheContentHash = cacheMetadata[networkName];
+        if (cacheContentHash) {
+          console.info(
+            `Found cache content hash from ENS: ${cacheContentHash}`
+          );
+          return cacheContentHash;
+        }
+      } catch (e) {
+        console.error(
+          '[BlockchainStore] Could not get the cache content hash from ENS.'
+        );
+      }
+
+      const buildIPFSHash = configStore.getCacheIPFSHash(networkName);
+      console.warn(
+        `Falling back to the cache content hash in the build: ${buildIPFSHash}`
+      );
+
+      return buildIPFSHash;
     }
   }
 }
