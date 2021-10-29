@@ -763,6 +763,10 @@ async function main() {
     JSON.stringify(networkConfig, null, 2),
     { encoding: 'utf8', flag: 'w' }
   );
+  
+  await hre.network.provider.send("evm_setAutomine", [false]);
+  await hre.network.provider.send("evm_setIntervalMining", [10000]);
+
 }
 
 main()
