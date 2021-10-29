@@ -309,14 +309,22 @@ export default class BlockchainStore {
         const metadataHash = await ensService.resolveContentHash(
           CACHE_METADATA_ENS
         );
-        const cacheMetadataString = await ipfsService.getContent(metadataHash);
-        const cacheMetadata = JSON.parse(cacheMetadataString);
-        const cacheContentHash = cacheMetadata[networkName];
-        if (cacheContentHash) {
+        if (metadataHash) {
           console.info(
-            `Found cache content hash from ENS: ${cacheContentHash}`
+            `[BlockchainStore] Found metadata content hash from ENS: ${metadataHash}`,
+            metadataHash
           );
-          return cacheContentHash;
+          const cacheMetadataString = await ipfsService.getContent(
+            metadataHash
+          );
+          const cacheMetadata = JSON.parse(cacheMetadataString);
+          const cacheContentHash = cacheMetadata[networkName];
+          if (cacheContentHash) {
+            console.info(
+              `[BlockchainStore] Found cache content hash from ENS: ${cacheContentHash}`
+            );
+            return cacheContentHash;
+          }
         }
       } catch (e) {
         console.error(
@@ -326,7 +334,7 @@ export default class BlockchainStore {
 
       const buildIPFSHash = configStore.getCacheIPFSHash(networkName);
       console.warn(
-        `Falling back to the cache content hash in the build: ${buildIPFSHash}`
+        `[BlockchainStore] Falling back to the cache content hash in the build: ${buildIPFSHash}`
       );
 
       return buildIPFSHash;

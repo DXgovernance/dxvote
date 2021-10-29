@@ -19,9 +19,9 @@ export default class ENSService {
     this.web3Context = context;
   }
 
-  async resolveContentHash(ensAddress: string) {
+  async resolveContentHash(ensAddress: string): Promise<string | null> {
     const web3 = this.web3Context.library;
     const contentHash = await web3.eth.ens.getContenthash(ensAddress);
-    return contentHash;
+    return contentHash && contentHash.decoded ? contentHash.decoded : null;
   }
 }
