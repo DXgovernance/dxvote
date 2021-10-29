@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
-import { createWeb3ReactRoot } from '@web3-react/core';
+import { Web3ReactProvider } from '@web3-react/core';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Web3 from 'web3';
 import moment from 'moment';
@@ -9,8 +9,6 @@ import * as serviceWorker from './serviceWorker';
 
 import 'index.css';
 import ThemeProvider, { GlobalStyle } from './theme';
-
-import { web3ContextNames } from 'provider/connectors';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -35,8 +33,6 @@ moment.updateLocale('en', {
     d: '1 day',
   },
 });
-
-const Web3ProviderInjected = createWeb3ReactRoot(web3ContextNames.injected);
 
 function getLibrary(provider) {
   return new Web3(provider);
@@ -97,7 +93,7 @@ const Routes = () => {
 };
 
 const Root = (
-  <Web3ProviderInjected getLibrary={getLibrary}>
+  <Web3ReactProvider getLibrary={getLibrary}>
     <ThemeProvider>
       <GlobalStyle />
       <HashRouter>
@@ -109,7 +105,7 @@ const Root = (
         </Switch>
       </HashRouter>
     </ThemeProvider>
-  </Web3ProviderInjected>
+  </Web3ReactProvider>
 );
 ReactDOM.render(Root, document.getElementById('root'));
 

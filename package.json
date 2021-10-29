@@ -10,8 +10,8 @@
     "upload-config": "yarn dotenv -e .env.development node scripts/uploadConfigFile.ts",
     "dev": "dotenv -e .env.development ./scripts/dev.sh",
     "lint": "eslint src/",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\"",
-    "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\""
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
+    "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\""
   },
   "engines": {
     "node": "^14.17.6"
@@ -55,6 +55,7 @@
     "qrcode.react": "^1.0.0",
     "react": "^16.10.2",
     "react-countdown": "^2.3.2",
+    "react-datetime": "^3.1.1",
     "react-device-detect": "^1.17.0",
     "react-dom": "^16.10.2",
     "react-feather": "^2.0.3",

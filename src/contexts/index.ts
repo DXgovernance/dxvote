@@ -78,6 +78,15 @@ export default class RootContext {
     this.alchemyService = new AlchemyService(this);
     this.customRpcService = new CustomRpcService(this);
   }
+
+  reset() {
+    this.notificationStore.reset();
+    this.transactionStore.reset();
+    this.modalStore.reset();
+    this.daoStore.reset();
+    this.userStore.reset();
+    this.blockchainStore.reset();
+  }
 }
 
 export const rootContext = React.createContext({
