@@ -38,3 +38,17 @@ export enum VotingMachineProposalState {
 export const enumKeys = <O extends object, K extends keyof O = keyof O>(
   obj: O
 ): K[] => Object.keys(obj).filter(k => Number.isNaN(+k)) as K[];
+
+export enum Status {
+  ExpiredInQueue = 'Expired in Queue',
+  Passed = 'Passed',
+  ProposalRejected = 'Proposal Rejected',
+  ExecutionSucceded = 'Execution Succeeded',
+  InQueue = 'In Queue',
+  ExecutionTimeout = 'Execution Timeout',
+  PendingExecution = 'Pending Execution',
+  PendingBoost = 'Pending Boost',
+  PreBoosted = 'Pre Boosted',
+  QuietEndingPeriod = 'Quiet Ending Period',
+  Boosted = 'Boosted',
+}

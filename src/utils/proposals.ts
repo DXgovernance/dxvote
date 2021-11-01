@@ -3,6 +3,7 @@ import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
   BigNumber,
+  Status,
 } from './index';
 import moment from 'moment';
 
@@ -76,20 +77,6 @@ interface DecodeProposalStatusReturns {
   boostTime: BigNumber;
   finishTime: BigNumber;
   pendingAction: number;
-}
-
-enum Status {
-  ExpiredInQueue = 'Expired in Queue',
-  Passed = 'Passed',
-  ProposalRejected = 'Proposal Rejected',
-  ExecutionSucceded = 'Execution Succeeded',
-  InQueue = 'In Queue',
-  ExecutionTimeout = 'Execution Timeout',
-  PendingExecution = 'Pending Execution',
-  PendingBoost = 'Pending Boost',
-  PreBoosted = 'Pre Boosted',
-  QuietEndingPeriod = 'Quiet Ending Period',
-  Boosted = 'Boosted',
 }
 
 // @ts-ignore
