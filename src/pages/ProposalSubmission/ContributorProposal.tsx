@@ -22,6 +22,7 @@ import {
   encodeErc20Approval,
   encodeDxdVestingCreate,
   encodeErc20Transfer,
+  normalizeBalance,
 } from '../../utils';
 import { useTokenService } from 'hooks/useTokenService';
 
@@ -178,7 +179,7 @@ export const ContributorProposalPage = observer(() => {
       );
 
       let currentRepReward = formatNumberValue(
-        totalSupply.times(0.001667).times(trialPeriod ? 0.8 : 1),
+        totalSupply.times(0.001667).times(discount),
         0
       );
 
@@ -203,7 +204,7 @@ export const ContributorProposalPage = observer(() => {
           bnum(currentRepReward).times(0.85).lt(largestMatchedRepAward)
         ) {
           currentRepReward = formatNumberValue(
-            largestMatchedRepAward.times(trialPeriod ? 0.8 : 1),
+            largestMatchedRepAward.times(discount),
             0
           );
           console.debug('Previous REP amount matches estimated inflation rate');
@@ -346,7 +347,7 @@ export const ContributorProposalPage = observer(() => {
       </Values>
       <Values>
         {calculateDiscountedValue(levels[selectedLevel]?.rep, discount)}% -{' '}
-        {repReward} REP
+        {normalizeBalance(bnum(repReward ? repReward : '0')).toString()} REP
       </Values>
       <WarningText>
         {periodEnd
