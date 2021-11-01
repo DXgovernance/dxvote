@@ -44,7 +44,7 @@ export const isWinningVote = (
 export const calculateStakes = function (
   thresholdConst,
   boostedProposals,
-  PreBoostedProposals,
+  preBoostedProposals,
   upstakes,
   downstakes
 ) {
@@ -247,7 +247,7 @@ export const decodeProposalStatus = function (
         proposal.shouldBoost
       ) {
         return {
-          status: 'Execution Timeout',
+          status: Status.ExecutionTimeout,
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
@@ -263,7 +263,7 @@ export const decodeProposalStatus = function (
         proposal.shouldBoost
       ) {
         return {
-          status: 'Pending Execution',
+          status: Status.PendingExecution,
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
@@ -276,7 +276,7 @@ export const decodeProposalStatus = function (
         proposal.shouldBoost
       ) {
         return {
-          status: 'Pending Boost',
+          status: Status.PendingBoost,
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
           finishTime: autoBoost
             ? preBoostedPhaseTime
@@ -324,7 +324,7 @@ export const decodeProposalStatus = function (
         };
       } else {
         return {
-          status: 'Pre Boosted',
+          status: Status.PreBoosted,
           boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
           finishTime: autoBoost
             ? preBoostedPhaseTime
