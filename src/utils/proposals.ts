@@ -2,6 +2,7 @@ import {
   bnum,
   WalletSchemeProposalState,
   VotingMachineProposalState,
+  BigNumber,
 } from './index';
 import moment from 'moment';
 
@@ -69,6 +70,14 @@ export const calculateStakes = function (
       .minus(downstakes),
   };
 };
+
+interface DecodeProposalStatusReturns {
+  status: string;
+  boostTime: BigNumber;
+  finishTime: BigNumber;
+  pendingAction: number;
+}
+
 // @ts-ignore
 export const decodeProposalStatus = function (
   proposal,
@@ -77,7 +86,7 @@ export const decodeProposalStatus = function (
   maxSecondsForExecution,
   autoBoost,
   schemeType
-) {
+): DecodeProposalStatusReturns {
   const timeNow = bnum(moment().unix());
   const queuedVotePeriodLimit = votingMachineParams.queuedVotePeriodLimit;
   const boostedVotePeriodLimit = votingMachineParams.boostedVotePeriodLimit;
