@@ -131,6 +131,7 @@ export const ContributorProposalPage = observer(() => {
   const [confirm, setConfirm] = useState(false);
   const [advanced, setAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [proposalCreated, setProposalCreated] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [periodEnd, setPeriodEnd] = useState(false);
   // Amounts
@@ -309,6 +310,7 @@ export const ContributorProposalPage = observer(() => {
         .on(TXEvents.RECEIPT, hash => {
           console.debug('[TX_RECEIPT]', hash);
           setLoading(false);
+          setProposalCreated(true);
         })
         .on(TXEvents.TX_ERROR, txerror => {
           console.error('[TX_ERROR]', txerror);
@@ -410,11 +412,11 @@ export const ContributorProposalPage = observer(() => {
             ) : null}
             <ButtonsWrapper>
               <Button
-                disabled={selectedLevel < 0}
+                disabled={selectedLevel < 0 || proposalCreated}
                 onClick={() => setConfirm(true)}
               >
                 <ButtonContentWrapper>
-                  Submit Proposal
+                  {proposalCreated ? 'Proposal Submitted' : 'Submit Proposal'}
                   {loading ? (
                     <PendingCircle height="10px" width="10px" />
                   ) : null}
