@@ -44,7 +44,7 @@ export const isWinningVote = (
 export const calculateStakes = function (
   thresholdConst,
   boostedProposals,
-  preBoostedProposals,
+  PreBoostedProposals,
   upstakes,
   downstakes
 ) {
@@ -72,10 +72,24 @@ export const calculateStakes = function (
 };
 
 interface DecodeProposalStatusReturns {
-  status: string;
+  status: Status;
   boostTime: BigNumber;
   finishTime: BigNumber;
   pendingAction: number;
+}
+
+enum Status {
+  ExpiredInQueue = 'Expired in Queue',
+  Passed = 'Passed',
+  ProposalRejected = 'Proposal Rejected',
+  ExecutionSucceded = 'Execution Succeeded',
+  InQueue = 'In Queue',
+  ExecutionTimeout = 'Execution Timeout',
+  PendingExecution = 'Pending Execution',
+  PendingBoost = 'Pending Boost',
+  PreBoosted = 'Pre Boosted',
+  QuietEndingPeriod = 'Quiet Ending Period',
+  Boosted = 'Boosted',
 }
 
 // @ts-ignore
@@ -100,7 +114,7 @@ export const decodeProposalStatus = function (
   switch (proposal.stateInVotingMachine) {
     case VotingMachineProposalState.ExpiredInQueue:
       return {
-        status: 'Expired in Queue',
+        status: Status.ExpiredInQueue,
         boostTime: bnum(0),
         finishTime: proposalStateChangeEvents.find(
           event =>
@@ -119,7 +133,7 @@ export const decodeProposalStatus = function (
     case VotingMachineProposalState.Executed:
       if (proposal.stateInScheme === WalletSchemeProposalState.Rejected)
         return {
-          status: 'Proposal Rejected',
+          status: Status.ProposalRejected,
           boostTime: boostedPhaseTime,
           finishTime: proposalStateChangeEvents.find(
             event => Number(event.state) === VotingMachineProposalState.Executed
@@ -137,7 +151,7 @@ export const decodeProposalStatus = function (
         proposal.stateInScheme === WalletSchemeProposalState.ExecutionSucceded
       )
         return {
-          status: 'Execution Succeeded',
+          status: Status.ExecutionSucceded,
           boostTime: boostedPhaseTime,
           finishTime: proposalStateChangeEvents.find(
             event => Number(event.state) === VotingMachineProposalState.Executed
@@ -155,7 +169,7 @@ export const decodeProposalStatus = function (
         proposal.stateInScheme === WalletSchemeProposalState.ExecutionTimeout
       )
         return {
-          status: 'Execution Timeout',
+          status: Status.ExecutionTimeout,
           boostTime: boostedPhaseTime,
           finishTime: proposalStateChangeEvents.find(
             event => Number(event.state) === VotingMachineProposalState.Executed
@@ -171,7 +185,7 @@ export const decodeProposalStatus = function (
         };
       else if (proposal.stateInScheme === WalletSchemeProposalState.Submitted)
         return {
-          status: 'Passed',
+          status: Status.Passed,
           boostTime: boostedPhaseTime,
           finishTime: proposalStateChangeEvents.find(
             event => Number(event.state) === VotingMachineProposalState.Executed
@@ -192,7 +206,7 @@ export const decodeProposalStatus = function (
         };
       else
         return {
-          status: 'Passed',
+          status: Status.Passed,
           boostTime: boostedPhaseTime,
           finishTime: proposalStateChangeEvents.find(
             event => Number(event.state) === VotingMachineProposalState.Executed
@@ -209,14 +223,14 @@ export const decodeProposalStatus = function (
     case VotingMachineProposalState.Queued:
       if (timeNow > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
         return {
-          status: 'Expired in Queue',
+          status: Status.ExpiredInQueue,
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
           pendingAction: 3,
         };
       } else {
         return {
-          status: 'In Queue',
+          status: Status.InQueue,
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
           pendingAction: 0,
@@ -281,7 +295,7 @@ export const decodeProposalStatus = function (
         proposal.shouldBoost
       ) {
         return {
-          status: 'Pending Execution',
+          status: Status.PendingExecution,
           boostTime: boostedPhaseTime,
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
@@ -293,7 +307,7 @@ export const decodeProposalStatus = function (
         !proposal.shouldBoost
       ) {
         return {
-          status: 'Pending Execution',
+          status: Status.PendingExecution,
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
           pendingAction: 2,
@@ -303,7 +317,7 @@ export const decodeProposalStatus = function (
         !proposal.shouldBoost
       ) {
         return {
-          status: 'In Queue',
+          status: Status.InQueue,
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
           pendingAction: 0,
@@ -323,14 +337,14 @@ export const decodeProposalStatus = function (
     case VotingMachineProposalState.Boosted:
       if (timeNow > boostedPhaseTime.plus(boostedVotePeriodLimit).toNumber()) {
         return {
-          status: 'Pending Execution',
+          status: Status.PendingBoost,
           boostTime: boostedPhaseTime,
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
           pendingAction: 2,
         };
       } else {
         return {
-          status: 'Boosted',
+          status: Status.Boosted,
           boostTime: boostedPhaseTime,
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
           pendingAction: 0,
@@ -346,7 +360,7 @@ export const decodeProposalStatus = function (
           ).timestamp
         ).plus(quietEndingPeriod) || bnum(0);
       return {
-        status: 'Quiet Ending Period',
+        status: Status.QuietEndingPeriod,
         boostTime: boostedPhaseTime,
         finishTime: finishTime,
         pendingAction: finishTime.lt(timeNow) ? 3 : 0,
