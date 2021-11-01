@@ -451,7 +451,7 @@ const ProposalPage = observer(() => {
         components.push(<span>{phrase}</span>);
         if (textParams[key])
           components.push(
-            <BlockchainLink text={textParams} toCopy={false} size="short" />
+            <BlockchainLink text={textParams[0]} toCopy={false} size="short" />
           );
         return components;
       });
