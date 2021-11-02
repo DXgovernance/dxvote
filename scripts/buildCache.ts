@@ -61,10 +61,6 @@ async function main() {
     let networkConfig = appConfig[networkName];
     let networkCacheFile: DaoNetworkCache;
     if (networkName === 'localhost') {
-      networkConfig = JSON.parse(
-        await fs.readFileSync('./.developmentNetwork.json')
-      );
-      console.log(networkConfig);
       networkCacheFile = emptyCache;
     } else {
       if (process.env.RESET_CACHE) {

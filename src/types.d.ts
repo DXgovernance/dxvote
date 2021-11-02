@@ -296,9 +296,16 @@ declare global {
       description: string;
       calls?: array;
     }[];
+    contributionLevels: {
+      id: string;
+      dxd: number;
+      stable: number;
+      rep: number;
+    }[];
     proposalTypes: {
       id: string;
       title: string;
+      scheme?: string;
     }[];
     tokens: {
       address: string;

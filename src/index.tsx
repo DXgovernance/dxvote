@@ -15,7 +15,7 @@ import Footer from './components/Footer';
 import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/Proposals';
-import NewProposalPage from './pages/NewProposal';
+import { SubmitProposalPage } from './pages/SubmitProposal';
 import { NewProposalTypePage } from './pages/NewProposalType';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
@@ -66,9 +66,9 @@ const Routes = () => {
         {' '}
         <NewProposalTypePage />{' '}
       </Route>
-      <Route path="/:network/create/submit/:proposalType">
+      <Route path="/:network/create/submit">
         {' '}
-        <NewProposalPage />{' '}
+        <SubmitProposalPage />{' '}
       </Route>
       <Route path="/:network/create/metadata/:proposalType">
         {' '}

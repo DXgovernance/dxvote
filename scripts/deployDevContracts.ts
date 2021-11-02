@@ -29,6 +29,8 @@ const DXDVestingFactory = hre.artifacts.require('DXDVestingFactory');
 const DXdaoNFT = hre.artifacts.require('DXdaoNFT');
 
 async function main() {
+  await hre.network.provider.send("evm_setAutomine", [true]);
+
   const accounts = await web3.eth.getAccounts();
   const GAS_LIMIT = 9000000;
   const votingMachineToken = await ERC20Mock.new(
@@ -182,7 +184,7 @@ async function main() {
       name: 'QuickWalletScheme',
       callToController: false,
       maxSecondsForExecution: moment.duration(10, 'minutes').asSeconds(),
-      maxRepPercentageToMint: 1,
+      maxRepPercentageToMint: 100,
       controllerPermissions: {
         canGenericCall: false,
         canUpgrade: false,
@@ -192,6 +194,13 @@ async function main() {
       permissions: [
         {
           asset: NULL_ADDRESS,
+          to: ANY_ADDRESS,
+          functionSignature: ANY_FUNC_SIGNATURE,
+          value: MAX_UINT_256,
+          allowed: true,
+        },
+        {
+          asset: votingMachineToken.address,
           to: ANY_ADDRESS,
           functionSignature: ANY_FUNC_SIGNATURE,
           value: MAX_UINT_256,
@@ -352,6 +361,9 @@ async function main() {
     from: accounts[0],
   });
   await votingMachineToken.transfer(avatar.address, web3.utils.toWei('100'), {
+    from: accounts[0],
+  });
+  await votingMachineToken.transfer(schemes['QuickWalletScheme'].address, web3.utils.toWei('50'), {
     from: accounts[0],
   });
   await votingMachineToken.transfer(accounts[1], web3.utils.toWei('50'), {
@@ -553,6 +565,77 @@ async function main() {
     }
   );
 
+  // Create contributor proposal in qws to acc 2 --------------------
+
+  const repFunctionEncoded = web3.eth.abi.encodeFunctionSignature(
+    'mintReputation(uint256,address,address)'
+  );
+  
+  const repParamsEncoded = web3.eth.abi
+    .encodeParameters(
+      ['uint256', 'address', 'address'],
+      ['100', accounts[2], avatar.address]
+    )
+    .substring(2);
+  
+  const repCallData = repFunctionEncoded + repParamsEncoded;
+
+  // Encode DXD approval
+  const dxdApprovalFunctionEncoded = web3.eth.abi.encodeFunctionSignature(
+    'approve(address,uint256)'
+  );
+
+  const dxdApprovalParamsEncoded = web3.eth.abi
+    .encodeParameters(
+      ['address', 'uint256'],
+      [dxdVestingFactory.address, '100']
+    )
+    .substring(2);
+
+  const dxdApprovalCallData =
+    dxdApprovalFunctionEncoded + dxdApprovalParamsEncoded;
+
+  // Encode vesting contract call
+  const vestingFunctionEncoded = web3.eth.abi.encodeFunctionSignature(
+    'create(address,uint256,uint256,uint256,uint256)'
+  );
+
+  const vestingParamsEncoded = web3.eth.abi
+    .encodeParameters(
+      ['address', 'uint256', 'uint256', 'uint256', 'uint256'],
+      [
+        accounts[2],
+        moment().unix(),
+        moment.duration(1, 'years').asSeconds(),
+        moment.duration(2, 'years').asSeconds(),
+        '100',
+      ]
+    )
+    .substring(2);
+
+  const vestingCallData = vestingFunctionEncoded + vestingParamsEncoded;
+
+  const testProposalContributor = (
+    await schemes['QuickWalletScheme'].proposeCalls(
+      [
+        controller.address,
+        accounts[2],
+        votingMachineToken.address,
+        dxdVestingFactory.address,
+      ],
+      [repCallData, "0x0", dxdApprovalCallData, vestingCallData],
+      [0, 100, 0, 0],
+      'Test Proposal #4',
+      await uploadAndGetContentHash('Send moneys for work'),
+      { from: accounts[0] }
+    )
+  ).logs[0].args[0];
+
+  // Pass proposal2 with majority vote
+  await dxdVotingMachine.vote(testProposalContributor, 1, 0, NULL_ADDRESS, {
+    from: accounts[2],
+  });
+
   // Create test proposal 3 in quick wallet scheme
   descriptionText = 'Tranfer 5 ETH to ' + accounts[2];
   await schemes['QuickWalletScheme'].proposeCalls(
@@ -665,6 +748,14 @@ async function main() {
 
   console.log('Contracts Deployed:', contractsDeployed);
 
+  const wXdaiToken = await ERC20Mock.new(
+    accounts[0],
+    web3.utils.toWei('1000')
+  );
+  await wXdaiToken.transfer(avatar.address, web3.utils.toWei('1000'), {
+    from: accounts[0],
+  });
+  
   const networkConfig = {
     cache: {
       fromBlock: 0,
@@ -674,14 +765,78 @@ async function main() {
     contracts: contractsDeployed,
     recommendedCalls: [],
     proposalTemplates: [],
-    tokens: [],
+    proposalTypes: [
+      {
+        "id": "contributor",
+        "title": "Contributor",
+        "scheme": "QuickWalletScheme"
+      },
+      {
+        "id": "custom",
+        "title": "Custom"
+      }
+    ],
+    contributionLevels: [
+      {
+        "id": "1",
+        "dxd": 2000,
+        "stable": 4000,
+        "rep": 0.1667
+      },
+      {
+        "id": "2",
+        "dxd": 3000,
+        "stable": 5000,
+        "rep": 0.1667
+      },
+      {
+        "id": "3",
+        "dxd": 4000,
+        "stable": 6000,
+        "rep": 0.1667
+      },
+      {
+        "id": "4",
+        "dxd": 5000,
+        "stable": 7000,
+        "rep": 0.1667
+      },
+      {
+        "id": "5",
+        "dxd": 6000,
+        "stable": 8000,
+        "rep": 0.1667
+      }
+    ],
+    tokens: [
+      {
+        "address": contractsDeployed.votingMachines.dxd.token,
+        "name": "DXdao on Localhost",
+        "decimals": 18,
+        "symbol": "DXD",
+        "fetchPrice": true,
+        "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
+      },
+      {
+        "address": wXdaiToken.address,
+        "name": "Wrapped XDAI",
+        "decimals": 18,
+        "symbol": "WXDAI",
+        "fetchPrice": true,
+        "logoURI": "https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png"
+      },
+    ],
   };
 
   await fs.writeFileSync(
-    '.developmentNetwork.json',
+    'src/configs/localhost/config.json',
     JSON.stringify(networkConfig, null, 2),
     { encoding: 'utf8', flag: 'w' }
   );
+  
+  await hre.network.provider.send("evm_setAutomine", [false]);
+  await hre.network.provider.send("evm_setIntervalMining", [10000]);
+
 }
 
 main()

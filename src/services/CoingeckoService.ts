@@ -61,4 +61,13 @@ export default class CoingeckoService {
   getPrices() {
     return this.prices;
   }
+
+  async getCoinData(token: String) {
+    return (
+      await axios({
+        method: 'GET',
+        url: `https://api.coingecko.com/api/v3/coins/${token}`,
+      })
+    ).data;
+  }
 }

@@ -76,6 +76,39 @@ export default class IPFSService {
     ).data;
   }
 
+  async uploadProposalMetadata(
+    title: string,
+    description: string,
+    tags: string[],
+    pinataService
+  ) {
+    const bodyTextToUpload = JSON.stringify({
+      description,
+      title,
+      tags: [...tags, 'dxvote'],
+      url: '',
+    });
+
+    const hash = await this.add(bodyTextToUpload);
+    localStorage.setItem('dxvote-newProposal-hash', hash);
+
+    if (pinataService.auth) {
+      const pinataPin = await this.pin(hash);
+      console.debug('[PINATA PIN]', pinataPin.data);
+    }
+    const ipfsPin = await this.pin(hash);
+    console.debug('[IPFS PIN]', ipfsPin);
+
+    let uploaded = false;
+    while (!uploaded) {
+      const ipfsContent = await this.getContent(hash);
+      console.debug('[IPFS CONTENT]', ipfsContent);
+      if (ipfsContent === bodyTextToUpload) uploaded = true;
+      await sleep(1000);
+    }
+    return hash;
+  }
+  
   private async start() {
     if (this.starting) return;
 
