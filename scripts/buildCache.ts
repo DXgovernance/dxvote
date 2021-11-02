@@ -114,7 +114,7 @@ async function main() {
       { encoding: 'utf8', flag: 'w' }
     );
 
-    networkConfig.cache.toBlock = blockNumber;
+    networkConfig.cache.toBlock = Number(toBlock);
     const newIpfsHash = (
       await ipfs.add(fs.readFileSync('./cache/' + networkName + '.json'), {
         pin: true,
