@@ -7,7 +7,7 @@ import {
 } from 'utils';
 import { useContext } from '../contexts';
 
-type ProposalsExtended = Proposal &
+export type ProposalsExtended = Proposal &
   ProposalStateChange &
   VotingMachineParameters &
   Pick<Scheme, 'maxSecondsForExecution' | 'type'> & {
