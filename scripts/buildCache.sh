@@ -17,6 +17,7 @@ CACHE_TO_BLOCK=18870524 yarn hardhat run --network xdai scripts/buildCache.ts
 CACHE_TO_BLOCK=2790301 yarn hardhat run --network arbitrum scripts/buildCache.ts
 CACHE_TO_BLOCK=9574593 yarn hardhat run --network rinkeby scripts/buildCache.ts
 CACHE_TO_BLOCK=6264591 yarn hardhat run --network arbitrumTestnet scripts/buildCache.ts
+yarn prettier --write src/configs/**/*.json
 sleep 1
 yarn upload-config
 
