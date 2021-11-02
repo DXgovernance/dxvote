@@ -5,8 +5,8 @@ import { observer } from 'mobx-react';
 import { useEtherscanService } from 'hooks/useEtherscanService';
 import { BigNumber, normalizeBalance } from 'utils';
 import { ProposalCalls } from 'types';
-import PendingCircle from './common/PendingCircle';
-import { BlockchainLink } from './common';
+import PendingCircle from '../../common/PendingCircle';
+import { BlockchainLink } from '../../common';
 import { Link } from 'react-router-dom';
 
 interface CallDataInformationParams {
@@ -47,6 +47,7 @@ const CallDataInformation = observer(
       const result = await Promise.all(
         proposal.to.map(item => getContractABI(item))
       );
+
       result.map((abi, i) =>
         proposalCallArray.push(
           decodedCallData(
@@ -61,6 +62,7 @@ const CallDataInformation = observer(
           )
         )
       );
+
       setLoading(false);
     };
     useEffect(() => {
