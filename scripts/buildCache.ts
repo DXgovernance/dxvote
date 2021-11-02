@@ -5,6 +5,7 @@ const fs = require('fs');
 const hre = require('hardhat');
 const web3 = hre.web3;
 const { getUpdatedCache } = require('../src/cache');
+const { tryWhile } = require('../src/utils/cache');
 
 const arbitrum = require('../src/configs/arbitrum/config.json');
 const arbitrumTestnet = require('../src/configs/arbitrumTestnet/config.json');
@@ -85,17 +86,15 @@ async function main() {
       networkConfig.cache.toBlock
     );
     const blockNumber = await web3.eth.getBlockNumber();
-    const toBlock = process.env.RESET_CACHE
-      ? fromBlock
-      : process.env.CACHE_TO_BLOCK || networkConfig.cache.toBlock;
+    const toBlock = process.env.CACHE_TO_BLOCK || networkConfig.cache.toBlock;
 
-    if (process.env.RESET_CACHE || toBlock < blockNumber) {
+    if (process.env.RESET_CACHE || ((fromBlock < toBlock) && (toBlock <= blockNumber))) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug(
         'Runing cache script from block',
-        networkConfig.cache.toBlock,
+        fromBlock,
         'to block',
-        blockNumber,
+        toBlock,
         'in network',
         networkName
       );
@@ -103,8 +102,8 @@ async function main() {
         null,
         networkCacheFile,
         networkConfig.contracts,
-        networkConfig.cache.toBlock,
-        blockNumber,
+        fromBlock,
+        toBlock,
         web3
       );
     }
@@ -178,7 +177,7 @@ async function main() {
   );
 }
 
-main()
+tryWhile([main()])
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error);

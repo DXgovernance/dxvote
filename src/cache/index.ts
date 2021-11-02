@@ -8,6 +8,7 @@ import {
   decodeSchemeParameters,
   WalletSchemeProposalState,
   VotingMachineProposalState,
+  tryCacheUpdates
 } from '../utils';
 import {
   getEvents,
@@ -23,20 +24,6 @@ import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import ContributionRewardJSON from '../contracts/ContributionReward.json';
 import { getContracts } from '../contracts';
 import RootContext from '../contexts';
-
-async function tryWhile(promises, networkCache) {
-  let retry = true;
-  while (retry) {
-    try {
-      (await Promise.all(promises)).map(networkCacheUpdated => {
-        networkCache = networkCacheUpdated;
-      });
-    } finally {
-      retry = false;
-    }
-  }
-  return networkCache;
-}
 
 export const getUpdatedCache = async function (
   context: RootContext,
@@ -57,7 +44,7 @@ export const getUpdatedCache = async function (
       `Collecting reputation events for blocks ${fromBlock} - ${toBlock}`
     );
 
-  networkCache = await tryWhile(
+  networkCache = await tryCacheUpdates(
     [
       updateDaoInfo(networkCache, networkWeb3Contracts, web3),
       updateReputationEvents(
@@ -77,7 +64,7 @@ export const getUpdatedCache = async function (
       `Collecting voting machine data in blocks ${fromBlock} - ${toBlock}`
     );
 
-  networkCache = await tryWhile(
+  networkCache = await tryCacheUpdates(
     [
       updateVotingMachines(
         networkCache,
@@ -97,7 +84,7 @@ export const getUpdatedCache = async function (
       `Updating scheme data in blocks ${fromBlock} - ${toBlock}`
     );
 
-  networkCache = await tryWhile(
+  networkCache = await tryCacheUpdates(
     [
       updateSchemes(
         networkCache,
@@ -116,7 +103,7 @@ export const getUpdatedCache = async function (
       `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
     );
 
-  networkCache = await tryWhile(
+  networkCache = await tryCacheUpdates(
     [
       updatePermissionRegistry(
         networkCache,
