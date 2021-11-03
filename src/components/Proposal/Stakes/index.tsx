@@ -147,7 +147,7 @@ const Stakes = () => {
         <PositiveSummary>
           <SummaryTotal>
             <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
-            {formatBalance(proposal.positiveStakes).toString()}{' '}
+            {formatBalance(proposal.positiveStakes).toString()}
             {votingMachineTokenName}
           </SummaryTotal>
           <HorizontalSeparator />
@@ -166,7 +166,7 @@ const Stakes = () => {
                       text={stakeEvent.staker}
                     />
                     <span>
-                      {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
+                      {formatBalance(bnum(stakeEvent.amount)).toString()}
                       {votingMachineTokenName}
                     </span>
                   </Vote>
@@ -177,7 +177,7 @@ const Stakes = () => {
         <NegativeSummary>
           <SummaryTotal>
             <AmountBadge color="red">{negativeStakesCount}</AmountBadge>
-            {formatBalance(proposal.negativeStakes).toString()}{' '}
+            {formatBalance(proposal.negativeStakes).toString()}
             {votingMachineTokenName}
           </SummaryTotal>
           <HorizontalSeparator />
@@ -196,7 +196,7 @@ const Stakes = () => {
                       text={stakeEvent.staker}
                     />
                     <span>
-                      {formatBalance(bnum(stakeEvent.amount)).toString()}{' '}
+                      {formatBalance(bnum(stakeEvent.amount)).toString()}
                       {votingMachineTokenName}
                     </span>
                   </Vote>
@@ -207,7 +207,7 @@ const Stakes = () => {
 
       {stakedAmount.toNumber() > 0 ? (
         <SidebarRow>
-          Already staked {stakedAmount.toNumber() > 0 ? 'for' : 'against'} with{' '}
+          Already staked {stakedAmount.toNumber() > 0 ? 'for' : 'against'} with
           {formatBalance(stakedAmount).toString()} {votingMachineTokenName}
         </SidebarRow>
       ) : (
@@ -244,7 +244,7 @@ const Stakes = () => {
                   18,
                   1,
                   false
-                ).toString()}{' '}
+                ).toString()}
                 {votingMachineTokenName} to boost
               </small>
             )}
@@ -256,7 +256,7 @@ const Stakes = () => {
                   18,
                   1,
                   false
-                ).toString()}{' '}
+                ).toString()}
                 {votingMachineTokenName} to unboost
               </small>
             )}

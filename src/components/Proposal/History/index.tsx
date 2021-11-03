@@ -57,7 +57,7 @@ const History = ({ proposalEvents }) => (
           text={historyEvent.event.tx}
           onlyIcon
         />
-        {i < proposalEvents.history.length - 1 ? <hr /> : <div />}
+        {i < proposalEvents.history.length - 1 && <hr />}
       </ProposalHistoryEvent>
     ))}
   </ProposalInfoBox>

@@ -131,7 +131,7 @@ const Votes = () => {
                     {bnum(voteEvent.amount)
                       .times('100')
                       .div(totalRepAtProposalCreation)
-                      .toFixed(2)}{' '}
+                      .toFixed(2)}
                     %
                   </span>
                 </Vote>
@@ -159,7 +159,7 @@ const Votes = () => {
                       .times('100')
                       .div(totalRepAtProposalCreation)
                       .toNumber()
-                      .toFixed(2)}{' '}
+                      .toFixed(2)}
                     %
                   </span>
                 </Vote>
@@ -178,7 +178,7 @@ const Votes = () => {
         finishTime.toNumber() > 0 && (
           <TextCenter>
             <small>
-              Voter REP Loss Ratio:{' '}
+              Voter REP Loss Ratio:
               {votingParameters.votersReputationLossRatio.toString()}%
             </small>
           </TextCenter>
@@ -236,11 +236,11 @@ const Votes = () => {
       ) : (
         votedAmount.toNumber() !== 0 && (
           <SidebarRow>
-            Already voted {votedAmount.toNumber() > 0 ? 'for' : 'against'} with{' '}
+            Already voted {votedAmount.toNumber() > 0 ? 'for' : 'against'} with
             {votedAmount
               .times('100')
               .div(totalRepAtProposalCreation)
-              .toFixed(2)}{' '}
+              .toFixed(2)}
             % REP
           </SidebarRow>
         )
