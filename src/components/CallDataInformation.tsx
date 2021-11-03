@@ -48,7 +48,6 @@ const CallDataInformation = observer(
         proposal.to.map(item => getContractABI(item))
       );
       result.map((abi, i) => {
-        console.log({ abi });
         proposalCallArray.push(
           decodedCallData(
             scheme.type === 'WalletScheme' &&
@@ -62,7 +61,6 @@ const CallDataInformation = observer(
           )
         );
       });
-      console.log({ proposalCallArray });
       setLoading(false);
     };
     useEffect(() => {
@@ -165,7 +163,6 @@ const CallDataInformation = observer(
       );
     };
     const etherscanCallDisplay = (to: string, from: string, abi: any) => {
-      console.log({ to, from, abi });
       if (advancedCalls) {
         return (
           <div>
@@ -281,7 +278,6 @@ const CallDataInformation = observer(
             },
             i
           ) => {
-            console.log({ contractABI });
             return (
               <div>
                 {i > 0 ? <Divider></Divider> : null}
