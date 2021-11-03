@@ -42,7 +42,7 @@ const Details = () => {
   return (
     <ProposalDescription>
       <Detail>
-        <strong>Proposer</strong>{' '}
+        <strong>Proposer</strong>
         <small>
           <BlockchainLink type="user" text={proposal.proposer} toCopy />
         </small>
@@ -61,36 +61,32 @@ const Details = () => {
         <small>{WalletSchemeProposalState[proposal.stateInScheme]}</small>
       </Detail>
       <Detail>
-        {' '}
-        <strong>Submitted Date</strong>{' '}
+        <strong>Submitted Date</strong>
         <small>
           {moment
             .unix(proposal.submittedTime.toNumber())
             .format('MMMM Do YYYY, h:mm:ss')}
-        </small>{' '}
+        </small>
       </Detail>
       <Detail>
-        {' '}
-        <strong>Boost Date</strong>{' '}
+        <strong>Boost Date</strong>
         <small>
           {boostTime.toNumber() > 0
             ? moment.unix(boostTime.toNumber()).format('MMMM Do YYYY, h:mm:ss')
             : '-'}
-        </small>{' '}
+        </small>
       </Detail>
       <Detail>
-        {' '}
-        <strong>Finish Date</strong>{' '}
+        <strong>Finish Date</strong>
         <small>
           {moment.unix(finishTime.toNumber()).format('MMMM Do YYYY, h:mm:ss')}
-        </small>{' '}
+        </small>
       </Detail>
 
       {boostedVoteRequiredPercentage > 0 && (
         <Detail>
-          {' '}
-          <strong> Required Boosted Vote: </strong>{' '}
-          <small>{boostedVoteRequiredPercentage}%</small>{' '}
+          <strong> Required Boosted Vote: </strong>
+          <small>{boostedVoteRequiredPercentage}%</small>
         </Detail>
       )}
     </ProposalDescription>

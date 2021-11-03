@@ -230,101 +230,98 @@ const Stakes = () => {
             </ActionButton>
           </ActionArea>
         </SidebarRow>
-      ) : account &&
+      ) : (
+        account &&
         !finishTimeReached &&
         (proposal.stateInVotingMachine === 3 ||
-          proposal.stateInVotingMachine === 4) ? (
-        <div>
-          {Number(recommendedStakeToBoost) > 0 ? (
-            <small>
-              Stake ~
-              {formatBalance(recommendedStakeToBoost, 18, 1, false).toString()}{' '}
-              {votingMachineTokenName} to boost
-            </small>
-          ) : (
-            <span />
-          )}
-          {Number(recommendedStakeToUnBoost) > 0 ? (
-            <small>
-              Stake ~
-              {formatBalance(
-                recommendedStakeToUnBoost,
-                18,
-                1,
-                false
-              ).toString()}{' '}
-              {votingMachineTokenName} to unboost
-            </small>
-          ) : (
-            <span />
-          )}
-          <SidebarRow>
-            <AmountInput
-              type="number"
-              placeholder={votingMachineTokenName}
-              name="stakeAmount"
-              value={stakeAmount}
-              id="stakeAmount"
-              step="0.01"
-              min="0"
-              onChange={onStakeAmountChange}
-              style={{ flex: 2 }}
-            />
-            <ActionButton
-              style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
-              color="green"
-              onClick={() => submitStake(1)}
-            >
-              <FiThumbsUp />
-            </ActionButton>
-            <ActionButton
-              style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
-              color="red"
-              onClick={() => submitStake(2)}
-            >
-              <FiThumbsDown />
-            </ActionButton>
-          </SidebarRow>
-        </div>
-      ) : (
-        <div></div>
+          proposal.stateInVotingMachine === 4) && (
+          <div>
+            {Number(recommendedStakeToBoost) > 0 && (
+              <small>
+                Stake ~
+                {formatBalance(
+                  recommendedStakeToBoost,
+                  18,
+                  1,
+                  false
+                ).toString()}{' '}
+                {votingMachineTokenName} to boost
+              </small>
+            )}
+            {Number(recommendedStakeToUnBoost) > 0 && (
+              <small>
+                Stake ~
+                {formatBalance(
+                  recommendedStakeToUnBoost,
+                  18,
+                  1,
+                  false
+                ).toString()}{' '}
+                {votingMachineTokenName} to unboost
+              </small>
+            )}
+            <SidebarRow>
+              <AmountInput
+                type="number"
+                placeholder={votingMachineTokenName}
+                name="stakeAmount"
+                value={stakeAmount}
+                id="stakeAmount"
+                step="0.01"
+                min="0"
+                onChange={onStakeAmountChange}
+                style={{ flex: 2 }}
+              />
+              <ActionButton
+                style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
+                color="green"
+                onClick={() => submitStake(1)}
+              >
+                <FiThumbsUp />
+              </ActionButton>
+              <ActionButton
+                style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
+                color="red"
+                onClick={() => submitStake(2)}
+              >
+                <FiThumbsDown />
+              </ActionButton>
+            </SidebarRow>
+          </div>
+        )
       )}
 
       {proposal.stateInVotingMachine < 3 &&
-      (redeemsLeft.rep.indexOf(proposalId) > -1 ||
-        redeemsLeft.stake.indexOf(proposalId) > -1) ? (
-        <SidebarRow
-          style={{
-            borderTop: '1px solid gray',
-            margin: '0px 10px',
-            justifyContent: 'center',
-          }}
-        >
-          <ActionButton color="blue" onClick={() => redeem()}>
-            Redeem
-          </ActionButton>
-        </SidebarRow>
-      ) : (
-        <div></div>
-      )}
+        (redeemsLeft.rep.indexOf(proposalId) > -1 ||
+          redeemsLeft.stake.indexOf(proposalId) > -1) && (
+          <SidebarRow
+            style={{
+              borderTop: '1px solid gray',
+              margin: '0px 10px',
+              justifyContent: 'center',
+            }}
+          >
+            <ActionButton color="blue" onClick={() => redeem()}>
+              Redeem
+            </ActionButton>
+          </SidebarRow>
+        )}
 
       {account &&
-      proposal.stateInVotingMachine < 3 &&
-      redeemsLeft.bounty.indexOf(proposalId) > -1 ? (
-        <SidebarRow
-          style={{
-            borderTop: '1px solid gray',
-            margin: '0px 10px',
-            justifyContent: 'center',
-          }}
-        >
-          <ActionButton color="blue" onClick={() => redeemDaoBounty()}>
-            Redeem Stake Bounty
-          </ActionButton>
-        </SidebarRow>
-      ) : (
-        <div></div>
-      )}
+        proposal.stateInVotingMachine < 3 &&
+        redeemsLeft.bounty.indexOf(proposalId) > -1 && (
+          <SidebarRow
+            style={{
+              borderTop: '1px solid gray',
+              margin: '0px 10px',
+              justifyContent: 'center',
+            }}
+          >
+            <ActionButton color="blue" onClick={() => redeemDaoBounty()}>
+              Redeem Stake Bounty
+            </ActionButton>
+          </SidebarRow>
+        )}
     </>
   );
 };
