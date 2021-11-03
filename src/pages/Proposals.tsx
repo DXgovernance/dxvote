@@ -30,6 +30,7 @@ import {
   orderByNewestTimeToFinish,
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
+import { useProposals } from 'hooks/useProposals';
 
 const LoadingBox = styled.div`
   display: flex;
@@ -210,6 +211,8 @@ const ProposalsPage = observer(() => {
     );
   });
   const miniSearch = miniSearchRef.current;
+  const propsi = useProposals();
+  console.log(propsi);
 
   /// filtering and sorting proposals for All States, All Schemas criteria
   const filterInitialCriteria = proposals => {
