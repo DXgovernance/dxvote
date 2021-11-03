@@ -32,8 +32,8 @@ const networkIds = {
   mainnet: 1,
   xdai: 100,
   rinkeby: 4,
-  localhost: 1337
-}
+  localhost: 1337,
+};
 
 const emptyCache: DaoNetworkCache = {
   networkId: networkIds[networkName],
@@ -48,7 +48,6 @@ const emptyCache: DaoNetworkCache = {
 };
 
 async function main() {
-  
   if (process.env.EMPTY_CACHE) {
     fs.writeFileSync(
       './cache/' + networkName + '.json',
@@ -62,10 +61,6 @@ async function main() {
     let networkConfig = appConfig[networkName];
     let networkCacheFile: DaoNetworkCache;
     if (networkName === 'localhost') {
-      networkConfig = JSON.parse(
-        await fs.readFileSync('./.developmentNetwork.json')
-      );
-      console.log(networkConfig);
       networkCacheFile = emptyCache;
     } else {
       if (process.env.RESET_CACHE) {
@@ -92,8 +87,7 @@ async function main() {
     const blockNumber = await web3.eth.getBlockNumber();
     const toBlock = process.env.RESET_CACHE
       ? fromBlock
-      : process.env.CACHE_TO_BLOCK ||
-        networkConfig.cache.toBlock;
+      : process.env.CACHE_TO_BLOCK || networkConfig.cache.toBlock;
 
     if (process.env.RESET_CACHE || toBlock < blockNumber) {
       // The cache file is updated with the data that had before plus new data in the network cache file
@@ -106,6 +100,7 @@ async function main() {
         networkName
       );
       networkCacheFile = await getUpdatedCache(
+        null,
         networkCacheFile,
         networkConfig.contracts,
         networkConfig.cache.toBlock,
@@ -173,10 +168,14 @@ async function main() {
   }
 
   // Update the appConfig file that stores the hashes of the dapp config and network caches
-  fs.writeFileSync('./src/configs/' + networkName + '/config.json', JSON.stringify(appConfig[networkName], null, 2), {
-    encoding: 'utf8',
-    flag: 'w',
-  });
+  fs.writeFileSync(
+    './src/configs/' + networkName + '/config.json',
+    JSON.stringify(appConfig[networkName], null, 2),
+    {
+      encoding: 'utf8',
+      flag: 'w',
+    }
+  );
 }
 
 main()

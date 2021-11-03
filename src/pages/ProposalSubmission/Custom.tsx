@@ -1,8 +1,8 @@
 import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useContext } from '../contexts';
-import { Box, Question, Button } from '../components/common';
+import { useContext } from '../../contexts';
+import { Box, Question, Button } from '../../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 
@@ -17,7 +17,7 @@ import {
   denormalizeBalance,
   encodePermission,
   TXEvents,
-} from '../utils';
+} from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
 
 const NewProposalFormWrapper = styled(Box)`

@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 9234792,
-    "toBlock": 9493631,
-    "ipfsHash": "QmUTJzfSLP6723JbNiMsQrejQQdUYnPTgAjuMYfLN2D7za"
+    "toBlock": 9545452,
+    "ipfsHash": "QmPqic9ffpDDdaVmKz7rBDBWinXTrevU8VdsmHDifTk2pV"
   },
   "contracts": {
     "avatar": "0x1A639b50D807ce7e61Dc9eeB091e6Cea8EcB1595",
@@ -389,8 +389,45 @@
   ],
   "proposalTypes": [
     {
+      "id": "contributor",
+      "title": "Contributor",
+      "scheme": "QuickWalletScheme"
+    },
+    {
       "id": "custom",
       "title": "Custom"
+    }
+  ],
+  "contributionLevels": [
+    {
+      "id": "1",
+      "dxd": 2000,
+      "stable": 4000,
+      "rep": 0.1667
+    },
+    {
+      "id": "2",
+      "dxd": 3000,
+      "stable": 5000,
+      "rep": 0.1667
+    },
+    {
+      "id": "3",
+      "dxd": 4000,
+      "stable": 6000,
+      "rep": 0.1667
+    },
+    {
+      "id": "4",
+      "dxd": 5000,
+      "stable": 7000,
+      "rep": 0.1667
+    },
+    {
+      "id": "5",
+      "dxd": 6000,
+      "stable": 8000,
+      "rep": 0.1667
     }
   ],
   "tokens": [

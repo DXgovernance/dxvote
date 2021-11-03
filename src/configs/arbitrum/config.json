@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 338923,
-    "toBlock": 2372475,
-    "ipfsHash": "QmUScD7MWRWV5aR4C7PSGwEnVzAFLCoDMvyUSimcmKfdeo"
+    "toBlock": 2661188,
+    "ipfsHash": "QmX1V8UxBkuwvarDtwb2dVRJrAgQku618AsShcoDH5chKn"
   },
   "contracts": {
     "avatar": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
@@ -431,6 +431,14 @@
       "symbol": "SWPR",
       "fetchPrice": true,
       "logoURI": "https://ipfs.io/ipfs/QmWF6nPb4y2DehfGRzKGaekXQzShSQ11uzMNmxsLJQxBUQ"
+    },
+    {
+      "address": "0x9f20de1fc9b161b34089cbEAE888168B44b03461",
+      "name": "ARBIS",
+      "decimals": 18,
+      "symbol": "ARBIS",
+      "fetchPrice": true,
+      "logoURI": "https://assets.coingecko.com/coins/images/18594/small/NcAIaWlc_400x400_%281%29.jpg"
     }
   ]
 }
