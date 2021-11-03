@@ -369,6 +369,7 @@ export interface ProposalCalls {
   recommendedCallUsed?: RecommendedCallUsed | undefined;
   callParameters?: unknown | undefined;
   encodedFunctionName?: string | undefined;
+  contractABI: any;
 }
 
 export interface RecommendedCallUsed {

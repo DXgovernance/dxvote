@@ -28,6 +28,7 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
   } = useContext();
 
   const networkName = configStore.getActiveChainName();
+  const contracts = configStore.getNetworkContracts();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -47,6 +48,11 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const getContractABI = async (address: string) => {
     try {
       setLoading(true);
+
+      if (address === contracts.controller) {
+        return JSON.stringify(require('../contracts/DxController.json').abi);
+      }
+
       const ABI = await etherscanService.getContractABI(address, networkName);
       checkEtherscanErrors(ABI);
 
