@@ -97,10 +97,7 @@ const ProposalPage = observer(() => {
     return null;
   }
 
-  const scheme = daoStore.getScheme(proposal.scheme);
-
   const proposalEvents = daoStore.getProposalEvents(proposalId);
-  console.debug('[Scheme]', scheme);
 
   // @ts-ignore
   try {
@@ -120,9 +117,6 @@ const ProposalPage = observer(() => {
     setProposalTitle('Error getting proposal title from ipfs');
     setProposalDescription('Error getting proposal description from IPFS');
   }
-
-  console.debug('[Proposal]', proposal);
-  console.debug('[Proposal events]', proposalEvents);
 
   return (
     <ProposalInformationWrapper>
@@ -160,9 +154,7 @@ const ProposalPage = observer(() => {
       </ProposalInfoSection>
       <InfoSidebarBox>
         <Status />
-
         <SidebarDivider />
-
         <SidebarRow>
           <Details />
         </SidebarRow>

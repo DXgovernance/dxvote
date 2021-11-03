@@ -4,6 +4,11 @@ export const TextCenter = styled.div`
   text-align: center;
 `;
 
+export const ActionArea = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const SidebarRow = styled.div`
   display: flex;
   justify-content: space-around;
@@ -49,10 +54,12 @@ export const AmountInput = styled.input`
   font-family: var(--roboto);
 `;
 
-const Summary = styled.div``;
+export const Summary = styled.div``;
+
 export const PositiveSummary = styled(Summary)`
   color: ${({ theme }) => theme.votes.positive.color};
 `;
+
 export const NegativeSummary = styled(Summary)`
   color: ${({ theme }) => theme.votes.negative.color};
 `;

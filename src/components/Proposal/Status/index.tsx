@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import moment from 'moment';
 import Countdown from 'react-countdown';
 import { FiPlayCircle, FiFastForward } from 'react-icons/fi';
@@ -9,46 +8,7 @@ import { useLocation } from 'react-router-dom';
 import { bnum } from 'utils';
 import { Question } from 'components/common';
 
-const SidebarRow = styled.div`
-  display: flex;
-  justify-content: space-around;
-  flex-direction: row;
-  padding: 5px 0px;
-
-  .timeText {
-    font-size: 20;
-    margin-left: -10px;
-    width: 100%;
-    text-align: center;
-    padding-top: 5px;
-  }
-
-  span {
-    margin-bottom: 5px;
-  }
-`;
-
-const ActionButton = styled.div`
-  background-color: ${props => props.color || '#536DFE'};
-  border-radius: 4px;
-  color: white;
-  height: 34px;
-  width: max-content;
-  letter-spacing: 1px;
-  font-weight: 500;
-  line-height: 34px;
-  text-align: center;
-  cursor: pointer;
-  padding: 0px 10px;
-  margin: 5px;
-
-  display: flex;
-  align-items: center;
-
-  svg {
-    margin-right: 4px;
-  }
-`;
+import { SidebarRow, ActionButton } from '../styles';
 
 const Status = () => {
   const {

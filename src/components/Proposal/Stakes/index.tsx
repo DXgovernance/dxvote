@@ -1,15 +1,8 @@
 import { useState } from 'react';
-import styled from 'styled-components';
 import moment from 'moment';
-import {
-  Question,
-  AmountBadge,
-  BlockchainLink,
-  HorizontalSeparator,
-} from 'components/common';
+import { useLocation } from 'react-router-dom';
 
 import { useContext } from 'contexts';
-import { useLocation } from 'react-router-dom';
 import {
   bnum,
   calculateStakes,
@@ -19,98 +12,24 @@ import {
 
 import { FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
 
-//move to Styles
-const ActionArea = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-const SidebarRow = styled.div`
-  display: flex;
-  justify-content: space-around;
-  flex-direction: row;
-  padding: 5px 0px;
+import {
+  Question,
+  AmountBadge,
+  BlockchainLink,
+  HorizontalSeparator,
+} from 'components/common';
 
-  .timeText {
-    font-size: 20;
-    margin-left: -10px;
-    width: 100%;
-    text-align: center;
-    padding-top: 5px;
-  }
-
-  span {
-    margin-bottom: 5px;
-  }
-`;
-
-const Vote = styled.div`
-  display: flex;
-  font-size: ${({ theme }) => theme.votes.fontSize};
-  justify-content: space-between;
-
-  > * {
-    margin-left: 4px;
-  }
-`;
-
-const AmountInput = styled.input`
-  background-color: white;
-  border: 1px solid gray;
-  border-radius: 4px;
-  height: 34px;
-  letter-spacing: 1px;
-  font-weight: 500;
-  line-height: 32px;
-  text-align: left;
-  cursor: pointer;
-  width: 60px;
-  padding: 0px 10px;
-  margin: 5px;
-  font-family: var(--roboto);
-`;
-
-const Summary = styled.div``;
-
-const PositiveSummary = styled(Summary)`
-  color: ${({ theme }) => theme.votes.positive.color};
-`;
-const NegativeSummary = styled(Summary)`
-  color: ${({ theme }) => theme.votes.negative.color};
-`;
-
-const SummaryTotal = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-`;
-const SummaryDetails = styled.div`
-  font-size: 13px;
-  flex: 1;
-`;
-
-const ActionButton = styled.div`
-  background-color: ${props => props.color || '#536DFE'};
-  border-radius: 4px;
-  color: white;
-  height: 34px;
-  width: max-content;
-  letter-spacing: 1px;
-  font-weight: 500;
-  line-height: 34px;
-  text-align: center;
-  cursor: pointer;
-  padding: 0px 10px;
-  margin: 5px;
-
-  display: flex;
-  align-items: center;
-
-  svg {
-    margin-right: 4px;
-  }
-`;
-//
+import {
+  ActionArea,
+  SidebarRow,
+  Vote,
+  AmountInput,
+  PositiveSummary,
+  NegativeSummary,
+  SummaryDetails,
+  SummaryTotal,
+  ActionButton,
+} from '../styles';
 
 const Stakes = () => {
   const {
@@ -135,6 +54,8 @@ const Stakes = () => {
   ).length;
   const networkContracts = configStore.getNetworkContracts();
   const votingMachines = networkContracts.votingMachines;
+
+  const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
   const votingMachineTokenName =
     votingMachines.gen && scheme.votingMachine === votingMachines.gen.address
@@ -176,6 +97,7 @@ const Stakes = () => {
   const { finishTime } = daoStore.getProposalStatus(proposalId);
   const finishTimeReached = finishTime.toNumber() < moment().unix();
 
+  // Event Handlers
   function onStakeAmountChange(event) {
     setStakeAmount(event.target.value);
   }
@@ -213,7 +135,6 @@ const Stakes = () => {
   const approveVotingMachineToken = function () {
     daoService.approveVotingMachineToken(votingMachineUsed);
   };
-  const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
   return (
     <>
