@@ -92,6 +92,7 @@ const InputWrapper = styled.div`
   display: flex;
   justify-content: center;
   font-size: xx-large;
+  align-items: center;
 `;
 const ButtonContentWrapper = styled.div`
   display: flex;
@@ -143,6 +144,7 @@ export const ContributorProposalPage = observer(() => {
   const [selectedLevel, setSelectedLevel] = useState(-1);
   const [percentage, setPercentage] = useState(null);
   const [trialPeriod, setTrialPeriod] = useState(false);
+  const [stableOverride, setStableOverride] = useState<number>(null);
 
   const { tokenAth: dxdAth } = useTokenService('dxdao');
 
@@ -215,8 +217,15 @@ export const ContributorProposalPage = observer(() => {
     }
   }, [confirm]);
 
-  const calculateDiscountedValue = (amount, discount) => {
-    return amount * discount;
+  // Reset stable override when changing level
+  useEffect(() => {
+    setStableOverride(
+      calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
+    );
+  }, [selectedLevel]);
+
+  const calculateDiscountedValue = (amount, discount, override = null) => {
+    return override || amount * discount;
   };
 
   const submitProposal = async () => {
@@ -228,7 +237,11 @@ export const ContributorProposalPage = observer(() => {
         localStorage.getItem('dxvote-newProposal-description') +
           `${
             '$' +
-            calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
+            calculateDiscountedValue(
+              levels[selectedLevel]?.stable,
+              discount,
+              stableOverride
+            )
           } \n ${calculateDiscountedValue(
             levels[selectedLevel]?.dxd / dxdAth,
             discount
@@ -261,7 +274,11 @@ export const ContributorProposalPage = observer(() => {
         account,
         denormalizeBalance(
           bnum(
-            calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
+            calculateDiscountedValue(
+              levels[selectedLevel]?.stable,
+              discount,
+              stableOverride
+            )
           )
         )
       );
@@ -339,7 +356,12 @@ export const ContributorProposalPage = observer(() => {
     <ModalContentWrap>
       <b>Payment:</b>
       <Values>
-        ${calculateDiscountedValue(levels[selectedLevel]?.stable, discount)}
+        $
+        {calculateDiscountedValue(
+          levels[selectedLevel]?.stable,
+          discount,
+          stableOverride
+        )}
       </Values>
       <Values>
         {((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(2)} DXD
@@ -373,7 +395,6 @@ export const ContributorProposalPage = observer(() => {
                 numberOfLevels={levels.length}
                 selected={selectedLevel}
                 onSelect={index => {
-                  console.log({ index });
                   setSelectedLevel(index);
                 }}
               />
@@ -384,7 +405,8 @@ export const ContributorProposalPage = observer(() => {
                   $
                   {calculateDiscountedValue(
                     levels[selectedLevel]?.stable,
-                    discount
+                    discount,
+                    stableOverride
                   )}
                 </Value>
                 <Value>
@@ -447,6 +469,17 @@ export const ContributorProposalPage = observer(() => {
             />
             {/* Add REP snapshot date selector */}
             {/* Edit DXD ATH */}
+
+            <InputWrapper>
+              $
+              <TextInput
+                placeholder="Override Amount"
+                type="number"
+                onChange={event => setStableOverride(event.target.value)}
+                value={stableOverride}
+              />
+            </InputWrapper>
+
             <ButtonsWrapper>
               <Button onClick={() => setAdvanced(false)}>Save</Button>
             </ButtonsWrapper>
