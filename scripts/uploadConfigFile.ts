@@ -30,7 +30,6 @@ async function main() {
         },
       })
       .then(function (response) {
-        console.log(response.data);
         console.debug(
           `IPFS hash for dxvote ${networkNames[i]} config: ${response.data.IpfsHash}`
         );
