@@ -34,7 +34,7 @@ const CallDataInformation = observer(
     proposal,
     networkContracts,
   }: CallDataInformationParams) => {
-    const { decodedCallData, ABI } = useABIService();
+    const { decodedCallData } = useABIService();
     const { getContractABI, error } = useEtherscanService();
     const [loading, setLoading] = useState(false);
     const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
@@ -47,8 +47,7 @@ const CallDataInformation = observer(
       const result = await Promise.all(
         proposal.to.map(item => getContractABI(item))
       );
-
-      result.map((abi, i) =>
+      result.map((abi, i) => {
         proposalCallArray.push(
           decodedCallData(
             scheme.type === 'WalletScheme' &&
@@ -60,9 +59,8 @@ const CallDataInformation = observer(
             proposal.values[i],
             abi
           )
-        )
-      );
-
+        );
+      });
       setLoading(false);
     };
     useEffect(() => {
@@ -164,7 +162,7 @@ const CallDataInformation = observer(
         </div>
       );
     };
-    const etherscanCallDisplay = (to: string, from: string) => {
+    const etherscanCallDisplay = (to: string, from: string, abi: any) => {
       if (advancedCalls) {
         return (
           <div>
@@ -182,17 +180,17 @@ const CallDataInformation = observer(
             </p>
             <p>
               <strong>Function: </strong>
-              <small>{ABI.function.signature}</small>
+              <small>{abi?.function?.signature}</small>
             </p>
-            {Object.keys(ABI.args)
+            {Object.keys(abi.args)
               .filter(item => item != '__length__')
               .map((item, i) => {
-                const check = ABI.function.inputs[item];
+                const check = abi.function.inputs[item];
                 const functionName = check
-                  ? ABI.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
+                  ? abi.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
                   : 'failed';
                 const functionType = check
-                  ? ABI.function.inputs[item].type
+                  ? abi.function.inputs[item].type
                   : 'failed';
                 return (
                   <p>
@@ -203,14 +201,14 @@ const CallDataInformation = observer(
                     <CallParams fontStyle="italic">
                       ({functionType}){' '}
                     </CallParams>
-                    <CallParams>{ABI.args[item]} </CallParams>
+                    <CallParams>{abi.args[item]} </CallParams>
                   </p>
                 );
               })}
           </div>
         );
       }
-      return decodedText(from, to, ABI.function.signature);
+      return decodedText(from, to, abi?.function?.signature);
     };
 
     const errorDisplay = (error: Error) => {
@@ -276,6 +274,7 @@ const CallDataInformation = observer(
               data,
               value,
               encodedFunctionName,
+              contractABI,
             },
             i
           ) => {
@@ -292,9 +291,10 @@ const CallDataInformation = observer(
                       data,
                       encodedFunctionName,
                       value,
+                      contractABI,
                     })
-                  : ABI
-                  ? etherscanCallDisplay(to, from)
+                  : contractABI.function
+                  ? etherscanCallDisplay(to, from, contractABI)
                   : baseDisplay(to, from, data, value, advancedCalls)}
               </div>
             );
