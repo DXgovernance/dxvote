@@ -165,6 +165,7 @@ const CallDataInformation = observer(
       );
     };
     const etherscanCallDisplay = (to: string, from: string, abi: any) => {
+      console.log({ to, from, abi });
       if (advancedCalls) {
         return (
           <div>
@@ -182,7 +183,7 @@ const CallDataInformation = observer(
             </p>
             <p>
               <strong>Function: </strong>
-              <small>{abi.function.signature}</small>
+              <small>{abi?.function?.signature}</small>
             </p>
             {Object.keys(abi.args)
               .filter(item => item != '__length__')
@@ -210,7 +211,7 @@ const CallDataInformation = observer(
           </div>
         );
       }
-      return decodedText(from, to, abi.function.signature);
+      return decodedText(from, to, abi?.function?.signature);
     };
 
     const errorDisplay = (error: Error) => {
@@ -296,7 +297,7 @@ const CallDataInformation = observer(
                       value,
                       contractABI,
                     })
-                  : contractABI
+                  : contractABI.function
                   ? etherscanCallDisplay(to, from, contractABI)
                   : baseDisplay(to, from, data, value, advancedCalls)}
               </div>
