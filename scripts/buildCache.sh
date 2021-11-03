@@ -19,7 +19,6 @@ CACHE_TO_BLOCK=9574593 yarn hardhat run --network rinkeby scripts/buildCache.ts
 CACHE_TO_BLOCK=6264591 yarn hardhat run --network arbitrumTestnet scripts/buildCache.ts
 yarn prettier --write src/configs/**/*.json
 sleep 1
-yarn upload-config
 
 # Enable isolatedModules and use esnext as module in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \
