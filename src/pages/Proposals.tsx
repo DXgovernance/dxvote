@@ -204,8 +204,7 @@ const ProposalsPage = observer(() => {
   const userEvents = daoStore.getUserEvents(account);
 
   const miniSearch = miniSearchRef.current;
-  const {proposals, setProposals} = useProposals();
-
+  const { proposals, setProposals } = useProposals();
 
   const history = useHistory();
   const location = useLocation();
@@ -234,8 +233,6 @@ const ProposalsPage = observer(() => {
     });
   }, []);
 
-  // Oberver to proposals filter changes
-  // @todo find way to undo reset setProposals
   useEffect(() => {
     let sortedProposals;
     setIsLoading(true);
