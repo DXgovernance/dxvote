@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useHistory, Link, useLocation } from 'react-router-dom';
+import { useHistory, Link} from 'react-router-dom';
 import { observer } from 'mobx-react';
-import MiniSearch from 'minisearch';
 import { useContext } from '../contexts';
 import {
   LinkButton,
@@ -20,16 +18,14 @@ import PulsingIcon from '../components/common/LoadingIcon';
 import Footer from '../components/Footer';
 import {
   ZERO_ADDRESS,
-  enumKeys,
   formatPercentage,
   normalizeBalance,
   timeToTimestamp,
   formatNumberValue,
-  VotingMachineProposalState,
-  filterInitialCriteria,
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 import { useProposals } from 'hooks/useProposals';
+import {  StatusSearch, SchemaSearch, TitleSearch} from "../components/Proposals/Search";
 
 const LoadingBox = styled.div`
   display: flex;
@@ -63,42 +59,6 @@ const ProposalsWrapper = styled.div`
 const NewProposalButton = styled.div`
   align-self: center;
   margin-bottom: 100px;
-`;
-
-const ProposalsFilter = styled.select`
-  background-color: ${props => props.color || '#536DFE'};
-  border-radius: 4px;
-  color: white;
-  height: 34px;
-  letter-spacing: 1px;
-  font-weight: 500;
-  line-height: 34px;
-  text-align: center;
-  cursor: pointer;
-  width: 200px;
-  padding: 0px 10px;
-  margin: 10px 0px;
-  font-family: var(--roboto);
-  border: 0px;
-  align-self: center;
-`;
-
-const ProposalsNameFilter = styled.input`
-  background-color: white;
-  border: 1px solid #536dfe;
-  border-radius: 4px;
-  color: #536dfe;
-  height: 34px;
-  letter-spacing: 1px;
-  font-weight: 500;
-  line-height: 32px;
-  text-align: left;
-  cursor: initial;
-  width: 180px;
-  padding: 0px 10px;
-  margin: 5px 0px;
-  font-family: var(--roboto);
-  align-self: center;
 `;
 
 const SidebarWrapper = styled.div`
@@ -178,121 +138,15 @@ const ProposalsPage = observer(() => {
     context: { daoStore, configStore, providerStore },
   } = useContext();
 
-  const schemes = daoStore.getAllSchemes();
-
-  const [stateFilter, setStateFilter] = React.useState('Any Status');
-  const [schemeFilter, setSchemeFilter] = React.useState('All Schemes');
-  const [titleFilter, setTitleFilter] = React.useState('');
-  //const [proposals, setProposals] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  const miniSearchRef = React.useRef(
-    new MiniSearch({
-      fields: ['title'],
-      storeFields: ['id'],
-      searchOptions: {
-        fuzzy: 0.3,
-        prefix: true,
-        combineWith: 'AND',
-      },
-    })
-  );
 
   const votingMachines = configStore.getNetworkContracts().votingMachines;
   const networkName = configStore.getActiveChainName();
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
 
-  const miniSearch = miniSearchRef.current;
-  const { proposals, setProposals } = useProposals();
+  const [state, dispatch] = useProposals();
 
   const history = useHistory();
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-
-  // load filter from url if any on initial load
-  // load filter from url  when back on history
-  useEffect(() => {
-    setIsLoading(true);
-    if (params.get('title')) setTitleFilter(params.get('title'));
-    if (params.get('scheme')) setSchemeFilter(params.get('scheme'));
-    if (params.get('state')) setStateFilter(params.get('state'));
-    setIsLoading(false);
-    history.listen(location => {
-      const params = new URLSearchParams(location.search);
-      if (history.action === 'POP') {
-        setIsLoading(true);
-        if (params.get('title')) setTitleFilter(params.get('title'));
-        else setTitleFilter('');
-        if (params.get('scheme')) setSchemeFilter(params.get('scheme'));
-        else setSchemeFilter('All Schemes');
-        if (params.get('state')) setStateFilter(params.get('state'));
-        else setStateFilter('Any Status');
-        setIsLoading(false);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    let sortedProposals;
-    setIsLoading(true);
-
-    if (stateFilter === 'Any Status') {
-      sortedProposals = filterInitialCriteria(proposals, daoStore);
-    } else {
-      sortedProposals = proposals.filter(
-        proposal =>
-          parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter)
-      );
-    }
-
-    if (schemeFilter !== 'All Schemes') {
-      sortedProposals = sortedProposals.filter(
-        proposal => proposal.scheme === schemeFilter
-      );
-    }
-    miniSearch.removeAll();
-    miniSearch.addAll(sortedProposals);
-
-    if (titleFilter) {
-      let search = miniSearch.search(titleFilter);
-      sortedProposals = sortedProposals.filter(proposal =>
-        search.find(elem => elem.id === proposal.id)
-      );
-    }
-
-    setProposals(sortedProposals); //triggers reindex
-    setIsLoading(false);
-  }, [schemeFilter, stateFilter, titleFilter]);
-
-  // Filter changes handlers
-  function onStateFilterChange(event) {
-    params.delete('state');
-    params.append('state', event.target.value);
-    history.push({
-      location: location.pathname,
-      search: params.toString(),
-    });
-    setStateFilter(event.target.value);
-  }
-  function onTitleFilterChange(event) {
-    params.delete('title');
-    params.append('title', event.target.value);
-    history.push({
-      location: location.pathname,
-      search: params.toString(),
-    });
-    setTitleFilter(event.target.value);
-  }
-  function onSchemeFilterChange(event) {
-    params.delete('scheme');
-    params.append('scheme', event.target.value);
-    history.push({
-      location: location.pathname,
-      search: params.toString(),
-    });
-    setSchemeFilter(event.target.value);
-  }
 
   return (
     <ProposalsWrapper>
@@ -303,43 +157,9 @@ const ProposalsPage = observer(() => {
               + New Proposal
             </LinkButton>
           </NewProposalButton>
-          <ProposalsNameFilter
-            type="text"
-            placeholder="Search by proposal title"
-            name="titleFilter"
-            id="titleFilter"
-            value={titleFilter}
-            onChange={onTitleFilterChange}
-          ></ProposalsNameFilter>
-          <ProposalsFilter
-            name="stateFilter"
-            id="stateSelector"
-            value={stateFilter}
-            onChange={onStateFilterChange}
-          >
-            <option value="Any Status">Any Status</option>
-            {enumKeys(VotingMachineProposalState).map(
-              i =>
-                i !== 'None' && (
-                  <option value={VotingMachineProposalState[i]}>{i}</option>
-                )
-            )}
-          </ProposalsFilter>
-          <ProposalsFilter
-            name="schemeFilter"
-            id="schemeSelector"
-            value={schemeFilter}
-            onChange={onSchemeFilterChange}
-          >
-            <option value="All Schemes">All Schemes</option>
-            {schemes.map(scheme => {
-              return (
-                <option key={scheme.address} value={scheme.address}>
-                  {scheme.name}
-                </option>
-              );
-            })}
-          </ProposalsFilter>
+          <TitleSearch/>
+          <StatusSearch/>
+          <SchemaSearch/>
         </ProposalTableHeaderActions>
         <FooterWrap>
           <Footer />
@@ -362,7 +182,7 @@ const ProposalsPage = observer(() => {
             <HeaderCell>Votes</HeaderCell>
           </TableHeader>
           <TableBody>
-            {proposals.map((proposal, i) => {
+            {state.map((proposal, i) => {
               const positiveStake = formatNumberValue(
                 normalizeBalance(proposal.positiveStakes, 18),
                 1

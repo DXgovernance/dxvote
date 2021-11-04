@@ -23,13 +23,14 @@ const ProposalsFilter = styled.select`
 `;
 
 const StatusSearch = () => {
-  const { proposals, setProposals } = useProposals();
+  const [state, dispatch] = useProposals();
   const [isLoading, setIsLoading] = useState(false);
   const [stateFilter, setStateFilter] = useState('Any Status');
 
   const history = useHistory();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
+  
 
   // load filter from url if any on initial load
   // load filter from url  when back on history
@@ -49,9 +50,6 @@ const StatusSearch = () => {
     });
   }, []);
 
-  /**
-   * seperating searching
-   */
 
   function onStateFilterChange(event) {
     params.delete('state');
@@ -68,13 +66,13 @@ const StatusSearch = () => {
     setIsLoading(true);
 
     if (stateFilter != 'Any Status') {
-      sortedProposals = proposals.filter(
+      sortedProposals = state.filter(
         proposal =>
           parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter)
       );
     }
 
-    setProposals(sortedProposals); //triggers reindex
+    dispatch({type: 'update', payload: sortedProposals}); //triggers reindex
     setIsLoading(false);
   }, [stateFilter]);
 

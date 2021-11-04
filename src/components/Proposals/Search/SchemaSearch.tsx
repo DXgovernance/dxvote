@@ -27,7 +27,7 @@ const SchemaSearch = () => {
     context: { daoStore },
   } = useContext();
   const schemes = daoStore.getAllSchemes();
-  const { proposals, setProposals } = useProposals();
+  const [state, dispatch] = useProposals();
   const [isLoading, setIsLoading] = useState(false);
   const [schemeFilter, setSchemeFilter] = useState('All Schemes');
 
@@ -72,12 +72,12 @@ const SchemaSearch = () => {
     setIsLoading(true);
 
     if (schemeFilter !== 'All Schemes') {
-      sortedProposals = proposals.filter(
+      sortedProposals = state.filter(
         proposal => proposal.scheme === schemeFilter
       );
     }
 
-    setProposals(sortedProposals); //triggers reindex
+    dispatch({type: 'update', payload: sortedProposals}); //triggers reindex
     setIsLoading(false);
   }, [schemeFilter]);
 

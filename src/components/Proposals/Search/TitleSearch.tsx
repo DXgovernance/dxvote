@@ -23,7 +23,7 @@ const ProposalsNameFilter = styled.input`
 `;
 
 const TitleSearch = () => {
-  const { proposals, setProposals } = useProposals();
+  const [state, dispatch] = useProposals();
   const [titleFilter, setTitleFilter] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
@@ -78,12 +78,12 @@ const TitleSearch = () => {
 
     if (titleFilter) {
       let search = miniSearch.search(titleFilter);
-      sortedProposals = proposals.filter(proposal =>
+      sortedProposals = state.filter(proposal =>
         search.find(elem => elem.id === proposal.id)
       );
     }
 
-    setProposals(sortedProposals); //triggers reindex
+    dispatch({type: "update", payload: sortedProposals})
     setIsLoading(false);
   }, [titleFilter]);
 

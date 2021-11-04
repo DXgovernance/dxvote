@@ -1,8 +1,7 @@
 import { useContext } from 'contexts';
-import { useState, createContext, ReactNode , useReducer} from 'react';
+import {  createContext, ReactNode , useReducer} from 'react';
 import { filterInitialCriteria } from 'utils';
 
-//types
 export type ProposalsExtended = Proposal &
   ProposalStateChange &
   VotingMachineParameters &
@@ -14,11 +13,15 @@ interface ProposalProviderProps {
   children: ReactNode;
 }
 
+type Action  =  {type: 'update', payload: ProposalsExtended[]} | { type: 'display'} 
+
+export const ProposalsContext = createContext(undefined);
+
+
+export const ProposalProvider = ({ children }: ProposalProviderProps) => {
 const {
   context: { daoStore },
 } = useContext();
-
-export const ProposalsContext = createContext(undefined);
 
 const initialProposalState: ProposalsExtended[] = filterInitialCriteria(
   daoStore.getAllProposals().map(cacheProposal => {
@@ -29,8 +32,7 @@ const initialProposalState: ProposalsExtended[] = filterInitialCriteria(
   }),
   daoStore
 );
-
- const proposalReducer = (state: ProposalsExtended[], action) => {
+  const [state, dispatch] = useReducer((state:ProposalsExtended[], action:Action) => {
   switch (action.type) {
     case "update":
       return action.payload 
@@ -39,9 +41,7 @@ const initialProposalState: ProposalsExtended[] = filterInitialCriteria(
     default:
       return initialProposalState
   }
-}
-export const ProposalProvider = ({ children }: ProposalProviderProps) => {
-  const [state, dispatch] = useReducer(proposalReducer, initialProposalState)
+  }, initialProposalState)
 
   return (
     <ProposalsContext.Provider value={[state, dispatch]}>
