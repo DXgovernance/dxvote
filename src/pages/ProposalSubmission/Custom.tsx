@@ -19,7 +19,7 @@ import {
   TXEvents,
 } from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
-import DiscourseImporter from '../components/DiscourseImporter';
+import DiscourseImporter from '../../components/DiscourseImporter';
 
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
