@@ -67,7 +67,7 @@ const DiscourseImporter: React.FC<DiscourseImporterProps> = ({ onImport }) => {
 
   const getTopic = async (topicId: number) => {
     const response = await fetch(
-      `https://cors-anywhere.herokuapp.com/${DISCOURSE_URL_ROOT}/t/${topicId}.json`,
+      `${DISCOURSE_URL_ROOT}/t/${topicId}.json`,
       {
         headers: { 'content-type': 'application/json' },
       }
@@ -83,7 +83,7 @@ const DiscourseImporter: React.FC<DiscourseImporterProps> = ({ onImport }) => {
 
   const getPost = async (postId: number) => {
     const response = await fetch(
-      `https://cors-anywhere.herokuapp.com/${DISCOURSE_URL_ROOT}/posts/${postId}.json`,
+      `${DISCOURSE_URL_ROOT}/posts/${postId}.json`,
       {
         headers: { 'content-type': 'application/json' },
       }
