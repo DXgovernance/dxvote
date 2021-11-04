@@ -55,7 +55,6 @@ async function main() {
       { encoding: 'utf8', flag: 'w' }
     );
   } else {
-    
     // Get the network configuration
     let networkConfig = appConfig[networkName];
     let networkCacheFile: DaoNetworkCache;
@@ -79,11 +78,14 @@ async function main() {
     }
 
     // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
-    const fromBlock = networkCacheFile.l1BlockNumber
+    const fromBlock = networkCacheFile.l1BlockNumber;
     const blockNumber = await web3.eth.getBlockNumber();
     const toBlock = Number(process.env.CACHE_TO_BLOCK || blockNumber);
 
-    if (process.env.RESET_CACHE || ((fromBlock <= toBlock) && (toBlock <= blockNumber))) {
+    if (
+      process.env.RESET_CACHE ||
+      (fromBlock <= toBlock && toBlock <= blockNumber)
+    ) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug(
         'Runing cache script from block',
@@ -139,14 +141,14 @@ async function main() {
       })
       .then(function (response) {
         console.log(response.data);
-        if (response.data.IpfsHash){
+        if (response.data.IpfsHash) {
           networkConfig.cache.ipfsHash = response.data.IpfsHash;
           appConfig[networkName] = networkConfig;
           console.debug(
             `IPFS hash for cache in ${networkName} network: ${appConfig[networkName].cache.ipfsHash}`
           );
         } else {
-          console.error("Error uploading cache to pinata");
+          console.error('Error uploading cache to pinata');
         }
       })
       .catch(function (error) {
