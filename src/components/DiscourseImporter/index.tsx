@@ -111,6 +111,8 @@ const DiscourseImporter: React.FC<DiscourseImporterProps> = ({ onImport }) => {
       const topic = await getTopic(topicId);
       const post = await getPost(topic.post_stream.stream[0]);
       onImport(post.raw);
+      setIsInvalid(false);
+      setErrorMessage(null);
     } catch (e) {
       setIsInvalid(true);
       setErrorMessage(e?.message);
