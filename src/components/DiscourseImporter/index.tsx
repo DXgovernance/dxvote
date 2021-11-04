@@ -66,12 +66,9 @@ const DiscourseImporter: React.FC<DiscourseImporterProps> = ({ onImport }) => {
   };
 
   const getTopic = async (topicId: number) => {
-    const response = await fetch(
-      `${DISCOURSE_URL_ROOT}/t/${topicId}.json`,
-      {
-        headers: { 'content-type': 'application/json' },
-      }
-    );
+    const response = await fetch(`${DISCOURSE_URL_ROOT}/t/${topicId}.json`, {
+      headers: { 'content-type': 'application/json' },
+    });
     if (response.ok) {
       const result = await response.json();
       return result;
@@ -82,12 +79,9 @@ const DiscourseImporter: React.FC<DiscourseImporterProps> = ({ onImport }) => {
   };
 
   const getPost = async (postId: number) => {
-    const response = await fetch(
-      `${DISCOURSE_URL_ROOT}/posts/${postId}.json`,
-      {
-        headers: { 'content-type': 'application/json' },
-      }
-    );
+    const response = await fetch(`${DISCOURSE_URL_ROOT}/posts/${postId}.json`, {
+      headers: { 'content-type': 'application/json' },
+    });
     if (response.ok) {
       const result = await response.json();
       return result;

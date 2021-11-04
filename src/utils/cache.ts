@@ -344,7 +344,7 @@ export async function tryCacheUpdates(promises, networkCache) {
       (await Promise.all(promises)).map(networkCacheUpdated => {
         networkCache = networkCacheUpdated;
       });
-    } catch(e) {
+    } catch (e) {
       console.error('[CACHE UPDATE] (trying again)', e.message);
     } finally {
       retry = false;
@@ -358,7 +358,7 @@ export async function tryWhile(promises) {
   while (retry) {
     try {
       await Promise.all(promises);
-    } catch(e) {
+    } catch (e) {
       console.error('[ERROR IN TRY WHILE] (trying again)', e.message);
     } finally {
       retry = false;

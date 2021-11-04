@@ -40,20 +40,17 @@ async function main() {
         console.error(error);
       });
   }
-  
+
   fs.writeFileSync(
     './defaultCacheFile.json',
     JSON.stringify(defaultCacheFile, null, 2),
     { encoding: 'utf8', flag: 'w' }
   );
-  
+
   console.log('Default cache file:', defaultCacheFile);
-  
+
   data = new FormData();
-  data.append(
-    'file',
-    fs.createReadStream('./defaultCacheFile.json')
-  );
+  data.append('file', fs.createReadStream('./defaultCacheFile.json'));
   data.append(
     'pinataMetadata',
     JSON.stringify({
@@ -73,9 +70,7 @@ async function main() {
       },
     })
     .then(function (response) {
-      console.debug(
-        `Default cache file ipfs hash: ${response.data.IpfsHash}`
-      );
+      console.debug(`Default cache file ipfs hash: ${response.data.IpfsHash}`);
     })
     .catch(function (error) {
       console.error(error);
