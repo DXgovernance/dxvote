@@ -108,7 +108,7 @@ export default class IPFSService {
     }
     return hash;
   }
-  
+
   private async start() {
     if (this.starting) return;
 
