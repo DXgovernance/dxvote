@@ -8,6 +8,7 @@ import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useContext } from '../contexts';
 import { Button } from '../components/common/Button';
 import { Box } from '../components/common';
+import DiscourseImporter from '../components/DiscourseImporter';
 
 const ProposalsWrapper = styled.div`
   padding: 10px 0px;
@@ -39,6 +40,7 @@ const ButtonsWrapper = styled.div`
   width: 100%;
   flex-wrap: wrap;
   justify-content: space-around;
+  margin-top: 100px;
 `;
 
 const MarkdownWrapper = styled.div`
@@ -140,16 +142,20 @@ export const CreateMetadataPage = observer(() => {
               value={title}
             />
             {error}
-            <ButtonsWrapper>
-              <Button onClick={() => history.push(`../type`)}>Back</Button>
-              <Button
-                onClick={async () => {
-                  await uploadToIPFS();
-                }}
-              >
-                Next
-              </Button>
-            </ButtonsWrapper>
+
+            <div>
+              <DiscourseImporter onImport={onDescriptionChange} />
+              <ButtonsWrapper>
+                <Button onClick={() => history.push(`../type`)}>Back</Button>
+                <Button
+                  onClick={async () => {
+                    await uploadToIPFS();
+                  }}
+                >
+                  Next
+                </Button>
+              </ButtonsWrapper>
+            </div>
           </SidebarWrapper>
           <MarkdownWrapper>
             <Editor
