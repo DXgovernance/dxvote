@@ -74,13 +74,13 @@ const TitleSearch = () => {
     setIsLoading(true);
 
     miniSearch.removeAll();
-    miniSearch.addAll(sortedProposals);
 
     if (titleFilter) {
       let search = miniSearch.search(titleFilter);
       sortedProposals = state.filter(proposal =>
         search.find(elem => elem.id === proposal.id)
       );
+    miniSearch.addAll(sortedProposals);
     }
 
     dispatch({type: "update", payload: sortedProposals})

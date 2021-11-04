@@ -13,7 +13,7 @@ interface ProposalProviderProps {
   children: ReactNode;
 }
 
-type Action  =  {type: 'update', payload: ProposalsExtended[]} | { type: 'display'} 
+type Action  =  {type: 'update', payload: ProposalsExtended[]} 
 
 export const ProposalsContext = createContext(undefined);
 
@@ -36,10 +36,8 @@ const initialProposalState: ProposalsExtended[] = filterInitialCriteria(
   switch (action.type) {
     case "update":
       return action.payload 
-    case "display":
-      return state
     default:
-      return initialProposalState
+      return state
   }
   }, initialProposalState)
 
