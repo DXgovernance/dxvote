@@ -19,6 +19,7 @@ import {
   TXEvents,
 } from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
+import DiscourseImporter from '../../components/DiscourseImporter';
 
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
@@ -681,6 +682,9 @@ const NewProposalPage = observer(() => {
           </select>
         </TitleInput>
       </div>
+
+      <DiscourseImporter onImport={onDescriptionChange} />
+
       {submitionState < 1 ? (
         <MDEditor
           value={descriptionText}
