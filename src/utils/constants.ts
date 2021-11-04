@@ -13,6 +13,8 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 
 const defaultAlchemyKey = process.env.REACT_APP_KEY_ALCHEMY_API_KEY;
 
+export const DISCOURSE_URL_ROOT = "https://daotalk.org";
+
 export const NETWORKS: ChainConfig[] = [
   {
     id: 1,
