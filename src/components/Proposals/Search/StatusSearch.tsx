@@ -78,8 +78,8 @@ const StatusSearch = () => {
     setIsLoading(false);
   }, [stateFilter]);
 
-  if(isLoading){
-    return <div>Loading...</div>
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
