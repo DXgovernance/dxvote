@@ -180,6 +180,12 @@ export default class BlockchainStore {
 
         notificationStore.setGlobalLoading(
           true,
+          'Looking for latest chain configurations'
+        );
+        await configStore.loadAppConfigs(networkName);
+
+        notificationStore.setGlobalLoading(
+          true,
           'Looking for existing cache data'
         );
         const cache = await caches.open(`dxvote-cache`);
@@ -191,7 +197,6 @@ export default class BlockchainStore {
 
         const blockNumber = (await library.eth.getBlockNumber()) - 1;
 
-        // Fetch cache from ipfs if not in localStorage or newer hash is available
         const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
 
         if (

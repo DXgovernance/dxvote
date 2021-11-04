@@ -3,6 +3,8 @@ import IPFS from 'ipfs-core';
 import CID from 'cids';
 import { sleep } from '../utils';
 import RootContext from '../contexts';
+import { GetOptions } from 'ipfs-core/src/components/get';
+import { AbortOptions } from 'ipfs-core/src/utils';
 
 export default class IPFSService {
   private static SLEEP_MS = 1000;
@@ -48,12 +50,12 @@ export default class IPFSService {
     return ipfs.pin.add(cid);
   }
 
-  async getContent(hash: string) {
+  async getContent(hash: string, options?: GetOptions & AbortOptions) {
     let content = [];
     try {
       const ipfs = await this.getIpfs();
 
-      for await (const file of ipfs.get(hash)) {
+      for await (const file of ipfs.get(hash, options)) {
         console.debug('[IPFS] Getting content', file.type, file.path);
         if (file.type != 'file' || !file.content) continue;
         for await (const chunk of file.content) {
