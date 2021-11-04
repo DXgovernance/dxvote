@@ -3,7 +3,7 @@ import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
-import { bnum, CACHE_METADATA_ENS } from '../utils';
+import { bnum } from '../utils';
 import { getUpdatedCache } from '../cache';
 
 export default class BlockchainStore {
@@ -180,6 +180,12 @@ export default class BlockchainStore {
 
         notificationStore.setGlobalLoading(
           true,
+          'Looking for latest chain configurations'
+        );
+        await configStore.loadAppConfigs(networkName);
+
+        notificationStore.setGlobalLoading(
+          true,
           'Looking for existing cache data'
         );
         const cache = await caches.open(`dxvote-cache`);
@@ -191,10 +197,7 @@ export default class BlockchainStore {
 
         const blockNumber = (await library.eth.getBlockNumber()) - 1;
 
-        // Fetch cache from ipfs if not in localStorage or newer hash is available
-        const newestCacheIpfsHash = await this.getNewestCacheIpfsHash(
-          networkName
-        );
+        const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
 
         if (
           !networkCache ||
@@ -298,66 +301,6 @@ export default class BlockchainStore {
         }
         this.activeFetchLoop = false;
       }
-    }
-  }
-
-  async getNewestCacheIpfsHash(networkName: string) {
-    const { configStore } = this.context;
-
-    let cacheIpfsHash = null;
-    if (CACHE_METADATA_ENS) {
-      cacheIpfsHash = this.getCacheIpfsHashFromEns(networkName);
-    }
-
-    // Fallback if resolving cache from ENS failed
-    if (!cacheIpfsHash) {
-      cacheIpfsHash = configStore.getCacheIPFSHash(networkName);
-      console.warn(
-        `[BlockchainStore] Falling back to the cache content hash in the build: ${cacheIpfsHash}`
-      );
-    }
-
-    return cacheIpfsHash;
-  }
-
-  private async getCacheIpfsHashFromEns(networkName: string) {
-    const { ensService, ipfsService } = this.context;
-
-    try {
-      const metadataHash = await ensService.resolveContentHash(
-        CACHE_METADATA_ENS
-      );
-      if (!metadataHash) return null;
-
-      console.info(
-        `[BlockchainStore] Found metadata content hash from ENS: ${metadataHash}`,
-        metadataHash
-      );
-      const configRefs = JSON.parse(
-        await ipfsService.getContent(metadataHash, { timeout: 10000 })
-      );
-      const configContentHash = configRefs[networkName];
-      if (!configContentHash) return null;
-
-      console.info(
-        `[BlockchainStore] Found config content hash from ENS: ${configContentHash}`
-      );
-      const configString = await ipfsService.getContent(configContentHash, {
-        timeout: 10000,
-      });
-      const config = JSON.parse(configString);
-      const cacheContentHash = config?.cache?.ipfsHash;
-      if (!cacheContentHash) return null;
-
-      console.info(
-        `[BlockchainStore] Found cache content hash from ENS: ${cacheContentHash}`
-      );
-      return cacheContentHash;
-    } catch (e) {
-      console.error(
-        '[BlockchainStore] Could not get the cache content hash from ENS.'
-      );
-      return null;
     }
   }
 }
