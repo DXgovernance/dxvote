@@ -72,7 +72,7 @@ const SchemaSearch = () => {
     setIsLoading(true);
 
     if (schemeFilter !== 'All Schemes') {
-      sortedProposals = sortedProposals.filter(
+      sortedProposals = proposals.filter(
         proposal => proposal.scheme === schemeFilter
       );
     }
@@ -80,6 +80,10 @@ const SchemaSearch = () => {
     setProposals(sortedProposals); //triggers reindex
     setIsLoading(false);
   }, [schemeFilter]);
+
+  if(isLoading){
+    return <div>Loading...</div>
+  }
 
   return (
     <ProposalsFilter

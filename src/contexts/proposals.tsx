@@ -1,5 +1,5 @@
 import { useContext } from 'contexts';
-import { useState, createContext, ReactNode, useReducer } from 'react';
+import { useState, createContext, ReactNode  } from 'react';
 
 //types
 export type ProposalsExtended = Proposal &

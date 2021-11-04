@@ -78,7 +78,7 @@ const TitleSearch = () => {
 
     if (titleFilter) {
       let search = miniSearch.search(titleFilter);
-      sortedProposals = sortedProposals.filter(proposal =>
+      sortedProposals = proposals.filter(proposal =>
         search.find(elem => elem.id === proposal.id)
       );
     }
@@ -86,6 +86,10 @@ const TitleSearch = () => {
     setProposals(sortedProposals); //triggers reindex
     setIsLoading(false);
   }, [titleFilter]);
+
+  if(isLoading){
+    return <div>Loading...</div>
+  }
 
   return (
     <ProposalsNameFilter
