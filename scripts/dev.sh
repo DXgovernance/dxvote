@@ -115,7 +115,7 @@ echo "${contents}" > tsconfig.json
 yarn hardhat run --network localhost scripts/deployDevContracts.ts
 
 # Run build cache
-EMPTY_CACHE=1 yarn hardhat run --network localhost scripts/buildCache.ts
+yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
 
 # Enable isolatedModules and use esnext as module in tsconfig
