@@ -1,7 +1,16 @@
 import { Title, BlockchainLink, Box } from '../../common';
 import styled from 'styled-components';
 
-const ProposalHistoryEvent = styled.div`
+const HistoryBox = styled(Box)`
+  max-width: 900px;
+  overflow-wrap: anywhere;
+  padding: 20px 15px 10px 15px;
+  justify-content: flex-start;
+  overflow: auto;
+  margin-top: 15px;
+`;
+
+const HistoryEvent = styled.div`
   display: flex;
   align-items: center;
   padding: 4px 0px;
@@ -17,14 +26,6 @@ const HistoryEventText = styled.span`
   > * {
     margin-right: 5px;
   }
-`;
-
-const ProposalInfoBox = styled(Box)`
-  max-width: 900px;
-  overflow-wrap: anywhere;
-  padding: 20px 15px 10px 15px;
-  justify-content: flex-start;
-  overflow: auto;
 `;
 
 const renderEvents = ({ text, textParams }) => {
@@ -46,10 +47,10 @@ const renderEvents = ({ text, textParams }) => {
 };
 
 const History = ({ proposalEvents }) => (
-  <ProposalInfoBox style={{ marginTop: '15px' }}>
+  <HistoryBox>
     <Title noMargins> History </Title>
     {proposalEvents.history.map((historyEvent, i) => (
-      <ProposalHistoryEvent key={'proposalHistoryEvent' + i}>
+      <HistoryEvent key={'proposalHistoryEvent' + i}>
         <HistoryEventText>{renderEvents(historyEvent)}</HistoryEventText>
         <BlockchainLink
           type="transaction"
@@ -58,9 +59,9 @@ const History = ({ proposalEvents }) => (
           onlyIcon
         />
         {i < proposalEvents.history.length - 1 && <hr />}
-      </ProposalHistoryEvent>
+      </HistoryEvent>
     ))}
-  </ProposalInfoBox>
+  </HistoryBox>
 );
 
 export default History;

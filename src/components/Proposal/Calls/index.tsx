@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { FiZoomIn, FiZoomOut } from 'react-icons/fi';
-import CallDataInformation from './CallDataInformation';
-import { Question } from 'components/common';
 import { useContext } from 'contexts';
 import { useLocation } from 'react-router-dom';
+
+import { Question } from 'components/common';
+import CallDataInformation from './CallDataInformation';
 
 const Calls = () => {
   const [showMore, setShowMore] = useState(false);

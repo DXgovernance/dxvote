@@ -1,11 +1,14 @@
 import styled from 'styled-components';
 import moment from 'moment';
-import { BlockchainLink } from 'components/common';
 import { useLocation } from 'react-router-dom';
 import { useContext } from 'contexts';
 import { WalletSchemeProposalState, VotingMachineProposalState } from 'utils';
 
-const ProposalDescription = styled.div`
+import { BlockchainLink } from 'components/common';
+
+import { CenteredRow } from '../styles';
+
+const DetailsContainer = styled.div`
   margin: 0px 10px;
   padding: 10px 0px;
   flex-direction: column;
@@ -40,56 +43,60 @@ const Details = () => {
   const { boostTime, finishTime } = daoStore.getProposalStatus(proposalId);
 
   return (
-    <ProposalDescription>
-      <Detail>
-        <strong>Proposer</strong>
-        <small>
-          <BlockchainLink type="user" text={proposal.proposer} toCopy />
-        </small>
-      </Detail>
-      <Detail>
-        <strong>Scheme</strong> <small>{scheme.name}</small>
-      </Detail>
-      <Detail>
-        <strong>State in Voting Machine </strong>
-        <small>
-          {VotingMachineProposalState[proposal.stateInVotingMachine]}
-        </small>
-      </Detail>
-      <Detail>
-        <strong>State in Scheme </strong>
-        <small>{WalletSchemeProposalState[proposal.stateInScheme]}</small>
-      </Detail>
-      <Detail>
-        <strong>Submitted Date</strong>
-        <small>
-          {moment
-            .unix(proposal.submittedTime.toNumber())
-            .format('MMMM Do YYYY, h:mm:ss')}
-        </small>
-      </Detail>
-      <Detail>
-        <strong>Boost Date</strong>
-        <small>
-          {boostTime.toNumber() > 0
-            ? moment.unix(boostTime.toNumber()).format('MMMM Do YYYY, h:mm:ss')
-            : '-'}
-        </small>
-      </Detail>
-      <Detail>
-        <strong>Finish Date</strong>
-        <small>
-          {moment.unix(finishTime.toNumber()).format('MMMM Do YYYY, h:mm:ss')}
-        </small>
-      </Detail>
-
-      {boostedVoteRequiredPercentage > 0 && (
+    <CenteredRow>
+      <DetailsContainer>
         <Detail>
-          <strong> Required Boosted Vote: </strong>
-          <small>{boostedVoteRequiredPercentage}%</small>
+          <strong>Proposer</strong>
+          <small>
+            <BlockchainLink type="user" text={proposal.proposer} toCopy />
+          </small>
         </Detail>
-      )}
-    </ProposalDescription>
+        <Detail>
+          <strong>Scheme</strong> <small>{scheme.name}</small>
+        </Detail>
+        <Detail>
+          <strong>State in Voting Machine </strong>
+          <small>
+            {VotingMachineProposalState[proposal.stateInVotingMachine]}
+          </small>
+        </Detail>
+        <Detail>
+          <strong>State in Scheme </strong>
+          <small>{WalletSchemeProposalState[proposal.stateInScheme]}</small>
+        </Detail>
+        <Detail>
+          <strong>Submitted Date</strong>
+          <small>
+            {moment
+              .unix(proposal.submittedTime.toNumber())
+              .format('MMMM Do YYYY, h:mm:ss')}
+          </small>
+        </Detail>
+        <Detail>
+          <strong>Boost Date</strong>
+          <small>
+            {boostTime.toNumber() > 0
+              ? moment
+                  .unix(boostTime.toNumber())
+                  .format('MMMM Do YYYY, h:mm:ss')
+              : '-'}
+          </small>
+        </Detail>
+        <Detail>
+          <strong>Finish Date</strong>
+          <small>
+            {moment.unix(finishTime.toNumber()).format('MMMM Do YYYY, h:mm:ss')}
+          </small>
+        </Detail>
+
+        {boostedVoteRequiredPercentage > 0 && (
+          <Detail>
+            <strong> Required Boosted Vote: </strong>
+            <small>{boostedVoteRequiredPercentage}%</small>
+          </Detail>
+        )}
+      </DetailsContainer>
+    </CenteredRow>
   );
 };
 export default Details;

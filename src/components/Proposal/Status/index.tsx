@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 import { bnum } from 'utils';
 import { Question } from 'components/common';
 
-import { SidebarRow, ActionButton } from '../styles';
+import { CenteredRow, ActionButton, TextCenter } from '../styles';
 
 const Status = () => {
   const {
@@ -19,7 +19,7 @@ const Status = () => {
   const networkContracts = configStore.getNetworkContracts();
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
-  console.log('Proposal ID in Vote: ', proposalId);
+
   const proposal = daoStore.getProposal(proposalId);
   const { account } = providerStore.getActiveWeb3React();
   const scheme = daoStore.getScheme(proposal.scheme);
@@ -60,32 +60,32 @@ const Status = () => {
       <h2 style={{ margin: '10px 0px 0px 0px', textAlign: 'center' }}>
         {status} <Question question="3" />
       </h2>
-      <SidebarRow style={{ margin: '0px 10px', flexDirection: 'column' }}>
+      <CenteredRow style={{ margin: '0px 10px', flexDirection: 'column' }}>
         {boostTime.toNumber() > moment().unix() && (
-          <span className="timeText">
+          <TextCenter>
             Boost in <Countdown date={boostTime.toNumber() * 1000} />{' '}
-          </span>
+          </TextCenter>
         )}
         {finishTime.toNumber() > moment().unix() && (
-          <span className="timeText">
+          <TextCenter>
             Finish in{' '}
             <Countdown
               autoStart={pendingAction === 1 && !autoBoost ? false : true}
               date={finishTime.toNumber() * 1000}
             />
             {pendingAction === 1 && !autoBoost && ' after boost'}
-          </span>
+          </TextCenter>
         )}
         {status === 'Pending Execution' && executionTimeoutTime.toNumber() > 0 && (
-          <span className="timeText">
+          <TextCenter>
             {' '}
             Execution timeout in{' '}
             <Countdown date={executionTimeoutTime.toNumber() * 1000} />{' '}
-          </span>
+          </TextCenter>
         )}
-      </SidebarRow>
+      </CenteredRow>
       {account && (
-        <SidebarRow style={{ flexDirection: 'column', alignItems: 'center' }}>
+        <CenteredRow style={{ flexDirection: 'column', alignItems: 'center' }}>
           {pendingAction === 1 ? (
             <ActionButton color="blue" onClick={executeProposal}>
               <FiFastForward /> Boost{' '}
@@ -109,7 +109,7 @@ const Status = () => {
               </ActionButton>
             )
           )}
-        </SidebarRow>
+        </CenteredRow>
       )}
     </>
   );

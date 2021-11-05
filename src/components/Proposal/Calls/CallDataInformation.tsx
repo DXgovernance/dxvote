@@ -22,6 +22,7 @@ const CallParams = styled.span`
   font-size: ${props => props.fontSize || '14px'};
   font-weight: ${props => props.fontWeight || 500};
 `;
+
 const Divider = styled.div`
   border-top: 1px solid gray;
   margin: 10px 0;

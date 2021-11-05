@@ -9,23 +9,11 @@ export const ActionArea = styled.div`
   flex-direction: column;
 `;
 
-export const SidebarRow = styled.div`
+export const CenteredRow = styled.div`
   display: flex;
   justify-content: space-around;
   flex-direction: row;
   padding: 5px 0px;
-
-  .timeText {
-    font-size: 20;
-    margin-left: -10px;
-    width: 100%;
-    text-align: center;
-    padding-top: 5px;
-  }
-
-  span {
-    margin-bottom: 5px;
-  }
 `;
 
 export const Vote = styled.div`

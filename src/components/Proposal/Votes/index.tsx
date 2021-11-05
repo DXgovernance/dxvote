@@ -11,7 +11,7 @@ import {
 import { ConfirmVoteModal } from 'components/ConfirmVoteModal';
 import {
   TextCenter,
-  SidebarRow,
+  CenteredRow,
   Vote,
   AmountInput,
   PositiveSummary,
@@ -49,7 +49,6 @@ const Votes = () => {
     }
   });
 
-  console.log('prop events', proposalEvents);
   let positiveVotesCount = proposalEvents.votes.filter(
     vote => vote.vote.toString() === '1'
   ).length;
@@ -105,12 +104,12 @@ const Votes = () => {
 
   return (
     <>
-      <SidebarRow>
+      <CenteredRow>
         <strong>
           Votes <Question question="4" />
         </strong>
-      </SidebarRow>
-      <SidebarRow>
+      </CenteredRow>
+      <CenteredRow>
         <PositiveSummary>
           <SummaryTotal>
             <AmountBadge color="green">{positiveVotesCount}</AmountBadge>
@@ -166,7 +165,7 @@ const Votes = () => {
               ))}
           </SummaryDetails>
         </NegativeSummary>
-      </SidebarRow>
+      </CenteredRow>
 
       {Number(repPercentageAtCreation) > 0 && (
         <small>{repPercentageAtCreation} % REP at proposal creation</small>
@@ -189,7 +188,7 @@ const Votes = () => {
       votedAmount.toNumber() === 0 &&
       Number(repPercentageAtCreation) > 0 &&
       proposal.stateInVotingMachine >= 3 ? (
-        <SidebarRow>
+        <CenteredRow>
           <ConfirmVoteModal
             voteDecision={decision}
             toAdd={votePercentage}
@@ -232,17 +231,17 @@ const Votes = () => {
           >
             <FiThumbsDown />
           </ActionButton>
-        </SidebarRow>
+        </CenteredRow>
       ) : (
         votedAmount.toNumber() !== 0 && (
-          <SidebarRow>
+          <CenteredRow>
             Already voted {votedAmount.toNumber() > 0 ? 'for' : 'against'} with
             {votedAmount
               .times('100')
               .div(totalRepAtProposalCreation)
               .toFixed(2)}
             % REP
-          </SidebarRow>
+          </CenteredRow>
         )
       )}
     </>
