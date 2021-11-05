@@ -5,7 +5,13 @@ const FormData = require('form-data');
 async function main() {
   let defaultCacheFile = {};
   let data;
-  const networkNames = process.env.REACT_APP_ETH_NETWORKS.split(',');
+  const networkNames = [
+    'mainnet',
+    'xdai',
+    'arbitrum',
+    'rinkeby',
+    'arbitrumTestnet',
+  ];
   for (let i = 0; i < networkNames.length; i++) {
     data = new FormData();
     data.append(

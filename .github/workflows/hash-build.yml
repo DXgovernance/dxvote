@@ -20,7 +20,7 @@ jobs:
       - name: Install Dependencies
         run: yarn
       - name: Build
-        run: CI=false yarn build-ci
+        run: CI=false yarn build
       - name: Install IPFS & Hash
         run: |
           # make file runnable, might not be necessary
