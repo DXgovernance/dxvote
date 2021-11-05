@@ -99,7 +99,7 @@ const Footer = () => {
         <FooterDivider></FooterDivider>
         <FooterItem>
           v
-          {`${process.env.REACT_APP_VERSION}${
+          {`1.0.3${
             process.env.NODE_ENV !== 'production'
               ? `-${process.env.NODE_ENV}-${process.env.REACT_APP_GIT_SHA}`
               : ''

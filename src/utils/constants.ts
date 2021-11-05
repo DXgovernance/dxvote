@@ -13,7 +13,7 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 
 export const CACHE_METADATA_ENS = 'cache.dxvote.eth';
 
-const defaultAlchemyKey = process.env.REACT_APP_KEY_ALCHEMY_API_KEY;
+const defaultAlchemyKey = '7i7fiiOx1b7bGmgWY_oI9twyQBCsuXKC';
 
 export const DISCOURSE_URL_ROOT = 'https://daotalk.org';
 
