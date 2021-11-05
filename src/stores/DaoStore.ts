@@ -29,15 +29,25 @@ export default class DaoStore {
 
     makeObservable(this, {
       setCache: action,
+      reset: action,
     });
+  }
+
+  reset() {
+    this.daoCache = undefined;
   }
 
   // Parse bignnumbers
   parseCache(unparsedCache: DaoNetworkCache): DaoNetworkCache {
-    unparsedCache.daoInfo.ethBalance = bnum(unparsedCache.daoInfo.ethBalance);
-    unparsedCache.daoInfo.repEvents.map((repEvent, i) => {
-      unparsedCache.daoInfo.repEvents[i].amount = bnum(repEvent.amount);
-    });
+    unparsedCache.daoInfo.ethBalance = bnum(
+      unparsedCache.daoInfo.ethBalance || '0'
+    );
+
+    if (unparsedCache.daoInfo.repEvents)
+      unparsedCache.daoInfo.repEvents.map((repEvent, i) => {
+        unparsedCache.daoInfo.repEvents[i].amount = bnum(repEvent.amount);
+      });
+
     Object.keys(unparsedCache.schemes).map(schemeAddress => {
       unparsedCache.schemes[schemeAddress].ethBalance = bnum(
         unparsedCache.schemes[schemeAddress].ethBalance
@@ -66,7 +76,6 @@ export default class DaoStore {
       ].values.map(value => {
         return bnum(value);
       });
-
       unparsedCache.proposals[proposalId].stateInScheme =
         unparsedCache.proposals[proposalId].stateInScheme;
       unparsedCache.proposals[proposalId].stateInVotingMachine =
@@ -1155,6 +1164,31 @@ export default class DaoStore {
           totalSupply = totalSupply.minus(repEvents[i].amount);
           if (repEvents[i].account === userAddress)
             userRep = userRep.minus(repEvents[i].amount);
+        }
+      }
+    }
+    return { userRep, totalSupply };
+  }
+
+  getRepEventsOfUser(
+    userAddress: string = ZERO_ADDRESS,
+    atBlock: number = 0
+  ): {
+    userRep: RepEvent[];
+    totalSupply: BigNumber;
+  } {
+    const { daoStore, providerStore, configStore } = this.context;
+    const repEvents = daoStore.getCache().daoInfo.repEvents;
+    let userRep = [],
+      totalSupply = bnum(0);
+    if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
+    const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1;
+
+    for (let i = 0; i < repEvents.length; i++) {
+      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
+        if (repEvents[i].event === 'Mint') {
+          totalSupply = totalSupply.plus(repEvents[i].amount);
+          if (repEvents[i].account === userAddress) userRep.push(repEvents[i]);
         }
       }
     }

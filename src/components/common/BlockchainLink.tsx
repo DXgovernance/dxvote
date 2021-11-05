@@ -6,6 +6,7 @@ import {
   getERC20Token,
   getDxVoteContract,
   toAddressStub,
+  isAddress,
 } from 'utils';
 import { useContext } from '../../contexts';
 import { FiExternalLink } from 'react-icons/fi';
@@ -51,7 +52,7 @@ export const BlockchainLink = ({
       setENSName(response);
     }
     getENS();
-  }, []);
+  }, [text]);
 
   let formatedAddress;
   if (!ensName && !dxVoteContract && !erc20Token) {
@@ -69,7 +70,11 @@ export const BlockchainLink = ({
   return (
     <AddressLink>
       <a
-        href={getBlockchainLink(text, networkName, type)}
+        href={getBlockchainLink(
+          text,
+          networkName,
+          isAddress(text) ? 'address' : type
+        )}
         target="_blank"
         rel="noreferrer"
       >

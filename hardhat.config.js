@@ -2,7 +2,7 @@ require('dotenv').config();
 require('@nomiclabs/hardhat-truffle5');
 require('hardhat-dependency-compiler');
 
-const MNEMONIC = process.env.REACT_APP_KEY_MNEMONIC;
+const MNEMONIC = "dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao";
 const INFURA_API_KEY = process.env.REACT_APP_KEY_INFURA_API_KEY;
 const ALCHEMY_API_KEY = process.env.REACT_APP_KEY_ALCHEMY_API_KEY || "";
 
@@ -19,6 +19,8 @@ module.exports = {
       'dxdao-contracts/contracts/dxvote/DXDVotingMachine.sol',
       'dxdao-contracts/contracts/dxvote/WalletScheme.sol',
       'dxdao-contracts/contracts/dxvote/PermissionRegistry.sol',
+      'dxdao-contracts/contracts/dxvote/utils/DXDVestingFactory.sol',
+      'dxdao-contracts/contracts/dxvote/utils/DXdaoNFT.sol',
       'dxdao-contracts/contracts/utils/Multicall.sol',
       'dxdao-contracts/contracts/test/ERC20Mock.sol',
       'dxdao-contracts/contracts/daostack/universalSchemes/ContributionReward.sol',
@@ -37,6 +39,15 @@ module.exports = {
             runs: 200
           }
         },
+      },
+      {
+        version: '0.7.6',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200
+          }
+        },
       }
     ]
   },
@@ -46,13 +57,7 @@ module.exports = {
       accounts: { mnemonic: MNEMONIC },
       throwOnTransactionFailures: true,
       throwOnCallFailures: true,
-      allowUnlimitedContractSize: true,
-      gasLimit: 9000000,
-      gasPrice: 10000000000, // 10 gwei,
-      mining: {
-        auto: true,
-        interval: 5000
-      }
+      allowUnlimitedContractSize: false
     },
     mainnet: {
       url: ALCHEMY_API_KEY.length > 0

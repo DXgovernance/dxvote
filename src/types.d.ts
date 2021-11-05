@@ -296,9 +296,16 @@ declare global {
       description: string;
       calls?: array;
     }[];
+    contributionLevels: {
+      id: string;
+      dxd: number;
+      stable: number;
+      rep: number;
+    }[];
     proposalTypes: {
       id: string;
       title: string;
+      scheme?: string;
     }[];
     tokens: {
       address: string;
@@ -362,6 +369,7 @@ export interface ProposalCalls {
   recommendedCallUsed?: RecommendedCallUsed | undefined;
   callParameters?: unknown | undefined;
   encodedFunctionName?: string | undefined;
+  contractABI: any;
 }
 
 export interface RecommendedCallUsed {

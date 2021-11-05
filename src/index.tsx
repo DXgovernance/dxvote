@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
-import { createWeb3ReactRoot } from '@web3-react/core';
+import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Web3 from 'web3';
 import moment from 'moment';
@@ -10,14 +10,15 @@ import * as serviceWorker from './serviceWorker';
 import 'index.css';
 import ThemeProvider, { GlobalStyle } from './theme';
 
-import { web3ContextNames } from 'provider/connectors';
-
 import Header from './components/Header';
 import Footer from './components/Footer';
+import MainnetWeb3Manager, {
+  MAINNET_WEB3_ROOT_KEY,
+} from './components/MainnetWeb3Manager';
 import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/Proposals';
-import NewProposalPage from './pages/NewProposal';
+import { SubmitProposalPage } from './pages/SubmitProposal';
 import { NewProposalTypePage } from './pages/NewProposalType';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
@@ -35,8 +36,6 @@ moment.updateLocale('en', {
     d: '1 day',
   },
 });
-
-const Web3ProviderInjected = createWeb3ReactRoot(web3ContextNames.injected);
 
 function getLibrary(provider) {
   return new Web3(provider);
@@ -70,9 +69,9 @@ const Routes = () => {
         {' '}
         <NewProposalTypePage />{' '}
       </Route>
-      <Route path="/:network/create/submit/:proposalType">
+      <Route path="/:network/create/submit">
         {' '}
-        <NewProposalPage />{' '}
+        <SubmitProposalPage />{' '}
       </Route>
       <Route path="/:network/create/metadata/:proposalType">
         {' '}
@@ -96,20 +95,26 @@ const Routes = () => {
   );
 };
 
+const MainnetWeb3Provider: any = createWeb3ReactRoot(MAINNET_WEB3_ROOT_KEY);
+
 const Root = (
-  <Web3ProviderInjected getLibrary={getLibrary}>
-    <ThemeProvider>
-      <GlobalStyle />
-      <HashRouter>
-        <Switch>
-          <Web3ReactManager>
-            <Header />
-            <Routes />
-          </Web3ReactManager>
-        </Switch>
-      </HashRouter>
-    </ThemeProvider>
-  </Web3ProviderInjected>
+  <Web3ReactProvider getLibrary={getLibrary}>
+    <MainnetWeb3Provider getLibrary={getLibrary}>
+      <ThemeProvider>
+        <GlobalStyle />
+        <HashRouter>
+          <Switch>
+            <MainnetWeb3Manager>
+              <Web3ReactManager>
+                <Header />
+                <Routes />
+              </Web3ReactManager>
+            </MainnetWeb3Manager>
+          </Switch>
+        </HashRouter>
+      </ThemeProvider>
+    </MainnetWeb3Provider>
+  </Web3ReactProvider>
 );
 ReactDOM.render(Root, document.getElementById('root'));
 

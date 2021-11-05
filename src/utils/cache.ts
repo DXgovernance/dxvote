@@ -336,3 +336,33 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
     creationLogEncoding: [],
   };
 };
+
+export async function tryCacheUpdates(promises, networkCache) {
+  let retry = true;
+  while (retry) {
+    try {
+      (await Promise.all(promises)).map(networkCacheUpdated => {
+        networkCache = networkCacheUpdated;
+      });
+    } catch (e) {
+      console.error('[CACHE UPDATE] (trying again)', e.message);
+    } finally {
+      retry = false;
+    }
+  }
+  return networkCache;
+}
+
+export async function tryWhile(promises) {
+  let retry = true;
+  while (retry) {
+    try {
+      await Promise.all(promises);
+    } catch (e) {
+      console.error('[ERROR IN TRY WHILE] (trying again)', e.message);
+    } finally {
+      retry = false;
+    }
+  }
+  return;
+}

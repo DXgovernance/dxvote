@@ -1,11 +1,13 @@
+import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
 import { useEtherscanService } from 'hooks/useEtherscanService';
 import { BigNumber, normalizeBalance } from 'utils';
 import { ProposalCalls } from 'types';
-import PendingCircle from './common/PendingCircle';
-import { BlockchainLink } from './common';
+import PendingCircle from '../../common/PendingCircle';
+import { BlockchainLink } from '../../common';
+import { Link } from 'react-router-dom';
 
 interface CallDataInformationParams {
   advancedCalls: boolean;
@@ -14,6 +16,17 @@ interface CallDataInformationParams {
   networkContracts: NetworkContracts;
 }
 
+const CallParams = styled.span`
+  color: black;
+  font-style: ${props => props.fontStyle || 'normal'};
+  font-size: ${props => props.fontSize || '14px'};
+  font-weight: ${props => props.fontWeight || 500};
+`;
+const Divider = styled.div`
+  border-top: 1px solid gray;
+  margin: 10px 0;
+`;
+
 const CallDataInformation = observer(
   ({
     advancedCalls,
@@ -21,18 +34,20 @@ const CallDataInformation = observer(
     proposal,
     networkContracts,
   }: CallDataInformationParams) => {
-    const { decodedCallData, ABI } = useABIService();
-    const { getContractABI, loading, error } = useEtherscanService();
+    const { decodedCallData } = useABIService();
+    const { getContractABI, error } = useEtherscanService();
+    const [loading, setLoading] = useState(false);
     const [ProposalCallTexts, setProposalCallTexts] = useState<ProposalCalls[]>(
       new Array(proposal.to.length)
     );
 
     const proposalCallArray = [];
     const getProposalCalls = async () => {
+      setLoading(true);
       const result = await Promise.all(
         proposal.to.map(item => getContractABI(item))
       );
-      result.map((abi, i) =>
+      result.map((abi, i) => {
         proposalCallArray.push(
           decodedCallData(
             scheme.type === 'WalletScheme' &&
@@ -44,8 +59,9 @@ const CallDataInformation = observer(
             proposal.values[i],
             abi
           )
-        )
-      );
+        );
+      });
+      setLoading(false);
     };
     useEffect(() => {
       getProposalCalls();
@@ -132,46 +148,78 @@ const CallDataInformation = observer(
         </div>
       );
     };
-    const etherscanCallDisplay = (to: string, from: string) => {
+
+    // function that creates a short description of "from X to X calling function X"
+    const decodedText = (from: string, to: string, functionName: string) => {
       return (
         <div>
-          <p>
-            <strong>From:</strong>
-            <small>
-              <BlockchainLink text={from} toCopy={false} />
-            </small>
-          </p>
-          <p>
-            <strong>To: </strong>
-            <small>
-              <BlockchainLink text={to} toCopy={false} />
-            </small>
-          </p>
-          <p>
-            <strong>Function Name: </strong>
-            <small>{ABI.function.signature}</small>
-          </p>
-          <strong>Params:</strong>
-          {Object.keys(ABI.args)
-            .filter(item => item != '__length__')
-            .map(item => {
-              const check = ABI.function.inputs[item];
-              const functionName = check
-                ? ABI.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
-                : 'failed';
-              const functionType = check
-                ? ABI.function.inputs[item].type
-                : 'failed';
-              return (
-                <p>
-                  <small>{functionName} </small>
-                  <small>{functionType} </small>
-                  <small>{ABI.args[item]} </small>
-                </p>
-              );
-            })}
+          <CallParams>from </CallParams>
+          <CallParams fontStyle="italic">{from} </CallParams>
+          <CallParams>to </CallParams>
+          <CallParams fontStyle="italic">{to} </CallParams>
+          <CallParams>calling function </CallParams>
+          <CallParams fontStyle="italic">{functionName} </CallParams>
         </div>
       );
+    };
+    const etherscanCallDisplay = (to: string, from: string, abi: any) => {
+      if (advancedCalls) {
+        return (
+          <div>
+            <p>
+              <strong>From:</strong>
+              <small>
+                <BlockchainLink text={from} toCopy={false} />
+              </small>
+            </p>
+            <p>
+              <strong>To: </strong>
+              <small>
+                <BlockchainLink text={to} toCopy={false} />
+              </small>
+            </p>
+            <p>
+              <strong>Function: </strong>
+              <small>{abi?.function?.signature}</small>
+            </p>
+            {Object.keys(abi.args)
+              .filter(item => item != '__length__')
+              .map((item, i) => {
+                const check = abi.function.inputs[item];
+                const functionName = check
+                  ? abi.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
+                  : 'failed';
+                const functionType = check
+                  ? abi.function.inputs[item].type
+                  : 'failed';
+                return (
+                  <p>
+                    {i > 0 ? <Divider></Divider> : null}
+                    <CallParams fontSize="14px" fontWeight={700}>
+                      {functionName}:{' '}
+                    </CallParams>
+                    <CallParams fontStyle="italic">
+                      ({functionType}){' '}
+                    </CallParams>
+                    <CallParams>{abi.args[item]} </CallParams>
+                  </p>
+                );
+              })}
+          </div>
+        );
+      }
+      return decodedText(from, to, abi?.function?.signature);
+    };
+
+    const errorDisplay = (error: Error) => {
+      if (error.message == 'API')
+        return (
+          <div>
+            An API Key error has occured:
+            <Link to="/config"> Click here to enter API key</Link>
+          </div>
+        );
+      return <p>{error.message}</p>;
     };
 
     const baseDisplay = (
@@ -183,14 +231,7 @@ const CallDataInformation = observer(
     ) => {
       return (
         <div>
-          {error && (
-            <p>
-              {error.message ==
-              `OK-Missing/Invalid API Key, rate limit of 1/5sec applied`
-                ? `Missing API key, Please provide the appropriate blockexplorer API Key`
-                : error.message}
-            </p>
-          )}
+          {error && errorDisplay(error)}
           <p>
             <strong>From: </strong>
             <small>
@@ -233,12 +274,13 @@ const CallDataInformation = observer(
               data,
               value,
               encodedFunctionName,
+              contractABI,
             },
             i
           ) => {
             return (
               <div>
-                {i > 0 ? <hr></hr> : null}
+                {i > 0 ? <Divider></Divider> : null}
                 <strong> Call #{i + 1}</strong>
                 {recommendedCallUsed
                   ? recommendedCallDisplay({
@@ -249,9 +291,10 @@ const CallDataInformation = observer(
                       data,
                       encodedFunctionName,
                       value,
+                      contractABI,
                     })
-                  : ABI
-                  ? etherscanCallDisplay(to, from)
+                  : contractABI.function
+                  ? etherscanCallDisplay(to, from, contractABI)
                   : baseDisplay(to, from, data, value, advancedCalls)}
               </div>
             );

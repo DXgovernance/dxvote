@@ -9,45 +9,52 @@ interface UseEtherscanServiceReturns {
   loading: boolean;
 }
 
+interface EtherscanResponse {
+  status: '0' | '1';
+  message: string;
+  result: string;
+}
+
+enum EtherscanErrors {
+  MaxLimit = 'Max rate limit reached',
+  MissingAPI = 'OK-Missing/Invalid API Key, rate limit of 1/5sec applied',
+  invalidAPI = 'Invalid API Key',
+  tooManyAttempts = 'Too many invalid api key attempts, please try again later',
+}
+
 export const useEtherscanService = (): UseEtherscanServiceReturns => {
   const {
     context: { etherscanService, configStore },
   } = useContext();
 
   const networkName = configStore.getActiveChainName();
+  const contracts = configStore.getNetworkContracts();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const etherscanErrors = (etherscanResult: AxiosResponse<any>) => {
-    switch (etherscanResult.data.status) {
-      case '0':
-        switch (etherscanResult.data.message) {
-          case 'NOTOK':
-            throw new Error(etherscanResult.data.result);
-          default:
-            break;
-        }
-        throw new Error(etherscanResult.data.message);
-      case '1':
-        switch (etherscanResult.data.message) {
-          case 'OK-Missing/Invalid API Key, rate limit of 1/5sec applied':
-            throw new Error(etherscanResult.data.message);
-          default:
-            break;
-        }
-        break;
-      default:
-        break;
+  const checkEtherscanErrors = (
+    etherscanResult: AxiosResponse<EtherscanResponse>
+  ) => {
+    if (
+      Object.values<string>(EtherscanErrors).includes(
+        etherscanResult.data.result || etherscanResult.data.message
+      )
+    ) {
+      throw new Error('API');
     }
   };
 
   const getContractABI = async (address: string) => {
     try {
       setLoading(true);
-      const ABI = await etherscanService.getContractABI(address, networkName);
 
-      etherscanErrors(ABI);
+      if (address === contracts.controller) {
+        return JSON.stringify(require('../contracts/DxController.json').abi);
+      }
+
+      const ABI = await etherscanService.getContractABI(address, networkName);
+      checkEtherscanErrors(ABI);
 
       setLoading(false);
       return ABI.data.result;
@@ -65,7 +72,7 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
         address,
         networkName
       );
-      etherscanErrors(source);
+      checkEtherscanErrors(source);
       setLoading(false);
       return source.data.result;
     } catch (error) {

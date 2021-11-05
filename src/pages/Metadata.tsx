@@ -8,6 +8,7 @@ import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useContext } from '../contexts';
 import { Button } from '../components/common/Button';
 import { Box } from '../components/common';
+import DiscourseImporter from '../components/DiscourseImporter';
 
 const ProposalsWrapper = styled.div`
   padding: 10px 0px;
@@ -33,11 +34,13 @@ const TextInput = styled.input`
   margin-right: 5px;
   font-size: xx-large;
 `;
+
 const ButtonsWrapper = styled.div`
   display: flex;
   width: 100%;
   flex-wrap: wrap;
   justify-content: space-around;
+  margin-top: 100px;
 `;
 
 const MarkdownWrapper = styled.div`
@@ -51,11 +54,23 @@ const Editor = styled(MDEditor)`
   overflow: scroll;
 `;
 
-const Preview = styled(MDEditor.Markdown)`
+const PreviewWrapper = styled.div`
   width: 50%;
+  box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0),
+    0 1px 1px rgba(16, 22, 26, 0.2);
+  border-radius: 3px;
+`;
+const PreviewHeader = styled.div`
+  height: 28px;
+  background-color: #fbfbfb;
+  border-radius: 3px 3px 0 0;
+  padding-left: 10px;
+`;
+
+const Preview = styled(MDEditor.Markdown)`
   background-color: white;
   border: 1px solid #10161a33;
-  border-radius: 3px;
+  border-radius: 0 0 3px 3px;
   padding: 20px 10px;
   height: 80vh;
   overflow: scroll;
@@ -91,6 +106,7 @@ export const CreateMetadataPage = observer(() => {
   const [title, setTitle] = useState(
     localStorage.getItem('dxvote-newProposal-title') || ''
   );
+  const [error, setError] = useState(null);
 
   const onTitleChange = newValue => {
     setTitle(newValue);
@@ -100,6 +116,18 @@ export const CreateMetadataPage = observer(() => {
   const onDescriptionChange = newValue => {
     setDescriptionText(newValue);
     localStorage.setItem('dxvote-newProposal-description', newValue);
+  };
+
+  const uploadToIPFS = async function () {
+    if (title.length < 10) {
+      setError('Title has to be at mimimum 10 characters length');
+    } else if (descriptionText.length === 0) {
+      setError('Description has to be at mimimum 100 characters length');
+    } else {
+      setError(null);
+
+      history.push(`../submit/${proposalType}`);
+    }
   };
 
   return (
@@ -113,12 +141,21 @@ export const CreateMetadataPage = observer(() => {
               onChange={event => onTitleChange(event.target.value)}
               value={title}
             />
-            <ButtonsWrapper>
-              <Button onClick={() => history.push(`../../new`)}>Back</Button>
-              <Button onClick={() => history.push(`../${proposalType}`)}>
-                Next
-              </Button>
-            </ButtonsWrapper>
+            {error}
+
+            <div>
+              <DiscourseImporter onImport={onDescriptionChange} />
+              <ButtonsWrapper>
+                <Button onClick={() => history.push(`../type`)}>Back</Button>
+                <Button
+                  onClick={async () => {
+                    await uploadToIPFS();
+                  }}
+                >
+                  Next
+                </Button>
+              </ButtonsWrapper>
+            </div>
           </SidebarWrapper>
           <MarkdownWrapper>
             <Editor
@@ -142,7 +179,10 @@ export const CreateMetadataPage = observer(() => {
                 commands.checkedListCommand,
               ]}
             />
-            <Preview source={descriptionText} />
+            <PreviewWrapper>
+              <PreviewHeader>Preview</PreviewHeader>
+              <Preview source={descriptionText} />
+            </PreviewWrapper>
           </MarkdownWrapper>
         </ProposalsWrapper>
       ) : (
