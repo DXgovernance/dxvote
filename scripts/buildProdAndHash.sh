@@ -2,5 +2,5 @@
 rm -rf build
 export REACT_APP_GIT_SHA=$(echo $(git rev-parse  HEAD) | cut -c1-9)
 export SKIP_PREFLIGHT_CHECK=true
-yarn react-scripts build
+yarn react-app-rewired build
 ipfs add build -r -n
