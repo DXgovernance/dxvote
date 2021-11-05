@@ -1,5 +1,6 @@
 import { normalizeBalance } from 'utils';
 import { BlockchainLink } from 'components/common';
+
 export const RecommendedCalls = ({
   to,
   from,

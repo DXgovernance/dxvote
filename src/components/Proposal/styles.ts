@@ -9,7 +9,7 @@ export const ActionArea = styled.div`
   flex-direction: column;
 `;
 
-export const SidebarRow = styled.div`
+export const SpaceAroundRow = styled.div`
   display: flex;
   justify-content: space-around;
   flex-direction: row;
