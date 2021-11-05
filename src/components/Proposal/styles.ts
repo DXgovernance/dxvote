@@ -96,3 +96,8 @@ export const ActionButton = styled.div`
     margin-right: 4px;
   }
 `;
+
+export const Divider = styled.div`
+  border-top: 1px solid gray;
+  margin: 10px 0;
+`;
