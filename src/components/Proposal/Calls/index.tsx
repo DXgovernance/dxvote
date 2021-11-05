@@ -13,7 +13,7 @@ import { BaseCalls } from './BaseCalls';
 import { ShowMore } from './ShowMore';
 import { Divider } from '../styles';
 
-const CallDataInformation = observer(() => {
+const Calls = observer(() => {
   const [showMore, setShowMore] = useState(false);
   const {
     context: { configStore, daoStore },
@@ -121,4 +121,4 @@ const CallDataInformation = observer(() => {
   );
 });
 
-export default CallDataInformation;
+export default Calls;
