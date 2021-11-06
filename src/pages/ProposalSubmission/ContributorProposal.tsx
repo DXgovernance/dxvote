@@ -219,9 +219,7 @@ export const ContributorProposalPage = observer(() => {
 
   // Reset stable override when changing level
   useEffect(() => {
-    setStableOverride(
-      calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
-    );
+    setStableOverride(null);
   }, [selectedLevel]);
 
   const calculateDiscountedValue = (amount, discount, override = null) => {
