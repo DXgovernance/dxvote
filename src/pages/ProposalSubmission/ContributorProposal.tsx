@@ -423,7 +423,13 @@ export const ContributorProposalPage = observer(() => {
     <VerticalLayout>
       <NavigationBar>
         <BackToProposals
-          onClick={() => history.push('../metadata/contributor')}
+          onClick={() => {
+            if (advanced) {
+              setAdvanced(false);
+            } else {
+              history.push('../metadata/contributor');
+            }
+          }}
         >
           {`< Back`}
         </BackToProposals>
