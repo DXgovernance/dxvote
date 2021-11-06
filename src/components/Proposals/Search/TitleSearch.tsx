@@ -80,10 +80,10 @@ const TitleSearch = () => {
       sortedProposals = state.filter(proposal =>
         search.find(elem => elem.id === proposal.id)
       );
-    miniSearch.addAll(sortedProposals);
+      miniSearch.addAll(sortedProposals);
     }
 
-    dispatch({type: "update", payload: sortedProposals})
+    dispatch({ type: 'update', payload: sortedProposals });
     setIsLoading(false);
   }, [titleFilter]);
 

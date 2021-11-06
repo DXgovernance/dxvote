@@ -1,8 +1,9 @@
 import { useProposals } from 'hooks/useProposals';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent , useMemo} from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useContext } from 'contexts';
+import { ProposalsExtended } from 'contexts/proposals';
 
 const ProposalsFilter = styled.select`
   background-color: ${props => props.color || '#536DFE'};
@@ -28,36 +29,28 @@ const SchemaSearch = () => {
   } = useContext();
   const schemes = daoStore.getAllSchemes();
   const [state, dispatch] = useProposals();
-  const [isLoading, setIsLoading] = useState(false);
   const [schemeFilter, setSchemeFilter] = useState('All Schemes');
 
   const history = useHistory();
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
+  const params = useMemo(() =>  new URLSearchParams(location.search), [location.search])
 
   // load filter from url if any on initial load
   // load filter from url  when back on history
   // I dont understant what useHistory functions
   useEffect(() => {
-    setIsLoading(true);
     if (params.get('scheme')) setSchemeFilter(params.get('scheme'));
-    setIsLoading(false);
     history.listen(location => {
       const params = new URLSearchParams(location.search);
       if (history.action === 'POP') {
-        setIsLoading(true);
         if (params.get('scheme')) setSchemeFilter(params.get('scheme'));
         else setSchemeFilter('All Schemes');
-        setIsLoading(false);
       }
     });
-  }, []);
+  },[schemeFilter, history, params] );
 
-  /**
-   * seperating searching
-   */
 
-  function onSchemeFilterChange(event) {
+  function onSchemeFilterChange(event: ChangeEvent<HTMLInputElement>) {
     params.delete('scheme');
     params.append('scheme', event.target.value);
     history.push({

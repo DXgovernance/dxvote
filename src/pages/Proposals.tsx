@@ -157,9 +157,9 @@ const ProposalsPage = observer(() => {
               + New Proposal
             </LinkButton>
           </NewProposalButton>
-          <TitleSearch/>
-          <StatusSearch/>
-          <SchemaSearch/>
+          <TitleSearch />
+          <StatusSearch />
+          <SchemaSearch />
         </ProposalTableHeaderActions>
         <FooterWrap>
           <Footer />

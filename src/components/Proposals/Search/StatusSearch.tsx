@@ -30,7 +30,6 @@ const StatusSearch = () => {
   const history = useHistory();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  
 
   // load filter from url if any on initial load
   // load filter from url  when back on history
@@ -49,7 +48,6 @@ const StatusSearch = () => {
       }
     });
   }, []);
-
 
   function onStateFilterChange(event) {
     params.delete('state');
@@ -72,7 +70,7 @@ const StatusSearch = () => {
       );
     }
 
-    dispatch({type: 'update', payload: sortedProposals}); //triggers reindex
+    dispatch({ type: 'update', payload: sortedProposals }); //triggers reindex
     setIsLoading(false);
   }, [stateFilter]);
 
