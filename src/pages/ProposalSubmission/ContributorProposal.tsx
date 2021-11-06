@@ -305,7 +305,7 @@ export const ContributorProposalPage = observer(() => {
               stableOverride
             )
           )
-        )
+        ).toString()
       );
       console.log('done');
       // Encode WXDAI transfer
@@ -320,7 +320,7 @@ export const ContributorProposalPage = observer(() => {
               stableOverride
             )
           )
-        )
+        ).toString()
       );
 
       // Encode DXD approval
