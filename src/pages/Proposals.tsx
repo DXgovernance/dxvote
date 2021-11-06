@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useHistory, Link} from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import {
@@ -25,7 +25,12 @@ import {
 } from '../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 import { useProposals } from 'hooks/useProposals';
-import {  StatusSearch, SchemaSearch, TitleSearch} from "../components/Proposals/Search";
+import {
+  StatusSearch,
+  SchemaSearch,
+  TitleSearch,
+} from '../components/Proposals/Search';
+import { useEffect, useState } from 'react';
 
 const LoadingBox = styled.div`
   display: flex;
@@ -138,13 +143,20 @@ const ProposalsPage = observer(() => {
     context: { daoStore, configStore, providerStore },
   } = useContext();
 
-
   const votingMachines = configStore.getNetworkContracts().votingMachines;
   const networkName = configStore.getActiveChainName();
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
 
-  const [state, dispatch] = useProposals();
+  const [state] = useProposals();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (state) {
+      setIsLoading(false);
+    }
+  }, []);
 
   const history = useHistory();
 

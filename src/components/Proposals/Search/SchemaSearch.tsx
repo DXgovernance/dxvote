@@ -61,22 +61,19 @@ const SchemaSearch = () => {
   }
 
   useEffect(() => {
-    let sortedProposals;
-    setIsLoading(true);
+    let sortedProposals: ProposalsExtended[];
+    dispatch({type: 'update', payload: {loading: true}})
+    // set Loading to true
 
     if (schemeFilter !== 'All Schemes') {
-      sortedProposals = state.filter(
+      sortedProposals = state.proposals.filter(
         proposal => proposal.scheme === schemeFilter
       );
     }
 
-    dispatch({type: 'update', payload: sortedProposals}); //triggers reindex
-    setIsLoading(false);
-  }, [schemeFilter]);
+    dispatch({ type: 'update', payload: {loading: false, error: null, proposals: sortedProposals} }); //triggers reindex
+  }, [schemeFilter, state.proposals, dispatch]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <ProposalsFilter
