@@ -265,49 +265,7 @@ export const ContributorProposalPage = observer(() => {
         account,
         contracts.avatar
       );
-      console.log('encoding stable call');
-      console.log({
-        stables: levels[selectedLevel]?.stable,
-        discount,
-        stableOverride,
-      });
-      console.log(
-        calculateDiscountedValue(
-          levels[selectedLevel]?.stable,
-          discount,
-          stableOverride
-        )
-      );
-      console.log(
-        calculateDiscountedValue(
-          levels[selectedLevel]?.stable,
-          discount,
-          stableOverride
-        ).toString()
-      );
-      console.log('bnum');
-      console.log(
-        bnum(
-          calculateDiscountedValue(
-            levels[selectedLevel]?.stable,
-            discount,
-            stableOverride
-          )
-        )
-      );
-      console.log('denorm');
-      console.log(
-        denormalizeBalance(
-          bnum(
-            calculateDiscountedValue(
-              levels[selectedLevel]?.stable,
-              discount,
-              stableOverride
-            )
-          )
-        ).toString()
-      );
-      console.log('done');
+
       // Encode WXDAI transfer
       const wxdaiTransferCallData = encodeErc20Transfer(
         library,
