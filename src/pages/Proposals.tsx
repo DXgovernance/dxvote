@@ -30,7 +30,6 @@ import {
   SchemaSearch,
   TitleSearch,
 } from '../components/Proposals/Search';
-import { useEffect, useState } from 'react';
 
 const LoadingBox = styled.div`
   display: flex;
@@ -149,17 +148,9 @@ const ProposalsPage = observer(() => {
   const userEvents = daoStore.getUserEvents(account);
 
   const [state] = useProposals();
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setIsLoading(true);
-    if (state) {
-      setIsLoading(false);
-    }
-  }, []);
 
   const history = useHistory();
-
+  console.log(state.proposals, state.loading);
   return (
     <ProposalsWrapper>
       <SidebarWrapper>
@@ -177,14 +168,14 @@ const ProposalsPage = observer(() => {
           <Footer />
         </FooterWrap>
       </SidebarWrapper>
-      {isLoading && (
+      {state.loading && (
         <LoadingBox>
           <div className="loader">
             <PulsingIcon size={80} inactive={false} />
           </div>
         </LoadingBox>
       )}
-      {!isLoading && (
+      {!state.loading && (
         <TableProposal>
           <TableHeader>
             <HeaderCell>Title</HeaderCell>
@@ -194,7 +185,7 @@ const ProposalsPage = observer(() => {
             <HeaderCell>Votes</HeaderCell>
           </TableHeader>
           <TableBody>
-            {state.map((proposal, i) => {
+            {state.proposals.map((proposal, i) => {
               const positiveStake = formatNumberValue(
                 normalizeBalance(proposal.positiveStakes, 18),
                 1

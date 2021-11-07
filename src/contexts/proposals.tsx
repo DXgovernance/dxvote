@@ -26,23 +26,12 @@ interface DefaultAction {
 interface ProposalsState {
   loading: boolean;
   error: Error | null;
-  state: ProposalsExtended[];
+  proposals: ProposalsExtended[];
 }
 
-type Action = UpdateAction | DefaultAction
+type Action = UpdateAction | DefaultAction;
 
 export const ProposalsContext = createContext(undefined);
-
-const proposalsReducer = (state: ProposalsState, action: Action) => {
-  switch (action.type) {
-    case 'update':
-      return action.payload;
-    case 'default':
-      return state;
-    default:
-      return state;
-  }
-};
 
 export const ProposalProvider = ({ children }: ProposalProviderProps) => {
   const {
@@ -62,10 +51,22 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
   const initialProposalState: ProposalsState = {
     loading: false,
     error: null,
-    state: allProposals,
+    proposals: allProposals,
   };
 
-  const [state, dispatch] = useReducer(proposalsReducer, initialProposalState);
+  const [state, dispatch] = useReducer(
+    (state: ProposalsState = initialProposalState, action: Action) => {
+      switch (action.type) {
+        case 'update':
+          return action.payload;
+        case 'default':
+          return initialProposalState;
+        default:
+          return state;
+      }
+    },
+    initialProposalState
+  );
 
   return (
     <ProposalsContext.Provider value={[state, dispatch]}>

@@ -1,6 +1,7 @@
+import { ProposalsExtended } from 'contexts/proposals';
 import { useProposals } from 'hooks/useProposals';
 import MiniSearch from 'minisearch';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, ChangeEvent } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -25,12 +26,14 @@ const ProposalsNameFilter = styled.input`
 const TitleSearch = () => {
   const [state, dispatch] = useProposals();
   const [titleFilter, setTitleFilter] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
+  const params = useMemo(
+    () => new URLSearchParams(location.search),
+    [location.search]
+  );
 
-  function onTitleFilterChange(event) {
+  function onTitleFilterChange(event: ChangeEvent<HTMLInputElement>) {
     params.delete('title');
     params.append('title', event.target.value);
     history.push({
@@ -54,42 +57,32 @@ const TitleSearch = () => {
   // load filter from url if any on initial load
   // load filter from url  when back on history
   useEffect(() => {
-    setIsLoading(true);
     if (params.get('title')) setTitleFilter(params.get('title'));
-
-    setIsLoading(false);
     history.listen(location => {
       const params = new URLSearchParams(location.search);
       if (history.action === 'POP') {
-        setIsLoading(true);
         if (params.get('title')) setTitleFilter(params.get('title'));
         else setTitleFilter('');
-        setIsLoading(false);
       }
     });
   }, []);
 
   useEffect(() => {
-    let sortedProposals;
-    setIsLoading(true);
-
     miniSearch.removeAll();
 
     if (titleFilter) {
       let search = miniSearch.search(titleFilter);
-      sortedProposals = state.filter(proposal =>
-        search.find(elem => elem.id === proposal.id)
+      const sortedProposals = state.proposals.filter(
+        (proposal: ProposalsExtended) =>
+          search.find(elem => elem.id === proposal.id)
       );
       miniSearch.addAll(sortedProposals);
+      dispatch({
+        type: 'update',
+        payload: { loading: false, error: null, proposals: sortedProposals },
+      });
     }
-
-    dispatch({ type: 'update', payload: sortedProposals });
-    setIsLoading(false);
   }, [titleFilter]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <ProposalsNameFilter

@@ -1,9 +1,8 @@
 import { useProposals } from 'hooks/useProposals';
-import { useState, useEffect, ChangeEvent , useMemo} from 'react';
+import { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useContext } from 'contexts';
-import { ProposalsExtended } from 'contexts/proposals';
 
 const ProposalsFilter = styled.select`
   background-color: ${props => props.color || '#536DFE'};
@@ -33,7 +32,10 @@ const SchemaSearch = () => {
 
   const history = useHistory();
   const location = useLocation();
-  const params = useMemo(() =>  new URLSearchParams(location.search), [location.search])
+  const params = useMemo(
+    () => new URLSearchParams(location.search),
+    [location.search]
+  );
 
   // load filter from url if any on initial load
   // load filter from url  when back on history
@@ -47,8 +49,7 @@ const SchemaSearch = () => {
         else setSchemeFilter('All Schemes');
       }
     });
-  },[schemeFilter, history, params] );
-
+  }, []);
 
   function onSchemeFilterChange(event: ChangeEvent<HTMLInputElement>) {
     params.delete('scheme');
@@ -61,19 +62,16 @@ const SchemaSearch = () => {
   }
 
   useEffect(() => {
-    let sortedProposals: ProposalsExtended[];
-    dispatch({type: 'update', payload: {loading: true}})
-    // set Loading to true
-
     if (schemeFilter !== 'All Schemes') {
-      sortedProposals = state.proposals.filter(
+      const sortedProposals = state.proposals.filter(
         proposal => proposal.scheme === schemeFilter
       );
+      dispatch({
+        type: 'update',
+        payload: { loading: false, error: null, proposals: sortedProposals },
+      });
     }
-
-    dispatch({ type: 'update', payload: {loading: false, error: null, proposals: sortedProposals} }); //triggers reindex
-  }, [schemeFilter, state.proposals, dispatch]);
-
+  }, [schemeFilter]);
 
   return (
     <ProposalsFilter
