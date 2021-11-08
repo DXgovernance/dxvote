@@ -75,6 +75,11 @@ const Header = observer(() => {
 
   const { active, account } = providerStore.getActiveWeb3React();
 
+  const isTestingEnv = !(
+    window?.location?.href?.includes('dxvote.eth.link') ||
+    window?.location?.href?.includes('dxvote.eth.limo')
+  );
+
   if (!active) {
     return (
       <NavWrapper>
@@ -82,9 +87,7 @@ const Header = observer(() => {
           <NavItem route={`/`}>
             <MenuItem>
               <img alt="dxdao" src={dxdaoIcon} />
-              {process.env.NODE_ENV !== 'production' && (
-                <WarningDev>Development Environment</WarningDev>
-              )}
+              {isTestingEnv && <WarningDev>Testing Environment</WarningDev>}
             </MenuItem>
           </NavItem>
         </NavSection>
@@ -135,9 +138,7 @@ const Header = observer(() => {
           <NavItem route={`/${networkName}/proposals`}>
             <MenuItem>
               <img alt="dxdao" src={dxdaoIcon} />
-              {process.env.NODE_ENV !== 'production' && (
-                <WarningDev>Development Environment</WarningDev>
-              )}
+              {isTestingEnv && <WarningDev>Testing Environment</WarningDev>}
             </MenuItem>
           </NavItem>
         </NavSection>
