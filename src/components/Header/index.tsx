@@ -42,6 +42,11 @@ const ItemBox = styled(Box)`
   border-radius: 6px;
 `;
 
+const WarningDev = styled.div`
+  margin-left: 5px;
+  padding-top: 3px;
+`;
+
 const Header = observer(() => {
   const NavItem = withRouter(({ route, history, children }) => {
     return (
@@ -76,6 +81,9 @@ const Header = observer(() => {
           <NavItem route={`/`}>
             <MenuItem>
               <img alt="dxdao" src={dxdaoIcon} />
+              {process.env.NODE_ENV !== 'production' && (
+                <WarningDev>Development Mode</WarningDev>
+              )}
             </MenuItem>
           </NavItem>
         </NavSection>
@@ -126,6 +134,9 @@ const Header = observer(() => {
           <NavItem route={`/${networkName}/proposals`}>
             <MenuItem>
               <img alt="dxdao" src={dxdaoIcon} />
+              {process.env.NODE_ENV !== 'production' && (
+                <WarningDev>Development Mode</WarningDev>
+              )}
             </MenuItem>
           </NavItem>
         </NavSection>
