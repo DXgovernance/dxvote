@@ -25,25 +25,6 @@ const ProposalInformationWrapper = styled.div`
   flex-direction: row;
 `;
 
-const SidebarRow = styled.div`
-  display: flex;
-  justify-content: space-around;
-  flex-direction: row;
-  padding: 5px 0px;
-
-  .timeText {
-    font-size: 20;
-    margin-left: -10px;
-    width: 100%;
-    text-align: center;
-    padding-top: 5px;
-  }
-
-  span {
-    margin-bottom: 5px;
-  }
-`;
-
 const InfoSidebarBox = styled(Box)`
   max-width: 400px;
   min-width: 300px;
@@ -155,9 +136,7 @@ const ProposalPage = observer(() => {
       <InfoSidebarBox>
         <Status />
         <SidebarDivider />
-        <SidebarRow>
-          <Details />
-        </SidebarRow>
+        <Details />
         <SidebarDivider />
         <Votes />
         <SidebarDivider />

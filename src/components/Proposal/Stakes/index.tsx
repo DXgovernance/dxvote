@@ -21,7 +21,7 @@ import {
 
 import {
   ActionArea,
-  SidebarRow,
+  SpaceAroundRow,
   Vote,
   AmountInput,
   PositiveSummary,
@@ -39,7 +39,7 @@ const Stakes = () => {
   const [stakeAmount, setStakeAmount] = useState(0);
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
-  console.log('Proposal ID in Vote: ', proposalId);
+
   const proposal = daoStore.getProposal(proposalId);
   const proposalEvents = daoStore.getProposalEvents(proposalId);
   const { account } = providerStore.getActiveWeb3React();
@@ -138,12 +138,12 @@ const Stakes = () => {
 
   return (
     <>
-      <SidebarRow>
+      <SpaceAroundRow>
         <strong>
           Stakes <Question question="5" />
         </strong>
-      </SidebarRow>
-      <SidebarRow>
+      </SpaceAroundRow>
+      <SpaceAroundRow>
         <PositiveSummary>
           <SummaryTotal>
             <AmountBadge color="green">{positiveStakesCount}</AmountBadge>
@@ -203,13 +203,13 @@ const Stakes = () => {
                 ))}
           </SummaryDetails>
         </NegativeSummary>
-      </SidebarRow>
+      </SpaceAroundRow>
 
       {stakedAmount.toNumber() > 0 ? (
-        <SidebarRow>
+        <SpaceAroundRow>
           Already staked {stakedAmount.toNumber() > 0 ? 'for' : 'against'} with
           {formatBalance(stakedAmount).toString()} {votingMachineTokenName}
-        </SidebarRow>
+        </SpaceAroundRow>
       ) : (
         <div></div>
       )}
@@ -219,7 +219,7 @@ const Stakes = () => {
       (proposal.stateInVotingMachine === 3 ||
         proposal.stateInVotingMachine === 4) &&
       votingMachineTokenApproved.toString() === '0' ? (
-        <SidebarRow>
+        <SpaceAroundRow>
           <ActionArea>
             <small>Approve {votingMachineTokenName} to stake</small>
             <ActionButton
@@ -229,7 +229,7 @@ const Stakes = () => {
               Approve {votingMachineTokenName}
             </ActionButton>
           </ActionArea>
-        </SidebarRow>
+        </SpaceAroundRow>
       ) : (
         account &&
         !finishTimeReached &&
@@ -260,7 +260,7 @@ const Stakes = () => {
                 {votingMachineTokenName} to unboost
               </small>
             )}
-            <SidebarRow>
+            <SpaceAroundRow>
               <AmountInput
                 type="number"
                 placeholder={votingMachineTokenName}
@@ -286,7 +286,7 @@ const Stakes = () => {
               >
                 <FiThumbsDown />
               </ActionButton>
-            </SidebarRow>
+            </SpaceAroundRow>
           </div>
         )
       )}
@@ -294,7 +294,7 @@ const Stakes = () => {
       {proposal.stateInVotingMachine < 3 &&
         (redeemsLeft.rep.indexOf(proposalId) > -1 ||
           redeemsLeft.stake.indexOf(proposalId) > -1) && (
-          <SidebarRow
+          <SpaceAroundRow
             style={{
               borderTop: '1px solid gray',
               margin: '0px 10px',
@@ -304,13 +304,13 @@ const Stakes = () => {
             <ActionButton color="blue" onClick={() => redeem()}>
               Redeem
             </ActionButton>
-          </SidebarRow>
+          </SpaceAroundRow>
         )}
 
       {account &&
         proposal.stateInVotingMachine < 3 &&
         redeemsLeft.bounty.indexOf(proposalId) > -1 && (
-          <SidebarRow
+          <SpaceAroundRow
             style={{
               borderTop: '1px solid gray',
               margin: '0px 10px',
@@ -320,7 +320,7 @@ const Stakes = () => {
             <ActionButton color="blue" onClick={() => redeemDaoBounty()}>
               Redeem Stake Bounty
             </ActionButton>
-          </SidebarRow>
+          </SpaceAroundRow>
         )}
     </>
   );

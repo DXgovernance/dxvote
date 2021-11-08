@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 import { bnum } from 'utils';
 import { Question } from 'components/common';
 
-import { SidebarRow, ActionButton } from '../styles';
+import { SpaceAroundRow, ActionButton } from '../styles';
 
 const Status = () => {
   const {
@@ -60,7 +60,7 @@ const Status = () => {
       <h2 style={{ margin: '10px 0px 0px 0px', textAlign: 'center' }}>
         {status} <Question question="3" />
       </h2>
-      <SidebarRow style={{ margin: '0px 10px', flexDirection: 'column' }}>
+      <SpaceAroundRow style={{ margin: '0px 10px', flexDirection: 'column' }}>
         {boostTime.toNumber() > moment().unix() && (
           <span className="timeText">
             Boost in <Countdown date={boostTime.toNumber() * 1000} />{' '}
@@ -83,9 +83,11 @@ const Status = () => {
             <Countdown date={executionTimeoutTime.toNumber() * 1000} />{' '}
           </span>
         )}
-      </SidebarRow>
+      </SpaceAroundRow>
       {account && (
-        <SidebarRow style={{ flexDirection: 'column', alignItems: 'center' }}>
+        <SpaceAroundRow
+          style={{ flexDirection: 'column', alignItems: 'center' }}
+        >
           {pendingAction === 1 ? (
             <ActionButton color="blue" onClick={executeProposal}>
               <FiFastForward /> Boost{' '}
@@ -109,7 +111,7 @@ const Status = () => {
               </ActionButton>
             )
           )}
-        </SidebarRow>
+        </SpaceAroundRow>
       )}
     </>
   );
