@@ -45,6 +45,7 @@ const ItemBox = styled(Box)`
 const WarningDev = styled.div`
   margin-left: 5px;
   padding-top: 3px;
+  color: red;
 `;
 
 const Header = observer(() => {
@@ -82,7 +83,7 @@ const Header = observer(() => {
             <MenuItem>
               <img alt="dxdao" src={dxdaoIcon} />
               {process.env.NODE_ENV !== 'production' && (
-                <WarningDev>Development Mode</WarningDev>
+                <WarningDev>Development Environment</WarningDev>
               )}
             </MenuItem>
           </NavItem>
@@ -135,7 +136,7 @@ const Header = observer(() => {
             <MenuItem>
               <img alt="dxdao" src={dxdaoIcon} />
               {process.env.NODE_ENV !== 'production' && (
-                <WarningDev>Development Mode</WarningDev>
+                <WarningDev>Development Environment</WarningDev>
               )}
             </MenuItem>
           </NavItem>
