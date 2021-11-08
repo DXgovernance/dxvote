@@ -219,9 +219,7 @@ export const ContributorProposalPage = observer(() => {
 
   // Reset stable override when changing level
   useEffect(() => {
-    setStableOverride(
-      calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
-    );
+    setStableOverride(null);
   }, [selectedLevel]);
 
   const calculateDiscountedValue = (amount, discount, override = null) => {
@@ -280,7 +278,7 @@ export const ContributorProposalPage = observer(() => {
               stableOverride
             )
           )
-        )
+        ).toString()
       );
 
       // Encode DXD approval
@@ -383,7 +381,13 @@ export const ContributorProposalPage = observer(() => {
     <VerticalLayout>
       <NavigationBar>
         <BackToProposals
-          onClick={() => history.push('../metadata/contributor')}
+          onClick={() => {
+            if (advanced) {
+              setAdvanced(false);
+            } else {
+              history.push('../metadata/contributor');
+            }
+          }}
         >
           {`< Back`}
         </BackToProposals>
