@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Copy from './Copy';
 import {
   getBlockchainLink,
-  getENSName,
   getERC20Token,
   getDxVoteContract,
   toAddressStub,
@@ -39,7 +38,7 @@ export const BlockchainLink = ({
   onlyText = false,
 }) => {
   const {
-    context: { configStore },
+    context: { configStore, ensService },
   } = useContext();
 
   const networkName = configStore.getActiveChainName();
@@ -49,7 +48,7 @@ export const BlockchainLink = ({
 
   useEffect(() => {
     async function getENS() {
-      const response = await getENSName(text);
+      const response = await ensService.resolveENSName(text);
       setENSName(response);
     }
     getENS();
