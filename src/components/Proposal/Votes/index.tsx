@@ -240,12 +240,18 @@ const Votes = () => {
       ) : (
         votedAmount.toNumber() !== 0 && (
           <SpaceAroundRow>
-            Already voted {votedAmount.toNumber() > 0 ? 'for' : 'against'} with
-            {votedAmount
-              .times('100')
-              .div(totalRepAtProposalCreation)
-              .toFixed(2)}
-            % REP
+            <TextCenter>
+              {' '}
+              Already voted {votedAmount.toNumber() > 0
+                ? 'for'
+                : 'against'}{' '}
+              with
+              {votedAmount
+                .times('100')
+                .div(totalRepAtProposalCreation)
+                .toFixed(2)}
+              % REP
+            </TextCenter>
           </SpaceAroundRow>
         )
       )}

@@ -1,5 +1,18 @@
 import { normalizeBalance } from 'utils';
 import { BlockchainLink } from 'components/common';
+import { ProposalCalls } from 'types';
+
+type RecomendedCallsProps = Pick<
+  ProposalCalls,
+  | 'to'
+  | 'from'
+  | 'recommendedCallUsed'
+  | 'callParameters'
+  | 'encodedFunctionName'
+  | 'data'
+> & {
+  showMore: boolean;
+};
 
 export const RecommendedCalls = ({
   to,
@@ -8,10 +21,8 @@ export const RecommendedCalls = ({
   callParameters,
   encodedFunctionName,
   data,
-  // value,
-  // contractABI,
   showMore,
-}) => {
+}: RecomendedCallsProps) => {
   let decodedCallText = '';
 
   if (

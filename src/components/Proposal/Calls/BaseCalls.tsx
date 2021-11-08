@@ -1,7 +1,20 @@
 import { Error } from './Error';
 import { BlockchainLink } from 'components/common';
+import { ProposalCalls } from 'types';
 
-export const BaseCalls = ({ to, from, data, value, error, showMore }) => {
+type BaseCallsProps = Pick<ProposalCalls, 'to' | 'from' | 'value' | 'data'> & {
+  showMore: boolean;
+  error: any;
+};
+
+export const BaseCalls = ({
+  to,
+  from,
+  data,
+  value,
+  error,
+  showMore,
+}: BaseCallsProps) => {
   return (
     <div>
       {error && <Error error={error} />}

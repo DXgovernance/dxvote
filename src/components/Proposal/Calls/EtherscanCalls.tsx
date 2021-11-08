@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
+import { ProposalCalls } from 'types';
 import { BlockchainLink } from '../../common';
-import { Divider } from '../styles';
 
 const CallParams = styled.span`
   color: black;
@@ -10,7 +10,17 @@ const CallParams = styled.span`
   font-weight: ${props => props.fontWeight || 500};
 `;
 
-export const EtherscanCalls = ({ to, from, abi, showMore }) => {
+type EtherscanCallProps = Pick<ProposalCalls, 'to' | 'from'> & {
+  abi: any;
+  showMore: boolean;
+};
+
+export const EtherscanCalls = ({
+  to,
+  from,
+  abi,
+  showMore,
+}: EtherscanCallProps) => {
   if (showMore) {
     return (
       <div>
@@ -32,7 +42,7 @@ export const EtherscanCalls = ({ to, from, abi, showMore }) => {
         </p>
         {Object.keys(abi.args)
           .filter(item => item != '__length__')
-          .map((item, i) => {
+          .map(item => {
             const check = abi.function.inputs[item];
             const functionName = check
               ? abi.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
@@ -42,7 +52,6 @@ export const EtherscanCalls = ({ to, from, abi, showMore }) => {
               : 'failed';
             return (
               <p>
-                {i > 0 ? <Divider></Divider> : null}
                 <CallParams fontSize="14px" fontWeight={700}>
                   {functionName}:{' '}
                 </CallParams>
