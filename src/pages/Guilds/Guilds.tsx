@@ -11,6 +11,7 @@ import {
 import { Box } from '../../components/Guilds/common/Layout';
 import { Menu, MenuItem } from '../../components/Guilds/common/Menu';
 import Sidebar from '../../components/Guilds/Sidebar';
+import ProposalCard from '../../components/Guilds/ProposalCard';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -28,15 +29,14 @@ const PageHeader = styled(Box)`
 `;
 
 const PageTitle = styled.h3`
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   font-weight: 700;
   margin: 0;
   margin: 0.1rem 0 1rem 0;
 `;
 
 const PageSubtitle = styled.h4`
-  font-size: 0.9rem;
-  font-weight: 400;
+  font-weight: 500;
   margin: 0;
 `;
 
@@ -78,7 +78,9 @@ const GuildsPage: React.FC = () => {
         </PageHeader>
 
         <ProposalsList>
-          
+          <ProposalCard />
+          <ProposalCard />
+          <ProposalCard />
         </ProposalsList>
       </PageContent>
     </PageContainer>
