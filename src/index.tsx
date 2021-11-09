@@ -27,6 +27,7 @@ import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
 import { CreateMetadataPage } from 'pages/Metadata';
+import GuildsPage from './pages/Guilds/Guilds';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -95,6 +96,19 @@ const Routes = () => {
   );
 };
 
+const GuildsRoutes = () => {
+  return (
+    <HashRouter basename="/guilds">
+      <Route exact path="/">
+        <GuildsPage />
+      </Route>
+      <Route path="/:guild_id">
+        <div>Guild Page</div>
+      </Route>
+    </HashRouter>
+  );
+};
+
 const MainnetWeb3Provider: any = createWeb3ReactRoot(MAINNET_WEB3_ROOT_KEY);
 
 const SplitApp = () => {
@@ -113,7 +127,7 @@ const SplitApp = () => {
           </Web3ReactManager>
         </MainnetWeb3Manager>
       ) : (
-        <div>GuildsApp</div>
+        <GuildsRoutes />
       )}
     </Switch>
   );
