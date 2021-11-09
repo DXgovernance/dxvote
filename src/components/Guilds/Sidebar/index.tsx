@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Box } from '../common/Layout';
 import { Button } from '../common/Button';
+import { Menu, MenuItem } from '../common/Menu';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 
 const SidebarWrapper = styled(Box)`
@@ -34,16 +35,11 @@ const DaoMemberCount = styled(Box)`
   margin-bottom: 1rem;
 `;
 
-const SidebarMenu = styled(Box)`
+const SidebarMenu = styled(Menu)`
   padding: 1rem 0;
-  display: flex;
-  flex-direction: column;
 `;
 
-const MenuItem = styled.a`
-  display: block;
-  text-decoration: none;
-  color: initial;
+const SidebarMenuItem = styled(MenuItem)`
   font-size: 1rem;
   padding: 0.8rem 1rem;
 
@@ -66,10 +62,10 @@ const Sidebar = () => {
         <Button>Create Proposal</Button>
       </SidebarHeader>
       <SidebarMenu>
-        <MenuItem href="#">Proposals</MenuItem>
-        <MenuItem href="#">Members</MenuItem>
-        <MenuItem href="#">Portfolio</MenuItem>
-        <MenuItem href="#">Settings</MenuItem>
+        <SidebarMenuItem href="#">Proposals</SidebarMenuItem>
+        <SidebarMenuItem href="#">Members</SidebarMenuItem>
+        <SidebarMenuItem href="#">Portfolio</SidebarMenuItem>
+        <SidebarMenuItem href="#">Settings</SidebarMenuItem>
       </SidebarMenu>
     </SidebarWrapper>
   );
