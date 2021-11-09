@@ -159,4 +159,61 @@ export const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
+
+  body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    font-family: var(--roboto);
+    background-color: var(--background-color);
+  }
+  
+  :root {
+    --active-button-border: #304ffe;
+    --orange: #f9aa33;
+    --blue-text: #536DFE;
+    --red-text: #FF4081;
+    --blue-onHover: #4864FE;
+    --blue-onHover-border: #2545FE;
+    --dangerous-alert: #D32F2F;
+    --wrong-network-border: #D81B60;
+    --wrong-network-border-hover: #C2185B;
+    --wrong-network-hover: #E91E63;
+    --wrong-network: #EC407A;
+    --light-text-gray: #bdbdbd;
+    --text-gray-onHover: #727D82;
+    --dark-text-gray: #616161;
+    --nav-text-light: rgba(55, 71, 79, 0.4);
+    --nav-text-dark: rgba(55, 71, 79, 1);
+    --panel-text: rgba(83, 109, 254, 0.8);
+    --pending-panel-text: rgba(83, 109, 254, 0.6);
+    --panel-icon: rgba(83, 109, 254, 0.2);
+    --panel-icon-2: #758afe;
+    --panel-pending: #98a7fe;
+    --footer-text-gray: #c2c2c2;
+    --pending-text-gray: #d4dcdf;
+    --pending-ellipses-purple: #dde2ff;
+    --medium-gray: rgba(207, 216, 220, 0.9); /*For border*/
+    --light-gray: #FAFAFA; /*Site background*/
+    --line-gray: rgba(225, 227, 231, 0.4);
+    --turquois-text: #2d9cdb;
+    --turquois-text-onHover: #226C96;
+    --white: #ffffff;
+    --gridLine: rgba(232, 234, 246, 0.5);
+  
+    --roboto: 'Roboto', sans-serif;
+  
+    height: 100%;
+    width: 100%;
+  }
+  
+  #root{
+    height: 100%;
+    width: 85%;
+    margin: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
 `;

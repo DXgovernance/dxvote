@@ -7,7 +7,6 @@ import moment from 'moment';
 
 import * as serviceWorker from './serviceWorker';
 
-import 'index.css';
 import ThemeProvider, { GlobalStyle } from './theme';
 
 import Header from './components/Header';
@@ -122,6 +121,7 @@ const SplitApp = () => {
       {!isGuilds ? (
         <MainnetWeb3Manager>
           <Web3ReactManager>
+            <GlobalStyle />
             <Header />
             <Routes />
           </Web3ReactManager>
@@ -138,7 +138,6 @@ const Root = () => {
     <Web3ReactProvider getLibrary={getLibrary}>
       <MainnetWeb3Provider getLibrary={getLibrary}>
         <ThemeProvider>
-          <GlobalStyle />
           <HashRouter>
             <SplitApp />
           </HashRouter>
