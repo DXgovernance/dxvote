@@ -7,6 +7,7 @@ import { IconButton } from '../common/Button';
 const HeaderWrapper = styled(Box)`
   border-bottom: 1px solid #000;
   padding: 1.5rem 0;
+  margin-bottom: 3rem;
 `;
 
 const HeaderContainer = styled(Container)`
@@ -34,7 +35,7 @@ const ButtonIcon = styled.img`
 
 const Header = () => {
   return (
-    <HeaderWrapper>
+    <HeaderWrapper as="header">
       <HeaderContainer>
         <AppLogo>DXvote</AppLogo>
         <MenuItems>

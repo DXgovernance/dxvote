@@ -1,5 +1,6 @@
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
+import { Container } from './components/Guilds/common/Layout';
 
 import Header from './components/Guilds/Header';
 import GuildsPage from './pages/Guilds/Guilds';
@@ -25,14 +26,16 @@ const GuildsApp = () => {
     <HashRouter basename="/guilds">
       <GlobalStyle />
       <Header />
-      <Switch>
-        <Route exact path="/">
-          <GuildsPage />
-        </Route>
-        <Route path="/:guild_id">
-          <div>Guild Page</div>
-        </Route>
-      </Switch>
+      <Container>
+        <Switch>
+          <Route exact path="/">
+            <GuildsPage />
+          </Route>
+          <Route path="/:guild_id">
+            <div>Guild Page</div>
+          </Route>
+        </Switch>
+      </Container>
     </HashRouter>
   );
 };
