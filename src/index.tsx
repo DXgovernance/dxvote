@@ -97,26 +97,43 @@ const Routes = () => {
 
 const MainnetWeb3Provider: any = createWeb3ReactRoot(MAINNET_WEB3_ROOT_KEY);
 
-const Root = (
-  <Web3ReactProvider getLibrary={getLibrary}>
-    <MainnetWeb3Provider getLibrary={getLibrary}>
-      <ThemeProvider>
-        <GlobalStyle />
-        <HashRouter>
-          <Switch>
-            <MainnetWeb3Manager>
-              <Web3ReactManager>
-                <Header />
-                <Routes />
-              </Web3ReactManager>
-            </MainnetWeb3Manager>
-          </Switch>
-        </HashRouter>
-      </ThemeProvider>
-    </MainnetWeb3Provider>
-  </Web3ReactProvider>
-);
-ReactDOM.render(Root, document.getElementById('root'));
+const SplitApp = () => {
+  // This split between DXvote and Guilds frontends are temporary.
+  // We'll eventually converge changes on the Guilds side to DXvote.
+  const location = useLocation();
+  const isGuilds = location.pathname.startsWith('/guilds');
+
+  return (
+    <Switch>
+      {!isGuilds ? (
+        <MainnetWeb3Manager>
+          <Web3ReactManager>
+            <Header />
+            <Routes />
+          </Web3ReactManager>
+        </MainnetWeb3Manager>
+      ) : (
+        <div>GuildsApp</div>
+      )}
+    </Switch>
+  );
+};
+
+const Root = () => {
+  return (
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <MainnetWeb3Provider getLibrary={getLibrary}>
+        <ThemeProvider>
+          <GlobalStyle />
+          <HashRouter>
+            <SplitApp />
+          </HashRouter>
+        </ThemeProvider>
+      </MainnetWeb3Provider>
+    </Web3ReactProvider>
+  );
+};
+ReactDOM.render(<Root />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
