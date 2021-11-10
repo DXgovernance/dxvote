@@ -13,15 +13,14 @@ import {
   ZERO_HASH,
   sleep,
   bnum,
-  normalizeBalance,
   denormalizeBalance,
   encodePermission,
   TXEvents,
 } from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
 import DiscourseImporter from '../../components/DiscourseImporter';
-import { Calls } from 'components/NewProposal/CallsForm/Calls';
-
+import { Calls } from 'components/ProposalSubmission/Custom/Calls';
+import { Preview } from '../../components/ProposalSubmission/Custom/Preview';
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
   display: flex;
@@ -87,7 +86,6 @@ const NewProposalPage = observer(() => {
     },
   } = useContext();
 
-  const networkTokens = configStore.getTokensOfNetwork();
   const schemes = daoStore.getAllSchemes();
   const networkContracts = configStore.getNetworkContracts();
   const schemeInLocalStorage = localStorage.getItem(
@@ -663,61 +661,7 @@ const NewProposalPage = observer(() => {
         <div />
       )}
       <h2>Description Preview</h2>
-      <MDEditor.Markdown
-        source={descriptionText}
-        style={{
-          backgroundColor: 'white',
-          borderRadius: '5px',
-          border: '1px solid gray',
-          padding: '20px 10px',
-        }}
-      />
-      {schemeToUse.type === 'ContributionReward' ||
-      schemeToUse.type === 'GenericMulticall' ||
-      schemeToUse.type === 'SchemeRegistrar' ||
-      (schemeToUse.type === 'WalletScheme' &&
-        schemeToUse.controllerAddress === networkContracts.controller) ? (
-        <h2>
-          Calls executed from the avatar <Question question="9" />
-        </h2>
-      ) : (
-        <h2>
-          Calls executed from the scheme <Question question="9" />
-        </h2>
-      )}
-      {Object.keys(transferLimits).map(assetAddress => {
-        if (assetAddress === ZERO_ADDRESS)
-          return (
-            <h3>
-              Transfer limit of{' '}
-              {normalizeBalance(transferLimits[assetAddress]).toString()}{' '}
-              {networkAssetSymbol}
-            </h3>
-          );
-        else {
-          const token = networkTokens.find(
-            networkToken => networkToken.address === assetAddress
-          );
-          if (token)
-            return (
-              <h3>
-                Transfer limit of{' '}
-                {normalizeBalance(
-                  transferLimits[assetAddress],
-                  token.decimals
-                ).toString()}{' '}
-                {token.symbol}
-              </h3>
-            );
-          else
-            return (
-              <h3>
-                Transfer limit {transferLimits[assetAddress].toString()} of
-                asset {assetAddress}
-              </h3>
-            );
-        }
-      })}
+      <Preview descriptionText={descriptionText} schemeToUse={schemeToUse} />
 
       <Calls
         schemeToUse={schemeToUse}
