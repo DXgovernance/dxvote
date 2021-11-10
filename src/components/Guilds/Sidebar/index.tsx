@@ -36,6 +36,7 @@ const DaoMemberCount = styled(Box)`
 `;
 
 const SidebarMenu = styled(Menu)`
+  margin: 0;
   padding: 1rem 0;
 `;
 

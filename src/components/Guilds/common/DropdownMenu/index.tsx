@@ -15,11 +15,10 @@ export const DropdownButton = styled(IconButton)``;
 
 export const DropdownContent = styled(Box)`
   display: none;
-  border: 1px solid #ccc;
+  border: 1px solid #000;
   border-radius: 0.5rem;
   padding-top: 0.25rem;
   position: absolute;
-  top: 100%;
   background-color: #fff;
   z-index: 9999;
   width: 12.5rem;

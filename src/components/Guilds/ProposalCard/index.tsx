@@ -70,7 +70,12 @@ const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
   padding: 0.25rem 0.8rem;
 `;
 
-const ProposalCard = () => {
+interface ProposalCardProps {
+  title: string;
+  description: string;
+}
+
+const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
   return (
     <CardWrapper>
       <CardHeader>
@@ -87,11 +92,9 @@ const ProposalCard = () => {
         </IconDetailWrapper>
       </CardHeader>
       <CardContent>
-        <CardTitle>DXD Buyback Program Extension #3 Proposal</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <p>
-          The DXD Buyback Program was passed by REP holders in May of this year.
-          Since then, 6,313 DXD have been purchased on mainnet and xDai for an
-          average price...
+          {description}
         </p>
       </CardContent>
       <CardFooter>
