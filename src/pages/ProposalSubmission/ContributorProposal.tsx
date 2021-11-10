@@ -332,7 +332,6 @@ export const ContributorProposalPage = observer(() => {
   };
 
   const header = <div>Submit worker proposal</div>;
-  console.log({ athDate, startDate });
 
   const ModalContent = () => (
     <ModalContentWrap>
@@ -356,11 +355,6 @@ export const ContributorProposalPage = observer(() => {
         {calculateDiscountedValue(levels[selectedLevel]?.rep, discount)}% -{' '}
         {normalizeBalance(bnum(repReward ? repReward : '0')).toString()} REP
       </Values>
-      {/* <WarningText>
-        {periodEnd
-          ? 'If this is the second half of your payment then there is a chance DXD ATH changed and double check REP amount is accurate. If something is wrong please override the automatic values.'
-          : null}
-      </WarningText> */}
     </ModalContentWrap>
   );
 
@@ -419,18 +413,24 @@ export const ContributorProposalPage = observer(() => {
                 <InputDate
                   value={startDate}
                   onChange={setStartDateAndDxdOverride}
-                  text={'Start Date:'}
+                  text={'Proposal Start Date:'}
                 />
                 {startDate.isBefore(moment(athDate)) ? (
-                  <InputWrapper>
-                    $
-                    <TextInput
-                      placeholder="DXD ATH"
-                      type="number"
-                      onChange={event => setDXDOverride(event.target.value)}
-                      value={percentage}
-                    />
-                  </InputWrapper>
+                  <div>
+                    <WarningText>
+                      DXD all time high (ATH) has changed, please manually
+                      provide correct ATH as of start date
+                    </WarningText>
+                    <InputWrapper>
+                      $
+                      <TextInput
+                        placeholder="DXD ATH"
+                        type="number"
+                        onChange={event => setDXDOverride(event.target.value)}
+                        value={percentage}
+                      />
+                    </InputWrapper>
+                  </div>
                 ) : null}
               </Values>
             ) : null}
