@@ -20,6 +20,8 @@ import {
 } from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
 import DiscourseImporter from '../../components/DiscourseImporter';
+import { ContributionRewardCall } from 'components/NewProposal/CallsForm/ContributionRewardCall';
+import { SchemeRegistrarCall } from 'components/NewProposal/CallsForm/SchemeRegistarCall';
 
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
@@ -771,131 +773,17 @@ const NewProposalPage = observer(() => {
 
       {schemeToUse.type === 'ContributionReward' ? (
         // If scheme to use is Contribution Reward display a different form with less fields
-        <div>
-          <CallRow>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Beneficiary Account
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>REP Change</span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              {networkAssetSymbol} Value
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Address of Token
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Token Amount (in WEI)
-            </span>
-          </CallRow>
-          <CallRow>
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'beneficiary',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.beneficiary}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange('repChange', event.target.value)
-              }
-              value={contributionRewardCalls.repChange}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange('ethValue', event.target.value)
-              }
-              value={contributionRewardCalls.ethValue}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'externalToken',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.externalToken}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'tokenValue',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.tokenValue}
-              width="50%"
-            />
-          </CallRow>
-        </div>
+
+        <ContributionRewardCall
+          onContributionRewardValueChange={onContributionRewardValueChange}
+          contributionRewardCalls={contributionRewardCalls}
+        />
       ) : schemeToUse.type === 'SchemeRegistrar' ? (
         // If scheme to use is SchemeRegistrar display a different form with less fields
-        <div>
-          <CallRow>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Rergister Scheme
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Scheme Address
-            </span>
-            <span style={{ width: '40%', fontSize: '13px' }}>
-              {' '}
-              Parameters Hash{' '}
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>Permissions</span>
-          </CallRow>
-          <CallRow>
-            <TextInput
-              type="checkbox"
-              onChange={event =>
-                onSchemeRegistrarValueChange('register', event.target.checked)
-              }
-              checked={schemeRegistrarProposalValues.register}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange(
-                  'schemeAddress',
-                  event.target.value
-                )
-              }
-              value={schemeRegistrarProposalValues.schemeAddress}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange(
-                  'parametersHash',
-                  event.target.value
-                )
-              }
-              value={schemeRegistrarProposalValues.parametersHash}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange('permissions', event.target.value)
-              }
-              value={schemeRegistrarProposalValues.permissions}
-              width="50%"
-            />
-          </CallRow>
-        </div>
+        <SchemeRegistrarCall
+          onSchemeRegistrarValueChange={onSchemeRegistrarValueChange}
+          schemeRegistrarProposalValues={schemeRegistrarProposalValues}
+        />
       ) : (
         // If the scheme is GenericMulticall allow only advanced encoded calls
         // At last if the scheme used is a Wallet Scheme type allow a complete edition of the calls :)
