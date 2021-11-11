@@ -299,6 +299,7 @@ export default class ConfigStore {
         name: string;
         defaultValue: string;
         decimals?: number;
+        isRep?: boolean;
       }[];
       decodeText: string;
     }[] = [
@@ -309,7 +310,13 @@ export default class ConfigStore {
         toName: 'DXdao Controller',
         functionName: 'mintReputation(uint256,address,address)',
         params: [
-          { type: 'uint256', name: '_amount', defaultValue: '', decimals: 18 },
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
           { type: 'address', name: '_to', defaultValue: '' },
           {
             type: 'address',
@@ -317,7 +324,7 @@ export default class ConfigStore {
             defaultValue: networkContracts.avatar,
           },
         ],
-        decodeText: 'Mint of [PARAM_0] REP to [PARAM_1]',
+        decodeText: 'Mint of [PARAM_0] to [PARAM_1]',
       },
       {
         asset: ZERO_ADDRESS,
@@ -326,7 +333,13 @@ export default class ConfigStore {
         toName: 'DXdao Controller',
         functionName: 'burnReputation(uint256,address,address)',
         params: [
-          { type: 'uint256', name: '_amount', defaultValue: '', decimals: 18 },
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
           { type: 'address', name: '_from', defaultValue: '' },
           {
             type: 'address',
@@ -334,7 +347,7 @@ export default class ConfigStore {
             defaultValue: networkContracts.avatar,
           },
         ],
-        decodeText: 'Burn of [PARAM_0] REP to [PARAM_1]',
+        decodeText: 'Burn of [PARAM_0] to [PARAM_1]',
       },
       {
         asset: ZERO_ADDRESS,
