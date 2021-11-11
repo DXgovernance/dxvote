@@ -43,54 +43,54 @@ const Routes = () => {
   const location = useLocation();
   return (
     <PageRouter>
-      <ProposalProvider>
-        <Route exact path="/">
-          {' '}
+      <Route exact path="/">
+        {' '}
+        <ProposalsPage />{' '}
+      </Route>
+      <Route exact path="/config">
+        {' '}
+        <ConfigPage />{' '}
+      </Route>
+      <Route exact path="/forum">
+        {' '}
+        <ForumPage />{' '}
+      </Route>
+      <Route exact path="/faq">
+        {' '}
+        <FAQPage />{' '}
+      </Route>
+      <Route exact path="/:network/proposals">
+        {' '}
+        <ProposalProvider>
           <ProposalsPage />{' '}
-        </Route>
-        <Route exact path="/config">
-          {' '}
-          <ConfigPage />{' '}
-        </Route>
-        <Route exact path="/forum">
-          {' '}
-          <ForumPage />{' '}
-        </Route>
-        <Route exact path="/faq">
-          {' '}
-          <FAQPage />{' '}
-        </Route>
-        <Route exact path="/:network/proposals">
-          {' '}
-          <ProposalsPage />{' '}
-        </Route>
-        <Route exact path="/:network/create/type">
-          {' '}
-          <NewProposalTypePage />{' '}
-        </Route>
-        <Route path="/:network/create/submit/:proposalType">
-          {' '}
-          <NewProposalPage />{' '}
-        </Route>
-        <Route path="/:network/create/metadata/:proposalType">
-          {' '}
-          <CreateMetadataPage />{' '}
-        </Route>
-        <Route exact path="/:network/info">
-          {' '}
-          <InfoPage />{' '}
-        </Route>
-        <Route exact path="/:network/user/:address">
-          {' '}
-          <UserPage />{' '}
-        </Route>
-        <Route exact path="/:network/proposal/:proposalId">
-          {' '}
-          <ProposalPage />{' '}
-        </Route>
-        {location.pathname.indexOf('/proposals') < 0 &&
-          location.pathname.indexOf('/create/metadata') < 0 && <Footer />}
-      </ProposalProvider>
+        </ProposalProvider>
+      </Route>
+      <Route exact path="/:network/create/type">
+        {' '}
+        <NewProposalTypePage />{' '}
+      </Route>
+      <Route path="/:network/create/submit/:proposalType">
+        {' '}
+        <NewProposalPage />{' '}
+      </Route>
+      <Route path="/:network/create/metadata/:proposalType">
+        {' '}
+        <CreateMetadataPage />{' '}
+      </Route>
+      <Route exact path="/:network/info">
+        {' '}
+        <InfoPage />{' '}
+      </Route>
+      <Route exact path="/:network/user/:address">
+        {' '}
+        <UserPage />{' '}
+      </Route>
+      <Route exact path="/:network/proposal/:proposalId">
+        {' '}
+        <ProposalPage />{' '}
+      </Route>
+      {location.pathname.indexOf('/proposals') < 0 &&
+        location.pathname.indexOf('/create/metadata') < 0 && <Footer />}
     </PageRouter>
   );
 };

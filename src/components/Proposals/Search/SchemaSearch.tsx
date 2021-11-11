@@ -63,12 +63,9 @@ const SchemaSearch = () => {
 
   useEffect(() => {
     if (schemeFilter !== 'All Schemes') {
-      const sortedProposals = state.proposals.filter(
-        proposal => proposal.scheme === schemeFilter
-      );
       dispatch({
-        type: 'update',
-        payload: { loading: false, error: null, proposals: sortedProposals },
+        type: 'filter',
+        payload: { scheme: schemeFilter },
       });
     }
   }, [schemeFilter]);

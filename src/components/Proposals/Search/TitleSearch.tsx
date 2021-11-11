@@ -43,6 +43,7 @@ const TitleSearch = () => {
     setTitleFilter(event.target.value);
   }
   const miniSearchRef = React.useRef(
+    // create search engine and set title and id as searchable fields
     new MiniSearch({
       fields: ['title'],
       storeFields: ['id'],
@@ -68,15 +69,18 @@ const TitleSearch = () => {
   }, []);
 
   useEffect(() => {
+    // remove all indexed search
     miniSearch.removeAll();
 
+    // add all proposals to search
+    miniSearch.addAll(state.proposals);
     if (titleFilter) {
+      // search with fuzzy options and returns array of possible proposal ids
       let search = miniSearch.search(titleFilter);
       const sortedProposals = state.proposals.filter(
         (proposal: ProposalsExtended) =>
           search.find(elem => elem.id === proposal.id)
       );
-      miniSearch.addAll(sortedProposals);
       dispatch({
         type: 'update',
         payload: { loading: false, error: null, proposals: sortedProposals },

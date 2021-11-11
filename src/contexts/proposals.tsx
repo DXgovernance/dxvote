@@ -1,4 +1,5 @@
 import { useContext } from 'contexts';
+import { SearchResult } from 'minisearch';
 import { createContext, ReactNode, useReducer } from 'react';
 import { filterInitialCriteria } from 'utils';
 
@@ -13,14 +14,13 @@ interface ProposalProviderProps {
   children: ReactNode;
 }
 
-interface UpdateAction {
-  type: 'update';
-  payload: ProposalsState;
-}
-
-interface DefaultAction {
-  type: 'default';
-  payload: ProposalsState;
+interface FilterAction {
+  type: 'filter';
+  payload: {
+    search: string;
+    scheme: string;
+    title: SearchResult[];
+  };
 }
 
 interface ProposalsState {
@@ -29,7 +29,7 @@ interface ProposalsState {
   proposals: ProposalsExtended[];
 }
 
-type Action = UpdateAction | DefaultAction;
+type Action = FilterAction;
 
 export const ProposalsContext = createContext(undefined);
 
@@ -48,6 +48,7 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     daoStore
   );
 
+  
   const initialProposalState: ProposalsState = {
     loading: false,
     error: null,
@@ -57,10 +58,20 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
   const [state, dispatch] = useReducer(
     (state: ProposalsState = initialProposalState, action: Action) => {
       switch (action.type) {
-        case 'update':
-          return action.payload;
-        case 'default':
-          return initialProposalState;
+        case 'filter':
+          const { scheme, title, search } = action.payload;
+          console.log(scheme, search, title);
+          return {
+            ...state,
+            proposals: initialProposalState.proposals.filter(
+              proposal =>
+                proposal.scheme === scheme &&
+                parseInt(proposal.stateInVotingMachine as any) ===
+                  parseInt(search) &&
+                title.find(elem => elem.id === proposal.id)
+            ),
+          };
+
         default:
           return state;
       }

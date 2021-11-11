@@ -150,7 +150,6 @@ const ProposalsPage = observer(() => {
   const [state] = useProposals();
 
   const history = useHistory();
-  console.log(state.proposals, state.loading);
   return (
     <ProposalsWrapper>
       <SidebarWrapper>

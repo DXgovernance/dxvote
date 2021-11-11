@@ -59,20 +59,11 @@ const StatusSearch = () => {
 
   useEffect(() => {
     if (stateFilter !== 'Any Status') {
-      const sortedProposals = state.proposals.filter(
-        proposal =>
-          parseInt(proposal.stateInVotingMachine) === parseInt(stateFilter)
-      );
       dispatch({
-        type: 'update',
-        payload: { loading: false, error: null, proposals: sortedProposals },
+        type: 'filter',
+        payload: { status: stateFilter },
       });
     }
-
-    if (stateFilter === 'Any Status') {
-      dispatch({ type: 'default' });
-    }
-    console.log(stateFilter);
   }, [stateFilter]);
 
   return (

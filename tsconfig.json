@@ -23,14 +23,14 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "declaration": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noImplicitReturns": true,
     "allowUnreachableCode": false,
     "isolatedModules": true,
     "useDefineForClassFields": true,
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "typeRoots": [
       "./src/types"
     ]
