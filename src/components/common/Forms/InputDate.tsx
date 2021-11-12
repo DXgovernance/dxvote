@@ -32,7 +32,7 @@ const Date = styled(Datetime)`
 
 export const InputDate = ({ onChange, value, text = null, width = 200 }) => (
   <div>
-    <Label>{text}</Label>
+    <Label width={width}>{text}</Label>
     <Date
       value={value}
       onChange={onChange}
