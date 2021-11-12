@@ -26,7 +26,8 @@ const Date = styled(Datetime)`
     width: ${props => `${props.width}px`};
   }
   .rdtPicker {
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
   }
 `;
 
