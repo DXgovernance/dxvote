@@ -43,7 +43,7 @@ const SchemaSearch = () => {
         scheme: schemeFilter,
       },
     });
-  }, [schemeFilter]);
+  }, [schemeFilter, getParams]);
 
   return (
     <ProposalsFilter

@@ -39,7 +39,7 @@ const StatusSearch = () => {
         status: stateFilter,
       },
     });
-  }, [stateFilter]);
+  }, [stateFilter, getParams]);
 
   return (
     <ProposalsFilter

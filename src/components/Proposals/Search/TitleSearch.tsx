@@ -57,8 +57,7 @@ const TitleSearch = () => {
         scheme: state.filters.scheme,
       },
     });
-    console.log(titleFilter);
-  }, [titleFilter]);
+  }, [titleFilter, getParams]);
 
   return (
     <ProposalsNameFilter

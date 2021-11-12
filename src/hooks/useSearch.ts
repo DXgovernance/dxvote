@@ -10,7 +10,7 @@ export const useParams = (searchType: string, defaultSearchtype: string)  => {
     [location.search]
   );
 
-  const [getParams, setParams] = useState('')
+  const [getParams, setParams] = useState<string>('')
 
 
   // load filter from url if any on initial load
@@ -21,7 +21,6 @@ export const useParams = (searchType: string, defaultSearchtype: string)  => {
       const params = new URLSearchParams(location.search);
       if (history.action === 'POP') {
         if (params.get(searchType)) setParams(params.get(searchType));
-        // setdefault
         else setParams(defaultSearchtype);
       }
     });
