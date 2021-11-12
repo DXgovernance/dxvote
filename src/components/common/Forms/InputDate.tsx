@@ -11,7 +11,7 @@ import 'react-datetime/css/react-datetime.css';
 const Label = styled.div`
   text-align: left;
   font-size: smaller;
-  width: 200px;
+  width: ${props => `${props.width}px`};
   margin: auto;
 `;
 const Date = styled(Datetime)`
@@ -23,11 +23,14 @@ const Date = styled(Datetime)`
     padding: 2% 0;
     text-align: center;
     font-size: x-large;
-    width: 200px;
+    width: ${props => `${props.width}px`};
+  }
+  .rdtPicker {
+    width: 100%;
   }
 `;
 
-export const InputDate = ({ onChange, value, text = null }) => (
+export const InputDate = ({ onChange, value, text = null, width = 200 }) => (
   <div>
     <Label>{text}</Label>
     <Date
@@ -35,6 +38,7 @@ export const InputDate = ({ onChange, value, text = null }) => (
       onChange={onChange}
       dateFormat="DD/MM/YYYY"
       timeFormat={false}
+      width={width}
     />
   </div>
 );

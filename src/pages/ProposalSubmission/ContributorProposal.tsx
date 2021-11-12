@@ -414,6 +414,7 @@ export const ContributorProposalPage = observer(() => {
                   value={startDate}
                   onChange={setStartDateAndDxdOverride}
                   text={'Proposal Start Date:'}
+                  width={200}
                 />
                 {startDate.isBefore(moment(athDate)) ? (
                   <div>
