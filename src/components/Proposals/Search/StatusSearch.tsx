@@ -1,8 +1,8 @@
 import { useProposals } from 'hooks/useProposals';
-import { useState, useEffect, useMemo, ChangeEvent } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useState, useEffect} from 'react';
 import { enumKeys, VotingMachineProposalState } from 'utils';
 import styled from 'styled-components';
+import { useParams } from 'hooks/useSearch';
 
 const ProposalsFilter = styled.select`
   background-color: ${props => props.color || '#536DFE'};
@@ -26,42 +26,19 @@ const StatusSearch = () => {
   const [state, dispatch] = useProposals();
   const [stateFilter, setStateFilter] = useState('Any Status');
 
-  const history = useHistory();
-  const location = useLocation();
-  const params = useMemo(
-    () => new URLSearchParams(location.search),
-    [location.search]
-  );
+  const {onFilterChange,  getParams} = useParams('state', 'Any Status')
 
-  // load filter from url if any on initial load
-  // load filter from url  when back on history
-  // I dont understant what useHistory functions
-  useEffect(() => {
-    if (params.get('state')) setStateFilter(params.get('state'));
-    history.listen(location => {
-      const params = new URLSearchParams(location.search);
-      if (history.action === 'POP') {
-        if (params.get('state')) setStateFilter(params.get('state'));
-        else setStateFilter('Any Status');
-      }
-    });
-  }, []);
-
-  function onStateFilterChange(event: ChangeEvent<HTMLInputElement>) {
-    params.delete('state');
-    params.append('state', event.target.value);
-    history.push({
-      location: location.pathname,
-      search: params.toString(),
-    });
-    setStateFilter(event.target.value);
-  }
 
   useEffect(() => {
-      dispatch({
-        type: 'filter',
-        payload: { title:state.filters.title, scheme: state.filters.scheme, status: stateFilter },
-      });
+    setStateFilter(getParams)
+    dispatch({
+      type: 'filter',
+      payload: {
+        title: state.filters.title,
+        scheme: state.filters.scheme,
+        status: stateFilter,
+      },
+    });
   }, [stateFilter]);
 
   return (
@@ -69,7 +46,7 @@ const StatusSearch = () => {
       name="stateFilter"
       id="stateSelector"
       value={stateFilter}
-      onChange={onStateFilterChange}
+      onChange={onFilterChange}
     >
       <option value="Any Status">Any Status</option>
       {enumKeys(VotingMachineProposalState).map(

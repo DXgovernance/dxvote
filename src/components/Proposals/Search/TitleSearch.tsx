@@ -1,9 +1,8 @@
-import { ProposalsExtended } from 'contexts/proposals';
 import { useProposals } from 'hooks/useProposals';
 import MiniSearch from 'minisearch';
-import React, { useEffect, useState, useMemo, ChangeEvent } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import React, { useEffect, useState} from 'react';
 import styled from 'styled-components';
+import { useParams } from 'hooks/useSearch';
 
 const ProposalsNameFilter = styled.input`
   background-color: white;
@@ -26,22 +25,7 @@ const ProposalsNameFilter = styled.input`
 const TitleSearch = () => {
   const [state, dispatch] = useProposals();
   const [titleFilter, setTitleFilter] = useState('');
-  const history = useHistory();
-  const location = useLocation();
-  const params = useMemo(
-    () => new URLSearchParams(location.search),
-    [location.search]
-  );
-
-  function onTitleFilterChange(event: ChangeEvent<HTMLInputElement>) {
-    params.delete('title');
-    params.append('title', event.target.value);
-    history.push({
-      location: location.pathname,
-      search: params.toString(),
-    });
-    setTitleFilter(event.target.value);
-  }
+  const {onFilterChange,  getParams} = useParams('title', '')
   const miniSearchRef = React.useRef(
     // create search engine and set title and id as searchable fields
     new MiniSearch({
@@ -55,32 +39,25 @@ const TitleSearch = () => {
     })
   );
   const miniSearch = miniSearchRef.current;
-  // load filter from url if any on initial load
-  // load filter from url  when back on history
-  useEffect(() => {
-    if (params.get('title')) setTitleFilter(params.get('title'));
-    history.listen(location => {
-      const params = new URLSearchParams(location.search);
-      if (history.action === 'POP') {
-        if (params.get('title')) setTitleFilter(params.get('title'));
-        else setTitleFilter('');
-      }
-    });
-  }, []);
 
   useEffect(() => {
+    setTitleFilter(getParams)
     // remove all indexed search
     miniSearch.removeAll();
 
     // add all proposals to search
     miniSearch.addAll(state.proposals);
 
-    const search = miniSearch.search(titleFilter)
+    const search = miniSearch.search(titleFilter);
     dispatch({
       type: 'filter',
-      payload: { status: state.filters.status, title: search, scheme: state.filters.scheme},
+      payload: {
+        status: state.filters.status,
+        title: search,
+        scheme: state.filters.scheme,
+      },
     });
-    console.log(titleFilter)
+    console.log(titleFilter);
   }, [titleFilter]);
 
   return (
@@ -90,7 +67,7 @@ const TitleSearch = () => {
       name="titleFilter"
       id="titleFilter"
       value={titleFilter}
-      onChange={onTitleFilterChange}
+      onChange={onFilterChange}
     ></ProposalsNameFilter>
   );
 };

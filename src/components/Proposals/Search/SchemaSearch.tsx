@@ -1,6 +1,6 @@
 import { useProposals } from 'hooks/useProposals';
-import { useState, useEffect, ChangeEvent, useMemo } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useParams } from 'hooks/useSearch';
+import { useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { useContext } from 'contexts';
 
@@ -30,42 +30,19 @@ const SchemaSearch = () => {
   const [state, dispatch] = useProposals();
   const [schemeFilter, setSchemeFilter] = useState('All Schemes');
 
-  const history = useHistory();
-  const location = useLocation();
-  const params = useMemo(
-    () => new URLSearchParams(location.search),
-    [location.search]
-  );
+  const {onFilterChange,  getParams} = useParams('scheme', 'All Schemes')
 
-  // load filter from url if any on initial load
-  // load filter from url  when back on history
-  // I dont understant what useHistory functions
-  useEffect(() => {
-    if (params.get('scheme')) setSchemeFilter(params.get('scheme'));
-    history.listen(location => {
-      const params = new URLSearchParams(location.search);
-      if (history.action === 'POP') {
-        if (params.get('scheme')) setSchemeFilter(params.get('scheme'));
-        else setSchemeFilter('All Schemes');
-      }
-    });
-  }, []);
-
-  function onSchemeFilterChange(event: ChangeEvent<HTMLInputElement>) {
-    params.delete('scheme');
-    params.append('scheme', event.target.value);
-    history.push({
-      location: location.pathname,
-      search: params.toString(),
-    });
-    setSchemeFilter(event.target.value);
-  }
 
   useEffect(() => {
-      dispatch({
-        type: 'filter',
-        payload: { title: state.filters.title, status: state.filters.status, scheme: schemeFilter },
-      });
+    setSchemeFilter(getParams)
+    dispatch({
+      type: 'filter',
+      payload: {
+        title: state.filters.title,
+        status: state.filters.status,
+        scheme: schemeFilter,
+      },
+    });
   }, [schemeFilter]);
 
   return (
@@ -73,7 +50,7 @@ const SchemaSearch = () => {
       name="schemeFilter"
       id="schemeSelector"
       value={schemeFilter}
-      onChange={onSchemeFilterChange}
+      onChange={onFilterChange}
     >
       <option value="All Schemes">All Schemes</option>
       {schemes.map(scheme => {
