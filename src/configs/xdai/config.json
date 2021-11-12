@@ -24,6 +24,9 @@
         "address": "0x053f406aD40c9Eb8eB43aFf28DA0D0EC17dF8e44"
       }
     },
+    "schemes": {
+      "QuickWalletScheme": "0x983e0c64088E48b6AB7C76a8ABa3eE93d1C10aD5"
+    },
     "daostack": {
       "contributionRewardRedeemer": "0xd2cc17817c0d4cfc6819510b2e5288512122d71c",
       "schemeRegistrar": {

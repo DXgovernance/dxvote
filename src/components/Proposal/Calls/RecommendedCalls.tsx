@@ -1,6 +1,10 @@
-import { normalizeBalance } from 'utils';
+import reactStringReplace from 'react-string-replace';
+import { useLocation } from 'react-router-dom';
+import { bnum, normalizeBalance } from 'utils';
 import { BlockchainLink } from 'components/common';
-import { ProposalCalls } from 'types';
+import { CallParameterDefinition, ProposalCalls } from 'types';
+import RepDisplay from '../../RepDisplay';
+import { useContext } from '../../../contexts';
 
 type RecomendedCallsProps = Pick<
   ProposalCalls,
@@ -23,32 +27,53 @@ export const RecommendedCalls = ({
   data,
   showMore,
 }: RecomendedCallsProps) => {
-  let decodedCallText = '';
+  const {
+    context: { daoStore },
+  } = useContext();
 
+  const proposalId = useLocation().pathname.split('/')[3];
+  const proposal = daoStore.getProposal(proposalId);
+
+  const normalizeValue = (value: any, param: CallParameterDefinition) => {
+    if (param.decimals) {
+      return normalizeBalance(value, param.decimals).toString();
+    }
+
+    return value;
+  };
+
+  const getComponentToRender = (param: CallParameterDefinition, value: any) => {
+    if (param.isRep) {
+      return (
+        <RepDisplay
+          rep={bnum(value)}
+          atBlock={proposal.creationEvent.l1BlockNumber}
+          timestamp={proposal.creationEvent.timestamp}
+        />
+      );
+    } else {
+      return normalizeValue(value, param);
+    }
+  };
+
+  let decodedCallDetail: React.ReactNodeArray = [
+    recommendedCallUsed.decodeText,
+  ];
   if (
     recommendedCallUsed.decodeText &&
     recommendedCallUsed.decodeText.length > 0
   ) {
-    decodedCallText = recommendedCallUsed.decodeText;
+    recommendedCallUsed.params.forEach((param, paramIndex) => {
+      const component = getComponentToRender(param, callParameters[paramIndex]);
 
-    recommendedCallUsed.params.map((_, paramIndex) => {
-      if (recommendedCallUsed.params[paramIndex].decimals) {
-        decodedCallText = decodedCallText.replaceAll(
-          '[PARAM_' + paramIndex + ']',
-          String(
-            normalizeBalance(
-              callParameters[paramIndex],
-              recommendedCallUsed.params[paramIndex].decimals
-            )
-          )
-        );
-      }
-      decodedCallText = decodedCallText.replaceAll(
-        '[PARAM_' + paramIndex + ']',
-        callParameters[paramIndex]
+      decodedCallDetail = reactStringReplace(
+        decodedCallDetail,
+        `[PARAM_${paramIndex}]`,
+        () => component
       );
     });
   }
+
   if (showMore) {
     return (
       <div>
@@ -89,9 +114,10 @@ export const RecommendedCalls = ({
       </div>
     );
   }
+
   return (
     <div>
-      <small>{decodedCallText}</small>
+      <small>{decodedCallDetail}</small>
     </div>
   );
 };
