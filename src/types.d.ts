@@ -260,6 +260,7 @@ declare global {
     controller: string;
     permissionRegistry: string;
     utils: { [name: string]: string };
+    schemes?: any;
     daostack?: any;
     votingMachines: {
       [name: string]: {

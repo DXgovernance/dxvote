@@ -328,7 +328,7 @@ export default class ConfigStore {
       },
       {
         asset: ZERO_ADDRESS,
-        from: '0x983e0c64088E48b6AB7C76a8ABa3eE93d1C10aD5',
+        from: networkContracts.schemes?.QuickWalletScheme,
         to: networkContracts.controller,
         toName: 'DXdao Controller',
         functionName: 'mintReputation(uint256,address,address)',
