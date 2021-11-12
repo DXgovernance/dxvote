@@ -328,6 +328,29 @@ export default class ConfigStore {
       },
       {
         asset: ZERO_ADDRESS,
+        from: '0x983e0c64088E48b6AB7C76a8ABa3eE93d1C10aD5',
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'mintReputation(uint256,address,address)',
+        params: [
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
+          { type: 'address', name: '_to', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText: 'Mint of [PARAM_0] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
         from: networkContracts.avatar,
         to: networkContracts.controller,
         toName: 'DXdao Controller',
