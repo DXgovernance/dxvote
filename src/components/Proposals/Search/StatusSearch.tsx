@@ -58,12 +58,10 @@ const StatusSearch = () => {
   }
 
   useEffect(() => {
-    if (stateFilter !== 'Any Status') {
       dispatch({
         type: 'filter',
-        payload: { status: stateFilter },
+        payload: { title:state.filters.title, scheme: state.filters.scheme, status: stateFilter },
       });
-    }
   }, [stateFilter]);
 
   return (

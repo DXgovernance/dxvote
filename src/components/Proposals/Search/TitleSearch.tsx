@@ -74,18 +74,10 @@ const TitleSearch = () => {
 
     // add all proposals to search
     miniSearch.addAll(state.proposals);
-    if (titleFilter) {
-      // search with fuzzy options and returns array of possible proposal ids
-      let search = miniSearch.search(titleFilter);
-      const sortedProposals = state.proposals.filter(
-        (proposal: ProposalsExtended) =>
-          search.find(elem => elem.id === proposal.id)
-      );
-      dispatch({
-        type: 'update',
-        payload: { loading: false, error: null, proposals: sortedProposals },
-      });
-    }
+    dispatch({
+      type: 'filter',
+      payload: { status: state.filters.status, title: titleFilter, scheme: state.filters.scheme},
+    });
   }, [titleFilter]);
 
   return (

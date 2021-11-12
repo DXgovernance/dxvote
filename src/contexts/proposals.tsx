@@ -16,17 +16,20 @@ interface ProposalProviderProps {
 
 interface FilterAction {
   type: 'filter';
-  payload: {
-    search: string;
-    scheme: string;
-    title: SearchResult[];
-  };
+  payload: Filters
+}
+
+interface Filters {
+  status: string | undefined
+  scheme: string | undefined
+  title: SearchResult[] | undefined
 }
 
 interface ProposalsState {
   loading: boolean;
   error: Error | null;
   proposals: ProposalsExtended[];
+  filters: Filters
 }
 
 type Action = FilterAction;
@@ -48,30 +51,67 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     daoStore
   );
 
-  
+
+  //helpers
+  const comp = ( f , g ) =>
+    x => f ( g ( x ) )
+
+  const compose = ( ...fs ) =>
+    fs.reduce ( comp , x => x )
+
+  const append = ( xs , x ) =>
+    xs.concat ( [ x ] )
+
+  const transduce = ( ...ts ) => xs =>
+    xs.reduce ( ts.reduce ( comp ) ( append ) , [] )
+
+  const filterer = f =>
+    k => ( acc , x ) => f ( x ) ? k ( acc , x ) : acc
+
+
+  // function selectors
+  const statusSelector = (proposal, status) =>
+    ((status === 'Any Status' || !status) ? proposal : parseInt(proposal.stateInVotingMachine) ===
+      parseInt(status))
+
+  const schemeSelector = (proposal, scheme) => ((scheme === 'All Schemes' || !scheme)? proposal :  proposal.scheme === scheme)
+
+ const titleSelector = (proposal, title) => ( (!title || title.length === 0) ? proposal : title.find(elem => elem.id === proposal.id))
+
+
+  // record previous states of the
+  const filterSelector = ( status, scheme, title, items) =>
+    transduce ( filterer ( proposal => schemeSelector(proposal, scheme))
+              , filterer ( proposal => statusSelector(proposal, status))
+              , filterer ( proposal => titleSelector(proposal, title))
+    ) (items)
+
+
   const initialProposalState: ProposalsState = {
     loading: false,
     error: null,
     proposals: allProposals,
+    filters: {
+      scheme: undefined,
+      title: undefined,
+      status:undefined,
+    }
   };
-
   const [state, dispatch] = useReducer(
     (state: ProposalsState = initialProposalState, action: Action) => {
       switch (action.type) {
         case 'filter':
-          const { scheme, title, search } = action.payload;
-          console.log(scheme, search, title);
+          const { scheme, title, status } = action.payload;
+          console.log(scheme, title, status)
           return {
             ...state,
-            proposals: initialProposalState.proposals.filter(
-              proposal =>
-                proposal.scheme === scheme &&
-                parseInt(proposal.stateInVotingMachine as any) ===
-                  parseInt(search) &&
-                title.find(elem => elem.id === proposal.id)
-            ),
+            proposals: filterSelector(status, scheme, title, initialProposalState.proposals),
+            filters: {
+              title: title,
+              status: status,
+              scheme: scheme
+            }
           };
-
         default:
           return state;
       }

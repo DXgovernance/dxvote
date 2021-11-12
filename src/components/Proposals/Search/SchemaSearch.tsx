@@ -62,12 +62,10 @@ const SchemaSearch = () => {
   }
 
   useEffect(() => {
-    if (schemeFilter !== 'All Schemes') {
       dispatch({
         type: 'filter',
-        payload: { scheme: schemeFilter },
+        payload: { title: state.filters.title, status: state.filters.status, scheme: schemeFilter },
       });
-    }
   }, [schemeFilter]);
 
   return (
