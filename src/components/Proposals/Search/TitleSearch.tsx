@@ -74,10 +74,13 @@ const TitleSearch = () => {
 
     // add all proposals to search
     miniSearch.addAll(state.proposals);
+
+    const search = miniSearch.search(titleFilter)
     dispatch({
       type: 'filter',
-      payload: { status: state.filters.status, title: titleFilter, scheme: state.filters.scheme},
+      payload: { status: state.filters.status, title: search, scheme: state.filters.scheme},
     });
+    console.log(titleFilter)
   }, [titleFilter]);
 
   return (
