@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import { useHistory, Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
@@ -7,11 +6,9 @@ import {
   Positive,
   Negative,
   Separator,
-  Table,
   TableHeader,
   HeaderCell,
   TableBody,
-  TableRow,
   DataCell,
 } from '../components/common';
 import PulsingIcon from '../components/common/LoadingIcon';
@@ -30,112 +27,9 @@ import {
   SchemaSearch,
   TitleSearch,
 } from '../components/Proposals/Search';
+import { ProposalsWrapper, SidebarWrapper, ProposalTableHeaderActions, NewProposalButton, LoadingBox, FooterWrap, TableProposal, UnstyledAnchor, StyledTableRow } from './proposals/styles';
 
-const LoadingBox = styled.div`
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: center;
 
-  .loader {
-    text-align: center;
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 18px;
-    color: var(--dark-text-gray);
-    padding: 25px 0px;
-
-    svg {
-      margin-bottom: 10px;
-    }
-  }
-`;
-
-const ProposalsWrapper = styled.div`
-  padding: 10px 0px;
-  background: white;
-  border-radius: 4px;
-  display: grid;
-  grid-template-columns: 20% 80%;
-  grid-gap: 10px;
-`;
-
-const NewProposalButton = styled.div`
-  align-self: center;
-  margin-bottom: 100px;
-`;
-
-const SidebarWrapper = styled.div`
-  padding: 0px 10px 10px 10px;
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  height: calc(90vh - 20px);
-  align-self: flex-start;
-  position: sticky;
-  top: 10%;
-`;
-
-const ProposalTableHeaderActions = styled.div`
-  padding: 20px 10px 20px 10px;
-  color: var(--dark-text-gray);
-  font-weight: 500;
-  font-size: 18px;
-  letter-spacing: 1px;
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-
-  span {
-    font-size: 20px;
-    padding: 10px 5px 5px 5px;
-  }
-`;
-
-const StyledTableRow = styled(TableRow)`
-  font-size: smaller;
-  padding: 16px 24px;
-  color: var(--dark-text-gray);
-  text-align: center;
-  cursor: pointer;
-  &:hover {
-    ${DataCell} {
-      background-color: #80808012;
-    }
-  }
-
-  ${DataCell} {
-    border-bottom: 1px solid var(--line-gray);
-    padding: 20px 5px;
-    &:nth-child(1) {
-      text-align: left;
-      font-size: 14px;
-    }
-  }
-`;
-
-const FooterWrap = styled.div`
-  align-self: flex-end;
-`;
-
-const TableProposal = styled(Table)`
-  grid-template-columns: 33% 20% 15% 20% 12%;
-  margin-bottom: auto;
-  overflow-y: scroll;
-  max-height: calc(90vh - 20px);
-  ${TableHeader} {
-    ${HeaderCell} {
-      background: white;
-      position: sticky;
-      top: 0;
-    }
-  }
-`;
-
-const UnstyledAnchor = styled.a`
-  color: inherit;
-  text-decoration: inherit;
-`;
 
 const ProposalsPage = observer(() => {
   const {
@@ -147,7 +41,7 @@ const ProposalsPage = observer(() => {
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
 
-  const [state] = useProposals();
+  const [{loading, proposals}] = useProposals();
 
   const history = useHistory();
   return (
@@ -167,14 +61,14 @@ const ProposalsPage = observer(() => {
           <Footer />
         </FooterWrap>
       </SidebarWrapper>
-      {state.loading && (
+      {loading && (
         <LoadingBox>
           <div className="loader">
             <PulsingIcon size={80} inactive={false} />
           </div>
         </LoadingBox>
       )}
-      {!state.loading && (
+      {!loading && (
         <TableProposal>
           <TableHeader>
             <HeaderCell>Title</HeaderCell>
@@ -184,7 +78,7 @@ const ProposalsPage = observer(() => {
             <HeaderCell>Votes</HeaderCell>
           </TableHeader>
           <TableBody>
-            {state.proposals.map((proposal, i) => {
+            {proposals.map((proposal, i) => {
               const positiveStake = formatNumberValue(
                 normalizeBalance(proposal.positiveStakes, 18),
                 1
