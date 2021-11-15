@@ -1701,7 +1701,7 @@ export const updateProposals = async function (
     ];
 
     // If the script is running on the client side and it alreaady tried three times, continue.
-    if (invalidTitleProposals.indexOf(proposal.id) >= 0 || retryIntent > 3) {
+    if (invalidTitleProposals.indexOf(proposal.id) >= 0 || retryIntent > 20) {
       retryIntent = 0;
       continue;
     }
