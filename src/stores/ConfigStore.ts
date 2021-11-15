@@ -1,7 +1,11 @@
 import { makeObservable, observable, action } from 'mobx';
 import RootContext from '../contexts';
 
-import { NETWORK_ASSET_SYMBOL, NETWORK_NAMES } from '../utils';
+import {
+  CACHE_METADATA_ENS,
+  NETWORK_ASSET_SYMBOL,
+  NETWORK_NAMES,
+} from '../utils';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
 const Web3 = require('web3');
@@ -13,25 +17,75 @@ const xdai = require('../configs/xdai/config.json');
 const rinkeby = require('../configs/rinkeby/config.json');
 const localhost = require('../configs/localhost/config.json');
 
+const defaultAppConfigs = {
+  arbitrum,
+  arbitrumTestnet,
+  mainnet,
+  xdai,
+  rinkeby,
+  localhost,
+};
+
 export default class ConfigStore {
   darkMode: boolean;
   context: RootContext;
-  appConfig: AppConfig = {
-    arbitrum,
-    arbitrumTestnet,
-    mainnet,
-    xdai,
-    rinkeby,
-    localhost,
-  };
+  appConfig: AppConfig = defaultAppConfigs;
 
   constructor(context) {
     this.context = context;
     this.darkMode = false;
     makeObservable(this, {
       darkMode: observable,
+      loadAppConfigs: action,
       toggleDarkMode: action,
     });
+  }
+
+  async loadAppConfigs(networkName: string) {
+    const { ensService, ipfsService } = this.context;
+
+    let appConfig = defaultAppConfigs[networkName];
+
+    try {
+      const metadataHash = await ensService.resolveContentHash(
+        CACHE_METADATA_ENS
+      );
+      if (!metadataHash)
+        throw new Error('Cannot resolve content metadata hash.');
+      console.info(
+        `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
+        metadataHash
+      );
+
+      const configRefs = JSON.parse(
+        await ipfsService.getContent(metadataHash, { timeout: 10000 })
+      );
+      const configContentHash = configRefs[networkName];
+      if (!configContentHash)
+        throw new Error('Cannot resolve config metadata hash.');
+      console.info(
+        `[ConfigStore] Found config content hash from ENS: ${configContentHash}`
+      );
+
+      const configString = await ipfsService.getContent(configContentHash, {
+        timeout: 10000,
+      });
+      const ensConfig = JSON.parse(configString);
+      console.info(
+        '[ConfigStore] Using configs from ENS',
+        ensConfig,
+        appConfig
+      );
+      appConfig = ensConfig;
+    } catch (e) {
+      console.error(
+        '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
+        appConfig
+      );
+    }
+
+    this.appConfig[networkName] = appConfig;
+    return appConfig;
   }
 
   getActiveChainName() {
@@ -225,6 +279,10 @@ export default class ConfigStore {
     return this.appConfig[this.getActiveChainName()].proposalTypes;
   }
 
+  getContributorLevels() {
+    return this.appConfig[this.getActiveChainName()].contributionLevels;
+  }
+
   getRecommendedCalls() {
     const networkName = this.getActiveChainName();
     const networkContracts = this.getNetworkContracts();
@@ -241,6 +299,7 @@ export default class ConfigStore {
         name: string;
         defaultValue: string;
         decimals?: number;
+        isRep?: boolean;
       }[];
       decodeText: string;
     }[] = [
@@ -251,7 +310,13 @@ export default class ConfigStore {
         toName: 'DXdao Controller',
         functionName: 'mintReputation(uint256,address,address)',
         params: [
-          { type: 'uint256', name: '_amount', defaultValue: '', decimals: 18 },
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
           { type: 'address', name: '_to', defaultValue: '' },
           {
             type: 'address',
@@ -259,7 +324,30 @@ export default class ConfigStore {
             defaultValue: networkContracts.avatar,
           },
         ],
-        decodeText: 'Mint of [PARAM_0] REP to [PARAM_1]',
+        decodeText: 'Mint of [PARAM_0] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.schemes?.QuickWalletScheme,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'mintReputation(uint256,address,address)',
+        params: [
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
+          { type: 'address', name: '_to', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText: 'Mint of [PARAM_0] to [PARAM_1]',
       },
       {
         asset: ZERO_ADDRESS,
@@ -268,7 +356,13 @@ export default class ConfigStore {
         toName: 'DXdao Controller',
         functionName: 'burnReputation(uint256,address,address)',
         params: [
-          { type: 'uint256', name: '_amount', defaultValue: '', decimals: 18 },
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
           { type: 'address', name: '_from', defaultValue: '' },
           {
             type: 'address',
@@ -276,7 +370,7 @@ export default class ConfigStore {
             defaultValue: networkContracts.avatar,
           },
         ],
-        decodeText: 'Burn of [PARAM_0] REP to [PARAM_1]',
+        decodeText: 'Burn of [PARAM_0] to [PARAM_1]',
       },
       {
         asset: ZERO_ADDRESS,

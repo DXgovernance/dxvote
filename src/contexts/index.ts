@@ -11,6 +11,7 @@ import CoingeckoService from '../services/CoingeckoService';
 import InfuraService from '../services/InfuraService';
 import AlchemyService from '../services/AlchemyService';
 import CustomRpcService from '../services/CustomRpcService';
+import ENSService from '../services/ENSService';
 
 import ProviderStore from '../stores/Provider';
 import TransactionStore from '../stores/Transaction';
@@ -55,6 +56,7 @@ export default class RootContext {
   infuraService: InfuraService;
   alchemyService: AlchemyService;
   customRpcService: CustomRpcService;
+  ensService: ENSService;
 
   constructor() {
     this.providerStore = new ProviderStore(this);
@@ -77,6 +79,7 @@ export default class RootContext {
     this.infuraService = new InfuraService(this);
     this.alchemyService = new AlchemyService(this);
     this.customRpcService = new CustomRpcService(this);
+    this.ensService = new ENSService(this);
   }
 
   reset() {

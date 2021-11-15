@@ -5,9 +5,18 @@ import { NETWORKS } from 'utils';
 import metamaskIcon from 'assets/images/metamask.png';
 import walletConnectIcon from 'assets/images/walletconnect.png';
 import { ChainConfig } from 'types';
-
+console.log(process.env.NODE_ENV);
 export const ACTIVE_NETWORK_NAMES =
-  process.env.REACT_APP_ETH_NETWORKS.split(',');
+  process.env.NODE_ENV === 'production'
+    ? ['mainnet', 'xdai', 'arbitrum', 'rinkeby', 'arbitrumTestnet']
+    : [
+        'mainnet',
+        'xdai',
+        'arbitrum',
+        'rinkeby',
+        'arbitrumTestnet',
+        'localhost',
+      ];
 export const ACTIVE_NETWORKS = NETWORKS.filter(network =>
   ACTIVE_NETWORK_NAMES.includes(network.name)
 );

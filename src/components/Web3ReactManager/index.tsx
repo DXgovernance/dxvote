@@ -80,7 +80,7 @@ const Web3ReactManager = ({ children }) => {
 
   // Setup listener to handle injected wallet events
   useEffect(() => {
-    if (!window.ethereum) return null;
+    if (!window.ethereum) return () => {};
 
     const handleChainChange = (chainId: string) => {
       const chains = getChains();

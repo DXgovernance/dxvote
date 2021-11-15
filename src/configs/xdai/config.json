@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 13060713,
-    "toBlock": 18795788,
-    "ipfsHash": "QmbVJsvKyncT8feLkuzVuykpWzkcc2ti6M6yygJjacjK1v"
+    "toBlock": 18870524,
+    "ipfsHash": "QmYwtECdromudUP2B8cH43KNHpRBDu3UKEFJi27RBcLQ4a"
   },
   "contracts": {
     "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
@@ -11,7 +11,8 @@
     "controller": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
     "permissionRegistry": "0x757bbdC3dF870202f28e5cF92a0005158D5e0786",
     "utils": {
-      "multicall": "0xDD032cd0dfCB54050E1FA30Be59056403e292700"
+      "multicall": "0xDD032cd0dfCB54050E1FA30Be59056403e292700",
+      "dxdVestingFactory": "0x45734dB5C3342c66932db308Dbb23a5e2B159561"
     },
     "votingMachines": {
       "gen": {
@@ -22,6 +23,9 @@
         "token": "0xb90D6bec20993Be5d72A5ab353343f7a0281f158",
         "address": "0x053f406aD40c9Eb8eB43aFf28DA0D0EC17dF8e44"
       }
+    },
+    "schemes": {
+      "QuickWalletScheme": "0x983e0c64088E48b6AB7C76a8ABa3eE93d1C10aD5"
     },
     "daostack": {
       "contributionRewardRedeemer": "0xd2cc17817c0d4cfc6819510b2e5288512122d71c",
@@ -226,8 +230,45 @@
   ],
   "proposalTypes": [
     {
+      "id": "contributor",
+      "title": "Contributor",
+      "scheme": "QuickWalletScheme"
+    },
+    {
       "id": "custom",
       "title": "Custom"
+    }
+  ],
+  "contributionLevels": [
+    {
+      "id": "1",
+      "dxd": 2000,
+      "stable": 4000,
+      "rep": 0.1667
+    },
+    {
+      "id": "2",
+      "dxd": 3000,
+      "stable": 5000,
+      "rep": 0.1667
+    },
+    {
+      "id": "3",
+      "dxd": 4000,
+      "stable": 6000,
+      "rep": 0.1667
+    },
+    {
+      "id": "4",
+      "dxd": 5000,
+      "stable": 7000,
+      "rep": 0.1667
+    },
+    {
+      "id": "5",
+      "dxd": 6000,
+      "stable": 8000,
+      "rep": 0.1667
     }
   ],
   "tokens": [

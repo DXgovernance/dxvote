@@ -115,7 +115,7 @@ echo "${contents}" > tsconfig.json
 yarn hardhat run --network localhost scripts/deployDevContracts.ts
 
 # Run build cache
-EMPTY_CACHE=1 yarn hardhat run --network localhost scripts/buildCache.ts
+yarn hardhat run --network localhost scripts/buildCache.ts
 sleep 1
 
 # Enable isolatedModules and use esnext as module in tsconfig
@@ -129,4 +129,4 @@ export REACT_APP_GIT_SHA=`git rev-parse --short HEAD`
 
 # Run dapp with localhost contracts
 FORCE_COLOR=true \
-SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-scripts start | cat
+SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-app-rewired start | cat

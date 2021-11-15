@@ -53,7 +53,7 @@ const TitleSearch = () => {
       type: 'filter',
       payload: {
         status: state.filters.status,
-        title: search,
+        search: search,
         scheme: state.filters.scheme,
       },
     });

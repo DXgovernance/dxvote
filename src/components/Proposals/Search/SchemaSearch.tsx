@@ -38,7 +38,7 @@ const SchemaSearch = () => {
     dispatch({
       type: 'filter',
       payload: {
-        title: state.filters.title,
+        searc: state.filters.search,
         status: state.filters.status,
         scheme: schemeFilter,
       },

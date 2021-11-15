@@ -1,10 +1,10 @@
-import IPFS from 'ipfs-core';
 import axios from 'axios';
 import { DaoNetworkCache, DaoInfo } from '../src/types';
 const fs = require('fs');
 const hre = require('hardhat');
 const web3 = hre.web3;
 const { getUpdatedCache } = require('../src/cache');
+const { tryWhile } = require('../src/utils/cache');
 
 const arbitrum = require('../src/configs/arbitrum/config.json');
 const arbitrumTestnet = require('../src/configs/arbitrumTestnet/config.json');
@@ -55,16 +55,10 @@ async function main() {
       { encoding: 'utf8', flag: 'w' }
     );
   } else {
-    const ipfs = await IPFS.create();
-
     // Get the network configuration
     let networkConfig = appConfig[networkName];
     let networkCacheFile: DaoNetworkCache;
     if (networkName === 'localhost') {
-      networkConfig = JSON.parse(
-        await fs.readFileSync('./.developmentNetwork.json')
-      );
-      console.log(networkConfig);
       networkCacheFile = emptyCache;
     } else {
       if (process.env.RESET_CACHE) {
@@ -84,22 +78,20 @@ async function main() {
     }
 
     // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
-    const fromBlock = Math.max(
-      networkCacheFile.l1BlockNumber + 1,
-      networkConfig.cache.toBlock
-    );
+    const fromBlock = networkCacheFile.l1BlockNumber;
     const blockNumber = await web3.eth.getBlockNumber();
-    const toBlock = process.env.RESET_CACHE
-      ? fromBlock
-      : process.env.CACHE_TO_BLOCK || networkConfig.cache.toBlock;
+    const toBlock = Number(process.env.CACHE_TO_BLOCK || blockNumber);
 
-    if (process.env.RESET_CACHE || toBlock < blockNumber) {
+    if (
+      process.env.RESET_CACHE ||
+      (fromBlock <= toBlock && toBlock <= blockNumber)
+    ) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug(
         'Runing cache script from block',
-        networkConfig.cache.toBlock,
+        fromBlock,
         'to block',
-        blockNumber,
+        toBlock,
         'in network',
         networkName
       );
@@ -107,8 +99,8 @@ async function main() {
         null,
         networkCacheFile,
         networkConfig.contracts,
-        networkConfig.cache.toBlock,
-        blockNumber,
+        fromBlock,
+        toBlock,
         web3
       );
     }
@@ -119,56 +111,49 @@ async function main() {
       { encoding: 'utf8', flag: 'w' }
     );
 
-    networkConfig.cache.toBlock = blockNumber;
-    const newIpfsHash = (
-      await ipfs.add(fs.readFileSync('./cache/' + networkName + '.json'), {
-        pin: true,
-        onlyHash: false,
-      })
-    ).cid.toString();
+    networkConfig.cache.toBlock = toBlock;
 
     // Upload the cache file
-    if (newIpfsHash !== networkConfig.cache.ipfsHash) {
-      networkConfig.cache.ipfsHash = newIpfsHash;
-
-      let data = new FormData();
-      data.append(
-        'file',
-        fs.createReadStream('./cache/' + networkName + '.json')
-      );
-      data.append(
-        'pinataMetadata',
-        JSON.stringify({
-          name: `DXvote ${networkName} Cache`,
-          keyvalues: {
-            type: 'dxvote-cache',
-            network: networkName,
-          },
-        })
-      );
-
-      await axios
-        .post('https://api.pinata.cloud/pinning/pinFileToIPFS', data, {
-          maxBodyLength: Number(Infinity),
-          headers: {
-            'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-            pinata_api_key: process.env.PINATA_API_KEY,
-            pinata_secret_api_key: process.env.PINATA_API_SECRET_KEY,
-          },
-        })
-        .then(function (response) {
-          console.log(response.data);
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
-
-      appConfig[networkName] = networkConfig;
-    }
-
-    console.debug(
-      `IPFS hash for cache in ${networkName} network: ${appConfig[networkName].cache.ipfsHash}`
+    let data = new FormData();
+    data.append(
+      'file',
+      fs.createReadStream('./cache/' + networkName + '.json')
     );
+    data.append(
+      'pinataMetadata',
+      JSON.stringify({
+        name: `DXvote ${networkName} Cache`,
+        keyvalues: {
+          type: 'dxvote-cache',
+          network: networkName,
+        },
+      })
+    );
+
+    await axios
+      .post('https://api.pinata.cloud/pinning/pinFileToIPFS', data, {
+        maxBodyLength: Number(Infinity),
+        headers: {
+          'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+          pinata_api_key: process.env.PINATA_API_KEY,
+          pinata_secret_api_key: process.env.PINATA_API_SECRET_KEY,
+        },
+      })
+      .then(function (response) {
+        console.log(response.data);
+        if (response.data.IpfsHash) {
+          networkConfig.cache.ipfsHash = response.data.IpfsHash;
+          appConfig[networkName] = networkConfig;
+          console.debug(
+            `IPFS hash for cache in ${networkName} network: ${appConfig[networkName].cache.ipfsHash}`
+          );
+        } else {
+          console.error('Error uploading cache to pinata');
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   }
 
   // Update the appConfig file that stores the hashes of the dapp config and network caches
@@ -182,7 +167,7 @@ async function main() {
   );
 }
 
-main()
+tryWhile([main()])
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error);

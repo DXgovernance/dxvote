@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 0,
-    "toBlock": 0,
-    "ipfsHash": "QmPYMC4Z7btmVuy72r4TFGiSFw4X4NmBT72oxKjFZ4L9y8"
+    "toBlock": 76,
+    "ipfsHash": "QmS3hfS68mgeBp5xfyRhBeJ4hdWMMbDSSVUfVBpnaQ3oEw"
   },
   "contracts": {
     "avatar": "0xD899Be87df2076e0Be28486b60dA406Be6757AfC",
@@ -17,11 +17,71 @@
     "permissionRegistry": "0x7963EDD55E0e11cf8055c9206b425607b8d6591e",
     "utils": {
       "multicall": "0x8cADF854a4D479Ca25fF2DEe61675023265f8614",
-      "dxdVestingFactory": "0x37311D0D80c9dF1fc0d37F66dB74230f8a6D4100",
-      "dxDaoNFT": "0x9543c1d42250069c4e86594E391E985cC9DC8E2a"
+      "dxdVestingFactory": "0x2245CE863Bcf3914D9Ade65916e7DEC8A2453B65",
+      "dxDaoNFT": "0x37311D0D80c9dF1fc0d37F66dB74230f8a6D4100"
     }
   },
   "recommendedCalls": [],
   "proposalTemplates": [],
-  "tokens": []
+  "proposalTypes": [
+    {
+      "id": "contributor",
+      "title": "Contributor",
+      "scheme": "QuickWalletScheme"
+    },
+    {
+      "id": "custom",
+      "title": "Custom"
+    }
+  ],
+  "contributionLevels": [
+    {
+      "id": "1",
+      "dxd": 2000,
+      "stable": 4000,
+      "rep": 0.1667
+    },
+    {
+      "id": "2",
+      "dxd": 3000,
+      "stable": 5000,
+      "rep": 0.1667
+    },
+    {
+      "id": "3",
+      "dxd": 4000,
+      "stable": 6000,
+      "rep": 0.1667
+    },
+    {
+      "id": "4",
+      "dxd": 5000,
+      "stable": 7000,
+      "rep": 0.1667
+    },
+    {
+      "id": "5",
+      "dxd": 6000,
+      "stable": 8000,
+      "rep": 0.1667
+    }
+  ],
+  "tokens": [
+    {
+      "address": "0x9F513d1823D68D0064f78d3337e6221C5D31169c",
+      "name": "DXdao on Localhost",
+      "decimals": 18,
+      "symbol": "DXD",
+      "fetchPrice": true,
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
+    },
+    {
+      "address": "0x019361f55F364a440094Be14256941c870f8748d",
+      "name": "Wrapped XDAI",
+      "decimals": 18,
+      "symbol": "WXDAI",
+      "fetchPrice": true,
+      "logoURI": "https://raw.githubusercontent.com/1Hive/default-token-list/master/src/assets/xdai/0xe91d153e0b41518a2ce8dd3d7944fa863463a97d/logo.png"
+    }
+  ]
 }

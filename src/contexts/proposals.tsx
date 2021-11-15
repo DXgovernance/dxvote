@@ -22,7 +22,7 @@ interface FilterAction {
 interface Filters {
   status: string | undefined;
   scheme: string | undefined;
-  title: SearchResult[] | undefined;
+  search: SearchResult[] | undefined;
 }
 
 interface ProposalsState {
@@ -36,40 +36,19 @@ type Action = FilterAction;
 
 export const ProposalsContext = createContext(undefined);
 
-//helpers
-const comp = (f, g) => x => f(g(x));
 
-const compose = (...fs) => fs.reduce(comp, x => x);
-
-const append = (xs, x) => xs.concat([x]);
-
-const transduce =
-  (...ts) =>
-  xs =>
-    xs.reduce(ts.reduce(comp)(append), []);
-
-const filterer = f => k => (acc, x) => f(x) ? k(acc, x) : acc;
-
-// function selectors
-const statusSelector = (proposal, status) =>
+const statusFilter = (proposal, status) =>
   status === 'Any Status' || !status
     ? proposal
     : parseInt(proposal.stateInVotingMachine) === parseInt(status);
 
-const schemeSelector = (proposal, scheme) =>
+const schemeFitler = (proposal, scheme) =>
   scheme === 'All Schemes' || !scheme ? proposal : proposal.scheme === scheme;
 
-const titleSelector = (proposal, title) =>
-  !title || title.length === 0
+const searchFilter = (proposal, search) =>
+  !search || search.length === 0
     ? proposal
-    : title.find(elem => elem.id === proposal.id);
-
-const filterSelector = (status, scheme, title, items) =>
-  transduce(
-    filterer(proposal => schemeSelector(proposal, scheme)),
-    filterer(proposal => statusSelector(proposal, status)),
-    filterer(proposal => titleSelector(proposal, title))
-  )(items);
+    : search.find(elem => elem.id === proposal.id);
 
 export const ProposalProvider = ({ children }: ProposalProviderProps) => {
   const {
@@ -96,7 +75,7 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     proposals: allProposals,
     filters: {
       scheme: undefined,
-      title: undefined,
+      search: undefined,
       status: undefined,
     },
   };
@@ -105,18 +84,13 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     (state: ProposalsState = initialProposalState, action: Action) => {
       switch (action.type) {
         case 'filter':
-          const { scheme, title, status } = action.payload;
-          console.log(scheme, title, status);
+          const { scheme, search, status } = action.payload;
+          console.log(scheme, search, status);
           return {
             ...state,
-            proposals: filterSelector(
-              status,
-              scheme,
-              title,
-              initialProposalState.proposals
-            ),
+            proposals: initialProposalState.proposals.filter( proposal => statusFilter(proposal, status) && schemeFitler(proposal, scheme) && searchFilter(proposal, search)),
             filters: {
-              title: title,
+              search: search,
               status: status,
               scheme: scheme,
             },

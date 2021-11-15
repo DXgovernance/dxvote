@@ -8,6 +8,7 @@ import {
   decodeSchemeParameters,
   WalletSchemeProposalState,
   VotingMachineProposalState,
+  tryCacheUpdates,
 } from '../utils';
 import {
   getEvents,
@@ -23,20 +24,6 @@ import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import ContributionRewardJSON from '../contracts/ContributionReward.json';
 import { getContracts } from '../contracts';
 import RootContext from '../contexts';
-
-async function tryWhile(promises, networkCache) {
-  let retry = true;
-  while (retry) {
-    try {
-      (await Promise.all(promises)).map(networkCacheUpdated => {
-        networkCache = networkCacheUpdated;
-      });
-    } finally {
-      retry = false;
-    }
-  }
-  return networkCache;
-}
 
 export const getUpdatedCache = async function (
   context: RootContext,
@@ -57,7 +44,7 @@ export const getUpdatedCache = async function (
       `Collecting reputation events for blocks ${fromBlock} - ${toBlock}`
     );
 
-  networkCache = await tryWhile(
+  networkCache = await tryCacheUpdates(
     [
       updateDaoInfo(networkCache, networkWeb3Contracts, web3),
       updateReputationEvents(
@@ -77,7 +64,7 @@ export const getUpdatedCache = async function (
       `Collecting voting machine data in blocks ${fromBlock} - ${toBlock}`
     );
 
-  networkCache = await tryWhile(
+  networkCache = await tryCacheUpdates(
     [
       updateVotingMachines(
         networkCache,
@@ -97,7 +84,7 @@ export const getUpdatedCache = async function (
       `Updating scheme data in blocks ${fromBlock} - ${toBlock}`
     );
 
-  networkCache = await tryWhile(
+  networkCache = await tryCacheUpdates(
     [
       updateSchemes(
         networkCache,
@@ -116,7 +103,7 @@ export const getUpdatedCache = async function (
       `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
     );
 
-  networkCache = await tryWhile(
+  networkCache = await tryCacheUpdates(
     [
       updatePermissionRegistry(
         networkCache,
@@ -1702,10 +1689,26 @@ export const updateProposals = async function (
         Object.keys(networkCache.proposals)[proposalIndex]
       ];
     const ipfsHash = descriptionHashToIPFSHash(proposal.descriptionHash);
-    if (retryIntent > 3) {
+
+    // TODO: Move this somewhere else later.
+    const invalidTitleProposals = [
+      '0xbd5a578170b28eedb9ed05adcd7a904180a18178a7fee5627640bce217601f60',
+      '0x216c41327eb0d8e6b64018626193d132d379b43b9b031720ee6a11494ad400a7',
+      '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
+
+      // TODO: Fix this xdai proposal IPFS content
+      '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
+    ];
+
+    // If the script is running on the client side and it alreaady tried three times, continue.
+    if (
+      invalidTitleProposals.indexOf(proposal.id) >= 0 ||
+      (!isNode() && retryIntent > 3)
+    ) {
       retryIntent = 0;
       continue;
     }
+
     if (
       networkCache.schemes[proposal.scheme].type !== 'WalletScheme' &&
       proposal.descriptionHash &&
@@ -1716,37 +1719,36 @@ export const updateProposals = async function (
         proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
     )
       try {
-        console.debug(
-          'Getting title from proposal',
-          proposal.id,
-          proposal.descriptionHash,
-          ipfsHash
-        );
+        // console.debug(`Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`);
         const response = await axios.request({
           url: 'https://ipfs.io/ipfs/' + ipfsHash,
           method: 'GET',
-          timeout: isNode() ? 10000 : 1000,
+          timeout: isNode() ? 2000 : 1000,
         });
         if (response && response.data && response.data.title) {
           networkCache.proposals[proposal.id].title = response.data.title;
         } else {
-          console.error('Couldnt not get title from', proposal.id, ipfsHash);
+          console.error(
+            `Couldnt not get title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
+          );
         }
       } catch (error) {
-        console.error(
-          'Error getting title from',
-          proposal.id,
-          ipfsHash,
-          'waiting 2 seconds and trying again..'
-        );
-        console.error((error as Error).message);
-        if ((error as Error).message === 'Request failed with status code 429')
+        if (
+          (error as Error).message === 'Request failed with status code 429'
+        ) {
+          console.error(
+            `Request failed with status code 429 waiting 10 second and trying again..`
+          );
           await sleep(10000);
-        if (isNode()) {
-          proposalIndex--;
-          retryIntent++;
+        } else {
+          console.log((error as Error).message);
+          console.error(
+            `Error getting title from proposal ${proposal.id} with hash ${ipfsHash} waiting 1 second and trying again..`
+          );
           await sleep(1000);
         }
+        proposalIndex--;
+        retryIntent++;
       }
   }
 

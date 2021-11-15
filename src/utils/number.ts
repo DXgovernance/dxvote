@@ -63,6 +63,7 @@ export const roundUpToScale = (value: BigNumber): BigNumber => {
   return scaledValue.integerValue(BigNumber.ROUND_UP).shiftedBy(placesValue);
 };
 
+// ether -> wei
 export const denormalizeBalance = (
   normalizedBalance: string | BigNumber,
   decimals: number = DEFAULT_TOKEN_DECIMALS
@@ -70,6 +71,7 @@ export const denormalizeBalance = (
   return scale(bnum(normalizedBalance), decimals);
 };
 
+// wei -> ether
 export const normalizeBalance = (
   amount: BigNumber,
   decimals: number = DEFAULT_TOKEN_DECIMALS

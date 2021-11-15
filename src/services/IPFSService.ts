@@ -3,6 +3,8 @@ import IPFS from 'ipfs-core';
 import CID from 'cids';
 import { sleep } from '../utils';
 import RootContext from '../contexts';
+import { GetOptions } from 'ipfs-core/src/components/get';
+import { AbortOptions } from 'ipfs-core/src/utils';
 
 export default class IPFSService {
   private static SLEEP_MS = 1000;
@@ -48,12 +50,12 @@ export default class IPFSService {
     return ipfs.pin.add(cid);
   }
 
-  async getContent(hash: string) {
+  async getContent(hash: string, options?: GetOptions & AbortOptions) {
     let content = [];
     try {
       const ipfs = await this.getIpfs();
 
-      for await (const file of ipfs.get(hash)) {
+      for await (const file of ipfs.get(hash, options)) {
         console.debug('[IPFS] Getting content', file.type, file.path);
         if (file.type != 'file' || !file.content) continue;
         for await (const chunk of file.content) {
@@ -74,6 +76,39 @@ export default class IPFSService {
         url: 'https://gateway.pinata.cloud/ipfs/' + hash,
       })
     ).data;
+  }
+
+  async uploadProposalMetadata(
+    title: string,
+    description: string,
+    tags: string[],
+    pinataService
+  ) {
+    const bodyTextToUpload = JSON.stringify({
+      description,
+      title,
+      tags: [...tags, 'dxvote'],
+      url: '',
+    });
+
+    const hash = await this.add(bodyTextToUpload);
+    localStorage.setItem('dxvote-newProposal-hash', hash);
+
+    if (pinataService.auth) {
+      const pinataPin = await this.pin(hash);
+      console.debug('[PINATA PIN]', pinataPin.data);
+    }
+    const ipfsPin = await this.pin(hash);
+    console.debug('[IPFS PIN]', ipfsPin);
+
+    let uploaded = false;
+    while (!uploaded) {
+      const ipfsContent = await this.getContent(hash);
+      console.debug('[IPFS CONTENT]', ipfsContent);
+      if (ipfsContent === bodyTextToUpload) uploaded = true;
+      await sleep(1000);
+    }
+    return hash;
   }
 
   private async start() {

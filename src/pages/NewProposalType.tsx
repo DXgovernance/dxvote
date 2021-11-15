@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
 
 import { useContext } from '../contexts';
+import { Box } from '../components/common';
 
 const VerticalLayout = styled.div`
   display: flex;
@@ -46,17 +47,21 @@ const OptionsWrapper = styled.div`
   justify-content: space-around;
 `;
 
-const ProposalType = styled.div`
+const ProposalType = styled(Box)`
   width: 10%;
-  min-width: 100px;
+  min-width: 120px;
   height: 100px;
-  box-shadow: 0px 0px 15px 11px #3a58fd47;
   margin: 5%;
   padding: 10px;
   cursor: pointer;
-  transition-duration: 1s;
+  text-align: center;
+  color: var(--dark-text-gray);
+  padding: 5px 10px;
+  font-weight: 500;
+  font-size: 24px;
+  transition-duration: 0.5s;
   :hover {
-    box-shadow: 0px 0px 20px 15px #3a57fd66;
+    box-shadow: 0px 0px 15px 10px rgba(14, 0, 135, 0.1);
     transform: scale(1.05);
   }
 `;
@@ -75,8 +80,10 @@ export const NewProposalTypePage = observer(() => {
   }, []);
 
   proposalTypes.forEach(type => {
+    const path =
+      type.id === 'custom' ? `submit/${type.id}` : `metadata/${type.id}`;
     options.push(
-      <ProposalType onClick={() => history.push(`submit/${type.id}`)}>
+      <ProposalType onClick={() => history.push(path)}>
         {type.title}
       </ProposalType>
     );
@@ -85,7 +92,7 @@ export const NewProposalTypePage = observer(() => {
   return (
     <VerticalLayout>
       <NavigationBar>
-        <BackToProposals onClick={() => history.push('proposals')}>
+        <BackToProposals onClick={() => history.push('../proposals')}>
           {`< Back `}
         </BackToProposals>
         <Title>Choose Proposal Type</Title>

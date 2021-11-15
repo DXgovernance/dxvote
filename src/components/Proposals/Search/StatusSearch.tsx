@@ -34,7 +34,7 @@ const StatusSearch = () => {
     dispatch({
       type: 'filter',
       payload: {
-        title: state.filters.title,
+        search: state.filters.search,
         scheme: state.filters.scheme,
         status: stateFilter,
       },
