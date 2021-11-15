@@ -1,4 +1,4 @@
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch, useHistory } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import { Container } from './components/Guilds/common/Layout';
 
@@ -31,6 +31,14 @@ const GlobalStyle = createGlobalStyle`
   `;
 
 const GuildsApp = () => {
+  const history = useHistory();
+
+  const isTestingEnv = !window.location?.hostname?.startsWith('dxvote.eth');
+  if (!isTestingEnv) {
+    history.push('/');
+    return null;
+  }
+
   return (
     <HashRouter basename="/guilds">
       <GlobalStyle />
