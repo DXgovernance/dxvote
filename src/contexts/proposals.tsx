@@ -1,6 +1,6 @@
 import { useContext } from 'contexts';
 import { SearchResult } from 'minisearch';
-import { createContext, ReactNode, useReducer, useMemo } from 'react';
+import { createContext, ReactNode, useReducer  } from 'react';
 import { filterInitialCriteria } from 'utils';
 
 export type ProposalsExtended = Proposal &
@@ -37,15 +37,15 @@ type Action = FilterAction;
 export const ProposalsContext = createContext(undefined);
 
 
-const statusFilter = (proposal, status) =>
+const statusFilter = (proposal: ProposalsExtended, status: string) =>
   status === 'Any Status' || !status
     ? proposal
-    : parseInt(proposal.stateInVotingMachine) === parseInt(status);
+    : parseInt(proposal.stateInVotingMachine as any) === parseInt(status);
 
-const schemeFitler = (proposal, scheme) =>
+const schemeFitler = (proposal: ProposalsExtended, scheme: string) =>
   scheme === 'All Schemes' || !scheme ? proposal : proposal.scheme === scheme;
 
-const searchFilter = (proposal, search) =>
+const searchFilter = (proposal: ProposalsExtended, search: SearchResult[]) =>
   !search || search.length === 0
     ? proposal
     : search.find(elem => elem.id === proposal.id);
@@ -55,8 +55,7 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     context: { daoStore },
   } = useContext();
 
-  const allProposals: ProposalsExtended[] = useMemo(
-    () =>
+  const allProposals: ProposalsExtended[] =
       filterInitialCriteria(
         daoStore.getAllProposals().map(cacheProposal => {
           return Object.assign(
@@ -65,9 +64,7 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
           );
         }),
         daoStore
-      ),
-    []
-  );
+      )
 
   const initialProposalState: ProposalsState = {
     loading: false,
@@ -101,6 +98,7 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     },
     initialProposalState
   );
+
 
   return (
     <ProposalsContext.Provider value={[state, dispatch]}>
