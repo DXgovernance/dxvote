@@ -2,7 +2,7 @@ import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../../contexts';
-import { Box, Question, Button } from '../../components/common';
+import { Box, Question, Button, LinkButton } from '../../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 
@@ -1107,7 +1107,7 @@ const NewProposalPage = observer(() => {
             active={submitionState}
           />
         ) : (
-          <Button route="/">Back to Proposals</Button>
+          <LinkButton route="/">Back to Proposals</LinkButton>
         )}
         {submitionState > 1 ? (
           <TextActions>
