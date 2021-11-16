@@ -17,7 +17,7 @@ import MainnetWeb3Manager, {
 } from './components/MainnetWeb3Manager';
 import PageRouter from './PageRouter';
 
-import ProposalsPage from './pages/Proposals';
+import ProposalsPage from './pages/proposals';
 import { SubmitProposalPage } from './pages/SubmitProposal';
 import { NewProposalTypePage } from './pages/NewProposalType';
 import UserPage from './pages/User';

@@ -27,7 +27,7 @@ const SchemaSearch = () => {
     context: { daoStore },
   } = useContext();
   const schemes = daoStore.getAllSchemes();
-  const [state, dispatch] = useProposals();
+    const [{ filters: { status, search } }, dispatch] = useProposals();
   const [schemeFilter, setSchemeFilter] = useState('All Schemes');
 
   const {onFilterChange,  getParams} = useParams('scheme', 'All Schemes')
@@ -38,8 +38,8 @@ const SchemaSearch = () => {
     dispatch({
       type: 'filter',
       payload: {
-        searc: state.filters.search,
-        status: state.filters.status,
+        searc: search,
+        status: status,
         scheme: schemeFilter,
       },
     });

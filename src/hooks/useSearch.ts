@@ -3,22 +3,19 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 
 export const useParams = (searchType: string, defaultSearchtype: string)  => {
+  const [getParams, setParams] = useState<string>('')
   const history = useHistory();
   const location = useLocation();
-  const params = useMemo(
-    () => new URLSearchParams(location.search),
-    [location.search]
-  );
-
-  const [getParams, setParams] = useState<string>('')
+  const params =  new URLSearchParams(location.search)
 
 
+  // create url/useContext to share URL state
   // load filter from url if any on initial load
   // load filter from url  when back on history
+
   useEffect(() => {
     if (params.get(searchType)) setParams(params.get(searchType));
     history.listen(location => {
-      const params = new URLSearchParams(location.search);
       if (history.action === 'POP') {
         if (params.get(searchType)) setParams(params.get(searchType));
         else setParams(defaultSearchtype);
@@ -31,7 +28,7 @@ export const useParams = (searchType: string, defaultSearchtype: string)  => {
     params.append(title, event.target.value);
     history.push({
       location: location.pathname,
-      search: params.toString(),
+      search: `${searchType}=${getParams}`
     });
     setParams(event.target.value)
   }

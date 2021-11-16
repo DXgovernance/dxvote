@@ -23,7 +23,7 @@ const ProposalsNameFilter = styled.input`
 `;
 
 const TitleSearch = () => {
-  const [state, dispatch] = useProposals();
+    const [{ filters: { scheme, status }, proposals }, dispatch] = useProposals();
   const [titleFilter, setTitleFilter] = useState('');
   const {onFilterChange,  getParams} = useParams('title', '')
   const miniSearchRef = React.useRef(
@@ -46,15 +46,15 @@ const TitleSearch = () => {
     miniSearch.removeAll();
 
     // add all proposals to search
-    miniSearch.addAll(state.proposals);
+    miniSearch.addAll(proposals);
 
     const search = miniSearch.search(titleFilter);
     dispatch({
       type: 'filter',
       payload: {
-        status: state.filters.status,
+        status: status,
         search: search,
-        scheme: state.filters.scheme,
+        scheme: scheme,
       },
     });
   }, [titleFilter, getParams]);

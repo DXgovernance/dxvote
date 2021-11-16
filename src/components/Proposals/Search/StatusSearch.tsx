@@ -23,9 +23,8 @@ const ProposalsFilter = styled.select`
 `;
 
 const StatusSearch = () => {
-  const [state, dispatch] = useProposals();
+  const [{filters: {scheme, search}}, dispatch] = useProposals();
   const [stateFilter, setStateFilter] = useState('Any Status');
-
   const {onFilterChange,  getParams} = useParams('state', 'Any Status')
 
 
@@ -34,8 +33,8 @@ const StatusSearch = () => {
     dispatch({
       type: 'filter',
       payload: {
-        search: state.filters.search,
-        scheme: state.filters.scheme,
+        search: search,
+        scheme: scheme,
         status: stateFilter,
       },
     });
