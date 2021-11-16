@@ -1677,6 +1677,27 @@ export const updateProposals = async function (
     })
   );
 
+  if (!isNode()) {
+    const proposalTitles = await getProposalTitlesFromIPFS(
+      networkCache,
+      toBlock
+    );
+    Object.keys(networkCache.proposals).map(proposalId => {
+      if (!networkCache.proposals[proposalId].title) {
+        networkCache.proposals[proposalId].title =
+          proposalTitles[proposalId] || '';
+      }
+    });
+  }
+
+  return networkCache;
+};
+
+export async function getProposalTitlesFromIPFS(
+  networkCache: DaoNetworkCache,
+  toBlock: number
+) {
+  const proposalTitles = {};
   let retryIntent = 0;
   // Update proposals title
   for (
@@ -1711,7 +1732,7 @@ export const updateProposals = async function (
       proposal.descriptionHash &&
       proposal.descriptionHash.length > 0 &&
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
-      proposal.title.length === 0 &&
+      proposal.title?.length === 0 &&
       (isNode() ||
         proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
     )
@@ -1723,7 +1744,7 @@ export const updateProposals = async function (
           timeout: isNode() ? 2000 : 1000,
         });
         if (response && response.data && response.data.title) {
-          networkCache.proposals[proposal.id].title = response.data.title;
+          proposalTitles[proposal.id] = response.data.title;
         } else {
           console.error(
             `Couldnt not get title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
@@ -1749,5 +1770,5 @@ export const updateProposals = async function (
       }
   }
 
-  return networkCache;
-};
+  return proposalTitles;
+}
