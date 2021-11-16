@@ -2,7 +2,7 @@ import { useProposals } from 'hooks/useProposals';
 import MiniSearch from 'minisearch';
 import React, { useEffect, useState} from 'react';
 import styled from 'styled-components';
-import { useParams } from 'hooks/useSearch';
+import { useParams } from 'hooks/useParams';
 
 const ProposalsNameFilter = styled.input`
   background-color: white;

@@ -1,5 +1,5 @@
 import { useProposals } from 'hooks/useProposals';
-import { useParams } from 'hooks/useSearch';
+import { useParams } from 'hooks/useParams';
 import { useState, useEffect} from 'react';
 import { useContext } from 'contexts';
 import { ProposalsFilter } from './style';

@@ -1,7 +1,7 @@
 import { useProposals } from 'hooks/useProposals';
 import { useState, useEffect} from 'react';
 import { enumKeys, VotingMachineProposalState } from 'utils';
-import { useParams } from 'hooks/useSearch';
+import { useParams } from 'hooks/useParams';
 import { ProposalsFilter } from './style';
 
 
