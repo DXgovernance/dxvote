@@ -23,7 +23,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "declaration": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noImplicitReturns": true,
     "allowUnreachableCode": false,
     "isolatedModules": true,
