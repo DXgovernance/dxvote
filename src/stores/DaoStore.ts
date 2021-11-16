@@ -1142,20 +1142,26 @@ export default class DaoStore {
 
   getRepAt(
     userAddress: string = ZERO_ADDRESS,
-    atBlock: number = 0
+    atBlock: number = 0,
+    atTime: number = 0
   ): {
     userRep: BigNumber;
     totalSupply: BigNumber;
   } {
     const { daoStore, providerStore, configStore } = this.context;
     const repEvents = daoStore.getCache().daoInfo.repEvents;
+    console.log({ repEvents });
     let userRep = bnum(0),
       totalSupply = bnum(0);
     if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
     const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1;
 
     for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] < atBlock) {
+      if (
+        atTime > 0
+          ? repEvents[i].timestamp < atTime
+          : repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] < atBlock
+      ) {
         if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount);
           if (repEvents[i].account === userAddress)
@@ -1170,12 +1176,12 @@ export default class DaoStore {
     return { userRep, totalSupply };
   }
 
+  // total supply calculation broken
   getRepEventsOfUser(
     userAddress: string = ZERO_ADDRESS,
     atBlock: number = 0
   ): {
     userRep: RepEvent[];
-    totalSupply: BigNumber;
   } {
     const { daoStore, providerStore, configStore } = this.context;
     const repEvents = daoStore.getCache().daoInfo.repEvents;
@@ -1192,7 +1198,7 @@ export default class DaoStore {
         }
       }
     }
-    return { userRep, totalSupply };
+    return { userRep };
   }
 
   getUsersRep(): {

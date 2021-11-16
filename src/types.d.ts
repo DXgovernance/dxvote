@@ -260,6 +260,7 @@ declare global {
     controller: string;
     permissionRegistry: string;
     utils: { [name: string]: string };
+    schemes?: any;
     daostack?: any;
     votingMachines: {
       [name: string]: {
@@ -372,17 +373,20 @@ export interface ProposalCalls {
   contractABI: any;
 }
 
+export interface CallParameterDefinition {
+  type: string;
+  name: string;
+  defaultValue: string;
+  decimals?: number;
+  isRep?: boolean;
+}
+
 export interface RecommendedCallUsed {
   asset: string;
   from: string;
   to: string;
   toName: string;
   functionName: string;
-  params: {
-    type: string;
-    name: string;
-    defaultValue: string;
-    decimals?: number;
-  }[];
+  params: CallParameterDefinition[];
   decodeText: string;
 }

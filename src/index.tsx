@@ -16,7 +16,7 @@ import MainnetWeb3Manager, {
 } from './components/MainnetWeb3Manager';
 import PageRouter from './PageRouter';
 
-import ProposalsPage from './pages/Proposals';
+import ProposalsPage from './pages/proposals';
 import { SubmitProposalPage } from './pages/SubmitProposal';
 import { NewProposalTypePage } from './pages/NewProposalType';
 import UserPage from './pages/User';
@@ -27,6 +27,7 @@ import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
 import { CreateMetadataPage } from 'pages/Metadata';
 import GuildsApp from './GuildsApp';
+import { ProposalProvider } from 'contexts/proposals';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -63,7 +64,9 @@ const Routes = () => {
       </Route>
       <Route exact path="/:network/proposals">
         {' '}
-        <ProposalsPage />{' '}
+        <ProposalProvider>
+          <ProposalsPage />{' '}
+        </ProposalProvider>
       </Route>
       <Route exact path="/:network/create/type">
         {' '}
