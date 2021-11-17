@@ -5,20 +5,24 @@ import { NETWORKS } from 'utils';
 import metamaskIcon from 'assets/images/metamask.png';
 import walletConnectIcon from 'assets/images/walletconnect.png';
 import { ChainConfig } from 'types';
-
+console.log(process.env.NODE_ENV);
 export const ACTIVE_NETWORK_NAMES =
-  process.env.REACT_APP_ETH_NETWORKS.split(',');
+  process.env.NODE_ENV === 'production'
+    ? ['mainnet', 'xdai', 'arbitrum', 'rinkeby', 'arbitrumTestnet']
+    : [
+        'mainnet',
+        'xdai',
+        'arbitrum',
+        'rinkeby',
+        'arbitrumTestnet',
+        'localhost',
+      ];
 export const ACTIVE_NETWORKS = NETWORKS.filter(network =>
   ACTIVE_NETWORK_NAMES.includes(network.name)
 );
 
 export const ETH_NETWORKS_IDS = ACTIVE_NETWORKS.map(network => network.id);
 export const DEFAULT_ETH_CHAIN_ID = ACTIVE_NETWORKS[0].id;
-
-export const web3ContextNames = {
-  injected: 'INJECTED',
-  metamask: 'METAMASK',
-};
 
 export const isChainIdSupported = (chainId: ChainConfig['id']): boolean => {
   return ETH_NETWORKS_IDS ? ETH_NETWORKS_IDS.indexOf(chainId) >= 0 : false;

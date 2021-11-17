@@ -57,11 +57,7 @@ module.exports = {
       accounts: { mnemonic: MNEMONIC },
       throwOnTransactionFailures: true,
       throwOnCallFailures: true,
-      allowUnlimitedContractSize: false,
-      mining: {
-        auto: true,
-        interval: 5000
-      }
+      allowUnlimitedContractSize: false
     },
     mainnet: {
       url: ALCHEMY_API_KEY.length > 0

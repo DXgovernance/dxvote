@@ -48,8 +48,10 @@ export const useABIService = (): UseABIServiceReturns => {
     try {
       const abi = abiService.decodeCall(data, contract, contractABI);
       setABI(abi);
+      return abi;
     } catch (error) {
       console.log(error);
+      return {};
     }
   };
 
@@ -58,7 +60,7 @@ export const useABIService = (): UseABIServiceReturns => {
     to: string,
     data: string,
     value: BigNumber,
-    contractABI: any
+    contractABI: string
   ) => {
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();
@@ -68,7 +70,7 @@ export const useABIService = (): UseABIServiceReturns => {
       data,
       ContractType.Controller
     );
-    decodeABI({ data, contractABI });
+    const decodedAbi = decodeABI({ data, contractABI });
 
     if (
       controllerCallDecoded &&
@@ -120,6 +122,7 @@ export const useABIService = (): UseABIServiceReturns => {
         callParameters: callParameters,
         data: data,
         value: value,
+        contractABI: decodedAbi,
       };
     }
 
@@ -129,6 +132,7 @@ export const useABIService = (): UseABIServiceReturns => {
       data: data,
       value: value,
       functionSignature: functionSignature,
+      contractABI: decodedAbi,
     };
   };
 

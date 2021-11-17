@@ -63,18 +63,6 @@ export function getBlockchainLink(address, networkName, type) {
   }
 }
 
-export async function getENSName(address) {
-  let name = null;
-  try {
-    const provider = ethers.getDefaultProvider();
-    const checksumed = ethers.utils.getAddress(address);
-    name = provider.lookupAddress(checksumed);
-  } catch (e) {
-    console.error(e);
-  }
-  return name;
-}
-
 export function getERC20Token(address) {
   let tokenObject;
   Object.entries(appConfig).forEach(([_, value]) => {

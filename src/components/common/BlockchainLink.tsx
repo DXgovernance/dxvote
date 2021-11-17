@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import Copy from './Copy';
 import {
   getBlockchainLink,
-  getENSName,
   getERC20Token,
   getDxVoteContract,
   toAddressStub,
+  isAddress,
 } from 'utils';
 import { useContext } from '../../contexts';
 import { FiExternalLink } from 'react-icons/fi';
@@ -35,9 +35,10 @@ export const BlockchainLink = ({
   type = 'default',
   toCopy = false,
   onlyIcon = false,
+  onlyText = false,
 }) => {
   const {
-    context: { configStore },
+    context: { configStore, ensService },
   } = useContext();
 
   const networkName = configStore.getActiveChainName();
@@ -47,7 +48,7 @@ export const BlockchainLink = ({
 
   useEffect(() => {
     async function getENS() {
-      const response = await getENSName(text);
+      const response = await ensService.resolveENSName(text);
       setENSName(response);
     }
     getENS();
@@ -65,20 +66,35 @@ export const BlockchainLink = ({
   If the address is an known dxvote contract (avatar,controller, etc) domain show the contract name with a link to the blockchain explorer address and option to copy the address.
   else show formatted address
   */
+  const Address = () => (
+    <>
+      {ensName}
+      {!ensName && erc20Token && <Icon src={erc20Token.logoURI} />}
+      {!ensName && dxVoteContract && dxVoteContract?.contract}
+      {formatedAddress}
+    </>
+  );
 
   return (
     <AddressLink>
-      <a
-        href={getBlockchainLink(text, networkName, type)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {ensName}
-        {!ensName && erc20Token && <Icon src={erc20Token.logoURI} />}
-        {!ensName && dxVoteContract && dxVoteContract?.contract}
-        {formatedAddress}
-      </a>
-      {toCopy ? <Copy toCopy={text} /> : <div />}
+      {!onlyText ? (
+        <a
+          href={getBlockchainLink(
+            text,
+            networkName,
+            isAddress(text) ? 'address' : type
+          )}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Address />
+        </a>
+      ) : (
+        <div>
+          <Address />
+        </div>
+      )}
+      {toCopy ? <Copy toCopy={text} /> : null}
     </AddressLink>
   );
 };

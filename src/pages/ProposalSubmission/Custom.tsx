@@ -1,8 +1,8 @@
 import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useContext } from '../contexts';
-import { Box, Question, Button } from '../components/common';
+import { useContext } from '../../contexts';
+import { Box, Question, Button, LinkButton } from '../../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 
@@ -19,13 +19,14 @@ import {
   ZERO_HASH,
   sleep,
   bnum,
-  normalizeBalance,
   denormalizeBalance,
   encodePermission,
   TXEvents,
-} from '../utils';
+} from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
-
+import DiscourseImporter from '../../components/DiscourseImporter';
+import { Calls } from 'components/ProposalSubmission/Custom/Calls';
+import { Preview } from '../../components/ProposalSubmission/Custom/Preview';
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
   display: flex;
@@ -79,6 +80,7 @@ const TextActions = styled.div`
   line-height: 30px;
 `;
 
+<<<<<<< HEAD:src/pages/NewProposal.tsx
 const CallRow = styled.div`
   width: 100%;
   display: flex;
@@ -155,6 +157,8 @@ const Field = styled.label`
   }
 `;
 
+=======
+>>>>>>> 7f875713db1436a67119303d13d0b6df0f3d1198:src/pages/ProposalSubmission/Custom.tsx
 const NewProposalPage = observer(() => {
   const {
     context: {
@@ -167,7 +171,6 @@ const NewProposalPage = observer(() => {
     },
   } = useContext();
 
-  const networkTokens = configStore.getTokensOfNetwork();
   const schemes = daoStore.getAllSchemes();
   const networkContracts = configStore.getNetworkContracts();
   const schemeInLocalStorage = localStorage.getItem(
@@ -728,6 +731,9 @@ const NewProposalPage = observer(() => {
           </select>
         </TitleInput>
       </div>
+
+      <DiscourseImporter onImport={onDescriptionChange} />
+
       {submitionState < 1 ? (
         <MDEditor
           value={descriptionText}
@@ -756,15 +762,26 @@ const NewProposalPage = observer(() => {
         <div />
       )}
       <h2>Description Preview</h2>
-      <MDEditor.Markdown
-        source={descriptionText}
-        style={{
-          backgroundColor: 'white',
-          borderRadius: '5px',
-          border: '1px solid gray',
-          padding: '20px 10px',
-        }}
+      <Preview descriptionText={descriptionText} schemeToUse={schemeToUse} />
+
+      <Calls
+        schemeToUse={schemeToUse}
+        onContributionRewardValueChange={onContributionRewardValueChange}
+        contributionRewardCalls={contributionRewardCalls}
+        onSchemeRegistrarValueChange={onSchemeRegistrarValueChange}
+        schemeRegistrarProposalValues={schemeRegistrarProposalValues}
+        calls={calls}
+        onToSelectChange={onToSelectChange}
+        allowedToCall={allowedToCall}
+        onFunctionSelectChange={onFunctionSelectChange}
+        onFunctionParamsChange={onFunctionParamsChange}
+        addCall={addCall}
+        onValueChange={onValueChange}
+        networkAssetSymbol={networkAssetSymbol}
+        removeCall={removeCall}
+        changeCallType={changeCallType}
       />
+<<<<<<< HEAD:src/pages/NewProposal.tsx
       {schemeToUse.type === 'ContributionReward' ||
       schemeToUse.type === 'GenericMulticall' ||
       schemeToUse.type === 'SchemeRegistrar' ||
@@ -1186,6 +1203,8 @@ const NewProposalPage = observer(() => {
           </div>
         </div>
       )}
+=======
+>>>>>>> 7f875713db1436a67119303d13d0b6df0f3d1198:src/pages/ProposalSubmission/Custom.tsx
 
       {errorMessage && (
         <TextActions>
@@ -1223,7 +1242,7 @@ const NewProposalPage = observer(() => {
             active={submitionState}
           />
         ) : (
-          <Button route="/">Back to Proposals</Button>
+          <LinkButton route="/">Back to Proposals</LinkButton>
         )}
         {submitionState > 1 ? (
           <TextActions>

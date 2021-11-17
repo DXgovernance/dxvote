@@ -11,7 +11,11 @@ export const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 export const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
-const defaultAlchemyKey = process.env.REACT_APP_KEY_ALCHEMY_API_KEY;
+export const CACHE_METADATA_ENS = 'cache.dxvote.eth';
+
+const defaultAlchemyKey = '7i7fiiOx1b7bGmgWY_oI9twyQBCsuXKC';
+
+export const DISCOURSE_URL_ROOT = 'https://daotalk.org';
 
 export const NETWORKS: ChainConfig[] = [
   {

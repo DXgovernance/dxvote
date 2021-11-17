@@ -4,10 +4,11 @@ import { toCamelCaseString } from '../../utils';
 import WalletModal from 'components/WalletModal';
 import { getChains, injected, isChainIdSupported } from 'provider/connectors';
 import { useContext } from '../../contexts';
-import { Box, BlockchainLink } from '../../components/common';
+import { Box } from '../../components/common';
 import NetworkModal from 'components/NetworkModal';
 import { useEffect, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
+import BlockchainLink from '../common/BlockchainLink';
 
 const WrongNetworkButton = styled(Box)`
   color: var(--dark-text-gray);
@@ -109,7 +110,7 @@ const Web3ConnectStatus = observer(props => {
     } else if (account) {
       return (
         <AccountButton onClick={toggleWalletModal}>
-          <BlockchainLink text={account} />
+          <BlockchainLink text={account} onlyText />
         </AccountButton>
       );
     } else {

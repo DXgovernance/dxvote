@@ -4,8 +4,6 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
 import { Row, Box, Question, Button } from '../components/common';
-import { useActiveWeb3React } from 'provider/providerHooks';
-import { injected } from 'provider/connectors';
 
 const FormLabel = styled.label`
   padding: 10px 0px;
@@ -56,7 +54,6 @@ const ConfigPage = observer(() => {
     },
   } = useContext();
   const networkName = configStore.getActiveChainName();
-  const { connector } = useActiveWeb3React();
 
   const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(
     etherscanService.auth
@@ -144,72 +141,68 @@ const ConfigPage = observer(() => {
           <FormLabel>{pinataKeyStatus ? <FiCheckCircle /> : <FiX />}</FormLabel>
         </Row>
 
-        {connector != injected && (
-          <>
-            <Row>
-              <FormLabel>RPC:</FormLabel>
-              <Dropdown
-                onChange={event =>
-                  onApiKeyValueChange(event.target.value, 'rpcType')
-                }
-                value={localConfig.rpcType}
-              >
-                <option value="">Default</option>
-                <option value="infura">Infura</option>
-                <option value="alchemy">Alchemy</option>
-                <option value="custom">Custom</option>
-              </Dropdown>
-            </Row>
+        <Row>
+          <FormLabel>RPC:</FormLabel>
+          <Dropdown
+            onChange={event =>
+              onApiKeyValueChange(event.target.value, 'rpcType')
+            }
+            value={localConfig.rpcType}
+          >
+            <option value="">Default</option>
+            <option value="infura">Infura</option>
+            <option value="alchemy">Alchemy</option>
+            <option value="custom">Custom</option>
+          </Dropdown>
+        </Row>
 
-            {localConfig.rpcType === 'infura' && (
-              <Row>
-                <FormLabel>Infura:</FormLabel>
-                <InputBox
-                  type="text"
-                  serviceName="infura"
-                  onChange={event =>
-                    onApiKeyValueChange(event.target.value, 'infura')
-                  }
-                  value={localConfig.infura}
-                ></InputBox>
-                <FormLabel>
-                  {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
-                </FormLabel>
-              </Row>
-            )}
-            {localConfig.rpcType === 'alchemy' && (
-              <Row>
-                <FormLabel>Alchemy:</FormLabel>
-                <InputBox
-                  type="text"
-                  serviceName="alchemy"
-                  onChange={event =>
-                    onApiKeyValueChange(event.target.value, 'alchemy')
-                  }
-                  value={localConfig.alchemy}
-                ></InputBox>
-                <FormLabel>
-                  {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
-                </FormLabel>
-              </Row>
-            )}
-            {localConfig.rpcType === 'custom' && (
-              <Row>
-                <FormLabel>RPC URL:</FormLabel>
-                <InputBox
-                  type="text"
-                  serviceName="customRpcUrl"
-                  onChange={event =>
-                    onApiKeyValueChange(event.target.value, 'customRpcUrl')
-                  }
-                  value={localConfig.customRpcUrl}
-                ></InputBox>
-                <FormLabel>
-                  {customRpcUrlStatus ? <FiCheckCircle /> : <FiX />}
-                </FormLabel>
-              </Row>
-            )}
-          </>
+        {localConfig.rpcType === 'infura' && (
+          <Row>
+            <FormLabel>Infura:</FormLabel>
+            <InputBox
+              type="text"
+              serviceName="infura"
+              onChange={event =>
+                onApiKeyValueChange(event.target.value, 'infura')
+              }
+              value={localConfig.infura}
+            ></InputBox>
+            <FormLabel>
+              {infuraKeyStatus ? <FiCheckCircle /> : <FiX />}
+            </FormLabel>
+          </Row>
+        )}
+        {localConfig.rpcType === 'alchemy' && (
+          <Row>
+            <FormLabel>Alchemy:</FormLabel>
+            <InputBox
+              type="text"
+              serviceName="alchemy"
+              onChange={event =>
+                onApiKeyValueChange(event.target.value, 'alchemy')
+              }
+              value={localConfig.alchemy}
+            ></InputBox>
+            <FormLabel>
+              {alchemyKeyStatus ? <FiCheckCircle /> : <FiX />}
+            </FormLabel>
+          </Row>
+        )}
+        {localConfig.rpcType === 'custom' && (
+          <Row>
+            <FormLabel>RPC URL:</FormLabel>
+            <InputBox
+              type="text"
+              serviceName="customRpcUrl"
+              onChange={event =>
+                onApiKeyValueChange(event.target.value, 'customRpcUrl')
+              }
+              value={localConfig.customRpcUrl}
+            ></InputBox>
+            <FormLabel>
+              {customRpcUrlStatus ? <FiCheckCircle /> : <FiX />}
+            </FormLabel>
+          </Row>
         )}
       </FormContainer>
       <Row>

@@ -42,6 +42,12 @@ const ItemBox = styled(Box)`
   border-radius: 6px;
 `;
 
+const WarningDev = styled.div`
+  margin-left: 5px;
+  padding-top: 3px;
+  color: red;
+`;
+
 const Header = observer(() => {
   const NavItem = withRouter(({ route, history, children }) => {
     return (
@@ -69,6 +75,8 @@ const Header = observer(() => {
 
   const { active, account } = providerStore.getActiveWeb3React();
 
+  const isTestingEnv = !window?.location?.href?.includes('dxvote.eth.link');
+
   if (!active) {
     return (
       <NavWrapper>
@@ -76,6 +84,7 @@ const Header = observer(() => {
           <NavItem route={`/`}>
             <MenuItem>
               <img alt="dxdao" src={dxdaoIcon} />
+              {isTestingEnv && <WarningDev>Testing Environment</WarningDev>}
             </MenuItem>
           </NavItem>
         </NavSection>
@@ -126,6 +135,7 @@ const Header = observer(() => {
           <NavItem route={`/${networkName}/proposals`}>
             <MenuItem>
               <img alt="dxdao" src={dxdaoIcon} />
+              {isTestingEnv && <WarningDev>Testing Environment</WarningDev>}
             </MenuItem>
           </NavItem>
         </NavSection>

@@ -6,11 +6,8 @@ labels: 'Enhancement'
 assignees: ''
 ---
 
-**Problem Description**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Desired Solution**
-A clear and concise description of what you want to happen.
+**User Story**
+As a <type of user>, I want <some goal> so that <some reason>.
 
 **Alternative Solutions**
 A clear and concise description of any alternative solutions or features you've considered.

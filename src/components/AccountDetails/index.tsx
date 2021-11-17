@@ -152,7 +152,7 @@ export default function AccountDetails(props: Props) {
   const {
     context: { providerStore, configStore },
   } = useContext();
-  const { account, connector } = providerStore.getActiveWeb3React();
+  const { account, connector, deactivate } = providerStore.getActiveWeb3React();
 
   const networkName = configStore.getActiveChainName();
 
@@ -167,6 +167,7 @@ export default function AccountDetails(props: Props) {
                   onClick={() => {
                     //@ts-ignore
                     connector.close();
+                    deactivate();
                   }}
                 >
                   Disconnect
