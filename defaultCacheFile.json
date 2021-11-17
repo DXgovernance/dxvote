@@ -1,8 +1,7 @@
 {
-  "localhost": "Qmas7GFUchNmY3Uh2L88t5nLcZonmQdsway1NbA4K8SgHu",
-  "mainnet": "Qmc7FPKqHSveSEcn3CWQvPhnpM1aRZAr5Lzs4N57WBmeCx",
-  "xdai": "QmbwjRZEymGVeiRb7EwEwRcU2zZS6sbzzs7KugHtdFX712",
-  "arbitrum": "Qmb8LcnF7kG69Emp5AY4QakgLMB49tKM9ncSMpuvPatCn9",
-  "rinkeby": "QmPJeq8EzqVaZzcLnpXFPe8D1G1ApeEPnA3wd7QiHR4g33",
-  "arbitrumTestnet": "QmauqxYDa6LSLUETsFme2U1NYn5odWvHxwiz6S5ov4bRUf"
+  "mainnet": "Qmcz1mmAhhKdW1vaKYULsBLbNA6rpSVUBv2qcNBa7p9PRK",
+  "xdai": "QmfUb5Xqw3dqtopu151TF9apqPfsyPWxJ24X5nxx4X2uFF",
+  "arbitrum": "QmQTt7vtJ3a1kxmkkRWMHxFgHoaxkbknsZWDzDSvkjJahF",
+  "rinkeby": "Qmf9iyKcnJTnxcvHYyAnPw6SC4UNQGPVjXcTXrNrMnDn1v",
+  "arbitrumTestnet": "QmXtE42h1ehy4Zz94pD5TDzPcv3ninNzwuLezX2DQpVkEJ"
 }
