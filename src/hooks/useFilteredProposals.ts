@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ProposalsExtended } from '../contexts/proposals';
 import useMiniSearch from './useMiniSearch';
 import { useProposals } from './useProposals';
+import useQueryStringValue from './useQueryStringValue';
 
 const matchStatus = (proposal: ProposalsExtended, status: string) =>
   status === 'Any Status' || !status
@@ -24,9 +25,15 @@ export const useFilteredProposals = () => {
   });
 
   // Filtering criteria
-  const [titleFilter, setTitleFilter] = useState('');
-  const [stateFilter, setStateFilter] = useState('Any Status');
-  const [schemesFilter, setSchemesFilter] = useState('All Schemes');
+  const [titleFilter, setTitleFilter] = useQueryStringValue('title', '');
+  const [stateFilter, setStateFilter] = useQueryStringValue(
+    'status',
+    'Any Status'
+  );
+  const [schemesFilter, setSchemesFilter] = useQueryStringValue(
+    'scheme',
+    'All Schemes'
+  );
 
   // Rebuild search index when proposals list changes
   useEffect(() => {
