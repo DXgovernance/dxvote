@@ -8,7 +8,7 @@ function useQueryStringValue(
 ): [string, (value: string) => void] {
   const { query, setQueryParam } = useQuery();
   const [value, setValue] = useState<string>(query.get(key) || initialValue);
-  const setQueryParamDebounced = useDebounceFn(setQueryParam, 1000);
+  const setQueryParamDebounced = useDebounceFn(setQueryParam, 500);
 
   const onSetValue = useCallback(
     (newValue: string) => {

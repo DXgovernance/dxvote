@@ -48,8 +48,6 @@ export const useFilteredProposals = () => {
       ? minisearch.query(titleFilter)
       : proposals;
 
-    console.log(stateFilter, schemesFilter);
-
     filteredProposals = filteredProposals.filter(
       proposal =>
         matchStatus(proposal, stateFilter) &&
