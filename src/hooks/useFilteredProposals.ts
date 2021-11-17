@@ -35,6 +35,8 @@ export const useFilteredProposals = () => {
 
   // Compute search results when search criteria changes
   const searchResults = useMemo(() => {
+    if (!proposals) return [];
+
     let filteredProposals = titleFilter
       ? minisearch.query(titleFilter)
       : proposals;

@@ -43,7 +43,7 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
   };
 
   return (
-    <ProposalsContext.Provider value={[proposalState]}>
+    <ProposalsContext.Provider value={proposalState}>
       {children}
     </ProposalsContext.Provider>
   );
