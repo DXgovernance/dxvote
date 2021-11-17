@@ -21,7 +21,6 @@ import {
   formatNumberValue,
 } from '../../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
-// import { useProposals } from 'hooks/useProposals';
 import {
   StatusSearch,
   SchemeSearch,
@@ -50,7 +49,6 @@ const ProposalsPage = observer(() => {
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
 
-  // const [{loading, proposals}] = useProposals();
   const {
     proposals,
     loading,

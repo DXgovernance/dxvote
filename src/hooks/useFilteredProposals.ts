@@ -12,7 +12,7 @@ const matchScheme = (proposal: ProposalsExtended, scheme: string) =>
   scheme === 'All Schemes' || !scheme ? proposal : proposal.scheme === scheme;
 
 export const useFilteredProposals = () => {
-  const [{ proposals, loading }] = useProposals();
+  const { proposals, loading } = useProposals();
   const minisearch = useMiniSearch<ProposalsExtended>({
     fields: ['title'],
     storeFields: ['id'],
