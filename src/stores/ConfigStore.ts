@@ -16,6 +16,7 @@ const mainnet = require('../configs/mainnet/config.json');
 const xdai = require('../configs/xdai/config.json');
 const rinkeby = require('../configs/rinkeby/config.json');
 const localhost = require('../configs/localhost/config.json');
+const proposalTitles = require('../configs/proposalTitles.json');
 
 const defaultAppConfigs = {
   arbitrum,
@@ -86,6 +87,10 @@ export default class ConfigStore {
 
     this.appConfig[networkName] = appConfig;
     return appConfig;
+  }
+
+  getProposalTitlesInBuild() {
+    return proposalTitles;
   }
 
   getActiveChainName() {

@@ -12,10 +12,10 @@ echo "${contents}" > tsconfig.json
 # Run build cache in all networks
 # Use RESET_CACHE=1 to reset the cache and ignore existing content
 # Use EMPTY_CACHE=1 to save an empty cache
-CACHE_TO_BLOCK=13539223 yarn hardhat run --network mainnet scripts/buildCache.ts
-CACHE_TO_BLOCK=18870524 yarn hardhat run --network xdai scripts/buildCache.ts
-CACHE_TO_BLOCK=2790301 yarn hardhat run --network arbitrum scripts/buildCache.ts
-CACHE_TO_BLOCK=9574593 yarn hardhat run --network rinkeby scripts/buildCache.ts
+CACHE_TO_BLOCK=13633246 yarn hardhat run --network mainnet scripts/buildCache.ts
+CACHE_TO_BLOCK=19117255 yarn hardhat run --network xdai scripts/buildCache.ts
+CACHE_TO_BLOCK=3102407 yarn hardhat run --network arbitrum scripts/buildCache.ts
+CACHE_TO_BLOCK=9629062 yarn hardhat run --network rinkeby scripts/buildCache.ts
 CACHE_TO_BLOCK=6264591 yarn hardhat run --network arbitrumTestnet scripts/buildCache.ts
 yarn prettier --write src/configs/**/*.json
 sleep 1
