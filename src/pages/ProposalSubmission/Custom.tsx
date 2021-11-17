@@ -2,7 +2,7 @@ import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../../contexts';
-import { Box, Question, Button, LinkButton } from '../../components/common';
+import { Box, Question, LinkButton } from '../../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 
@@ -10,7 +10,7 @@ import {
   ContributionRewardFormSchema,
   SchemeRegistrarFormSchema,
   CallFormScheme,
-} from '../utils/yupSchemas';
+} from '../../utils/yupSchemas';
 
 import {
   NETWORK_ASSET_SYMBOL,
@@ -27,6 +27,7 @@ import { LinkedButtons } from 'components/LinkedButtons';
 import DiscourseImporter from '../../components/DiscourseImporter';
 import { Calls } from 'components/ProposalSubmission/Custom/Calls';
 import { Preview } from '../../components/ProposalSubmission/Custom/Preview';
+
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
   display: flex;
@@ -80,85 +81,6 @@ const TextActions = styled.div`
   line-height: 30px;
 `;
 
-<<<<<<< HEAD:src/pages/NewProposal.tsx
-const CallRow = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: left;
-  flex-direction: row;
-  margin-bottom: 10px;
-
-  span {
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 18px;
-    padding: 10px 10px;
-  }
-`;
-
-const RemoveButton = styled.div`
-  background-color: grey;
-  border: 1px solid black;
-  border-radius: 10px;
-  color: white;
-  height: 25px;
-  letter-spacing: 1px;
-  font-weight: 500;
-  line-height: 25px;
-  text-align: center;
-  cursor: pointer;
-  width: max-content;
-  padding: 0px 5px;
-  margin: 5px;
-`;
-
-const TextInput = styled.input`
-  width: ${props => props.width || '25%'};
-  height: 34px;
-  border-radius: 3px;
-  border: 1px solid gray;
-  margin-right: 5px;
-`;
-
-const SelectInput = styled.select`
-  width: ${props => props.width || '25%'};
-  height: 38px;
-  border-radius: 3px;
-  border: 1px solid gray;
-  margin-right: 5px;
-  background-color: #fff;
-`;
-
-const FormattedForm = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-`;
-
-const FieldErrorMessage = styled.div`
-  align-self: flex-start;
-  margin-left: 8px;
-  font-size: 11px;
-  margin-top: 4px;
-  color: ${({ theme }) => theme.forms.error};
-`;
-
-const Field = styled.label`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-
-  ${TextInput} {
-    width: 90%;
-  }
-`;
-
-=======
->>>>>>> 7f875713db1436a67119303d13d0b6df0f3d1198:src/pages/ProposalSubmission/Custom.tsx
 const NewProposalPage = observer(() => {
   const {
     context: {
@@ -244,7 +166,7 @@ const NewProposalPage = observer(() => {
   // 5 = Proposal creation tx receipt received
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [errorMessageUI, setErrorMessageUI] = useState<any | undefined>({});
+
   const proposalTemplates = configStore.getProposalTemplates();
 
   const { assetLimits: transferLimits, recommendedCalls } =
@@ -589,35 +511,25 @@ const NewProposalPage = observer(() => {
     try {
       CallFormScheme.validateSync({ value: event.target.value });
       setCallsInState(calls);
-    } catch (e) {
-      setErrorMessageUI(e);
-    }
+    } catch (e) {}
   }
 
   function onContributionRewardValueChange(key, value) {
-    setErrorMessageUI(null);
     contributionRewardCalls[key] = value;
 
     try {
       ContributionRewardFormSchema.validateSync(contributionRewardCalls);
-      setErrorMessageUI(null);
       setContributionRewardCallsInState(contributionRewardCalls);
-    } catch (error) {
-      setErrorMessageUI(error);
-    }
+    } catch (error) {}
   }
 
   function onSchemeRegistrarValueChange(key, value) {
-    setErrorMessageUI(null);
     schemeRegistrarProposalValues[key] = value;
 
     try {
       SchemeRegistrarFormSchema.validateSync(schemeRegistrarProposalValues);
-      setErrorMessageUI(null);
       setSchemeRegistrarValueInState(schemeRegistrarProposalValues);
-    } catch (error) {
-      setErrorMessageUI(error);
-    }
+    } catch (error) {}
   }
 
   function onSchemeChange(event) {
@@ -781,430 +693,6 @@ const NewProposalPage = observer(() => {
         removeCall={removeCall}
         changeCallType={changeCallType}
       />
-<<<<<<< HEAD:src/pages/NewProposal.tsx
-      {schemeToUse.type === 'ContributionReward' ||
-      schemeToUse.type === 'GenericMulticall' ||
-      schemeToUse.type === 'SchemeRegistrar' ||
-      (schemeToUse.type === 'WalletScheme' &&
-        schemeToUse.controllerAddress === networkContracts.controller) ? (
-        <h2>
-          Calls executed from the avatar <Question question="9" />
-        </h2>
-      ) : (
-        <h2>
-          Calls executed from the scheme <Question question="9" />
-        </h2>
-      )}
-      {Object.keys(transferLimits).map(assetAddress => {
-        if (assetAddress === ZERO_ADDRESS)
-          return (
-            <h3>
-              Transfer limit of{' '}
-              {normalizeBalance(transferLimits[assetAddress]).toString()}{' '}
-              {networkAssetSymbol}
-            </h3>
-          );
-        else {
-          const token = networkTokens.find(
-            networkToken => networkToken.address === assetAddress
-          );
-          if (token)
-            return (
-              <h3>
-                Transfer limit of{' '}
-                {normalizeBalance(
-                  transferLimits[assetAddress],
-                  token.decimals
-                ).toString()}{' '}
-                {token.symbol}
-              </h3>
-            );
-          else
-            return (
-              <h3>
-                Transfer limit {transferLimits[assetAddress].toString()} of
-                asset {assetAddress}
-              </h3>
-            );
-        }
-      })}
-
-      {schemeToUse.type === 'ContributionReward' ? (
-        // If scheme to use is Contribution Reward display a different form with less fields
-        <div>
-          <CallRow>
-            <FormattedForm>
-              <Field>
-                <span>Beneficiary Account</span>
-
-                <TextInput
-                  type="text"
-                  onChange={event =>
-                    onContributionRewardValueChange(
-                      'beneficiary',
-                      event.target.value
-                    )
-                  }
-                  value={contributionRewardCalls.beneficiary}
-                  width="50%"
-                />
-                {errorMessageUI && errorMessageUI.path === 'beneficiary' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-              <Field>
-                <span>REP Change</span>
-                <TextInput
-                  type="text"
-                  onChange={event =>
-                    onContributionRewardValueChange(
-                      'repChange',
-                      event.target.value
-                    )
-                  }
-                  value={contributionRewardCalls.repChange}
-                  width="50%"
-                />
-
-                {errorMessageUI && errorMessageUI.path === 'repChange' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-
-              <Field>
-                <span>{networkAssetSymbol} Value</span>
-                <TextInput
-                  type="text"
-                  onChange={event =>
-                    onContributionRewardValueChange(
-                      'ethValue',
-                      event.target.value
-                    )
-                  }
-                  value={contributionRewardCalls.ethValue}
-                  width="50%"
-                />
-
-                {errorMessageUI && errorMessageUI.path === 'ethValue' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-
-              <Field>
-                <span>Address of Token</span>
-                <TextInput
-                  aria-invalid="true"
-                  aria-describedby="error"
-                  type="text"
-                  onChange={event =>
-                    onContributionRewardValueChange(
-                      'externalToken',
-                      event.target.value
-                    )
-                  }
-                  value={contributionRewardCalls.externalToken}
-                  width="50%"
-                />
-
-                {errorMessageUI && errorMessageUI.path === 'externalToken' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-              <Field>
-                <span>Token Amount (in ETH)</span>
-                <TextInput
-                  type="text"
-                  onChange={event =>
-                    onContributionRewardValueChange(
-                      'tokenValue',
-                      event.target.value
-                    )
-                  }
-                  value={contributionRewardCalls.tokenValue}
-                  width="50%"
-                />
-                {errorMessageUI && errorMessageUI.path === 'tokenValue' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-            </FormattedForm>
-          </CallRow>
-        </div>
-      ) : schemeToUse.type === 'SchemeRegistrar' ? (
-        // If scheme to use is SchemeRegistrar display a different form with less fields
-        <div>
-          <CallRow>
-            <FormattedForm>
-              <Field>
-                <span>Rergister Scheme</span>
-                <TextInput
-                  type="checkbox"
-                  onChange={event =>
-                    onSchemeRegistrarValueChange(
-                      'register',
-                      event.target.checked
-                    )
-                  }
-                  checked={schemeRegistrarProposalValues.register}
-                  width="50%"
-                />
-                {errorMessageUI && errorMessageUI.path === 'register' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-
-              <Field>
-                <span>Scheme Address</span>
-                <TextInput
-                  type="text"
-                  onChange={event =>
-                    onSchemeRegistrarValueChange(
-                      'schemeAddress',
-                      event.target.value
-                    )
-                  }
-                  value={schemeRegistrarProposalValues.schemeAddress}
-                  width="50%"
-                />
-                {errorMessageUI && errorMessageUI.path === 'schemeAddress' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-              <Field>
-                <span>Parameters Hash </span>
-                <TextInput
-                  type="text"
-                  onChange={event =>
-                    onSchemeRegistrarValueChange(
-                      'parametersHash',
-                      event.target.value
-                    )
-                  }
-                  value={schemeRegistrarProposalValues.parametersHash}
-                  width="50%"
-                />
-                {errorMessageUI && errorMessageUI.path === 'parametersHash' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-              <Field>
-                <span>Permissions</span>
-                <TextInput
-                  type="text"
-                  onChange={event =>
-                    onSchemeRegistrarValueChange(
-                      'permissions',
-                      event.target.value
-                    )
-                  }
-                  value={schemeRegistrarProposalValues.permissions}
-                  width="50%"
-                />
-                {errorMessageUI && errorMessageUI.path === 'permissions' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-            </FormattedForm>
-          </CallRow>
-        </div>
-      ) : (
-        // If the scheme is GenericMulticall allow only advanced encoded calls
-        // At last if the scheme used is a Wallet Scheme type allow a complete edition of the calls :)
-        <div>
-          {calls.map((call, i) => (
-            <CallRow key={'call' + i}>
-              <span>#{i}</span>
-
-              {schemeToUse.type === 'WalletScheme' &&
-              call.callType === 'simple' ? (
-                <SelectInput
-                  value={calls[i].to}
-                  onChange={e => {
-                    onToSelectChange(i, e.target.value);
-                  }}
-                  width={'20%'}
-                >
-                  {allowedToCall.map((allowedCall, allowedCallIndex) => {
-                    return (
-                      <option
-                        key={'toCall' + allowedCallIndex}
-                        value={allowedCall.value || ''}
-                      >
-                        {allowedCall.name}
-                      </option>
-                    );
-                  })}
-                </SelectInput>
-              ) : (
-                schemeToUse.type !== 'ContributionReward' && (
-                  <TextInput
-                    onChange={e => {
-                      onToSelectChange(i, e.target.value);
-                    }}
-                    width={'20%'}
-                  />
-                )
-              )}
-
-              {call.callType === 'simple' ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    width: call.callType === 'simple' ? '60%' : '50%',
-                  }}
-                >
-                  <SelectInput
-                    value={calls[i].functionName || ''}
-                    onChange={event => {
-                      const selectedFunction = calls[i].allowedFunctions.find(
-                        allowedFunction => {
-                          return (
-                            allowedFunction.functionName === event.target.value
-                          );
-                        }
-                      );
-                      onFunctionSelectChange(
-                        i,
-                        event.target.value,
-                        selectedFunction ? selectedFunction.params : ''
-                      );
-                    }}
-                    width="40%"
-                  >
-                    {calls[i].allowedFunctions.map(
-                      (allowedFunc, allowedFuncIndex) => {
-                        return (
-                          <option
-                            key={'functionToCall' + allowedFuncIndex}
-                            value={allowedFunc.functionName || ''}
-                          >
-                            {allowedFunc.functionName}
-                          </option>
-                        );
-                      }
-                    )}
-                  </SelectInput>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      width: '100%',
-                      flexDirection: 'column',
-                      paddingRight: '10px',
-                    }}
-                  >
-                    {calls[i].functionParams.length === 0 ? (
-                      <TextInput
-                        key={'functionParam00'}
-                        disabled
-                        type="text"
-                        placeholder="Select address to call and function"
-                        width="100%"
-                        style={{ marginTop: '0px' }}
-                      />
-                    ) : (
-                      calls[i].functionParams.map(
-                        (funcParam, funcParamIndex) => {
-                          return (
-                            <TextInput
-                              key={'functionParam' + funcParamIndex}
-                              type="text"
-                              onChange={value =>
-                                onFunctionParamsChange(i, value, funcParamIndex)
-                              }
-                              value={calls[i].dataValues[funcParamIndex] || ''}
-                              placeholder={funcParam.name}
-                              width="100%"
-                              style={{
-                                marginTop: funcParamIndex > 0 ? '5px' : '0px',
-                              }}
-                            />
-                          );
-                        }
-                      )
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <TextInput
-                  type="text"
-                  onChange={value => onFunctionParamsChange(i, value, 0)}
-                  value={calls[i].dataValues[0] || ''}
-                  placeholder="0x..."
-                  width="100%"
-                />
-              )}
-
-              <Field>
-                <TextInput
-                  type="text"
-                  onChange={value => onValueChange(i, value)}
-                  value={calls[i].value || ''}
-                  placeholder={
-                    calls[i].callType === 'advanced'
-                      ? 'ETH'
-                      : { networkAssetSymbol }
-                  }
-                />
-                {errorMessageUI && errorMessageUI.path === 'value' && (
-                  <FieldErrorMessage>
-                    {errorMessageUI.errors[0]}
-                  </FieldErrorMessage>
-                )}
-              </Field>
-
-              <RemoveButton
-                onClick={() => {
-                  removeCall(i);
-                }}
-              >
-                X
-              </RemoveButton>
-              {schemeToUse.type === 'WalletScheme' ? (
-                <RemoveButton
-                  onClick={() => {
-                    changeCallType(i);
-                  }}
-                >
-                  {calls[i].callType === 'advanced' ? 'Simple' : 'Advanced'}
-                </RemoveButton>
-              ) : (
-                <div />
-              )}
-            </CallRow>
-          ))}
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Button onClick={addCall}>Add Call</Button>
-          </div>
-        </div>
-      )}
-=======
->>>>>>> 7f875713db1436a67119303d13d0b6df0f3d1198:src/pages/ProposalSubmission/Custom.tsx
 
       {errorMessage && (
         <TextActions>
