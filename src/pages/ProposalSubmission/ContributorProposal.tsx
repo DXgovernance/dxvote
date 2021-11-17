@@ -228,7 +228,7 @@ export const ContributorProposalPage = observer(() => {
           ).toFixed(2)} DXD vested for 2 years and 1 year cliff @ $${
             dxdOverride ? dxdOverride : dxdAth
           }/DXD
-          } \n ${calculateDiscountedValue(
+          \n ${calculateDiscountedValue(
             levels[selectedLevel]?.rep,
             discount
           )}% - ${repReward} REP \n `,
@@ -428,7 +428,7 @@ export const ContributorProposalPage = observer(() => {
                         placeholder="DXD ATH"
                         type="number"
                         onChange={event => setDXDOverride(event.target.value)}
-                        value={percentage}
+                        value={dxdOverride}
                       />
                     </InputWrapper>
                   </div>
