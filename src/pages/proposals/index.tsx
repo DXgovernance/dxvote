@@ -22,13 +22,14 @@ import {
   formatNumberValue,
 } from '../../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
-import { useProposals } from 'hooks/useProposals';
+// import { useProposals } from 'hooks/useProposals';
 import {
   StatusSearch,
   SchemeSearch,
   TitleSearch,
 } from '../../components/Proposals/Search';
 import { ProposalsWrapper, SidebarWrapper, ProposalTableHeaderActions, NewProposalButton, LoadingBox, FooterWrap, TableProposal, UnstyledAnchor, StyledTableRow } from './styles';
+import { useFilteredProposals } from '../../hooks/useFilteredProposals';
 
 
 
@@ -42,7 +43,8 @@ const ProposalsPage = observer(() => {
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
 
-  const [{loading, proposals}] = useProposals();
+  // const [{loading, proposals}] = useProposals();
+  const { proposals, loading, titleFilter, setTitleFilter } = useFilteredProposals();
 
   const history = useHistory();
   return (
@@ -54,7 +56,7 @@ const ProposalsPage = observer(() => {
               + New Proposal
             </LinkButton>
           </NewProposalButton>
-          <TitleSearch />
+          <TitleSearch value={titleFilter} onFilter={setTitleFilter} />
           <StatusSearch />
           <SchemeSearch />
         </ProposalTableHeaderActions>

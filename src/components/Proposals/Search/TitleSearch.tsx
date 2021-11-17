@@ -1,8 +1,5 @@
-import { useProposals } from 'hooks/useProposals';
-import MiniSearch from 'minisearch';
-import React, { useEffect, useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useParams } from 'hooks/useParams';
 
 const ProposalsNameFilter = styled.input`
   background-color: white;
@@ -22,42 +19,47 @@ const ProposalsNameFilter = styled.input`
   align-self: center;
 `;
 
-const TitleSearch = () => {
-    const [{ filters: { scheme, status }, proposals }, dispatch] = useProposals();
-  const [titleFilter, setTitleFilter] = useState('');
-  const {onFilterChange,  getParams} = useParams('title', '')
-  const miniSearchRef = React.useRef(
-    // create search engine and set title and id as searchable fields
-    new MiniSearch({
-      fields: ['title'],
-      storeFields: ['id'],
-      searchOptions: {
-        fuzzy: 0.3,
-        prefix: true,
-        combineWith: 'AND',
-      },
-    })
-  );
-  const miniSearch = miniSearchRef.current;
+interface TitleSearchProps {
+  value: string;
+  onFilter: (value: string) => void;
+}
 
-  useEffect(() => {
-    setTitleFilter(getParams)
-    // remove all indexed search
-    miniSearch.removeAll();
+const TitleSearch: React.FC<TitleSearchProps> = ({ value, onFilter }) => {
+  //   const [{ filters: { scheme, status }, proposals }, dispatch] = useProposals();
+  // const [titleFilter, setTitleFilter] = useState('');
+  // const {onFilterChange,  getParams} = useParams('title', '')
+  // const miniSearchRef = React.useRef(
+  //   // create search engine and set title and id as searchable fields
+  //   new MiniSearch({
+  //     fields: ['title'],
+  //     storeFields: ['id'],
+  //     searchOptions: {
+  //       fuzzy: 0.3,
+  //       prefix: true,
+  //       combineWith: 'AND',
+  //     },
+  //   })
+  // );
+  // const miniSearch = miniSearchRef.current;
 
-    // add all proposals to search
-    miniSearch.addAll(proposals);
+  // useEffect(() => {
+  //   setTitleFilter(getParams)
+  //   // remove all indexed search
+  //   miniSearch.removeAll();
 
-    const search = miniSearch.search(titleFilter);
-    dispatch({
-      type: 'filter',
-      payload: {
-        status: status,
-        search: search,
-        scheme: scheme,
-      },
-    });
-  }, [titleFilter, getParams]);
+  //   // add all proposals to search
+  //   miniSearch.addAll(proposals);
+
+  //   const search = miniSearch.search(titleFilter);
+  //   dispatch({
+  //     type: 'filter',
+  //     payload: {
+  //       status: status,
+  //       search: search,
+  //       scheme: scheme,
+  //     },
+  //   });
+  // }, [titleFilter, getParams]);
 
   return (
     <ProposalsNameFilter
@@ -65,8 +67,8 @@ const TitleSearch = () => {
       placeholder="Search by proposal title"
       name="titleFilter"
       id="titleFilter"
-      value={titleFilter}
-      onChange={onFilterChange}
+      value={value}
+      onChange={(e) => onFilter(e.target.value)}
     ></ProposalsNameFilter>
   );
 };
