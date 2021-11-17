@@ -1,4 +1,3 @@
-
 import { useHistory, Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../../contexts';
@@ -28,10 +27,18 @@ import {
   SchemeSearch,
   TitleSearch,
 } from '../../components/Proposals/Search';
-import { ProposalsWrapper, SidebarWrapper, ProposalTableHeaderActions, NewProposalButton, LoadingBox, FooterWrap, TableProposal, UnstyledAnchor, StyledTableRow } from './styles';
+import {
+  ProposalsWrapper,
+  SidebarWrapper,
+  ProposalTableHeaderActions,
+  NewProposalButton,
+  LoadingBox,
+  FooterWrap,
+  TableProposal,
+  UnstyledAnchor,
+  StyledTableRow,
+} from './styles';
 import { useFilteredProposals } from '../../hooks/useFilteredProposals';
-
-
 
 const ProposalsPage = observer(() => {
   const {
@@ -44,7 +51,16 @@ const ProposalsPage = observer(() => {
   const userEvents = daoStore.getUserEvents(account);
 
   // const [{loading, proposals}] = useProposals();
-  const { proposals, loading, titleFilter, setTitleFilter } = useFilteredProposals();
+  const {
+    proposals,
+    loading,
+    titleFilter,
+    setTitleFilter,
+    stateFilter,
+    setStateFilter,
+    schemesFilter,
+    setSchemesFilter,
+  } = useFilteredProposals();
 
   const history = useHistory();
   return (
@@ -57,8 +73,8 @@ const ProposalsPage = observer(() => {
             </LinkButton>
           </NewProposalButton>
           <TitleSearch value={titleFilter} onFilter={setTitleFilter} />
-          <StatusSearch />
-          <SchemeSearch />
+          <StatusSearch value={stateFilter} onFilter={setStateFilter} />
+          <SchemeSearch value={schemesFilter} onFilter={setSchemesFilter} />
         </ProposalTableHeaderActions>
         <FooterWrap>
           <Footer />
