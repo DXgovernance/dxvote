@@ -1,24 +1,24 @@
 {
   "cache": {
     "fromBlock": 0,
-    "toBlock": 76,
-    "ipfsHash": "QmS3hfS68mgeBp5xfyRhBeJ4hdWMMbDSSVUfVBpnaQ3oEw"
+    "toBlock": 26678,
+    "ipfsHash": ""
   },
   "contracts": {
-    "avatar": "0xD899Be87df2076e0Be28486b60dA406Be6757AfC",
-    "controller": "0xf89f66329e7298246de22D210Ac246DCddff4621",
-    "reputation": "0x033B0C959Ca16Ae1fBbBC3d7815dd5dF34a5E648",
+    "avatar": "0x7BdF512815D85037E47aBbbC29e5c4369989264C",
+    "controller": "0x284d3E423127a751608733f7F5313ceEBC82d03E",
+    "reputation": "0x57BC3FBecB51dFa1153A3dB457499cB6fDC395D5",
     "votingMachines": {
       "dxd": {
-        "address": "0x890Aff9B651A056FD79D304942203C3d5B1dB301",
-        "token": "0x9F513d1823D68D0064f78d3337e6221C5D31169c"
+        "address": "0x2226e479EDdD03991671B162f1E3Aed3e9c2C72f",
+        "token": "0xDe2061C015b235470a2F03Fe3728Fed03aaa1939"
       }
     },
-    "permissionRegistry": "0x7963EDD55E0e11cf8055c9206b425607b8d6591e",
+    "permissionRegistry": "0x377e939a3E7f254C811f39D4D0E16ef814530283",
     "utils": {
-      "multicall": "0x8cADF854a4D479Ca25fF2DEe61675023265f8614",
-      "dxdVestingFactory": "0x2245CE863Bcf3914D9Ade65916e7DEC8A2453B65",
-      "dxDaoNFT": "0x37311D0D80c9dF1fc0d37F66dB74230f8a6D4100"
+      "multicall": "0xac08dc6ECe1CE797D522A58834b559ED30D533c4",
+      "dxdVestingFactory": "0x37C058BE388feC9b116319C04c0F0614C19e5764",
+      "dxDaoNFT": "0xF6c598Ee75DBD4B7B728E6d5935dD073D137bb2e"
     }
   },
   "recommendedCalls": [],
@@ -68,7 +68,7 @@
   ],
   "tokens": [
     {
-      "address": "0x9F513d1823D68D0064f78d3337e6221C5D31169c",
+      "address": "0xDe2061C015b235470a2F03Fe3728Fed03aaa1939",
       "name": "DXdao on Localhost",
       "decimals": 18,
       "symbol": "DXD",
@@ -76,7 +76,7 @@
       "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
     },
     {
-      "address": "0x019361f55F364a440094Be14256941c870f8748d",
+      "address": "0x4C3f6D460C9B818b8dC364778415b28C85aD719c",
       "name": "Wrapped XDAI",
       "decimals": 18,
       "symbol": "WXDAI",
