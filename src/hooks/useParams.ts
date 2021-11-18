@@ -1,13 +1,11 @@
-import { useState, useEffect ,  ChangeEvent} from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-
-export const useParams = (searchType: string, defaultSearchtype: string)  => {
-  const [getParams, setParams] = useState<string>('')
+export const useParams = (searchType: string, defaultSearchtype: string) => {
+  const [getParams, setParams] = useState<string>('');
   const history = useHistory();
   const location = useLocation();
-  const params =  new URLSearchParams(location.search)
-
+  const params = new URLSearchParams(location.search);
 
   // create url/useContext to share URL state
   // load filter from url if any on initial load
@@ -28,14 +26,14 @@ export const useParams = (searchType: string, defaultSearchtype: string)  => {
     params.append(title, event.target.value);
     history.push({
       location: location.pathname,
-      search: `${searchType}=${getParams}`
+      search: `${searchType}=${getParams}`,
     });
-    setParams(event.target.value)
+    setParams(event.target.value);
   }
 
   return {
     onFilterChange,
     setParams,
-    getParams
+    getParams,
   };
 };
