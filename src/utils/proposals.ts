@@ -355,6 +355,9 @@ export const decodeProposalStatus = function (
 export const orderByNewestTimeToFinish = (a: any, b: any) =>
   a.finishTime - b.finishTime;
 
+export const orderByOldestTimeToFinish = (a: any, b: any) =>
+  b.finishTime - a.finishTime;
+
 /// filtering and sorting proposals for All States, All Schemas criteria
 export const filterInitialCriteria = (
   proposals: ProposalsExtended[],
@@ -362,7 +365,6 @@ export const filterInitialCriteria = (
 ) => {
   // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
   let earliestAbove10 = proposals.filter((proposal: Proposal) => {
-
     const repAtCreation = daoStore.getRepAt(
       ZERO_ADDRESS,
       proposal.creationEvent.l1BlockNumber
@@ -396,9 +398,7 @@ export const filterInitialCriteria = (
 
   // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
   let earliestUnder10 = proposals.filter((proposal: Proposal): Boolean => {
-
-
-   const repAtCreation = daoStore.getRepAt(
+    const repAtCreation = daoStore.getRepAt(
       ZERO_ADDRESS,
       proposal.creationEvent.l1BlockNumber
     ).totalSupply;
@@ -421,7 +421,7 @@ export const filterInitialCriteria = (
     (proposal: Proposal): Boolean =>
       proposal.stateInVotingMachine === VotingMachineProposalState.Executed
   );
-  executed.sort(orderByNewestTimeToFinish);
+  executed.sort(orderByOldestTimeToFinish);
 
   return [
     ...earliestAbove10,
