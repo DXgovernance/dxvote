@@ -2,7 +2,7 @@ import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../../contexts';
-import { Box, Question, Button, LinkButton } from '../../components/common';
+import { Box, Question, LinkButton } from '../../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 
