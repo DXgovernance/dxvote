@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 13060713,
-    "toBlock": 18870524,
-    "ipfsHash": "QmYwtECdromudUP2B8cH43KNHpRBDu3UKEFJi27RBcLQ4a"
+    "toBlock": 19117255,
+    "ipfsHash": "QmVYFVX7sfaNTSL6nkYwiXEj4DyaS2mmrVHCE8KmSpL3R8"
   },
   "contracts": {
     "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
@@ -23,6 +23,9 @@
         "token": "0xb90D6bec20993Be5d72A5ab353343f7a0281f158",
         "address": "0x053f406aD40c9Eb8eB43aFf28DA0D0EC17dF8e44"
       }
+    },
+    "schemes": {
+      "QuickWalletScheme": "0x983e0c64088E48b6AB7C76a8ABa3eE93d1C10aD5"
     },
     "daostack": {
       "contributionRewardRedeemer": "0xd2cc17817c0d4cfc6819510b2e5288512122d71c",

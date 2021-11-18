@@ -190,7 +190,8 @@ export default class BlockchainStore {
         );
         const cache = await caches.open(`dxvote-cache`);
         let match = await cache.match(networkName);
-        let networkCache = null;
+        let networkCache: DaoNetworkCache & { baseCacheIpfsHash?: string } =
+          null;
         if (match) {
           networkCache = JSON.parse(await match.text());
         }
@@ -226,6 +227,14 @@ export default class BlockchainStore {
           const fromBlock = lastCheckedBlockNumber;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
+          const proposalTitles = configStore.getProposalTitlesInBuild();
+
+          Object.keys(networkCache.proposals).map(proposalId => {
+            networkCache.proposals[proposalId].title =
+              networkCache.proposals[proposalId].title ||
+              proposalTitles[proposalId] ||
+              '';
+          });
 
           networkCache = await getUpdatedCache(
             this.context,

@@ -1,5 +1,5 @@
-import { Title, BlockchainLink, Box } from '../../common';
 import styled from 'styled-components';
+import { Title, BlockchainLink, Box } from '../../common';
 
 const ProposalHistoryEvent = styled.div`
   display: flex;

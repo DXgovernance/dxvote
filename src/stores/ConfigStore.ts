@@ -16,6 +16,7 @@ const mainnet = require('../configs/mainnet/config.json');
 const xdai = require('../configs/xdai/config.json');
 const rinkeby = require('../configs/rinkeby/config.json');
 const localhost = require('../configs/localhost/config.json');
+const proposalTitles = require('../configs/proposalTitles.json');
 
 const defaultAppConfigs = {
   arbitrum,
@@ -86,6 +87,10 @@ export default class ConfigStore {
 
     this.appConfig[networkName] = appConfig;
     return appConfig;
+  }
+
+  getProposalTitlesInBuild() {
+    return proposalTitles;
   }
 
   getActiveChainName() {
@@ -299,6 +304,7 @@ export default class ConfigStore {
         name: string;
         defaultValue: string;
         decimals?: number;
+        isRep?: boolean;
       }[];
       decodeText: string;
     }[] = [
@@ -309,7 +315,13 @@ export default class ConfigStore {
         toName: 'DXdao Controller',
         functionName: 'mintReputation(uint256,address,address)',
         params: [
-          { type: 'uint256', name: '_amount', defaultValue: '', decimals: 18 },
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
           { type: 'address', name: '_to', defaultValue: '' },
           {
             type: 'address',
@@ -317,7 +329,30 @@ export default class ConfigStore {
             defaultValue: networkContracts.avatar,
           },
         ],
-        decodeText: 'Mint of [PARAM_0] REP to [PARAM_1]',
+        decodeText: 'Mint of [PARAM_0] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.schemes?.QuickWalletScheme,
+        to: networkContracts.controller,
+        toName: 'DXdao Controller',
+        functionName: 'mintReputation(uint256,address,address)',
+        params: [
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
+          { type: 'address', name: '_to', defaultValue: '' },
+          {
+            type: 'address',
+            name: '_avatar',
+            defaultValue: networkContracts.avatar,
+          },
+        ],
+        decodeText: 'Mint of [PARAM_0] to [PARAM_1]',
       },
       {
         asset: ZERO_ADDRESS,
@@ -326,7 +361,13 @@ export default class ConfigStore {
         toName: 'DXdao Controller',
         functionName: 'burnReputation(uint256,address,address)',
         params: [
-          { type: 'uint256', name: '_amount', defaultValue: '', decimals: 18 },
+          {
+            type: 'uint256',
+            name: '_amount',
+            defaultValue: '',
+            decimals: 18,
+            isRep: true,
+          },
           { type: 'address', name: '_from', defaultValue: '' },
           {
             type: 'address',
@@ -334,7 +375,7 @@ export default class ConfigStore {
             defaultValue: networkContracts.avatar,
           },
         ],
-        decodeText: 'Burn of [PARAM_0] REP to [PARAM_1]',
+        decodeText: 'Burn of [PARAM_0] to [PARAM_1]',
       },
       {
         asset: ZERO_ADDRESS,
@@ -521,6 +562,22 @@ export default class ConfigStore {
         ],
         decodeText:
           'Set [PARAM_5] permission in asset [PARAM_0] from [FROM] to [PARAM_2] with function signature [PARAM_3] and value [PARAM_4]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: ANY_ADDRESS,
+        to: networkContracts.utils.dxdVestingFactory,
+        toName: 'DXD Vesting Factory',
+        functionName: 'create(address,uint256,uint256,uint256,uint256)',
+        params: [
+          { type: 'address', name: 'to', defaultValue: '' },
+          { type: 'uint256', name: 'startDate', defaultValue: '' },
+          { type: 'uint256', name: 'cliff', defaultValue: '' },
+          { type: 'uint256', name: 'duration', defaultValue: '' },
+          { type: 'uint256', name: 'amount', defaultValue: '' },
+        ],
+        decodeText:
+          'Create vesting contract of [PARAM_4] DXD for [PARAM_0] starting [PARAM_1] for [PARAM_2] with [PARAM_3] cliff',
       },
     ];
 

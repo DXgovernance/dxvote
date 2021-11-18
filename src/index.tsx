@@ -7,7 +7,6 @@ import moment from 'moment';
 
 import * as serviceWorker from './serviceWorker';
 
-import 'index.css';
 import ThemeProvider, { GlobalStyle } from './theme';
 
 import Header from './components/Header';
@@ -17,7 +16,7 @@ import MainnetWeb3Manager, {
 } from './components/MainnetWeb3Manager';
 import PageRouter from './PageRouter';
 
-import ProposalsPage from './pages/Proposals';
+import ProposalsPage from './pages/proposals';
 import { SubmitProposalPage } from './pages/SubmitProposal';
 import { NewProposalTypePage } from './pages/NewProposalType';
 import UserPage from './pages/User';
@@ -27,6 +26,8 @@ import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
 import { CreateMetadataPage } from 'pages/Metadata';
+import GuildsApp from './GuildsApp';
+import { ProposalProvider } from 'contexts/proposals';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -63,7 +64,9 @@ const Routes = () => {
       </Route>
       <Route exact path="/:network/proposals">
         {' '}
-        <ProposalsPage />{' '}
+        <ProposalProvider>
+          <ProposalsPage />{' '}
+        </ProposalProvider>
       </Route>
       <Route exact path="/:network/create/type">
         {' '}
@@ -97,26 +100,45 @@ const Routes = () => {
 
 const MainnetWeb3Provider: any = createWeb3ReactRoot(MAINNET_WEB3_ROOT_KEY);
 
-const Root = (
-  <Web3ReactProvider getLibrary={getLibrary}>
-    <MainnetWeb3Provider getLibrary={getLibrary}>
-      <ThemeProvider>
-        <GlobalStyle />
-        <HashRouter>
-          <Switch>
-            <MainnetWeb3Manager>
-              <Web3ReactManager>
-                <Header />
-                <Routes />
-              </Web3ReactManager>
-            </MainnetWeb3Manager>
-          </Switch>
-        </HashRouter>
-      </ThemeProvider>
-    </MainnetWeb3Provider>
-  </Web3ReactProvider>
-);
-ReactDOM.render(Root, document.getElementById('root'));
+const SplitApp = () => {
+  // This split between DXvote and Guilds frontends are temporary.
+  // We'll eventually converge changes on the Guilds side to DXvote.
+  const location = useLocation();
+  const isGuilds = location.pathname.startsWith('/guilds');
+
+  return (
+    <>
+      {!isGuilds ? (
+        <Switch>
+          <MainnetWeb3Manager>
+            <Web3ReactManager>
+              <GlobalStyle />
+              <Header />
+              <Routes />
+            </Web3ReactManager>
+          </MainnetWeb3Manager>
+        </Switch>
+      ) : (
+        <GuildsApp />
+      )}
+    </>
+  );
+};
+
+const Root = () => {
+  return (
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <MainnetWeb3Provider getLibrary={getLibrary}>
+        <ThemeProvider>
+          <HashRouter>
+            <SplitApp />
+          </HashRouter>
+        </ThemeProvider>
+      </MainnetWeb3Provider>
+    </Web3ReactProvider>
+  );
+};
+ReactDOM.render(<Root />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

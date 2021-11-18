@@ -25,6 +25,7 @@ import {
   normalizeBalance,
 } from '../../utils';
 import { useTokenService } from 'hooks/useTokenService';
+import { InputDate } from 'components/common';
 
 const VerticalLayout = styled.div`
   display: flex;
@@ -93,6 +94,7 @@ const InputWrapper = styled.div`
   justify-content: center;
   font-size: xx-large;
   align-items: center;
+  margin: 1%;
 `;
 const ButtonContentWrapper = styled.div`
   display: flex;
@@ -135,7 +137,6 @@ export const ContributorProposalPage = observer(() => {
   const [loading, setLoading] = useState(false);
   const [proposalCreated, setProposalCreated] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [periodEnd, setPeriodEnd] = useState(false);
   // Amounts
   const [dxdAmount, setDxdAmount] = useState(null);
   const [repReward, setRepReward] = useState(null);
@@ -145,8 +146,10 @@ export const ContributorProposalPage = observer(() => {
   const [percentage, setPercentage] = useState(null);
   const [trialPeriod, setTrialPeriod] = useState(false);
   const [stableOverride, setStableOverride] = useState<number>(null);
+  const [dxdOverride, setDXDOverride] = useState<number>(null);
+  const [startDate, setStartDate] = useState(moment());
 
-  const { tokenAth: dxdAth } = useTokenService('dxdao');
+  const { tokenAth: dxdAth, athDate } = useTokenService('dxdao');
 
   const proposalType = configStore
     .getProposalTypes()
@@ -169,63 +172,40 @@ export const ContributorProposalPage = observer(() => {
 
   useEffect(() => {
     if (confirm) {
-      const { userRep, totalSupply } = daoStore.getRepEventsOfUser(
+      const { totalSupply } = daoStore.getRepAt(
         account,
-        providerStore.getCurrentBlockNumber()
+        providerStore.getCurrentBlockNumber(),
+        moment(startDate).unix()
       );
 
       setDxdAmount(
         denormalizeBalance(
-          bnum((levels[selectedLevel]?.dxd / dxdAth) * discount)
+          bnum(
+            (levels[selectedLevel]?.dxd /
+              (dxdOverride ? dxdOverride : dxdAth)) *
+              discount
+          )
         ).toString()
       );
 
-      let currentRepReward = formatNumberValue(
-        totalSupply.times(0.001667).times(discount),
-        0
+      setRepReward(
+        formatNumberValue(totalSupply.times(0.001667).times(discount), 0)
       );
-
-      // Finds last period's rep amount
-      if (periodEnd) {
-        const loweLimit = moment().subtract(1, 'months').unix();
-        const upperLimit = moment().subtract(3, 'months').unix();
-        let largestMatchedRepAward = bnum(0);
-
-        userRep.reverse().forEach(repEvent => {
-          if (
-            repEvent.timestamp < loweLimit &&
-            repEvent.timestamp > upperLimit &&
-            repEvent.amount.gt(largestMatchedRepAward)
-          ) {
-            largestMatchedRepAward = repEvent.amount;
-            console.debug('Matched previous REP amount');
-          }
-        });
-        if (
-          largestMatchedRepAward.gt(bnum(0)) &&
-          bnum(currentRepReward).times(0.85).lt(largestMatchedRepAward)
-        ) {
-          currentRepReward = formatNumberValue(
-            largestMatchedRepAward.times(discount),
-            0
-          );
-          console.debug('Previous REP amount matches estimated inflation rate');
-        }
-      }
-
-      setRepReward(currentRepReward);
     }
   }, [confirm]);
 
   // Reset stable override when changing level
   useEffect(() => {
-    setStableOverride(
-      calculateDiscountedValue(levels[selectedLevel]?.stable, discount)
-    );
+    setStableOverride(null);
   }, [selectedLevel]);
 
   const calculateDiscountedValue = (amount, discount, override = null) => {
     return override || amount * discount;
+  };
+
+  const setStartDateAndDxdOverride = newDate => {
+    if (newDate.isSameOrAfter(moment())) setDXDOverride(null);
+    setStartDate(newDate);
   };
 
   const submitProposal = async () => {
@@ -236,18 +216,19 @@ export const ContributorProposalPage = observer(() => {
         localStorage.getItem('dxvote-newProposal-title'),
         localStorage.getItem('dxvote-newProposal-description') +
           `${
-            '$' +
+            '\n$' +
             calculateDiscountedValue(
               levels[selectedLevel]?.stable,
               discount,
               stableOverride
             )
           } \n ${calculateDiscountedValue(
-            levels[selectedLevel]?.dxd / dxdAth,
+            levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : dxdAth),
             discount
-          ).toFixed(
-            2
-          )} DXD vested for 2 years and 1 year cliff \n ${calculateDiscountedValue(
+          ).toFixed(2)} DXD vested for 2 years and 1 year cliff @ $${
+            dxdOverride ? dxdOverride : dxdAth
+          }/DXD
+          \n ${calculateDiscountedValue(
             levels[selectedLevel]?.rep,
             discount
           )}% - ${repReward} REP \n `,
@@ -280,7 +261,7 @@ export const ContributorProposalPage = observer(() => {
               stableOverride
             )
           )
-        )
+        ).toString()
       );
 
       // Encode DXD approval
@@ -364,18 +345,16 @@ export const ContributorProposalPage = observer(() => {
         )}
       </Values>
       <Values>
-        {((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(2)} DXD
-        vested for 2 years and 1 year cliff
+        {(
+          (levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : dxdAth)) *
+          discount
+        ).toFixed(2)}{' '}
+        DXD vested for 2 years and 1 year cliff
       </Values>
       <Values>
         {calculateDiscountedValue(levels[selectedLevel]?.rep, discount)}% -{' '}
         {normalizeBalance(bnum(repReward ? repReward : '0')).toString()} REP
       </Values>
-      <WarningText>
-        {periodEnd
-          ? 'If this is the second half of your payment then there is a chance DXD ATH changed and double check REP amount is accurate. If something is wrong please override the automatic values.'
-          : null}
-      </WarningText>
     </ModalContentWrap>
   );
 
@@ -383,7 +362,13 @@ export const ContributorProposalPage = observer(() => {
     <VerticalLayout>
       <NavigationBar>
         <BackToProposals
-          onClick={() => history.push('../metadata/contributor')}
+          onClick={() => {
+            if (advanced) {
+              setAdvanced(false);
+            } else {
+              history.push('../metadata/contributor');
+            }
+          }}
         >
           {`< Back`}
         </BackToProposals>
@@ -411,9 +396,11 @@ export const ContributorProposalPage = observer(() => {
                 </Value>
                 <Value>
                   {dxdAth ? (
-                    ((levels[selectedLevel]?.dxd / dxdAth) * discount).toFixed(
-                      2
-                    )
+                    (
+                      (levels[selectedLevel]?.dxd /
+                        (dxdOverride ? dxdOverride : dxdAth)) *
+                      discount
+                    ).toFixed(2)
                   ) : (
                     <PendingCircle height="10px" width="10px" />
                   )}{' '}
@@ -423,14 +410,29 @@ export const ContributorProposalPage = observer(() => {
                 <Value>
                   {levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}% REP
                 </Value>
-                <Toggle
-                  onToggle={() => {
-                    setPeriodEnd(!periodEnd);
-                  }}
-                  state={periodEnd}
-                  optionOne={'Period 1/2'}
-                  optionTwo={'Period 2/2'}
+                <InputDate
+                  value={startDate}
+                  onChange={setStartDateAndDxdOverride}
+                  text={'Proposal Start Date:'}
+                  width={200}
                 />
+                {startDate.isBefore(moment(athDate)) ? (
+                  <div>
+                    <WarningText>
+                      DXD all time high (ATH) has changed, please manually
+                      provide correct ATH as of start date
+                    </WarningText>
+                    <InputWrapper>
+                      $
+                      <TextInput
+                        placeholder="DXD ATH"
+                        type="number"
+                        onChange={event => setDXDOverride(event.target.value)}
+                        value={dxdOverride}
+                      />
+                    </InputWrapper>
+                  </div>
+                ) : null}
               </Values>
             ) : null}
             <ButtonsWrapper>
@@ -467,8 +469,6 @@ export const ContributorProposalPage = observer(() => {
               optionOne={'Full worker'}
               optionTwo={'Trial period'}
             />
-            {/* Add REP snapshot date selector */}
-            {/* Edit DXD ATH */}
 
             <InputWrapper>
               $
