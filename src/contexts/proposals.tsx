@@ -1,6 +1,6 @@
 import { useContext } from 'contexts';
 import { SearchResult } from 'minisearch';
-import { createContext, ReactNode, useReducer  } from 'react';
+import { createContext, ReactNode, useReducer } from 'react';
 import { filterInitialCriteria } from 'utils';
 
 export type ProposalsExtended = Proposal &
@@ -36,7 +36,6 @@ type Action = FilterAction;
 
 export const ProposalsContext = createContext(undefined);
 
-
 const statusFilter = (proposal: ProposalsExtended, status: string) =>
   status === 'Any Status' || !status
     ? proposal
@@ -55,16 +54,15 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     context: { daoStore },
   } = useContext();
 
-  const allProposals: ProposalsExtended[] =
-      filterInitialCriteria(
-        daoStore.getAllProposals().map(cacheProposal => {
-          return Object.assign(
-            cacheProposal,
-            daoStore.getProposalStatus(cacheProposal.id)
-          );
-        }),
-        daoStore
-      )
+  const allProposals: ProposalsExtended[] = filterInitialCriteria(
+    daoStore.getAllProposals().map(cacheProposal => {
+      return Object.assign(
+        cacheProposal,
+        daoStore.getProposalStatus(cacheProposal.id)
+      );
+    }),
+    daoStore
+  );
 
   const initialProposalState: ProposalsState = {
     loading: false,
@@ -85,7 +83,12 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
           console.log(scheme, search, status);
           return {
             ...state,
-            proposals: initialProposalState.proposals.filter( proposal => statusFilter(proposal, status) && schemeFitler(proposal, scheme) && searchFilter(proposal, search)),
+            proposals: initialProposalState.proposals.filter(
+              proposal =>
+                statusFilter(proposal, status) &&
+                schemeFitler(proposal, scheme) &&
+                searchFilter(proposal, search)
+            ),
             filters: {
               search: search,
               status: status,
@@ -98,7 +101,6 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     },
     initialProposalState
   );
-
 
   return (
     <ProposalsContext.Provider value={[state, dispatch]}>

@@ -93,9 +93,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
       </CardHeader>
       <CardContent>
         <CardTitle>{title}</CardTitle>
-        <p>
-          {description}
-        </p>
+        <p>{description}</p>
       </CardContent>
       <CardFooter>
         <BorderedIconDetailWrapper>

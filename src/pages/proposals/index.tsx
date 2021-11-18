@@ -1,4 +1,3 @@
-
 import { useHistory, Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useContext } from '../../contexts';
@@ -28,9 +27,17 @@ import {
   SchemeSearch,
   TitleSearch,
 } from '../../components/Proposals/Search';
-import { ProposalsWrapper, SidebarWrapper, ProposalTableHeaderActions, NewProposalButton, LoadingBox, FooterWrap, TableProposal, UnstyledAnchor, StyledTableRow } from './styles';
-
-
+import {
+  ProposalsWrapper,
+  SidebarWrapper,
+  ProposalTableHeaderActions,
+  NewProposalButton,
+  LoadingBox,
+  FooterWrap,
+  TableProposal,
+  UnstyledAnchor,
+  StyledTableRow,
+} from './styles';
 
 const ProposalsPage = observer(() => {
   const {
@@ -42,7 +49,7 @@ const ProposalsPage = observer(() => {
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
 
-  const [{loading, proposals}] = useProposals();
+  const [{ loading, proposals }] = useProposals();
 
   const history = useHistory();
   return (

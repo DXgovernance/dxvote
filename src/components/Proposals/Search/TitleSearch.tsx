@@ -1,6 +1,6 @@
 import { useProposals } from 'hooks/useProposals';
 import MiniSearch from 'minisearch';
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'hooks/useParams';
 
@@ -23,9 +23,15 @@ const ProposalsNameFilter = styled.input`
 `;
 
 const TitleSearch = () => {
-    const [{ filters: { scheme, status }, proposals }, dispatch] = useProposals();
+  const [
+    {
+      filters: { scheme, status },
+      proposals,
+    },
+    dispatch,
+  ] = useProposals();
   const [titleFilter, setTitleFilter] = useState('');
-  const {onFilterChange,  getParams} = useParams('title', '')
+  const { onFilterChange, getParams } = useParams('title', '');
   const miniSearchRef = React.useRef(
     // create search engine and set title and id as searchable fields
     new MiniSearch({
@@ -41,7 +47,7 @@ const TitleSearch = () => {
   const miniSearch = miniSearchRef.current;
 
   useEffect(() => {
-    setTitleFilter(getParams)
+    setTitleFilter(getParams);
     // remove all indexed search
     miniSearch.removeAll();
 

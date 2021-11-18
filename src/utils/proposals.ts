@@ -362,7 +362,6 @@ export const filterInitialCriteria = (
 ) => {
   // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
   let earliestAbove10 = proposals.filter((proposal: Proposal) => {
-
     const repAtCreation = daoStore.getRepAt(
       ZERO_ADDRESS,
       proposal.creationEvent.l1BlockNumber
@@ -396,9 +395,7 @@ export const filterInitialCriteria = (
 
   // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
   let earliestUnder10 = proposals.filter((proposal: Proposal): Boolean => {
-
-
-   const repAtCreation = daoStore.getRepAt(
+    const repAtCreation = daoStore.getRepAt(
       ZERO_ADDRESS,
       proposal.creationEvent.l1BlockNumber
     ).totalSupply;

@@ -1,23 +1,26 @@
 import { useProposals } from 'hooks/useProposals';
 import { useParams } from 'hooks/useParams';
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { useContext } from 'contexts';
 import { ProposalsFilter } from './style';
-
 
 const SchemeSearch = () => {
   const {
     context: { daoStore },
   } = useContext();
   const schemes = daoStore.getAllSchemes();
-    const [{ filters: { status, search } }, dispatch] = useProposals();
+  const [
+    {
+      filters: { status, search },
+    },
+    dispatch,
+  ] = useProposals();
   const [schemeFilter, setSchemeFilter] = useState('All Schemes');
 
-  const {onFilterChange,  getParams} = useParams('scheme', 'All Schemes')
-
+  const { onFilterChange, getParams } = useParams('scheme', 'All Schemes');
 
   useEffect(() => {
-    setSchemeFilter(getParams)
+    setSchemeFilter(getParams);
     dispatch({
       type: 'filter',
       payload: {
