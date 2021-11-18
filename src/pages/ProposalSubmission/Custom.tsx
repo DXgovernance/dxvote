@@ -7,12 +7,6 @@ import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 
 import {
-  ContributionRewardFormSchema,
-  SchemeRegistrarFormSchema,
-  CallFormScheme,
-} from '../../utils/yupSchemas';
-
-import {
   NETWORK_ASSET_SYMBOL,
   ZERO_ADDRESS,
   ANY_ADDRESS,
@@ -27,7 +21,6 @@ import { LinkedButtons } from 'components/LinkedButtons';
 import DiscourseImporter from '../../components/DiscourseImporter';
 import { Calls } from 'components/ProposalSubmission/Custom/Calls';
 import { Preview } from '../../components/ProposalSubmission/Custom/Preview';
-
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
   display: flex;
@@ -166,7 +159,6 @@ const NewProposalPage = observer(() => {
   // 5 = Proposal creation tx receipt received
 
   const [errorMessage, setErrorMessage] = useState('');
-
   const proposalTemplates = configStore.getProposalTemplates();
 
   const { assetLimits: transferLimits, recommendedCalls } =
@@ -310,7 +302,9 @@ const NewProposalPage = observer(() => {
             return daoService.encodeControllerGenericCall(
               call.to,
               callData,
-              call.value
+              call.callType === 'simple'
+                ? library.utils.toWei(call.value).toString()
+                : call.value
             );
           } else {
             return callData;
@@ -318,7 +312,11 @@ const NewProposalPage = observer(() => {
         });
 
         value = calls.map(call => {
-          return callToController ? '0' : call.value;
+          return callToController
+            ? '0'
+            : call.callType === 'simple'
+            ? library.utils.toWei(call.value).toString()
+            : call.value;
         });
       }
 
@@ -508,28 +506,17 @@ const NewProposalPage = observer(() => {
 
   function onValueChange(callIndex, event) {
     calls[callIndex].value = event.target.value;
-    try {
-      CallFormScheme.validateSync({ value: event.target.value });
-      setCallsInState(calls);
-    } catch (e) {}
+    setCallsInState(calls);
   }
 
   function onContributionRewardValueChange(key, value) {
     contributionRewardCalls[key] = value;
-
-    try {
-      ContributionRewardFormSchema.validateSync(contributionRewardCalls);
-      setContributionRewardCallsInState(contributionRewardCalls);
-    } catch (error) {}
+    setContributionRewardCallsInState(contributionRewardCalls);
   }
 
   function onSchemeRegistrarValueChange(key, value) {
     schemeRegistrarProposalValues[key] = value;
-
-    try {
-      SchemeRegistrarFormSchema.validateSync(schemeRegistrarProposalValues);
-      setSchemeRegistrarValueInState(schemeRegistrarProposalValues);
-    } catch (error) {}
+    setSchemeRegistrarValueInState(schemeRegistrarProposalValues);
   }
 
   function onSchemeChange(event) {
@@ -694,10 +681,12 @@ const NewProposalPage = observer(() => {
         changeCallType={changeCallType}
       />
 
-      {errorMessage && (
+      {errorMessage.length > 0 ? (
         <TextActions>
           <span>{errorMessage}</span>
         </TextActions>
+      ) : (
+        <div />
       )}
 
       <div
