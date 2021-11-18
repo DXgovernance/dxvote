@@ -70,9 +70,6 @@ const theme = darkMode => ({
     },
     //
   },
-  forms: {
-    error: 'red',
-  },
   //colors
   white,
   black,
