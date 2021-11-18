@@ -32,7 +32,7 @@ const TitleSearch: React.FC<TitleSearchProps> = ({ value, onFilter }) => {
       name="titleFilter"
       id="titleFilter"
       value={value}
-      onChange={(e) => onFilter(e.target.value)}
+      onChange={e => onFilter(e.target.value)}
     ></ProposalsNameFilter>
   );
 };

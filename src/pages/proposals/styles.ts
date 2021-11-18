@@ -7,9 +7,6 @@ import {
   DataCell,
 } from '../../components/common';
 
-
-
-
 export const LoadingBox = styled.div`
   display: flex;
   height: 100%;
