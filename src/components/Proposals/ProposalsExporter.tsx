@@ -1,9 +1,11 @@
 import moment, { Moment } from 'moment';
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useContext } from '../../contexts';
 import useExporters from '../../hooks/useExporters';
 import { useProposals } from '../../hooks/useProposals';
+import { getChains } from '../../provider/connectors';
 import {
   VotingMachineProposalState,
   WalletSchemeProposalState,
@@ -49,6 +51,7 @@ const ProposalsExporter = () => {
     context: { daoStore },
   } = useContext();
   const { proposals } = useProposals();
+  const location = useLocation();
   const { exportToCSV, triggerDownload } = useExporters<ProposalExportRow>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDateRange, setIsDateRange] = useState<boolean>(false);
@@ -112,6 +115,21 @@ const ProposalsExporter = () => {
     triggerDownload(csvString, `${exportName}.csv`, 'text/csv');
   };
 
+  const copyAsMarkdown = async () => {
+    let filteredProposals = await getFilteredProposalsList();
+    const urlNetworkName = location.pathname.split('/')[1];
+
+    const chainName =
+      getChains().find(chain => chain.name == urlNetworkName)?.name || null;
+
+    let markdown = `**${chainName}**\n\n`;
+    filteredProposals.map(proposal => {
+      markdown += `- [${proposal.title}](${window.location.origin}/#/${urlNetworkName}/proposal/${proposal.id})\n`;
+    });
+
+    await navigator.clipboard.writeText(markdown);
+  };
+
   return (
     <>
       <Button onClick={() => setIsOpen(true)}>Export...</Button>
@@ -137,7 +155,7 @@ const ProposalsExporter = () => {
                   setStartDate(date.startOf('day'));
                 }}
                 text={'Start Date'}
-                width={200}
+                width={150}
               />
               <InputDate
                 value={endDate}
@@ -145,14 +163,14 @@ const ProposalsExporter = () => {
                   setEndDate(date.endOf('day'));
                 }}
                 text={'End Date'}
-                width={200}
+                width={150}
               />
             </WrapperRow>
           )}
 
           <ExportButtonsRow>
             <Button onClick={triggerCSVExport}>Export to CSV</Button>
-            <Button onClick={() => setIsOpen(true)}>Export to Markdown</Button>
+            <Button onClick={copyAsMarkdown}>Copy Titles as Markdown</Button>
           </ExportButtonsRow>
         </Wrapper>
       </Modal>
