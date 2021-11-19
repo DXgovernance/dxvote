@@ -1,15 +1,24 @@
 import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
-import { useContext } from '../contexts';
 import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import moment from 'moment';
 import {
   BlockchainLink,
   Row,
   Box,
   InfoBox,
   Subtitle,
+  Button,
 } from '../components/common';
 import { formatBalance } from '../utils';
+import { useContext } from '../contexts';
+import useExporters from '../hooks/useExporters';
+
+const TitleRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 
 const UserPage = observer(() => {
   let history = useHistory();
@@ -18,10 +27,27 @@ const UserPage = observer(() => {
     context: { daoStore, configStore },
   } = useContext();
   const userAddress = useLocation().pathname.split('/')[3];
+  const { exportToCSV, triggerDownload } = useExporters();
+
   const userEvents = daoStore.getUserEvents(userAddress);
   const userInfo = daoStore.getUser(userAddress);
   const networkName = configStore.getActiveChainName();
   const redeemsLeft = daoStore.getUserRedeemsLeft(userAddress);
+
+  const getExportFileName = () => {
+    return `history_${userAddress}-${moment().format('YYYY-MM-DD')}`;
+  };
+
+  const exportCSV = async () => {
+    const historyItems = userEvents.history.map(historyEvent => ({
+      tx: historyEvent.event.tx,
+      timestamp: moment.unix(historyEvent.event.timestamp).format(),
+      blockNumber: historyEvent.event.block,
+      action: historyEvent.text,
+    }));
+    const csvString = await exportToCSV(historyItems);
+    triggerDownload(csvString, `${getExportFileName()}.csv`, 'text/csv');
+  };
 
   return (
     <Box>
@@ -94,7 +120,11 @@ const UserPage = observer(() => {
         );
       })}
 
-      <h2> History </h2>
+      <TitleRow>
+        <h2>History</h2>
+        <Button onClick={exportCSV}>Export to CSV</Button>
+      </TitleRow>
+
       {userEvents.history.map((historyEvent, i) => {
         return (
           <div
