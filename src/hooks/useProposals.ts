@@ -1,4 +1,7 @@
-import { ProposalsContext, ProposalsContextInterface } from 'contexts/proposals';
+import {
+  ProposalsContext,
+  ProposalsContextInterface,
+} from 'contexts/proposals';
 import { useContext } from 'react';
 
 export const useProposals = () => {

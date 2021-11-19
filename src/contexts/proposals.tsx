@@ -9,8 +9,8 @@ export type ProposalsExtended = Proposal &
     autoBoost: Boolean;
     boostTime: BigNumber;
     finishTime: BigNumber;
-    status: string,
-    pendingAction: number,
+    status: string;
+    pendingAction: number;
   };
 
 interface ProposalProviderProps {
