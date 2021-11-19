@@ -156,6 +156,9 @@ const ProposalsExporter = () => {
                 }}
                 text={'Start Date'}
                 width={150}
+                isValidDate={(date: Moment) =>
+                  date.isBefore(endDate) && date.isBefore(moment())
+                }
               />
               <InputDate
                 value={endDate}
@@ -164,6 +167,9 @@ const ProposalsExporter = () => {
                 }}
                 text={'End Date'}
                 width={150}
+                isValidDate={(date: Moment) =>
+                  date.isAfter(startDate) && date.isBefore(moment())
+                }
               />
             </WrapperRow>
           )}
