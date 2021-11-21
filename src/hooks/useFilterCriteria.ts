@@ -1,4 +1,3 @@
-import { useContext } from 'contexts';
 import { useState, useEffect } from 'react';
 import {
   orderByNewestTimeToFinish,
@@ -7,6 +6,7 @@ import {
   ZERO_ADDRESS,
 } from 'utils';
 import { useProposals } from './useProposals';
+import { useRep } from './useRep';
 
 interface useFilterCriteriaReturns {
   filteredProposals: Proposal[];
@@ -15,13 +15,13 @@ interface useFilterCriteriaReturns {
   preBoosted: Proposal[];
   earliestUnder10: Proposal[];
   executed: Proposal[];
+  loading: boolean
 }
 
 export const useFilterCriteria = (): useFilterCriteriaReturns => {
-  const { proposals } = useProposals();
-  const {
-    context: { daoStore },
-  } = useContext();
+  const [{loading, proposals}] = useProposals();
+
+  const {getRep} = useRep(ZERO_ADDRESS)
 
   // states
   const [filteredProposals, setFilteredProposals] = useState([]);
@@ -37,10 +37,8 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       proposals
         .filter((proposal: Proposal) => {
           // useMemo here
-          const repAtCreation = daoStore.getRepAt(
-            ZERO_ADDRESS,
-            proposal.creationEvent.l1BlockNumber
-          ).totalSupply;
+          const repAtCreation = getRep(proposal.creationEvent.l1BlockNumber).totalSupply
+
 
           return (
             (proposal.stateInVotingMachine ===
@@ -81,10 +79,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     setEarliestUnder10(
       proposals
         .filter((proposal: Proposal): Boolean => {
-          const repAtCreation = daoStore.getRepAt(
-            ZERO_ADDRESS,
-            proposal.creationEvent.l1BlockNumber
-          ).totalSupply;
+          const repAtCreation = getRep(proposal.creationEvent.l1BlockNumber).totalSupply
 
           return (
             (proposal.stateInVotingMachine ===
@@ -128,5 +123,6 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     preBoosted,
     earliestUnder10,
     executed,
+    loading
   };
 };

@@ -54,15 +54,12 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     context: { daoStore },
   } = useContext();
 
-  const allProposals: ProposalsExtended[] = filterInitialCriteria(
-    daoStore.getAllProposals().map(cacheProposal => {
+  const allProposals: ProposalsExtended[] =    daoStore.getAllProposals().map(cacheProposal => {
       return Object.assign(
         cacheProposal,
         daoStore.getProposalStatus(cacheProposal.id)
       );
-    }),
-    daoStore
-  );
+    })
 
   const initialProposalState: ProposalsState = {
     loading: false,
