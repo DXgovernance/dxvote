@@ -1,82 +1,63 @@
-import { useContext } from "contexts"
-import { useState , useEffect} from "react"
-import { BigNumber } from "utils/bignumber"
-import { ZERO_ADDRESS } from "utils/constants"
-import { bnum } from "utils/helpers"
-
+import { useContext } from 'contexts';
+import { useState, useEffect } from 'react';
+import { BigNumber } from 'utils/bignumber';
+import { ZERO_ADDRESS } from 'utils/constants';
 
 interface UseRepReturns {
-  totalSupply: BigNumber
-  userRep: BigNumber
+  getRep(atBlock: number): { totalSupply: BigNumber; userRep: BigNumber };
 }
-
 
 interface MemoInteface {
   [index: number]: {
-    totalSupply: BigNumber,
-    userRep: BigNumber
-  }
- }
+    totalSupply: BigNumber;
+    userRep: BigNumber;
+  };
+}
 
-
-export const useRep = (userAddress: string = ZERO_ADDRESS, atBlock: number = 0): UseRepReturns => {
-  const {context: {daoStore,  configStore }} = useContext()
-  const [totalSupply, setTotalSupply] = useState<BigNumber>(bnum(0))
-  const [userRep, setUserRep] = useState<BigNumber>(bnum(0))
-  const [memo, setMemo] = useState<MemoInteface>({})
-
-
+export const useRep = (userAddress: string = ZERO_ADDRESS): UseRepReturns => {
+  const {
+    context: { daoStore, configStore },
+  } = useContext();
+  const [memo, setMemo] = useState<MemoInteface>({});
+  const cache: MemoInteface = {};
   const repEvents = daoStore.getCache().daoInfo.repEvents;
   const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1;
 
-    // go through entire array once, store value in object,
-    // {[blockNumber]: {totalSupply: "2132"}
-    // cache value
-    // localStorage/SessionStorage
-    // go through object
+  let totalSupply: BigNumber;
+  let userRep: BigNumber;
 
-  const cache: MemoInteface = {}
+  const getRep = (atBlock: number = 0) => {
+    const totalSupply = memo[atBlock].totalSupply;
+    const userRep = memo[atBlock].userRep;
 
-  const getTotalSupply = repEvents.reduce((total, repEvent) => {
-      if (repEvent.event === 'Mint') {
-        total.plus(repEvent.amount)
-        cache[inL2 ? repEvent.l2BlockNumber : repEvent.l1BlockNumber].totalSupply == total
-      }
+    return { totalSupply, userRep };
+  };
 
-      if (repEvent.event === 'burn') {
-        total.minus(repEvent.amount)
-        cache[inL2 ? repEvent.l2BlockNumber : repEvent.l1BlockNumber].totalSupply == total
-      }
-    return total
-    }, bnum(0))
-
-  const getUserRep = repEvents.reduce((total, repEvent) => {
-  if(repEvent.event === 'Mint' && repEvent.account === userAddress){
-    total.plus(repEvent.amount)
-    cache[inL2 ? repEvent.l2BlockNumber : repEvent.l1BlockNumber].userRep == total
+  for (let i = 0; i < repEvents.length; i++) {
+    if (repEvents[i].event === 'Mint') {
+      totalSupply = totalSupply.plus(repEvents[i].amount);
+      cache[inL2 ? repEvents[i].l2BlockNumber : repEvents[i].l1BlockNumber]
+        .totalSupply == totalSupply;
+      if (repEvents[i].account === userAddress)
+        userRep = userRep.plus(repEvents[i].amount);
+      cache[inL2 ? repEvents[i].l2BlockNumber : repEvents[i].l1BlockNumber]
+        .userRep == userRep;
+    } else if (repEvents[i].event === 'Burn') {
+      totalSupply = totalSupply.minus(repEvents[i].amount);
+      cache[inL2 ? repEvents[i].l2BlockNumber : repEvents[i].l1BlockNumber]
+        .totalSupply == totalSupply;
+      if (repEvents[i].account === userAddress)
+        userRep = userRep.minus(repEvents[i].amount);
+      cache[inL2 ? repEvents[i].l2BlockNumber : repEvents[i].l1BlockNumber]
+        .userRep == userRep;
+    }
   }
-  if(repEvent.event === 'burn' && repEvent.account === userAddress){
-    total.minus(repEvent.amount)
-    cache[inL2 ? repEvent.l2BlockNumber : repEvent.l1BlockNumber].userRep == total
-  }
-  return total
-}, bnum(0))
 
   useEffect(() => {
-    getTotalSupply
-    getUserRep
-    setMemo(cache)
-  }, [repEvents])
-
-useEffect(() => {
-  setTotalSupply(memo[atBlock].totalSupply)
-  setUserRep(memo[atBlock].userRep)
-}, [userAddress, atBlock])
-
-
+    setMemo(cache);
+  }, [repEvents]);
 
   return {
-    totalSupply,
-    userRep
-  }
-}
+    getRep,
+  };
+};
