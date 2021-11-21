@@ -355,6 +355,9 @@ export const decodeProposalStatus = function (
 export const orderByNewestTimeToFinish = (a: any, b: any) =>
   a.finishTime - b.finishTime;
 
+export const orderByOldestTimeToFinish = (a: any, b: any) =>
+  b.finishTime - a.finishTime;
+
 /// filtering and sorting proposals for All States, All Schemas criteria
 export const filterInitialCriteria = (
   proposals: ProposalsExtended[],
@@ -418,7 +421,7 @@ export const filterInitialCriteria = (
     (proposal: Proposal): Boolean =>
       proposal.stateInVotingMachine === VotingMachineProposalState.Executed
   );
-  executed.sort(orderByNewestTimeToFinish);
+  executed.sort(orderByOldestTimeToFinish);
 
   return [
     ...earliestAbove10,

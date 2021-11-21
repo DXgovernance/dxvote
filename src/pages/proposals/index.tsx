@@ -37,7 +37,7 @@ import {
   UnstyledAnchor,
   StyledTableRow,
 } from './styles';
-import { useFilterCriteria } from 'hooks/useFilterCriteria';
+import { useFilteredProposals } from '../../hooks/useFilteredProposals';
 
 const ProposalsPage = observer(() => {
   const {
@@ -49,7 +49,16 @@ const ProposalsPage = observer(() => {
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
 
-  const { filteredProposals: proposals, loading} = useFilterCriteria()
+  const {
+    proposals,
+    loading,
+    titleFilter,
+    setTitleFilter,
+    stateFilter,
+    setStateFilter,
+    schemesFilter,
+    setSchemesFilter,
+  } = useFilteredProposals();
 
   const history = useHistory();
   return (
@@ -61,9 +70,9 @@ const ProposalsPage = observer(() => {
               + New Proposal
             </LinkButton>
           </NewProposalButton>
-          <TitleSearch />
-          <StatusSearch />
-          <SchemeSearch />
+          <TitleSearch value={titleFilter} onFilter={setTitleFilter} />
+          <StatusSearch value={stateFilter} onFilter={setStateFilter} />
+          <SchemeSearch value={schemesFilter} onFilter={setSchemesFilter} />
         </ProposalTableHeaderActions>
         <FooterWrap>
           <Footer />

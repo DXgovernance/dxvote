@@ -3,7 +3,7 @@ import { DaoNetworkCache, DaoInfo } from '../src/types';
 const fs = require('fs');
 const hre = require('hardhat');
 const web3 = hre.web3;
-const { getUpdatedCache } = require('../src/cache');
+const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
 
 const arbitrum = require('../src/configs/arbitrum/config.json');
@@ -25,6 +25,7 @@ const appConfig: AppConfig = {
 const FormData = require('form-data');
 
 const networkName = hre.network.name;
+const proposalTitlesFileName = 'proposalTitles';
 
 const networkIds = {
   arbitrum: 42161,
@@ -47,6 +48,8 @@ const emptyCache: DaoNetworkCache = {
   ipfsHashes: [],
 };
 
+let proposalTitles: Record<string, string> = {};
+
 async function main() {
   if (process.env.EMPTY_CACHE) {
     fs.writeFileSync(
@@ -54,10 +57,29 @@ async function main() {
       JSON.stringify(emptyCache, null, 2),
       { encoding: 'utf8', flag: 'w' }
     );
+    fs.writeFileSync(
+      './cache/' + proposalTitlesFileName + '.json',
+      JSON.stringify({}, null, 2),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      }
+    );
   } else {
     // Get the network configuration
     let networkConfig = appConfig[networkName];
     let networkCacheFile: DaoNetworkCache;
+
+    // Read the existing proposal titles file
+    if (fs.existsSync('./cache/' + proposalTitlesFileName + '.json')) {
+      proposalTitles = JSON.parse(
+        fs.readFileSync('./cache/' + proposalTitlesFileName + '.json', {
+          encoding: 'utf8',
+          flag: 'r',
+        })
+      );
+    }
+
     if (networkName === 'localhost') {
       networkCacheFile = emptyCache;
     } else {
@@ -103,11 +125,22 @@ async function main() {
         toBlock,
         web3
       );
+      const newTitles = await getProposalTitlesFromIPFS(
+        networkCacheFile,
+        toBlock
+      );
+      Object.assign(proposalTitles, newTitles);
     }
 
     fs.writeFileSync(
       './cache/' + networkName + '.json',
       JSON.stringify(networkCacheFile),
+      { encoding: 'utf8', flag: 'w' }
+    );
+
+    fs.writeFileSync(
+      './cache/' + proposalTitlesFileName + '.json',
+      JSON.stringify(proposalTitles),
       { encoding: 'utf8', flag: 'w' }
     );
 
@@ -160,6 +193,15 @@ async function main() {
   fs.writeFileSync(
     './src/configs/' + networkName + '/config.json',
     JSON.stringify(appConfig[networkName], null, 2),
+    {
+      encoding: 'utf8',
+      flag: 'w',
+    }
+  );
+
+  fs.writeFileSync(
+    './src/configs/' + proposalTitlesFileName + '.json',
+    JSON.stringify(proposalTitles, null, 2),
     {
       encoding: 'utf8',
       flag: 'w',

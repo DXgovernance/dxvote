@@ -2,7 +2,7 @@ import { useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useContext } from '../../contexts';
-import { Box, Question, Button, LinkButton } from '../../components/common';
+import { Box, Question, LinkButton } from '../../components/common';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import contentHash from 'content-hash';
 
@@ -13,14 +13,14 @@ import {
   ZERO_HASH,
   sleep,
   bnum,
-  normalizeBalance,
   denormalizeBalance,
   encodePermission,
   TXEvents,
 } from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
 import DiscourseImporter from '../../components/DiscourseImporter';
-
+import { Calls } from 'components/ProposalSubmission/Custom/Calls';
+import { Preview } from '../../components/ProposalSubmission/Custom/Preview';
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
   display: flex;
@@ -74,57 +74,6 @@ const TextActions = styled.div`
   line-height: 30px;
 `;
 
-const CallRow = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: left;
-  flex-direction: row;
-  margin-bottom: 10px;
-
-  span {
-    text-align: center;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 18px;
-    padding: 10px 10px;
-  }
-`;
-
-const RemoveButton = styled.div`
-  background-color: grey;
-  border: 1px solid black;
-  border-radius: 10px;
-  color: white;
-  height: 25px;
-  letter-spacing: 1px;
-  font-weight: 500;
-  line-height: 25px;
-  text-align: center;
-  cursor: pointer;
-  width: max-content;
-  padding: 0px 5px;
-  margin: 5px;
-`;
-
-const TextInput = styled.input`
-  width: ${props => props.width || '25%'};
-  height: 34px;
-  border-radius: 3px;
-  border: 1px solid gray;
-  margin-right: 5px;
-`;
-
-const SelectInput = styled.select`
-  width: ${props => props.width || '25%'};
-  height: 38px;
-  border-radius: 3px;
-  border: 1px solid gray;
-  margin-right: 5px;
-  background-color: #fff;
-`;
-
 const NewProposalPage = observer(() => {
   const {
     context: {
@@ -137,7 +86,6 @@ const NewProposalPage = observer(() => {
     },
   } = useContext();
 
-  const networkTokens = configStore.getTokensOfNetwork();
   const schemes = daoStore.getAllSchemes();
   const networkContracts = configStore.getNetworkContracts();
   const schemeInLocalStorage = localStorage.getItem(
@@ -713,361 +661,25 @@ const NewProposalPage = observer(() => {
         <div />
       )}
       <h2>Description Preview</h2>
-      <MDEditor.Markdown
-        source={descriptionText}
-        style={{
-          backgroundColor: 'white',
-          borderRadius: '5px',
-          border: '1px solid gray',
-          padding: '20px 10px',
-        }}
+      <Preview descriptionText={descriptionText} schemeToUse={schemeToUse} />
+
+      <Calls
+        schemeToUse={schemeToUse}
+        onContributionRewardValueChange={onContributionRewardValueChange}
+        contributionRewardCalls={contributionRewardCalls}
+        onSchemeRegistrarValueChange={onSchemeRegistrarValueChange}
+        schemeRegistrarProposalValues={schemeRegistrarProposalValues}
+        calls={calls}
+        onToSelectChange={onToSelectChange}
+        allowedToCall={allowedToCall}
+        onFunctionSelectChange={onFunctionSelectChange}
+        onFunctionParamsChange={onFunctionParamsChange}
+        addCall={addCall}
+        onValueChange={onValueChange}
+        networkAssetSymbol={networkAssetSymbol}
+        removeCall={removeCall}
+        changeCallType={changeCallType}
       />
-      {schemeToUse.type === 'ContributionReward' ||
-      schemeToUse.type === 'GenericMulticall' ||
-      schemeToUse.type === 'SchemeRegistrar' ||
-      (schemeToUse.type === 'WalletScheme' &&
-        schemeToUse.controllerAddress === networkContracts.controller) ? (
-        <h2>
-          Calls executed from the avatar <Question question="9" />
-        </h2>
-      ) : (
-        <h2>
-          Calls executed from the scheme <Question question="9" />
-        </h2>
-      )}
-      {Object.keys(transferLimits).map(assetAddress => {
-        if (assetAddress === ZERO_ADDRESS)
-          return (
-            <h3>
-              Transfer limit of{' '}
-              {normalizeBalance(transferLimits[assetAddress]).toString()}{' '}
-              {networkAssetSymbol}
-            </h3>
-          );
-        else {
-          const token = networkTokens.find(
-            networkToken => networkToken.address === assetAddress
-          );
-          if (token)
-            return (
-              <h3>
-                Transfer limit of{' '}
-                {normalizeBalance(
-                  transferLimits[assetAddress],
-                  token.decimals
-                ).toString()}{' '}
-                {token.symbol}
-              </h3>
-            );
-          else
-            return (
-              <h3>
-                Transfer limit {transferLimits[assetAddress].toString()} of
-                asset {assetAddress}
-              </h3>
-            );
-        }
-      })}
-
-      {schemeToUse.type === 'ContributionReward' ? (
-        // If scheme to use is Contribution Reward display a different form with less fields
-        <div>
-          <CallRow>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Beneficiary Account
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>REP Change</span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              {networkAssetSymbol} Value
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Address of Token
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Token Amount (in WEI)
-            </span>
-          </CallRow>
-          <CallRow>
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'beneficiary',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.beneficiary}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange('repChange', event.target.value)
-              }
-              value={contributionRewardCalls.repChange}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange('ethValue', event.target.value)
-              }
-              value={contributionRewardCalls.ethValue}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'externalToken',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.externalToken}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onContributionRewardValueChange(
-                  'tokenValue',
-                  event.target.value
-                )
-              }
-              value={contributionRewardCalls.tokenValue}
-              width="50%"
-            />
-          </CallRow>
-        </div>
-      ) : schemeToUse.type === 'SchemeRegistrar' ? (
-        // If scheme to use is SchemeRegistrar display a different form with less fields
-        <div>
-          <CallRow>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Rergister Scheme
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>
-              Scheme Address
-            </span>
-            <span style={{ width: '40%', fontSize: '13px' }}>
-              {' '}
-              Parameters Hash{' '}
-            </span>
-            <span style={{ width: '20%', fontSize: '13px' }}>Permissions</span>
-          </CallRow>
-          <CallRow>
-            <TextInput
-              type="checkbox"
-              onChange={event =>
-                onSchemeRegistrarValueChange('register', event.target.checked)
-              }
-              checked={schemeRegistrarProposalValues.register}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange(
-                  'schemeAddress',
-                  event.target.value
-                )
-              }
-              value={schemeRegistrarProposalValues.schemeAddress}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange(
-                  'parametersHash',
-                  event.target.value
-                )
-              }
-              value={schemeRegistrarProposalValues.parametersHash}
-              width="50%"
-            />
-            <TextInput
-              type="text"
-              onChange={event =>
-                onSchemeRegistrarValueChange('permissions', event.target.value)
-              }
-              value={schemeRegistrarProposalValues.permissions}
-              width="50%"
-            />
-          </CallRow>
-        </div>
-      ) : (
-        // If the scheme is GenericMulticall allow only advanced encoded calls
-        // At last if the scheme used is a Wallet Scheme type allow a complete edition of the calls :)
-        <div>
-          {calls.map((call, i) => (
-            <CallRow key={'call' + i}>
-              <span>#{i}</span>
-
-              {schemeToUse.type === 'WalletScheme' &&
-              call.callType === 'simple' ? (
-                <SelectInput
-                  value={calls[i].to}
-                  onChange={e => {
-                    onToSelectChange(i, e.target.value);
-                  }}
-                  width={'20%'}
-                >
-                  {allowedToCall.map((allowedCall, allowedCallIndex) => {
-                    return (
-                      <option
-                        key={'toCall' + allowedCallIndex}
-                        value={allowedCall.value || ''}
-                      >
-                        {allowedCall.name}
-                      </option>
-                    );
-                  })}
-                </SelectInput>
-              ) : (
-                schemeToUse.type !== 'ContributionReward' && (
-                  <TextInput
-                    onChange={e => {
-                      onToSelectChange(i, e.target.value);
-                    }}
-                    width={'20%'}
-                  />
-                )
-              )}
-
-              {call.callType === 'simple' ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    width: call.callType === 'simple' ? '60%' : '50%',
-                  }}
-                >
-                  <SelectInput
-                    value={calls[i].functionName || ''}
-                    onChange={event => {
-                      const selectedFunction = calls[i].allowedFunctions.find(
-                        allowedFunction => {
-                          return (
-                            allowedFunction.functionName === event.target.value
-                          );
-                        }
-                      );
-                      onFunctionSelectChange(
-                        i,
-                        event.target.value,
-                        selectedFunction ? selectedFunction.params : ''
-                      );
-                    }}
-                    width="40%"
-                  >
-                    {calls[i].allowedFunctions.map(
-                      (allowedFunc, allowedFuncIndex) => {
-                        return (
-                          <option
-                            key={'functionToCall' + allowedFuncIndex}
-                            value={allowedFunc.functionName || ''}
-                          >
-                            {allowedFunc.functionName}
-                          </option>
-                        );
-                      }
-                    )}
-                  </SelectInput>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      width: '100%',
-                      flexDirection: 'column',
-                      paddingRight: '10px',
-                    }}
-                  >
-                    {calls[i].functionParams.length === 0 ? (
-                      <TextInput
-                        key={'functionParam00'}
-                        disabled
-                        type="text"
-                        placeholder="Select address to call and function"
-                        width="100%"
-                        style={{ marginTop: '0px' }}
-                      />
-                    ) : (
-                      calls[i].functionParams.map(
-                        (funcParam, funcParamIndex) => {
-                          return (
-                            <TextInput
-                              key={'functionParam' + funcParamIndex}
-                              type="text"
-                              onChange={value =>
-                                onFunctionParamsChange(i, value, funcParamIndex)
-                              }
-                              value={calls[i].dataValues[funcParamIndex] || ''}
-                              placeholder={funcParam.name}
-                              width="100%"
-                              style={{
-                                marginTop: funcParamIndex > 0 ? '5px' : '0px',
-                              }}
-                            />
-                          );
-                        }
-                      )
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <TextInput
-                  type="text"
-                  onChange={value => onFunctionParamsChange(i, value, 0)}
-                  value={calls[i].dataValues[0] || ''}
-                  placeholder="0x..."
-                  width="100%"
-                />
-              )}
-
-              <TextInput
-                type="text"
-                onChange={value => onValueChange(i, value)}
-                value={calls[i].value || ''}
-                width="10%"
-                placeholder={
-                  calls[i].callType === 'advanced'
-                    ? 'WEI'
-                    : { networkAssetSymbol }
-                }
-              />
-
-              <RemoveButton
-                onClick={() => {
-                  removeCall(i);
-                }}
-              >
-                X
-              </RemoveButton>
-              {schemeToUse.type === 'WalletScheme' ? (
-                <RemoveButton
-                  onClick={() => {
-                    changeCallType(i);
-                  }}
-                >
-                  {calls[i].callType === 'advanced' ? 'Simple' : 'Advanced'}
-                </RemoveButton>
-              ) : (
-                <div />
-              )}
-            </CallRow>
-          ))}
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Button onClick={addCall}>Add Call</Button>
-          </div>
-        </div>
-      )}
 
       {errorMessage.length > 0 ? (
         <TextActions>

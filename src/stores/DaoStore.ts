@@ -1150,7 +1150,6 @@ export default class DaoStore {
   } {
     const { daoStore, providerStore, configStore } = this.context;
     const repEvents = daoStore.getCache().daoInfo.repEvents;
-    console.log({ repEvents });
     let userRep = bnum(0),
       totalSupply = bnum(0);
     if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
