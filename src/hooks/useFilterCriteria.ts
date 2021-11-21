@@ -127,6 +127,6 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     boosted,
     preBoosted,
     earliestUnder10,
-    executed
+    executed,
   };
 };
