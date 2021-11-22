@@ -29,12 +29,14 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     context: { daoStore },
   } = useContext();
 
-  const allProposals: ProposalsExtended[] = daoStore.getAllProposals().map(cacheProposal => {
+  const allProposals: ProposalsExtended[] = daoStore
+    .getAllProposals()
+    .map(cacheProposal => {
       return Object.assign(
         cacheProposal,
         daoStore.getProposalStatus(cacheProposal.id)
       );
-    })
+    });
 
   const proposalState: ProposalsState = {
     proposals: allProposals,

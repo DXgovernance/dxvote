@@ -10,42 +10,37 @@ import { useProposals } from './useProposals';
 import { useRep } from './useRep';
 
 interface useFilterCriteriaReturns {
-  filteredProposals: ProposalsExtended[];
+  proposals: ProposalsExtended[];
   earliestAbove10: ProposalsExtended[];
   boosted: ProposalsExtended[];
   preBoosted: ProposalsExtended[];
   earliestUnder10: ProposalsExtended[];
   executed: ProposalsExtended[];
-  loading: boolean
+  loading: boolean;
 }
 
 export const useFilterCriteria = (): useFilterCriteriaReturns => {
-  const {proposals} = useProposals();
-
-
-  const {getRep} = useRep(ZERO_ADDRESS)
-
-  console.log(proposals)
+  const { proposals } = useProposals();
+  const { getRep } = useRep(ZERO_ADDRESS);
   // states
-  const [filteredProposals, setFilteredProposals] = useState(proposals);
+  const [filteredProposals, setFilteredProposals] =
+    useState<ProposalsExtended[]>(proposals);
   const [earliestAbove10, setEarliestAbove10] = useState([]);
   const [boosted, setBoosted] = useState([]);
   const [preBoosted, setPreBoosted] = useState([]);
   const [earliestUnder10, setEarliestUnder10] = useState([]);
   const [executed, setExecuted] = useState([]);
-  const [loading, setLoading] = useState(false)
-
-
-
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     setEarliestAbove10(
       proposals
-        .filter((proposal) => {
-          const repAtCreation = getRep(proposal.creationEvent.l1BlockNumber).totalSupply
-
+        .filter(proposal => {
+          const repAtCreation = getRep(
+            proposal.creationEvent.l1BlockNumber
+          ).totalSupply;
 
           return (
             (proposal.stateInVotingMachine ===
@@ -86,7 +81,9 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     setEarliestUnder10(
       proposals
         .filter((proposal): Boolean => {
-          const repAtCreation = getRep(proposal.creationEvent.l1BlockNumber).totalSupply
+          const repAtCreation = getRep(
+            proposal.creationEvent.l1BlockNumber
+          ).totalSupply;
 
           return (
             (proposal.stateInVotingMachine ===
@@ -121,16 +118,17 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       ...earliestUnder10,
       ...executed,
     ]);
-    setLoading(false)
+    setLoading(false);
   }, [proposals]);
 
+  console.log(filteredProposals);
   return {
-    filteredProposals,
+    proposals: filteredProposals,
     earliestAbove10,
     boosted,
     preBoosted,
     earliestUnder10,
     executed,
-    loading
+    loading,
   };
 };

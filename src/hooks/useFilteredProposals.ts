@@ -13,8 +13,8 @@ const matchScheme = (proposal: ProposalsExtended, scheme: string) =>
   scheme === 'All Schemes' || !scheme ? proposal : proposal.scheme === scheme;
 
 export const useFilteredProposals = () => {
-  const { filteredProposals: proposals, loading } = useFilterCriteria();
-
+  const { proposals, loading } = useFilterCriteria();
+  console.log(proposals, loading);
 
   const minisearch = useMiniSearch<ProposalsExtended>({
     fields: ['title'],
@@ -37,7 +37,6 @@ export const useFilteredProposals = () => {
     'All Schemes'
   );
 
-
   // Rebuild search index when proposals list changes
   useEffect(() => {
     minisearch.buildIndex(proposals);
@@ -46,8 +45,6 @@ export const useFilteredProposals = () => {
   // Compute search results when search criteria changes
   const searchResults = useMemo(() => {
     if (!proposals) return [];
-
-
 
     let filteredProposals = titleFilter
       ? minisearch.query(titleFilter)

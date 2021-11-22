@@ -50,7 +50,7 @@ const ProposalsPage = observer(() => {
   const userEvents = daoStore.getUserEvents(account);
 
   const {
-   proposals,
+    proposals,
     loading,
     titleFilter,
     setTitleFilter,
@@ -60,7 +60,6 @@ const ProposalsPage = observer(() => {
     setSchemesFilter,
   } = useFilteredProposals();
 
-  console.log(proposals, loading)
   const history = useHistory();
   return (
     <ProposalsWrapper>
