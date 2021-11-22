@@ -15,40 +15,40 @@ export function useEagerConnect() {
   const [tried, setTried] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
+  const tryConnecting = async () => {
     const chains = getChains();
     const urlNetworkName = location.pathname.split('/')[1];
     const urlChainId =
       chains.find(chain => chain.name == urlNetworkName)?.id || null;
     const urlChainIdHex = urlChainId ? `0x${urlChainId.toString(16)}` : null;
 
-    const tryConnecting = async () => {
-      const isAuthorized = await injected.isAuthorized();
-      console.debug('[EagerConnect] Activate injected if authorized', {
-        injected,
-        isAuthorized,
+    const isAuthorized = await injected.isAuthorized();
+    console.debug('[EagerConnect] Activate injected if authorized', {
+      injected,
+      isAuthorized,
+    });
+
+    try {
+      const injectedChainId = await injected.getChainId();
+      if (injectedChainId != urlChainIdHex) {
+        setTried(true);
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      setTried(true);
+    }
+
+    if (isAuthorized || (isMobile && window.ethereum)) {
+      activate(injected, undefined, true).catch(() => {
+        setTried(true);
       });
+    } else {
+      setTried(true);
+    }
+  };
 
-      try {
-        const injectedChainId = await injected.getChainId();
-        if (injectedChainId != urlChainIdHex) {
-          setTried(true);
-          return;
-        }
-      } catch (error) {
-        console.error(error);
-        setTried(true);
-      }
-
-      if (isAuthorized || (isMobile && window.ethereum)) {
-        activate(injected, undefined, true).catch(() => {
-          setTried(true);
-        });
-      } else {
-        setTried(true);
-      }
-    };
-
+  useEffect(() => {
     tryConnecting().catch(() => {
       setTried(true);
     });
@@ -61,7 +61,7 @@ export function useEagerConnect() {
     }
   }, [active]);
 
-  return tried;
+  return { triedEager: tried, tryConnecting };
 }
 
 export function useRpcUrls() {
