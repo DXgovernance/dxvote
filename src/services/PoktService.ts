@@ -1,8 +1,9 @@
 import RootContext from '../contexts';
 import axios from 'axios';
-import { ETH_NETWORKS_IDS } from 'provider/connectors';
+import { ETH_NETWORKS_IDS, DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
+import { DEFAULT_RPC_URLS, POKT_NETWORK_URLS } from 'utils';
 
-export default class CustomRpcService {
+export default class poktService {
   context: RootContext;
   auth: Boolean = false;
 
@@ -11,25 +12,20 @@ export default class CustomRpcService {
   }
 
   async isAuthenticated() {
-    const customRpcUrl = this.context.configStore.getLocalConfig().customRpcUrl;
+    const poktAPIKey = this.context.configStore.getLocalConfig().pokt;
 
-    if (customRpcUrl && customRpcUrl.length > 0) {
-      console.log('testing');
+    if (poktAPIKey && poktAPIKey.length > 0) {
       try {
         const auth = await axios({
           method: 'POST',
-          url: customRpcUrl,
+          url: POKT_NETWORK_URLS[DEFAULT_ETH_CHAIN_ID],
           data: {
             jsonrpc: '2.0',
             method: 'eth_blockNumber',
             params: [],
             id: 1,
           },
-          headers: {
-            'Content-Type': 'application/json',
-          },
         });
-        console.log({ auth });
         this.auth = auth.status === 200;
       } catch (e) {
         this.auth = false;
@@ -40,11 +36,20 @@ export default class CustomRpcService {
   }
 
   getRpcUrls() {
-    const customRpcUrl = this.context.configStore.getLocalConfig().customRpcUrl;
-    if (!customRpcUrl) return null;
+    const poktAPIKey = this.context.configStore.getLocalConfig().pokt;
+    if (!poktAPIKey) return null;
 
     return ETH_NETWORKS_IDS.reduce((prevUrls, chainId) => {
-      prevUrls[chainId] = customRpcUrl;
+      const poktNetworkName = POKT_NETWORK_URLS[chainId];
+
+      let poktUrl = null;
+      if (poktNetworkName) {
+        poktUrl = poktNetworkName;
+      } else {
+        poktUrl = DEFAULT_RPC_URLS[chainId];
+      }
+
+      prevUrls[chainId] = poktUrl;
       return prevUrls;
     }, {});
   }

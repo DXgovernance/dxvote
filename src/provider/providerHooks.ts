@@ -66,7 +66,13 @@ export function useEagerConnect() {
 
 export function useRpcUrls() {
   const {
-    context: { infuraService, alchemyService, customRpcService, configStore },
+    context: {
+      infuraService,
+      poktService,
+      alchemyService,
+      customRpcService,
+      configStore,
+    },
   } = useContext();
   const preferredRpc = configStore.getLocalConfig().rpcType;
   const [rpcUrls, setRpcUrls] = useState(null);
@@ -84,6 +90,8 @@ export function useRpcUrls() {
       return infuraService.getRpcUrls();
     } else if (preferredRpc === 'alchemy' && alchemyService.auth) {
       return alchemyService.getRpcUrls();
+    } else if (preferredRpc === 'pokt' && poktService.auth) {
+      return poktService.getRpcUrls();
     } else if (preferredRpc === 'custom' && customRpcService.auth) {
       return customRpcService.getRpcUrls();
     } else {

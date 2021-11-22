@@ -9,6 +9,7 @@ import PinataService from '../services/PinataService';
 import EtherscanService from '../services/EtherscanService';
 import CoingeckoService from '../services/CoingeckoService';
 import InfuraService from '../services/InfuraService';
+import PoktService from '../services/PoktService';
 import AlchemyService from '../services/AlchemyService';
 import CustomRpcService from '../services/CustomRpcService';
 import ENSService from '../services/ENSService';
@@ -54,6 +55,7 @@ export default class RootContext {
   etherscanService: EtherscanService;
   coingeckoService: CoingeckoService;
   infuraService: InfuraService;
+  poktService: PoktService;
   alchemyService: AlchemyService;
   customRpcService: CustomRpcService;
   ensService: ENSService;
@@ -77,6 +79,7 @@ export default class RootContext {
     this.etherscanService = new EtherscanService(this);
     this.coingeckoService = new CoingeckoService(this);
     this.infuraService = new InfuraService(this);
+    this.poktService = new PoktService(this);
     this.alchemyService = new AlchemyService(this);
     this.customRpcService = new CustomRpcService(this);
     this.ensService = new ENSService(this);
