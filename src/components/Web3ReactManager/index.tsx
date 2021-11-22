@@ -20,7 +20,6 @@ const Web3ReactManager = ({ children }) => {
   const location = useLocation();
   const history = useHistory();
   const rpcUrls = useRpcUrls();
-  console.log({ rpcUrls });
 
   const originalFetch = window.fetch;
   window.fetch = (url, opts): Promise<Response> => {

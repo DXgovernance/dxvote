@@ -14,7 +14,6 @@ export default class CustomRpcService {
     const customRpcUrl = this.context.configStore.getLocalConfig().customRpcUrl;
 
     if (customRpcUrl && customRpcUrl.length > 0) {
-      console.log('testing');
       try {
         const auth = await axios({
           method: 'POST',
@@ -25,11 +24,7 @@ export default class CustomRpcService {
             params: [],
             id: 1,
           },
-          headers: {
-            'Content-Type': 'application/json',
-          },
         });
-        console.log({ auth });
         this.auth = auth.status === 200;
       } catch (e) {
         this.auth = false;
