@@ -103,6 +103,9 @@ const ProposalsExporter = () => {
           submittedAt: moment.unix(proposal.submittedTime.toNumber()).format(),
           boostedAt: moment.unix(proposal.boostTime.toNumber()).format(),
           finishedAt: moment.unix(proposal.finishTime.toNumber()).format(),
+          submittedAtTs: proposal.submittedTime.toNumber(),
+          boostedAtTs: proposal.boostTime.toNumber(),
+          finishedAtTs: proposal.finishTime.toNumber(),
           stateInVotingMachine:
             VotingMachineProposalState[proposal.stateInVotingMachine],
           stateInScheme: WalletSchemeProposalState[proposal.stateInScheme],

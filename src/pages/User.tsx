@@ -41,7 +41,8 @@ const UserPage = observer(() => {
   const exportCSV = async () => {
     const historyItems = userEvents.history.map(historyEvent => ({
       tx: historyEvent.event.tx,
-      timestamp: moment.unix(historyEvent.event.timestamp).format(),
+      eventTime: moment.unix(historyEvent.event.timestamp).format(),
+      eventTimeTs: historyEvent.event.timestamp,
       blockNumber: historyEvent.event.block,
       action: historyEvent.text,
     }));
