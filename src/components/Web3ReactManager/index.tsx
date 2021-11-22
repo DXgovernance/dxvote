@@ -21,6 +21,7 @@ const Web3ReactManager = ({ children }) => {
   const history = useHistory();
   const rpcUrls = useRpcUrls();
 
+  // Overriding default fetch to check for RPC url and setting correct headers if matched
   const originalFetch = window.fetch;
   window.fetch = (url, opts): Promise<Response> => {
     if (rpcUrls && Object.values(rpcUrls).includes(url) && opts) {
