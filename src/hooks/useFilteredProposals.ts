@@ -15,6 +15,7 @@ const matchScheme = (proposal: ProposalsExtended, scheme: string) =>
 export const useFilteredProposals = () => {
   const { filteredProposals: proposals, loading } = useFilterCriteria();
 
+
   const minisearch = useMiniSearch<ProposalsExtended>({
     fields: ['title'],
     storeFields: ['id'],
@@ -59,7 +60,6 @@ export const useFilteredProposals = () => {
     );
     return filteredProposals;
   }, [minisearch, proposals, titleFilter, stateFilter, schemesFilter]);
-  console.log(proposals, loading)
 
   return {
     proposals: searchResults,

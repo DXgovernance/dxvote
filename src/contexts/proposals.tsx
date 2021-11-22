@@ -1,11 +1,17 @@
 import { useContext } from 'contexts';
 import { createContext, ReactNode } from 'react';
+import { BigNumber } from 'utils';
 
 export type ProposalsExtended = Proposal &
   ProposalStateChange &
   VotingMachineParameters &
   Pick<Scheme, 'maxSecondsForExecution' | 'type'> & {
     autoBoost: Boolean;
+    boostTime: BigNumber;
+    finishTime: BigNumber;
+    // @Todo convert PA to enum
+    status: any;
+    pendingAction: any;
   };
 
 interface ProposalProviderProps {

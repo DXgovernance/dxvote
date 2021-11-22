@@ -1,3 +1,4 @@
+import { ProposalsExtended } from 'contexts/proposals';
 import { useState, useEffect } from 'react';
 import {
   orderByNewestTimeToFinish,
@@ -9,12 +10,12 @@ import { useProposals } from './useProposals';
 import { useRep } from './useRep';
 
 interface useFilterCriteriaReturns {
-  filteredProposals: any[];
-  earliestAbove10: Proposal[];
-  boosted: Proposal[];
-  preBoosted: Proposal[];
-  earliestUnder10: Proposal[];
-  executed: Proposal[];
+  filteredProposals: ProposalsExtended[];
+  earliestAbove10: ProposalsExtended[];
+  boosted: ProposalsExtended[];
+  preBoosted: ProposalsExtended[];
+  earliestUnder10: ProposalsExtended[];
+  executed: ProposalsExtended[];
   loading: boolean
 }
 
@@ -42,7 +43,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     setEarliestAbove10(
       proposals
-        .filter((proposal: Proposal) => {
+        .filter((proposal) => {
           const repAtCreation = getRep(proposal.creationEvent.l1BlockNumber).totalSupply
 
 
@@ -65,7 +66,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     setBoosted(
       proposals
         .filter(
-          (proposal: Proposal): Boolean =>
+          (proposal): Boolean =>
             proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
         )
         .sort(orderByNewestTimeToFinish)
@@ -74,7 +75,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     setPreBoosted(
       proposals
         .filter(
-          (proposal: Proposal): Boolean =>
+          (proposal): Boolean =>
             proposal.stateInVotingMachine ===
             VotingMachineProposalState.PreBoosted
         )
@@ -84,7 +85,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     setEarliestUnder10(
       proposals
-        .filter((proposal: Proposal): Boolean => {
+        .filter((proposal): Boolean => {
           const repAtCreation = getRep(proposal.creationEvent.l1BlockNumber).totalSupply
 
           return (
@@ -106,7 +107,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     setExecuted(
       proposals
         .filter(
-          (proposal: Proposal): Boolean =>
+          (proposal): Boolean =>
             proposal.stateInVotingMachine ===
             VotingMachineProposalState.Executed
         )
