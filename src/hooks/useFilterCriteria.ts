@@ -9,7 +9,7 @@ import { useProposals } from './useProposals';
 import { useRep } from './useRep';
 
 interface useFilterCriteriaReturns {
-  filteredProposals: Proposal[];
+  filteredProposals: any[];
   earliestAbove10: Proposal[];
   boosted: Proposal[];
   preBoosted: Proposal[];
@@ -19,24 +19,30 @@ interface useFilterCriteriaReturns {
 }
 
 export const useFilterCriteria = (): useFilterCriteriaReturns => {
-  const [{loading, proposals}] = useProposals();
+  const {proposals} = useProposals();
+
 
   const {getRep} = useRep(ZERO_ADDRESS)
 
+  console.log(proposals)
   // states
-  const [filteredProposals, setFilteredProposals] = useState([]);
+  const [filteredProposals, setFilteredProposals] = useState(proposals);
   const [earliestAbove10, setEarliestAbove10] = useState([]);
   const [boosted, setBoosted] = useState([]);
   const [preBoosted, setPreBoosted] = useState([]);
   const [earliestUnder10, setEarliestUnder10] = useState([]);
   const [executed, setExecuted] = useState([]);
+  const [loading, setLoading] = useState(false)
+
+
+
 
   useEffect(() => {
+    setLoading(true)
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     setEarliestAbove10(
       proposals
         .filter((proposal: Proposal) => {
-          // useMemo here
           const repAtCreation = getRep(proposal.creationEvent.l1BlockNumber).totalSupply
 
 
@@ -114,6 +120,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       ...earliestUnder10,
       ...executed,
     ]);
+    setLoading(false)
   }, [proposals]);
 
   return {

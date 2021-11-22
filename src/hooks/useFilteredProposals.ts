@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { ProposalsExtended } from '../contexts/proposals';
+import { useFilterCriteria } from './useFilterCriteria';
 import useMiniSearch from './useMiniSearch';
-import { useProposals } from './useProposals';
 import useQueryStringValue from './useQueryStringValue';
 
 const matchStatus = (proposal: ProposalsExtended, status: string) =>
@@ -13,7 +13,8 @@ const matchScheme = (proposal: ProposalsExtended, scheme: string) =>
   scheme === 'All Schemes' || !scheme ? proposal : proposal.scheme === scheme;
 
 export const useFilteredProposals = () => {
-  const { proposals, loading } = useProposals();
+  const { filteredProposals: proposals, loading } = useFilterCriteria();
+
   const minisearch = useMiniSearch<ProposalsExtended>({
     fields: ['title'],
     storeFields: ['id'],
@@ -35,6 +36,7 @@ export const useFilteredProposals = () => {
     'All Schemes'
   );
 
+
   // Rebuild search index when proposals list changes
   useEffect(() => {
     minisearch.buildIndex(proposals);
@@ -43,6 +45,8 @@ export const useFilteredProposals = () => {
   // Compute search results when search criteria changes
   const searchResults = useMemo(() => {
     if (!proposals) return [];
+
+
 
     let filteredProposals = titleFilter
       ? minisearch.query(titleFilter)
@@ -55,6 +59,7 @@ export const useFilteredProposals = () => {
     );
     return filteredProposals;
   }, [minisearch, proposals, titleFilter, stateFilter, schemesFilter]);
+  console.log(proposals, loading)
 
   return {
     proposals: searchResults,
