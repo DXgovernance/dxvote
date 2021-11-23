@@ -35,93 +35,88 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
   useEffect(() => {
     setLoading(true);
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
-    setEarliestAbove10(
-      proposals
-        .filter(proposal => {
-          const repAtCreation = getRep(
-            proposal.creationEvent.l1BlockNumber
-          ).totalSupply;
+    const stateEarliestAbove10 = proposals
+      .filter(proposal => {
+        const repAtCreation = getRep(
+          proposal.creationEvent.l1BlockNumber
+        ).totalSupply;
 
-          return (
-            (proposal.stateInVotingMachine ===
-              VotingMachineProposalState.QuietEndingPeriod ||
-              proposal.stateInVotingMachine ===
-                VotingMachineProposalState.Queued) &&
-            proposal.positiveVotes
-              .div(repAtCreation)
-              .times(100)
-              .decimalPlaces(2)
-              .gte(QUEUED_PRIORITY_THRESHOLD)
-          );
-        })
-        .sort(orderByNewestTimeToFinish)
-    );
+        return (
+          (proposal.stateInVotingMachine ===
+            VotingMachineProposalState.QuietEndingPeriod ||
+            proposal.stateInVotingMachine ===
+              VotingMachineProposalState.Queued) &&
+          proposal.positiveVotes
+            .div(repAtCreation)
+            .times(100)
+            .decimalPlaces(2)
+            .gte(QUEUED_PRIORITY_THRESHOLD)
+        );
+      })
+      .sort(orderByNewestTimeToFinish);
 
     // Proposals Boosted. (Ordered from time to finish, from lower to higher)
-    setBoosted(
-      proposals
-        .filter(
-          (proposal): Boolean =>
-            proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
-        )
-        .sort(orderByNewestTimeToFinish)
-    );
+    const stateBoosted = proposals
+      .filter(
+        (proposal): Boolean =>
+          proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
+      )
+      .sort(orderByNewestTimeToFinish);
 
-    setPreBoosted(
-      proposals
-        .filter(
-          (proposal): Boolean =>
-            proposal.stateInVotingMachine ===
-            VotingMachineProposalState.PreBoosted
-        )
-        .sort(orderByNewestTimeToFinish)
-    );
+    const statePreBoosted = proposals
+      .filter(
+        (proposal): Boolean =>
+          proposal.stateInVotingMachine ===
+          VotingMachineProposalState.PreBoosted
+      )
+      .sort(orderByNewestTimeToFinish);
 
     // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
-    setEarliestUnder10(
-      proposals
-        .filter((proposal): Boolean => {
-          const repAtCreation = getRep(
-            proposal.creationEvent.l1BlockNumber
-          ).totalSupply;
+    const stateEarliestUnder10 = proposals
+      .filter((proposal): Boolean => {
+        const repAtCreation = getRep(
+          proposal.creationEvent.l1BlockNumber
+        ).totalSupply;
 
-          return (
-            (proposal.stateInVotingMachine ===
-              VotingMachineProposalState.QuietEndingPeriod ||
-              proposal.stateInVotingMachine ===
-                VotingMachineProposalState.Queued) &&
-            proposal.positiveVotes
-              .div(repAtCreation)
-              .times(100)
-              .decimalPlaces(2)
-              .lt(QUEUED_PRIORITY_THRESHOLD)
-          );
-        })
-        .sort(orderByNewestTimeToFinish)
-    );
+        return (
+          (proposal.stateInVotingMachine ===
+            VotingMachineProposalState.QuietEndingPeriod ||
+            proposal.stateInVotingMachine ===
+              VotingMachineProposalState.Queued) &&
+          proposal.positiveVotes
+            .div(repAtCreation)
+            .times(100)
+            .decimalPlaces(2)
+            .lt(QUEUED_PRIORITY_THRESHOLD)
+        );
+      })
+      .sort(orderByNewestTimeToFinish);
 
     //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
-    setExecuted(
-      proposals
-        .filter(
-          (proposal): Boolean =>
-            proposal.stateInVotingMachine ===
-            VotingMachineProposalState.Executed
-        )
-        .sort(orderByNewestTimeToFinish)
-    );
+    const stateExecuted = proposals
+      .filter(
+        (proposal): Boolean =>
+          proposal.stateInVotingMachine === VotingMachineProposalState.Executed
+      )
+      .sort(orderByNewestTimeToFinish);
+
+    setEarliestAbove10(stateEarliestAbove10);
+    setEarliestUnder10(stateEarliestUnder10);
+    setPreBoosted(statePreBoosted);
+    setBoosted(statePreBoosted);
+    setExecuted(stateExecuted);
 
     setFilteredProposals([
-      ...earliestAbove10,
-      ...boosted,
-      ...preBoosted,
-      ...earliestUnder10,
-      ...executed,
+      ...stateEarliestAbove10,
+      ...stateBoosted,
+      ...statePreBoosted,
+      ...stateEarliestUnder10,
+      ...stateExecuted,
     ]);
+
     setLoading(false);
   }, [proposals]);
 
-  console.log(filteredProposals);
   return {
     proposals: filteredProposals,
     earliestAbove10,
