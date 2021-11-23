@@ -22,18 +22,18 @@ interface useFilterCriteriaReturns {
 export const useFilterCriteria = (): useFilterCriteriaReturns => {
   const { proposals } = useProposals();
   const { getRep } = useRep(ZERO_ADDRESS);
-  // states
-  const [filteredProposals, setFilteredProposals] =
-    useState<ProposalsExtended[]>(proposals);
+
+  const [filteredProposals, setFilteredProposals] = useState<
+    ProposalsExtended[]
+  >([]);
   const [earliestAbove10, setEarliestAbove10] = useState([]);
   const [boosted, setBoosted] = useState([]);
   const [preBoosted, setPreBoosted] = useState([]);
   const [earliestUnder10, setEarliestUnder10] = useState([]);
   const [executed, setExecuted] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestAbove10 = proposals
       .filter(proposal => {
