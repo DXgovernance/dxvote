@@ -1,6 +1,7 @@
 import Datetime from 'react-datetime';
 import styled from 'styled-components';
 import 'react-datetime/css/react-datetime.css';
+import { Moment } from 'moment';
 
 // This is an example of usage of a component
 // In the form we can use <Datetime value{controledValue} />
@@ -31,7 +32,13 @@ const Date = styled(Datetime)`
   }
 `;
 
-export const InputDate = ({ onChange, value, text = null, width = 200 }) => (
+export const InputDate = ({
+  onChange,
+  value,
+  text = null,
+  width = 200,
+  isValidDate = (date: Moment) => true,
+}) => (
   <div>
     <Label width={width}>{text}</Label>
     <Date
@@ -40,6 +47,7 @@ export const InputDate = ({ onChange, value, text = null, width = 200 }) => (
       dateFormat="DD/MM/YYYY"
       timeFormat={false}
       width={width}
+      isValidDate={isValidDate}
     />
   </div>
 );
