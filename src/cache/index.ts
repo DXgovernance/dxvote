@@ -321,7 +321,7 @@ export const updateVotingMachine = async function (
               votingMachineEvent.returnValues._paramsHash
             );
           break;
-        case 'StateChange': {
+        case 'StateChange':
           votingMachineEventsInCache.proposalStateChanges.push({
             event: votingMachineEvent.event,
             signature: votingMachineEvent.signature,
@@ -336,7 +336,6 @@ export const updateVotingMachine = async function (
             logIndex: votingMachineEvent.logIndex,
           });
           break;
-        }
         case 'VoteProposal':
           const preBoosted =
             votingMachineEventsInCache.proposalStateChanges.findIndex(
