@@ -1,19 +1,23 @@
 import { useContext } from 'contexts';
 import { createContext, ReactNode } from 'react';
-import { filterInitialCriteria } from 'utils';
+import { BigNumber, filterInitialCriteria } from 'utils';
 
 export type ProposalsExtended = Proposal &
   ProposalStateChange &
   VotingMachineParameters &
   Pick<Scheme, 'maxSecondsForExecution' | 'type'> & {
     autoBoost: Boolean;
+    boostTime: BigNumber;
+    finishTime: BigNumber;
+    status: string;
+    pendingAction: number;
   };
 
 interface ProposalProviderProps {
   children: ReactNode;
 }
 
-interface ProposalsState {
+export interface ProposalsContextInterface {
   loading: boolean;
   error: Error | null;
   proposals: ProposalsExtended[];
@@ -36,7 +40,7 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     daoStore
   );
 
-  const proposalState: ProposalsState = {
+  const proposalState: ProposalsContextInterface = {
     loading: false,
     error: null,
     proposals: allProposals,

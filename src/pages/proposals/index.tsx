@@ -38,6 +38,7 @@ import {
   StyledTableRow,
 } from './styles';
 import { useFilteredProposals } from '../../hooks/useFilteredProposals';
+import ProposalsExporter from '../../components/Proposals/ProposalsExporter';
 
 const ProposalsPage = observer(() => {
   const {
@@ -75,6 +76,7 @@ const ProposalsPage = observer(() => {
           <SchemeSearch value={schemesFilter} onFilter={setSchemesFilter} />
         </ProposalTableHeaderActions>
         <FooterWrap>
+          <ProposalsExporter />
           <Footer />
         </FooterWrap>
       </SidebarWrapper>
