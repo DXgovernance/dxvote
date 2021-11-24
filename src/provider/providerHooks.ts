@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { isMobile } from 'react-device-detect';
-import { getChains, injected } from '../provider/connectors';
+import { DEFAULT_ETH_CHAIN_ID, getChains, injected } from '../provider/connectors';
 import { useContext } from '../contexts';
 import { DEFAULT_RPC_URLS } from '../utils';
 
@@ -19,7 +19,7 @@ export function useEagerConnect() {
     const chains = getChains();
     const urlNetworkName = location.pathname.split('/')[1];
     const urlChainId =
-      chains.find(chain => chain.name == urlNetworkName)?.id || null;
+      chains.find(chain => chain.name == urlNetworkName)?.id || DEFAULT_ETH_CHAIN_ID;
     const urlChainIdHex = urlChainId ? `0x${urlChainId.toString(16)}` : null;
 
     const isAuthorized = await injected.isAuthorized();
