@@ -10,6 +10,7 @@ import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { useContext } from 'contexts';
 import { useInterval, usePrevious } from 'utils';
 import { InjectedConnector } from '@web3-react/injected-connector';
+import { NetworkConnector } from '@web3-react/network-connector';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -52,7 +53,7 @@ const Web3ReactManager = ({ children }) => {
   }, [web3Context]);
 
   // try to eagerly connect to a provider if possible
-  const triedEager = useEagerConnect();
+  const { triedEager, tryConnecting } = useEagerConnect();
 
   // If eager-connect failed, try to connect to network in the URL
   // If no chain in the URL, fallback to default chain
@@ -102,6 +103,11 @@ const Web3ReactManager = ({ children }) => {
       // If currently connected to an injected wallet, keep synced with it
       if (connector instanceof InjectedConnector) {
         history.push(`/${chain.name}/proposals`);
+      } else if (connector instanceof NetworkConnector) {
+        const urlNetworkName = location.pathname.split('/')[1];
+        if (urlNetworkName == chain.name) {
+          tryConnecting();
+        }
       }
     };
 
