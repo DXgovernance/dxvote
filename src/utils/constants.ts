@@ -22,7 +22,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 1,
     name: 'mainnet',
     displayName: 'Ethereum Mainnet',
-    defaultRpc: `https://eth-mainnet.alchemyapi.io/v2/${defaultAlchemyKey}`,
+    defaultRpc: `https://eth-mainnet.gateway.pokt.network/v1/lb/610e4d3118656e00369b9b05`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -35,7 +35,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 4,
     name: 'rinkeby',
     displayName: 'Rinkeby Testnet',
-    defaultRpc: `https://eth-rinkeby.alchemyapi.io/v2/${defaultAlchemyKey}`,
+    defaultRpc: `https://eth-rinkeby.gateway.pokt.network/v1/lb/61116c81a585a20035149067`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -48,7 +48,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 100,
     name: 'xdai',
     displayName: 'xDai Chain',
-    defaultRpc: `https://rpc.xdaichain.com/`,
+    defaultRpc: `https://poa-xdai.gateway.pokt.network/v1/lb/610e4ed818656e00369b9ccc`,
     nativeAsset: {
       name: 'xDai',
       symbol: 'xDAI',
@@ -139,6 +139,12 @@ export const ALCHEMY_NETWORK_URLS = {
   '4': 'eth-rinkeby.alchemyapi.io',
   '42161': 'arb-mainnet.g.alchemy.com',
   '421611': 'arb-rinkeby.g.alchemy.com',
+};
+
+export const POKT_NETWORK_URLS = {
+  '1': 'https://eth-mainnet.gateway.pokt.network/v1/lb/610e4d3118656e00369b9b05',
+  '4': 'https://eth-rinkeby.gateway.pokt.network/v1/lb/61116c81a585a20035149067',
+  '100': 'https://poa-xdai.gateway.pokt.network/v1/lb/610e4ed818656e00369b9ccc',
 };
 
 export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(

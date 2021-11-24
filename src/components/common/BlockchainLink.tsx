@@ -10,6 +10,7 @@ import {
 import { useContext } from '../../contexts';
 import { FiExternalLink } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
+import { useRpcUrls } from 'provider/providerHooks';
 
 const AddressLink = styled.div`
   display: flex;
@@ -41,6 +42,8 @@ export const BlockchainLink = ({
     context: { configStore, ensService },
   } = useContext();
 
+  const rpcUrls = useRpcUrls();
+
   const networkName = configStore.getActiveChainName();
   const [ensName, setENSName] = useState('');
   const erc20Token = getERC20Token(text);
@@ -52,7 +55,7 @@ export const BlockchainLink = ({
       setENSName(response);
     }
     getENS();
-  }, [text]);
+  }, [text, rpcUrls]);
 
   let formatedAddress;
   if (!ensName && !dxVoteContract && !erc20Token) {

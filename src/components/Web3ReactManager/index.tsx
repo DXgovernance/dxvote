@@ -21,6 +21,17 @@ const Web3ReactManager = ({ children }) => {
   const history = useHistory();
   const rpcUrls = useRpcUrls();
 
+  // Overriding default fetch to check for RPC url and setting correct headers if matched
+  const originalFetch = window.fetch;
+  window.fetch = (url, opts): Promise<Response> => {
+    if (rpcUrls && Object.values(rpcUrls).includes(url) && opts) {
+      opts.headers = opts.headers || {
+        'Content-Type': 'application/json',
+      };
+    }
+    return originalFetch(url, opts);
+  };
+
   const web3Context = useWeb3React();
   const {
     active: networkActive,
