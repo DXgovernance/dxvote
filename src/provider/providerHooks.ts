@@ -15,7 +15,7 @@ import { DEFAULT_RPC_URLS } from '../utils';
     If we tried to connect, or it's active, return true;
  */
 export function useEagerConnect() {
-  const { activate, active } = useWeb3React();
+  const { activate, active, chainId } = useWeb3React();
   const [tried, setTried] = useState(false);
   const location = useLocation();
 
@@ -57,7 +57,7 @@ export function useEagerConnect() {
     tryConnecting().catch(() => {
       setTried(true);
     });
-  }, [activate]); // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate, chainId]); // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
