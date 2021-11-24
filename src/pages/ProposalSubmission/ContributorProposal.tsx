@@ -275,7 +275,8 @@ export const ContributorProposalPage = observer(() => {
       const vestingCallData = encodeDxdVestingCreate(
         library,
         account,
-        dxdAmount
+        dxdAmount,
+        startDate
       );
 
       const proposalData = {
