@@ -1,6 +1,6 @@
 import { useContext } from 'contexts';
 import { createContext, ReactNode } from 'react';
-import { BigNumber, filterInitialCriteria } from 'utils';
+import { BigNumber } from 'utils';
 
 export type ProposalsExtended = Proposal &
   ProposalStateChange &
@@ -9,17 +9,16 @@ export type ProposalsExtended = Proposal &
     autoBoost: Boolean;
     boostTime: BigNumber;
     finishTime: BigNumber;
-    status: string;
-    pendingAction: number;
+    // @Todo convert PA to enum
+    status: any;
+    pendingAction: any;
   };
 
 interface ProposalProviderProps {
   children: ReactNode;
 }
 
-export interface ProposalsContextInterface {
-  loading: boolean;
-  error: Error | null;
+interface ProposalsState {
   proposals: ProposalsExtended[];
 }
 
@@ -30,19 +29,16 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     context: { daoStore },
   } = useContext();
 
-  const allProposals: ProposalsExtended[] = filterInitialCriteria(
-    daoStore.getAllProposals().map(cacheProposal => {
+  const allProposals: ProposalsExtended[] = daoStore
+    .getAllProposals()
+    .map(cacheProposal => {
       return Object.assign(
         cacheProposal,
         daoStore.getProposalStatus(cacheProposal.id)
       );
-    }),
-    daoStore
-  );
+    });
 
-  const proposalState: ProposalsContextInterface = {
-    loading: false,
-    error: null,
+  const proposalState: ProposalsState = {
     proposals: allProposals,
   };
 
