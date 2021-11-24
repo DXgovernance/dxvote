@@ -56,7 +56,7 @@ const DecodeButton = styled(Button)`
 const ActionParamColor = ['#F9DBDB', '#DBF9DF', '#DBECF9', '#F8DBF9'];
 const contractParameters = ["address", "bytes", "address", "uint256"]
 // will fail if params > 3
-const repeatLoopThroughColorArray = (i, myArray) => i < 4 ? i : i - (4 * Math.floor(i / 4))
+const repeatLoopThroughColorArray = (i, colorArray) => i < colorArray.length ? i : i - (colorArray.length * Math.floor(i / colorArray.length))
 
 
 const ActionDetails = () => {
@@ -68,7 +68,7 @@ const ActionDetails = () => {
           {contractParameters.map((item, i) => {
             return (
               <>
-                <ActionParamTag color={ActionParamColor[repeatLoopThroughColorArray(i, contractParameters)]}>{item}</ActionParamTag>
+                <ActionParamTag color={ActionParamColor[repeatLoopThroughColorArray(i, ActionParamColor)]}>{item}</ActionParamTag>
               </>
             );
           })})
