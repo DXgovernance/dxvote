@@ -9,7 +9,6 @@ const ActionTitle = styled(Box)`
   padding: 1rem;
 `;
 
-
 const ActionParamTag = styled(Box)`
   border-radius: 0.5rem;
   padding: ${props => (props.detailed ? '0.3rem 1rem' : '0 0.5rem')};
@@ -53,11 +52,22 @@ const DecodeButton = styled(Button)`
   padding: 0.25rem 0.75rem;
 `;
 
+// to be replaced with theming array
 const ActionParamColor = ['#F9DBDB', '#DBF9DF', '#DBECF9', '#F8DBF9'];
-const contractParameters = ["address", "bytes", "address", "uint256"]
-// will fail if params > 3
-const repeatLoopThroughColorArray = (i, colorArray) => i < colorArray.length ? i : i - (colorArray.length * Math.floor(i / colorArray.length))
 
+// fake Data to be replaced with contract params data
+const contractParamTypes = ['address', 'bytes', 'address', 'uint256'];
+const contractData = [
+  '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
+  '0x8efcc7500000000000000000000000006a023ccd1ff6f2045c3309768ead9e68f978f6e1000000000000000000000000b90d6bec20993be5d72a5ab353343f7a0281f1580000000000000000000000000000000000000000000000006d37db4d8e530000000000000000000000000000000000000000000000000001e5b8fa8fe2ac00000000000000000000000000000000000000000000000000000000000000009c400000000000000000000000000000000000000000000000008ac7230489e80000000000000000000000000000000000000000000000000000000000006194e23c0000000000000000000000000000000000000000000000000000000061bc6f3c0000000000000000000000005d48c95adffd4b40c1aaadc4e08fc44117e02179',
+  '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
+  '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
+];
+
+const contractParamNames = ['Contract', 'data', 'Avatar', 'Value'];
+
+const repeatLoopThroughColorArray = (i: number, colorArray: String[]) =>
+  i - colorArray.length * Math.floor(i / colorArray.length);
 
 const ActionDetails = () => {
   return (
@@ -65,76 +75,57 @@ const ActionDetails = () => {
       header={
         <ActionTitle>
           genericCall(
-          {contractParameters.map((item, i) => {
+          {contractParamTypes.map((item, i) => {
             return (
               <>
-                <ActionParamTag color={ActionParamColor[repeatLoopThroughColorArray(i, ActionParamColor)]}>{item}</ActionParamTag>
+                <ActionParamTag
+                  color={
+                    ActionParamColor[
+                      repeatLoopThroughColorArray(i, ActionParamColor)
+                    ]
+                  }
+                >
+                  {item}
+                </ActionParamTag>
               </>
             );
-          })})
+          })}
+          )
         </ActionTitle>
       }
     >
       <ActionDetailsTable>
-        <ActionDetailsRow>
-          <ActionDetailsParam>
-            <ActionParamTag detailed>
-              Contract
-              <br />
-              <em>(address)</em>
-            </ActionParamTag>
-          </ActionDetailsParam>
-          <ActionDetailsValue>
-            <IconButton variant="minimal" iconRight>
-              0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46
-              <FiExternalLink />
-            </IconButton>
-          </ActionDetailsValue>
-        </ActionDetailsRow>
-
-        <ActionDetailsRow>
-          <ActionDetailsParam>
-            <ActionParamTag detailed>
-              Data
-              <br />
-              <em>(bytes)</em>
-            </ActionParamTag>
-
-            <DecodeButton>Decode</DecodeButton>
-          </ActionDetailsParam>
-          <ActionDetailsValue>
-            0x8efcc7500000000000000000000000006a023ccd1ff6f2045c3309768ead9e68f978f6e1000000000000000000000000b90d6bec20993be5d72a5ab353343f7a0281f1580000000000000000000000000000000000000000000000006d37db4d8e530000000000000000000000000000000000000000000000000001e5b8fa8fe2ac00000000000000000000000000000000000000000000000000000000000000009c400000000000000000000000000000000000000000000000008ac7230489e80000000000000000000000000000000000000000000000000000000000006194e23c0000000000000000000000000000000000000000000000000000000061bc6f3c0000000000000000000000005d48c95adffd4b40c1aaadc4e08fc44117e02179
-          </ActionDetailsValue>
-        </ActionDetailsRow>
-
-        <ActionDetailsRow>
-          <ActionDetailsParam>
-            <ActionParamTag detailed>
-              Avatar
-              <br />
-              <em>(address)</em>
-            </ActionParamTag>
-          </ActionDetailsParam>
-          <ActionDetailsValue>
-            <IconButton variant="minimal" iconRight>
-              0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46
-              <FiExternalLink />
-            </IconButton>
-          </ActionDetailsValue>
-        </ActionDetailsRow>
-
-        <ActionDetailsRow>
-          <ActionDetailsParam>
-            <ActionParamTag detailed>
-              Value
-              <br />
-              <em>(uint256)</em>
-            </ActionParamTag>
-          </ActionDetailsParam>
-          <ActionDetailsValue>
-            0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46
-          </ActionDetailsValue>
-        </ActionDetailsRow>
+        {contractParamTypes.map((item, i) => {
+          return (
+            <ActionDetailsRow>
+              <ActionDetailsParam>
+                <ActionParamTag
+                  color={
+                    ActionParamColor[
+                      repeatLoopThroughColorArray(i, ActionParamColor)
+                    ]
+                  }
+                  detailed
+                >
+                  {contractParamNames[i]}
+                  <br />
+                  <em>({item})</em>
+                </ActionParamTag>
+                {item === 'bytes' ? <DecodeButton>Decode</DecodeButton> : null}
+              </ActionDetailsParam>
+              <ActionDetailsValue>
+                {item === 'address' ? (
+                  <IconButton variant="minimal" iconRight>
+                    {contractData[i]}
+                    <FiExternalLink />
+                  </IconButton>
+                ) : (
+                  contractData[i]
+                )}
+              </ActionDetailsValue>
+            </ActionDetailsRow>
+          );
+        })}
       </ActionDetailsTable>
     </SidebarCard>
   );
