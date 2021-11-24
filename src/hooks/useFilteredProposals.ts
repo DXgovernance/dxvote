@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { ProposalsExtended } from '../contexts/proposals';
+import { useFilterCriteria } from './useFilterCriteria';
 import useMiniSearch from './useMiniSearch';
-import { useProposals } from './useProposals';
 import useQueryStringValue from './useQueryStringValue';
 
 const matchStatus = (proposal: ProposalsExtended, status: string) =>
@@ -13,7 +13,8 @@ const matchScheme = (proposal: ProposalsExtended, scheme: string) =>
   scheme === 'All Schemes' || !scheme ? proposal : proposal.scheme === scheme;
 
 export const useFilteredProposals = () => {
-  const { proposals, loading } = useProposals();
+  const { proposals, loading } = useFilterCriteria();
+
   const minisearch = useMiniSearch<ProposalsExtended>({
     fields: ['title'],
     storeFields: ['id'],

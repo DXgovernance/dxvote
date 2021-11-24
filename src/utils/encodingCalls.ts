@@ -38,7 +38,7 @@ export const encodeErc20Transfer = (library, to, amount) => {
   return erc20TransferFunctionEncoded + erc20TransferParamsEncoded;
 };
 
-export const encodeDxdVestingCreate = (library, to, dxdAmount) => {
+export const encodeDxdVestingCreate = (library, to, dxdAmount, start) => {
   const vestingFunctionEncoded = library.eth.abi.encodeFunctionSignature(
     'create(address,uint256,uint256,uint256,uint256)'
   );
@@ -48,7 +48,7 @@ export const encodeDxdVestingCreate = (library, to, dxdAmount) => {
       ['address', 'uint256', 'uint256', 'uint256', 'uint256'],
       [
         to,
-        moment().unix(),
+        start.unix(),
         moment.duration(1, 'years').asSeconds(),
         moment.duration(2, 'years').asSeconds(),
         dxdAmount,

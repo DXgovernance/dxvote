@@ -48,7 +48,9 @@ const Routes = () => {
     <PageRouter>
       <Route exact path="/">
         {' '}
-        <ProposalsPage />{' '}
+        <ProposalProvider>
+          <ProposalsPage />{' '}
+        </ProposalProvider>
       </Route>
       <Route exact path="/config">
         {' '}
