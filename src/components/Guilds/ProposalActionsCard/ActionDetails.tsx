@@ -9,11 +9,12 @@ const ActionTitle = styled(Box)`
   padding: 1rem;
 `;
 
+
 const ActionParamTag = styled(Box)`
   border-radius: 0.5rem;
   padding: ${props => (props.detailed ? '0.3rem 1rem' : '0 0.5rem')};
   margin: 0 0.2rem;
-  background-color: #f9dbdb;
+  background-color: ${props => props.color};
   font-family: monospace;
 `;
 
@@ -52,15 +53,25 @@ const DecodeButton = styled(Button)`
   padding: 0.25rem 0.75rem;
 `;
 
+const ActionParamColor = ['#F9DBDB', '#DBF9DF', '#DBECF9', '#F8DBF9'];
+const contractParameters = ["address", "bytes", "address", "uint256"]
+// will fail if params > 3
+const repeatLoopThroughColorArray = (i, myArray) => i < 4 ? i : i - (4 * Math.floor(i / 4))
+
+
 const ActionDetails = () => {
   return (
     <SidebarCard
       header={
         <ActionTitle>
-          genericCall(<ActionParamTag>address</ActionParamTag>,
-          <ActionParamTag>bytes</ActionParamTag>,
-          <ActionParamTag>address</ActionParamTag>,
-          <ActionParamTag>uint256</ActionParamTag>)
+          genericCall(
+          {contractParameters.map((item, i) => {
+            return (
+              <>
+                <ActionParamTag color={ActionParamColor[repeatLoopThroughColorArray(i, contractParameters)]}>{item}</ActionParamTag>
+              </>
+            );
+          })})
         </ActionTitle>
       }
     >
