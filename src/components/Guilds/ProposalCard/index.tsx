@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import { FiZap, FiArrowRight, FiCircle } from 'react-icons/fi';
+import { FiArrowRight, FiCircle } from 'react-icons/fi';
 import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
+import ProposalStatus from '../ProposalStatus';
 
 const CardWrapper = styled(Box)`
   border: 1px solid #000;
@@ -84,12 +85,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
           <Detail>Swapr von 0x01Cf...2712</Detail>
         </IconDetailWrapper>
 
-        <IconDetailWrapper>
-          <Detail>Ends in 4 days</Detail>
-          <Icon as="div" spaceLeft bordered>
-            <FiZap />
-          </Icon>
-        </IconDetailWrapper>
+        <ProposalStatus status="Active" detail="Ends in 4 days" />
       </CardHeader>
       <CardContent>
         <CardTitle>{title}</CardTitle>

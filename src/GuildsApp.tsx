@@ -4,6 +4,7 @@ import { Container } from './components/Guilds/common/Layout';
 
 import Header from './components/Guilds/Header';
 import GuildsPage from './pages/Guilds/Guilds';
+import ProposalPage from './pages/Guilds/Proposal';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -48,8 +49,8 @@ const GuildsApp = () => {
           <Route exact path="/">
             <GuildsPage />
           </Route>
-          <Route path="/:guild_id">
-            <div>Guild Page</div>
+          <Route path="/:proposal_id">
+            <ProposalPage />
           </Route>
         </Switch>
       </Container>
