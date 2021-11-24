@@ -15,7 +15,7 @@ const Pill = styled(Box)`
 `;
 
 const DetailText = styled(Box)`
-    padding: 0.5rem;
+  padding: 0.5rem;
 `;
 
 interface ProposalStatusProps {

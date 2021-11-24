@@ -27,7 +27,6 @@ const VoteButton = styled(Button)`
     background-color: #fff;
     color: #000;
   }
-
 `;
 
 const ProposalVoteCard = () => {
