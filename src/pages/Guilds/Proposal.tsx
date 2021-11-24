@@ -6,6 +6,7 @@ import { Box } from '../../components/Guilds/common/Layout';
 import ProposalSidebar from '../../components/Guilds/ProposalSidebar';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
 import dxIcon from '../../assets/images/dxdao-icon.svg';
+import ProposalActionsCard from '../../components/Guilds/ProposalActionsCard';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -41,6 +42,10 @@ const ButtonIcon = styled.img`
   width: 1.1rem;
 `;
 
+const ProposalActionsWrapper = styled(Box)`
+  margin-top: 2rem;
+`;
+
 const ProposalPage: React.FC = () => {
   return (
     <PageContainer>
@@ -72,6 +77,10 @@ const ProposalPage: React.FC = () => {
           <ButtonIcon src={dxIcon} alt={'Icon'} />
           geronimo.eth
         </IconButton>
+
+        <ProposalActionsWrapper>
+          <ProposalActionsCard />
+        </ProposalActionsWrapper>
       </PageContent>
       <SidebarContent>
         <ProposalSidebar />

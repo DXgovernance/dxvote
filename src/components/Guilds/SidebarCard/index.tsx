@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import styled from 'styled-components';
 import { Box } from '../common/Layout';
 
@@ -12,8 +13,8 @@ const CardHeader = styled(Box)`
 `;
 
 interface SidebarCardProps {
-  header?: JSX.Element;
-  children?: JSX.Element;
+  header?: ReactElement | ReactElement[];
+  children?: ReactElement | ReactElement[];
 }
 
 const SidebarCard: React.FC<SidebarCardProps> = ({ header, children }) => {
