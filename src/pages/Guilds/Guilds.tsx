@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FiChevronDown } from 'react-icons/fi';
+import { isMobile, isDesktop } from 'react-device-detect';
 
 import {
   DropdownButton,
@@ -10,20 +11,32 @@ import {
 } from '../../components/Guilds/common/DropdownMenu';
 import { Box } from '../../components/Guilds/common/Layout';
 import { Menu, MenuItem } from '../../components/Guilds/common/Menu';
-import Sidebar from '../../components/Guilds/Sidebar';
+import {
+  SidebarDesktop,
+  SidebarMobile,
+} from '../../components/Guilds/Sidebar/';
 import ProposalCard from '../../components/Guilds/ProposalCard';
 
 const PageContainer = styled(Box)`
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: 1fr;
+
+  /* Medium devices (landscape tablets, 768px and up) */
+  @media only screen and (min-width: 768px) {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
 `;
 
 const SidebarContent = styled(Box)`
-  margin-right: 0.5rem;
+  @media only screen and (min-width: 768px) {
+    margin-right: 0.5rem;
+  }
 `;
 
 const PageContent = styled(Box)`
-  margin-left: 0.5rem;
+  @media only screen and (min-width: 768px) {
+    margin-left: 0.5rem;
+  }
 `;
 
 const PageHeader = styled(Box)`
@@ -73,7 +86,8 @@ const GuildsPage: React.FC = () => {
   return (
     <PageContainer>
       <SidebarContent>
-        <Sidebar />
+        {isMobile && <SidebarMobile />}
+        {isDesktop && <SidebarDesktop />}
       </SidebarContent>
       <PageContent>
         <PageHeader>

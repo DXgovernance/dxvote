@@ -8,7 +8,9 @@ import { useState } from 'react';
 const SidebarWrapper = styled(Box)`
   border: 1px solid #000;
   border-radius: 0.5rem;
-  margin-right: 1rem;
+  @media only screen and(min - width: 768px) {
+    margin-right: 1rem;
+  }
 `;
 
 const SidebarHeader = styled(Box)`
@@ -89,7 +91,7 @@ const SidebarMenuItem = styled(MenuItem)`
   }
 `;
 
-const Sidebar = () => {
+export const SidebarDesktop = () => {
   const [showExtendedHeader, setShowExtendedHeader] = useState<boolean>(false);
 
   return (
@@ -139,5 +141,3 @@ const Sidebar = () => {
     </SidebarWrapper>
   );
 };
-
-export default Sidebar;
