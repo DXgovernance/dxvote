@@ -5,7 +5,7 @@ import { Container } from './components/Guilds/common/Layout';
 import Header from './components/Guilds/Header';
 import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
-import theme from "./theme/light.json";
+import theme from './theme/light.json';
 
 const GlobalStyle = createGlobalStyle`
   body {
