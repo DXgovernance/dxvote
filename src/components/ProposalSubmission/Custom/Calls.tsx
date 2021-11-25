@@ -233,10 +233,12 @@ export const Calls = ({
                 X
               </RemoveButton>
               {schemeToUse.type === 'WalletScheme' ? (
-                <div style={{
-                  padding: '0px 5px 0px 10px',
-                  marginTop: '-10px',
-                }}>
+                <div
+                  style={{
+                    padding: '0px 5px 0px 10px',
+                    marginTop: '-10px',
+                  }}
+                >
                   <Toggle
                     onToggle={() => {
                       changeCallType(i);
@@ -245,7 +247,8 @@ export const Calls = ({
                     height={35}
                     state={calls[i].callType === 'advanced'}
                     optionOne={'Simple'}
-                    optionTwo={'Advanced'} />
+                    optionTwo={'Advanced'}
+                  />
                 </div>
               ) : (
                 <div />

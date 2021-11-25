@@ -17,7 +17,14 @@ const Icon = styled.section`
   padding-right: 2;
 `;
 
-export default function Toggle({ onToggle, state, optionOne, optionTwo, width = 120, height = 50 }) {
+export default function Toggle({
+  onToggle,
+  state,
+  optionOne,
+  optionTwo,
+  width = 120,
+  height = 50,
+}) {
   return (
     <Wrap>
       <Switch
