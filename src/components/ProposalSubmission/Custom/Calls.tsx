@@ -253,6 +253,7 @@ export const Calls = ({
                       changeCallType(i);
                     }}
                     width={80}
+                    onColor="#536DFE"
                     checked={calls[i].callType === 'advanced'}
                     uncheckedIcon={<ToggleIcons>Simple</ToggleIcons>}
                     checkedIcon={<ToggleIcons>Advanced</ToggleIcons>}/>
