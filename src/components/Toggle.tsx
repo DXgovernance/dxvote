@@ -17,14 +17,14 @@ const Icon = styled.section`
   padding-right: 2;
 `;
 
-export default function Toggle({ onToggle, state, optionOne, optionTwo }) {
+export default function Toggle({ onToggle, state, optionOne, optionTwo, width = 120, height = 50 }) {
   return (
     <Wrap>
       <Switch
         checked={state}
         onChange={onToggle}
-        height={50}
-        width={120}
+        height={height}
+        width={width}
         offColor="#536DFE"
         onColor="#536DFE"
         uncheckedIcon={<Icon>{optionOne}</Icon>}

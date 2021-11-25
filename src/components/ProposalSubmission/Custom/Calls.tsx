@@ -2,7 +2,7 @@ import { ContributionRewardCall } from './ContributionRewardCall';
 import { SchemeRegistrarCall } from './SchemeRegistarCall';
 import styled from 'styled-components';
 import { Button } from 'components/common';
-import Switch from "react-switch";
+import Toggle from 'components/Toggle';
 
 const CallRow = styled.div`
   width: 100%;
@@ -53,17 +53,6 @@ const SelectInput = styled.select`
   border: 1px solid gray;
   margin-right: 5px;
   background-color: #fff;
-`;
-
-const ToggleIcons = styled.div`
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  height: 100%;
-  color: #fff;
-  font-size: 10px;
-  font-weight: bold;
-  margin-left: 4px;
 `;
 export const Calls = ({
   schemeToUse,
@@ -245,18 +234,18 @@ export const Calls = ({
               </RemoveButton>
               {schemeToUse.type === 'WalletScheme' ? (
                 <div style={{
-                  padding: '0px 5px',
-                  margin: '5px'
+                  padding: '0px 5px 0px 10px',
+                  marginTop: '-10px',
                 }}>
-                  <Switch
-                    onChange={() => {
+                  <Toggle
+                    onToggle={() => {
                       changeCallType(i);
                     }}
                     width={80}
-                    onColor="#536DFE"
-                    checked={calls[i].callType === 'advanced'}
-                    uncheckedIcon={<ToggleIcons>Simple</ToggleIcons>}
-                    checkedIcon={<ToggleIcons>Advanced</ToggleIcons>}/>
+                    height={35}
+                    state={calls[i].callType === 'advanced'}
+                    optionOne={'Simple'}
+                    optionTwo={'Advanced'} />
                 </div>
               ) : (
                 <div />
