@@ -1,20 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FiChevronDown } from 'react-icons/fi';
-import { isMobile, isDesktop } from 'react-device-detect';
 
-import {
-  DropdownButton,
-  DropdownContent,
-  DropdownMenu,
-  DropdownPosition,
-} from '../../components/Guilds/common/DropdownMenu';
 import { Box } from '../../components/Guilds/common/Layout';
-import { Menu, MenuItem } from '../../components/Guilds/common/Menu';
-import {
-  SidebarDesktop,
-  SidebarMobile,
-} from '../../components/Guilds/Sidebar/';
+
+import { Sidebar } from '../../components/Guilds/Sidebar/';
+import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard from '../../components/Guilds/ProposalCard';
 
 const PageContainer = styled(Box)`
@@ -39,36 +29,6 @@ const PageContent = styled(Box)`
   }
 `;
 
-const PageHeader = styled(Box)`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-
-  @media only screen and (min-width: 768px) {
-    justify-content: space-between;
-  }
-`;
-
-const PageTitle = styled.h3`
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 0;
-  margin: 0.1rem 0 1rem 0;
-`;
-
-const PageSubtitle = styled.h4`
-  font-weight: 500;
-  margin: 0;
-`;
-
-const DropdownMenuItem = styled(MenuItem)`
-  cursor: pointer;
-
-  &:hover {
-    background-color: #f5f5f5;
-  }
-`;
-
 const ProposalsList = styled(Box)`
   margin-top: 1rem;
 `;
@@ -90,32 +50,10 @@ const GuildsPage: React.FC = () => {
   return (
     <PageContainer>
       <SidebarContent>
-        {isMobile && <SidebarMobile />}
-        {isDesktop && <SidebarDesktop />}
+        <Sidebar />
       </SidebarContent>
       <PageContent>
-        <PageHeader>
-          {isDesktop && (
-            <Box>
-              <PageSubtitle>DXdao</PageSubtitle>
-              <PageTitle>Proposals</PageTitle>
-            </Box>
-          )}
-          <DropdownMenu position={DropdownPosition.BottomRight}>
-            <DropdownButton iconRight>
-              Sort by <FiChevronDown />
-            </DropdownButton>
-            <DropdownContent>
-              <Menu>
-                <DropdownMenuItem>Newest</DropdownMenuItem>
-                <DropdownMenuItem>Oldest</DropdownMenuItem>
-                <DropdownMenuItem>Most voted</DropdownMenuItem>
-                <DropdownMenuItem>Least voted</DropdownMenuItem>
-              </Menu>
-            </DropdownContent>
-          </DropdownMenu>
-        </PageHeader>
-
+        <Filter />
         <ProposalsList>
           {proposalsMock.map(proposal => (
             <ProposalCard
