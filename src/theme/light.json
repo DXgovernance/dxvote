@@ -1,0 +1,36 @@
+{
+  "colors": {
+    "text": "#000",
+    "background": "#fff",
+    "primary": "#000",
+    "secondary": "#000",
+    "muted": "#555"
+  },
+  "fonts": {
+    "body": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif'",
+    "heading": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif'",
+    "monospace": "'Azeret Mono', Menlo, Monaco, Consolas, 'Courier New', monospace"
+  },
+  "fontSizes": {
+    "label": 12,
+    "mono": 14,
+    "body": 14,
+    "header1": 16,
+    "header2": 20
+  },
+  "lineHeights": {
+    "label": 16,
+    "mono": 16,
+    "body": 20,
+    "header1": 24,
+    "header2": 24
+  },
+  "fontWeights": {
+    "medium": 600,
+    "bold": 700
+  },
+  "radii": {
+    "curved": "6px",
+    "pill": "32px"
+  }
+}

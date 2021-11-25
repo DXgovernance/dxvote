@@ -288,6 +288,8 @@ export const updateVotingMachine = async function (
           newProposalEvent.proposalId
       ) > -1;
 
+    let existEvent;
+
     if (
       votingMachineEvent.returnValues._organization ===
         networkContractsConfig.avatar ||
@@ -340,56 +342,93 @@ export const updateVotingMachine = async function (
               i => i.state === '5'
             ) >= 0;
 
-          votingMachineEventsInCache.votes.push({
-            event: votingMachineEvent.event,
-            signature: votingMachineEvent.signature,
-            address: votingMachineEvent.address,
-            voter: votingMachineEvent.returnValues._voter,
-            vote: votingMachineEvent.returnValues._vote,
-            amount: votingMachineEvent.returnValues._reputation,
-            preBoosted: preBoosted,
-            proposalId: votingMachineEvent.returnValues._proposalId,
-            tx: votingMachineEvent.transactionHash,
-            l1BlockNumber: votingMachineEvent.l1BlockNumber,
-            l2BlockNumber: votingMachineEvent.l2BlockNumber,
-            timestamp: votingMachineEvent.timestamp,
-            transactionIndex: votingMachineEvent.transactionIndex,
-            logIndex: votingMachineEvent.logIndex,
-          });
+          existEvent = votingMachineEventsInCache.votes.find(
+            event =>
+              event.tx === votingMachineEvent.transactionHas &&
+              event.transactionIndex === votingMachineEvent.transactionIndex &&
+              event.logIndex === votingMachineEvent.logIndex
+          );
+          if (existEvent)
+            console.debug(
+              'Duplicated Vote in votingMachineEvent',
+              votingMachineEvent
+            );
+
+          !existEvent &&
+            votingMachineEventsInCache.votes.push({
+              event: votingMachineEvent.event,
+              signature: votingMachineEvent.signature,
+              address: votingMachineEvent.address,
+              voter: votingMachineEvent.returnValues._voter,
+              vote: votingMachineEvent.returnValues._vote,
+              amount: votingMachineEvent.returnValues._reputation,
+              preBoosted: preBoosted,
+              proposalId: votingMachineEvent.returnValues._proposalId,
+              tx: votingMachineEvent.transactionHash,
+              l1BlockNumber: votingMachineEvent.l1BlockNumber,
+              l2BlockNumber: votingMachineEvent.l2BlockNumber,
+              timestamp: votingMachineEvent.timestamp,
+              transactionIndex: votingMachineEvent.transactionIndex,
+              logIndex: votingMachineEvent.logIndex,
+            });
           break;
         case 'Stake':
-          votingMachineEventsInCache.stakes.push({
-            event: votingMachineEvent.event,
-            signature: votingMachineEvent.signature,
-            address: votingMachineEvent.address,
-            staker: votingMachineEvent.returnValues._staker,
-            vote: votingMachineEvent.returnValues._vote,
-            amount: votingMachineEvent.returnValues._amount,
-            amount4Bounty: bnum('0'),
-            proposalId: votingMachineEvent.returnValues._proposalId,
-            tx: votingMachineEvent.transactionHash,
-            l1BlockNumber: votingMachineEvent.l1BlockNumber,
-            l2BlockNumber: votingMachineEvent.l2BlockNumber,
-            timestamp: votingMachineEvent.timestamp,
-            transactionIndex: votingMachineEvent.transactionIndex,
-            logIndex: votingMachineEvent.logIndex,
-          });
+          existEvent = votingMachineEventsInCache.stakes.find(
+            event =>
+              event.tx === votingMachineEvent.transactionHas &&
+              event.transactionIndex === votingMachineEvent.transactionIndex &&
+              event.logIndex === votingMachineEvent.logIndex
+          );
+          if (existEvent)
+            console.debug(
+              'Duplicated Stake in votingMachineEvent',
+              votingMachineEvent
+            );
+          !existEvent &&
+            votingMachineEventsInCache.stakes.push({
+              event: votingMachineEvent.event,
+              signature: votingMachineEvent.signature,
+              address: votingMachineEvent.address,
+              staker: votingMachineEvent.returnValues._staker,
+              vote: votingMachineEvent.returnValues._vote,
+              amount: votingMachineEvent.returnValues._amount,
+              amount4Bounty: bnum('0'),
+              proposalId: votingMachineEvent.returnValues._proposalId,
+              tx: votingMachineEvent.transactionHash,
+              l1BlockNumber: votingMachineEvent.l1BlockNumber,
+              l2BlockNumber: votingMachineEvent.l2BlockNumber,
+              timestamp: votingMachineEvent.timestamp,
+              transactionIndex: votingMachineEvent.transactionIndex,
+              logIndex: votingMachineEvent.logIndex,
+            });
           break;
         case 'Redeem':
-          votingMachineEventsInCache.redeems.push({
-            event: votingMachineEvent.event,
-            signature: votingMachineEvent.signature,
-            address: votingMachineEvent.address,
-            beneficiary: votingMachineEvent.returnValues._beneficiary,
-            amount: votingMachineEvent.returnValues._amount,
-            proposalId: votingMachineEvent.returnValues._proposalId,
-            tx: votingMachineEvent.transactionHash,
-            l1BlockNumber: votingMachineEvent.l1BlockNumber,
-            l2BlockNumber: votingMachineEvent.l2BlockNumber,
-            timestamp: votingMachineEvent.timestamp,
-            transactionIndex: votingMachineEvent.transactionIndex,
-            logIndex: votingMachineEvent.logIndex,
-          });
+          existEvent = votingMachineEventsInCache.stakes.find(
+            event =>
+              event.tx === votingMachineEvent.transactionHas &&
+              event.transactionIndex === votingMachineEvent.transactionIndex &&
+              event.logIndex === votingMachineEvent.logIndex
+          );
+          if (existEvent)
+            console.debug(
+              'Duplicated Redeem in votingMachineEvent',
+              votingMachineEvent
+            );
+          !existEvent &&
+            votingMachineEventsInCache.redeems.push({
+              event: votingMachineEvent.event,
+              signature: votingMachineEvent.signature,
+              address: votingMachineEvent.address,
+              beneficiary: votingMachineEvent.returnValues._beneficiary,
+              amount: votingMachineEvent.returnValues._amount,
+              proposalId: votingMachineEvent.returnValues._proposalId,
+              tx: votingMachineEvent.transactionHash,
+              l1BlockNumber: votingMachineEvent.l1BlockNumber,
+              l2BlockNumber: votingMachineEvent.l2BlockNumber,
+              timestamp: votingMachineEvent.timestamp,
+              transactionIndex: votingMachineEvent.transactionIndex,
+              logIndex: votingMachineEvent.logIndex,
+            });
           break;
         case 'RedeemReputation':
           votingMachineEventsInCache.redeemsRep.push({

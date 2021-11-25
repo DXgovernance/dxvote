@@ -35,7 +35,6 @@ const Votes = () => {
 
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
-  console.debug('Proposal ID in Vote: ', proposalId);
 
   const proposal = daoStore.getProposal(proposalId);
   const proposalEvents = daoStore.getProposalEvents(proposalId);

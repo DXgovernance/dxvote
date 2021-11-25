@@ -6,12 +6,12 @@ import ethIcon from '../../../assets/images/ethereum.svg';
 import { IconButton } from '../common/Button';
 
 const HeaderWrapper = styled(Box)`
-  border-bottom: 1px solid #000;
   padding: 0.75rem 0;
 
   @media only screen and(min - width: 768px) {
     padding: 1.5rem 0;
   }
+  border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
 `;
 
 const HeaderContainer = styled(Container)`

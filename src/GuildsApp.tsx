@@ -1,10 +1,11 @@
 import { HashRouter, Route, Switch, useHistory } from 'react-router-dom';
-import { createGlobalStyle } from 'styled-components';
+import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { Container } from './components/Guilds/common/Layout';
 
 import Header from './components/Guilds/Header';
 import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
+import theme from './theme/light.json';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -41,20 +42,22 @@ const GuildsApp = () => {
   }
 
   return (
-    <HashRouter basename="/guilds">
-      <GlobalStyle />
-      <Header />
-      <Container>
-        <Switch>
-          <Route exact path="/">
-            <GuildsPage />
-          </Route>
-          <Route path="/:proposal_id">
-            <ProposalPage />
-          </Route>
-        </Switch>
-      </Container>
-    </HashRouter>
+    <ThemeProvider theme={theme}>
+      <HashRouter basename="/guilds">
+        <GlobalStyle />
+        <Header />
+        <Container>
+          <Switch>
+            <Route exact path="/">
+              <GuildsPage />
+            </Route>
+            <Route path="/:proposal_id">
+              <ProposalPage />
+            </Route>
+          </Switch>
+        </Container>
+      </HashRouter>
+    </ThemeProvider>
   );
 };
 
