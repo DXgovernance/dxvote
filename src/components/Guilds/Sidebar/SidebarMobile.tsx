@@ -74,7 +74,6 @@ const DaoTitle = styled(Box)`
 
 const DaoMemberCount = styled(Box)`
   font-size: 1rem;
-  margin-bottom: 0.6rem;
 `;
 
 const SidebarMenu = styled(Menu)`
