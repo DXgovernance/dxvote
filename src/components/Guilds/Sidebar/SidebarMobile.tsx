@@ -7,23 +7,35 @@ import { useState } from 'react';
 
 const SidebarHeader = styled(Box)`
   border-bottom: 1px solid #000;
+  padding: 1rem 0rem;
 `;
 
-const DaoInfoPanel = styled(Box)<{ shrink: boolean }>`
-  display: flex;
-  flex-direction: ${props => (props.shrink ? 'row' : 'column')};
-  align-items: center;
-  padding: ${props => (props.shrink ? '1rem' : '2rem')};
+const DaoInfoPanel = styled(Box)`
+  padding: '1rem';
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+`;
+const DaoInfoRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;
 
+const DaoBrand = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+/*
 const DaoDetails = styled(Box)<{ shrink: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: ${props => (props.shrink ? 'center' : 'flex-start')};
   padding-left: ${props => (props.shrink ? '0' : '1rem')};
 `;
-
+*/
 const UserInfoPanel = styled(Box)`
   display: flex;
   flex-direction: column;
@@ -57,12 +69,7 @@ const DaoIcon = styled.img`
 const DaoTitle = styled(Box)`
   font-weight: 600;
   font-size: 1.25rem;
-  margin: 0.5rem 0;
-`;
-
-const DaoBrand = styled.div`
-  display: flex;
-  flex-direction: row;
+  margin-left: 0.5rem;
 `;
 
 const DaoMemberCount = styled(Box)`
@@ -73,6 +80,8 @@ const DaoMemberCount = styled(Box)`
 const SidebarMenu = styled(Menu)`
   margin: 0;
   padding: 1rem 0;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const SidebarMenuItem = styled(MenuItem)`
@@ -80,11 +89,11 @@ const SidebarMenuItem = styled(MenuItem)`
   padding: 0.8rem 1rem;
 
   &:hover {
-    border-left: 2px solid #000;
+    border-bottom: 2px solid #000;
   }
 
   &:active {
-    border-left: 2px solid #000;
+    border-bottom: 2px solid #000;
   }
 `;
 
@@ -98,13 +107,14 @@ export const SidebarMobile = () => {
           onClick={() => setShowExtendedHeader(!showExtendedHeader)}
           shrink={showExtendedHeader}
         >
-          <DaoBrand>
-            <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-            <DaoTitle as="h1">DXdao</DaoTitle>
-          </DaoBrand>
-          <DaoDetails shrink={!showExtendedHeader}>
+          <DaoInfoRow>
+            <DaoBrand>
+              <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
+              <DaoTitle as="h1">DXdao</DaoTitle>
+            </DaoBrand>
+
             <DaoMemberCount>464 Members</DaoMemberCount>
-          </DaoDetails>
+          </DaoInfoRow>
           {!showExtendedHeader && <Button>Create Proposal</Button>}
         </DaoInfoPanel>
 
@@ -134,7 +144,8 @@ export const SidebarMobile = () => {
       <SidebarMenu>
         <SidebarMenuItem href="#">Proposals</SidebarMenuItem>
         <SidebarMenuItem href="#">Members</SidebarMenuItem>
-        <SidebarMenuItem href="#">Portfolio</SidebarMenuItem>
+        {/* what happens in mobile? 
+        <SidebarMenuItem href="#">Portfolio</SidebarMenuItem>*/}
         <SidebarMenuItem href="#">Settings</SidebarMenuItem>
       </SidebarMenu>
     </>

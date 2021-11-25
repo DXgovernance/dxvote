@@ -41,8 +41,12 @@ const PageContent = styled(Box)`
 
 const PageHeader = styled(Box)`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 1rem;
+
+  @media only screen and (min-width: 768px) {
+    justify-content: space-between;
+  }
 `;
 
 const PageTitle = styled.h3`
@@ -91,10 +95,12 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <PageHeader>
-          <Box>
-            <PageSubtitle>DXdao</PageSubtitle>
-            <PageTitle>Proposals</PageTitle>
-          </Box>
+          {isDesktop && (
+            <Box>
+              <PageSubtitle>DXdao</PageSubtitle>
+              <PageTitle>Proposals</PageTitle>
+            </Box>
+          )}
           <DropdownMenu position={DropdownPosition.BottomRight}>
             <DropdownButton iconRight>
               Sort by <FiChevronDown />

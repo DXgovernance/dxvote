@@ -1,5 +1,12 @@
 import styled from 'styled-components';
 import { Box } from '../common/Layout';
+const Status = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+`;
 
 const Pill = styled(Box)`
   display: inline-flex;
@@ -15,7 +22,10 @@ const Pill = styled(Box)`
 `;
 
 const DetailText = styled(Box)`
-  padding: 0.5rem;
+  padding: 0.2rem;
+  @media only screen and (min-width: 768px) {
+    padding: 0.5rem;
+  }
 `;
 
 interface ProposalStatusProps {
@@ -30,12 +40,12 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   detail,
 }) => {
   return (
-    <Pill bordered={bordered}>
+    <Status bordered={bordered}>
       <DetailText>{detail}</DetailText>
       <Pill filled padded>
         {status}
       </Pill>
-    </Pill>
+    </Status>
   );
 };
 
