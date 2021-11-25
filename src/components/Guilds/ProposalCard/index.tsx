@@ -3,6 +3,7 @@ import { FiArrowRight, FiCircle } from 'react-icons/fi';
 import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
 import ProposalStatus from '../ProposalStatus';
+import { isDesktop } from 'react-device-detect';
 
 const CardWrapper = styled(Box)`
   border: 1px solid #000;
@@ -19,6 +20,10 @@ const CardHeader = styled(Box)`
 
 const CardContent = styled(Box)`
   margin: 1rem 0;
+  font-size: 14px;
+  @media only screen and (min-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const CardFooter = styled(Box)`
@@ -28,8 +33,12 @@ const CardFooter = styled(Box)`
 `;
 
 const CardTitle = styled.h2`
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
+
+  @media only screen and (min-width: 768px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const IconDetailWrapper = styled(Box)`
@@ -84,8 +93,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
           <Icon src={dxIcon} spaceRight />
           <Detail>Swapr von 0x01Cf...2712</Detail>
         </IconDetailWrapper>
-
-        <ProposalStatus status="Active" detail="Ends in 4 days" />
+        <ProposalStatus status="Active" detail="4 days left" />
       </CardHeader>
       <CardContent>
         <CardTitle>{title}</CardTitle>
@@ -94,10 +102,14 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
       <CardFooter>
         <BorderedIconDetailWrapper>
           <Detail>150 ETH</Detail>
-          <Icon as="div" spaceLeft spaceRight>
-            <FiArrowRight />
-          </Icon>
-          <Detail>geronimo.eth</Detail>
+          {isDesktop && (
+            <>
+              <Icon as="div" spaceLeft spaceRight>
+                <FiArrowRight />
+              </Icon>{' '}
+              <Detail>geronimo.eth</Detail>
+            </>
+          )}
         </BorderedIconDetailWrapper>
         <BorderedIconDetailWrapper>
           <Detail>15.60%</Detail>
