@@ -7,27 +7,29 @@ type ButtonProps = {
 const variantStyles = (variant = 'primary') =>
   ({
     primary: css`
-      border: 0.1rem solid #000;
-      border-radius: 1.5rem;
+      border: 0.1rem solid ${({ theme }) => theme.colors.primary};
+      background-color: ${({ theme }) => theme.colors.background};
+      color: ${({ theme }) => theme.colors.text};
+      border-radius: ${({ theme }) => theme.radii.pill};
       padding: 0.5rem 0.8rem;
       margin: 0.2rem;
-      background-color: #fff;
 
       :hover:enabled {
-        background-color: #000;
-        color: #fff;
+        background-color: ${({ theme }) => theme.colors.primary};
+        color: ${({ theme }) => theme.colors.background};
       }
 
       :active:enabled {
-        border: 0.1rem solid #ccc;
+        border: 0.1rem solid ${({ theme }) => theme.colors.muted};
       }
     `,
     minimal: css`
       border: none;
       background-color: transparent;
+      color: ${({ theme }) => theme.colors.text};
 
       :hover:enabled {
-        color: #555;
+        color: ${({ theme }) => theme.colors.muted};
       }
     `,
   }[variant]);
