@@ -5,7 +5,7 @@ import ethIcon from '../../../assets/images/ethereum.svg';
 import { IconButton } from '../common/Button';
 
 const HeaderWrapper = styled(Box)`
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   padding: 1.5rem 0;
   margin-bottom: 3rem;
 `;
