@@ -38,7 +38,9 @@ const Header = () => {
   return (
     <HeaderWrapper as="header">
       <HeaderContainer>
-        <Heading size={2}><strong>DXvote</strong></Heading>
+        <Heading size={2}>
+          <strong>DXvote</strong>
+        </Heading>
         <MenuItems>
           <IconButton iconLeft>
             <ButtonIcon src={ethIcon} alt={'Icon'} />

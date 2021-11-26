@@ -11,7 +11,8 @@ const sizeStyles = (size = 1) =>
       line-height: ${({ theme }) => theme.lineHeights.header1};
       font-weight: ${({ theme }) => theme.fontWeights.regular};
 
-      strong, b {
+      strong,
+      b {
         font-weight: ${({ theme }) => theme.fontWeights.medium};
       }
     `,

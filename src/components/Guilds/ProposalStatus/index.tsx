@@ -16,9 +16,12 @@ const Pill = styled(Box)`
   font-weight: 600;
   border-radius: 1.5rem;
   padding: ${props => (props.padded ? '0.5rem 0.8rem' : '0')};
-  color: ${props => (props.filled ? props.theme.colors.background : props.theme.colors.text)};
-  background-color: ${props => (props.filled ? props.theme.colors.text : 'transparent')};
-  border: 1px solid ${props => (props.bordered ? props.theme.colors.text : 'transparent')};
+  color: ${props =>
+    props.filled ? props.theme.colors.background : props.theme.colors.text};
+  background-color: ${props =>
+    props.filled ? props.theme.colors.text : 'transparent'};
+  border: 1px solid
+    ${props => (props.bordered ? props.theme.colors.text : 'transparent')};
 `;
 
 const DetailText = styled(Box)`

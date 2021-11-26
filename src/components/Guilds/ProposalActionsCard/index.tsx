@@ -9,7 +9,13 @@ const ProposalCardHeader = styled(Heading)`
 
 const ProposalActionsCard = () => {
   return (
-    <SidebarCard header={<ProposalCardHeader><strong>Details</strong></ProposalCardHeader>}>
+    <SidebarCard
+      header={
+        <ProposalCardHeader>
+          <strong>Details</strong>
+        </ProposalCardHeader>
+      }
+    >
       <ActionItem />
       <ActionItem />
       <ActionItem />
