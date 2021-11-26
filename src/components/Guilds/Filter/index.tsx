@@ -9,7 +9,7 @@ import {
   DropdownPosition,
 } from '../common/DropdownMenu';
 
-import { FiChevronDown, FiCheck } from 'react-icons/fi';
+import { FiChevronDown, FiCheck, FiArrowLeft } from 'react-icons/fi';
 
 import { Menu, MenuItem } from '../common/Menu';
 import { Button } from '../common/Button';
@@ -69,6 +69,7 @@ const FilterButtonsComponent = () => {
         </DropdownButton>
         <DropdownContent show={showScheme}>
           <Menu>
+            {isMobile && <FiArrowLeft onClick={() => setShowScheme(false)} />}
             <DropdownMenuItem onClick={() => onToggleScheme('a')}>
               Schema 1 {isSchemeSelected('a') && <FiCheck />}
             </DropdownMenuItem>
@@ -87,6 +88,7 @@ const FilterButtonsComponent = () => {
         </DropdownButton>
         <DropdownContent show={showStatus}>
           <Menu>
+            {isMobile && <FiArrowLeft onClick={() => setShowStatus(false)} />}
             <DropdownMenuItem onClick={() => onToggleStatus('a')}>
               Status a {isStatusSelected('a') && <FiCheck />}
             </DropdownMenuItem>
