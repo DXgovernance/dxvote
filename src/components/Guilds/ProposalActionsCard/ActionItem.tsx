@@ -9,7 +9,7 @@ import ActionDetails from './ActionDetails';
 
 const ProposalActionItem = styled(Box)`
   padding: 1rem;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
 
   &:last-child {
     border-bottom: none;
