@@ -4,10 +4,11 @@ import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
 import ProposalStatus from '../ProposalStatus';
 import { isDesktop } from 'react-device-detect';
+import { Heading } from '../common/Typography';
 
 const CardWrapper = styled(Box)`
-  border: 1px solid #000;
-  border-radius: 0.3rem;
+  border: 1px solid ${({ theme }) => theme.colors.muted};
+  border-radius: ${({ theme }) => theme.radii.curved};
   margin-bottom: 1rem;
   padding: 1rem;
 `;
@@ -20,10 +21,6 @@ const CardHeader = styled(Box)`
 
 const CardContent = styled(Box)`
   margin: 1rem 0;
-  font-size: 14px;
-  @media only screen and (min-width: 768px) {
-    font-size: 1rem;
-  }
 `;
 
 const CardFooter = styled(Box)`
@@ -32,7 +29,7 @@ const CardFooter = styled(Box)`
   justify-content: space-between;
 `;
 
-const CardTitle = styled.h2`
+const CardTitle = styled(Heading)`
   font-size: 1rem;
   font-weight: 700;
 
@@ -96,7 +93,9 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
         <ProposalStatus status="Active" detail="4 days left" />
       </CardHeader>
       <CardContent>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle size={2}>
+          <strong>{title}</strong>
+        </CardTitle>
         <p>{description}</p>
       </CardContent>
       <CardFooter>

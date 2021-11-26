@@ -40,7 +40,7 @@ export const Button = styled.button<ButtonProps>`
   align-items: center;
   text-align: center;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: ${({ theme }) => theme.fontSizes.body};
 
   :disabled {
     color: initial;

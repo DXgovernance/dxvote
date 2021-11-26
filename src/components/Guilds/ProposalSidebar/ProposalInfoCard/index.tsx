@@ -1,12 +1,12 @@
 import { FiCheck, FiInbox } from 'react-icons/fi';
 import styled from 'styled-components';
 import { Box } from '../../common/Layout';
+import { Heading } from '../../common/Typography';
 import SidebarCard from '../../SidebarCard';
 import InfoItem from './InfoItem';
 
-const SidebarCardHeader = styled(Box)`
-  padding: 1rem;
-  font-weight: 600;
+const SidebarCardHeader = styled(Heading)`
+  padding-left: 1rem;
 `;
 
 const SidebarCardContent = styled(Box)`
@@ -14,7 +14,7 @@ const SidebarCardContent = styled(Box)`
 `;
 
 const InfoItemLinkerLine = styled(Box)`
-  border-left: 1px dashed #000;
+  border-left: 1px dashed ${({ theme }) => theme.colors.muted};
   height: 1.5rem;
   position: relative;
   left: 1rem;
@@ -36,7 +36,13 @@ const UserInfoDetail = styled(Box)`
 
 const ProposalInfoCard = () => {
   return (
-    <SidebarCard header={<SidebarCardHeader>Information</SidebarCardHeader>}>
+    <SidebarCard
+      header={
+        <SidebarCardHeader>
+          <strong>Information</strong>
+        </SidebarCardHeader>
+      }
+    >
       <SidebarCardContent>
         <InfoItem
           icon={<FiCheck />}
