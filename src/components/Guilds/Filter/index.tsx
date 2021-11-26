@@ -53,13 +53,21 @@ const FilterButtonsComponent = () => {
   const { isStatusSelected, isSchemeSelected, onToggleStatus, onToggleScheme } =
     useMenu({ initialSchemas: [], initialStatuses: [] });
 
+  const [showScheme, setShowScheme] = useState(false);
+  const [showStatus, setShowStatus] = useState(false);
+
   return (
     <FilterButtons>
       <DropdownMenu position={DropdownPosition.BottomRight}>
-        <DropdownButton iconRight>
+        <DropdownButton
+          iconRight
+          onClick={() => {
+            setShowScheme(!showScheme);
+          }}
+        >
           Scheme <FiChevronDown />
         </DropdownButton>
-        <DropdownContent>
+        <DropdownContent show={showScheme}>
           <Menu>
             <DropdownMenuItem onClick={() => onToggleScheme('a')}>
               Schema 1 {isSchemeSelected('a') && <FiCheck />}
@@ -74,10 +82,10 @@ const FilterButtonsComponent = () => {
         </DropdownContent>
       </DropdownMenu>
       <DropdownMenu>
-        <DropdownButton iconRight>
+        <DropdownButton iconRight onClick={() => setShowStatus(!showStatus)}>
           Status <FiChevronDown />
         </DropdownButton>
-        <DropdownContent>
+        <DropdownContent show={showStatus}>
           <Menu>
             <DropdownMenuItem onClick={() => onToggleStatus('a')}>
               Status a {isStatusSelected('a') && <FiCheck />}
