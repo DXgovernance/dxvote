@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import { Box } from '../common/Layout';
 
 const CardWrapper = styled(Box)`
-  border: 1px solid #000;
-  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.muted};
+  border-radius: ${({ theme }) => theme.radii.curved};
   margin-bottom: 1rem;
 `;
 
 const CardHeader = styled(Box)`
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
 `;
 
 interface SidebarCardProps {

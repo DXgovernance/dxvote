@@ -9,7 +9,7 @@ import { Heading } from '../common/Typography';
 const HeaderWrapper = styled(Box)`
   padding: 0.75rem 0;
 
-  @media only screen and(min - width: 768px) {
+  @media only screen and(min-width: 768px) {
     padding: 1.5rem 0;
   }
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};

@@ -10,8 +10,8 @@ const InfoItemIcon = styled(Box)`
   height: 2rem;
   width: 2rem;
   border-radius: 50%;
-  color: #fff;
-  background-color: #000;
+  color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.text};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,7 +46,7 @@ const InfoItemDescription = styled(Box)`
 const InfoItemLink = styled(Box)`
   height: 2rem;
   width: 2rem;
-  color: #000;
+  color: ${({ theme }) => theme.colors.text};
   display: flex;
   justify-content: center;
   align-items: center;
