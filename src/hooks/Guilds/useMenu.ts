@@ -8,9 +8,12 @@ export const useMenu = ({ initialStatuses = [], initialSchemas = [] }) => {
   // abstract function to toggle given value, state, and setSate params.
   const onToggleFilter = (value, stateToUse, setStateToUse) => {
     let actualState = new Array(...stateToUse);
+
     if (actualState.find(elem => elem === value)) {
+      //if the menuItem is selected already, filter out.
       setStateToUse(actualState.filter(elem => elem !== value));
     } else {
+      //else lets push this menuItem in the selected ones.
       actualState.push(value);
       setStateToUse(actualState);
     }
