@@ -20,12 +20,12 @@ const VoteButton = styled(Button)`
   margin-top: 1rem;
   display: block;
   width: 100%;
-  background-color: #000;
-  color: #fff;
+  background-color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.background};
 
   &:hover:enabled {
-    background-color: #fff;
-    color: #000;
+    background-color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
 

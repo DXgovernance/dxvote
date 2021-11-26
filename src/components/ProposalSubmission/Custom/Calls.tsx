@@ -2,6 +2,7 @@ import { ContributionRewardCall } from './ContributionRewardCall';
 import { SchemeRegistrarCall } from './SchemeRegistarCall';
 import styled from 'styled-components';
 import { Button } from 'components/common';
+import Toggle from 'components/Toggle';
 
 const CallRow = styled.div`
   width: 100%;
@@ -232,13 +233,23 @@ export const Calls = ({
                 X
               </RemoveButton>
               {schemeToUse.type === 'WalletScheme' ? (
-                <RemoveButton
-                  onClick={() => {
-                    changeCallType(i);
+                <div
+                  style={{
+                    padding: '0px 5px 0px 10px',
+                    marginTop: '-10px',
                   }}
                 >
-                  {calls[i].callType === 'advanced' ? 'Simple' : 'Advanced'}
-                </RemoveButton>
+                  <Toggle
+                    onToggle={() => {
+                      changeCallType(i);
+                    }}
+                    width={80}
+                    height={35}
+                    state={calls[i].callType === 'advanced'}
+                    optionOne={'Simple'}
+                    optionTwo={'Advanced'}
+                  />
+                </div>
               ) : (
                 <div />
               )}

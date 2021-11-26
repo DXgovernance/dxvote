@@ -15,11 +15,12 @@ export const DropdownButton = styled(IconButton)``;
 
 export const DropdownContent = styled(Box)`
   display: ${({ show }) => (show ? 'block' : 'none')};
-  border: 1px solid #000;
   border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.muted};
+  border-radius: ${({ theme }) => theme.radii.curved};
   padding-top: 0.25rem;
   position: absolute;
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.colors.background};
   z-index: 9999;
   width: 12.5rem;
 

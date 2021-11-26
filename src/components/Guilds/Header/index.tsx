@@ -4,11 +4,12 @@ import { Box, Container } from '../common/Layout';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import ethIcon from '../../../assets/images/ethereum.svg';
 import { IconButton } from '../common/Button';
+import { Heading } from '../common/Typography';
 
 const HeaderWrapper = styled(Box)`
   padding: 0.75rem 0;
 
-  @media only screen and(min - width: 768px) {
+  @media only screen and(min-width: 768px) {
     padding: 1.5rem 0;
   }
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
@@ -28,11 +29,6 @@ const MenuItems = styled(Box)`
   margin-left: auto;
 `;
 
-const AppLogo = styled(Box)`
-  font-weight: 600;
-  font-size: 1.25rem;
-`;
-
 const ButtonIcon = styled.img`
   height: 1.1rem;
   width: 1.1rem;
@@ -42,7 +38,9 @@ const Header = () => {
   return (
     <HeaderWrapper as="header">
       <HeaderContainer>
-        <AppLogo>DXvote</AppLogo>
+        <Heading size={2}>
+          <strong>DXvote</strong>
+        </Heading>
         <MenuItems>
           <IconButton iconLeft>
             <ButtonIcon src={ethIcon} alt={'Icon'} />
