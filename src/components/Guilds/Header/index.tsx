@@ -1,14 +1,12 @@
 import styled from 'styled-components';
-import { isDesktop } from 'react-device-detect';
 import { Box, Container } from '../common/Layout';
-import dxIcon from '../../../assets/images/dxdao-icon.svg';
-import ethIcon from '../../../assets/images/ethereum.svg';
-import { IconButton } from '../common/Button';
+import NetworkButton from './NetworkButton';
+import WalletButton from './WalletButton';
 
 const HeaderWrapper = styled(Box)`
   padding: 0.75rem 0;
 
-  @media only screen and(min - width: 768px) {
+  @media only screen and (min-width: 768px) {
     padding: 1.5rem 0;
   }
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
@@ -33,26 +31,14 @@ const AppLogo = styled(Box)`
   font-size: 1.25rem;
 `;
 
-const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
-`;
-
 const Header = () => {
   return (
     <HeaderWrapper as="header">
       <HeaderContainer>
         <AppLogo>DXvote</AppLogo>
         <MenuItems>
-          <IconButton iconLeft>
-            <ButtonIcon src={ethIcon} alt={'Icon'} />
-            Ethereum
-          </IconButton>
-
-          <IconButton iconLeft>
-            <ButtonIcon src={dxIcon} alt={'Icon'} />
-            {isDesktop && <span>geronimo.eth</span>}
-          </IconButton>
+          <NetworkButton />
+          <WalletButton />
         </MenuItems>
       </HeaderContainer>
     </HeaderWrapper>
