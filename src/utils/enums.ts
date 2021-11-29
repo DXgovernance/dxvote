@@ -33,6 +33,8 @@ export enum VotingMachineProposalState {
   PreBoosted,
   Boosted,
   QuietEndingPeriod,
+  Rejected,
+  Passed,
 }
 
 export const enumKeys = <O extends object, K extends keyof O = keyof O>(
