@@ -2,6 +2,8 @@ import axios from 'axios';
 import { DaoNetworkCache, DaoInfo } from '../src/types';
 const fs = require('fs');
 const hre = require('hardhat');
+var stringify = require('json-stable-stringify');
+
 const web3 = hre.web3;
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
@@ -134,13 +136,13 @@ async function main() {
 
     fs.writeFileSync(
       './cache/' + networkName + '.json',
-      JSON.stringify(networkCacheFile),
+      stringify(networkCacheFile),
       { encoding: 'utf8', flag: 'w' }
     );
 
     fs.writeFileSync(
       './cache/' + proposalTitlesFileName + '.json',
-      JSON.stringify(proposalTitles),
+      stringify(proposalTitles),
       { encoding: 'utf8', flag: 'w' }
     );
 
