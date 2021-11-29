@@ -3,6 +3,8 @@ require('@nomiclabs/hardhat-truffle5');
 require('hardhat-dependency-compiler');
 
 const MNEMONIC = "dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao";
+const INFURA_API_KEY = process.env.REACT_APP_KEY_INFURA_API_KEY;
+const ALCHEMY_API_KEY = process.env.REACT_APP_KEY_ALCHEMY_API_KEY || "";
 
 module.exports = {
   paths: {
@@ -58,19 +60,23 @@ module.exports = {
       allowUnlimitedContractSize: false
     },
     mainnet: {
-      url: `https://eth-mainnet.gateway.pokt.network/v1/lb/610e4d3118656e00369b9b05`,
+      url: ALCHEMY_API_KEY.length > 0
+        ? `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`
+        : `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
       accounts: { mnemonic: MNEMONIC },
       gasLimit: 9000000,
       timeout: 20000
     },
     rinkeby: {
-      url: `https://eth-rinkeby.gateway.pokt.network/v1/lb/61116c81a585a20035149067`,
+      url: ALCHEMY_API_KEY.length > 0
+        ? `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_API_KEY}`
+        : `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,
       accounts: { mnemonic: MNEMONIC },
       gasLimit: 9000000,
       gasPrice: 1000000000 // 1 gwei
     },
     xdai: {
-      url: `https://poa-xdai.gateway.pokt.network/v1/lb/610e4ed818656e00369b9ccc`,
+      url: `https://rpc.xdaichain.com/`,
       accounts: { mnemonic: MNEMONIC },
       gasLimit: 17000000,
       gasPrice: 2000000000, // 2 gwei
