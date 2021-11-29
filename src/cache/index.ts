@@ -9,6 +9,7 @@ import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
   tryCacheUpdates,
+  objCompare,
 } from '../utils';
 import {
   getEvents,
@@ -1719,9 +1720,7 @@ export const updateProposals = async function (
   // Sort cache data, so the IPFS hash is consistent
   Object.keys(networkCache.schemes).forEach(schemeId => {
     networkCache.schemes[schemeId].proposalIds.sort();
-    networkCache.schemes[schemeId].newProposalEvents.sort((a, b) =>
-      a.proposalId.localeCompare(b.proposalId)
-    );
+    networkCache.schemes[schemeId].newProposalEvents.sort((a, b) => objCompare(a, b, 'proposalId'));
   });
   networkCache.proposals = Object.keys(networkCache.proposals)
     .sort()
@@ -1729,7 +1728,7 @@ export const updateProposals = async function (
       obj[key] = networkCache.proposals[key];
       return obj;
     }, {});
-  networkCache.ipfsHashes.sort((a, b) => a.hash.localeCompare(b.hash));
+  networkCache.ipfsHashes.sort((a, b) => objCompare(a, b, 'hash'));
 
   if (!isNode()) {
     const proposalTitles = await getProposalTitlesFromIPFS(
