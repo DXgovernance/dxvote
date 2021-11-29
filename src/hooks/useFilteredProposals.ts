@@ -23,8 +23,13 @@ const matchStatus = (proposal: ProposalsExtended, status: string) => {
   return proposal.stateInVotingMachine === parseInt(status);
 };
 
-const matchScheme = (proposal: ProposalsExtended, scheme: string) =>
-  scheme === 'All Schemes' || !scheme ? proposal : proposal.scheme === scheme;
+const matchScheme = (proposal: ProposalsExtended, scheme: string) => {
+  if (scheme === 'All Schemes' || !scheme) {
+    return proposal
+  }
+  return proposal.scheme === scheme
+}
+
 
 export const useFilteredProposals = () => {
   const { proposals, loading } = useFilterCriteria();

@@ -45,7 +45,7 @@ const ProposalsPage = observer(() => {
     context: { daoStore, configStore, providerStore },
   } = useContext();
 
-    const { getRep } = useRep()
+  const { getRep } = useRep();
 
   const votingMachines = configStore.getNetworkContracts().votingMachines;
   const networkName = configStore.getActiveChainName();
@@ -111,7 +111,7 @@ const ProposalsPage = observer(() => {
 
               const repAtCreation = getRep(
                 proposal.creationEvent.l1BlockNumber
-              ).totalSupply
+              ).totalSupply;
 
               const positiveVotesPercentage = formatPercentage(
                 proposal.positiveVotes.div(repAtCreation),
