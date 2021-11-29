@@ -2,7 +2,7 @@ import axios from 'axios';
 import { DaoNetworkCache, DaoInfo } from '../src/types';
 const fs = require('fs');
 const hre = require('hardhat');
-var stringify = require('json-stable-stringify');
+const stringify = require('json-stable-stringify');
 
 const web3 = hre.web3;
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
