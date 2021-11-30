@@ -20,6 +20,10 @@ import {
   formatBalance,
 } from '../utils';
 import { NETWORK_ASSET_SYMBOL } from '../utils';
+import useExporters from '../hooks/useExporters';
+import { Button } from './common/Button';
+import { flatten } from '../utils/array';
+import moment from 'moment';
 
 const FinanceInfoWrapper = styled.div`
   background: white;
@@ -40,17 +44,21 @@ const CenteredRow = styled(Row)`
   padding: 0;
 `;
 
+const ExportRow = styled(CenteredRow)`
+  margin-top: 20px;
+`;
+
 const FinanceInformation = observer(() => {
   const {
     context: { daoStore, configStore, coingeckoService },
   } = useContext();
+  const { exportToCSV, triggerDownload } = useExporters();
 
   const daoInfo = daoStore.getDaoInfo();
   const schemes = daoStore.getAllSchemes();
   const prices = coingeckoService.getPrices();
   const networkAssetSymbol =
     NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
-
   let assets = {
     total: [
       {
@@ -129,6 +137,32 @@ const FinanceInformation = observer(() => {
     });
   });
 
+  const getExportFileName = () => {
+    return `finances-${moment().format('YYYY-MM-DD')}`;
+  };
+
+  const exportData = async () => {
+    const allAssets = Object.keys(assets).map(assetHolder => {
+      const assetsOfHolder = assets[assetHolder];
+      const assetsExportable = assetsOfHolder.map(asset => ({
+        name: asset.name,
+        address: asset.address,
+        holder: parseCamelCase(assetHolder),
+        balance: formatBalance(asset.amount, asset.decimals, 2).toString(),
+        usdPrice:
+          prices[asset.address] && prices[asset.address].usd
+            ? Number(formatBalance(asset.amount, asset.decimals, 2)) *
+              prices[asset.address].usd
+            : null,
+      }));
+      return assetsExportable;
+    });
+    const assetsExportable = flatten(allAssets);
+    const csvString = await exportToCSV(assetsExportable);
+
+    triggerDownload(csvString, `${getExportFileName()}.csv`, 'text/csv');
+  };
+
   return (
     <FinanceInfoWrapper>
       {Object.keys(assets).map(assetHolder => {
@@ -153,13 +187,15 @@ const FinanceInformation = observer(() => {
                         <DataCell align="left" weight="500">
                           <CenteredRow>
                             {asset.name}{' '}
-                            <BlockchainLink
-                              size="long"
-                              type="address"
-                              text={asset.address}
-                              onlyIcon
-                              toCopy
-                            />
+                            {asset.address != ZERO_ADDRESS && (
+                              <BlockchainLink
+                                size="long"
+                                type="address"
+                                text={asset.address}
+                                onlyIcon
+                                toCopy
+                              />
+                            )}
                           </CenteredRow>
                         </DataCell>
                         <DataCell align="center">
@@ -193,6 +229,10 @@ const FinanceInformation = observer(() => {
           </div>
         );
       })}
+
+      <ExportRow>
+        <Button onClick={exportData}>Export to CSV</Button>
+      </ExportRow>
     </FinanceInfoWrapper>
   );
 });

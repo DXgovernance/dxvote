@@ -1,12 +1,17 @@
 import { useContext } from 'contexts';
 import { createContext, ReactNode } from 'react';
-import { filterInitialCriteria } from 'utils';
+import { BigNumber } from 'utils';
 
 export type ProposalsExtended = Proposal &
   ProposalStateChange &
   VotingMachineParameters &
   Pick<Scheme, 'maxSecondsForExecution' | 'type'> & {
     autoBoost: Boolean;
+    boostTime: BigNumber;
+    finishTime: BigNumber;
+    // @Todo convert PA to enum
+    status: any;
+    pendingAction: any;
   };
 
 interface ProposalProviderProps {
@@ -14,8 +19,6 @@ interface ProposalProviderProps {
 }
 
 interface ProposalsState {
-  loading: boolean;
-  error: Error | null;
   proposals: ProposalsExtended[];
 }
 
@@ -26,19 +29,16 @@ export const ProposalProvider = ({ children }: ProposalProviderProps) => {
     context: { daoStore },
   } = useContext();
 
-  const allProposals: ProposalsExtended[] = filterInitialCriteria(
-    daoStore.getAllProposals().map(cacheProposal => {
+  const allProposals: ProposalsExtended[] = daoStore
+    .getAllProposals()
+    .map(cacheProposal => {
       return Object.assign(
         cacheProposal,
         daoStore.getProposalStatus(cacheProposal.id)
       );
-    }),
-    daoStore
-  );
+    });
 
   const proposalState: ProposalsState = {
-    loading: false,
-    error: null,
     proposals: allProposals,
   };
 

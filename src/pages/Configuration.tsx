@@ -49,6 +49,7 @@ const ConfigPage = observer(() => {
       pinataService,
       etherscanService,
       infuraService,
+      poktService,
       alchemyService,
       customRpcService,
     },
@@ -64,6 +65,7 @@ const ConfigPage = observer(() => {
   const [infuraKeyStatus, setInfuraKeyStatus] = React.useState(
     infuraService.auth
   );
+  const [poktStatus, setPoktStatus] = React.useState(poktService.auth);
   const [alchemyKeyStatus, setAlchemyKeyStatus] = React.useState(
     alchemyService.auth
   );
@@ -90,11 +92,13 @@ const ConfigPage = observer(() => {
     await pinataService.isAuthenticated();
     await etherscanService.isAuthenticated(networkName);
     await infuraService.isAuthenticated();
+    await poktService.isAuthenticated();
     await alchemyService.isAuthenticated();
     await customRpcService.isAuthenticated();
     setPinataKeyStatus(pinataService.auth);
     setEtherscanApiStatus(etherscanService.auth);
     setInfuraKeyStatus(infuraService.auth);
+    setPoktStatus(poktService.auth);
     setAlchemyKeyStatus(alchemyService.auth);
     setCustomRpcUrlStatus(customRpcService.auth);
   }
@@ -150,12 +154,27 @@ const ConfigPage = observer(() => {
             value={localConfig.rpcType}
           >
             <option value="">Default</option>
+            <option value="pokt">Pokt</option>
             <option value="infura">Infura</option>
             <option value="alchemy">Alchemy</option>
             <option value="custom">Custom</option>
           </Dropdown>
         </Row>
 
+        {localConfig.rpcType === 'pokt' && (
+          <Row>
+            <FormLabel>Pokt:</FormLabel>
+            <InputBox
+              type="text"
+              serviceName="pokt"
+              onChange={event =>
+                onApiKeyValueChange(event.target.value, 'pokt')
+              }
+              value={localConfig.pokt}
+            ></InputBox>
+            <FormLabel>{poktStatus ? <FiCheckCircle /> : <FiX />}</FormLabel>
+          </Row>
+        )}
         {localConfig.rpcType === 'infura' && (
           <Row>
             <FormLabel>Infura:</FormLabel>

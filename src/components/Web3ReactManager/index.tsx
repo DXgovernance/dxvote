@@ -10,6 +10,7 @@ import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { useContext } from 'contexts';
 import { useInterval, usePrevious } from 'utils';
 import { InjectedConnector } from '@web3-react/injected-connector';
+import { NetworkConnector } from '@web3-react/network-connector';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -20,6 +21,17 @@ const Web3ReactManager = ({ children }) => {
   const location = useLocation();
   const history = useHistory();
   const rpcUrls = useRpcUrls();
+
+  // Overriding default fetch to check for RPC url and setting correct headers if matched
+  const originalFetch = window.fetch;
+  window.fetch = (url, opts): Promise<Response> => {
+    if (rpcUrls && Object.values(rpcUrls).includes(url) && opts) {
+      opts.headers = opts.headers || {
+        'Content-Type': 'application/json',
+      };
+    }
+    return originalFetch(url, opts);
+  };
 
   const web3Context = useWeb3React();
   const {
@@ -41,7 +53,7 @@ const Web3ReactManager = ({ children }) => {
   }, [web3Context]);
 
   // try to eagerly connect to a provider if possible
-  const triedEager = useEagerConnect();
+  const { triedEager, tryConnecting } = useEagerConnect();
 
   // If eager-connect failed, try to connect to network in the URL
   // If no chain in the URL, fallback to default chain
@@ -91,6 +103,11 @@ const Web3ReactManager = ({ children }) => {
       // If currently connected to an injected wallet, keep synced with it
       if (connector instanceof InjectedConnector) {
         history.push(`/${chain.name}/proposals`);
+      } else if (connector instanceof NetworkConnector) {
+        const urlNetworkName = location.pathname.split('/')[1];
+        if (urlNetworkName == chain.name) {
+          tryConnecting();
+        }
       }
     };
 

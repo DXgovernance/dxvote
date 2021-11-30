@@ -1,11 +1,14 @@
 import styled from 'styled-components';
-import { FiZap, FiArrowRight, FiCircle } from 'react-icons/fi';
+import { FiArrowRight, FiCircle } from 'react-icons/fi';
 import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
+import ProposalStatus from '../ProposalStatus';
+import { isDesktop } from 'react-device-detect';
+import { Heading } from '../common/Typography';
 
 const CardWrapper = styled(Box)`
-  border: 1px solid #000;
-  border-radius: 0.3rem;
+  border: 1px solid ${({ theme }) => theme.colors.muted};
+  border-radius: ${({ theme }) => theme.radii.curved};
   margin-bottom: 1rem;
   padding: 1rem;
 `;
@@ -26,9 +29,13 @@ const CardFooter = styled(Box)`
   justify-content: space-between;
 `;
 
-const CardTitle = styled.h2`
-  font-size: 1.25rem;
+const CardTitle = styled(Heading)`
+  font-size: 1rem;
   font-weight: 700;
+
+  @media only screen and (min-width: 768px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const IconDetailWrapper = styled(Box)`
@@ -83,25 +90,25 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
           <Icon src={dxIcon} spaceRight />
           <Detail>Swapr von 0x01Cf...2712</Detail>
         </IconDetailWrapper>
-
-        <IconDetailWrapper>
-          <Detail>Ends in 4 days</Detail>
-          <Icon as="div" spaceLeft bordered>
-            <FiZap />
-          </Icon>
-        </IconDetailWrapper>
+        <ProposalStatus status="Active" detail="4 days left" />
       </CardHeader>
       <CardContent>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle size={2}>
+          <strong>{title}</strong>
+        </CardTitle>
         <p>{description}</p>
       </CardContent>
       <CardFooter>
         <BorderedIconDetailWrapper>
           <Detail>150 ETH</Detail>
-          <Icon as="div" spaceLeft spaceRight>
-            <FiArrowRight />
-          </Icon>
-          <Detail>geronimo.eth</Detail>
+          {isDesktop && (
+            <>
+              <Icon as="div" spaceLeft spaceRight>
+                <FiArrowRight />
+              </Icon>{' '}
+              <Detail>geronimo.eth</Detail>
+            </>
+          )}
         </BorderedIconDetailWrapper>
         <BorderedIconDetailWrapper>
           <Detail>15.60%</Detail>

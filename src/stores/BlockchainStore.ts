@@ -224,7 +224,7 @@ export default class BlockchainStore {
             chainId
           );
 
-          const fromBlock = lastCheckedBlockNumber;
+          const fromBlock = lastCheckedBlockNumber + 1;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
           const proposalTitles = configStore.getProposalTitlesInBuild();
