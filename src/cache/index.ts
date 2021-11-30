@@ -123,6 +123,26 @@ export const getUpdatedCache = async function (
     networkCache
   );
 
+  if (notificationStore)
+    notificationStore.setGlobalLoading(
+      true,
+      `Collecting vesting factory contract data in blocks ${fromBlock} - ${toBlock}`
+    );
+
+  networkCache = await tryCacheUpdates(
+    [
+      updateVestingFactory(
+        networkCache,
+        networkContractsConfig,
+        networkWeb3Contracts.vestingFactory,
+        fromBlock,
+        toBlock,
+        web3
+      ),
+    ],
+    networkCache
+  );
+
   networkCache.l1BlockNumber = Number(toBlock);
   networkCache.l2BlockNumber = 0;
 
@@ -551,6 +571,32 @@ export const updatePermissionRegistry = async function (
         fromTime: eventValues.fromTime,
       };
     });
+  }
+
+  return networkCache;
+};
+// Gets all teh events form the permission registry and stores the permissions set.
+export const updateVestingFactory = async function (
+  networkCache: DaoNetworkCache,
+  networkContractsConfig: NetworkContracts,
+  vestingFactoryContract: any,
+  fromBlock: number,
+  toBlock: number,
+  web3: any
+): Promise<DaoNetworkCache> {
+  if (vestingFactoryContract?._address !== ZERO_ADDRESS) {
+    let vestingFactoryEvents = sortEvents(
+      await getEvents(
+        web3,
+        vestingFactoryContract,
+        fromBlock,
+        toBlock,
+        'allEvents' // Should we get 'VestingCreated' event? ref: https://github.com/DXgovernance/dxdao-contracts/blob/main/contracts/dxvote/utils/DXDVestingFactory.sol
+      )
+    );
+    (networkCache.daoInfo as any).vestingFactory = vestingFactoryEvents;
+    // Do something with contract data. Maybe map over transactions/events?
+    // console.log('contract.transactions', vestingFactoryContract.transactions);
   }
 
   return networkCache;
