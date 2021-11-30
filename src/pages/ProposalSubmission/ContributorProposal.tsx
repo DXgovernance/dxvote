@@ -148,6 +148,7 @@ export const ContributorProposalPage = observer(() => {
   const [stableOverride, setStableOverride] = useState<number>(null);
   const [dxdOverride, setDXDOverride] = useState<number>(null);
   const [startDate, setStartDate] = useState(moment());
+  const [noRep, setNoRep] = useState(false);
 
   const { tokenAth: dxdAth, athDate } = useTokenService('dxdao');
 
@@ -189,7 +190,9 @@ export const ContributorProposalPage = observer(() => {
       );
 
       setRepReward(
-        formatNumberValue(totalSupply.times(0.001667).times(discount), 0)
+        noRep
+          ? 0
+          : formatNumberValue(totalSupply.times(0.001667).times(discount), 0)
       );
     }
   }, [confirm]);
@@ -228,15 +231,18 @@ export const ContributorProposalPage = observer(() => {
           ).toFixed(2)} DXD vested for 2 years and 1 year cliff @ $${
             dxdOverride ? dxdOverride : dxdAth
           }/DXD
-          \n ${calculateDiscountedValue(
-            levels[selectedLevel]?.rep,
-            discount
-          )}% - ${repReward} REP \n `,
+          \n ${
+            noRep
+              ? 'No REP'
+              : calculateDiscountedValue(levels[selectedLevel]?.rep, discount) +
+                '%'
+          } - ${repReward} REP \n `,
         [
           'Contributor Proposal',
           `Level ${selectedLevel + 1}`,
           `${trialPeriod ? 'Trial Period' : ''}`,
           `${percentage && percentage < 100 ? '' : 'Full time worker'}`,
+          `${noRep ? 'No REP' : ''}`,
         ],
         pinataService
       );
@@ -352,10 +358,14 @@ export const ContributorProposalPage = observer(() => {
         ).toFixed(2)}{' '}
         DXD vested for 2 years and 1 year cliff
       </Values>
-      <Values>
-        {calculateDiscountedValue(levels[selectedLevel]?.rep, discount)}% -{' '}
-        {normalizeBalance(bnum(repReward ? repReward : '0')).toString()} REP
-      </Values>
+      {noRep ? (
+        <Values>No REP</Values>
+      ) : (
+        <Values>
+          {calculateDiscountedValue(levels[selectedLevel]?.rep, discount)}% -{' '}
+          {normalizeBalance(bnum(repReward ? repReward : '0')).toString()} REP
+        </Values>
+      )}
     </ModalContentWrap>
   );
 
@@ -409,7 +419,10 @@ export const ContributorProposalPage = observer(() => {
                 </Value>
 
                 <Value>
-                  {levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}% REP
+                  {noRep
+                    ? 0
+                    : levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}
+                  % REP
                 </Value>
                 <InputDate
                   value={startDate}
@@ -469,6 +482,14 @@ export const ContributorProposalPage = observer(() => {
               state={trialPeriod}
               optionOne={'Full worker'}
               optionTwo={'Trial period'}
+            />
+            <Toggle
+              onToggle={() => {
+                setNoRep(!noRep);
+              }}
+              state={noRep}
+              optionOne={'REP'}
+              optionTwo={'No REP'}
             />
 
             <InputWrapper>
