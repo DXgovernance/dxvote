@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
-export const useClickOutside = (ref, callback) => {
+// detects when a blur (out of focus) happens on ref element and calls callback
+export const useDetectBlur = (ref, callback) => {
   useEffect(() => {
     const handleClickOutside = event => {
       if (ref.current && !ref.current.contains(event.target)) {

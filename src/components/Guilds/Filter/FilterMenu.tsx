@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import { isMobile } from 'react-device-detect';
 
 import { useFilter } from 'contexts/Guilds/filters';
-import { useClickOutside } from 'hooks/Guilds/useClickOutside';
+import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
 
 import {
   DropdownContent,
@@ -57,8 +57,8 @@ export const FilterMenu = () => {
   const statusRef = useRef(null);
 
   // hook that handles the click outside the ref element, when clicked calls callback to close.
-  useClickOutside(schemeRef, () => setShowScheme(false));
-  useClickOutside(statusRef, () => setShowStatus(false));
+  useDetectBlur(schemeRef, () => setShowScheme(false));
+  useDetectBlur(statusRef, () => setShowStatus(false));
 
   return (
     <FilterButtons>
