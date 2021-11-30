@@ -25,11 +25,15 @@ const ProposalActionRow = styled(Box)`
   display: flex;
   justify-content: space-between;
   cursor: pointer;
+  align-items: center;
 `;
 
 const ProposalActionTitle = styled(Box)`
   display: flex;
   align-items: center;
+  span {
+    font-size: 14px;
+  }
 `;
 
 const FiArrowRightSpaced = styled(FiArrowRight)`
@@ -47,7 +51,7 @@ const ActionItem = () => {
     <ProposalActionItem>
       <ProposalActionRow onClick={() => setIsOpen(!isOpen)}>
         <ProposalActionTitle>
-          Issue 0.001% REP (1 REP) <FiArrowRightSpaced />
+          <span>Issue 0.001% REP (1 REP)</span> <FiArrowRightSpaced />
           <IconButton variant="minimal" iconLeft>
             <ButtonIcon src={dxIcon} alt={'Icon'} />
             geronimo.eth
