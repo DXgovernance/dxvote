@@ -12,9 +12,11 @@ export const Wrapper = styled.div`
   transform: translate(-50%, -50%);
   z-index: 700;
   width: 40%;
+  max-width: ${({ maxWidth }) => maxWidth}px;
   min-width: 400px;
   outline: 0;
 `;
+
 export const Backdrop = styled.div`
   position: fixed;
   width: 100%;
@@ -81,6 +83,7 @@ export interface ModalProps {
   onConfirm?: (any?: any) => void;
   onCancel?: () => void;
   children: JSX.Element;
+  maxWidth?: number;
 }
 
 export const ModalButton = styled(Button)`
@@ -98,11 +101,12 @@ export const Modal: React.FC<ModalProps> = ({
   onCancel,
   hideHeader,
   children,
+  maxWidth,
 }) => {
   const modal = (
     <div>
       <Backdrop onClick={onDismiss} />
-      <Wrapper>
+      <Wrapper maxWidth={maxWidth}>
         <StyledModal>
           {!hideHeader && (
             <Header>
