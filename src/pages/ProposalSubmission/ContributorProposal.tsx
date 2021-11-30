@@ -148,6 +148,7 @@ export const ContributorProposalPage = observer(() => {
   const [stableOverride, setStableOverride] = useState<number>(null);
   const [dxdOverride, setDXDOverride] = useState<number>(null);
   const [startDate, setStartDate] = useState(moment());
+  const [noRep, setNoRep] = useState(false);
 
   const { tokenAth: dxdAth, athDate } = useTokenService('dxdao');
 
@@ -469,6 +470,14 @@ export const ContributorProposalPage = observer(() => {
               state={trialPeriod}
               optionOne={'Full worker'}
               optionTwo={'Trial period'}
+            />
+            <Toggle
+              onToggle={() => {
+                setNoRep(!noRep);
+              }}
+              state={noRep}
+              optionOne={'REP'}
+              optionTwo={'No REP'}
             />
 
             <InputWrapper>
