@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { isMobile } from 'react-device-detect';
 
 import { useFilter } from 'contexts/Guilds/filters';
