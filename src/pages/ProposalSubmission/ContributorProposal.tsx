@@ -190,8 +190,9 @@ export const ContributorProposalPage = observer(() => {
       );
 
       setRepReward(
-        noRep ? 0 :
-        formatNumberValue(totalSupply.times(0.001667).times(discount), 0)
+        noRep
+          ? 0
+          : formatNumberValue(totalSupply.times(0.001667).times(discount), 0)
       );
     }
   }, [confirm]);
@@ -230,10 +231,12 @@ export const ContributorProposalPage = observer(() => {
           ).toFixed(2)} DXD vested for 2 years and 1 year cliff @ $${
             dxdOverride ? dxdOverride : dxdAth
           }/DXD
-          \n ${noRep ? 'No REP' : calculateDiscountedValue(
-            levels[selectedLevel]?.rep,
-            discount
-          ) + '%'} - ${repReward} REP \n `,
+          \n ${
+            noRep
+              ? 'No REP'
+              : calculateDiscountedValue(levels[selectedLevel]?.rep, discount) +
+                '%'
+          } - ${repReward} REP \n `,
         [
           'Contributor Proposal',
           `Level ${selectedLevel + 1}`,
@@ -355,12 +358,14 @@ export const ContributorProposalPage = observer(() => {
         ).toFixed(2)}{' '}
         DXD vested for 2 years and 1 year cliff
       </Values>
-      { noRep ? <Values>No REP</Values> :
+      {noRep ? (
+        <Values>No REP</Values>
+      ) : (
         <Values>
           {calculateDiscountedValue(levels[selectedLevel]?.rep, discount)}% -{' '}
           {normalizeBalance(bnum(repReward ? repReward : '0')).toString()} REP
         </Values>
-      }
+      )}
     </ModalContentWrap>
   );
 
@@ -414,7 +419,10 @@ export const ContributorProposalPage = observer(() => {
                 </Value>
 
                 <Value>
-                  {noRep ? 0 : levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}% REP
+                  {noRep
+                    ? 0
+                    : levels[selectedLevel]?.rep * (trialPeriod ? 0.8 : 1)}
+                  % REP
                 </Value>
                 <InputDate
                   value={startDate}
