@@ -15,6 +15,12 @@ export const Wrapper = styled.div`
   max-width: ${({ maxWidth }) => maxWidth}px;
   min-width: 400px;
   outline: 0;
+
+  @media only screen and (max-width: 768px) {
+    max-width: 300px;
+    min-width: 300px;
+    width: 300px;
+  }
 `;
 
 export const Backdrop = styled.div`
