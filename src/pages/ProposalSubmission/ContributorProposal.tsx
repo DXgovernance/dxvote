@@ -230,15 +230,16 @@ export const ContributorProposalPage = observer(() => {
           ).toFixed(2)} DXD vested for 2 years and 1 year cliff @ $${
             dxdOverride ? dxdOverride : dxdAth
           }/DXD
-          \n ${calculateDiscountedValue(
+          \n ${noRep ? 'No REP' : calculateDiscountedValue(
             levels[selectedLevel]?.rep,
             discount
-          )}% - ${repReward} REP \n `,
+          ) + '%'} - ${repReward} REP \n `,
         [
           'Contributor Proposal',
           `Level ${selectedLevel + 1}`,
           `${trialPeriod ? 'Trial Period' : ''}`,
           `${percentage && percentage < 100 ? '' : 'Full time worker'}`,
+          `${noRep ? 'No REP' : ''}`,
         ],
         pinataService
       );
