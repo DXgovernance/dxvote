@@ -188,13 +188,13 @@ const FinanceInformation = observer(() => {
                         <DataCell align="left" weight="500">
                           <CenteredRow>
                             {asset.name}{' '}
-                            <BlockchainLink
+                            {(asset.address != ZERO_ADDRESS) && <BlockchainLink
                               size="long"
                               type="address"
                               text={asset.address}
                               onlyIcon
                               toCopy
-                            />
+                            />}
                           </CenteredRow>
                         </DataCell>
                         <DataCell align="center">
