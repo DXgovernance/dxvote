@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { IconButton } from '../Button';
 import { Box } from '../Layout';
 
@@ -13,7 +13,11 @@ export enum DropdownPosition {
 
 export const DropdownButton = styled(IconButton)``;
 
-export const DropdownContent = styled(Box)`
+interface DropdownContentProps {
+  show: boolean;
+  fullScreenMobile?: boolean;
+}
+export const DropdownContent = styled<DropdownContentProps>(Box)`
   display: ${({ show }) => (show ? 'block' : 'none')};
   border-radius: 0.5rem;
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -22,19 +26,23 @@ export const DropdownContent = styled(Box)`
   position: absolute;
   background-color: ${({ theme }) => theme.colors.background};
   z-index: 9999;
-  width: 12.5rem;
+  width: 200px;
 
-  @media only screen and (max-width: 768px) {
-    height: 100vh;
-    width: 100%;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    position: fixed;
-    display: ${({ show }) => (show ? 'block' : 'none')};
-    border: none;
-  }
+  ${({ fullScreenMobile }) =>
+    fullScreenMobile &&
+    css`
+      @media only screen and (max-width: 768px) {
+        height: 100vh;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: fixed;
+        display: ${({ show }) => (show ? 'block' : 'none')};
+        border: none;
+      }
+    `}
 `;
 
 export const DropdownMenu = styled<DropdownProps>(Box)`

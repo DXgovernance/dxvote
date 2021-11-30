@@ -4,6 +4,7 @@ import { IconButton, Button } from '../common/Button';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { FiChevronDown } from 'react-icons/fi';
 import { DropdownMenu, DropdownContent } from '../common/DropdownMenu';
+
 const Icon = styled.img`
   height: 1.1rem;
   width: 1.1rem;
@@ -12,6 +13,7 @@ const Icon = styled.img`
 const UserActionButton = styled(IconButton)`
   border-radius: 10px;
   flex: 1;
+  width: 100%;
 `;
 
 const ContentItem = styled.div`
@@ -19,25 +21,19 @@ const ContentItem = styled.div`
   flex: 1;
   width: 100%;
   justify-content: space-between;
+  font-size: 14px;
+  padding-bottom: 5px;
 `;
 
-const CenteredDropdownMenu = styled(DropdownMenu)`
-  margin: auto;
-  display: flex;
+const DaoInfoContent = styled(DropdownContent)`
+  padding: 10px;
+  width: 90%;
+  display: ${({ show }) => (show ? 'flex' : 'none')};
   flex-direction: column;
-
-  ${DropdownContent} {
-    position: relative;
-    padding: 10px;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-
-    ${ContentItem} {
-      margin-bottom: 10px;
-    }
-  }
+  align-items: center;
 `;
+
+const CenteredDropdownMenu = styled(DropdownMenu)``;
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -48,7 +44,7 @@ export const MemberActions = () => {
         <span>geronimo.eth</span>
         <FiChevronDown />
       </UserActionButton>
-      <DropdownContent show={showMenu}>
+      <DaoInfoContent fullScreenMobile={false} show={showMenu}>
         <ContentItem>
           Voting Power <span>3.54%</span>
         </ContentItem>
@@ -59,7 +55,7 @@ export const MemberActions = () => {
           Unlocked in <span>542 days</span>
         </ContentItem>
         <Button onClick={() => alert('lock dxd')}> Lock DXD</Button>
-      </DropdownContent>
+      </DaoInfoContent>
     </CenteredDropdownMenu>
   );
 };

@@ -66,7 +66,7 @@ export const FilterMenu = () => {
             <FilterBadge>{countSchemeSelected}</FilterBadge>
           )}
         </FilterButton>
-        <DropdownContent show={showScheme}>
+        <DropdownContent fullScreenMobile={true} show={showScheme}>
           <Menu>
             {isMobile && <FiArrowLeft onClick={() => setShowScheme(false)} />}
             <DropdownMenuItem onClick={() => onToggleScheme('a')}>
@@ -81,7 +81,7 @@ export const FilterMenu = () => {
           </Menu>
         </DropdownContent>
       </DropdownMenu>
-      <DropdownMenu>
+      <DropdownMenu position={DropdownPosition.BottomRight}>
         <FilterButton
           iconRight
           onClick={() => setShowStatus(!showStatus)}
@@ -92,7 +92,7 @@ export const FilterMenu = () => {
             <FilterBadge>{countStatusSelected}</FilterBadge>
           )}
         </FilterButton>
-        <DropdownContent show={showStatus}>
+        <DropdownContent fullScreenMobile={true} show={showStatus}>
           <Menu>
             {isMobile && <FiArrowLeft onClick={() => setShowStatus(false)} />}
             <DropdownMenuItem onClick={() => onToggleStatus('a')}>

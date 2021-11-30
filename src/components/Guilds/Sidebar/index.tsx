@@ -111,7 +111,9 @@ export const Sidebar = () => {
           <DaoMemberCount>464 Members</DaoMemberCount>
         </DaoInfo>
         {isMember && <MemberActions />}
-        {!isMember && <GuestActions /* for now */ onJoin={setIsMember} />}
+        {!isMember && (
+          <GuestActions /* for now */ onJoin={() => setIsMember(true)} />
+        )}
       </DaoInfoPanel>
       <SidebarMenu>
         <SidebarMenuItem href="#">Proposals</SidebarMenuItem>

@@ -86,7 +86,7 @@ export const GuestActions = ({ onJoin }) => {
             </BalanceRow>
             <BalanceRow>
               <AcquireValue>10.00</AcquireValue>
-              <Button>Max</Button>
+              <Button onClick={onJoin}>Max</Button>
             </BalanceRow>
           </BalanceWidget>
         </ModalContainer>
