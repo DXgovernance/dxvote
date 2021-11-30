@@ -20,7 +20,8 @@ import {
   ipfsHashToDescriptionHash,
   getSchemeTypeData,
 } from '../utils/cache';
-import WalletSchemeJSON from '../contracts/WalletScheme.json';
+import WalletScheme1_0JSON from '../contracts/WalletScheme1_0.json';
+import WalletScheme1_1JSON from '../contracts/WalletScheme1_1.json';
 import ContributionRewardJSON from '../contracts/ContributionReward.json';
 import { getContracts } from '../contracts';
 import RootContext from '../contexts';
@@ -601,6 +602,12 @@ export const updateSchemes = async function (
         schemeTypeData.name
       );
 
+      let controllerAddress = networkWeb3Contracts.controller._address;
+      let schemeName = schemeTypeData.name;
+      let maxSecondsForExecution = bnum(0);
+      let maxRepPercentageChange = bnum(0);
+      let schemeType = schemeTypeData.type;
+
       let callsToExecute = [
         [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
         [
@@ -617,21 +624,56 @@ export const updateSchemes = async function (
 
       if (schemeTypeData.type === 'WalletScheme') {
         const walletSchemeContract = await new web3.eth.Contract(
-          WalletSchemeJSON.abi,
+          WalletScheme1_0JSON.abi,
           schemeAddress
         );
-        callsToExecute.push([walletSchemeContract, 'controllerAddress', []]);
-        callsToExecute.push([walletSchemeContract, 'schemeName', []]);
-        callsToExecute.push([
-          walletSchemeContract,
-          'maxSecondsForExecution',
-          [],
-        ]);
-        callsToExecute.push([
-          walletSchemeContract,
-          'maxRepPercentageChange',
-          [],
-        ]);
+        const walletSchemeType = await walletSchemeContract.methods
+          .SCHEME_TYPE()
+          .call();
+
+        schemeType = walletSchemeType;
+        switch (schemeType) {
+          case 'Wallet Scheme v1.1':
+            const walletSchemeContract1_1 = await new web3.eth.Contract(
+              WalletScheme1_1JSON.abi,
+              schemeAddress
+            );
+            callsToExecute.push([
+              walletSchemeContract1_1,
+              'doAvatarGenericCalls',
+              [],
+            ]);
+            callsToExecute.push([walletSchemeContract1_1, 'schemeName', []]);
+            callsToExecute.push([
+              walletSchemeContract1_1,
+              'maxSecondsForExecution',
+              [],
+            ]);
+            callsToExecute.push([
+              walletSchemeContract1_1,
+              'maxRepPercentageChange',
+              [],
+            ]);
+            break;
+          default:
+            callsToExecute.push([
+              walletSchemeContract,
+              'controllerAddress',
+              [],
+            ]);
+            callsToExecute.push([walletSchemeContract, 'schemeName', []]);
+            callsToExecute.push([
+              walletSchemeContract,
+              'maxSecondsForExecution',
+              [],
+            ]);
+            callsToExecute.push([
+              walletSchemeContract,
+              'maxRepPercentageChange',
+              [],
+            ]);
+            break;
+        }
       }
 
       const callsResponse1 = await executeMulticall(
@@ -641,28 +683,24 @@ export const updateSchemes = async function (
       );
 
       const ethBalance = callsResponse1.decodedReturnData[0];
-
       const permissions = decodePermission(callsResponse1.decodedReturnData[1]);
-      const paramsHash = schemeTypeData.voteParams
-        ? schemeTypeData.voteParams
-        : callsResponse1.decodedReturnData[2];
+      const paramsHash = callsResponse1.decodedReturnData[2];
 
-      const controllerAddress =
-        schemeTypeData.type === 'WalletScheme'
-          ? callsResponse1.decodedReturnData[3]
-          : networkWeb3Contracts.avatar._address;
-      const schemeName =
-        schemeTypeData.type === 'WalletScheme'
-          ? callsResponse1.decodedReturnData[4]
-          : schemeTypeData.name;
-      const maxSecondsForExecution =
-        schemeTypeData.type === 'WalletScheme'
-          ? callsResponse1.decodedReturnData[5]
-          : 0;
-      const maxRepPercentageChange =
-        schemeTypeData.type === 'WalletScheme'
-          ? callsResponse1.decodedReturnData[6]
-          : 0;
+      if (schemeTypeData.type === 'WalletScheme') {
+        switch (schemeType) {
+          case 'Wallet Scheme v1.1':
+            controllerAddress = callsResponse1.decodedReturnData[3]
+              ? networkWeb3Contracts.controller.address
+              : ZERO_ADDRESS;
+            break;
+          default:
+            controllerAddress = callsResponse1.decodedReturnData[3];
+            break;
+        }
+        schemeName = callsResponse1.decodedReturnData[4];
+        maxSecondsForExecution = callsResponse1.decodedReturnData[5];
+        maxRepPercentageChange = callsResponse1.decodedReturnData[6];
+      }
 
       callsToExecute = [];
       if (schemeTypeData.type === 'WalletScheme') {
@@ -738,7 +776,7 @@ export const updateSchemes = async function (
           registered: true,
           controllerAddress,
           name: schemeName,
-          type: schemeTypeData.type,
+          type: schemeType,
           ethBalance: ethBalance,
           tokenBalances: {},
           votingMachine: schemeTypeData.votingMachine,
@@ -793,7 +831,7 @@ export const updateSchemes = async function (
 
       if (networkCache.schemes[schemeAddress].type === 'WalletScheme') {
         callsToExecute.push([
-          await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
+          await new web3.eth.Contract(WalletScheme1_0JSON.abi, schemeAddress),
           'maxSecondsForExecution',
           [],
         ]);
@@ -848,7 +886,7 @@ export const updateSchemes = async function (
 
         if (networkCache.schemes[schemeAddress].type === 'WalletScheme') {
           callsToExecute.push([
-            await new web3.eth.Contract(WalletSchemeJSON.abi, schemeAddress),
+            await new web3.eth.Contract(WalletScheme1_0JSON.abi, schemeAddress),
             'maxSecondsForExecution',
             [],
           ]);
@@ -981,7 +1019,7 @@ export const updateProposals = async function (
                 if (schemeTypeData.type === 'WalletScheme') {
                   callsToExecute.push([
                     await new web3.eth.Contract(
-                      WalletSchemeJSON.abi,
+                      WalletScheme1_0JSON.abi,
                       schemeAddress
                     ),
                     'getOrganizationProposal',
@@ -1511,7 +1549,7 @@ export const updateProposals = async function (
             if (schemeTypeData.type === 'WalletScheme') {
               callsToExecute.push([
                 await new web3.eth.Contract(
-                  WalletSchemeJSON.abi,
+                  WalletScheme1_0JSON.abi,
                   schemeAddress
                 ),
                 'getOrganizationProposal',

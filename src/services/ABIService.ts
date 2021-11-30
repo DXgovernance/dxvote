@@ -8,7 +8,7 @@ export const schema = {
   VotingMachine: require('../contracts/GenesisProtocol').abi,
   DXDVotingMachine: require('../contracts/DXDVotingMachine').abi,
   Reputation: require('../contracts/DxReputation').abi,
-  WalletScheme: require('../contracts/WalletScheme').abi,
+  WalletScheme: require('../contracts/WalletScheme1_0').abi,
   ERC20: require('../contracts/ERC20').abi,
   PermissionRegistry: require('../contracts/PermissionRegistry').abi,
   Multicall: require('../contracts/Multicall').abi,
