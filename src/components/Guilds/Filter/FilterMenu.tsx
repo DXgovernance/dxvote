@@ -1,7 +1,9 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
+
 import { useFilter } from 'contexts/Guilds/filters';
+import { useClickOutside } from 'hooks/Guilds/useClickOutside';
 
 import {
   DropdownContent,
@@ -51,9 +53,16 @@ export const FilterMenu = () => {
     isStatusSelected,
     onToggleStatus,
   } = useFilter();
+  const schemeRef = useRef(null);
+  const statusRef = useRef(null);
+
+  // hook that handles the click outside the ref element, when clicked calls callback to close.
+  useClickOutside(schemeRef, () => setShowScheme(false));
+  useClickOutside(statusRef, () => setShowStatus(false));
+
   return (
     <FilterButtons>
-      <DropdownMenu position={DropdownPosition.BottomRight}>
+      <DropdownMenu ref={schemeRef} position={DropdownPosition.BottomRight}>
         <FilterButton
           iconRight
           onClick={() => {
@@ -81,7 +90,7 @@ export const FilterMenu = () => {
           </Menu>
         </DropdownContent>
       </DropdownMenu>
-      <DropdownMenu position={DropdownPosition.BottomRight}>
+      <DropdownMenu ref={statusRef} position={DropdownPosition.BottomRight}>
         <FilterButton
           iconRight
           onClick={() => setShowStatus(!showStatus)}

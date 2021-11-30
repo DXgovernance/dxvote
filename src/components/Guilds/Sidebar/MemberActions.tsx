@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
+
+import { FiChevronDown } from 'react-icons/fi';
+
+import { DropdownMenu, DropdownContent } from '../common/DropdownMenu';
 import { IconButton, Button } from '../common/Button';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
-import { FiChevronDown } from 'react-icons/fi';
-import { DropdownMenu, DropdownContent } from '../common/DropdownMenu';
+
+import { useClickOutside } from 'hooks/Guilds/useClickOutside';
 
 const Icon = styled.img`
   height: 1.1rem;
@@ -22,23 +26,27 @@ const ContentItem = styled.div`
   width: 100%;
   justify-content: space-between;
   font-size: 14px;
-  padding-bottom: 5px;
+  padding-bottom: 8px;
 `;
 
 const DaoInfoContent = styled(DropdownContent)`
-  padding: 10px;
+  padding: 20px;
   width: 90%;
   display: ${({ show }) => (show ? 'flex' : 'none')};
   flex-direction: column;
   align-items: center;
 `;
 
-const CenteredDropdownMenu = styled(DropdownMenu)``;
-
+const LockButton = styled(Button)`
+  width: 100%;
+  margin-top: 12px;
+`;
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const memberMenuRef = useRef(null);
+  useClickOutside(memberMenuRef, () => setShowMenu(false));
   return (
-    <CenteredDropdownMenu>
+    <DropdownMenu ref={memberMenuRef}>
       <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
         <Icon src={dxIcon} alt={'Icon'} />
         <span>geronimo.eth</span>
@@ -54,8 +62,8 @@ export const MemberActions = () => {
         <ContentItem>
           Unlocked in <span>542 days</span>
         </ContentItem>
-        <Button onClick={() => alert('lock dxd')}> Lock DXD</Button>
+        <LockButton onClick={() => alert('lock dxd')}> Lock DXD</LockButton>
       </DaoInfoContent>
-    </CenteredDropdownMenu>
+    </DropdownMenu>
   );
 };

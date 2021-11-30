@@ -17,6 +17,9 @@ interface DropdownContentProps {
   show: boolean;
   fullScreenMobile?: boolean;
 }
+
+// DropdownContent renders a floating absolute box under the button that opens it.
+// In mobile, if fullScreenMobile is true it renders an absolute full screen menu.
 export const DropdownContent = styled<DropdownContentProps>(Box)`
   display: ${({ show }) => (show ? 'block' : 'none')};
   border-radius: 0.5rem;
