@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { Box } from '../common/Layout';
+
 const Status = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
 `;
 
@@ -25,9 +26,10 @@ const Pill = styled(Box)`
 `;
 
 const DetailText = styled(Box)`
-  padding: 0.2rem;
+  padding-right: 0.2rem;
+
   @media only screen and (min-width: 768px) {
-    padding: 0.5rem;
+    padding-right: 0.5rem;
   }
 `;
 
