@@ -1,0 +1,65 @@
+import { useState } from 'react';
+import styled from 'styled-components';
+import { IconButton, Button } from '../common/Button';
+import dxIcon from '../../../assets/images/dxdao-icon.svg';
+import { FiChevronDown } from 'react-icons/fi';
+import { DropdownMenu, DropdownContent } from '../common/DropdownMenu';
+const Icon = styled.img`
+  height: 1.1rem;
+  width: 1.1rem;
+`;
+
+const UserActionButton = styled(IconButton)`
+  border-radius: 10px;
+  flex: 1;
+`;
+
+const ContentItem = styled.div`
+  display: flex;
+  flex: 1;
+  width: 100%;
+  justify-content: space-between;
+`;
+
+const CenteredDropdownMenu = styled(DropdownMenu)`
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+
+  ${DropdownContent} {
+    position: relative;
+    padding: 10px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+
+    ${ContentItem} {
+      margin-bottom: 10px;
+    }
+  }
+`;
+
+export const MemberActions = () => {
+  const [showMenu, setShowMenu] = useState(false);
+  return (
+    <CenteredDropdownMenu>
+      <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
+        <Icon src={dxIcon} alt={'Icon'} />
+        <span>geronimo.eth</span>
+        <FiChevronDown />
+      </UserActionButton>
+      <DropdownContent show={showMenu}>
+        <ContentItem>
+          Voting Power <span>3.54%</span>
+        </ContentItem>
+        <ContentItem>
+          Locked <span>3.54%</span>
+        </ContentItem>
+        <ContentItem>
+          Unlocked in <span>542 days</span>
+        </ContentItem>
+        <Button onClick={() => alert('lock dxd')}> Lock DXD</Button>
+      </DropdownContent>
+    </CenteredDropdownMenu>
+  );
+};

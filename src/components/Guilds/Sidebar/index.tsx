@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Box } from '../common/Layout';
 import { Menu, MenuItem } from '../common/Menu';
-import { UserActions } from './UserActions';
+import { MemberActions } from './MemberActions';
+import { GuestActions } from './GuestActions';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
 
@@ -94,6 +96,8 @@ const SidebarMenuItem = styled(MenuItem)`
 `;
 
 export const Sidebar = () => {
+  const [isMember, setIsMember] = useState(false);
+
   return (
     <SidebarWrapper>
       <DaoInfoPanel>
@@ -106,7 +110,8 @@ export const Sidebar = () => {
           </DaoBrand>
           <DaoMemberCount>464 Members</DaoMemberCount>
         </DaoInfo>
-        <UserActions />
+        {isMember && <MemberActions />}
+        {!isMember && <GuestActions /* for now */ onJoin={setIsMember} />}
       </DaoInfoPanel>
       <SidebarMenu>
         <SidebarMenuItem href="#">Proposals</SidebarMenuItem>
