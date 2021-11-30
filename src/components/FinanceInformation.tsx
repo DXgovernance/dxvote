@@ -59,7 +59,6 @@ const FinanceInformation = observer(() => {
   const prices = coingeckoService.getPrices();
   const networkAssetSymbol =
     NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
-
   let assets = {
     total: [
       {
@@ -188,13 +187,15 @@ const FinanceInformation = observer(() => {
                         <DataCell align="left" weight="500">
                           <CenteredRow>
                             {asset.name}{' '}
-                            <BlockchainLink
-                              size="long"
-                              type="address"
-                              text={asset.address}
-                              onlyIcon
-                              toCopy
-                            />
+                            {asset.address != ZERO_ADDRESS && (
+                              <BlockchainLink
+                                size="long"
+                                type="address"
+                                text={asset.address}
+                                onlyIcon
+                                toCopy
+                              />
+                            )}
                           </CenteredRow>
                         </DataCell>
                         <DataCell align="center">
