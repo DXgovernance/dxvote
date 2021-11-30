@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useState } from 'react';
 
 import { Button } from 'components/Guilds/common/Button';
@@ -6,6 +6,7 @@ import { Modal } from 'components/Modal';
 import { Heading } from '../common/Typography';
 
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
+import { FiArrowRight, FiInfo } from 'react-icons/fi';
 
 const ModalHeader = styled.div`
   border-bottom: 1px solid #ccc;
@@ -14,8 +15,11 @@ const ModalContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px;
+  padding: 20px;
   color: black;
+  @media only screen and (min-width: 769px) {
+    padding: 40px;
+  }
 `;
 
 const DaoBrand = styled.div`
@@ -34,7 +38,7 @@ const DaoTitle = styled(Heading)`
 `;
 
 const InfoItem = styled.p`
-  margin-bottom: 4px;
+  margin: 0px 0px 4px 0px;
   font-size: 14px;
 `;
 
@@ -48,17 +52,37 @@ const BalanceWidget = styled.div`
   border-radius: ${({ theme }) => theme.radii.curved};
 `;
 
-const BalanceRow = styled.div`
+const InfoRow = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 5px;
+  margin-top: 10px;
 `;
 
-const BalanceLabel = styled.span``;
-const BalanceValue = styled.span``;
-const AcquireValue = styled.span``;
+const BaseFont = css`
+  font-size: 12px;
+
+  @media only screen and (min-width: 769px) {
+    font-size: 14px;
+  }
+`;
+
+const InfoLabel = styled.span`
+  ${BaseFont}
+`;
+
+const InfoValue = styled.span`
+  ${BaseFont}
+
+  font-weight: bold;
+  flex-wrap: wrap;
+`;
+const AcquireValue = styled.span`
+  font-size: 20px;
+  font-weight: 600;
+`;
 
 export const GuestActions = ({ onJoin }) => {
   const [joinModal, setJoinModal] = useState(false);
@@ -80,15 +104,27 @@ export const GuestActions = ({ onJoin }) => {
           <InfoItem>6 days proposal duration</InfoItem>
           <InfoItem>2.5 DXD min. deposit</InfoItem>
           <BalanceWidget>
-            <BalanceRow>
-              <BalanceLabel>Balance:</BalanceLabel>
-              <BalanceValue>10.00 DXD</BalanceValue>
-            </BalanceRow>
-            <BalanceRow>
+            <InfoRow>
+              <InfoLabel>Balance:</InfoLabel>
+              <InfoValue>10.00 DXD</InfoValue>
+            </InfoRow>
+            <InfoRow>
               <AcquireValue>10.00</AcquireValue>
               <Button onClick={onJoin}>Max</Button>
-            </BalanceRow>
+            </InfoRow>
           </BalanceWidget>
+          <InfoRow>
+            <InfoLabel>Your voting power</InfoLabel>
+            <InfoValue>
+              0% <FiArrowRight /> <strong>0.12%</strong>
+            </InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <InfoLabel>Unlock Date</InfoLabel>
+            <InfoValue>
+              <strong> March 31rd, 2021 - 2:32 UTC</strong> <FiInfo />
+            </InfoValue>
+          </InfoRow>
         </ModalContainer>
       </Modal>
     </>
