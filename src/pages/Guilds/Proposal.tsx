@@ -65,6 +65,10 @@ const StyledIconButton = styled(IconButton)`
 const ProposalActionsWrapper = styled(Box)`
   margin-top: 2rem;
 `;
+const ProposalStatusWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+`;
 
 const ProposalPage: React.FC = () => {
   return (
@@ -75,7 +79,9 @@ const ProposalPage: React.FC = () => {
             <FiArrowLeft /> DXdao
           </StyledIconButton>
           <PageTitle>DXLisbon Contributor Stipend and Funds</PageTitle>
-          <ProposalStatus bordered status="Active" detail="Ends in 34 days" />
+          <ProposalStatusWrapper>
+            <ProposalStatus bordered status="Active" detail="Ends in 34 days" />
+          </ProposalStatusWrapper>
         </PageHeader>
 
         <ProposalDescription>

@@ -15,7 +15,6 @@ export const DropdownButton = styled(IconButton)``;
 
 export const DropdownContent = styled(Box)`
   display: ${({ show }) => (show ? 'block' : 'none')};
-  border-radius: 0.5rem;
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
   padding-top: 0.25rem;
