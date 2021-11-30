@@ -50,7 +50,7 @@ export const useABIService = (): UseABIServiceReturns => {
       setABI(abi);
       return abi;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {};
     }
   };

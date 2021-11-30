@@ -1774,7 +1774,7 @@ export async function getProposalTitlesFromIPFS(
           );
           await sleep(10000);
         } else {
-          console.log((error as Error).message);
+          console.debug((error as Error).message);
           console.error(
             `Error getting title from proposal ${proposal.id} with hash ${ipfsHash} waiting 1 second and trying again..`
           );

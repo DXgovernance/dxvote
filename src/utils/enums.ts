@@ -37,6 +37,16 @@ export enum VotingMachineProposalState {
   Passed,
 }
 
+
+export enum PendingAction {
+  None,
+  Boost,
+  Execute,
+  Finish,
+  Redeem,
+  RedeemForBeneficiary,
+}
+
 export const enumKeys = <O extends object, K extends keyof O = keyof O>(
   obj: O
 ): K[] => Object.keys(obj).filter(k => Number.isNaN(+k)) as K[];

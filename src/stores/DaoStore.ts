@@ -263,7 +263,7 @@ export default class DaoStore {
             cache.daoInfo.repEvents[i].account
           ].minus(cache.daoInfo.repEvents[i].amount);
         } else {
-          console.log('ERROR on duplicated REP');
+          console.error('ERROR on duplicated REP');
         }
       }
 

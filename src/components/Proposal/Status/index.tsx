@@ -19,7 +19,6 @@ const Status = () => {
   const networkContracts = configStore.getNetworkContracts();
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
-  console.log('Proposal ID in Vote: ', proposalId);
   const proposal = daoStore.getProposal(proposalId);
   const { account } = providerStore.getActiveWeb3React();
   const scheme = daoStore.getScheme(proposal.scheme);

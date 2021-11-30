@@ -34,7 +34,6 @@ export default class EventsService {
       contractType,
       address
     );
-    console.log('Getting event', eventName, fromBlock, toBlock);
     return _.orderBy(
       await contract.getPastEvents(eventName, {
         fromBlock: fromBlock,
