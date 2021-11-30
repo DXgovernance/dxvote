@@ -86,6 +86,7 @@ const DXDValue = styled.span`
 
 const ButtonLock = styled(Button)`
   width: 100%;
+  margin-top: 22px;
 `;
 
 export const GuestActions = ({ onJoin }) => {
