@@ -79,13 +79,18 @@ const InfoValue = styled.span`
   font-weight: bold;
   flex-wrap: wrap;
 `;
-const AcquireValue = styled.span`
+const DXDValue = styled.span`
   font-size: 20px;
   font-weight: 600;
 `;
 
+const ButtonLock = styled(Button)`
+  width: 100%;
+`;
+
 export const GuestActions = ({ onJoin }) => {
   const [joinModal, setJoinModal] = useState(false);
+  const [dxdValue, setDXDValue] = useState(0);
   return (
     <>
       <Button onClick={() => setJoinModal(true)}>Join</Button>
@@ -109,8 +114,8 @@ export const GuestActions = ({ onJoin }) => {
               <InfoValue>10.00 DXD</InfoValue>
             </InfoRow>
             <InfoRow>
-              <AcquireValue>10.00</AcquireValue>
-              <Button onClick={onJoin}>Max</Button>
+              <DXDValue>{dxdValue}</DXDValue>
+              <Button onClick={() => setDXDValue(10)}>Max</Button>
             </InfoRow>
           </BalanceWidget>
           <InfoRow>
@@ -125,6 +130,9 @@ export const GuestActions = ({ onJoin }) => {
               <strong> March 31rd, 2021 - 2:32 UTC</strong> <FiInfo />
             </InfoValue>
           </InfoRow>
+          <ButtonLock disabled={dxdValue <= 0} onClick={onJoin}>
+            Lock DXD
+          </ButtonLock>
         </ModalContainer>
       </Modal>
     </>
