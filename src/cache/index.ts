@@ -36,7 +36,7 @@ export const getUpdatedCache = async function (
 ): Promise<DaoNetworkCache> {
   const notificationStore = isNode() ? null : context.notificationStore;
 
-  console.debug('[Cache Update]', fromBlock, toBlock);
+  console.debug(`[CACHE UPDATE] from ${fromBlock} to ${toBlock}`);
   const networkWeb3Contracts = await getContracts(networkContractsConfig, web3);
 
   if (notificationStore)
@@ -279,7 +279,6 @@ export const updateVotingMachine = async function (
   );
   const votingMachineEventsInCache =
     networkCache.votingMachines[votingMachine._address].events;
-  const votingMachineParamsHash = [];
 
   newVotingMachineEvents.map(votingMachineEvent => {
     const proposalCreated =
@@ -312,15 +311,6 @@ export const updateVotingMachine = async function (
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex,
           });
-
-          if (
-            votingMachineParamsHash.indexOf(
-              votingMachineEvent.returnValues._paramsHash
-            ) < 0
-          )
-            votingMachineParamsHash.push(
-              votingMachineEvent.returnValues._paramsHash
-            );
           break;
         case 'StateChange':
           votingMachineEventsInCache.proposalStateChanges.push({
@@ -466,48 +456,13 @@ export const updateVotingMachine = async function (
       }
   });
 
-  const callsToExecute = [];
-  for (let i = 0; i < votingMachineParamsHash.length; i++) {
-    callsToExecute.push([
-      votingMachine,
-      'parameters',
-      [votingMachineParamsHash[i]],
-    ]);
-  }
-
-  const callsResponse = await executeMulticall(web3, multicall, callsToExecute);
-
-  for (let i = 0; i < callsResponse.returnData.length; i++) {
-    networkCache.votingMachines[votingMachine._address].votingParameters[
-      votingMachineParamsHash[i]
-    ] = decodeSchemeParameters(
-      web3.eth.abi.decodeParameters(
-        [
-          { type: 'uint256', name: 'queuedVoteRequiredPercentage' },
-          { type: 'uint256', name: 'queuedVotePeriodLimit' },
-          { type: 'uint256', name: 'boostedVotePeriodLimit' },
-          { type: 'uint256', name: 'preBoostedVotePeriodLimit' },
-          { type: 'uint256', name: 'thresholdConst' },
-          { type: 'uint256', name: 'limitExponentValue' },
-          { type: 'uint256', name: 'quietEndingPeriod' },
-          { type: 'uint256', name: 'proposingRepReward' },
-          { type: 'uint256', name: 'votersReputationLossRatio' },
-          { type: 'uint256', name: 'minimumDaoBounty' },
-          { type: 'uint256', name: 'daoBountyConst' },
-          { type: 'uint256', name: 'activationTime' },
-        ],
-        callsResponse.returnData[i]
-      )
-    );
-  }
-
   networkCache.votingMachines[votingMachine._address].events =
     votingMachineEventsInCache;
 
   return networkCache;
 };
 
-// Gets all teh events form the permission registry and stores the permissions set.
+// Gets all the events form the permission registry and stores the permissions set.
 export const updatePermissionRegistry = async function (
   networkCache: DaoNetworkCache,
   networkContractsConfig: NetworkContracts,
@@ -567,6 +522,7 @@ export const updateSchemes = async function (
 ): Promise<DaoNetworkCache> {
   const networkWeb3Contracts = await getContracts(networkContractsConfig, web3);
 
+  // Get all the events from the Controller
   let controllerEvents = sortEvents(
     await getEvents(
       web3,
@@ -577,6 +533,7 @@ export const updateSchemes = async function (
     )
   );
 
+  // Go over all controller events and add update or remove schemes depending on the event
   for (
     let controllerEventsIndex = 0;
     controllerEventsIndex < controllerEvents.length;
@@ -586,8 +543,10 @@ export const updateSchemes = async function (
 
     const schemeAddress = controllerEvent.returnValues._scheme;
 
-    // Add or update the scheme information, register scheme is used to add and updates scheme parametersHash
+    // Add or update the scheme information,
+    // register scheme is used to add a scheme or update the parametersHash of an existent one
     if (controllerEvent.event === 'RegisterScheme') {
+
       const schemeTypeData = getSchemeTypeData(
         networkContractsConfig,
         schemeAddress
@@ -657,95 +616,47 @@ export const updateSchemes = async function (
         networkWeb3Contracts.multicall,
         callsToExecute
       );
+      callsToExecute = [];
 
-      const ethBalance = callsResponse1.decodedReturnData[0];
-      const permissions = decodePermission(callsResponse1.decodedReturnData[1]);
-      const paramsHash = callsResponse1.decodedReturnData[2];
+      const permissions = decodePermission(callsResponse1.decodedReturnData[0]);
+      const paramsHash = callsResponse1.decodedReturnData[1];
 
       if (schemeTypeData.type === 'WalletScheme') {
         switch (schemeType) {
           case 'Wallet Scheme v1.1':
-            controllerAddress = callsResponse1.decodedReturnData[3]
+            controllerAddress = callsResponse1.decodedReturnData[2]
               ? networkWeb3Contracts.controller.address
               : ZERO_ADDRESS;
             break;
           default:
-            controllerAddress = callsResponse1.decodedReturnData[3];
+            controllerAddress = callsResponse1.decodedReturnData[2];
             break;
         }
-        schemeName = callsResponse1.decodedReturnData[4];
-        maxSecondsForExecution = callsResponse1.decodedReturnData[5];
-        maxRepPercentageChange = callsResponse1.decodedReturnData[6];
+        schemeName = callsResponse1.decodedReturnData[3];
+        maxSecondsForExecution = callsResponse1.decodedReturnData[4];
+        maxRepPercentageChange = callsResponse1.decodedReturnData[5];
       }
 
-      callsToExecute = [];
-      if (schemeTypeData.type === 'WalletScheme') {
-        callsToExecute.push([
-          votingMachine,
-          'getBoostedVoteRequiredPercentage',
-          [schemeAddress, networkWeb3Contracts.avatar._address, paramsHash],
-        ]);
-      }
+      // Register the new voting parameters in the voting machine params
+      const votingParameters = await votingMachine.methods.parameters(paramsHash).call();
+      networkCache.votingMachines[votingMachine._address].votingParameters[
+        paramsHash
+      ] = {
+        queuedVoteRequiredPercentage: votingParameters.queuedVoteRequiredPercentage,
+        queuedVotePeriodLimit: votingParameters.queuedVotePeriodLimit,
+        boostedVotePeriodLimit: votingParameters.boostedVotePeriodLimit,
+        preBoostedVotePeriodLimit: votingParameters.preBoostedVotePeriodLimit,
+        thresholdConst: votingParameters.thresholdConst,
+        limitExponentValue: votingParameters.limitExponentValue,
+        quietEndingPeriod: votingParameters.quietEndingPeriod,
+        proposingRepReward: votingParameters.proposingRepReward,
+        votersReputationLossRatio: votingParameters.votersReputationLossRatio,
+        minimumDaoBounty: votingParameters.minimumDaoBounty,
+        daoBountyConst: votingParameters.daoBountyConst,
+        activationTime: votingParameters.activationTime,
+      };
 
-      if (
-        paramsHash !== ZERO_HASH &&
-        !networkCache.votingMachines[votingMachine._address].votingParameters[
-          paramsHash
-        ]
-      ) {
-        callsToExecute.push([votingMachine, 'parameters', [paramsHash]]);
-      }
-
-      const callsResponse2 = await executeMulticall(
-        web3,
-        networkWeb3Contracts.multicall,
-        callsToExecute
-      );
-
-      const boostedVoteRequiredPercentage =
-        schemeTypeData.type === 'WalletScheme'
-          ? web3.eth.abi.decodeParameters(
-              ['uint256'],
-              callsResponse2.returnData[0]
-            )['0']
-          : 0;
-
-      if (
-        paramsHash !== ZERO_HASH &&
-        !networkCache.votingMachines[votingMachine._address].votingParameters[
-          paramsHash
-        ]
-      ) {
-        try {
-          networkCache.votingMachines[votingMachine._address].votingParameters[
-            paramsHash
-          ] = decodeSchemeParameters(
-            web3.eth.abi.decodeParameters(
-              [
-                { type: 'uint256', name: 'queuedVoteRequiredPercentage' },
-                { type: 'uint256', name: 'queuedVotePeriodLimit' },
-                { type: 'uint256', name: 'boostedVotePeriodLimit' },
-                { type: 'uint256', name: 'preBoostedVotePeriodLimit' },
-                { type: 'uint256', name: 'thresholdConst' },
-                { type: 'uint256', name: 'limitExponentValue' },
-                { type: 'uint256', name: 'quietEndingPeriod' },
-                { type: 'uint256', name: 'proposingRepReward' },
-                { type: 'uint256', name: 'votersReputationLossRatio' },
-                { type: 'uint256', name: 'minimumDaoBounty' },
-                { type: 'uint256', name: 'daoBountyConst' },
-                { type: 'uint256', name: 'activationTime' },
-              ],
-              callsResponse2.returnData[1]
-            )
-          );
-        } catch (error) {
-          console.error(
-            'Error getting parameters configuration for',
-            schemeTypeData.name
-          );
-        }
-      }
-
+      // If the scheme not exist, register it
       if (!networkCache.schemes[schemeAddress]) {
         networkCache.schemes[schemeAddress] = {
           address: schemeAddress,
