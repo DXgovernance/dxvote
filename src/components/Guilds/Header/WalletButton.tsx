@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react';
 import { isDesktop } from 'react-device-detect';
+import styled from 'styled-components';
 import WalletModal from 'components/WalletModal';
 import { getChains, injected } from 'provider/connectors';
 import { useEffect, useState } from 'react';
@@ -8,6 +9,18 @@ import { useContext } from '../../../contexts';
 import { Button, IconButton } from '../common/Button';
 import useENSAddress from '../../../hooks/useENSAddress';
 import Avatar from '../Avatar';
+import { shortenAddress } from '../../../utils';
+
+const IconHolder = styled.span`
+  display: flex;
+  justify-content: center;
+  margin-right: 0.3rem;
+
+  img {
+    border-radius: 50%;
+    margin-right: 0;
+  }
+`;
 
 const Web3Status = observer(() => {
   const {
@@ -24,7 +37,6 @@ const Web3Status = observer(() => {
   }, [injected]);
 
   const { chainId, account } = providerStore.getActiveWeb3React();
-
   const { ensName, avatarUri } = useENSAddress(account);
 
   const toggleWalletModal = () => {
@@ -68,8 +80,10 @@ const Web3Status = observer(() => {
     } else if (account) {
       return (
         <IconButton onClick={toggleWalletModal} iconLeft>
-          <Avatar avatarUri={avatarUri} />
-          {isDesktop && <span>{ensName || account}</span>}
+          <IconHolder>
+            <Avatar ensAvatarUri={avatarUri} address={account} />
+          </IconHolder>
+          {isDesktop && <span>{ensName || shortenAddress(account)}</span>}
         </IconButton>
       );
     } else {
