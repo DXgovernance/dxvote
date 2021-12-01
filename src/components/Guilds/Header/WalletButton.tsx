@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { isDesktop } from 'react-device-detect';
 import WalletModal from 'components/WalletModal';
@@ -7,12 +6,8 @@ import { useEffect, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
 import { useContext } from '../../../contexts';
 import { Button, IconButton } from '../common/Button';
-import dxIcon from '../../../assets/images/dxdao-icon.svg';
-
-const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
-`;
+import useENSAddress from '../../../hooks/useENSAddress';
+import Avatar from '../Avatar';
 
 const Web3Status = observer(() => {
   const {
@@ -29,6 +24,8 @@ const Web3Status = observer(() => {
   }, [injected]);
 
   const { chainId, account } = providerStore.getActiveWeb3React();
+
+  const { ensName, avatarUri } = useENSAddress(account);
 
   const toggleWalletModal = () => {
     modalStore.toggleWalletModal();
@@ -71,8 +68,8 @@ const Web3Status = observer(() => {
     } else if (account) {
       return (
         <IconButton onClick={toggleWalletModal} iconLeft>
-          <ButtonIcon src={dxIcon} alt={'Icon'} />{' '}
-          {isDesktop && <span>{account}</span>}
+          <Avatar avatarUri={avatarUri} />
+          {isDesktop && <span>{ensName || account}</span>}
         </IconButton>
       );
     } else {

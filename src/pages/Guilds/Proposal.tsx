@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
-import { IconButton } from '../../components/Guilds/common/Button';
+import { ButtonIcon, IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
 import ProposalSidebar from '../../components/Guilds/ProposalSidebar';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
@@ -35,11 +35,6 @@ const PageTitle = styled.h3`
 const ProposalDescription = styled.p`
   margin: 1.5rem 0;
   line-height: 1.5;
-`;
-
-const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
 `;
 
 const ProposalActionsWrapper = styled(Box)`
