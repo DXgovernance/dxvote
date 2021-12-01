@@ -35,7 +35,6 @@ const Avatar: React.FC<AvatarProps> = ({ ensAvatarUri, address }) => {
     // Match <scheme>://<path> format
     let match = new RegExp(/([a-z]+):\/\/(.*)/).exec(avatarUri);
     if (match && match.length === 3) {
-      console.log("[Avatar] scheme:path", avatarUri);
       return resolveUri(avatarUri);
     }
 
@@ -56,7 +55,6 @@ const Avatar: React.FC<AvatarProps> = ({ ensAvatarUri, address }) => {
         return null;
       }
       const tokenUri = await erc721Contract.methods.tokenURI(tokenId).call();
-      console.log("[Avatar] tokenUri erc721Contract", tokenUri);
       const nftMetadataUri = resolveUri(tokenUri);
       const nftMetadata = await resolveNFTMetadata(nftMetadataUri);
       return resolveUri(nftMetadata.image);
@@ -72,10 +70,9 @@ const Avatar: React.FC<AvatarProps> = ({ ensAvatarUri, address }) => {
       const balance = await erc1155Contract.methods
         .balanceOf(address, tokenId)
         .call();
-      if (balance.isZero()) return null;
+      if (balance == 0) return null;
 
       const tokenUri = await erc1155Contract.methods.uri(tokenId).call();
-      console.log("[Avatar] tokenUri erc1155Contract", tokenUri);
       const nftMetadataUri = resolveUri(tokenUri);
       const nftMetadata = await resolveNFTMetadata(nftMetadataUri);
       return resolveUri(nftMetadata.image);
@@ -93,9 +90,9 @@ const Avatar: React.FC<AvatarProps> = ({ ensAvatarUri, address }) => {
 
     switch (scheme) {
       case 'ipfs':
-        return `https://gateway.ipfs.io/ipfs/${path}`;
+        return `https://gateway.pinata.cloud/ipfs/${path}`;
       case 'ipns':
-        return `https://gateway.ipfs.io/ipns/${path}`;
+        return `https://gateway.pinata.cloud/ipns/${path}`;
       case 'http':
       case 'https':
         return avatarUri;
