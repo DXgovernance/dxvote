@@ -64,7 +64,6 @@ export default class ENSService {
 
   async resolveAvatarUri(ensName: string): Promise<string | null> {
     const resolver = await this.getResolverContract(ensName);
-    console.log('ENSService', resolver);
     if (!resolver) return null;
 
     try {

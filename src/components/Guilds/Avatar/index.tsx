@@ -18,7 +18,6 @@ const Avatar: React.FC<AvatarProps> = ({ ensAvatarUri, address }) => {
     if (ensAvatarUri) {
       resolveAvatarUri(ensAvatarUri)
         .then(res => {
-          console.log('[Avatar] Got ENS avatar uri', res);
           return res;
         })
         .then(setUrl)
@@ -102,11 +101,8 @@ const Avatar: React.FC<AvatarProps> = ({ ensAvatarUri, address }) => {
   };
 
   const resolveNFTMetadata = async (nftMetadataUri: string) => {
-    console.log('[Avatar] resolving nft metadata:', nftMetadataUri);
     const response = await fetch(nftMetadataUri);
     const metadata = await response.json();
-    console.log('[Avatar] resolving nft metadata:', metadata);
-
     return metadata;
   };
 
