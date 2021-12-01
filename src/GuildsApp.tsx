@@ -9,6 +9,8 @@ import ProposalPage from './pages/Guilds/Proposal';
 import GlobalStyle from './theme/GlobalTheme';
 import theme from './theme/light.json';
 
+import { FilterProvider } from 'contexts/Guilds/filters';
+
 const GuildsApp = () => {
   const history = useHistory();
 
@@ -27,7 +29,9 @@ const GuildsApp = () => {
           <Container>
             <Switch>
               <Route exact path="/">
-                <GuildsPage />
+                <FilterProvider>
+                  <GuildsPage />
+                </FilterProvider>
               </Route>
               <Route path="/:proposal_id">
                 <ProposalPage />
