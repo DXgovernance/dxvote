@@ -638,40 +638,16 @@ export const updateSchemes = async function (
               WalletScheme1_1JSON.abi,
               schemeAddress
             );
-            callsToExecute.push([
-              walletSchemeContract1_1,
-              'doAvatarGenericCalls',
-              [],
-            ]);
+            callsToExecute.push([ walletSchemeContract1_1, 'doAvatarGenericCalls', [], ]);
             callsToExecute.push([walletSchemeContract1_1, 'schemeName', []]);
-            callsToExecute.push([
-              walletSchemeContract1_1,
-              'maxSecondsForExecution',
-              [],
-            ]);
-            callsToExecute.push([
-              walletSchemeContract1_1,
-              'maxRepPercentageChange',
-              [],
-            ]);
+            callsToExecute.push([ walletSchemeContract1_1, 'maxSecondsForExecution', [], ]);
+            callsToExecute.push([ walletSchemeContract1_1, 'maxRepPercentageChange', [], ]);
             break;
           default:
-            callsToExecute.push([
-              walletSchemeContract,
-              'controllerAddress',
-              [],
-            ]);
+            callsToExecute.push([ walletSchemeContract, 'controllerAddress', [], ]);
             callsToExecute.push([walletSchemeContract, 'schemeName', []]);
-            callsToExecute.push([
-              walletSchemeContract,
-              'maxSecondsForExecution',
-              [],
-            ]);
-            callsToExecute.push([
-              walletSchemeContract,
-              'maxRepPercentageChange',
-              [],
-            ]);
+            callsToExecute.push([ walletSchemeContract, 'maxSecondsForExecution', [], ]);
+            callsToExecute.push([ walletSchemeContract, 'maxRepPercentageChange', [], ]);
             break;
         }
       }
