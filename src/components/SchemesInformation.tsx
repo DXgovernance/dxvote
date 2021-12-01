@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { bnum, encodePermission } from '../utils';
+import { bnum, encodePermission, isWalletScheme } from '../utils';
 import moment from 'moment';
 import { useContext } from '../contexts';
 import {
@@ -101,7 +101,7 @@ const SchemesInformation = observer(() => {
                       .humanize()}
                   </small>
                   <br />
-                  {scheme.type === 'WalletScheme' ? (
+                  {isWalletScheme(scheme) ? (
                     <small>
                       Max time for execution:{' '}
                       {moment
@@ -115,7 +115,7 @@ const SchemesInformation = observer(() => {
                   ) : (
                     <div />
                   )}
-                  {scheme.type === 'WalletScheme' ? (
+                  {isWalletScheme(scheme) ? (
                     <small>
                       Max REP % to change in proposal:{' '}
                       {scheme.maxRepPercentageChange.toString()} %<br />
@@ -123,7 +123,7 @@ const SchemesInformation = observer(() => {
                   ) : (
                     <div />
                   )}
-                  {scheme.type === 'WalletScheme' ? (
+                  {isWalletScheme(scheme) ? (
                     <small>
                       Required Percentage for boosted approval:{' '}
                       {bnum(scheme.boostedVoteRequiredPercentage)

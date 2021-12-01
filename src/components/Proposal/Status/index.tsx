@@ -5,7 +5,7 @@ import { useContext } from 'contexts';
 
 import { useLocation } from 'react-router-dom';
 
-import { bnum } from 'utils';
+import { bnum, isWalletScheme } from 'utils';
 import { Question } from 'components/common';
 
 import { SpaceAroundRow, ActionButton } from '../styles';
@@ -25,7 +25,7 @@ const Status = () => {
   const scheme = daoStore.getScheme(proposal.scheme);
 
   const executionTimeoutTime =
-    scheme.type === 'WalletScheme'
+    isWalletScheme(scheme)
       ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
       : bnum(0);
 

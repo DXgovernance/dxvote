@@ -16,6 +16,7 @@ import {
   denormalizeBalance,
   encodePermission,
   TXEvents,
+  isWalletScheme
 } from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
 import DiscourseImporter from '../../components/DiscourseImporter';
@@ -183,7 +184,7 @@ const NewProposalPage = observer(() => {
 
   const callPermissions = daoStore.getCache().callPermissions;
   if (
-    schemeToUse.type === 'WalletScheme' &&
+    isWalletScheme(schemeToUse) &&
     callPermissions[ZERO_ADDRESS] &&
     callPermissions[ZERO_ADDRESS][
       schemeToUse.controllerAddress === networkContracts.controller
@@ -417,7 +418,7 @@ const NewProposalPage = observer(() => {
 
   function addCall() {
     calls.push({
-      callType: schemeToUse.type === 'WalletScheme' ? 'simple' : 'advanced',
+      callType: isWalletScheme(schemeToUse) ? 'simple' : 'advanced',
       allowedFunctions: [],
       to: '',
       data: '',
@@ -602,7 +603,7 @@ const NewProposalPage = observer(() => {
           >
             {schemes.map((scheme, i) => {
               if (
-                scheme.type === 'WalletScheme' ||
+                isWalletScheme(scheme) ||
                 scheme.type === 'ContributionReward' ||
                 scheme.type === 'GenericMulticall' ||
                 scheme.type === 'SchemeRegistrar'

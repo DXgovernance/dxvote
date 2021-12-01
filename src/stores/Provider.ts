@@ -15,7 +15,8 @@ export enum ContractType {
   PermissionRegistry = 'PermissionRegistry',
   VotingMachine = 'VotingMachine',
   DXDVotingMachine = 'DXDVotingMachine',
-  WalletScheme = 'WalletScheme',
+  WalletScheme1_0 = 'WalletScheme1_0',
+  WalletScheme1_1 = 'WalletScheme1_0',
   Multicall = 'Multicall',
   Redeemer = 'Redeemer',
 }
