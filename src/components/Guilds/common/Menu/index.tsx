@@ -10,6 +10,13 @@ export const Menu = styled(Box)`
 export const MenuItem = styled.a`
   display: block;
   text-decoration: none;
-  color: initial;
   padding: 0.5rem 1rem;
+
+  &:visited,
+  &:active,
+  &:link {
+    text-decoration: none;
+    decoration: none;
+    color: inherit;
+  }
 `;
