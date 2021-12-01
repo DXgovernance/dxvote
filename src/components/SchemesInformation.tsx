@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { bnum } from '../utils';
+import { bnum, encodePermission } from '../utils';
 import moment from 'moment';
 import { useContext } from '../contexts';
 import {
@@ -53,6 +53,8 @@ const SchemesInformation = observer(() => {
               <TableRow>
                 <DataCell>
                   {scheme.name}
+                  <br />
+                  <small>{scheme.type}</small>
                   <br />
                   <BlockchainLink size="short" text={scheme.address} toCopy />
                 </DataCell>
@@ -177,6 +179,8 @@ const SchemesInformation = observer(() => {
                 </DataCell>
                 <DataCell>
                   <strong>Controller Permissions</strong>
+                  <br />
+                  <small>Raw: {encodePermission(scheme.permissions)}</small>
                   <br />
                   <small>
                     {scheme.permissions.canGenericCall ? 'Can' : 'Cant'} make
