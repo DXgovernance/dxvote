@@ -5,10 +5,10 @@ import {
   ZERO_ADDRESS,
   sleep,
   decodePermission,
-  decodeSchemeParameters,
   WalletSchemeProposalState,
   VotingMachineProposalState,
   tryCacheUpdates,
+  isWalletScheme
 } from '../utils';
 import {
   getEvents,
@@ -568,7 +568,6 @@ export const updateSchemes = async function (
       let schemeType = schemeTypeData.type;
 
       let callsToExecute = [
-        [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
         [
           networkWeb3Contracts.controller,
           'getSchemePermissions',
@@ -591,6 +590,9 @@ export const updateSchemes = async function (
           .call();
 
         schemeType = walletSchemeType;
+        if (schemeType == 'Wallet Scheme v1')
+          schemeType = 'Wallet Scheme v1.0';
+
         switch (schemeType) {
           case 'Wallet Scheme v1.1':
             const walletSchemeContract1_1 = await new web3.eth.Contract(
@@ -598,13 +600,13 @@ export const updateSchemes = async function (
               schemeAddress
             );
             callsToExecute.push([ walletSchemeContract1_1, 'doAvatarGenericCalls', [], ]);
-            callsToExecute.push([walletSchemeContract1_1, 'schemeName', []]);
+            callsToExecute.push([ walletSchemeContract1_1, 'schemeName', []]);
             callsToExecute.push([ walletSchemeContract1_1, 'maxSecondsForExecution', [], ]);
             callsToExecute.push([ walletSchemeContract1_1, 'maxRepPercentageChange', [], ]);
             break;
           default:
             callsToExecute.push([ walletSchemeContract, 'controllerAddress', [], ]);
-            callsToExecute.push([walletSchemeContract, 'schemeName', []]);
+            callsToExecute.push([ walletSchemeContract, 'schemeName', []]);
             callsToExecute.push([ walletSchemeContract, 'maxSecondsForExecution', [], ]);
             callsToExecute.push([ walletSchemeContract, 'maxRepPercentageChange', [], ]);
             break;
@@ -664,12 +666,12 @@ export const updateSchemes = async function (
           controllerAddress,
           name: schemeName,
           type: schemeType,
-          ethBalance: ethBalance,
+          ethBalance: bnum(0),
           tokenBalances: {},
           votingMachine: schemeTypeData.votingMachine,
           paramsHash: paramsHash,
           permissions,
-          boostedVoteRequiredPercentage,
+          boostedVoteRequiredPercentage: 0,
           proposalIds: [],
           boostedProposals: 0,
           maxSecondsForExecution,
@@ -679,8 +681,6 @@ export const updateSchemes = async function (
       } else {
         networkCache.schemes[schemeAddress].paramsHash = paramsHash;
         networkCache.schemes[schemeAddress].permissions = permissions;
-        networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage =
-          boostedVoteRequiredPercentage;
       }
 
       // Mark scheme as not registered but save all previous data
@@ -716,7 +716,7 @@ export const updateSchemes = async function (
         ],
       ];
 
-      if (networkCache.schemes[schemeAddress].type === 'WalletScheme') {
+      if (isWalletScheme(networkCache.schemes[schemeAddress])) {
         callsToExecute.push([
           await new web3.eth.Contract(WalletScheme1_0JSON.abi, schemeAddress),
           'maxSecondsForExecution',
@@ -730,7 +730,7 @@ export const updateSchemes = async function (
       );
 
       const maxSecondsForExecution =
-        networkCache.schemes[schemeAddress].type === 'WalletScheme'
+        isWalletScheme(networkCache.schemes[schemeAddress])
           ? callsResponse.decodedReturnData[2]
           : 0;
 
@@ -744,20 +744,21 @@ export const updateSchemes = async function (
       networkCache.schemes[schemeAddress].registered = false;
     }
   }
-
   // Update registered schemes
   await Promise.all(
     Object.keys(networkCache.schemes).map(async schemeAddress => {
+
       if (networkCache.schemes[schemeAddress].registered) {
+
         const schemeTypeData = getSchemeTypeData(
           networkContractsConfig,
           schemeAddress
-        );
+          );
         const votingMachine =
-          networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
+        networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
             .contract;
-
-        let callsToExecute = [
+            
+            let callsToExecute = [
           [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
           [
             votingMachine,
@@ -766,12 +767,12 @@ export const updateSchemes = async function (
               web3.utils.soliditySha3(
                 schemeAddress,
                 networkWeb3Contracts.avatar._address
-              ),
+                ),
+              ],
             ],
-          ],
         ];
-
-        if (networkCache.schemes[schemeAddress].type === 'WalletScheme') {
+        
+        if (isWalletScheme(networkCache.schemes[schemeAddress])) {
           callsToExecute.push([
             await new web3.eth.Contract(WalletScheme1_0JSON.abi, schemeAddress),
             'maxSecondsForExecution',
@@ -796,12 +797,12 @@ export const updateSchemes = async function (
         );
 
         const maxSecondsForExecution =
-          networkCache.schemes[schemeAddress].type === 'WalletScheme'
+          isWalletScheme(networkCache.schemes[schemeAddress])
             ? callsResponse.decodedReturnData[2]
             : 0;
 
         const boostedVoteRequiredPercentage =
-          schemeTypeData.type === 'WalletScheme'
+          isWalletScheme(networkCache.schemes[schemeAddress])
             ? web3.eth.abi.decodeParameters(
                 ['uint256'],
                 callsResponse.returnData[3]
@@ -1707,7 +1708,7 @@ export async function getProposalTitlesFromIPFS(
     }
 
     if (
-      networkCache.schemes[proposal.scheme].type !== 'WalletScheme' &&
+      isWalletScheme(networkCache.schemes[proposal.scheme]) &&
       proposal.descriptionHash &&
       proposal.descriptionHash.length > 0 &&
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
