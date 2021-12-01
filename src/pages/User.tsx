@@ -148,6 +148,29 @@ const UserPage = observer(() => {
           </div>
         );
       })}
+
+      <TitleRow>
+        <h2>Vesting Contracts</h2>
+        <Button onClick={console.log('TODO: Export vesting contracts')}>
+          Export to CSV
+        </Button>
+      </TitleRow>
+
+      {[1, 2, 3, 4, 5].map((contract, i, arr) => {
+        return (
+          <div
+            key={'userHistoryEvent' + i}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '6px 0px',
+              borderBottom: i < arr.length - 1 ? '1px solid' : '',
+            }}
+          >
+            <span> {contract} </span>
+          </div>
+        );
+      })}
     </Box>
   );
 });
