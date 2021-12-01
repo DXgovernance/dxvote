@@ -22,6 +22,7 @@ import {
 } from '../utils/cache';
 import WalletSchemeJSON from '../contracts/WalletScheme.json';
 import ContributionRewardJSON from '../contracts/ContributionReward.json';
+import DXDVestingFactoryJSON from '../contracts/DXDVestingFactory.json';
 import { getContracts } from '../contracts';
 import RootContext from '../contexts';
 
@@ -591,12 +592,49 @@ export const updateVestingFactory = async function (
         vestingFactoryContract,
         fromBlock,
         toBlock,
-        'allEvents' // Should we get 'VestingCreated' event? ref: https://github.com/DXgovernance/dxdao-contracts/blob/main/contracts/dxvote/utils/DXDVestingFactory.sol
+        'VestingCreated' //'allEvents' // Should we get 'VestingCreated' event? ref: https://github.com/DXgovernance/dxdao-contracts/blob/main/contracts/dxvote/utils/DXDVestingFactory.sol
       )
     );
-    (networkCache.daoInfo as any).vestingFactory = vestingFactoryEvents;
-    // Do something with contract data. Maybe map over transactions/events?
-    // console.log('contract.transactions', vestingFactoryContract.transactions);
+    // map over vestingFactoryEvents
+    for await (let evt of vestingFactoryEvents) {
+      // console.log('[[[VestingFactoryEvent]]]', evt);
+      // sample evt:
+      /* [
+          {
+            removed: false,
+            logIndex: 11,
+            transactionIndex: 0,
+            transactionHash: '0x1dea7442a64abb6373cfe9b76824e206c40d98a10f11af8455b4b28feb369923',
+            blockHash: '0x24a63ae2af20c269243a612bfe9c81d213d5ccf024e0a9c036566ec0adb808f0',
+            blockNumber: 63,
+            address: '0x2245CE863Bcf3914D9Ade65916e7DEC8A2453B65',
+            id: 'log_f7809e48',
+            returnValues: Result {
+              '0': '0xDcB23f8d41794Fa831C7C873aD984d8E1C390EC2',
+              vestingContractAddress: '0xDcB23f8d41794Fa831C7C873aD984d8E1C390EC2'
+            },
+            event: 'VestingCreated',
+            signature: '0xe4fb76c0ff20ae19784efe78af7946d749e229fec6e13499ab078f997113d6d3',
+            raw: {
+              data: '0x000000000000000000000000dcb23f8d41794fa831c7c873ad984d8e1c390ec2',
+              topics: [Array]
+            },
+            timestamp: 1638290250,
+            l1BlockNumber: 63, 
+            l2BlockNumber: 0
+          }
+        ] */
+      const contract = await new web3.eth.Contract(
+        DXDVestingFactoryJSON.abi,
+        // evt.address // this is the address of the vestincContract, not created one0x2245CE863Bcf3914D9Ade65916e7DEC8A2453B65
+        evt.returnValues.vestingContractAddress // 0xDcB23f8d41794Fa831C7C873aD984d8E1C390EC2
+      );
+      // const beneficiary = contract.beneficiary?
+      (networkCache as any).vestingFactoryContracts.push(contract);
+      // fetch the vesting contract by address?
+      // filter by contract beneficary address?
+      // if match and store in networkCache.daoInfo.vestingFactory[]?
+    }
   }
 
   return networkCache;
