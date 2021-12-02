@@ -42,6 +42,7 @@ const IconDetailWrapper = styled(Box)`
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex: 1;
 `;
 
 const Detail = styled(Box)`
@@ -77,6 +78,11 @@ const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
   padding: 0.25rem 0.8rem;
 `;
 
+const ProposalStatusWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+`;
 interface ProposalCardProps {
   title: string;
   description: string;
@@ -90,7 +96,13 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
           <Icon src={dxIcon} spaceRight />
           <Detail>Swapr von 0x01Cf...2712</Detail>
         </IconDetailWrapper>
-        <ProposalStatus status="Active" detail="4 days left" />
+        <ProposalStatusWrapper>
+          <ProposalStatus
+            bordered={false}
+            status="Active"
+            detail="4 days left"
+          />
+        </ProposalStatusWrapper>
       </CardHeader>
       <CardContent>
         <CardTitle size={2}>

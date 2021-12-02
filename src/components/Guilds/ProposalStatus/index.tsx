@@ -1,33 +1,40 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box } from '../common/Layout';
+
 const Status = styled.div`
+  font-size: 0.8rem;
+  font-weight: 600;
   display: flex;
   flex-direction: row;
-  width: 100%;
-  justify-content: flex-end;
   align-items: center;
+  ${({ bordered }) =>
+    bordered &&
+    css`
+      border: 1px solid ${({ theme }) => theme.colors.text};
+      border-radius: ${({ theme }) => theme.radii.pill};
+      padding-left: 0.5rem;
+    `}
 `;
 
 const Pill = styled(Box)`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  font-size: 0.95rem;
-  font-weight: 600;
+
   border-radius: 1.5rem;
   padding: ${props => (props.padded ? '0.5rem 0.8rem' : '0')};
   color: ${props =>
     props.filled ? props.theme.colors.background : props.theme.colors.text};
   background-color: ${props =>
     props.filled ? props.theme.colors.text : 'transparent'};
-  border: 1px solid
-    ${props => (props.bordered ? props.theme.colors.text : 'transparent')};
+  border: 1px solid ${({ theme }) => theme.colors.text};
 `;
 
 const DetailText = styled(Box)`
-  padding: 0.2rem;
+  padding-right: 0.2rem;
+
   @media only screen and (min-width: 768px) {
-    padding: 0.5rem;
+    padding-right: 0.5rem;
   }
 `;
 
