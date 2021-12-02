@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 import { Button } from '../../common/Button';
+import { VotersButton } from '../../common/VotersButton';
+
+// TODO: investigate where the voters data is gonan come from,
+// where the types are gonna sit, and which structure.
 
 interface VoteContent {
   dxd: number;
@@ -19,6 +23,7 @@ export interface ProposalVotesProps {
   voters: Voter[];
   summary: VoteSummary;
 }
+
 const VotesContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -40,16 +45,6 @@ const Voters = styled.div`
   ${Button} {
     padding: 5px;
   }
-`;
-
-const Avatar = styled.img`
-  width: 30px;
-  height: 30px;
-  margin-right: -10px;
-  z-index: ${({ index }) => index * 5};
-  border-radius: 50%;
-  border: 2px solid white;
-  object-fit: cover;
 `;
 
 const VotesGraphContainer = styled.div`
@@ -77,13 +72,6 @@ const VoteSeparator = styled.div`
   width: 1px;
   border-right: 1px solid black;
   height: 5px;
-`;
-
-const VotersButton = styled(Button)`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 10px !important; // why cant overwrite?
 `;
 
 // TODO: I will move as separate reusable component when knowing well
@@ -130,14 +118,7 @@ export const ProposalVotes = ({ summary, voters }: ProposalVotesProps) => {
       {voters && (
         <Voters>
           <p>Voted by</p>
-          <VotersButton>
-            <span>
-              {voters.map(({ avatar }: Voter, index) => (
-                <Avatar index={index} src={avatar} />
-              ))}
-            </span>
-            <span> +33 Others</span>
-          </VotersButton>
+          <VotersButton voters={voters} />
         </Voters>
       )}
     </VotesContainer>
