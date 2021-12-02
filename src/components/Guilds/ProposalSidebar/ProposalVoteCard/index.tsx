@@ -33,6 +33,8 @@ const VoteButton = styled(Button)`
 `;
 
 const ProposalVoteCard = () => {
+  //TODO: we may subscribe to this data from a store.
+  //TODO: remove this hardcoded data when necessary.
   const votes: VoteSummary = {
     yes: { dxd: 253, percentage: 80 },
     no: { dxd: 12, percentage: 10 },
@@ -40,6 +42,8 @@ const ProposalVoteCard = () => {
   const voters: Voter[] = [
     { avatar: dxIcon },
     { avatar: etherIcon },
+    { avatar: metaIcon },
+    { avatar: metaIcon },
     { avatar: metaIcon },
   ];
   return (

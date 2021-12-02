@@ -4,6 +4,7 @@ import { Voter } from '../../ProposalSidebar/ProposalVoteCard/ProposalVotes';
 
 // TODO: interface Voter is coming form ProposalVotes, may be there is a better place for reuse.
 
+// TODO: Avatar is already defined for ENS resolution, discuss what this should be.
 const Avatar = styled.img`
   width: 20px;
   height: 20px;
@@ -23,15 +24,16 @@ const VotersButtonContainer = styled(Button)`
 
 interface VotersButtonProps {
   voters: Voter[];
+  toShow?: number;
 }
 
-export const VotersButton = ({ voters }: VotersButtonProps) => (
+export const VotersButton = ({ voters, toShow = 3 }: VotersButtonProps) => (
   <VotersButtonContainer>
     <span>
-      {voters.map(({ avatar }: Voter, index) => (
+      {voters.slice(0, toShow).map(({ avatar }: Voter, index) => (
         <Avatar index={index} src={avatar} />
       ))}
     </span>
-    <span> +33 Others</span>
+    {voters.length > toShow && <span>+{voters.length - toShow} Others</span>}
   </VotersButtonContainer>
 );
