@@ -76,6 +76,8 @@ const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
   border: 1px solid #000;
   border-radius: 1rem;
   padding: 0.25rem 0.8rem;
+  flex: none;
+  display: flex;
 `;
 
 const ProposalStatusWrapper = styled.div`
