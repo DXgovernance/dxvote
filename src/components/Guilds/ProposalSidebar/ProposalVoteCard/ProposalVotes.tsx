@@ -64,7 +64,11 @@ const VotesGraphContainer = styled.div`
 `;
 
 const VoteHalf = styled.div`
-  width: ${({ fill }) => (fill ? `${fill}px` : '')};
+  display: flex;
+  flex: 1;
+`;
+const VoteFill = styled.div`
+  width: ${({ fill }) => (fill ? `${fill}%` : '')};
   background: black;
   border-radius: 30px;
 `;
@@ -84,31 +88,45 @@ const VotersButton = styled(Button)`
 
 // TODO: I will move as separate reusable component when knowing well
 // the data structure of the props.
-const VotesGraph = ({ yes, no }) => (
+const VotesGraph = ({ value }) => (
   <VotesGraphContainer>
-    <VoteHalf fill={30} />
+    <VoteHalf>
+      <VoteFill fill={value} />
+    </VoteHalf>
     <VoteSeparator />
     <VoteHalf></VoteHalf>
   </VotesGraphContainer>
 );
 
 export const ProposalVotes = ({ summary, voters }: ProposalVotesProps) => {
+  //--- TODO: this may change when we know structure of real data
   const { yes, no } = summary;
+  const total = yes?.dxd + no?.dxd;
+  const pYes = Math.round((yes.dxd / total) * 100);
+  const pNo = Math.round((no.dxd / total) * 100);
+  //---
+
   return (
     <VotesContainer>
       {yes && (
-        <VotesRow>
-          <span>Yes &middot; {yes.dxd} DXD</span>
-          <span>{yes.percentage}%</span>
-        </VotesRow>
+        <>
+          <VotesRow>
+            <span>Yes &middot; {yes.dxd} DXD</span>
+            <span>{pYes}%</span>
+          </VotesRow>
+          <VotesGraph value={pYes} />
+        </>
       )}
       {no && (
-        <VotesRow>
-          <span>No &middot; {no.dxd} DXD</span>
-          <span>{no.percentage}%</span>
-        </VotesRow>
+        <>
+          <VotesRow>
+            <span>No &middot; {no.dxd} DXD</span>
+            <span>{pNo}%</span>
+          </VotesRow>
+          <VotesGraph value={pNo} />
+        </>
       )}
-      <VotesGraph yes={yes} no={no} />
+
       {voters && (
         <Voters>
           <p>Voted by</p>
