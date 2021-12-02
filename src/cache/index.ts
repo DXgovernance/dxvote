@@ -1234,6 +1234,12 @@ export const updateProposals = async function (
                     } else if (creationLogDecoded._reputationChange < 0) {
                       schemeProposalInfo.to.push(schemeTypeData.contractToCall);
                       schemeProposalInfo.value.push(0);
+
+                      // Remove the negative sign in the number
+                      if (creationLogDecoded._reputationChange[0] == '-')
+                        creationLogDecoded._reputationChange =
+                          creationLogDecoded._reputationChange.substring(1);
+
                       schemeProposalInfo.callData.push(
                         web3.eth.abi.encodeFunctionCall(
                           {
@@ -1246,9 +1252,7 @@ export const updateProposals = async function (
                             ],
                           },
                           [
-                            bnum(creationLogDecoded._reputationChange).times(
-                              -1
-                            ),
+                            creationLogDecoded._reputationChange,
                             creationLogDecoded._beneficiary,
                             avatarAddress,
                           ]
