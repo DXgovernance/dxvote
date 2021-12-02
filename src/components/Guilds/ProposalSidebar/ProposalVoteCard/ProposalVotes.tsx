@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button } from '../../Guilds/common/Button';
+import { Button } from '../../common/Button';
 
 interface VoteContent {
   dxd: number;

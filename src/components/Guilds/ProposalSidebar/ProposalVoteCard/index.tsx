@@ -3,7 +3,7 @@ import { Button } from '../../common/Button';
 import { Box } from '../../common/Layout';
 
 import SidebarCard from '../../SidebarCard';
-import { ProposalVotes, VoteSummary, Voter } from '../../ProposalVotes';
+import { ProposalVotes, VoteSummary, Voter } from './ProposalVotes';
 
 // avatar examples
 import dxIcon from '../../../../assets/images/dxdao-icon.svg';
@@ -46,7 +46,6 @@ const ProposalVoteCard = () => {
     <SidebarCard header={<SidebarCardHeader>Cast your vote</SidebarCardHeader>}>
       <SidebarCardContent>
         <ProposalVotes summary={votes} voters={voters} />
-
         <VoteButton>Vote</VoteButton>
       </SidebarCardContent>
     </SidebarCard>
