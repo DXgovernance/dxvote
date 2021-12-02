@@ -1,7 +1,9 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { isMobile } from 'react-device-detect';
+
 import { useFilter } from 'contexts/Guilds/filters';
+import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
 
 import {
   DropdownContent,
@@ -51,9 +53,16 @@ export const FilterMenu = () => {
     isStatusSelected,
     onToggleStatus,
   } = useFilter();
+  const schemeRef = useRef(null);
+  const statusRef = useRef(null);
+
+  // hook that handles the click outside the ref element, when clicked calls callback to close.
+  useDetectBlur(schemeRef, () => setShowScheme(false));
+  useDetectBlur(statusRef, () => setShowStatus(false));
+
   return (
     <FilterButtons>
-      <DropdownMenu position={DropdownPosition.BottomRight}>
+      <DropdownMenu ref={schemeRef} position={DropdownPosition.BottomRight}>
         <FilterButton
           iconRight
           onClick={() => {
@@ -66,7 +75,7 @@ export const FilterMenu = () => {
             <FilterBadge>{countSchemeSelected}</FilterBadge>
           )}
         </FilterButton>
-        <DropdownContent show={showScheme}>
+        <DropdownContent fullScreenMobile={true} show={showScheme}>
           <Menu>
             {isMobile && <FiArrowLeft onClick={() => setShowScheme(false)} />}
             <DropdownMenuItem onClick={() => onToggleScheme('a')}>
@@ -81,7 +90,7 @@ export const FilterMenu = () => {
           </Menu>
         </DropdownContent>
       </DropdownMenu>
-      <DropdownMenu>
+      <DropdownMenu ref={statusRef} position={DropdownPosition.BottomRight}>
         <FilterButton
           iconRight
           onClick={() => setShowStatus(!showStatus)}
@@ -92,7 +101,7 @@ export const FilterMenu = () => {
             <FilterBadge>{countStatusSelected}</FilterBadge>
           )}
         </FilterButton>
-        <DropdownContent show={showStatus}>
+        <DropdownContent fullScreenMobile={true} show={showStatus}>
           <Menu>
             {isMobile && <FiArrowLeft onClick={() => setShowStatus(false)} />}
             <DropdownMenuItem onClick={() => onToggleStatus('a')}>
