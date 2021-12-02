@@ -29,6 +29,9 @@ import { CreateMetadataPage } from 'pages/Metadata';
 import GuildsApp from './GuildsApp';
 import { ProposalProvider } from 'contexts/proposals';
 
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+
 moment.updateLocale('en', {
   relativeTime: {
     s: '1 second',
@@ -117,6 +120,7 @@ const SplitApp = () => {
               <GlobalStyle />
               <Header />
               <Routes />
+              <ToastContainer />
             </Web3ReactManager>
           </MainnetWeb3Manager>
         </Switch>
