@@ -3,7 +3,8 @@ import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
-import ProposalSidebar from '../../components/Guilds/ProposalSidebar';
+import ProposalInfoCard from '../../components/Guilds/ProposalSidebar/ProposalInfoCard';
+import ProposalVoteCard from '../../components/Guilds/ProposalSidebar/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
 import dxIcon from '../../assets/images/dxdao-icon.svg';
 import ProposalActionsCard from '../../components/Guilds/ProposalActionsCard';
@@ -109,7 +110,8 @@ const ProposalPage: React.FC = () => {
         </ProposalActionsWrapper>
       </PageContent>
       <SidebarContent>
-        <ProposalSidebar />
+        <ProposalInfoCard />
+        <ProposalVoteCard />
       </SidebarContent>
     </PageContainer>
   );
