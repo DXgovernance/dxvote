@@ -2,6 +2,10 @@ import axios from 'axios';
 import { DaoNetworkCache, DaoInfo } from '../src/types';
 const fs = require('fs');
 const hre = require('hardhat');
+const stringify = require('json-stable-stringify');
+const prettier = require("prettier");
+const Hash = require('ipfs-only-hash')
+
 const web3 = hre.web3;
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
@@ -22,10 +26,7 @@ const appConfig: AppConfig = {
   localhost,
 };
 
-const FormData = require('form-data');
-
 const networkName = hre.network.name;
-const proposalTitlesFileName = 'proposalTitles';
 
 const networkIds = {
   arbitrum: 42161,
@@ -52,14 +53,17 @@ const emptyCache: DaoNetworkCache = {
 let proposalTitles: Record<string, string> = {};
 
 async function main() {
+  const cachePath = './cache/' + networkName + '.json';
+  const proposalTitlesPath = './cache/proposalTitles.json';
+
   if (process.env.EMPTY_CACHE) {
     fs.writeFileSync(
-      './cache/' + networkName + '.json',
+      cachePath,
       JSON.stringify(emptyCache, null, 2),
       { encoding: 'utf8', flag: 'w' }
     );
     fs.writeFileSync(
-      './cache/' + proposalTitlesFileName + '.json',
+      proposalTitlesPath,
       JSON.stringify({}, null, 2),
       {
         encoding: 'utf8',
@@ -72,9 +76,9 @@ async function main() {
     let networkCacheFile: DaoNetworkCache;
 
     // Read the existing proposal titles file
-    if (fs.existsSync('./cache/' + proposalTitlesFileName + '.json')) {
+    if (fs.existsSync(proposalTitlesPath)) {
       proposalTitles = JSON.parse(
-        fs.readFileSync('./cache/' + proposalTitlesFileName + '.json', {
+        fs.readFileSync(proposalTitlesPath, {
           encoding: 'utf8',
           flag: 'r',
         })
@@ -133,61 +137,36 @@ async function main() {
       Object.assign(proposalTitles, newTitles);
     }
 
+    const formatted = prettier.format(stringify(networkCacheFile), {
+      "singleQuote": true,
+      "trailingComma": "es5",
+      "arrowParens": "avoid",
+      "endOfLine": "crlf",
+      "printWidth": 80,
+      "useTabs": false,
+      "parser" : "json"
+    });
+
     fs.writeFileSync(
-      './cache/' + networkName + '.json',
-      JSON.stringify(networkCacheFile),
+      cachePath,
+      stringify(formatted),
       { encoding: 'utf8', flag: 'w' }
     );
 
     fs.writeFileSync(
-      './cache/' + proposalTitlesFileName + '.json',
-      JSON.stringify(proposalTitles),
+      proposalTitlesPath,
+      stringify(proposalTitles),
       { encoding: 'utf8', flag: 'w' }
     );
 
     networkConfig.cache.toBlock = toBlock;
 
-    // Upload the cache file
-    let data = new FormData();
-    data.append(
-      'file',
-      fs.createReadStream('./cache/' + networkName + '.json')
+    const newIpfsHash = await Hash.of(fs.readFileSync(cachePath));
+    networkConfig.cache.ipfsHash = newIpfsHash;
+    appConfig[networkName] = networkConfig;
+    console.debug(
+      `IPFS hash for cache in ${networkName} network: ${appConfig[networkName].cache.ipfsHash}`
     );
-    data.append(
-      'pinataMetadata',
-      JSON.stringify({
-        name: `DXvote ${networkName} Cache`,
-        keyvalues: {
-          type: 'dxvote-cache',
-          network: networkName,
-        },
-      })
-    );
-
-    await axios
-      .post('https://api.pinata.cloud/pinning/pinFileToIPFS', data, {
-        maxBodyLength: Number(Infinity),
-        headers: {
-          'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-          pinata_api_key: process.env.PINATA_API_KEY,
-          pinata_secret_api_key: process.env.PINATA_API_SECRET_KEY,
-        },
-      })
-      .then(function (response) {
-        console.log(response.data);
-        if (response.data.IpfsHash) {
-          networkConfig.cache.ipfsHash = response.data.IpfsHash;
-          appConfig[networkName] = networkConfig;
-          console.debug(
-            `IPFS hash for cache in ${networkName} network: ${appConfig[networkName].cache.ipfsHash}`
-          );
-        } else {
-          console.error('Error uploading cache to pinata');
-        }
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
   }
 
   // Update the appConfig file that stores the hashes of the dapp config and network caches
@@ -201,7 +180,7 @@ async function main() {
   );
 
   fs.writeFileSync(
-    './src/configs/' + proposalTitlesFileName + '.json',
+    './src/configs/proposalTitles.json',
     JSON.stringify(proposalTitles, null, 2),
     {
       encoding: 'utf8',
