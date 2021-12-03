@@ -1,4 +1,5 @@
 import axios from 'axios';
+import _get from 'lodash/get';
 import {
   bnum,
   ZERO_HASH,
@@ -607,17 +608,21 @@ export const updateVestingFactoryCreatedContractsInfo = async function (
       );
 
       for (let event of vestingFactoryEvents) {
+        const transaction = await web3.eth.getTransaction(
+          event.transactionHash
+        );
         const tokenVestingContract = await new web3.eth.Contract(
           TokenVestingJSON.abi,
           event.returnValues.vestingContractAddress
         );
-        // TODO: Find a way to get transfered value.
+        
         const tokenContractInfo = {
           address: event.returnValues.vestingContractAddress,
           beneficiary: await tokenVestingContract.methods.beneficiary().call(),
           cliff: await tokenVestingContract.methods.cliff().call(),
           duration: await tokenVestingContract.methods.duration().call(),
           owner: await tokenVestingContract.methods.owner().call(),
+          value: _get(transaction, 'value', '0'),
         };
 
         networkCache.vestingContracts = [

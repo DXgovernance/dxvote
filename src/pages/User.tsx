@@ -164,7 +164,8 @@ const UserPage = observer(() => {
           >
             <span>
               {contract.address} / Cliff:{' '}
-              {moment.unix(Number(contract.cliff)).format('LL')}
+              {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
+              {contract.value} wei
             </span>
           </ListRow>
         );

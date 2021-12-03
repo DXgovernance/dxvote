@@ -353,6 +353,7 @@ export interface TokenVesting {
   cliff: string;
   duration: string;
   owner: string;
+  value: string;
 }
 
 export interface ChainConfig {
