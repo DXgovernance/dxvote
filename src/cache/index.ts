@@ -127,12 +127,12 @@ export const getUpdatedCache = async function (
   if (notificationStore)
     notificationStore.setGlobalLoading(
       true,
-      `Collecting vesting factory contract data in blocks ${fromBlock} - ${toBlock}`
+      `Collecting VestingFactory VestingCreated events in blocks ${fromBlock} - ${toBlock}`
     );
 
   networkCache = await tryCacheUpdates(
     [
-      updateVestingFactory(
+      updateVestingFactoryCreatedContractsInfo(
         networkCache,
         networkWeb3Contracts.vestingFactory,
         fromBlock,
@@ -575,8 +575,13 @@ export const updatePermissionRegistry = async function (
 
   return networkCache;
 };
-// Gets all teh events form the permission registry and stores the permissions set.
-export const updateVestingFactory = async function (
+
+/**
+ * @function
+ * @description Get all "VestingCreated" events from VestingFactory contract and store created TokenVesting contract info into cache.
+ */
+
+export const updateVestingFactoryCreatedContractsInfo = async function (
   networkCache: DaoNetworkCache,
   vestingFactoryContract: any,
   fromBlock: number,
@@ -584,41 +589,44 @@ export const updateVestingFactory = async function (
   web3: any
 ): Promise<DaoNetworkCache> {
   const contractAddress = vestingFactoryContract?._address;
-
   if (contractAddress && contractAddress !== ZERO_ADDRESS) {
-    let vestingFactoryEvents = sortEvents(
-      await getEvents(
-        web3,
-        vestingFactoryContract,
-        fromBlock,
-        toBlock,
-        'VestingCreated'
-      )
-    );
-
-    console.debug(
-      'Total VestingFactory "VestingCreated" Events: ',
-      vestingFactoryEvents.length
-    );
-
-    for (let evt of vestingFactoryEvents) {
-      const tokenVestingContract = await new web3.eth.Contract(
-        TokenVestingJSON.abi,
-        evt.returnValues.vestingContractAddress
+    try {
+      const vestingFactoryEvents = sortEvents(
+        await getEvents(
+          web3,
+          vestingFactoryContract,
+          fromBlock,
+          toBlock,
+          'VestingCreated'
+        )
       );
-      // TODO: define what info should go on each cache vesting contract
-      const tokenContractInfo = {
-        address: evt.returnValues.vestingContractAddress,
-        beneficiary: await tokenVestingContract.methods.beneficiary().call(),
-        cliff: await tokenVestingContract.methods.cliff().call(),
-        duration: await tokenVestingContract.methods.duration().call(),
-        owner: await tokenVestingContract.methods.owner().call(),
-      };
 
-      networkCache.vestingContracts = [
-        ...(networkCache.vestingContracts ?? []),
-        tokenContractInfo,
-      ];
+      console.debug(
+        'Total VestingFactory "VestingCreated" Events: ',
+        vestingFactoryEvents.length
+      );
+
+      for (let event of vestingFactoryEvents) {
+        const tokenVestingContract = await new web3.eth.Contract(
+          TokenVestingJSON.abi,
+          event.returnValues.vestingContractAddress
+        );
+        // TODO: Fint a way to get transfered value.
+        const tokenContractInfo = {
+          address: event.returnValues.vestingContractAddress,
+          beneficiary: await tokenVestingContract.methods.beneficiary().call(),
+          cliff: await tokenVestingContract.methods.cliff().call(),
+          duration: await tokenVestingContract.methods.duration().call(),
+          owner: await tokenVestingContract.methods.owner().call(),
+        };
+
+        networkCache.vestingContracts = [
+          ...(networkCache.vestingContracts ?? []),
+          tokenContractInfo,
+        ];
+      }
+    } catch (error) {
+      console.error('Error in updateVestingFactoryCreatedContractsInfo', error);
     }
   }
 

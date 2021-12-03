@@ -77,8 +77,6 @@ export const getContracts = async function (
   const vestingFactory = await new web3.eth.Contract(
     VestingFactory.abi,
     networkConfig.utils.dxdVestingFactory
-    // '0xB5D42c8cA3B04479200E3782C41D99b46Cf8A6E1' // rinkeby
-    // '0x45734dB5C3342c66932db308Dbb23a5e2B159561' // dai
   );
 
   return {

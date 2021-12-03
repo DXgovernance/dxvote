@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
+import _isEmpty from 'lodash/isEmpty';
 import {
   BlockchainLink,
   Row,
@@ -18,6 +19,13 @@ import useExporters from '../hooks/useExporters';
 const TitleRow = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const ListRow = styled.div`
+  display: flex;
+  alignitems: center;
+  padding: 6px 0px;
+  borderbottom: ${({ borderBottom }) => (borderBottom ? '1px solid' : '')};
 `;
 
 const UserPage = observer(() => {
@@ -128,15 +136,9 @@ const UserPage = observer(() => {
 
       {userEvents.history.map((historyEvent, i) => {
         return (
-          <div
+          <ListRow
             key={'userHistoryEvent' + i}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '6px 0px',
-              borderBottom:
-                i < userEvents.history.length - 1 ? '1px solid' : '',
-            }}
+            borderBottom={i < userEvents.history.length - 1}
           >
             <span> {historyEvent.text} </span>
             <BlockchainLink
@@ -145,30 +147,26 @@ const UserPage = observer(() => {
               text={historyEvent.event.tx}
               onlyIcon
             />
-          </div>
+          </ListRow>
         );
       })}
 
-      <TitleRow>
-        <h2>Vesting Contracts</h2>
-        <Button onClick={() => console.log('TODO: Export vesting contracts')}>
-          Export to CSV
-        </Button>
-      </TitleRow>
-
+      {!_isEmpty(userVestingContracts) && (
+        <TitleRow>
+          <h2>Vesting Contracts</h2>
+        </TitleRow>
+      )}
       {userVestingContracts.map((contract, i, arr) => {
         return (
-          <div
-            key={'userHistoryEvent' + i}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '6px 0px',
-              borderBottom: i < arr.length - 1 ? '1px solid' : '',
-            }}
+          <ListRow
+            key={'vestingContract' + i}
+            borderBottom={i < arr.length - 1}
           >
-            <span> {contract.address}</span>
-          </div>
+            <span>
+              {contract.address} / Cliff:{' '}
+              {moment.unix(Number(contract.cliff)).format('LL')}
+            </span>
+          </ListRow>
         );
       })}
     </Box>

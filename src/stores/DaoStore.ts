@@ -1230,12 +1230,15 @@ export default class DaoStore {
   }
 
   getAllVestingContracts(): TokenVesting[] {
-    return this.daoCache.vestingContracts;
+    return _.defaultTo(this.daoCache.vestingContracts, []);
   }
 
   getUserVestingContracts(beneficiaryAddress: string): TokenVesting[] {
-    return this.daoCache.vestingContracts.filter(
-      contract => contract.beneficiary === beneficiaryAddress
+    return _.defaultTo(
+      this.daoCache.vestingContracts?.filter(
+        contract => contract.beneficiary === beneficiaryAddress
+      ),
+      []
     );
   }
 }
