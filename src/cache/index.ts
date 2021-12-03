@@ -583,9 +583,9 @@ export const updateVestingFactory = async function (
   toBlock: number,
   web3: any
 ): Promise<DaoNetworkCache> {
-  if (!networkCache.vestingContracts) networkCache.vestingContracts = [];
+  const contractAddress = vestingFactoryContract?._address;
 
-  if (vestingFactoryContract?._address !== ZERO_ADDRESS) {
+  if (contractAddress && contractAddress !== ZERO_ADDRESS) {
     let vestingFactoryEvents = sortEvents(
       await getEvents(
         web3,
@@ -615,7 +615,10 @@ export const updateVestingFactory = async function (
         owner: await tokenVestingContract.methods.owner().call(),
       };
 
-      networkCache.vestingContracts.push(tokenContractInfo);
+      networkCache.vestingContracts = [
+        ...(networkCache.vestingContracts ?? []),
+        tokenContractInfo,
+      ];
     }
   }
 

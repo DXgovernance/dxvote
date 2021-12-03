@@ -19,6 +19,7 @@ import {
   isWinningVote,
   votedBeforeBoosted,
 } from '../utils';
+import { TokenVesting } from 'types';
 
 export default class DaoStore {
   daoCache: DaoNetworkCache;
@@ -1226,5 +1227,15 @@ export default class DaoStore {
       }
     }
     return users;
+  }
+
+  getAllVestingContracts(): TokenVesting[] {
+    return this.daoCache.vestingContracts;
+  }
+
+  getUserVestingContracts(beneficiaryAddress: string): TokenVesting[] {
+    return this.daoCache.vestingContracts.filter(
+      contract => contract.beneficiary === beneficiaryAddress
+    );
   }
 }

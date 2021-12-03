@@ -28,11 +28,11 @@ const UserPage = observer(() => {
   } = useContext();
   const userAddress = useLocation().pathname.split('/')[3];
   const { exportToCSV, triggerDownload } = useExporters();
-
   const userEvents = daoStore.getUserEvents(userAddress);
   const userInfo = daoStore.getUser(userAddress);
   const networkName = configStore.getActiveChainName();
   const redeemsLeft = daoStore.getUserRedeemsLeft(userAddress);
+  const userVestingContracts = daoStore.getUserVestingContracts(userAddress);
 
   const getExportFileName = () => {
     return `history_${userAddress}-${moment().format('YYYY-MM-DD')}`;
@@ -151,12 +151,12 @@ const UserPage = observer(() => {
 
       <TitleRow>
         <h2>Vesting Contracts</h2>
-        <Button onClick={console.log('TODO: Export vesting contracts')}>
+        <Button onClick={() => console.log('TODO: Export vesting contracts')}>
           Export to CSV
         </Button>
       </TitleRow>
 
-      {[1, 2, 3, 4, 5].map((contract, i, arr) => {
+      {userVestingContracts.map((contract, i, arr) => {
         return (
           <div
             key={'userHistoryEvent' + i}
@@ -167,7 +167,7 @@ const UserPage = observer(() => {
               borderBottom: i < arr.length - 1 ? '1px solid' : '',
             }}
           >
-            <span> {contract} </span>
+            <span> {contract.address}</span>
           </div>
         );
       })}
