@@ -25,11 +25,10 @@ const matchStatus = (proposal: ProposalsExtended, status: string) => {
 
 const matchScheme = (proposal: ProposalsExtended, scheme: string) => {
   if (scheme === 'All Schemes' || !scheme) {
-    return proposal
+    return proposal;
   }
-  return proposal.scheme === scheme
-}
-
+  return proposal.scheme === scheme;
+};
 
 export const useFilteredProposals = () => {
   const { proposals, loading } = useFilterCriteria();

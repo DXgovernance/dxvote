@@ -37,7 +37,6 @@ export enum VotingMachineProposalState {
   Passed,
 }
 
-
 export enum PendingAction {
   None,
   Boost,
