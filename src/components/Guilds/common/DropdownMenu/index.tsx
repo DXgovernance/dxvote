@@ -18,6 +18,18 @@ interface DropdownContentProps {
   fullScreenMobile?: boolean;
 }
 
+export const DropdownHeader = styled.div`
+  padding: 20px 5px;
+  align-items: center;
+  display: flex;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.text};
+  width: 100%;
+  span {
+    margin-left: 5px;
+  }
+`;
+
 // DropdownContent renders a floating absolute box under the button that opens it.
 // In mobile, if fullScreenMobile is true it renders an absolute full screen menu.
 export const DropdownContent = styled<DropdownContentProps>(Box)`
