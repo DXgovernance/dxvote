@@ -615,7 +615,7 @@ export const updateVestingFactoryCreatedContractsInfo = async function (
           TokenVestingJSON.abi,
           event.returnValues.vestingContractAddress
         );
-        
+
         const tokenContractInfo = {
           address: event.returnValues.vestingContractAddress,
           beneficiary: await tokenVestingContract.methods.beneficiary().call(),
