@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import { useState, useRef } from 'react';
-import { isMobile } from 'react-device-detect';
+import { isMobile, isDesktop } from 'react-device-detect';
 
 import { useFilter } from 'contexts/Guilds/filters';
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
 
 import {
   DropdownContent,
+  DropdownHeader,
   DropdownMenu,
   DropdownPosition,
 } from '../common/DropdownMenu';
@@ -26,9 +27,23 @@ const DropdownMenuItem = styled(MenuItem)`
     background-color: ${({ theme }) => theme.colors.hoverMenu};
   }
 `;
+
 const FilterButtons = styled.div`
   display: flex;
   flex-direction: row;
+`;
+
+const FilterResetMobile = styled.div`
+  margin-left: auto;
+  margin-right: 20px;
+`;
+
+const FilterResetDesktop = styled.div`
+  background: ${({ theme }) => theme.colors.text};
+  color: white;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
 `;
 
 export const FilterButton = styled(DropdownButton)`
@@ -49,9 +64,11 @@ export const FilterMenu = () => {
     countSchemeSelected,
     isSchemeSelected,
     onToggleScheme,
+    onResetSchemes,
     countStatusSelected,
     isStatusSelected,
     onToggleStatus,
+    onResetStatus,
   } = useFilter();
   const schemeRef = useRef(null);
   const statusRef = useRef(null);
@@ -76,8 +93,15 @@ export const FilterMenu = () => {
           )}
         </FilterButton>
         <DropdownContent fullScreenMobile={true} show={showScheme}>
+          {isMobile && (
+            <DropdownHeader onClick={() => setShowScheme(false)}>
+              <FiArrowLeft /> <span>Schemes</span>{' '}
+              <FilterResetMobile onClick={onResetSchemes}>
+                Reset
+              </FilterResetMobile>
+            </DropdownHeader>
+          )}
           <Menu>
-            {isMobile && <FiArrowLeft onClick={() => setShowScheme(false)} />}
             <DropdownMenuItem onClick={() => onToggleScheme('a')}>
               Schema 1 {isSchemeSelected('a') && <FiCheck />}
             </DropdownMenuItem>
@@ -88,6 +112,11 @@ export const FilterMenu = () => {
               Schema 3 {isSchemeSelected('c') && <FiCheck />}
             </DropdownMenuItem>
           </Menu>
+          {isDesktop && countSchemeSelected > 0 && (
+            <FilterResetDesktop onClick={onResetSchemes}>
+              Reset
+            </FilterResetDesktop>
+          )}
         </DropdownContent>
       </DropdownMenu>
       <DropdownMenu ref={statusRef} position={DropdownPosition.BottomRight}>
@@ -102,8 +131,15 @@ export const FilterMenu = () => {
           )}
         </FilterButton>
         <DropdownContent fullScreenMobile={true} show={showStatus}>
+          {isMobile && (
+            <DropdownHeader onClick={() => setShowStatus(false)}>
+              <FiArrowLeft /> <span>Status</span>{' '}
+              <FilterResetMobile onClick={onResetStatus}>
+                Reset
+              </FilterResetMobile>
+            </DropdownHeader>
+          )}
           <Menu>
-            {isMobile && <FiArrowLeft onClick={() => setShowStatus(false)} />}
             <DropdownMenuItem onClick={() => onToggleStatus('a')}>
               Status a {isStatusSelected('a') && <FiCheck />}
             </DropdownMenuItem>
@@ -117,6 +153,11 @@ export const FilterMenu = () => {
               Status d {isStatusSelected('d') && <FiCheck />}
             </DropdownMenuItem>
           </Menu>
+          {isDesktop && countStatusSelected > 0 && (
+            <FilterResetDesktop onClick={onResetStatus}>
+              Reset
+            </FilterResetDesktop>
+          )}
         </DropdownContent>
       </DropdownMenu>
     </FilterButtons>
