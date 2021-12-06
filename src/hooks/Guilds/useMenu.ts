@@ -24,10 +24,14 @@ export const useMenu = ({ initialStatuses = [], initialSchemas = [] }) => {
     onToggleStatus: value =>
       onToggleFilter(value, filterStatus, setFilterStatus),
     isStatusSelected: value => filterStatus.indexOf(value) > -1,
+    countStatusSelected: filterStatus.length,
 
     //Schema
     onToggleScheme: value =>
       onToggleFilter(value, filterScheme, setFilterScheme),
     isSchemeSelected: value => filterScheme.indexOf(value) > -1,
+    countSchemeSelected: filterScheme.length,
+
+    totalFilters: filterStatus.length + filterScheme.length,
   };
 };
