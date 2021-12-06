@@ -610,7 +610,7 @@ const NewProposalPage = observer(() => {
               )
                 return (
                   <option key={scheme.address} value={i}>
-                    {scheme.name}
+                    {scheme.name} ({scheme.address.substring(0,6)})
                   </option>
                 );
               else return null;
