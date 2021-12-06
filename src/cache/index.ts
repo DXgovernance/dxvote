@@ -627,7 +627,7 @@ export const updateSchemes = async function (
         switch (schemeType) {
           case 'Wallet Scheme v1.1':
             controllerAddress = callsResponse1.decodedReturnData[2]
-              ? networkWeb3Contracts.controller.address
+              ? networkWeb3Contracts.controller._address
               : ZERO_ADDRESS;
             break;
           default:
