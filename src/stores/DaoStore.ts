@@ -460,10 +460,7 @@ export default class DaoStore {
   }
 
   getAllSchemes(): Scheme[] {
-    const schemeAddresses = Object.keys(this.getCache().schemes);
-    return schemeAddresses.map(schemeAddress => {
-      return this.getCache().schemes[schemeAddress];
-    });
+    return _.flatMap(_.filter(this.getCache().schemes, {registered: true}));
   }
 
   getProposal(proposalId): Proposal {
