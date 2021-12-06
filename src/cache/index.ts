@@ -578,7 +578,7 @@ export const updatePermissionRegistry = async function (
 };
 
 /**
- * @function
+ * @function updateVestingFactoryCreatedContractsInfo
  * @description Get all "VestingCreated" events from VestingFactory contract and store created TokenVesting contract info into cache.
  */
 
