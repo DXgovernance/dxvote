@@ -3,7 +3,7 @@ import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
 import WalletModal from 'components/WalletModal';
 import { getChains, injected } from 'provider/connectors';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
 import { useContext } from '../../../contexts';
 import { Button, IconButton } from '../common/Button';
@@ -24,7 +24,8 @@ const IconHolder = styled.span`
 `;
 
 const AccountButton = styled(IconButton)`
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   padding: 0;
   border-width: 1px;
 `;
@@ -39,7 +40,17 @@ const Web3Status = observer(() => {
     context: { modalStore },
   } = useContext();
   const { account, chainId } = useWeb3React();
-  const { ensName, imageUrl } = useENSAvatar(account);
+  const { ensName, imageUrl, avatarUri } = useENSAvatar(account);
+
+  let imageUrlToUse = useMemo(() => {
+    if (avatarUri) {
+      return (
+        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
+      );
+    } else {
+      return null;
+    }
+  }, [imageUrl, ensName, avatarUri]);
 
   const [injectedWalletAuthorized, setInjectedWalletAuthorized] =
     useState(false);
@@ -93,9 +104,11 @@ const Web3Status = observer(() => {
       return (
         <AccountButton onClick={toggleWalletModal} iconLeft>
           <IconHolder>
-            <Avatar src={imageUrl} defaultSeed={account} size={34} />
+            <Avatar src={imageUrlToUse} defaultSeed={account} size={34} />
           </IconHolder>
-          {isDesktop && <AddressText>{ensName || shortenAddress(account)}</AddressText>}
+          {isDesktop && (
+            <AddressText>{ensName || shortenAddress(account)}</AddressText>
+          )}
         </AccountButton>
       );
     } else {

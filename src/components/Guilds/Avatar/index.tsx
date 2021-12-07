@@ -9,8 +9,8 @@ interface AvatarProps {
 
 const AvatarIcon = styled(ButtonIcon)`
   border-radius: 50%;
-  height: ${props => props.height}px;
-  width: ${props => props.height}px;
+  height: ${props => props.size}px;
+  width: ${props => props.size}px;
 `;
 
 const Avatar: React.FC<AvatarProps> = ({ src, defaultSeed, size = 34 }) => {
