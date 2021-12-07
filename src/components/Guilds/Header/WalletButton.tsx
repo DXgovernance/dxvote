@@ -46,7 +46,7 @@ const Web3Status = observer(() => {
     context: { modalStore },
   } = useContext();
   const { account, chainId } = useWeb3React();
-  const { ensName, imageUrl, avatarUri } = useENSAvatar('rossdev.eth');
+  const { ensName, imageUrl, avatarUri } = useENSAvatar(account);
 
   let imageUrlToUse = useMemo(() => {
     if (avatarUri) {
