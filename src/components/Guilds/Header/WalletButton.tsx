@@ -11,6 +11,7 @@ import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { useWeb3React } from '@web3-react/core';
+import { isMobile } from 'react-device-detect';
 
 const IconHolder = styled.span`
   display: flex;
@@ -31,11 +32,16 @@ const AccountButton = styled(IconButton)`
   margin-bottom: 0;
   padding: 0;
   border-width: 1px;
+
+  @media only screen and (min-width: 768px) {
+    padding: 0.3rem 0.5rem;
+    border-width: 0.1rem;
+  }
 `;
 
 const AddressText = styled.span`
-  margin-left: 0.3rem;
-  margin-right: 0.75rem;
+  margin-left: 0.2rem;
+  margin-right: 0.3rem;
 `;
 
 const Web3Status = observer(() => {
@@ -43,7 +49,7 @@ const Web3Status = observer(() => {
     context: { modalStore },
   } = useContext();
   const { account, chainId } = useWeb3React();
-  const { ensName, imageUrl, avatarUri } = useENSAvatar(account);
+  const { ensName, imageUrl, avatarUri } = useENSAvatar('rossdev.eth');
 
   let imageUrlToUse = useMemo(() => {
     if (avatarUri) {
@@ -107,7 +113,11 @@ const Web3Status = observer(() => {
       return (
         <AccountButton onClick={toggleWalletModal} iconLeft>
           <IconHolder>
-            <Avatar src={imageUrlToUse} defaultSeed={account} size={34} />
+            <Avatar
+              src={imageUrlToUse}
+              defaultSeed={account}
+              size={isMobile ? 36 : 24}
+            />
           </IconHolder>
           {isDesktop && (
             <AddressText>{ensName || shortenAddress(account)}</AddressText>

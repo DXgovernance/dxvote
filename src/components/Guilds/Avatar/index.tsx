@@ -1,6 +1,6 @@
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { ButtonIcon } from '../common/Button';
 import styled from 'styled-components';
+import { ButtonIcon } from '../common/Button';
 interface AvatarProps {
   src?: string;
   defaultSeed?: string;
@@ -13,7 +13,7 @@ const AvatarIcon = styled(ButtonIcon)`
   width: ${props => props.size}px;
 `;
 
-const Avatar: React.FC<AvatarProps> = ({ src, defaultSeed, size = 34 }) => {
+const Avatar: React.FC<AvatarProps> = ({ src, defaultSeed, size = 24 }) => {
   return src ? (
     <AvatarIcon src={src} alt={'Avatar'} size={size} />
   ) : (
