@@ -31,9 +31,10 @@ async function uploadFileToPinata(filePath, name, keyValue) {
       console.error(error);
     });
 }
+
+// DefaultCacheFile[ network ] => ConfigFile => CacheFile
 async function main() {
   let defaultCacheFile = {};
-  let data;
   const networkNames = [
     'mainnet',
     'xdai',
@@ -41,17 +42,18 @@ async function main() {
     'rinkeby',
     'arbitrumTestnet',
   ];
+
+  // Update the cache and config for each network
   for (let i = 0; i < networkNames.length; i++) {
-    console.log(networkNames[i])
     const networkCacheHash = await uploadFileToPinata(
       `./cache/${networkNames[i]}.json`,
       `DXvote ${networkNames[i]} Cache`,
-      `dxvote-${networkNames[i]}-cache`,
+      `dxvote-${networkNames[i]}-cache`
     );
     const networkConfigHash = await uploadFileToPinata(
       `./src/configs/${networkNames[i]}/config.json`,
       `DXvote ${networkNames[i]} Config`,
-      `dxvote-${networkNames[i]}-config`,
+      `dxvote-${networkNames[i]}-config`
     );
     defaultCacheFile[networkNames[i]] = networkConfigHash;
   }
@@ -62,12 +64,12 @@ async function main() {
     { encoding: 'utf8', flag: 'w' }
   );
 
+  // Update the default cache file
   console.log('Default cache file:', defaultCacheFile);
-
   await uploadFileToPinata(
     './defaultCacheFile.json',
     'DXvote Default Cache',
-    'dxvote-cache',
+    'dxvote-cache'
   );
 }
 

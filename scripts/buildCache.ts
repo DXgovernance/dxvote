@@ -2,12 +2,14 @@ import axios from 'axios';
 import { DaoNetworkCache, DaoInfo } from '../src/types';
 const fs = require('fs');
 const hre = require('hardhat');
-const prettier = require("prettier");
-const Hash = require('ipfs-only-hash')
+const prettier = require('prettier');
+const Hash = require('ipfs-only-hash');
 
 const web3 = hre.web3;
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
+
+const defaultCacheFile = require('../defaultCacheFile.json');
 
 const arbitrum = require('../src/configs/arbitrum/config.json');
 const arbitrumTestnet = require('../src/configs/arbitrumTestnet/config.json');
@@ -52,23 +54,25 @@ const emptyCache: DaoNetworkCache = {
 let proposalTitles: Record<string, string> = {};
 
 async function main() {
-  const cachePath = './cache/' + networkName + '.json';
+  const cachePath = `./cache/${networkName}.json`;
+  const configPath = `./src/configs/${networkName}/config.json`;
   const proposalTitlesPath = './cache/proposalTitles.json';
 
+  const jsonParserOptions = {
+    singleQuote: true,
+    trailingComma: 'es5',
+    arrowParens: 'avoid',
+    endOfLine: 'crlf',
+    printWidth: 80,
+    useTabs: false,
+    parser: 'json',
+  };
+
   if (process.env.EMPTY_CACHE) {
-    fs.writeFileSync(
-      cachePath,
-      JSON.stringify(emptyCache, null, 2),
-      { encoding: 'utf8', flag: 'w' }
-    );
-    fs.writeFileSync(
-      proposalTitlesPath,
-      JSON.stringify({}, null, 2),
-      {
-        encoding: 'utf8',
-        flag: 'w',
-      }
-    );
+    fs.writeFileSync(cachePath, JSON.stringify(emptyCache, null, 2), {
+      encoding: 'utf8',
+      flag: 'w',
+    });
   } else {
     // Get the network configuration
     let networkConfig = appConfig[networkName];
@@ -84,6 +88,7 @@ async function main() {
       );
     }
 
+    // Set network cache and config objects
     if (networkName === 'localhost') {
       networkCacheFile = emptyCache;
     } else {
@@ -94,11 +99,12 @@ async function main() {
         emptyCache.daoInfo.address = networkConfig.contracts.avatar;
         networkCacheFile = emptyCache;
       } else {
-        const networkCacheFetch = await axios({
-          method: 'GET',
-          url:
-            'https://ipfs.io/ipfs/' + networkConfig.cache.ipfsHash,
-        });
+        console.log(
+          `Getting cache file from https://dweb.link/ipfs/${defaultCacheFile[networkName]}`
+        );
+        const networkCacheFetch = await axios.get(
+          `https://dweb.link/ipfs/${defaultCacheFile[networkName]}`
+        );
         networkCacheFile = networkCacheFetch.data;
       }
     }
@@ -114,7 +120,7 @@ async function main() {
     ) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug(
-        'Runing cache script from block',
+        'Running cache script from block',
         fromBlock,
         'to block',
         toBlock,
@@ -136,31 +142,16 @@ async function main() {
       Object.assign(proposalTitles, newTitles);
     }
 
-    const formatted = prettier.format(JSON.stringify(networkCacheFile), {
-      "singleQuote": true,
-      "trailingComma": "es5",
-      "arrowParens": "avoid",
-      "endOfLine": "crlf",
-      "printWidth": 80,
-      "useTabs": false
-    });
-
+    // Write network cache file
     fs.writeFileSync(
       cachePath,
-      JSON.stringify(formatted),
+      prettier.format(JSON.stringify(networkCacheFile), jsonParserOptions),
       { encoding: 'utf8', flag: 'w' }
     );
 
-    fs.writeFileSync(
-      proposalTitlesPath,
-      JSON.stringify(proposalTitles),
-      { encoding: 'utf8', flag: 'w' }
-    );
-
+    // Update appConfig file with the latest network config
     networkConfig.cache.toBlock = toBlock;
-
-    const newIpfsHash = await Hash.of(fs.readFileSync(cachePath));
-    networkConfig.cache.ipfsHash = newIpfsHash;
+    networkConfig.cache.ipfsHash = await Hash.of(fs.readFileSync(cachePath));
     appConfig[networkName] = networkConfig;
     console.debug(
       `IPFS hash for cache in ${networkName} network: ${appConfig[networkName].cache.ipfsHash}`
@@ -169,17 +160,18 @@ async function main() {
 
   // Update the appConfig file that stores the hashes of the dapp config and network caches
   fs.writeFileSync(
-    './src/configs/' + networkName + '/config.json',
-    JSON.stringify(appConfig[networkName], null, 2),
+    configPath,
+    prettier.format(JSON.stringify(appConfig[networkName]), jsonParserOptions),
     {
       encoding: 'utf8',
       flag: 'w',
     }
   );
 
+  // Write proposals titles file
   fs.writeFileSync(
-    './src/configs/proposalTitles.json',
-    JSON.stringify(proposalTitles, null, 2),
+    proposalTitlesPath,
+    prettier.format(JSON.stringify(proposalTitles), jsonParserOptions),
     {
       encoding: 'utf8',
       flag: 'w',
