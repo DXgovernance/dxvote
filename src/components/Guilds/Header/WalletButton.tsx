@@ -1,23 +1,63 @@
-import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { isDesktop } from 'react-device-detect';
+import styled from 'styled-components';
 import WalletModal from 'components/WalletModal';
 import { getChains, injected } from 'provider/connectors';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
 import { useContext } from '../../../contexts';
 import { Button, IconButton } from '../common/Button';
-import dxIcon from '../../../assets/images/dxdao-icon.svg';
+import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
+import Avatar from '../Avatar';
+import { shortenAddress } from '../../../utils';
+import { useWeb3React } from '@web3-react/core';
 
-const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
+const IconHolder = styled.span`
+  display: flex;
+  justify-content: center;
+
+  @media only screen and (min-width: 768px) {
+    margin-right: 0.3rem;
+  }
+
+  img {
+    border-radius: 50%;
+    margin-right: 0;
+  }
+`;
+
+const AccountButton = styled(IconButton)`
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0.3rem;
+
+  @media only screen and (min-width: 768px) {
+    padding: 0.3rem 0.5rem;
+  }
+`;
+
+const AddressText = styled.span`
+  margin-left: 0.2rem;
+  margin-right: 0.3rem;
 `;
 
 const Web3Status = observer(() => {
   const {
-    context: { modalStore, providerStore },
+    context: { modalStore },
   } = useContext();
+  const { account, chainId } = useWeb3React();
+  const { ensName, imageUrl, avatarUri } = useENSAvatar('rossdev.eth');
+
+  let imageUrlToUse = useMemo(() => {
+    if (avatarUri) {
+      return (
+        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
+      );
+    } else {
+      return null;
+    }
+  }, [imageUrl, ensName, avatarUri]);
+
   const [injectedWalletAuthorized, setInjectedWalletAuthorized] =
     useState(false);
   const rpcUrls = useRpcUrls();
@@ -26,9 +66,7 @@ const Web3Status = observer(() => {
     injected.isAuthorized().then(isAuthorized => {
       setInjectedWalletAuthorized(isAuthorized);
     });
-  }, [injected]);
-
-  const { chainId, account } = providerStore.getActiveWeb3React();
+  }, []);
 
   const toggleWalletModal = () => {
     modalStore.toggleWalletModal();
@@ -70,10 +108,14 @@ const Web3Status = observer(() => {
       );
     } else if (account) {
       return (
-        <IconButton onClick={toggleWalletModal} iconLeft>
-          <ButtonIcon src={dxIcon} alt={'Icon'} />{' '}
-          {isDesktop && <span>{account}</span>}
-        </IconButton>
+        <AccountButton onClick={toggleWalletModal} iconLeft>
+          <IconHolder>
+            <Avatar src={imageUrlToUse} defaultSeed={account} size={24} />
+          </IconHolder>
+          {isDesktop && (
+            <AddressText>{ensName || shortenAddress(account)}</AddressText>
+          )}
+        </AccountButton>
       );
     } else {
       return <Button onClick={toggleWalletModal}>Connect Wallet</Button>;

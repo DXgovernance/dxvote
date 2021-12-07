@@ -3,6 +3,7 @@ import { ThemeProvider } from 'styled-components';
 import { Container } from './components/Guilds/common/Layout';
 
 import Header from './components/Guilds/Header';
+import MainnetWeb3Manager from './components/MainnetWeb3Manager';
 import Web3ReactManager from './components/Web3ReactManager';
 import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
@@ -23,22 +24,24 @@ const GuildsApp = () => {
   return (
     <ThemeProvider theme={theme}>
       <HashRouter basename="/guilds">
-        <Web3ReactManager>
-          <GlobalStyle />
-          <Header />
-          <Container>
-            <Switch>
-              <Route exact path="/">
-                <FilterProvider>
-                  <GuildsPage />
-                </FilterProvider>
-              </Route>
-              <Route path="/:proposal_id">
-                <ProposalPage />
-              </Route>
-            </Switch>
-          </Container>
-        </Web3ReactManager>
+        <MainnetWeb3Manager>
+          <Web3ReactManager>
+            <GlobalStyle />
+            <Header />
+            <Container>
+              <Switch>
+                <Route exact path="/">
+                  <FilterProvider>
+                    <GuildsPage />
+                  </FilterProvider>
+                </Route>
+                <Route path="/:proposal_id">
+                  <ProposalPage />
+                </Route>
+              </Switch>
+            </Container>
+          </Web3ReactManager>
+        </MainnetWeb3Manager>
       </HashRouter>
     </ThemeProvider>
   );

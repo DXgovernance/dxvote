@@ -13,3 +13,8 @@ export const IconButton = styled(Button)<IconButtonProps>`
     ${props => props.iconRight && `margin-left: 0.2rem;`}
   }
 `;
+
+export const ButtonIcon = styled.img`
+  height: 1.1rem;
+  width: 1.1rem;
+`;

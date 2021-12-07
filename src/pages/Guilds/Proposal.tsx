@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
-import { IconButton } from '../../components/Guilds/common/Button';
+import { ButtonIcon, IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
 import ProposalInfoCard from '../../components/Guilds/ProposalSidebar/ProposalInfoCard';
 import ProposalVoteCard from '../../components/Guilds/ProposalSidebar/ProposalVoteCard';
@@ -51,11 +51,6 @@ const ProposalDescription = styled.p`
   line-height: 1.5;
   font-size: 16px;
   text-align: justify;
-`;
-
-const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
 `;
 
 const StyledIconButton = styled(IconButton)`
