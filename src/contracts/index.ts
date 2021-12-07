@@ -6,6 +6,7 @@ const DXDVotingMachine = require('./DXDVotingMachine');
 const GenesisProtocol = require('./GenesisProtocol');
 const ERC20 = require('./ERC20');
 const Multicall = require('./Multicall');
+const VestingFactory = require('./DXDVestingFactory');
 
 export const getContracts = async function (
   networkConfig: NetworkContracts,
@@ -73,6 +74,11 @@ export const getContracts = async function (
       ),
     };
 
+  const vestingFactory = await new web3.eth.Contract(
+    VestingFactory.abi,
+    networkConfig.utils.dxdVestingFactory
+  );
+
   return {
     votingMachines,
     avatar,
@@ -80,5 +86,6 @@ export const getContracts = async function (
     reputation,
     permissionRegistry,
     multicall,
+    vestingFactory,
   };
 };

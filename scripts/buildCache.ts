@@ -46,6 +46,7 @@ const emptyCache: DaoNetworkCache = {
   callPermissions: {},
   votingMachines: {},
   ipfsHashes: [],
+  vestingContracts: [],
 };
 
 let proposalTitles: Record<string, string> = {};

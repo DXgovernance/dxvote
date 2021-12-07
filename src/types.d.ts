@@ -249,6 +249,7 @@ declare global {
     callPermissions: CallPermissions;
     votingMachines: { [address: string]: VotingMachine };
     ipfsHashes: IPFSHash[];
+    vestingContracts: TokenVesting[];
   }
 
   // Application Config
@@ -343,6 +344,16 @@ export interface DaoNetworkCache {
   callPermissions: CallPermissions;
   votingMachines: { [address: string]: VotingMachine };
   ipfsHashes: IPFSHash[];
+  vestingContracts: TokenVesting[];
+}
+
+export interface TokenVesting {
+  address: string;
+  beneficiary: string;
+  cliff: string;
+  duration: string;
+  owner: string;
+  value: string;
 }
 
 export interface ChainConfig {
