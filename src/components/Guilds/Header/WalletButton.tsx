@@ -15,7 +15,10 @@ import { useWeb3React } from '@web3-react/core';
 const IconHolder = styled.span`
   display: flex;
   justify-content: center;
-  margin-right: 0.3rem;
+
+  @media only screen and (min-width: 768px) {
+    margin-right: 0.3rem;
+  }
 
   img {
     border-radius: 50%;
