@@ -48,7 +48,6 @@ const Votes = () => {
     }
   });
 
-  console.log('prop events', proposalEvents);
   let positiveVotesCount = proposalEvents.votes.filter(
     vote => vote.vote.toString() === '1'
   ).length;

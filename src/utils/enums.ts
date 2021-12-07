@@ -33,6 +33,17 @@ export enum VotingMachineProposalState {
   PreBoosted,
   Boosted,
   QuietEndingPeriod,
+  Rejected,
+  Passed,
+}
+
+export enum PendingAction {
+  None,
+  Boost,
+  Execute,
+  Finish,
+  Redeem,
+  RedeemForBeneficiary,
 }
 
 export const enumKeys = <O extends object, K extends keyof O = keyof O>(

@@ -31,3 +31,6 @@ yarn-error.log*
 
 #editor 
 .vscode/
+
+#logs
+.log/
