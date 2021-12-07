@@ -11,7 +11,6 @@ import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { useWeb3React } from '@web3-react/core';
-import { isMobile } from 'react-device-detect';
 
 const IconHolder = styled.span`
   display: flex;
@@ -30,12 +29,10 @@ const IconHolder = styled.span`
 const AccountButton = styled(IconButton)`
   margin-top: 0;
   margin-bottom: 0;
-  padding: 0;
-  border-width: 1px;
+  padding: 0.3rem;
 
   @media only screen and (min-width: 768px) {
     padding: 0.3rem 0.5rem;
-    border-width: 0.1rem;
   }
 `;
 
@@ -113,11 +110,7 @@ const Web3Status = observer(() => {
       return (
         <AccountButton onClick={toggleWalletModal} iconLeft>
           <IconHolder>
-            <Avatar
-              src={imageUrlToUse}
-              defaultSeed={account}
-              size={isMobile ? 36 : 24}
-            />
+            <Avatar src={imageUrlToUse} defaultSeed={account} size={24} />
           </IconHolder>
           {isDesktop && (
             <AddressText>{ensName || shortenAddress(account)}</AddressText>
