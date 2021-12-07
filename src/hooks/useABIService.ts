@@ -98,7 +98,7 @@ export const useABIService = (): UseABIServiceReturns => {
           from === recommendedCall.from) &&
         to === recommendedCall.to &&
         functionSignature ===
-        library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
+          library.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
       );
     });
 

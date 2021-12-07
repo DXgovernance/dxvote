@@ -9,13 +9,13 @@ export const ACTIVE_NETWORK_NAMES =
   process.env.NODE_ENV === 'production'
     ? ['mainnet', 'xdai', 'arbitrum', 'rinkeby', 'arbitrumTestnet']
     : [
-      'mainnet',
-      'xdai',
-      'arbitrum',
-      'rinkeby',
-      'arbitrumTestnet',
-      'localhost',
-    ];
+        'mainnet',
+        'xdai',
+        'arbitrum',
+        'rinkeby',
+        'arbitrumTestnet',
+        'localhost',
+      ];
 export const ACTIVE_NETWORKS = NETWORKS.filter(network =>
   ACTIVE_NETWORK_NAMES.includes(network.name)
 );

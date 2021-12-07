@@ -136,7 +136,7 @@ export default class DaoStore {
       ).map(paramsHash => {
         const unparsedParams =
           unparsedCache.votingMachines[votingMachineAddress].votingParameters[
-          paramsHash
+            paramsHash
           ];
         unparsedCache.votingMachines[votingMachineAddress].votingParameters[
           paramsHash
@@ -286,7 +286,7 @@ export default class DaoStore {
       ]);
     }
     rep = _.sortBy(rep, [
-      function(o) {
+      function (o) {
         return o[1];
       },
     ]);
@@ -545,7 +545,8 @@ export default class DaoStore {
               `Stake from `,
               `of ${normalizeBalance(
                 event.amount
-              ).toString()} staking token on decision ${VoteDecision[event.vote]
+              ).toString()} staking token on decision ${
+                VoteDecision[event.vote]
               }`,
             ],
             textParams: [event.staker],
@@ -612,7 +613,8 @@ export default class DaoStore {
         proposalEvents.stateChanges.map(event => {
           return {
             text: [
-              `Proposal change to state ${VotingMachineProposalState[event.state]
+              `Proposal change to state ${
+                VotingMachineProposalState[event.state]
               }`,
             ],
             textParams: [],
@@ -766,8 +768,9 @@ export default class DaoStore {
       .concat(
         proposalEvents.votes.map(event => {
           return {
-            text: `Voted with ${event.amount} REP for decision ${VoteDecision[event.vote]
-              } on proposal ${event.proposalId}`,
+            text: `Voted with ${event.amount} REP for decision ${
+              VoteDecision[event.vote]
+            } on proposal ${event.proposalId}`,
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -782,8 +785,9 @@ export default class DaoStore {
       .concat(
         proposalEvents.stakes.map(event => {
           return {
-            text: `Staked ${event.amount} staking token for decision ${VoteDecision[event.vote]
-              } on proposal ${event.proposalId}`,
+            text: `Staked ${event.amount} staking token for decision ${
+              VoteDecision[event.vote]
+            } on proposal ${event.proposalId}`,
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -906,7 +910,7 @@ export default class DaoStore {
       const proposal = this.getProposal(stake.proposalId);
       if (
         proposal.stateInVotingMachine ===
-        VotingMachineProposalState.ExpiredInQueue ||
+          VotingMachineProposalState.ExpiredInQueue ||
         (isNotActive(proposal) &&
           redeemsLeft.stake.indexOf(stake.proposalId) < 0 &&
           isWinningVote(proposal, stake))
@@ -914,7 +918,7 @@ export default class DaoStore {
         redeemsLeft.stake.push(stake.proposalId);
         if (
           proposal.stateInVotingMachine ===
-          VotingMachineProposalState.Executed &&
+            VotingMachineProposalState.Executed &&
           proposal.winningVote === 1
         ) {
           redeemsLeft.bounty.push(stake.proposalId);
@@ -955,11 +959,11 @@ export default class DaoStore {
     const networkContracts = this.context.configStore.getNetworkContracts();
     const votingMachineParams =
       proposal.paramsHash ===
-        '0x0000000000000000000000000000000000000000000000000000000000000000'
+      '0x0000000000000000000000000000000000000000000000000000000000000000'
         ? this.getCache().votingMachines[votingMachineOfProposal]
-          .votingParameters[scheme.paramsHash]
+            .votingParameters[scheme.paramsHash]
         : this.getCache().votingMachines[votingMachineOfProposal]
-          .votingParameters[proposal.paramsHash];
+            .votingParameters[proposal.paramsHash];
 
     const autoBoost =
       networkContracts.votingMachines.dxd &&
