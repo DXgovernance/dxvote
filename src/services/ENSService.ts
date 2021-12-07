@@ -2,7 +2,6 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { namehash, labelhash } from '@ensdomains/ensjs';
 import { ethers } from 'ethers';
 import RootContext from '../contexts';
-import ensResolverABI from '../abis/ENSPublicResolver.json';
 export default class ENSService {
   context: RootContext;
   web3Context: Web3ReactContextInterface;
@@ -36,22 +35,6 @@ export default class ENSService {
     return name;
   }
 
-  async getResolverContract(ensName: string): Promise<any | null> {
-    try {
-      const web3 = this.web3Context.library;
-
-      // The Resolver contract interface exposed by web3.js is no longer up-to-date.
-      // https://github.com/ChainSafe/web3.js/issues/4553
-      // Temporary workaround: Using our own ABIs instead
-      const resolverWeb3JsContract = await web3.eth.ens.getResolver(ensName);
-      const resolverAddress = await resolverWeb3JsContract.options.address;
-      const resolver = new web3.eth.Contract(ensResolverABI, resolverAddress);
-      return resolver;
-    } catch (e) {
-      return null;
-    }
-  }
-
   async resolveContentHash(ensName: string): Promise<string | null> {
     const web3 = this.web3Context.library;
 
@@ -60,19 +43,5 @@ export default class ENSService {
 
     const contentHash = await web3.eth.ens.getContenthash(ensName);
     return contentHash && contentHash.decoded ? contentHash.decoded : null;
-  }
-
-  async resolveAvatarUri(ensName: string): Promise<string | null> {
-    const resolver = await this.getResolverContract(ensName);
-    if (!resolver) return null;
-
-    try {
-      let avatar = await resolver.methods
-        .text(namehash(ensName), 'avatar')
-        .call();
-      return avatar;
-    } catch (e) {
-      return null;
-    }
   }
 }

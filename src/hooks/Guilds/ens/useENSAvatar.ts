@@ -21,7 +21,7 @@ const useENSAvatar = (ethAddress: string) => {
         let avatar = await resolver.text(namehash(ensName), 'avatar');
         return avatar;
       } catch (e) {
-        console.log('[useENSAvatar] Error resolving ENS avatar', e);
+        console.error('[useENSAvatar] Error resolving ENS avatar', e);
         return null;
       }
     }
