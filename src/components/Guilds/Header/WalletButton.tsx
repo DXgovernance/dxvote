@@ -10,6 +10,7 @@ import { Button, IconButton } from '../common/Button';
 import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
+import { useWeb3React } from '@web3-react/core';
 
 const IconHolder = styled.span`
   display: flex;
@@ -23,12 +24,14 @@ const IconHolder = styled.span`
 `;
 
 const Web3Status = observer(() => {
+  console.log("wallet button...")
+
   const {
-    context: { modalStore, providerStore },
+    context: { modalStore },
   } = useContext();
-  const { chainId, account } = providerStore.getActiveWeb3React();
-  const { ensName, avatarUri } = useENSAvatar(account);
-  
+  const { account, chainId } = useWeb3React();
+  const { ensName, imageUrl } = useENSAvatar(account);
+
   const [injectedWalletAuthorized, setInjectedWalletAuthorized] =
     useState(false);
   const rpcUrls = useRpcUrls();
@@ -37,7 +40,7 @@ const Web3Status = observer(() => {
     injected.isAuthorized().then(isAuthorized => {
       setInjectedWalletAuthorized(isAuthorized);
     });
-  }, [injected]);
+  }, []);
 
   const toggleWalletModal = () => {
     modalStore.toggleWalletModal();
@@ -81,7 +84,7 @@ const Web3Status = observer(() => {
       return (
         <IconButton onClick={toggleWalletModal} iconLeft>
           <IconHolder>
-            <Avatar ensAvatarUri={avatarUri} address={account} />
+            <Avatar src={imageUrl} defaultSeed={account} />
           </IconHolder>
           {isDesktop && <span>{ensName || shortenAddress(account)}</span>}
         </IconButton>

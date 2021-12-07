@@ -21,7 +21,7 @@ export function getContract(
   account?: string
 ): Contract {
   if (!isAddress(address) || address === AddressZero) {
-    throw Error(`Invalid 'address' parameter '${address}'.`);
+    return null;
   }
 
   return new Contract(
