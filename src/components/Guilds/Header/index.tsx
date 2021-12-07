@@ -28,7 +28,7 @@ const MenuItems = styled(Box)`
 `;
 
 const Header = () => {
-  console.log("Guilds header...")
+  console.log('Guilds header...');
 
   return (
     <HeaderWrapper as="header">

@@ -8,7 +8,10 @@ export default function useENS(
   web3Context: string = MAINNET_WEB3_ROOT_KEY
 ) {
   const validAddress = isAddress(nameOrAddress);
-  const reverseLookup = useENSName(validAddress ? validAddress : undefined, web3Context);
+  const reverseLookup = useENSName(
+    validAddress ? validAddress : undefined,
+    web3Context
+  );
   const lookup = useENSAddress(nameOrAddress, web3Context);
 
   return {

@@ -7,11 +7,11 @@ import useENSResolver from './useENSResolver';
 import useERC721NFT from '../nft/useERC721NFT';
 import useERC1155NFT from '../nft/useERC1155NFT';
 
-const useENSAvatar = (_ethAddress: string) => {
-  const { name: ensName } = useENS('rossdev.eth');
+const useENSAvatar = (ethAddress: string) => {
+  const { name: ensName } = useENS(ethAddress);
   const resolver = useENSResolver(ensName);
   const [avatarUri, setAvatarUri] = useState<string>(null);
-  const { imageUrl } = useENSAvatarNFT(avatarUri, _ethAddress);
+  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress);
 
   useEffect(() => {
     if (!resolver) return;

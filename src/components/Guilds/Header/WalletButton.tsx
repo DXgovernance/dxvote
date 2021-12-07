@@ -24,8 +24,6 @@ const IconHolder = styled.span`
 `;
 
 const Web3Status = observer(() => {
-  console.log("wallet button...")
-
   const {
     context: { modalStore },
   } = useContext();

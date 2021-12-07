@@ -18,12 +18,17 @@ export default function useENSResolver(ensName: string) {
 
     async function getResolver(ensName: string) {
       try {
-        const resolverAddress = await registrarContract.resolver(namehash(ensName));
+        const resolverAddress = await registrarContract.resolver(
+          namehash(ensName)
+        );
         const provider = new Web3Provider(library.currentProvider);
         const resolver = getContract(resolverAddress, ensResolverABI, provider);
         return resolver;
       } catch (e) {
-        console.error("[useENSResolver] Error getting ENS Resolver Contract", e);
+        console.error(
+          '[useENSResolver] Error getting ENS Resolver Contract',
+          e
+        );
         return null;
       }
     }
