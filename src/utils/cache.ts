@@ -1,6 +1,6 @@
 import contentHash from 'content-hash';
 import _ from 'lodash';
-import { ZERO_ADDRESS } from './index';
+import { ZERO_ADDRESS, sleep } from './index';
 
 const Web3 = require('web3');
 const web3 = new Web3();
@@ -358,10 +358,10 @@ export async function tryWhile(promises) {
   while (retry) {
     try {
       await Promise.all(promises);
+      retry = false;
     } catch (e) {
       console.error('[ERROR IN TRY WHILE] (trying again)', e.message);
-    } finally {
-      retry = false;
+      await sleep(1000);
     }
   }
   return;
