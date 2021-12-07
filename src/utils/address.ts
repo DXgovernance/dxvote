@@ -26,7 +26,7 @@ export function shortenAddress(address, digits = 4) {
   )}`;
 }
 
-export function isAddress(value) {
+export function isAddress(value: string) {
   try {
     return ethers.utils.getAddress(value.toLowerCase());
   } catch {

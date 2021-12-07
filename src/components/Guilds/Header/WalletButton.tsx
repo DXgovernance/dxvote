@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
 import { useContext } from '../../../contexts';
 import { Button, IconButton } from '../common/Button';
-import useENSAddress from '../../../hooks/useENSAddress';
+import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 
@@ -26,6 +26,9 @@ const Web3Status = observer(() => {
   const {
     context: { modalStore, providerStore },
   } = useContext();
+  const { chainId, account } = providerStore.getActiveWeb3React();
+  const { ensName, avatarUri } = useENSAvatar(account);
+  
   const [injectedWalletAuthorized, setInjectedWalletAuthorized] =
     useState(false);
   const rpcUrls = useRpcUrls();
@@ -35,9 +38,6 @@ const Web3Status = observer(() => {
       setInjectedWalletAuthorized(isAuthorized);
     });
   }, [injected]);
-
-  const { chainId, account } = providerStore.getActiveWeb3React();
-  const { ensName, avatarUri } = useENSAddress(account);
 
   const toggleWalletModal = () => {
     modalStore.toggleWalletModal();
