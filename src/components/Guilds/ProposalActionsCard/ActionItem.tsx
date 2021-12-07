@@ -3,7 +3,7 @@ import { FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
 import { FiArrowRight } from 'react-icons/fi';
 import styled from 'styled-components';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
-import { IconButton } from '../common/Button';
+import { ButtonIcon, IconButton } from '../common/Button';
 import { Box } from '../common/Layout';
 import ActionDetails from './ActionDetails';
 
@@ -14,11 +14,6 @@ const ProposalActionItem = styled(Box)`
   &:last-child {
     border-bottom: none;
   }
-`;
-
-const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
 `;
 
 const ProposalActionRow = styled(Box)`

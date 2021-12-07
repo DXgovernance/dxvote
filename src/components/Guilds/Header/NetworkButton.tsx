@@ -1,10 +1,9 @@
-import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { isChainIdSupported } from 'provider/connectors';
 import NetworkModal from 'components/NetworkModal';
 import { useContext } from '../../../contexts';
 import { toCamelCaseString } from '../../../utils';
-import { Button, IconButton } from '../common/Button';
+import { Button, ButtonIcon, IconButton } from '../common/Button';
 
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
@@ -18,11 +17,6 @@ const iconsByChain = {
   421611: arbitrumIcon,
   1337: ethereumIcon,
 };
-
-const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
-`;
 
 const NetworkButton = observer(() => {
   const {

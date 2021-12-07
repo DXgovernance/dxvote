@@ -23,6 +23,17 @@ const IconHolder = styled.span`
   }
 `;
 
+const AccountButton = styled(IconButton)`
+  margin: 0;
+  padding: 0;
+  border-width: 1px;
+`;
+
+const AddressText = styled.span`
+  margin-left: 0.3rem;
+  margin-right: 0.75rem;
+`;
+
 const Web3Status = observer(() => {
   const {
     context: { modalStore },
@@ -80,12 +91,12 @@ const Web3Status = observer(() => {
       );
     } else if (account) {
       return (
-        <IconButton onClick={toggleWalletModal} iconLeft>
+        <AccountButton onClick={toggleWalletModal} iconLeft>
           <IconHolder>
-            <Avatar src={imageUrl} defaultSeed={account} />
+            <Avatar src={imageUrl} defaultSeed={account} size={34} />
           </IconHolder>
-          {isDesktop && <span>{ensName || shortenAddress(account)}</span>}
-        </IconButton>
+          {isDesktop && <AddressText>{ensName || shortenAddress(account)}</AddressText>}
+        </AccountButton>
       );
     } else {
       return <Button onClick={toggleWalletModal}>Connect Wallet</Button>;
