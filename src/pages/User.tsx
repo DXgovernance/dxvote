@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
-import _isEmpty from 'lodash/isEmpty';
 import {
   BlockchainLink,
   Row,
@@ -151,7 +150,7 @@ const UserPage = observer(() => {
         );
       })}
 
-      {!_isEmpty(userVestingContracts) && (
+      {userVestingContracts.length && (
         <TitleRow>
           <h2>Vesting Contracts</h2>
         </TitleRow>

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import _get from 'lodash/get';
 import {
   bnum,
   ZERO_HASH,
@@ -622,7 +621,7 @@ export const updateVestingFactoryCreatedContractsInfo = async function (
           cliff: await tokenVestingContract.methods.cliff().call(),
           duration: await tokenVestingContract.methods.duration().call(),
           owner: await tokenVestingContract.methods.owner().call(),
-          value: _get(transaction, 'value', '0'),
+          value: transaction?.value ?? '0',
         };
 
         networkCache.vestingContracts = [
