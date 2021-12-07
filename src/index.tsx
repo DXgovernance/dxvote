@@ -29,7 +29,7 @@ import { CreateMetadataPage } from 'pages/Metadata';
 import GuildsApp from './GuildsApp';
 import { ProposalProvider } from 'contexts/proposals';
 
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 moment.updateLocale('en', {
