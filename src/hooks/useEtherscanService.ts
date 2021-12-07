@@ -59,7 +59,7 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
       setLoading(false);
       return ABI.data.result;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError(error);
       setLoading(false);
     }
@@ -76,7 +76,7 @@ export const useEtherscanService = (): UseEtherscanServiceReturns => {
       setLoading(false);
       return source.data.result;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError(error);
       setLoading(false);
     }

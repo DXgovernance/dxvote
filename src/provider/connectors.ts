@@ -5,7 +5,6 @@ import { NETWORKS } from 'utils';
 import metamaskIcon from 'assets/images/metamask.png';
 import walletConnectIcon from 'assets/images/walletconnect.png';
 import { ChainConfig } from 'types';
-console.log(process.env.NODE_ENV);
 export const ACTIVE_NETWORK_NAMES =
   process.env.NODE_ENV === 'production'
     ? ['mainnet', 'xdai', 'arbitrum', 'rinkeby', 'arbitrumTestnet']

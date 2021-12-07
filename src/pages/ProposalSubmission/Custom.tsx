@@ -206,7 +206,6 @@ const NewProposalPage = observer(() => {
     } else {
       setSubmitionState(1);
       setErrorMessage('');
-      console.log(schemeToUse.type);
       const bodyTextToUpload = JSON.stringify({
         description: descriptionText,
         title: titleText,

@@ -38,7 +38,6 @@ export default class PinataService {
   }
 
   async pin(hashToPin: String) {
-    console.log('pininng', hashToPin);
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
     return axios({
       method: 'POST',
