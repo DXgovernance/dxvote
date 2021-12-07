@@ -2,7 +2,6 @@ import axios from 'axios';
 import { DaoNetworkCache, DaoInfo } from '../src/types';
 const fs = require('fs');
 const hre = require('hardhat');
-const stringify = require('json-stable-stringify');
 const prettier = require("prettier");
 const Hash = require('ipfs-only-hash')
 
@@ -98,7 +97,7 @@ async function main() {
         const networkCacheFetch = await axios({
           method: 'GET',
           url:
-            'https://gateway.pinata.cloud/ipfs/' + networkConfig.cache.ipfsHash,
+            'https://ipfs.io/ipfs/' + networkConfig.cache.ipfsHash,
         });
         networkCacheFile = networkCacheFetch.data;
       }
@@ -137,25 +136,24 @@ async function main() {
       Object.assign(proposalTitles, newTitles);
     }
 
-    const formatted = prettier.format(stringify(networkCacheFile), {
+    const formatted = prettier.format(JSON.stringify(networkCacheFile), {
       "singleQuote": true,
       "trailingComma": "es5",
       "arrowParens": "avoid",
       "endOfLine": "crlf",
       "printWidth": 80,
-      "useTabs": false,
-      "parser" : "json"
+      "useTabs": false
     });
 
     fs.writeFileSync(
       cachePath,
-      stringify(formatted),
+      JSON.stringify(formatted),
       { encoding: 'utf8', flag: 'w' }
     );
 
     fs.writeFileSync(
       proposalTitlesPath,
-      stringify(proposalTitles),
+      JSON.stringify(proposalTitles),
       { encoding: 'utf8', flag: 'w' }
     );
 
