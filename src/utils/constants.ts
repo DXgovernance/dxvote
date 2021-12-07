@@ -1,4 +1,4 @@
-import { ChainConfig } from 'types';
+import { ChainConfig } from '../types/types';
 
 export const MAX_UINT =
   '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ProposalCalls } from 'types';
+import { ProposalCalls } from '../../../types/types';
 import { BlockchainLink } from '../../common';
 
 const CallParams = styled.span`
