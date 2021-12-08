@@ -1,6 +1,6 @@
 import { Error } from './Error';
 import { BlockchainLink } from 'components/common';
-import { ProposalCalls } from 'types';
+import { ProposalCalls } from '../../../types/types';
 
 type BaseCallsProps = Pick<ProposalCalls, 'to' | 'from' | 'value' | 'data'> & {
   showMore: boolean;

@@ -19,7 +19,7 @@ import {
   isWinningVote,
   votedBeforeBoosted,
 } from '../utils';
-import { TokenVesting } from 'types';
+import { TokenVesting } from '../types/types';
 
 export default class DaoStore {
   daoCache: DaoNetworkCache;

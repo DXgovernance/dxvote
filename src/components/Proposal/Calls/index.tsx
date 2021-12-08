@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
 import { useEtherscanService } from 'hooks/useEtherscanService';
-import { ProposalCalls } from 'types';
+import { ProposalCalls } from '../../../types/types';
 import { useContext } from 'contexts';
 import { useLocation } from 'react-router-dom';
 

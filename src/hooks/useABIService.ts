@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ContractType } from 'stores/Provider';
-import { ProposalCalls } from 'types';
+import { ProposalCalls } from '../types/types';
 import {
   ANY_ADDRESS,
   bnum,
