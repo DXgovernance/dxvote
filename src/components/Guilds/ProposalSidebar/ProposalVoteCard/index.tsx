@@ -18,17 +18,10 @@ const SidebarCardContent = styled(Box)`
   padding: 1rem;
 `;
 
-const VoteButton = styled(Button)`
-  margin-top: 1rem;
-  display: block;
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.text};
-  color: ${({ theme }) => theme.colors.background};
-
-  &:hover:enabled {
-    background-color: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-  }
+const ButtonsContainer = styled.div`
+  flex-direction: column;
+  display: flex;
+  margin-top: 30px;
 `;
 
 const SmallButton = styled(Button)`
@@ -47,7 +40,7 @@ const TOKEN = 'DXD';
 //
 const ProposalVoteCard = () => {
   const [showToken, setShowToken] = useState(false);
-
+  const [voted, setVoted] = useState('');
   return (
     <SidebarCard
       header={
@@ -65,7 +58,25 @@ const ProposalVoteCard = () => {
           showToken={showToken}
           token={TOKEN}
         />
-        <VoteButton>Vote</VoteButton>
+        <ButtonsContainer>
+          <Button
+            minimal
+            active={voted === 'yes'}
+            onClick={() => setVoted('yes')}
+          >
+            Yes
+          </Button>
+          <Button
+            minimal
+            active={voted === 'no'}
+            onClick={() => setVoted('no')}
+          >
+            No
+          </Button>
+          <Button primary disabled={!voted}>
+            Vote
+          </Button>
+        </ButtonsContainer>
       </SidebarCardContent>
     </SidebarCard>
   );
