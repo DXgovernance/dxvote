@@ -100,10 +100,16 @@ async function main() {
         networkCacheFile = emptyCache;
       } else {
         console.log(
-          `Getting cache file from https://dweb.link/ipfs/${defaultCacheFile[networkName]}`
+          `Getting config file from https://ipfs.io/ipfs/${defaultCacheFile[networkName]}`
+        );
+        const networkConfigFileFetch = await axios.get(
+          `https://ipfs.io/ipfs/${defaultCacheFile[networkName]}`
+        );
+        console.log(
+          `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
         );
         const networkCacheFetch = await axios.get(
-          `https://dweb.link/ipfs/${defaultCacheFile[networkName]}`
+          `https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
         );
         networkCacheFile = networkCacheFetch.data;
       }
