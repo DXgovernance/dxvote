@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { DaoNetworkCache, DaoInfo } from '../src/types';
+const FormData = require('form-data');
 const fs = require('fs');
+const Web3 = require('web3');
 const hre = require('hardhat');
 const prettier = require('prettier');
 const Hash = require('ipfs-only-hash');
 
-const web3 = hre.web3;
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
 
@@ -27,8 +28,6 @@ const appConfig: AppConfig = {
   localhost,
 };
 
-const networkName = hre.network.name;
-
 const networkIds = {
   arbitrum: 42161,
   arbitrumTestnet: 421611,
@@ -38,109 +37,102 @@ const networkIds = {
   localhost: 1337,
 };
 
-const emptyCache: DaoNetworkCache = {
-  networkId: networkIds[networkName],
-  l1BlockNumber: 1,
-  l2BlockNumber: 1,
-  daoInfo: {} as DaoInfo,
-  schemes: {},
-  proposals: {},
-  callPermissions: {},
-  votingMachines: {},
-  ipfsHashes: [],
-  vestingContracts: [],
+const jsonParserOptions = {
+  singleQuote: true,
+  trailingComma: 'es5',
+  arrowParens: 'avoid',
+  endOfLine: 'crlf',
+  printWidth: 80,
+  useTabs: false,
+  parser: 'json',
 };
 
 let proposalTitles: Record<string, string> = {};
 
-async function main() {
+async function buildCacheForNetwork(networkName: string, toBlock: number, resetCache: boolean = false) : Promise<NetworkConfig> {
+
+  const web3 = new Web3(hre.config.networks[networkName].url);
   const cachePath = `./cache/${networkName}.json`;
   const configPath = `./src/configs/${networkName}/config.json`;
   const proposalTitlesPath = './cache/proposalTitles.json';
 
-  const jsonParserOptions = {
-    singleQuote: true,
-    trailingComma: 'es5',
-    arrowParens: 'avoid',
-    endOfLine: 'crlf',
-    printWidth: 80,
-    useTabs: false,
-    parser: 'json',
+  const emptyCache: DaoNetworkCache = {
+    networkId: networkIds[networkName],
+    l1BlockNumber: 1,
+    l2BlockNumber: 1,
+    daoInfo: {} as DaoInfo,
+    schemes: {},
+    proposals: {},
+    callPermissions: {},
+    votingMachines: {},
+    ipfsHashes: [],
+    vestingContracts: [],
   };
 
-  if (process.env.EMPTY_CACHE) {
-    fs.writeFileSync(cachePath, JSON.stringify(emptyCache, null, 2), {
-      encoding: 'utf8',
-      flag: 'w',
-    });
+  // Get the network configuration
+  let networkConfig = appConfig[networkName];
+  let networkCacheFile: DaoNetworkCache;
+
+  // Read the existing proposal titles file
+  if (fs.existsSync(proposalTitlesPath)) {
+    proposalTitles = JSON.parse(
+      fs.readFileSync(proposalTitlesPath, {
+        encoding: 'utf8',
+        flag: 'r',
+      })
+    );
+  }
+
+  // Set network cache and config objects
+  if (networkName === 'localhost') {
+    networkCacheFile = emptyCache;
   } else {
-    // Get the network configuration
-    let networkConfig = appConfig[networkName];
-    let networkCacheFile: DaoNetworkCache;
-
-    // Read the existing proposal titles file
-    if (fs.existsSync(proposalTitlesPath)) {
-      proposalTitles = JSON.parse(
-        fs.readFileSync(proposalTitlesPath, {
-          encoding: 'utf8',
-          flag: 'r',
-        })
-      );
-    }
-
-    // Set network cache and config objects
-    if (networkName === 'localhost') {
+    if (resetCache) {
+      networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
+      networkConfig.cache.ipfsHash = '';
+      emptyCache.l1BlockNumber = networkConfig.cache.fromBlock;
+      emptyCache.daoInfo.address = networkConfig.contracts.avatar;
       networkCacheFile = emptyCache;
     } else {
-      if (process.env.RESET_CACHE) {
-        networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
-        networkConfig.cache.ipfsHash = '';
-        emptyCache.l1BlockNumber = networkConfig.cache.fromBlock;
-        emptyCache.daoInfo.address = networkConfig.contracts.avatar;
-        networkCacheFile = emptyCache;
-      } else {
-        console.log(
-          `Getting config file from https://ipfs.io/ipfs/${defaultCacheFile[networkName]}`
-        );
-        const networkConfigFileFetch = await axios.get(
-          `https://ipfs.io/ipfs/${defaultCacheFile[networkName]}`
-        );
-        console.log(
-          `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
-        );
-        const networkCacheFetch = await axios.get(
-          `https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
-        );
-        networkCacheFile = networkCacheFetch.data;
-      }
+      console.log(
+        `Getting config file from https://ipfs.io/ipfs/${defaultCacheFile[networkName].configHash}`
+      );
+      const networkConfigFileFetch = await axios.get(
+        `https://ipfs.io/ipfs/${defaultCacheFile[networkName].configHash}`
+      );
+      console.log(
+        `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
+      );
+      const networkCacheFetch = await axios.get(
+        `https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
+      );
+      networkCacheFile = networkCacheFetch.data;
     }
+  }
 
-    // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
-    const fromBlock = networkCacheFile.l1BlockNumber;
-    const blockNumber = await web3.eth.getBlockNumber();
-    const toBlock = Number(process.env.CACHE_TO_BLOCK || blockNumber);
+  // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
+  const fromBlock = networkCacheFile.l1BlockNumber;
 
-    if (
-      process.env.RESET_CACHE ||
-      (fromBlock <= toBlock && toBlock <= blockNumber)
-    ) {
-      // The cache file is updated with the data that had before plus new data in the network cache file
-      console.debug(
-        'Running cache script from block',
-        fromBlock,
-        'to block',
-        toBlock,
-        'in network',
-        networkName
-      );
-      networkCacheFile = await getUpdatedCache(
-        null,
-        networkCacheFile,
-        networkConfig.contracts,
-        fromBlock,
-        toBlock,
-        web3
-      );
+  if (fromBlock <= toBlock) {
+    // The cache file is updated with the data that had before plus new data in the network cache file
+    console.debug(
+      'Running cache script from block',
+      fromBlock,
+      'to block',
+      toBlock,
+      'in network',
+      networkName
+    );
+    networkCacheFile = await getUpdatedCache(
+      null,
+      networkCacheFile,
+      networkConfig.contracts,
+      fromBlock,
+      toBlock,
+      web3
+    );
+
+    if (process.env.GET_PROPOSAL_TITLES == "true") {
       const newTitles = await getProposalTitlesFromIPFS(
         networkCacheFile,
         toBlock
@@ -148,41 +140,119 @@ async function main() {
       Object.assign(proposalTitles, newTitles);
     }
 
-    // Write network cache file
-    fs.writeFileSync(
-      cachePath,
-      prettier.format(JSON.stringify(networkCacheFile), jsonParserOptions),
-      { encoding: 'utf8', flag: 'w' }
-    );
+  }
 
-    // Update appConfig file with the latest network config
-    networkConfig.cache.toBlock = toBlock;
-    networkConfig.cache.ipfsHash = await Hash.of(fs.readFileSync(cachePath));
-    appConfig[networkName] = networkConfig;
-    console.debug(
-      `IPFS hash for cache in ${networkName} network: ${appConfig[networkName].cache.ipfsHash}`
+  // Write network cache file
+  fs.writeFileSync(
+    cachePath,
+    prettier.format(JSON.stringify(networkCacheFile), jsonParserOptions),
+    { encoding: 'utf8', flag: 'w' }
+  );
+
+  // Update appConfig file with the latest network config
+  networkConfig.cache.toBlock = toBlock;
+  networkConfig.cache.ipfsHash = await Hash.of(fs.readFileSync(cachePath));
+
+  // Update the appConfig file that stores the hashes of the dapp config and network caches
+  if (process.env.UPLOAD_TO_IPFS == "true") {
+    fs.writeFileSync(
+      configPath,
+      prettier.format(JSON.stringify(networkConfig), jsonParserOptions),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      }
+    );
+    fs.writeFileSync(
+      proposalTitlesPath,
+      prettier.format(JSON.stringify(proposalTitles), jsonParserOptions),
+      {
+        encoding: 'utf8',
+        flag: 'w',
+      }
     );
   }
 
-  // Update the appConfig file that stores the hashes of the dapp config and network caches
-  fs.writeFileSync(
-    configPath,
-    prettier.format(JSON.stringify(appConfig[networkName]), jsonParserOptions),
-    {
-      encoding: 'utf8',
-      flag: 'w',
-    }
-  );
+  return networkConfig;
+}
 
-  // Write proposals titles file
-  fs.writeFileSync(
-    proposalTitlesPath,
-    prettier.format(JSON.stringify(proposalTitles), jsonParserOptions),
-    {
-      encoding: 'utf8',
-      flag: 'w',
-    }
+async function uploadFileToPinata(filePath, name, keyValue) {
+  let data = new FormData();
+  data.append('file', fs.createReadStream(filePath));
+  data.append(
+    'pinataMetadata',
+    JSON.stringify({
+      name: name,
+      keyvalues: {
+        type: keyValue,
+      },
+    })
   );
+  return await axios
+    .post('https://api.pinata.cloud/pinning/pinFileToIPFS', data, {
+      maxBodyLength: Number(Infinity),
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+        pinata_api_key: process.env.PINATA_API_KEY,
+        pinata_secret_api_key: process.env.PINATA_API_SECRET_KEY,
+      },
+    })
+    .then(function (response) {
+      console.debug(`${name} hash: ${response.data.IpfsHash}`);
+      return response.data.IpfsHash;
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+}
+
+async function main() {
+  const networkNames = process.env.ETH_NETWORKS.indexOf(',') > 0 
+    ? process.env.ETH_NETWORKS.split(",")
+    : [process.env.ETH_NETWORKS];
+  const upload = process.env.UPLOAD_TO_IPFS == "true";
+
+  // Update the cache and config for each network
+  for (let i = 0; i < networkNames.length; i++) {
+
+    const networkConfig = await buildCacheForNetwork(
+      networkNames[i], defaultCacheFile[networkNames[i]].toBlock
+    );
+    defaultCacheFile[networkNames[i]].configHash = await Hash.of(
+      prettier.format(JSON.stringify(networkConfig), jsonParserOptions)
+    );
+    defaultCacheFile[networkNames[i]].toBlock = networkConfig.cache.toBlock;
+
+    if (upload) {
+      await uploadFileToPinata(
+        `./cache/${networkNames[i]}.json`,
+        `DXvote ${networkNames[i]} Cache`,
+        `dxvote-${networkNames[i]}-cache`
+      );
+      await uploadFileToPinata(
+        `./src/configs/${networkNames[i]}/config.json`,
+        `DXvote ${networkNames[i]} Config`,
+        `dxvote-${networkNames[i]}-config`
+      );
+    }
+  }
+
+  console.log('Default cache file:', defaultCacheFile);
+  
+  // Update the default cache file only when upload
+  if (upload) {
+    fs.writeFileSync(
+      './defaultCacheFile.json',
+      JSON.stringify(defaultCacheFile, null, 2),
+      { encoding: 'utf8', flag: 'w' }
+    );
+    await uploadFileToPinata(
+      './defaultCacheFile.json',
+      'DXvote Default Cache',
+      'dxvote-cache'
+    );
+  }
+
 }
 
 tryWhile([main()])

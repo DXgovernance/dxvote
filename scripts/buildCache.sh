@@ -10,13 +10,18 @@ contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
 # Run build cache in all networks
-# Use RESET_CACHE=1 to reset the cache and ignore existing content
-# Use EMPTY_CACHE=1 to save an empty cache
-CACHE_TO_BLOCK=13670075 yarn hardhat run --network mainnet scripts/buildCache.ts
-CACHE_TO_BLOCK=19215635 yarn hardhat run --network xdai scripts/buildCache.ts
-CACHE_TO_BLOCK=3265896 yarn hardhat run --network arbitrum scripts/buildCache.ts
-CACHE_TO_BLOCK=9629062 yarn hardhat run --network rinkeby scripts/buildCache.ts
-CACHE_TO_BLOCK=6264591 yarn hardhat run --network arbitrumTestnet scripts/buildCache.ts
+export ETH_NETWORKS="mainnet,xdai,rinkeby,arbitrum,arbitrumTestnet"
+
+# If next line is enabled it will reset the cache
+# export RESET_CACHE="true"
+
+# If next line is enabled it will fetch proposal titles and save them
+# export GET_PROPOSAL_TITLES="true"
+
+# If next line is enabled it will upload, cache and config files to IPFS using pinata 
+# export UPLOAD_TO_IPFS="true"
+
+yarn hardhat run scripts/buildCache.ts
 sleep 1
 
 # Enable isolatedModules and use esnext as module in tsconfig
