@@ -217,7 +217,7 @@ async function main() {
   for (let i = 0; i < networkNames.length; i++) {
 
     const networkConfig = await buildCacheForNetwork(
-      networkNames[i], defaultCacheFile[networkNames[i]].toBlock
+      networkNames[i], defaultCacheFile[networkNames[i]].toBlock, process.env.RESET_CACHE == "true"
     );
     
     // Update the appConfig file that stores the hashes of the dapp config and network caches
