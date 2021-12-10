@@ -18,9 +18,6 @@ export ETH_NETWORKS="mainnet,xdai,rinkeby,arbitrum,arbitrumTestnet"
 # If next line is enabled it will fetch proposal titles and save them
 # export GET_PROPOSAL_TITLES="true"
 
-# If next line is enabled it will upload, cache and config files to IPFS using pinata 
-# export UPLOAD_TO_IPFS="true"
-
 yarn hardhat run scripts/buildCache.ts
 sleep 1
 
