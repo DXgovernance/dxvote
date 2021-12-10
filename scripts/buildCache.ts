@@ -6,6 +6,7 @@ const Web3 = require('web3');
 const hre = require('hardhat');
 const prettier = require('prettier');
 const Hash = require('ipfs-only-hash');
+const jsonSort = require('json-keys-sort');    
 
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
@@ -83,7 +84,7 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
 
   // Get the network configuration
   let networkConfig = appConfig[networkName];
-  let networkCacheFile: DaoNetworkCache;
+  let networkCache: DaoNetworkCache;
 
   // Read the existing proposal titles file
   if (fs.existsSync(proposalTitlesPath)) {
@@ -97,14 +98,14 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
 
   // Set network cache and config objects
   if (networkName === 'localhost') {
-    networkCacheFile = emptyCache;
+    networkCache = emptyCache;
   } else {
     if (resetCache) {
       networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
       networkConfig.cache.ipfsHash = '';
       emptyCache.l1BlockNumber = networkConfig.cache.fromBlock;
       emptyCache.daoInfo.address = networkConfig.contracts.avatar;
-      networkCacheFile = emptyCache;
+      networkCache = emptyCache;
     } else {
       console.log(
         `Getting config file from https://ipfs.io/ipfs/${defaultCacheFile[networkName].configHash}`
@@ -118,12 +119,12 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
       const networkCacheFetch = await axios.get(
         `https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
       );
-      networkCacheFile = networkCacheFetch.data;
+      networkCache = networkCacheFetch.data;
     }
   }
 
   // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
-  const fromBlock = networkCacheFile.l1BlockNumber;
+  const fromBlock = networkCache.l1BlockNumber;
 
   if (fromBlock <= toBlock) {
     // The cache file is updated with the data that had before plus new data in the network cache file
@@ -135,9 +136,9 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
       'in network',
       networkName
     );
-    networkCacheFile = await getUpdatedCache(
+    networkCache = await getUpdatedCache(
       null,
-      networkCacheFile,
+      networkCache,
       networkConfig.contracts,
       fromBlock,
       toBlock,
@@ -146,7 +147,7 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
 
     if (process.env.GET_PROPOSAL_TITLES == "true") {
       const newTitles = await getProposalTitlesFromIPFS(
-        networkCacheFile,
+        networkCache,
         toBlock
       );
       Object.assign(proposalTitles, newTitles);
@@ -163,17 +164,17 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
   }
 
   // Write network cache file
+  networkCache = await jsonSort.sortAsync(networkCache, true);
   fs.writeFileSync(
     cachePath,
-    prettier.format(JSON.stringify(networkCacheFile), jsonParserOptions),
+    prettier.format(JSON.stringify(networkCache), jsonParserOptions),
     { encoding: 'utf8', flag: 'w' }
   );
 
   // Update appConfig file with the latest network config
   networkConfig.cache.toBlock = toBlock;
   networkConfig.cache.ipfsHash = await Hash.of(fs.readFileSync(cachePath));
-
-  // Update the appConfig file that stores the hashes of the dapp config and network caches
+  networkConfig = await jsonSort.sortAsync(networkConfig, true);
 
   return networkConfig;
 }
@@ -219,6 +220,8 @@ async function main() {
     const networkConfig = await buildCacheForNetwork(
       networkNames[i], defaultCacheFile[networkNames[i]].toBlock
     );
+    
+    // Update the appConfig file that stores the hashes of the dapp config and network caches
     appConfig[networkNames[i]] = networkConfig;
 
     defaultCacheFile[networkNames[i]].configHash = await Hash.of(

@@ -12024,6 +12024,11 @@ json-buffer@3.0.0:
   resolved "https://registry.yarnpkg.com/json-buffer/-/json-buffer-3.0.0.tgz#5b1f397afc75d677bde8bcfc0e47e1f9a3d9a898"
   integrity sha1-Wx85evx11ne96Lz8Dkfh+aPZqJg=
 
+json-keys-sort@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/json-keys-sort/-/json-keys-sort-2.1.0.tgz#ddbc96c29550eb925f4548ad6c838bdb2a0d464b"
+  integrity sha512-Xo8Ep77w1K+GZ2DZ7S74Pyjlgqr3RP2tgFPDinwl5Z6YOculeDUJKosPScNzEZkhCvDD4W81r3qY7cWN+n98RQ==
+
 json-loader@^0.5.4:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/json-loader/-/json-loader-0.5.7.tgz#dca14a70235ff82f0ac9a3abeb60d337a365185d"
