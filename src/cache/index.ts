@@ -1728,7 +1728,7 @@ export const updateProposals = async function (
       obj[key] = networkCache.proposals[key];
       return obj;
     }, {});
-  networkCache.ipfsHashes.sort((a, b) => a.hash.localeCompare(b.hash));
+  networkCache.ipfsHashes.sort((a, b) => a.name.localeCompare(b.name));
 
   if (!isNode()) {
     const proposalTitles = await getProposalTitlesFromIPFS(
