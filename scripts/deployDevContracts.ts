@@ -271,8 +271,8 @@ async function main() {
     await newScheme.initialize(
       avatar.address,
       dxdVotingMachine.address,
-      schemeParamsHash,
-      schemeConfiguration.callToController ? controller.address : NULL_ADDRESS,
+      schemeConfiguration.callToController,
+      controller.address,
       permissionRegistry.address,
       schemeConfiguration.name,
       Math.max(86400, schemeConfiguration.maxSecondsForExecution),

@@ -54,6 +54,9 @@ const Details = () => {
           <strong>Scheme</strong> <small>{scheme.name}</small>
         </Detail>
         <Detail>
+          <strong>Voting Parameters</strong> <small>{proposal.paramsHash.substring(0,10)}...</small>
+        </Detail>
+        <Detail>
           <strong>State in Voting Machine </strong>
           <small>
             {VotingMachineProposalState[proposal.stateInVotingMachine]}

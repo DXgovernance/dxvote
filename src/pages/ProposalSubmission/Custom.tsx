@@ -16,6 +16,7 @@ import {
   denormalizeBalance,
   encodePermission,
   TXEvents,
+  isWalletScheme
 } from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
 import DiscourseImporter from '../../components/DiscourseImporter';
@@ -163,16 +164,15 @@ const NewProposalPage = observer(() => {
 
   const { assetLimits: transferLimits, recommendedCalls } =
     daoStore.getSchemeRecommendedCalls(schemeToUse.address);
-  console.debug('[PERMISSIONS]', schemeToUse, transferLimits, recommendedCalls);
-
+    
   let allowedToCall = [];
-
+  
   recommendedCalls.map(recommendedCall => {
     if (
       recommendedCall.fromTime > 0 &&
       allowedToCall.findIndex(
         allowedPermission => allowedPermission.value === recommendedCall.to
-      ) < 0
+    ) < 0
     ) {
       allowedToCall.push({
         value: recommendedCall.to,
@@ -180,24 +180,26 @@ const NewProposalPage = observer(() => {
       });
     }
   });
-
+  
   const callPermissions = daoStore.getCache().callPermissions;
   if (
-    schemeToUse.type === 'WalletScheme' &&
+    isWalletScheme(schemeToUse) &&
     callPermissions[ZERO_ADDRESS] &&
     callPermissions[ZERO_ADDRESS][
       schemeToUse.controllerAddress === networkContracts.controller
-        ? networkContracts.avatar
-        : schemeToUse.address
+      ? networkContracts.avatar
+      : schemeToUse.address
     ] &&
     callPermissions[ZERO_ADDRESS][
       schemeToUse.controllerAddress === networkContracts.controller
         ? networkContracts.avatar
         : schemeToUse.address
-    ][ANY_ADDRESS]
+      ][ANY_ADDRESS]
   )
-    allowedToCall.push({ value: ANY_ADDRESS, name: 'Custom' });
-
+  allowedToCall.push({ value: ANY_ADDRESS, name: 'Custom' });
+  
+  console.debug('[PERMISSIONS]', schemeToUse, transferLimits, recommendedCalls, allowedToCall);
+ 
   const uploadToIPFS = async function () {
     if (titleText.length < 10) {
       setErrorMessage('Title has to be at mimimum 10 characters length');
@@ -416,7 +418,7 @@ const NewProposalPage = observer(() => {
 
   function addCall() {
     calls.push({
-      callType: schemeToUse.type === 'WalletScheme' ? 'simple' : 'advanced',
+      callType: isWalletScheme(schemeToUse) ? 'simple' : 'advanced',
       allowedFunctions: [],
       to: '',
       data: '',
@@ -601,14 +603,14 @@ const NewProposalPage = observer(() => {
           >
             {schemes.map((scheme, i) => {
               if (
-                scheme.type === 'WalletScheme' ||
+                isWalletScheme(scheme) ||
                 scheme.type === 'ContributionReward' ||
                 scheme.type === 'GenericMulticall' ||
                 scheme.type === 'SchemeRegistrar'
               )
                 return (
                   <option key={scheme.address} value={i}>
-                    {scheme.name}
+                    {scheme.name} ({scheme.address.substring(0,6)})
                   </option>
                 );
               else return null;
