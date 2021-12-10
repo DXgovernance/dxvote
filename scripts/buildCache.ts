@@ -231,9 +231,8 @@ async function main() {
 
   console.log('Default cache file:', defaultCacheFile);
 
-  const upload = await requestInput("Upload to pinata? (y/n): ");
-    
-  if (upload == "y") {
+  const writeFiles = await requestInput("Save files? (y/n): ");
+  if (writeFiles == "y") {
     for (let i = 0; i < networkNames.length; i++) {
       fs.writeFileSync(
         `./src/configs/${networkNames[i]}/config.json`,
@@ -243,30 +242,34 @@ async function main() {
           flag: 'w',
         }
       );
-
-      await uploadFileToPinata(
-        `./cache/${networkNames[i]}.json`,
-        `DXvote ${networkNames[i]} Cache`,
-        `dxvote-${networkNames[i]}-cache`
-      );
-      await uploadFileToPinata(
-        `./src/configs/${networkNames[i]}/config.json`,
-        `DXvote ${networkNames[i]} Config`,
-        `dxvote-${networkNames[i]}-config`
-      );
-      
     }
-
     fs.writeFileSync(
       './defaultCacheFile.json',
       JSON.stringify(defaultCacheFile, null, 2),
       { encoding: 'utf8', flag: 'w' }
     );
-    await uploadFileToPinata(
-      './defaultCacheFile.json',
-      'DXvote Default Cache',
-      'dxvote-cache'
-    );    
+  
+    const upload = await requestInput("Upload to pinata? (y/n): ");
+    if (upload == "y") {
+      for (let i = 0; i < networkNames.length; i++) {
+        await uploadFileToPinata(
+          `./cache/${networkNames[i]}.json`,
+          `DXvote ${networkNames[i]} Cache`,
+          `dxvote-${networkNames[i]}-cache`
+        );
+        await uploadFileToPinata(
+          `./src/configs/${networkNames[i]}/config.json`,
+          `DXvote ${networkNames[i]} Config`,
+          `dxvote-${networkNames[i]}-config`
+        ); 
+      }
+      await uploadFileToPinata(
+        './defaultCacheFile.json',
+        'DXvote Default Cache',
+        'dxvote-cache'
+      );  
+    }
+    
   }
 
   rl.close();
