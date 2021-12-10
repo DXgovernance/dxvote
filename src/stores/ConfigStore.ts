@@ -144,7 +144,7 @@ export default class ConfigStore {
           votingMachine: networkContracts.votingMachines.gen.address,
           newProposalTopics:
             networkContracts.daostack.schemeRegistrar.newProposalTopics,
-          voteParams: networkContracts.daostack.contributionReward.voteParams,
+          voteParams: networkContracts.daostack.schemeRegistrar.voteParams,
           creationLogEncoding:
             networkContracts.daostack.schemeRegistrar.creationLogEncoding,
         };

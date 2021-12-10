@@ -692,8 +692,10 @@ export const updateSchemes = async function (
       callsToExecute = [];
 
       const permissions = decodePermission(callsResponse1.decodedReturnData[0]);
-      const paramsHash = callsResponse1.decodedReturnData[1];
-
+      const paramsHash = schemeTypeData.voteParams
+        ? schemeTypeData.voteParams
+        : callsResponse1.decodedReturnData[1];
+        
       if (schemeTypeData.type === 'WalletScheme') {
         switch (schemeType) {
           case 'Wallet Scheme v1.1':
