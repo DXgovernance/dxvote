@@ -71,8 +71,7 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
 
   const emptyCache: DaoNetworkCache = {
     networkId: networkIds[networkName],
-    l1BlockNumber: 1,
-    l2BlockNumber: 1,
+    blockNumber: 1,
     daoInfo: {} as DaoInfo,
     schemes: {},
     proposals: {},
@@ -103,7 +102,7 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
     if (resetCache) {
       networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
       networkConfig.cache.ipfsHash = '';
-      emptyCache.l1BlockNumber = networkConfig.cache.fromBlock;
+      emptyCache.blockNumber = networkConfig.cache.fromBlock;
       emptyCache.daoInfo.address = networkConfig.contracts.avatar;
       networkCache = emptyCache;
     } else {
@@ -124,7 +123,7 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
   }
 
   // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
-  const fromBlock = networkCache.l1BlockNumber;
+  const fromBlock = networkCache.blockNumber;
 
   if (fromBlock <= toBlock) {
     // The cache file is updated with the data that had before plus new data in the network cache file

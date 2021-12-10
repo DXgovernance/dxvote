@@ -110,7 +110,7 @@ const ProposalsPage = observer(() => {
               );
 
               const repAtCreation = getRep(
-                proposal.creationEvent.l1BlockNumber
+                proposal.creationEvent.blockNumber
               ).totalSupply;
 
               const positiveVotesPercentage = formatPercentage(

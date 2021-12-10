@@ -215,7 +215,7 @@ export default class BlockchainStore {
           networkCache.baseCacheIpfsHash = newestCacheIpfsHash;
         }
 
-        const lastCheckedBlockNumber = networkCache.l1BlockNumber;
+        const lastCheckedBlockNumber = networkCache.blockNumber;
 
         if (blockNumber > lastCheckedBlockNumber + 1) {
           console.debug(
@@ -290,7 +290,7 @@ export default class BlockchainStore {
             }
           });
 
-          networkCache.l1BlockNumber = toBlock;
+          networkCache.blockNumber = toBlock;
           providerStore.setCurrentBlockNumber(toBlock);
 
           notificationStore.setGlobalLoading(true, 'Saving updated cache');

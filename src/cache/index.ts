@@ -144,8 +144,7 @@ export const getUpdatedCache = async function (
     networkCache
   );
 
-  networkCache.l1BlockNumber = Number(toBlock);
-  networkCache.l2BlockNumber = 0;
+  networkCache.blockNumber = Number(toBlock);
 
   console.debug('Total Proposals', Object.keys(networkCache.proposals).length);
 
@@ -207,8 +206,7 @@ export const updateReputationEvents = async function (
           account: reputationEvent.returnValues._to,
           amount: bnum(reputationEvent.returnValues._amount),
           tx: reputationEvent.transactionHash,
-          l1BlockNumber: reputationEvent.l1BlockNumber,
-          l2BlockNumber: reputationEvent.l2BlockNumber,
+          blockNumber: reputationEvent.blockNumber,
           timestamp: reputationEvent.timestamp,
           transactionIndex: reputationEvent.transactionIndex,
           logIndex: reputationEvent.logIndex,
@@ -222,8 +220,7 @@ export const updateReputationEvents = async function (
           account: reputationEvent.returnValues._from,
           amount: bnum(reputationEvent.returnValues._amount),
           tx: reputationEvent.transactionHash,
-          l1BlockNumber: reputationEvent.l1BlockNumber,
-          l2BlockNumber: reputationEvent.l2BlockNumber,
+          blockNumber: reputationEvent.blockNumber,
           timestamp: reputationEvent.timestamp,
           transactionIndex: reputationEvent.transactionIndex,
           logIndex: reputationEvent.logIndex,
@@ -325,8 +322,7 @@ export const updateVotingMachine = async function (
             paramHash: votingMachineEvent.returnValues._paramsHash,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            l1BlockNumber: votingMachineEvent.l1BlockNumber,
-            l2BlockNumber: votingMachineEvent.l2BlockNumber,
+            blockNumber: votingMachineEvent.blockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex,
@@ -340,8 +336,7 @@ export const updateVotingMachine = async function (
             state: votingMachineEvent.returnValues._proposalState,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            l1BlockNumber: votingMachineEvent.l1BlockNumber,
-            l2BlockNumber: votingMachineEvent.l2BlockNumber,
+            blockNumber: votingMachineEvent.blockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex,
@@ -376,8 +371,7 @@ export const updateVotingMachine = async function (
               preBoosted: preBoosted,
               proposalId: votingMachineEvent.returnValues._proposalId,
               tx: votingMachineEvent.transactionHash,
-              l1BlockNumber: votingMachineEvent.l1BlockNumber,
-              l2BlockNumber: votingMachineEvent.l2BlockNumber,
+              blockNumber: votingMachineEvent.blockNumber,
               timestamp: votingMachineEvent.timestamp,
               transactionIndex: votingMachineEvent.transactionIndex,
               logIndex: votingMachineEvent.logIndex,
@@ -406,8 +400,7 @@ export const updateVotingMachine = async function (
               amount4Bounty: bnum('0'),
               proposalId: votingMachineEvent.returnValues._proposalId,
               tx: votingMachineEvent.transactionHash,
-              l1BlockNumber: votingMachineEvent.l1BlockNumber,
-              l2BlockNumber: votingMachineEvent.l2BlockNumber,
+              blockNumber: votingMachineEvent.blockNumber,
               timestamp: votingMachineEvent.timestamp,
               transactionIndex: votingMachineEvent.transactionIndex,
               logIndex: votingMachineEvent.logIndex,
@@ -434,8 +427,7 @@ export const updateVotingMachine = async function (
               amount: votingMachineEvent.returnValues._amount,
               proposalId: votingMachineEvent.returnValues._proposalId,
               tx: votingMachineEvent.transactionHash,
-              l1BlockNumber: votingMachineEvent.l1BlockNumber,
-              l2BlockNumber: votingMachineEvent.l2BlockNumber,
+              blockNumber: votingMachineEvent.blockNumber,
               timestamp: votingMachineEvent.timestamp,
               transactionIndex: votingMachineEvent.transactionIndex,
               logIndex: votingMachineEvent.logIndex,
@@ -450,8 +442,7 @@ export const updateVotingMachine = async function (
             amount: votingMachineEvent.returnValues._amount,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            l1BlockNumber: votingMachineEvent.l1BlockNumber,
-            l2BlockNumber: votingMachineEvent.l2BlockNumber,
+            blockNumber: votingMachineEvent.blockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex,
@@ -466,8 +457,7 @@ export const updateVotingMachine = async function (
             amount: votingMachineEvent.returnValues._amount,
             proposalId: votingMachineEvent.returnValues._proposalId,
             tx: votingMachineEvent.transactionHash,
-            l1BlockNumber: votingMachineEvent.l1BlockNumber,
-            l2BlockNumber: votingMachineEvent.l2BlockNumber,
+            blockNumber: votingMachineEvent.blockNumber,
             timestamp: votingMachineEvent.timestamp,
             transactionIndex: votingMachineEvent.transactionIndex,
             logIndex: votingMachineEvent.logIndex,
@@ -1092,7 +1082,7 @@ export const updateProposals = async function (
                 } else {
                   if (schemeTypeData.type === 'GenericMulticall') {
                     const executionEvent = await web3.eth.getPastLogs({
-                      fromBlock: schemeEvent.l1BlockNumber,
+                      fromBlock: schemeEvent.blockNumber,
                       address: schemeAddress,
                       topics: [
                         '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
@@ -1411,8 +1401,7 @@ export const updateProposals = async function (
                     signature: schemeEvent.signature,
                     address: schemeEvent.address,
                     tx: schemeEvent.transactionHash,
-                    l1BlockNumber: schemeEvent.l1BlockNumber,
-                    l2BlockNumber: schemeEvent.l2BlockNumber,
+                    blockNumber: schemeEvent.blockNumber,
                     timestamp: schemeEvent.timestamp,
                     transactionIndex: schemeEvent.transactionIndex,
                     logIndex: schemeEvent.logIndex,
@@ -1456,8 +1445,7 @@ export const updateProposals = async function (
                   signature: schemeEvent.signature,
                   address: schemeEvent.address,
                   tx: schemeEvent.transactionHash,
-                  l1BlockNumber: schemeEvent.l1BlockNumber,
-                  l2BlockNumber: schemeEvent.l2BlockNumber,
+                  blockNumber: schemeEvent.blockNumber,
                   timestamp: schemeEvent.timestamp,
                   transactionIndex: schemeEvent.transactionIndex,
                   logIndex: schemeEvent.logIndex,
@@ -1648,7 +1636,7 @@ export const updateProposals = async function (
               const executionEvent = await web3.eth.getPastLogs({
                 fromBlock:
                   networkCache.proposals[proposalId].creationEvent
-                    .l1BlockNumber,
+                    .blockNumber,
                 address: schemeAddress,
                 topics: [
                   '0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe',
@@ -1799,7 +1787,7 @@ export async function getProposalTitlesFromIPFS(
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
       proposal.title?.length === 0 &&
       (isNode() ||
-        proposal.creationEvent.l1BlockNumber > Number(toBlock) - 100000)
+        proposal.creationEvent.blockNumber > Number(toBlock) - 100000)
     )
       try {
         // console.debug(`Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`);

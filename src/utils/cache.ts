@@ -122,20 +122,11 @@ export const getTimestampOfEvents = async function (web3, events) {
         for (let i = 0; i < events.length; i++) {
           if (events[i].blockNumber === blockInfo.number)
             events[i].timestamp = blockInfo.timestamp;
-          if (blockInfo.l1BlockNumber)
-            events[i].l1BlockNumber = Number(blockInfo.l1BlockNumber);
+          if (blockInfo.l2BlockNumber)
+            events[i].blockNumber = Number(blockInfo.l2BlockNumber)
         }
       })
     );
-  }
-
-  for (let i = 0; i < events.length; i++) {
-    if (events[i].l1BlockNumber) {
-      events[i].l2BlockNumber = events[i].blockNumber;
-    } else {
-      events[i].l1BlockNumber = events[i].blockNumber;
-      events[i].l2BlockNumber = 0;
-    }
   }
   return events;
 };
@@ -143,7 +134,7 @@ export const getTimestampOfEvents = async function (web3, events) {
 export const sortEvents = function (events) {
   return _.orderBy(
     events,
-    ['l1BlockNumber', 'l2BlockNumber', 'transactionIndex', 'logIndex'],
+    ['blockNumber', 'transactionIndex', 'logIndex'],
     ['asc', 'asc', 'asc', 'asc']
   );
 };

@@ -59,8 +59,7 @@ declare global {
     signature: string;
     address: string;
     tx: string;
-    l1BlockNumber: number;
-    l2BlockNumber: number;
+    blockNumber: number;
     timestamp: number;
     transactionIndex: number;
     logIndex: number;
@@ -241,8 +240,7 @@ declare global {
 
   interface DaoNetworkCache {
     networkId: number;
-    l1BlockNumber: number;
-    l2BlockNumber: number;
+    blockNumber: number;
     daoInfo: DaoInfo;
     schemes: { [address: string]: Scheme };
     proposals: { [id: string]: Proposal };
@@ -336,8 +334,7 @@ export interface DaoInfo {
 
 export interface DaoNetworkCache {
   networkId: number;
-  l1BlockNumber: number;
-  l2BlockNumber: number;
+  blockNumber: number;
   daoInfo: DaoInfo;
   schemes: { [address: string]: Scheme };
   proposals: { [id: string]: Proposal };
