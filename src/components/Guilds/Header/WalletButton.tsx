@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react';
 import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
-import WalletModal from 'components/WalletModal';
 import { getChains, injected } from 'provider/connectors';
 import { useEffect, useMemo, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
@@ -11,6 +10,7 @@ import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { useWeb3React } from '@web3-react/core';
+import WalletModal from '../Modal/WalletModal';
 
 const IconHolder = styled.span`
   display: flex;

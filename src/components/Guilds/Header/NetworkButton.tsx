@@ -1,13 +1,13 @@
 import { observer } from 'mobx-react';
-import { isChainIdSupported } from 'provider/connectors';
-import NetworkModal from 'components/NetworkModal';
+import { getChains, isChainIdSupported } from 'provider/connectors';
 import { useContext } from '../../../contexts';
-import { toCamelCaseString } from '../../../utils';
 import { Button, ButtonIcon, IconButton } from '../common/Button';
 
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
 import xdaiIcon from '../../../assets/images/xdai.svg';
+import { useWeb3React } from '@web3-react/core';
+import NetworkModal from '../Modal/NetworkModal';
 
 const iconsByChain = {
   1: ethereumIcon,
@@ -20,10 +20,12 @@ const iconsByChain = {
 
 const NetworkButton = observer(() => {
   const {
-    context: { modalStore, providerStore, configStore },
+    context: { modalStore },
   } = useContext();
 
-  const { chainId, error } = providerStore.getActiveWeb3React();
+  const { chainId, error } = useWeb3React();
+  const chainName =
+    getChains().find(chain => chain.id === chainId)?.displayName || null;
 
   const toggleNetworkModal = () => {
     modalStore.toggleNetworkModal();
@@ -36,7 +38,7 @@ const NetworkButton = observer(() => {
       return (
         <IconButton onClick={toggleNetworkModal} iconLeft>
           <ButtonIcon src={iconsByChain[chainId]} alt={'Icon'} />
-          {toCamelCaseString(configStore.getActiveChainName())}
+          {chainName}
         </IconButton>
       );
     } else {
