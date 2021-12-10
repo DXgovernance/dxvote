@@ -19,6 +19,11 @@ const xdai = require('../src/configs/xdai/config.json');
 const rinkeby = require('../src/configs/rinkeby/config.json');
 const localhost = require('../src/configs/localhost/config.json');
 
+const readline = require('readline');
+const { stdin: input, stdout: output } = require('process');
+
+const rl = readline.createInterface({ input, output });
+
 const appConfig: AppConfig = {
   arbitrum,
   arbitrumTestnet,
@@ -48,13 +53,20 @@ const jsonParserOptions = {
 };
 
 let proposalTitles: Record<string, string> = {};
+const proposalTitlesPath = './cache/proposalTitles.json';
+
+async function requestInput(text: string) {
+  return new Promise((resolve, error) => {
+    rl.question(text, async (input) => {
+      resolve(input);
+    });
+  });
+}
 
 async function buildCacheForNetwork(networkName: string, toBlock: number, resetCache: boolean = false) : Promise<NetworkConfig> {
 
   const web3 = new Web3(hre.config.networks[networkName].url);
   const cachePath = `./cache/${networkName}.json`;
-  const configPath = `./src/configs/${networkName}/config.json`;
-  const proposalTitlesPath = './cache/proposalTitles.json';
 
   const emptyCache: DaoNetworkCache = {
     networkId: networkIds[networkName],
@@ -138,6 +150,14 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
         toBlock
       );
       Object.assign(proposalTitles, newTitles);
+      fs.writeFileSync(
+        proposalTitlesPath,
+        prettier.format(JSON.stringify(proposalTitles), jsonParserOptions),
+        {
+          encoding: 'utf8',
+          flag: 'w',
+        }
+      );
     }
 
   }
@@ -154,24 +174,6 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
   networkConfig.cache.ipfsHash = await Hash.of(fs.readFileSync(cachePath));
 
   // Update the appConfig file that stores the hashes of the dapp config and network caches
-  if (process.env.UPLOAD_TO_IPFS == "true") {
-    fs.writeFileSync(
-      configPath,
-      prettier.format(JSON.stringify(networkConfig), jsonParserOptions),
-      {
-        encoding: 'utf8',
-        flag: 'w',
-      }
-    );
-    fs.writeFileSync(
-      proposalTitlesPath,
-      prettier.format(JSON.stringify(proposalTitles), jsonParserOptions),
-      {
-        encoding: 'utf8',
-        flag: 'w',
-      }
-    );
-  }
 
   return networkConfig;
 }
@@ -210,7 +212,6 @@ async function main() {
   const networkNames = process.env.ETH_NETWORKS.indexOf(',') > 0 
     ? process.env.ETH_NETWORKS.split(",")
     : [process.env.ETH_NETWORKS];
-  const upload = process.env.UPLOAD_TO_IPFS == "true";
 
   // Update the cache and config for each network
   for (let i = 0; i < networkNames.length; i++) {
@@ -218,12 +219,29 @@ async function main() {
     const networkConfig = await buildCacheForNetwork(
       networkNames[i], defaultCacheFile[networkNames[i]].toBlock
     );
+    appConfig[networkNames[i]] = networkConfig;
+
     defaultCacheFile[networkNames[i]].configHash = await Hash.of(
       prettier.format(JSON.stringify(networkConfig), jsonParserOptions)
     );
     defaultCacheFile[networkNames[i]].toBlock = networkConfig.cache.toBlock;
+  }
 
-    if (upload) {
+  console.log('Default cache file:', defaultCacheFile);
+
+  const upload = await requestInput("Upload to pinata? (y/n): ");
+    
+  if (upload == "y") {
+    for (let i = 0; i < networkNames.length; i++) {
+      fs.writeFileSync(
+        `./src/configs/${networkNames[i]}/config.json`,
+        prettier.format(JSON.stringify(appConfig[networkNames[i]]), jsonParserOptions),
+        {
+          encoding: 'utf8',
+          flag: 'w',
+        }
+      );
+
       await uploadFileToPinata(
         `./cache/${networkNames[i]}.json`,
         `DXvote ${networkNames[i]} Cache`,
@@ -234,13 +252,9 @@ async function main() {
         `DXvote ${networkNames[i]} Config`,
         `dxvote-${networkNames[i]}-config`
       );
+      
     }
-  }
 
-  console.log('Default cache file:', defaultCacheFile);
-  
-  // Update the default cache file only when upload
-  if (upload) {
     fs.writeFileSync(
       './defaultCacheFile.json',
       JSON.stringify(defaultCacheFile, null, 2),
@@ -250,9 +264,10 @@ async function main() {
       './defaultCacheFile.json',
       'DXvote Default Cache',
       'dxvote-cache'
-    );
+    );    
   }
 
+  rl.close();
 }
 
 tryWhile([main()])
