@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DaoNetworkCache, DaoInfo } from '../src/types';
+import { DaoNetworkCache, DaoInfo } from '../src/types/types';
 const FormData = require('form-data');
 const fs = require('fs');
 const Web3 = require('web3');
