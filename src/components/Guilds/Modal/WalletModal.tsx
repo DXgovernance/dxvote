@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
-import { observer } from 'mobx-react';
 
 import { usePrevious } from 'utils';
 import { injected, getWallets, isChainIdSupported } from 'provider/connectors';
 import { useRpcUrls } from 'provider/providerHooks';
 import { useWeb3React } from '@web3-react/core';
-import { useContext } from '../../../contexts';
 import Option from '../../WalletModal/Option';
 import Link from '../../common/Link';
 import { Modal } from '../../Modal';
@@ -94,36 +92,32 @@ const WALLET_VIEWS = {
   PENDING: 'pending',
 };
 
-const WalletModal = observer(() => {
-  const {
-    context: { modalStore },
-  } = useContext();
+interface WalletModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
   const { active, connector, error, activate, account, chainId } =
     useWeb3React();
   const rpcUrls = useRpcUrls();
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
   const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);
 
-  const walletModalOpen = modalStore.walletModalVisible;
-
-  const toggleWalletModal = () => {
-    modalStore.toggleWalletModal();
-  };
-
   // always reset to account view
   useEffect(() => {
-    if (walletModalOpen) {
+    if (isOpen) {
       setConnectionErrorMessage(false);
       setWalletView(WALLET_VIEWS.ACCOUNT);
     }
-  }, [walletModalOpen]);
+  }, [isOpen]);
 
   // close modal when a connection is successful
   const activePrevious = usePrevious(active);
   const connectorPrevious = usePrevious(connector);
   useEffect(() => {
     if (
-      walletModalOpen &&
+      isOpen &&
       ((active && !activePrevious) ||
         (connector && connector !== connectorPrevious && !error))
     ) {
@@ -134,9 +128,9 @@ const WalletModal = observer(() => {
     active,
     error,
     connector,
-    walletModalOpen,
     activePrevious,
     connectorPrevious,
+    isOpen,
   ]);
 
   const tryActivation = async connector => {
@@ -310,14 +304,10 @@ const WalletModal = observer(() => {
   );
 
   return (
-    <Modal
-      header={Header}
-      isOpen={walletModalOpen}
-      onDismiss={toggleWalletModal}
-    >
+    <Modal header={Header} isOpen={isOpen} onDismiss={onClose}>
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>
   );
-});
+};
 
 export default WalletModal;

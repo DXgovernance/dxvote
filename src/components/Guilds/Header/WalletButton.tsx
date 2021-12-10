@@ -1,10 +1,8 @@
-import { observer } from 'mobx-react';
 import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
 import { getChains, injected } from 'provider/connectors';
 import { useEffect, useMemo, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
-import { useContext } from '../../../contexts';
 import { Button, IconButton } from '../common/Button';
 import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
@@ -41,12 +39,10 @@ const AddressText = styled.span`
   margin-right: 0.3rem;
 `;
 
-const Web3Status = observer(() => {
-  const {
-    context: { modalStore },
-  } = useContext();
+const Web3Status = () => {
   const { account, chainId } = useWeb3React();
   const { ensName, imageUrl, avatarUri } = useENSAvatar(account);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   let imageUrlToUse = useMemo(() => {
     if (avatarUri) {
@@ -69,7 +65,7 @@ const Web3Status = observer(() => {
   }, []);
 
   const toggleWalletModal = () => {
-    modalStore.toggleWalletModal();
+    setIsWalletModalOpen(!isWalletModalOpen);
   };
 
   const switchNetwork = async chain => {
@@ -125,9 +121,9 @@ const Web3Status = observer(() => {
   return (
     <>
       {getWalletStatus()}
-      <WalletModal />
+      <WalletModal isOpen={isWalletModalOpen} onClose={toggleWalletModal} />
     </>
   );
-});
+};
 
 export default Web3Status;

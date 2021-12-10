@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { observer } from 'mobx-react';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { useHistory } from 'react-router-dom';
-import { useContext } from 'contexts';
 import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
 
@@ -64,27 +61,22 @@ const OptionGrid = styled.div`
   flex-direction: column;
 `;
 
-const NetworkModal = observer(() => {
-  const {
-    context: { modalStore },
-  } = useContext();
+interface NetworkModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
   const { chainId, connector, deactivate } = useWeb3React();
   const rpcUrls = useRpcUrls();
-  const history = useHistory();
   const [networkErrorMessage, setNetworkErrorMessage] = useState(false);
-
-  const networkModalOpen = modalStore.networkModalVisible;
-
-  const toggleNetworkModal = () => {
-    modalStore.toggleNetworkModal();
-  };
 
   // always reset to options view
   useEffect(() => {
-    if (networkModalOpen) {
+    if (isOpen) {
       setNetworkErrorMessage(false);
     }
-  }, [networkModalOpen]);
+  }, [isOpen]);
 
   const trySwitching = async chain => {
     if (connector instanceof InjectedConnector) {
@@ -109,8 +101,6 @@ const NetworkModal = observer(() => {
     } else {
       deactivate();
     }
-
-    history.push(`/${chain.name}/proposals`);
   };
 
   // get networks user can switch to
@@ -144,8 +134,8 @@ const NetworkModal = observer(() => {
   return (
     <Modal
       header={<div>Switch network</div>}
-      isOpen={networkModalOpen}
-      onDismiss={toggleNetworkModal}
+      isOpen={isOpen}
+      onDismiss={onClose}
     >
       <>
         <Wrapper>{getModalContent()}</Wrapper>
@@ -153,6 +143,6 @@ const NetworkModal = observer(() => {
       </>
     </Modal>
   );
-});
+};
 
 export default NetworkModal;
