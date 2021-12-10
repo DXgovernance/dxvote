@@ -6,7 +6,7 @@ const Web3 = require('web3');
 const web3 = new Web3();
 
 const MAX_BLOCKS_PER_EVENTS_FETCH: number =
-  Number(process.env.MAX_BLOCKS_PER_EVENTS_FETCH) || 1000000;
+  Number(process.env.MAX_BLOCKS_PER_EVENTS_FETCH) || 100000;
 
 export const getEvents = async function (
   web3,
@@ -34,8 +34,8 @@ export const getEvents = async function (
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
       console.error('Error fetching blocks:', (error as Error).message);
-      if (Math.trunc((to - from) / 2) > 100000) {
-        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 100000);
+      if (Math.trunc((to - from) / 2) > 10000) {
+        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
       }
@@ -72,8 +72,8 @@ export const getRawEvents = async function (
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
       console.error('Error fetching blocks:', (error as Error).message);
-      if (Math.trunc((to - from) / 2) > 100000) {
-        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 100000);
+      if (Math.trunc((to - from) / 2) > 10000) {
+        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
       }
