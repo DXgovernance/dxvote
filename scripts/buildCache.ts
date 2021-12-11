@@ -11,7 +11,7 @@ const jsonSort = require('json-keys-sort');
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
 
-const defaultCacheFile = require('../defaultCacheFile.json');
+const defaultConfigHashes = require('../defaultConfigHashes.json');
 
 const arbitrum = require('../src/configs/arbitrum/config.json');
 const arbitrumTestnet = require('../src/configs/arbitrumTestnet/config.json');
@@ -107,10 +107,10 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
       networkCache = emptyCache;
     } else {
       console.log(
-        `Getting config file from https://ipfs.io/ipfs/${defaultCacheFile[networkName].configHash}`
+        `Getting config file from https://ipfs.io/ipfs/${defaultConfigHashes[networkName].configHash}`
       );
       const networkConfigFileFetch = await axios.get(
-        `https://ipfs.io/ipfs/${defaultCacheFile[networkName].configHash}`
+        `https://ipfs.io/ipfs/${defaultConfigHashes[networkName].configHash}`
       );
       console.log(
         `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
@@ -217,19 +217,19 @@ async function main() {
   for (let i = 0; i < networkNames.length; i++) {
 
     const networkConfig = await buildCacheForNetwork(
-      networkNames[i], defaultCacheFile[networkNames[i]].toBlock, process.env.RESET_CACHE == "true"
+      networkNames[i], defaultConfigHashes[networkNames[i]].toBlock, process.env.RESET_CACHE == "true"
     );
     
     // Update the appConfig file that stores the hashes of the dapp config and network caches
     appConfig[networkNames[i]] = networkConfig;
 
-    defaultCacheFile[networkNames[i]].configHash = await Hash.of(
+    defaultConfigHashes[networkNames[i]].configHash = await Hash.of(
       prettier.format(JSON.stringify(networkConfig), jsonParserOptions)
     );
-    defaultCacheFile[networkNames[i]].toBlock = networkConfig.cache.toBlock;
+    defaultConfigHashes[networkNames[i]].toBlock = networkConfig.cache.toBlock;
   }
 
-  console.log('Default cache file:', defaultCacheFile);
+  console.log('Default cache file:', defaultConfigHashes);
 
   const writeFiles = await requestInput("Save files? (y/n): ");
   if (writeFiles == "y") {
@@ -244,8 +244,8 @@ async function main() {
       );
     }
     fs.writeFileSync(
-      './defaultCacheFile.json',
-      JSON.stringify(defaultCacheFile, null, 2),
+      './defaultConfigHashes.json',
+      JSON.stringify(defaultConfigHashes, null, 2),
       { encoding: 'utf8', flag: 'w' }
     );
   
@@ -264,7 +264,7 @@ async function main() {
         ); 
       }
       await uploadFileToPinata(
-        './defaultCacheFile.json',
+        './defaultConfigHashes.json',
         'DXvote Default Cache',
         'dxvote-cache'
       );  

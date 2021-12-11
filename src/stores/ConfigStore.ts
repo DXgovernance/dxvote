@@ -27,6 +27,30 @@ const defaultAppConfigs = {
   localhost,
 };
 
+// Use the same content outside src folder in defaultConfigHashes.json or override
+const defaultCacheConfig  = {
+  "mainnet": {
+    "configHash": "QmQBh1hfvte5CEXJFWJzRNpB6sjKQji4FN43xHFdxymTqh",
+    "toBlock": 13777562
+  },
+  "xdai": {
+    "configHash": "QmPnsKv7KhW4eD2oCwQTfNQG7ykJ97Xig1juyWxUquP9aT",
+    "toBlock": 19505762
+  },
+  "arbitrum": {
+    "configHash": "Qmf2B8N9rhzgiAkWvJupD5SvEtAGYH7Mq8r22TcCbVXeMQ",
+    "toBlock": 3726849
+  },
+  "rinkeby": {
+    "configHash": "QmPuPEXB3DJPq9k7wdEZ6GxhT2SVEpL4eW8WF7K24tH4AL",
+    "toBlock": 9790490
+  },
+  "arbitrumTestnet": {
+    "configHash": "Qmdxrp3S8W1TYdPBC3rzyPzVseZUP8pwCozKwfHyu8RkqQ",
+    "toBlock": 7404680
+  }
+};
+
 export default class ConfigStore {
   darkMode: boolean;
   context: RootContext;
@@ -46,6 +70,7 @@ export default class ConfigStore {
     const { ensService, ipfsService } = this.context;
 
     let appConfig = defaultAppConfigs[networkName];
+    const isTestingEnv = !window?.location?.href?.includes('dxvote.eth.link');
 
     try {
       const metadataHash = await ensService.resolveContentHash(
@@ -53,12 +78,14 @@ export default class ConfigStore {
       );
       if (!metadataHash)
         throw new Error('Cannot resolve content metadata hash.');
-      console.info(
-        `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
-        metadataHash
-      );
 
-      const configRefs = JSON.parse(
+      if (!isTestingEnv)
+        console.debug(
+          `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
+          metadataHash
+        );
+      
+      const configRefs = isTestingEnv ? defaultCacheConfig : JSON.parse(
         await ipfsService.getContent(metadataHash, { timeout: 10000 })
       );
       const configContentHash = configRefs[networkName];
@@ -72,7 +99,7 @@ export default class ConfigStore {
         timeout: 10000,
       });
       const ensConfig = JSON.parse(configString);
-      console.info(
+      console.debug(
         '[ConfigStore] Using configs from ENS',
         ensConfig,
         appConfig
