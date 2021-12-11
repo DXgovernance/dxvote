@@ -221,7 +221,7 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
         votingMachine: networkConfig.votingMachines.gen.address,
         newProposalTopics:
           networkConfig.daostack.schemeRegistrar.newProposalTopics,
-        voteParams: networkConfig.daostack.contributionReward.voteParams,
+        voteParams: networkConfig.daostack.schemeRegistrar.voteParams,
         creationLogEncoding:
           networkConfig.daostack.schemeRegistrar.creationLogEncoding,
       };
