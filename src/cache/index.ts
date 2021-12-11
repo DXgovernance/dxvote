@@ -1,4 +1,5 @@
 import axios from 'axios';
+import _ from 'lodash';
 import {
   bnum,
   ZERO_HASH,
@@ -1455,9 +1456,7 @@ export const updateProposals = async function (
 
                 if (schemeProposalInfo.descriptionHash.length > 1) {
                   networkCache.ipfsHashes.push({
-                    hash: descriptionHashToIPFSHash(
-                      schemeProposalInfo.descriptionHash
-                    ),
+                    hash: descriptionHashToIPFSHash( schemeProposalInfo.descriptionHash ),
                     type: 'proposal',
                     name: proposalId,
                   });
@@ -1730,6 +1729,7 @@ export const updateProposals = async function (
       obj[key] = networkCache.proposals[key];
       return obj;
     }, {});
+  networkCache.ipfsHashes = _.uniqBy(networkCache.ipfsHashes, 'name');
   networkCache.ipfsHashes.sort((a, b) => a.name.localeCompare(b.name));
 
   if (!isNode()) {
