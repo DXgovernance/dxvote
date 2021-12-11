@@ -8,7 +8,7 @@ const ALCHEMY_API_KEY = process.env.REACT_APP_KEY_ALCHEMY_API_KEY || "";
 
 module.exports = {
   paths: {
-    sources: "./src", // Use src folder isntead of contracts to avoid having empty conrtracts folder
+    sources: "./src", // Use src folder instead of contracts to avoid having empty contracts folder
   },
   dependencyCompiler: {
     paths: [
