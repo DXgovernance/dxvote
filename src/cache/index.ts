@@ -1783,7 +1783,7 @@ export async function getProposalTitlesFromIPFS(
     }
 
     if (
-      isWalletScheme(networkCache.schemes[proposal.scheme]) &&
+      !isWalletScheme(networkCache.schemes[proposal.scheme]) &&
       proposal.descriptionHash &&
       proposal.descriptionHash.length > 0 &&
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
