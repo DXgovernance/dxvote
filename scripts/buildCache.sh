@@ -9,15 +9,6 @@ echo "${contents}" > tsconfig.json
 contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
-# Run build cache in all networks
-export ETH_NETWORKS="mainnet,xdai,rinkeby,arbitrum,arbitrumTestnet"
-
-# If next line is enabled it will reset the cache
-# export RESET_CACHE="true"
-
-# If next line is enabled it will fetch proposal titles and save them
-# export GET_PROPOSAL_TITLES="true"
-
 yarn hardhat run scripts/buildCache.ts
 sleep 1
 

@@ -11,7 +11,7 @@ const jsonSort = require('json-keys-sort');
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
 
-const defaultConfigHashes = require('../defaultConfigHashes.json');
+const defaultConfigHashes = require('../src/configs/default.json');
 
 const arbitrum = require('../src/configs/arbitrum/config.json');
 const arbitrumTestnet = require('../src/configs/arbitrumTestnet/config.json');
@@ -24,6 +24,31 @@ const readline = require('readline');
 const { stdin: input, stdout: output } = require('process');
 
 const rl = readline.createInterface({ input, output });
+
+const buildConfig = {
+  "mainnet": {
+    toBlock: 13777562,
+    reset: false
+  },
+  "xdai": {
+    toBlock: 19505762,
+    reset: false
+  },
+  "rinkeby": {
+    toBlock: 3726849,
+    reset: false
+  },
+  "arbitrum": {
+    toBlock: 9790490,
+    reset: false
+  },
+  "arbitrumTestnet": {
+    toBlock: 7404680,
+    reset: false
+  }
+};
+
+const getProposalTitles = false;
 
 const appConfig: AppConfig = {
   arbitrum,
@@ -110,10 +135,10 @@ async function buildCacheForNetwork(
       networkCache = emptyCache;
     } else {
       console.log(
-        `Getting config file from https://ipfs.io/ipfs/${defaultConfigHashes[networkName].configHash}`
+        `Getting config file from https://ipfs.io/ipfs/${defaultConfigHashes[networkName]}`
       );
       const networkConfigFileFetch = await axios.get(
-        `https://ipfs.io/ipfs/${defaultConfigHashes[networkName].configHash}`
+        `https://ipfs.io/ipfs/${defaultConfigHashes[networkName]}`
       );
       console.log(
         `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
@@ -147,7 +172,7 @@ async function buildCacheForNetwork(
       web3
     );
 
-    if (process.env.GET_PROPOSAL_TITLES == 'true') {
+    if (getProposalTitles) {
       const newTitles = await getProposalTitlesFromIPFS(networkCache, toBlock);
       Object.assign(proposalTitles, newTitles);
       fs.writeFileSync(
@@ -208,37 +233,37 @@ async function uploadFileToPinata(filePath, name, keyValue) {
 }
 
 async function main() {
-  const networkNames =
-    process.env.ETH_NETWORKS.indexOf(',') > 0
-      ? process.env.ETH_NETWORKS.split(',')
-      : [process.env.ETH_NETWORKS];
-
+ 
   // Update the cache and config for each network
-  for (let i = 0; i < networkNames.length; i++) {
+  for (let i = 0; i < Object.keys(buildConfig).length; i++) {
+    const networkName = Object.keys(buildConfig)[i];
+
     const networkConfig = await buildCacheForNetwork(
-      networkNames[i],
-      defaultConfigHashes[networkNames[i]].toBlock,
-      process.env.RESET_CACHE == 'true'
+      networkName,
+      buildConfig[networkName].toBlock,
+      buildConfig[networkName].reset
     );
 
     // Update the appConfig file that stores the hashes of the dapp config and network caches
-    appConfig[networkNames[i]] = networkConfig;
+    appConfig[networkName] = networkConfig;
 
-    defaultConfigHashes[networkNames[i]].configHash = await Hash.of(
+    defaultConfigHashes[networkName] = await Hash.of(
       prettier.format(JSON.stringify(networkConfig), jsonParserOptions)
     );
-    defaultConfigHashes[networkNames[i]].toBlock = networkConfig.cache.toBlock;
   }
 
   console.log('Default cache file:', defaultConfigHashes);
 
   const writeFiles = await requestInput('Save files? (y/n): ');
   if (writeFiles == 'y') {
-    for (let i = 0; i < networkNames.length; i++) {
+    const uploadFiles = await requestInput('Upload to pinata? (y/n): ');
+
+    for (let i = 0; i < Object.keys(buildConfig).length; i++) {
+      const networkName = Object.keys(buildConfig)[i];
       fs.writeFileSync(
-        `./src/configs/${networkNames[i]}/config.json`,
+        `./src/configs/${networkName}/config.json`,
         prettier.format(
-          JSON.stringify(appConfig[networkNames[i]]),
+          JSON.stringify(appConfig[networkName]),
           jsonParserOptions
         ),
         {
@@ -246,33 +271,34 @@ async function main() {
           flag: 'w',
         }
       );
+      if (uploadFiles == 'y') {
+        await uploadFileToPinata(
+          `./cache/${networkName}.json`,
+          `DXvote ${networkName} Cache`,
+          `dxvote-${networkName}-cache`
+        );
+        await uploadFileToPinata(
+          `./src/configs/${networkName}/config.json`,
+          `DXvote ${networkName} Config`,
+          `dxvote-${networkName}-config`
+        );
+      }
     }
+    
+    // Write and upload the default config file
     fs.writeFileSync(
-      './defaultConfigHashes.json',
+      './src/configs/default.json',
       JSON.stringify(defaultConfigHashes, null, 2),
       { encoding: 'utf8', flag: 'w' }
     );
-
-    const upload = await requestInput('Upload to pinata? (y/n): ');
-    if (upload == 'y') {
-      for (let i = 0; i < networkNames.length; i++) {
-        await uploadFileToPinata(
-          `./cache/${networkNames[i]}.json`,
-          `DXvote ${networkNames[i]} Cache`,
-          `dxvote-${networkNames[i]}-cache`
-        );
-        await uploadFileToPinata(
-          `./src/configs/${networkNames[i]}/config.json`,
-          `DXvote ${networkNames[i]} Config`,
-          `dxvote-${networkNames[i]}-config`
-        );
-      }
+    if (uploadFiles == 'y') {
       await uploadFileToPinata(
-        './defaultConfigHashes.json',
+        './src/configs/default.json',
         'DXvote Default Cache',
         'dxvote-cache'
       );
     }
+
   }
 
   rl.close();
