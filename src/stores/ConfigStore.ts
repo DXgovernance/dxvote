@@ -84,11 +84,13 @@ export default class ConfigStore {
           `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
           metadataHash
         );
-      
-      const configRefs = isTestingEnv ? defaultCacheConfig : JSON.parse(
-        await ipfsService.getContent(metadataHash, { timeout: 10000 })
-      );
-      const configContentHash = configRefs[networkName];
+
+      const configRefs = isTestingEnv
+        ? defaultCacheConfig
+        : JSON.parse(
+            await ipfsService.getContent(metadataHash, { timeout: 10000 })
+          );
+      const configContentHash = configRefs[networkName].configHash;
       if (!configContentHash)
         throw new Error('Cannot resolve config metadata hash.');
       console.info(
