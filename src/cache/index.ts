@@ -9,7 +9,7 @@ import {
   WalletSchemeProposalState,
   VotingMachineProposalState,
   tryCacheUpdates,
-  isWalletScheme
+  isWalletScheme,
 } from '../utils';
 import {
   getEvents,
@@ -618,7 +618,6 @@ export const updateSchemes = async function (
     // Add or update the scheme information,
     // register scheme is used to add a scheme or update the parametersHash of an existent one
     if (controllerEvent.event === 'RegisterScheme') {
-
       const schemeTypeData = getSchemeTypeData(
         networkContractsConfig,
         schemeAddress
@@ -662,8 +661,7 @@ export const updateSchemes = async function (
           .call();
 
         schemeType = walletSchemeType;
-        if (schemeType == 'Wallet Scheme v1')
-          schemeType = 'Wallet Scheme v1.0';
+        if (schemeType == 'Wallet Scheme v1') schemeType = 'Wallet Scheme v1.0';
 
         switch (schemeType) {
           case 'Wallet Scheme v1.1':
@@ -671,16 +669,40 @@ export const updateSchemes = async function (
               WalletScheme1_1JSON.abi,
               schemeAddress
             );
-            callsToExecute.push([ walletSchemeContract1_1, 'doAvatarGenericCalls', [], ]);
-            callsToExecute.push([ walletSchemeContract1_1, 'schemeName', []]);
-            callsToExecute.push([ walletSchemeContract1_1, 'maxSecondsForExecution', [], ]);
-            callsToExecute.push([ walletSchemeContract1_1, 'maxRepPercentageChange', [], ]);
+            callsToExecute.push([
+              walletSchemeContract1_1,
+              'doAvatarGenericCalls',
+              [],
+            ]);
+            callsToExecute.push([walletSchemeContract1_1, 'schemeName', []]);
+            callsToExecute.push([
+              walletSchemeContract1_1,
+              'maxSecondsForExecution',
+              [],
+            ]);
+            callsToExecute.push([
+              walletSchemeContract1_1,
+              'maxRepPercentageChange',
+              [],
+            ]);
             break;
           default:
-            callsToExecute.push([ walletSchemeContract, 'controllerAddress', [], ]);
-            callsToExecute.push([ walletSchemeContract, 'schemeName', []]);
-            callsToExecute.push([ walletSchemeContract, 'maxSecondsForExecution', [], ]);
-            callsToExecute.push([ walletSchemeContract, 'maxRepPercentageChange', [], ]);
+            callsToExecute.push([
+              walletSchemeContract,
+              'controllerAddress',
+              [],
+            ]);
+            callsToExecute.push([walletSchemeContract, 'schemeName', []]);
+            callsToExecute.push([
+              walletSchemeContract,
+              'maxSecondsForExecution',
+              [],
+            ]);
+            callsToExecute.push([
+              walletSchemeContract,
+              'maxRepPercentageChange',
+              [],
+            ]);
             break;
         }
       }
@@ -696,7 +718,7 @@ export const updateSchemes = async function (
       const paramsHash = schemeTypeData.voteParams
         ? schemeTypeData.voteParams
         : callsResponse1.decodedReturnData[1];
-        
+
       if (schemeTypeData.type === 'WalletScheme') {
         switch (schemeType) {
           case 'Wallet Scheme v1.1':
@@ -714,11 +736,14 @@ export const updateSchemes = async function (
       }
 
       // Register the new voting parameters in the voting machine params
-      const votingParameters = await votingMachine.methods.parameters(paramsHash).call();
+      const votingParameters = await votingMachine.methods
+        .parameters(paramsHash)
+        .call();
       networkCache.votingMachines[votingMachine._address].votingParameters[
         paramsHash
       ] = {
-        queuedVoteRequiredPercentage: votingParameters.queuedVoteRequiredPercentage,
+        queuedVoteRequiredPercentage:
+          votingParameters.queuedVoteRequiredPercentage,
         queuedVotePeriodLimit: votingParameters.queuedVotePeriodLimit,
         boostedVotePeriodLimit: votingParameters.boostedVotePeriodLimit,
         preBoostedVotePeriodLimit: votingParameters.preBoostedVotePeriodLimit,
@@ -803,10 +828,11 @@ export const updateSchemes = async function (
         callsToExecute
       );
 
-      const maxSecondsForExecution =
-        isWalletScheme(networkCache.schemes[schemeAddress])
-          ? callsResponse.decodedReturnData[2]
-          : 0;
+      const maxSecondsForExecution = isWalletScheme(
+        networkCache.schemes[schemeAddress]
+      )
+        ? callsResponse.decodedReturnData[2]
+        : 0;
 
       // Update the scheme values a last time
       networkCache.schemes[schemeAddress].ethBalance =
@@ -821,18 +847,16 @@ export const updateSchemes = async function (
   // Update registered schemes
   await Promise.all(
     Object.keys(networkCache.schemes).map(async schemeAddress => {
-
       if (networkCache.schemes[schemeAddress].registered) {
-
         const schemeTypeData = getSchemeTypeData(
           networkContractsConfig,
           schemeAddress
-          );
+        );
         const votingMachine =
-        networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
+          networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
             .contract;
-            
-            let callsToExecute = [
+
+        let callsToExecute = [
           [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
           [
             votingMachine,
@@ -841,11 +865,11 @@ export const updateSchemes = async function (
               web3.utils.soliditySha3(
                 schemeAddress,
                 networkWeb3Contracts.avatar._address
-                ),
-              ],
+              ),
             ],
+          ],
         ];
-        
+
         if (isWalletScheme(networkCache.schemes[schemeAddress])) {
           callsToExecute.push([
             await new web3.eth.Contract(WalletScheme1_0JSON.abi, schemeAddress),
@@ -870,18 +894,20 @@ export const updateSchemes = async function (
           callsToExecute
         );
 
-        const maxSecondsForExecution =
-          isWalletScheme(networkCache.schemes[schemeAddress])
-            ? callsResponse.decodedReturnData[2]
-            : 0;
+        const maxSecondsForExecution = isWalletScheme(
+          networkCache.schemes[schemeAddress]
+        )
+          ? callsResponse.decodedReturnData[2]
+          : 0;
 
-        const boostedVoteRequiredPercentage =
-          isWalletScheme(networkCache.schemes[schemeAddress])
-            ? web3.eth.abi.decodeParameters(
-                ['uint256'],
-                callsResponse.returnData[3]
-              )['0']
-            : 0;
+        const boostedVoteRequiredPercentage = isWalletScheme(
+          networkCache.schemes[schemeAddress]
+        )
+          ? web3.eth.abi.decodeParameters(
+              ['uint256'],
+              callsResponse.returnData[3]
+            )['0']
+          : 0;
 
         networkCache.schemes[schemeAddress].ethBalance =
           callsResponse.decodedReturnData[0];
@@ -1390,25 +1416,30 @@ export const updateProposals = async function (
                 }
 
                 // Register the new voting parameters in the voting machine params
-                if (!networkCache.votingMachines[votingMachine._address].votingParameters[
-                  votingMachineProposalInfo.paramsHash
-                ]) {
+                if (
+                  !networkCache.votingMachines[votingMachine._address]
+                    .votingParameters[votingMachineProposalInfo.paramsHash]
+                ) {
                   const votingParameters = await votingMachine.methods
                     .parameters(votingMachineProposalInfo.paramsHash)
                     .call();
-                  networkCache.votingMachines[votingMachine._address].votingParameters[
-                    votingMachineProposalInfo.paramsHash
-                  ] = {
+                  networkCache.votingMachines[
+                    votingMachine._address
+                  ].votingParameters[votingMachineProposalInfo.paramsHash] = {
                     queuedVoteRequiredPercentage:
                       votingParameters.queuedVoteRequiredPercentage,
-                    queuedVotePeriodLimit: votingParameters.queuedVotePeriodLimit,
-                    boostedVotePeriodLimit: votingParameters.boostedVotePeriodLimit,
-                    preBoostedVotePeriodLimit: votingParameters.preBoostedVotePeriodLimit,
+                    queuedVotePeriodLimit:
+                      votingParameters.queuedVotePeriodLimit,
+                    boostedVotePeriodLimit:
+                      votingParameters.boostedVotePeriodLimit,
+                    preBoostedVotePeriodLimit:
+                      votingParameters.preBoostedVotePeriodLimit,
                     thresholdConst: votingParameters.thresholdConst,
                     limitExponentValue: votingParameters.limitExponentValue,
                     quietEndingPeriod: votingParameters.quietEndingPeriod,
                     proposingRepReward: votingParameters.proposingRepReward,
-                    votersReputationLossRatio: votingParameters.votersReputationLossRatio,
+                    votersReputationLossRatio:
+                      votingParameters.votersReputationLossRatio,
                     minimumDaoBounty: votingParameters.minimumDaoBounty,
                     daoBountyConst: votingParameters.daoBountyConst,
                     activationTime: votingParameters.activationTime,
@@ -1482,7 +1513,9 @@ export const updateProposals = async function (
 
                 if (schemeProposalInfo.descriptionHash.length > 1) {
                   networkCache.ipfsHashes.push({
-                    hash: descriptionHashToIPFSHash( schemeProposalInfo.descriptionHash ),
+                    hash: descriptionHashToIPFSHash(
+                      schemeProposalInfo.descriptionHash
+                    ),
                     type: 'proposal',
                     name: proposalId,
                   });
@@ -1662,8 +1695,7 @@ export const updateProposals = async function (
             } else if (schemeTypeData.type === 'GenericMulticall') {
               const executionEvent = await web3.eth.getPastLogs({
                 fromBlock:
-                  networkCache.proposals[proposalId].creationEvent
-                    .blockNumber,
+                  networkCache.proposals[proposalId].creationEvent.blockNumber,
                 address: schemeAddress,
                 topics: [
                   '0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe',

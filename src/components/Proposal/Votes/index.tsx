@@ -58,8 +58,7 @@ const Votes = () => {
   const {
     userRep: userRepAtProposalCreation,
     totalSupply: totalRepAtProposalCreation,
-  } =
-    daoStore.getRepAt(account, proposal.creationEvent.blockNumber)
+  } = daoStore.getRepAt(account, proposal.creationEvent.blockNumber);
 
   const repPercentageAtCreation = toPercentage(
     userRepAtProposalCreation.div(totalRepAtProposalCreation)

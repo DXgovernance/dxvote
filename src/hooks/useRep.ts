@@ -39,9 +39,7 @@ export const useRep = (userAddress: string = ZERO_ADDRESS): UseRepReturns => {
         totalSupply: totalSupply,
         userRep: userRep,
       };
-      cache[repEvents[i].blockNumber][
-        'userRep'
-      ] = userRep;
+      cache[repEvents[i].blockNumber]['userRep'] = userRep;
     } else if (repEvents[i].event === 'Burn') {
       totalSupply = totalSupply.minus(repEvents[i].amount);
       cache[repEvents[i].blockNumber] = {

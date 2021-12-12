@@ -123,7 +123,7 @@ export const getTimestampOfEvents = async function (web3, events) {
           if (events[i].blockNumber === blockInfo.number)
             events[i].timestamp = blockInfo.timestamp;
           if (blockInfo.l2BlockNumber)
-            events[i].blockNumber = Number(blockInfo.l2BlockNumber)
+            events[i].blockNumber = Number(blockInfo.l2BlockNumber);
         }
       })
     );

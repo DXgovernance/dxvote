@@ -25,6 +25,6 @@ export const decodeSchemeParameters = function (rawParameters) {
   };
 };
 
-export const isWalletScheme = function(scheme: Scheme) {
-  return (scheme.type.indexOf('Wallet Scheme') > -1);
+export const isWalletScheme = function (scheme: Scheme) {
+  return scheme.type.indexOf('Wallet Scheme') > -1;
 };

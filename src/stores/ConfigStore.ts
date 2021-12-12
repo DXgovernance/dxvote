@@ -28,31 +28,27 @@ const defaultAppConfigs = {
 };
 
 // Use the same content outside src folder in defaultConfigHashes.json or override
-<<<<<<< HEAD
-const defaultCacheConfig  = {
-=======
 const defaultCacheConfig = {
->>>>>>> 5be8eea45... fix(src/configStore): Update defaultConfighashes in config store
-  "mainnet": {
-    "configHash": "QmQBh1hfvte5CEXJFWJzRNpB6sjKQji4FN43xHFdxymTqh",
-    "toBlock": 13777562
+  mainnet: {
+    configHash: 'QmQBh1hfvte5CEXJFWJzRNpB6sjKQji4FN43xHFdxymTqh',
+    toBlock: 13777562,
   },
-  "xdai": {
-    "configHash": "QmYbG4dshEXamVELgNdMNbA63iiC2jipzXWuWV53ysfFrd",
-    "toBlock": 19505762
+  xdai: {
+    configHash: 'QmYbG4dshEXamVELgNdMNbA63iiC2jipzXWuWV53ysfFrd',
+    toBlock: 19505762,
   },
-  "arbitrum": {
-    "configHash": "QmYo1bJ1emqxRgveabG9ndZmhezeg5FKYcxFtuU4DTcbbz",
-    "toBlock": 3726849
+  arbitrum: {
+    configHash: 'QmYo1bJ1emqxRgveabG9ndZmhezeg5FKYcxFtuU4DTcbbz',
+    toBlock: 3726849,
   },
-  "rinkeby": {
-    "configHash": "QmUAuJhaXCgGbELFLeZwNLkFZ65fEHBqDoLXjPoghwfKNC",
-    "toBlock": 9790490
+  rinkeby: {
+    configHash: 'QmUAuJhaXCgGbELFLeZwNLkFZ65fEHBqDoLXjPoghwfKNC',
+    toBlock: 9790490,
   },
-  "arbitrumTestnet": {
-    "configHash": "Qmdxrp3S8W1TYdPBC3rzyPzVseZUP8pwCozKwfHyu8RkqQ",
-    "toBlock": 7404680
-  }
+  arbitrumTestnet: {
+    configHash: 'Qmdxrp3S8W1TYdPBC3rzyPzVseZUP8pwCozKwfHyu8RkqQ',
+    toBlock: 7404680,
+  },
 };
 
 export default class ConfigStore {

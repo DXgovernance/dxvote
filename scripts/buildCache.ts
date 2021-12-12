@@ -6,7 +6,7 @@ const Web3 = require('web3');
 const hre = require('hardhat');
 const prettier = require('prettier');
 const Hash = require('ipfs-only-hash');
-const jsonSort = require('json-keys-sort');    
+const jsonSort = require('json-keys-sort');
 
 const { getUpdatedCache, getProposalTitlesFromIPFS } = require('../src/cache');
 const { tryWhile } = require('../src/utils/cache');
@@ -58,14 +58,17 @@ const proposalTitlesPath = './cache/proposalTitles.json';
 
 async function requestInput(text: string) {
   return new Promise((resolve, error) => {
-    rl.question(text, async (input) => {
+    rl.question(text, async input => {
       resolve(input);
     });
   });
 }
 
-async function buildCacheForNetwork(networkName: string, toBlock: number, resetCache: boolean = false) : Promise<NetworkConfig> {
-
+async function buildCacheForNetwork(
+  networkName: string,
+  toBlock: number,
+  resetCache: boolean = false
+): Promise<NetworkConfig> {
   const web3 = new Web3(hre.config.networks[networkName].url);
   const cachePath = `./cache/${networkName}.json`;
 
@@ -144,11 +147,8 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
       web3
     );
 
-    if (process.env.GET_PROPOSAL_TITLES == "true") {
-      const newTitles = await getProposalTitlesFromIPFS(
-        networkCache,
-        toBlock
-      );
+    if (process.env.GET_PROPOSAL_TITLES == 'true') {
+      const newTitles = await getProposalTitlesFromIPFS(networkCache, toBlock);
       Object.assign(proposalTitles, newTitles);
       fs.writeFileSync(
         proposalTitlesPath,
@@ -159,7 +159,6 @@ async function buildCacheForNetwork(networkName: string, toBlock: number, resetC
         }
       );
     }
-
   }
 
   // Write network cache file
@@ -209,17 +208,19 @@ async function uploadFileToPinata(filePath, name, keyValue) {
 }
 
 async function main() {
-  const networkNames = process.env.ETH_NETWORKS.indexOf(',') > 0 
-    ? process.env.ETH_NETWORKS.split(",")
-    : [process.env.ETH_NETWORKS];
+  const networkNames =
+    process.env.ETH_NETWORKS.indexOf(',') > 0
+      ? process.env.ETH_NETWORKS.split(',')
+      : [process.env.ETH_NETWORKS];
 
   // Update the cache and config for each network
   for (let i = 0; i < networkNames.length; i++) {
-
     const networkConfig = await buildCacheForNetwork(
-      networkNames[i], defaultConfigHashes[networkNames[i]].toBlock, process.env.RESET_CACHE == "true"
+      networkNames[i],
+      defaultConfigHashes[networkNames[i]].toBlock,
+      process.env.RESET_CACHE == 'true'
     );
-    
+
     // Update the appConfig file that stores the hashes of the dapp config and network caches
     appConfig[networkNames[i]] = networkConfig;
 
@@ -231,12 +232,15 @@ async function main() {
 
   console.log('Default cache file:', defaultConfigHashes);
 
-  const writeFiles = await requestInput("Save files? (y/n): ");
-  if (writeFiles == "y") {
+  const writeFiles = await requestInput('Save files? (y/n): ');
+  if (writeFiles == 'y') {
     for (let i = 0; i < networkNames.length; i++) {
       fs.writeFileSync(
         `./src/configs/${networkNames[i]}/config.json`,
-        prettier.format(JSON.stringify(appConfig[networkNames[i]]), jsonParserOptions),
+        prettier.format(
+          JSON.stringify(appConfig[networkNames[i]]),
+          jsonParserOptions
+        ),
         {
           encoding: 'utf8',
           flag: 'w',
@@ -248,9 +252,9 @@ async function main() {
       JSON.stringify(defaultConfigHashes, null, 2),
       { encoding: 'utf8', flag: 'w' }
     );
-  
-    const upload = await requestInput("Upload to pinata? (y/n): ");
-    if (upload == "y") {
+
+    const upload = await requestInput('Upload to pinata? (y/n): ');
+    if (upload == 'y') {
       for (let i = 0; i < networkNames.length; i++) {
         await uploadFileToPinata(
           `./cache/${networkNames[i]}.json`,
@@ -261,15 +265,14 @@ async function main() {
           `./src/configs/${networkNames[i]}/config.json`,
           `DXvote ${networkNames[i]} Config`,
           `dxvote-${networkNames[i]}-config`
-        ); 
+        );
       }
       await uploadFileToPinata(
         './defaultConfigHashes.json',
         'DXvote Default Cache',
         'dxvote-cache'
-      );  
+      );
     }
-    
   }
 
   rl.close();
