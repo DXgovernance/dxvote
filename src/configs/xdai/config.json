@@ -25,7 +25,8 @@
             "0xfc38e03bef8d47e8c970c106660459b8a9db8eb045bd1281ef4cc50c16e03227",
             "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
           ]
-        ]
+        ],
+        "voteParams": "0xa8139cb6b8d1e5f7a84c3f981d0c747b1d227ce46140246a4a2bfa46151d84cd"
       },
       "contributionReward": {
         "address": "0x016Bf002D361bf5563c76230D19B4DaB4d66Bda4",
