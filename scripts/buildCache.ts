@@ -34,11 +34,11 @@ const buildConfig = {
     toBlock: 19505762,
     reset: false
   },
-  "rinkeby": {
+  "arbitrum": {
     toBlock: 3726849,
     reset: false
   },
-  "arbitrum": {
+  "rinkeby": {
     toBlock: 9790490,
     reset: false
   },
