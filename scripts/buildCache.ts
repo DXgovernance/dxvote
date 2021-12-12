@@ -26,26 +26,26 @@ const { stdin: input, stdout: output } = require('process');
 const rl = readline.createInterface({ input, output });
 
 const buildConfig = {
-  "mainnet": {
+  mainnet: {
     toBlock: 13777562,
-    reset: false
+    reset: false,
   },
-  "xdai": {
+  xdai: {
     toBlock: 19505762,
-    reset: false
+    reset: false,
   },
-  "arbitrum": {
+  arbitrum: {
     toBlock: 3726849,
-    reset: false
+    reset: false,
   },
-  "rinkeby": {
+  rinkeby: {
     toBlock: 9790490,
-    reset: false
+    reset: false,
   },
-  "arbitrumTestnet": {
+  arbitrumTestnet: {
     toBlock: 7404680,
-    reset: false
-  }
+    reset: false,
+  },
 };
 
 const getProposalTitles = false;
@@ -233,7 +233,6 @@ async function uploadFileToPinata(filePath, name, keyValue) {
 }
 
 async function main() {
- 
   // Update the cache and config for each network
   for (let i = 0; i < Object.keys(buildConfig).length; i++) {
     const networkName = Object.keys(buildConfig)[i];
@@ -284,7 +283,7 @@ async function main() {
         );
       }
     }
-    
+
     // Write and upload the default config file
     fs.writeFileSync(
       './src/configs/default.json',
@@ -298,7 +297,6 @@ async function main() {
         'dxvote-cache'
       );
     }
-
   }
 
   rl.close();

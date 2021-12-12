@@ -28,7 +28,7 @@ const defaultAppConfigs = {
 };
 
 // Use the same content outside src folder in defaultConfigHashes.json or override
-const defaultCacheConfig = require('../configs/default.json');;
+const defaultCacheConfig = require('../configs/default.json');
 
 export default class ConfigStore {
   darkMode: boolean;
@@ -52,7 +52,6 @@ export default class ConfigStore {
     const isTestingEnv = !window?.location?.href?.includes('dxvote.eth.link');
 
     try {
-      
       const metadataHash = await ensService.resolveContentHash(
         CACHE_METADATA_ENS
       );
@@ -75,26 +74,17 @@ export default class ConfigStore {
       if (!configContentHash)
         throw new Error('Cannot resolve config metadata hash.');
 
-      console.info(
-        `[ConfigStore] IPFS config hash: ${configContentHash}`
-      );
+      console.info(`[ConfigStore] IPFS config hash: ${configContentHash}`);
 
       const ipfsConfigString = await ipfsService.getContent(configContentHash, {
         timeout: 10000,
       });
       const ipfsConfig = JSON.parse(ipfsConfigString);
-      console.debug(
-        '[ConfigStore] IPFS config content:',
-        ipfsConfig,
-      );
-      console.debug(
-        '[ConfigStore] Default config:',
-        networkConfig,
-      );
-      
+      console.debug('[ConfigStore] IPFS config content:', ipfsConfig);
+      console.debug('[ConfigStore] Default config:', networkConfig);
+
       // Override defaultConfig to ipfsConfig
       networkConfig = Object.assign(ipfsConfig, networkConfig);
-
     } catch (e) {
       console.error(
         '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
