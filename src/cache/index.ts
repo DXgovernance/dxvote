@@ -1389,6 +1389,32 @@ export const updateProposals = async function (
                   }
                 }
 
+                // Register the new voting parameters in the voting machine params
+                if (!networkCache.votingMachines[votingMachine._address].votingParameters[
+                  votingMachineProposalInfo.paramsHash
+                ]) {
+                  const votingParameters = await votingMachine.methods
+                    .parameters(votingMachineProposalInfo.paramsHash)
+                    .call();
+                  networkCache.votingMachines[votingMachine._address].votingParameters[
+                    votingMachineProposalInfo.paramsHash
+                  ] = {
+                    queuedVoteRequiredPercentage:
+                      votingParameters.queuedVoteRequiredPercentage,
+                    queuedVotePeriodLimit: votingParameters.queuedVotePeriodLimit,
+                    boostedVotePeriodLimit: votingParameters.boostedVotePeriodLimit,
+                    preBoostedVotePeriodLimit: votingParameters.preBoostedVotePeriodLimit,
+                    thresholdConst: votingParameters.thresholdConst,
+                    limitExponentValue: votingParameters.limitExponentValue,
+                    quietEndingPeriod: votingParameters.quietEndingPeriod,
+                    proposingRepReward: votingParameters.proposingRepReward,
+                    votersReputationLossRatio: votingParameters.votersReputationLossRatio,
+                    minimumDaoBounty: votingParameters.minimumDaoBounty,
+                    daoBountyConst: votingParameters.daoBountyConst,
+                    activationTime: votingParameters.activationTime,
+                  };
+                }
+
                 networkCache.proposals[proposalId] = {
                   id: proposalId,
                   scheme: schemeAddress,
