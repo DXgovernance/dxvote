@@ -4,15 +4,15 @@
     "toBlock": 13777562
   },
   "xdai": {
-    "configHash": "QmZ7QRkzgj12MxHPmfxsn1zSbRjdyPwSBu5tACH4mAU8wT",
+    "configHash": "QmYbG4dshEXamVELgNdMNbA63iiC2jipzXWuWV53ysfFrd",
     "toBlock": 19505762
   },
   "arbitrum": {
-    "configHash": "Qmf2B8N9rhzgiAkWvJupD5SvEtAGYH7Mq8r22TcCbVXeMQ",
+    "configHash": "QmYo1bJ1emqxRgveabG9ndZmhezeg5FKYcxFtuU4DTcbbz",
     "toBlock": 3726849
   },
   "rinkeby": {
-    "configHash": "QmPuPEXB3DJPq9k7wdEZ6GxhT2SVEpL4eW8WF7K24tH4AL",
+    "configHash": "QmUAuJhaXCgGbELFLeZwNLkFZ65fEHBqDoLXjPoghwfKNC",
     "toBlock": 9790490
   },
   "arbitrumTestnet": {
