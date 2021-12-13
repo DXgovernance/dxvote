@@ -20,6 +20,13 @@ const TitleRow = styled.div`
   justify-content: space-between;
 `;
 
+const ListRow = styled.div`
+  display: flex;
+  alignitems: center;
+  padding: 6px 0px;
+  borderbottom: ${({ borderBottom }) => (borderBottom ? '1px solid' : '')};
+`;
+
 const UserPage = observer(() => {
   let history = useHistory();
 
@@ -28,11 +35,11 @@ const UserPage = observer(() => {
   } = useContext();
   const userAddress = useLocation().pathname.split('/')[3];
   const { exportToCSV, triggerDownload } = useExporters();
-
   const userEvents = daoStore.getUserEvents(userAddress);
   const userInfo = daoStore.getUser(userAddress);
   const networkName = configStore.getActiveChainName();
   const redeemsLeft = daoStore.getUserRedeemsLeft(userAddress);
+  const userVestingContracts = daoStore.getUserVestingContracts(userAddress);
 
   const getExportFileName = () => {
     return `history_${userAddress}-${moment().format('YYYY-MM-DD')}`;
@@ -128,15 +135,9 @@ const UserPage = observer(() => {
 
       {userEvents.history.map((historyEvent, i) => {
         return (
-          <div
+          <ListRow
             key={'userHistoryEvent' + i}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '6px 0px',
-              borderBottom:
-                i < userEvents.history.length - 1 ? '1px solid' : '',
-            }}
+            borderBottom={i < userEvents.history.length - 1}
           >
             <span> {historyEvent.text} </span>
             <BlockchainLink
@@ -145,7 +146,27 @@ const UserPage = observer(() => {
               text={historyEvent.event.tx}
               onlyIcon
             />
-          </div>
+          </ListRow>
+        );
+      })}
+
+      {userVestingContracts.length && (
+        <TitleRow>
+          <h2>Vesting Contracts</h2>
+        </TitleRow>
+      )}
+      {userVestingContracts.map((contract, i, arr) => {
+        return (
+          <ListRow
+            key={'vestingContract' + i}
+            borderBottom={i < arr.length - 1}
+          >
+            <span>
+              {contract.address} / Cliff:{' '}
+              {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
+              {contract.value} wei
+            </span>
+          </ListRow>
         );
       })}
     </Box>

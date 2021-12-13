@@ -1,7 +1,14 @@
 import styled from 'styled-components';
 import { Button } from '../../common/Button';
 import { Box } from '../../common/Layout';
+
 import SidebarCard from '../../SidebarCard';
+import { ProposalVotes, VoteSummary, Voter } from './ProposalVotes';
+
+// avatar examples
+import dxIcon from '../../../../assets/images/dxdao-icon.svg';
+import etherIcon from '../../../../assets/images/ether.svg';
+import metaIcon from '../../../../assets/images/metamask.png';
 
 const SidebarCardHeader = styled(Box)`
   padding: 1rem;
@@ -10,10 +17,6 @@ const SidebarCardHeader = styled(Box)`
 
 const SidebarCardContent = styled(Box)`
   padding: 1rem;
-`;
-
-const Separator = styled.hr`
-  margin: 1.5rem 0;
 `;
 
 const VoteButton = styled(Button)`
@@ -30,13 +33,23 @@ const VoteButton = styled(Button)`
 `;
 
 const ProposalVoteCard = () => {
+  //TODO: we may subscribe to this data from a store.
+  //TODO: remove this hardcoded data when necessary.
+  const votes: VoteSummary = {
+    yes: { dxd: 253, percentage: 80 },
+    no: { dxd: 12, percentage: 10 },
+  };
+  const voters: Voter[] = [
+    { avatar: dxIcon },
+    { avatar: etherIcon },
+    { avatar: metaIcon },
+    { avatar: metaIcon },
+    { avatar: metaIcon },
+  ];
   return (
     <SidebarCard header={<SidebarCardHeader>Cast your vote</SidebarCardHeader>}>
       <SidebarCardContent>
-        <Separator />
-
-        <Separator />
-
+        <ProposalVotes summary={votes} voters={voters} />
         <VoteButton>Vote</VoteButton>
       </SidebarCardContent>
     </SidebarCard>

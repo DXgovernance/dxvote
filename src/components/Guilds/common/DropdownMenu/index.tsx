@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { IconButton } from '../Button';
 import { Box } from '../Layout';
 
@@ -13,28 +13,50 @@ export enum DropdownPosition {
 
 export const DropdownButton = styled(IconButton)``;
 
-export const DropdownContent = styled(Box)`
+interface DropdownContentProps {
+  show: boolean;
+  fullScreenMobile?: boolean;
+}
+
+export const DropdownHeader = styled.div`
+  padding: 20px 5px;
+  align-items: center;
+  display: flex;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.text};
+  width: 100%;
+  span {
+    margin-left: 5px;
+  }
+`;
+
+// DropdownContent renders a floating absolute box under the button that opens it.
+// In mobile, if fullScreenMobile is true it renders an absolute full screen menu.
+export const DropdownContent = styled<DropdownContentProps>(Box)`
   display: ${({ show }) => (show ? 'block' : 'none')};
-  border-radius: 0.5rem;
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
   padding-top: 0.25rem;
   position: absolute;
   background-color: ${({ theme }) => theme.colors.background};
   z-index: 9999;
-  width: 12.5rem;
+  width: 200px;
 
-  @media only screen and (max-width: 768px) {
-    height: 100vh;
-    width: 100%;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    position: fixed;
-    display: ${({ show }) => (show ? 'block' : 'none')};
-    border: none;
-  }
+  ${({ fullScreenMobile }) =>
+    fullScreenMobile &&
+    css`
+      @media only screen and (max-width: 768px) {
+        height: 100vh;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: fixed;
+        display: ${({ show }) => (show ? 'block' : 'none')};
+        border: none;
+      }
+    `}
 `;
 
 export const DropdownMenu = styled<DropdownProps>(Box)`

@@ -2,7 +2,7 @@ import { normalizeBalance } from 'utils';
 import MDEditor from '@uiw/react-md-editor';
 import { Question } from '../../common';
 import { useContext } from '../../../contexts';
-import { ZERO_ADDRESS, NETWORK_ASSET_SYMBOL } from 'utils';
+import { ZERO_ADDRESS, NETWORK_ASSET_SYMBOL, isWalletScheme } from 'utils';
 
 export const Preview = ({ descriptionText, schemeToUse }) => {
   const {
@@ -29,7 +29,7 @@ export const Preview = ({ descriptionText, schemeToUse }) => {
       {schemeToUse.type === 'ContributionReward' ||
       schemeToUse.type === 'GenericMulticall' ||
       schemeToUse.type === 'SchemeRegistrar' ||
-      (schemeToUse.type === 'WalletScheme' &&
+      (isWalletScheme(schemeToUse) &&
         schemeToUse.controllerAddress === networkContracts.controller) ? (
         <h2>
           Calls executed from the avatar <Question question="9" />

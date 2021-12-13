@@ -31,3 +31,10 @@ yarn-error.log*
 
 #editor 
 .vscode/
+
+#logs
+.log/
+
+#typechain
+src/types/*
+!src/types/types.d.ts

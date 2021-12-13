@@ -14,7 +14,6 @@ import {
 import PulsingIcon from '../../components/common/LoadingIcon';
 import Footer from '../../components/Footer';
 import {
-  ZERO_ADDRESS,
   formatPercentage,
   normalizeBalance,
   timeToTimestamp,
@@ -39,11 +38,14 @@ import {
 } from './styles';
 import { useFilteredProposals } from '../../hooks/useFilteredProposals';
 import ProposalsExporter from '../../components/Proposals/ProposalsExporter';
+import { useRep } from 'hooks/useRep';
 
 const ProposalsPage = observer(() => {
   const {
     context: { daoStore, configStore, providerStore },
   } = useContext();
+
+  const { getRep } = useRep();
 
   const votingMachines = configStore.getNetworkContracts().votingMachines;
   const networkName = configStore.getActiveChainName();
@@ -106,9 +108,9 @@ const ProposalsPage = observer(() => {
                 normalizeBalance(proposal.negativeStakes, 18),
                 1
               );
-              const repAtCreation = daoStore.getRepAt(
-                ZERO_ADDRESS,
-                proposal.creationEvent.l1BlockNumber
+
+              const repAtCreation = getRep(
+                proposal.creationEvent.blockNumber
               ).totalSupply;
 
               const positiveVotesPercentage = formatPercentage(

@@ -25,9 +25,6 @@ export default class CoingeckoService {
         if (i === tokens.length - 1) tokenAddresses += token.address;
         else tokenAddresses += token.address + '%2C';
       });
-      console.log(
-        `https://api.coingecko.com/api/v3/simple/token_price/${networkName}?contract_addresses=${tokenAddresses}&vs_currencies=usd`
-      );
       const pricesResponse = await Promise.all([
         axios({
           method: 'GET',

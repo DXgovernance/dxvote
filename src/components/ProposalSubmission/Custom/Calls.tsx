@@ -3,6 +3,7 @@ import { SchemeRegistrarCall } from './SchemeRegistarCall';
 import styled from 'styled-components';
 import { Button } from 'components/common';
 import Toggle from 'components/Toggle';
+import { isWalletScheme } from 'utils';
 
 const CallRow = styled.div`
   width: 100%;
@@ -93,8 +94,7 @@ export const Calls = ({
             <CallRow key={'call' + i}>
               <span>#{i}</span>
 
-              {schemeToUse.type === 'WalletScheme' &&
-              call.callType === 'simple' ? (
+              {isWalletScheme(schemeToUse) && call.callType === 'simple' ? (
                 <SelectInput
                   value={calls[i].to}
                   onChange={e => {
@@ -232,7 +232,7 @@ export const Calls = ({
               >
                 X
               </RemoveButton>
-              {schemeToUse.type === 'WalletScheme' ? (
+              {isWalletScheme(schemeToUse) ? (
                 <div
                   style={{
                     padding: '0px 5px 0px 10px',

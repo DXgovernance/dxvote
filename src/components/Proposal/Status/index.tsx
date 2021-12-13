@@ -5,7 +5,7 @@ import { useContext } from 'contexts';
 
 import { useLocation } from 'react-router-dom';
 
-import { bnum } from 'utils';
+import { bnum, isWalletScheme } from 'utils';
 import { Question } from 'components/common';
 
 import { SpaceAroundRow, ActionButton } from '../styles';
@@ -19,15 +19,13 @@ const Status = () => {
   const networkContracts = configStore.getNetworkContracts();
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
-  console.log('Proposal ID in Vote: ', proposalId);
   const proposal = daoStore.getProposal(proposalId);
   const { account } = providerStore.getActiveWeb3React();
   const scheme = daoStore.getScheme(proposal.scheme);
 
-  const executionTimeoutTime =
-    scheme.type === 'WalletScheme'
-      ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
-      : bnum(0);
+  const executionTimeoutTime = isWalletScheme(scheme)
+    ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
+    : bnum(0);
 
   const executeProposal = function () {
     daoService.execute(proposalId);

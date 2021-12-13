@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useABIService } from 'hooks/useABIService';
 import { observer } from 'mobx-react';
 import { useEtherscanService } from 'hooks/useEtherscanService';
-import { ProposalCalls } from 'types';
+import { ProposalCalls } from '../../../types/types';
 import { useContext } from 'contexts';
 import { useLocation } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ import { RecommendedCalls } from './RecommendedCalls';
 import { BaseCalls } from './BaseCalls';
 import { ShowMore } from './ShowMore';
 import { Divider } from '../styles';
+import { isWalletScheme } from 'utils';
 
 const Calls = observer(() => {
   const [showMore, setShowMore] = useState(false);
@@ -40,7 +41,7 @@ const Calls = observer(() => {
     result.map((abi, i) => {
       proposalCallArray.push(
         decodedCallData(
-          scheme.type === 'WalletScheme' &&
+          isWalletScheme(scheme) &&
             scheme.controllerAddress !== networkContracts.controller
             ? scheme.address
             : networkContracts.avatar,

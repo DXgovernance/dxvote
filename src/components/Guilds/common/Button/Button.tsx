@@ -7,7 +7,7 @@ type ButtonProps = {
 const variantStyles = (variant = 'primary') =>
   ({
     primary: css`
-      border: 0.1rem solid ${({ theme }) => theme.colors.primary};
+      border: 1px solid ${({ theme }) => theme.colors.primary};
       background-color: ${({ theme }) => theme.colors.background};
       color: ${({ theme }) => theme.colors.text};
       border-radius: ${({ theme }) => theme.radii.pill};
@@ -20,7 +20,7 @@ const variantStyles = (variant = 'primary') =>
       }
 
       :active:enabled {
-        border: 0.1rem solid ${({ theme }) => theme.colors.muted};
+        border: 1px solid ${({ theme }) => theme.colors.muted};
       }
     `,
     minimal: css`

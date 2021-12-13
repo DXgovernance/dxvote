@@ -35,13 +35,13 @@ export default class ENSService {
     return name;
   }
 
-  async resolveContentHash(ensAddress: string): Promise<string | null> {
+  async resolveContentHash(ensName: string): Promise<string | null> {
     const web3 = this.web3Context.library;
 
     console.debug('[ENSService] dxvote.eth namehash:', namehash('dxvote.eth'));
     console.debug('[ENSService] cache labelhash:', labelhash('cache'));
 
-    const contentHash = await web3.eth.ens.getContenthash(ensAddress);
+    const contentHash = await web3.eth.ens.getContenthash(ensName);
     return contentHash && contentHash.decoded ? contentHash.decoded : null;
   }
 }

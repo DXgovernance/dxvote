@@ -2,7 +2,7 @@ import reactStringReplace from 'react-string-replace';
 import { useLocation } from 'react-router-dom';
 import { bnum, normalizeBalance } from 'utils';
 import { BlockchainLink } from 'components/common';
-import { CallParameterDefinition, ProposalCalls } from 'types';
+import { CallParameterDefinition, ProposalCalls } from '../../../types/types';
 import RepDisplay from '../../RepDisplay';
 import { useContext } from '../../../contexts';
 
@@ -47,7 +47,7 @@ export const RecommendedCalls = ({
       return (
         <RepDisplay
           rep={bnum(value)}
-          atBlock={proposal.creationEvent.l1BlockNumber}
+          atBlock={proposal.creationEvent.blockNumber}
           timestamp={proposal.creationEvent.timestamp}
         />
       );

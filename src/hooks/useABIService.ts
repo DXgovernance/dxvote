@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ContractType } from 'stores/Provider';
-import { ProposalCalls } from 'types';
+import { ProposalCalls } from '../types/types';
 import {
   ANY_ADDRESS,
   bnum,
@@ -50,7 +50,7 @@ export const useABIService = (): UseABIServiceReturns => {
       setABI(abi);
       return abi;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return {};
     }
   };

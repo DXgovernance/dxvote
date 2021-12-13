@@ -1,24 +1,33 @@
 import React from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
-import { IconButton } from '../../components/Guilds/common/Button';
+import { ButtonIcon, IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
-import ProposalSidebar from '../../components/Guilds/ProposalSidebar';
+import ProposalInfoCard from '../../components/Guilds/ProposalSidebar/ProposalInfoCard';
+import ProposalVoteCard from '../../components/Guilds/ProposalSidebar/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
 import dxIcon from '../../assets/images/dxdao-icon.svg';
 import ProposalActionsCard from '../../components/Guilds/ProposalActionsCard';
 
 const PageContainer = styled(Box)`
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-columns: 1fr;
+
+  @media only screen and (min-width: 768px) {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
 `;
 
 const SidebarContent = styled(Box)`
-  margin-left: 1rem;
+  @media only screen and (min-width: 768px) {
+    margin-left: 1rem;
+  }
 `;
 
 const PageContent = styled(Box)`
-  margin-right: 1rem;
+  @media only screen and (min-width: 768px) {
+    margin-right: 1rem;
+  }
 `;
 
 const PageHeader = styled(Box)`
@@ -26,8 +35,13 @@ const PageHeader = styled(Box)`
 `;
 
 const PageTitle = styled.h3`
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
+
+  @media only screen and (min-width: 768px) {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
   margin: 0;
   margin: 1rem 0;
 `;
@@ -35,15 +49,21 @@ const PageTitle = styled.h3`
 const ProposalDescription = styled.p`
   margin: 1.5rem 0;
   line-height: 1.5;
+  font-size: 16px;
+  text-align: justify;
 `;
 
-const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
+const StyledIconButton = styled(IconButton)`
+  padding: 0;
+  margin-top: 5px;
 `;
 
 const ProposalActionsWrapper = styled(Box)`
   margin-top: 2rem;
+`;
+const ProposalStatusWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
 `;
 
 const ProposalPage: React.FC = () => {
@@ -51,11 +71,13 @@ const ProposalPage: React.FC = () => {
     <PageContainer>
       <PageContent>
         <PageHeader>
-          <IconButton variant="minimal" iconLeft>
+          <StyledIconButton variant="minimal" iconLeft>
             <FiArrowLeft /> DXdao
-          </IconButton>
+          </StyledIconButton>
           <PageTitle>DXLisbon Contributor Stipend and Funds</PageTitle>
-          <ProposalStatus bordered status="Active" detail="Ends in 34 days" />
+          <ProposalStatusWrapper>
+            <ProposalStatus bordered status="Active" detail="Ends in 34 days" />
+          </ProposalStatusWrapper>
         </PageHeader>
 
         <ProposalDescription>
@@ -83,7 +105,8 @@ const ProposalPage: React.FC = () => {
         </ProposalActionsWrapper>
       </PageContent>
       <SidebarContent>
-        <ProposalSidebar />
+        <ProposalInfoCard />
+        <ProposalVoteCard />
       </SidebarContent>
     </PageContainer>
   );

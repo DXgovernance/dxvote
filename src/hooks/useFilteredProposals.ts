@@ -1,16 +1,34 @@
 import { useEffect, useMemo } from 'react';
+import { VotingMachineProposalState, WalletSchemeProposalState } from 'utils';
 import { ProposalsExtended } from '../contexts/proposals';
 import { useFilterCriteria } from './useFilterCriteria';
 import useMiniSearch from './useMiniSearch';
 import useQueryStringValue from './useQueryStringValue';
 
-const matchStatus = (proposal: ProposalsExtended, status: string) =>
-  status === 'Any Status' || !status
-    ? proposal
-    : parseInt(proposal.stateInVotingMachine as any) === parseInt(status);
+const matchStatus = (proposal: ProposalsExtended, status: string) => {
+  if (status === 'Any Status' || !status) {
+    return proposal;
+  }
+  // status is rejected
+  if (status === '7') {
+    return proposal.stateInScheme === WalletSchemeProposalState.Rejected;
+  }
+  // status is passed
+  if (status === '8') {
+    return (
+      proposal.stateInScheme === WalletSchemeProposalState.Submitted &&
+      proposal.stateInVotingMachine === VotingMachineProposalState.Executed
+    );
+  }
+  return proposal.stateInVotingMachine === parseInt(status);
+};
 
-const matchScheme = (proposal: ProposalsExtended, scheme: string) =>
-  scheme === 'All Schemes' || !scheme ? proposal : proposal.scheme === scheme;
+const matchScheme = (proposal: ProposalsExtended, scheme: string) => {
+  if (scheme === 'All Schemes' || !scheme) {
+    return proposal;
+  }
+  return proposal.scheme === scheme;
+};
 
 export const useFilteredProposals = () => {
   const { proposals, loading } = useFilterCriteria();

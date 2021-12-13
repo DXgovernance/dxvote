@@ -59,8 +59,7 @@ declare global {
     signature: string;
     address: string;
     tx: string;
-    l1BlockNumber: number;
-    l2BlockNumber: number;
+    blockNumber: number;
     timestamp: number;
     transactionIndex: number;
     logIndex: number;
@@ -241,14 +240,14 @@ declare global {
 
   interface DaoNetworkCache {
     networkId: number;
-    l1BlockNumber: number;
-    l2BlockNumber: number;
+    blockNumber: number;
     daoInfo: DaoInfo;
     schemes: { [address: string]: Scheme };
     proposals: { [id: string]: Proposal };
     callPermissions: CallPermissions;
     votingMachines: { [address: string]: VotingMachine };
     ipfsHashes: IPFSHash[];
+    vestingContracts: TokenVesting[];
   }
 
   // Application Config
@@ -335,14 +334,23 @@ export interface DaoInfo {
 
 export interface DaoNetworkCache {
   networkId: number;
-  l1BlockNumber: number;
-  l2BlockNumber: number;
+  blockNumber: number;
   daoInfo: DaoInfo;
   schemes: { [address: string]: Scheme };
   proposals: { [id: string]: Proposal };
   callPermissions: CallPermissions;
   votingMachines: { [address: string]: VotingMachine };
   ipfsHashes: IPFSHash[];
+  vestingContracts: TokenVesting[];
+}
+
+export interface TokenVesting {
+  address: string;
+  beneficiary: string;
+  cliff: string;
+  duration: string;
+  owner: string;
+  value: string;
 }
 
 export interface ChainConfig {

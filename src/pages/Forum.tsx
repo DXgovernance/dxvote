@@ -57,7 +57,6 @@ const ForumPage = () => {
     iframe.width = '100%';
     iframe.frameBorder = '0';
     iframe.scrolling = 'no';
-    console.log(iframe);
     list.appendChild(iframe);
   }
 
