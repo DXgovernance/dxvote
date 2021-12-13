@@ -27,6 +27,9 @@ const defaultAppConfigs = {
   localhost,
 };
 
+// Use the same content outside src folder in defaultConfigHashes.json or override
+const defaultCacheConfig = require('../configs/default.json');
+
 export default class ConfigStore {
   darkMode: boolean;
   context: RootContext;
@@ -45,7 +48,8 @@ export default class ConfigStore {
   async loadAppConfigs(networkName: string) {
     const { ensService, ipfsService } = this.context;
 
-    let appConfig = defaultAppConfigs[networkName];
+    let networkConfig = defaultAppConfigs[networkName];
+    const isTestingEnv = !window?.location?.href?.includes('dxvote.eth.link');
 
     try {
       const metadataHash = await ensService.resolveContentHash(
@@ -53,40 +57,43 @@ export default class ConfigStore {
       );
       if (!metadataHash)
         throw new Error('Cannot resolve content metadata hash.');
-      console.info(
-        `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
-        metadataHash
-      );
 
-      const configRefs = JSON.parse(
-        await ipfsService.getContent(metadataHash, { timeout: 10000 })
-      );
+      if (!isTestingEnv)
+        console.debug(
+          `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
+          metadataHash
+        );
+
+      const configRefs = isTestingEnv
+        ? defaultCacheConfig
+        : JSON.parse(
+            await ipfsService.getContent(metadataHash, { timeout: 10000 })
+          );
+
       const configContentHash = configRefs[networkName];
       if (!configContentHash)
         throw new Error('Cannot resolve config metadata hash.');
-      console.info(
-        `[ConfigStore] Found config content hash from ENS: ${configContentHash}`
-      );
 
-      const configString = await ipfsService.getContent(configContentHash, {
+      console.info(`[ConfigStore] IPFS config hash: ${configContentHash}`);
+
+      const ipfsConfigString = await ipfsService.getContent(configContentHash, {
         timeout: 10000,
       });
-      const ensConfig = JSON.parse(configString);
-      console.info(
-        '[ConfigStore] Using configs from ENS',
-        ensConfig,
-        appConfig
-      );
-      appConfig = ensConfig;
+      const ipfsConfig = JSON.parse(ipfsConfigString);
+      console.debug('[ConfigStore] IPFS config content:', ipfsConfig);
+      console.debug('[ConfigStore] Default config:', networkConfig);
+
+      // Override defaultConfig to ipfsConfig
+      networkConfig = Object.assign(ipfsConfig, networkConfig);
     } catch (e) {
       console.error(
         '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
-        appConfig
+        networkConfig
       );
     }
 
-    this.appConfig[networkName] = appConfig;
-    return appConfig;
+    this.appConfig[networkName] = networkConfig;
+    return networkConfig;
   }
 
   getProposalTitlesInBuild() {
@@ -144,7 +151,7 @@ export default class ConfigStore {
           votingMachine: networkContracts.votingMachines.gen.address,
           newProposalTopics:
             networkContracts.daostack.schemeRegistrar.newProposalTopics,
-          voteParams: networkContracts.daostack.contributionReward.voteParams,
+          voteParams: networkContracts.daostack.schemeRegistrar.voteParams,
           creationLogEncoding:
             networkContracts.daostack.schemeRegistrar.creationLogEncoding,
         };

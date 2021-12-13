@@ -38,7 +38,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     const stateEarliestAbove10 = proposals
       .filter(proposal => {
         const repAtCreation = getRep(
-          proposal.creationEvent.l1BlockNumber
+          proposal.creationEvent.blockNumber
         ).totalSupply;
 
         return (
@@ -75,7 +75,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     const stateEarliestUnder10 = proposals
       .filter((proposal): Boolean => {
         const repAtCreation = getRep(
-          proposal.creationEvent.l1BlockNumber
+          proposal.creationEvent.blockNumber
         ).totalSupply;
 
         return (

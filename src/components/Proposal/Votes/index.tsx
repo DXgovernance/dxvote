@@ -26,7 +26,7 @@ import { bnum, toPercentage } from 'utils';
 
 const Votes = () => {
   const {
-    context: { daoStore, configStore, providerStore, daoService },
+    context: { daoStore, providerStore, daoService },
   } = useContext();
 
   //State
@@ -58,10 +58,7 @@ const Votes = () => {
   const {
     userRep: userRepAtProposalCreation,
     totalSupply: totalRepAtProposalCreation,
-  } =
-    configStore.getActiveChainName().indexOf('arbitrum') > -1
-      ? daoStore.getRepAt(account, proposal.creationEvent.l2BlockNumber)
-      : daoStore.getRepAt(account, proposal.creationEvent.l1BlockNumber);
+  } = daoStore.getRepAt(account, proposal.creationEvent.blockNumber);
 
   const repPercentageAtCreation = toPercentage(
     userRepAtProposalCreation.div(totalRepAtProposalCreation)

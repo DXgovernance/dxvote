@@ -8,7 +8,7 @@ const ALCHEMY_API_KEY = process.env.REACT_APP_KEY_ALCHEMY_API_KEY || "";
 
 module.exports = {
   paths: {
-    sources: "./src", // Use src folder isntead of contracts to avoid having empty conrtracts folder
+    sources: "./src", // Use src folder instead of contracts to avoid having empty contracts folder
   },
   dependencyCompiler: {
     paths: [
@@ -85,7 +85,7 @@ module.exports = {
       gasPrice: 1000000000 // 1 gwei
     },
     xdai: {
-      url: `https://rpc.xdaichain.com/`,
+      url: `https://poa-xdai-archival.gateway.pokt.network/v1/lb/61b4a50ec922b9003a3a93dc`,
       accounts: { mnemonic: MNEMONIC },
       gasLimit: 17000000,
       gasPrice: 2000000000, // 2 gwei

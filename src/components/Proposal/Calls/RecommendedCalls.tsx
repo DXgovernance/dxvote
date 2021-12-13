@@ -47,7 +47,7 @@ export const RecommendedCalls = ({
       return (
         <RepDisplay
           rep={bnum(value)}
-          atBlock={proposal.creationEvent.l1BlockNumber}
+          atBlock={proposal.creationEvent.blockNumber}
           timestamp={proposal.creationEvent.timestamp}
         />
       );

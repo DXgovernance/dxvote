@@ -23,10 +23,9 @@ const Status = () => {
   const { account } = providerStore.getActiveWeb3React();
   const scheme = daoStore.getScheme(proposal.scheme);
 
-  const executionTimeoutTime =
-    isWalletScheme(scheme)
-      ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
-      : bnum(0);
+  const executionTimeoutTime = isWalletScheme(scheme)
+    ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
+    : bnum(0);
 
   const executeProposal = function () {
     daoService.execute(proposalId);
