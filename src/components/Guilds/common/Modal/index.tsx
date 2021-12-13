@@ -49,8 +49,7 @@ export const Header = styled.div`
 `;
 
 export const HeaderText = styled(Heading)`
-  flex: 1;
-  line-height: 0;
+  margin: 0;
 `;
 
 const CloseIcon = styled(FiX)`
