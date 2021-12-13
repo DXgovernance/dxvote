@@ -268,8 +268,8 @@ export default class DaoStore {
         }
       }
 
-      if (cache.daoInfo.repEvents[i].l1BlockNumber > blockNumber) {
-        blockNumber = cache.daoInfo.repEvents[i].l1BlockNumber;
+      if (cache.daoInfo.repEvents[i].blockNumber > blockNumber) {
+        blockNumber = cache.daoInfo.repEvents[i].blockNumber;
         repEvents.push([
           blockNumber,
           bnum(repTotalSupply)
@@ -451,8 +451,7 @@ export default class DaoStore {
     return _.orderBy(
       allProposals,
       [
-        'creationEvent.l1BlockNumber',
-        'creationEvent.l2BlockNumber',
+        'creationEvent.blockNumber',
         'creationEvent.transactionIndex',
         'creationEvent.logIndex',
       ],
@@ -461,10 +460,7 @@ export default class DaoStore {
   }
 
   getAllSchemes(): Scheme[] {
-    const schemeAddresses = Object.keys(this.getCache().schemes);
-    return schemeAddresses.map(schemeAddress => {
-      return this.getCache().schemes[schemeAddress];
-    });
+    return _.flatMap(_.filter(this.getCache().schemes, { registered: true }));
   }
 
   getProposal(proposalId): Proposal {
@@ -531,7 +527,7 @@ export default class DaoStore {
           event: {
             proposalId: event.proposalId,
             tx: event.tx,
-            block: event.l1BlockNumber,
+            block: event.blockNumber,
             transactionIndex: event.transactionIndex,
             logIndex: event.logIndex,
             timestamp: event.timestamp,
@@ -553,7 +549,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -569,7 +565,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -585,7 +581,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -601,7 +597,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -621,7 +617,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -635,7 +631,7 @@ export default class DaoStore {
       event: {
         proposalId: proposal.id,
         tx: proposal.creationEvent.tx,
-        block: proposal.creationEvent.l1BlockNumber,
+        block: proposal.creationEvent.blockNumber,
         transactionIndex: proposal.creationEvent.transactionIndex,
         logIndex: proposal.creationEvent.logIndex,
         timestamp: proposal.creationEvent.timestamp,
@@ -751,7 +747,7 @@ export default class DaoStore {
         event: {
           proposalId: proposalId,
           tx: cache.proposals[proposalId].creationEvent.tx,
-          block: cache.proposals[proposalId].creationEvent.l1BlockNumber,
+          block: cache.proposals[proposalId].creationEvent.blockNumber,
           transactionIndex:
             cache.proposals[proposalId].creationEvent.transactionIndex,
           logIndex: cache.proposals[proposalId].creationEvent.logIndex,
@@ -774,7 +770,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -791,7 +787,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -806,7 +802,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -821,7 +817,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -836,7 +832,7 @@ export default class DaoStore {
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
-              block: event.l1BlockNumber,
+              block: event.blockNumber,
               transactionIndex: event.transactionIndex,
               logIndex: event.logIndex,
               timestamp: event.timestamp,
@@ -1149,18 +1145,17 @@ export default class DaoStore {
     userRep: BigNumber;
     totalSupply: BigNumber;
   } {
-    const { daoStore, providerStore, configStore } = this.context;
+    const { daoStore, providerStore } = this.context;
     const repEvents = daoStore.getCache().daoInfo.repEvents;
     let userRep = bnum(0),
       totalSupply = bnum(0);
     if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
-    const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1;
 
     for (let i = 0; i < repEvents.length; i++) {
       if (
         atTime > 0
           ? repEvents[i].timestamp < atTime
-          : repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] < atBlock
+          : repEvents[i].blockNumber < atBlock
       ) {
         if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount);
@@ -1183,15 +1178,14 @@ export default class DaoStore {
   ): {
     userRep: RepEvent[];
   } {
-    const { daoStore, providerStore, configStore } = this.context;
+    const { daoStore, providerStore } = this.context;
     const repEvents = daoStore.getCache().daoInfo.repEvents;
     let userRep = [],
       totalSupply = bnum(0);
     if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
-    const inL2 = configStore.getActiveChainName().indexOf('arbitrum') > -1;
 
     for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i][inL2 ? 'l2BlockNumber' : 'l1BlockNumber'] <= atBlock) {
+      if (repEvents[i].blockNumber <= atBlock) {
         if (repEvents[i].event === 'Mint') {
           totalSupply = totalSupply.plus(repEvents[i].amount);
           if (repEvents[i].account === userAddress) userRep.push(repEvents[i]);
@@ -1210,7 +1204,7 @@ export default class DaoStore {
     const atBlock = providerStore.getCurrentBlockNumber();
 
     for (let i = 0; i < repEvents.length; i++) {
-      if (repEvents[i].l1BlockNumber <= atBlock) {
+      if (repEvents[i].blockNumber <= atBlock) {
         if (repEvents[i].event === 'Mint') {
           if (!users[repEvents[i].account])
             users[repEvents[i].account] = repEvents[i].amount;

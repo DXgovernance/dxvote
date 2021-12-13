@@ -1,12 +1,12 @@
 import contentHash from 'content-hash';
 import _ from 'lodash';
-import { ZERO_ADDRESS } from './index';
+import { ZERO_ADDRESS, sleep } from './index';
 
 const Web3 = require('web3');
 const web3 = new Web3();
 
 const MAX_BLOCKS_PER_EVENTS_FETCH: number =
-  Number(process.env.MAX_BLOCKS_PER_EVENTS_FETCH) || 1000000;
+  Number(process.env.MAX_BLOCKS_PER_EVENTS_FETCH) || 100000;
 
 export const getEvents = async function (
   web3,
@@ -34,8 +34,8 @@ export const getEvents = async function (
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
       console.error('Error fetching blocks:', (error as Error).message);
-      if (Math.trunc((to - from) / 2) > 100000) {
-        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 100000);
+      if (Math.trunc((to - from) / 2) > 10000) {
+        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
       }
@@ -72,8 +72,8 @@ export const getRawEvents = async function (
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
       console.error('Error fetching blocks:', (error as Error).message);
-      if (Math.trunc((to - from) / 2) > 100000) {
-        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 100000);
+      if (Math.trunc((to - from) / 2) > 10000) {
+        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
       }
@@ -122,20 +122,11 @@ export const getTimestampOfEvents = async function (web3, events) {
         for (let i = 0; i < events.length; i++) {
           if (events[i].blockNumber === blockInfo.number)
             events[i].timestamp = blockInfo.timestamp;
-          if (blockInfo.l1BlockNumber)
-            events[i].l1BlockNumber = Number(blockInfo.l1BlockNumber);
+          if (blockInfo.l2BlockNumber)
+            events[i].blockNumber = Number(blockInfo.l2BlockNumber);
         }
       })
     );
-  }
-
-  for (let i = 0; i < events.length; i++) {
-    if (events[i].l1BlockNumber) {
-      events[i].l2BlockNumber = events[i].blockNumber;
-    } else {
-      events[i].l1BlockNumber = events[i].blockNumber;
-      events[i].l2BlockNumber = 0;
-    }
   }
   return events;
 };
@@ -143,7 +134,7 @@ export const getTimestampOfEvents = async function (web3, events) {
 export const sortEvents = function (events) {
   return _.orderBy(
     events,
-    ['l1BlockNumber', 'l2BlockNumber', 'transactionIndex', 'logIndex'],
+    ['blockNumber', 'transactionIndex', 'logIndex'],
     ['asc', 'asc', 'asc', 'asc']
   );
 };
@@ -230,7 +221,7 @@ export const getSchemeTypeData = function (networkConfig, schemeAddress) {
         votingMachine: networkConfig.votingMachines.gen.address,
         newProposalTopics:
           networkConfig.daostack.schemeRegistrar.newProposalTopics,
-        voteParams: networkConfig.daostack.contributionReward.voteParams,
+        voteParams: networkConfig.daostack.schemeRegistrar.voteParams,
         creationLogEncoding:
           networkConfig.daostack.schemeRegistrar.creationLogEncoding,
       };
@@ -358,10 +349,10 @@ export async function tryWhile(promises) {
   while (retry) {
     try {
       await Promise.all(promises);
+      retry = false;
     } catch (e) {
       console.error('[ERROR IN TRY WHILE] (trying again)', e.message);
-    } finally {
-      retry = false;
+      await sleep(1000);
     }
   }
   return;

@@ -24,3 +24,7 @@ export const decodeSchemeParameters = function (rawParameters) {
     activationTime: bnum(rawParameters.activationTime.toString()),
   };
 };
+
+export const isWalletScheme = function (scheme: Scheme) {
+  return scheme.type.indexOf('Wallet Scheme') > -1;
+};
