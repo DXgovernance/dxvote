@@ -174,7 +174,10 @@ async function buildCacheForNetwork(
 
     // Get proposal titles
     if (getProposalTitles) {
-      const newTitles = await getProposalTitlesFromIPFS(networkCache, proposalTitles);
+      const newTitles = await getProposalTitlesFromIPFS(
+        networkCache,
+        proposalTitles
+      );
       Object.assign(proposalTitles, newTitles);
       fs.writeFileSync(
         proposalTitlesPath,
@@ -187,7 +190,8 @@ async function buildCacheForNetwork(
       // Update proposals with no titles if title is available
       Object.keys(networkCache.proposals).map(proposalId => {
         if (!networkCache.proposals[proposalId].title) {
-          networkCache.proposals[proposalId].title = proposalTitles[proposalId] || '';
+          networkCache.proposals[proposalId].title =
+            proposalTitles[proposalId] || '';
         }
       });
     }

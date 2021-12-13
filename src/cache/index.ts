@@ -1797,7 +1797,7 @@ export const updateProposals = async function (
     Object.keys(networkCache.proposals).map(proposalId => {
       if (!networkCache.proposals[proposalId].title) {
         networkCache.proposals[proposalId].title =
-        proposalTitles[proposalId] || '';
+          proposalTitles[proposalId] || '';
       }
     });
   }
@@ -1846,7 +1846,8 @@ export async function getProposalTitlesFromIPFS(
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
       proposal.title?.length === 0 &&
       (isNode() ||
-        proposal.creationEvent.blockNumber > Number(networkCache.blockNumber) - 100000)
+        proposal.creationEvent.blockNumber >
+          Number(networkCache.blockNumber) - 100000)
     )
       try {
         console.debug(
@@ -1854,23 +1855,35 @@ export async function getProposalTitlesFromIPFS(
         );
         const response = await any([
           axios.request({
-            url: 'https://ipfs.io/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+            url: 'https://ipfs.io/ipfs/' + ipfsHash,
+            method: 'GET',
+            timeout: isNode() ? 2000 : 1000,
           }),
           axios.request({
-            url: 'https://gateway.ipfs.io/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+            url: 'https://gateway.ipfs.io/ipfs/' + ipfsHash,
+            method: 'GET',
+            timeout: isNode() ? 2000 : 1000,
           }),
           axios.request({
-            url: 'https://cloudflare-ipfs.com/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+            url: 'https://cloudflare-ipfs.com/ipfs/' + ipfsHash,
+            method: 'GET',
+            timeout: isNode() ? 2000 : 1000,
           }),
           axios.request({
-            url: 'https://gateway.pinata.cloud/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+            url: 'https://gateway.pinata.cloud/ipfs/' + ipfsHash,
+            method: 'GET',
+            timeout: isNode() ? 2000 : 1000,
           }),
           axios.request({
-            url: 'https://dweb.link/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+            url: 'https://dweb.link/ipfs/' + ipfsHash,
+            method: 'GET',
+            timeout: isNode() ? 2000 : 1000,
           }),
           axios.request({
-            url: 'https://infura-ipfs.io/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
-          })
+            url: 'https://infura-ipfs.io/ipfs/' + ipfsHash,
+            method: 'GET',
+            timeout: isNode() ? 2000 : 1000,
+          }),
         ]);
         if (response && response.data && response.data.title) {
           proposalTitles[proposal.id] = response.data.title;
