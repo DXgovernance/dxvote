@@ -80,7 +80,6 @@ export const getWallets = (
   },
 });
 
-
 export const findWalletType = (connector: any) => {
   if (connector instanceof InjectedConnector) {
     return 'MetaMask';

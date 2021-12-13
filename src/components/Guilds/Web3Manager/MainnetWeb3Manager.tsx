@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { useRpcUrls } from '../../../provider/providerHooks';
-import { DEFAULT_ETH_CHAIN_ID, getNetworkConnector } from '../../../provider/connectors';
+import {
+  DEFAULT_ETH_CHAIN_ID,
+  getNetworkConnector,
+} from '../../../provider/connectors';
 
 export const MAINNET_WEB3_ROOT_KEY = 'MAINNET';
 

@@ -19,12 +19,14 @@ interface TransactionProps {
   pending: boolean;
 }
 
-const Transaction: React.FC<TransactionProps> = ({ children, link, pending }) => {
+const Transaction: React.FC<TransactionProps> = ({
+  children,
+  link,
+  pending,
+}) => {
   return (
     <TransactionContainer>
-      <Link href={link}>
-        {children}
-      </Link>
+      <Link href={link}>{children}</Link>
       {pending && <FaSpinner />}
     </TransactionContainer>
   );

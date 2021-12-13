@@ -461,7 +461,7 @@ export default class DaoStore {
   }
 
   getAllSchemes(): Scheme[] {
-    return _.flatMap(_.filter(this.getCache().schemes, {registered: true}));
+    return _.flatMap(_.filter(this.getCache().schemes, { registered: true }));
   }
 
   getProposal(proposalId): Proposal {

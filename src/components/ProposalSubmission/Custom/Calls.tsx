@@ -94,8 +94,7 @@ export const Calls = ({
             <CallRow key={'call' + i}>
               <span>#{i}</span>
 
-              {isWalletScheme(schemeToUse) &&
-              call.callType === 'simple' ? (
+              {isWalletScheme(schemeToUse) && call.callType === 'simple' ? (
                 <SelectInput
                   value={calls[i].to}
                   onChange={e => {
