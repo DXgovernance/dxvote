@@ -8,8 +8,8 @@ import { useRpcUrls } from 'provider/providerHooks';
 import { useWeb3React } from '@web3-react/core';
 import Option from '../../WalletModal/Option';
 import Link from '../../common/Link';
-import { Modal } from '../../Modal';
-import AccountDetails from './AccountDetails';
+import { Modal } from '../common/Modal';
+import AccountDetails from '../NetworkModal/AccountDetails';
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -304,7 +304,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
   );
 
   return (
-    <Modal header={Header} isOpen={isOpen} onDismiss={onClose}>
+    <Modal header={Header} isOpen={isOpen} onDismiss={onClose} maxWidth={380}>
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>
   );

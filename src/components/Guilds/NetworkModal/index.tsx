@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { useRpcUrls } from 'provider/providerHooks';
@@ -8,7 +7,7 @@ import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
 import xdaiIcon from '../../../assets/images/xdai.svg';
 import Option from '../../NetworkModal/Option';
-import { Modal } from '../../Modal';
+import { Modal } from '../common/Modal';
 import { useWeb3React } from '@web3-react/core';
 
 const iconsByChain = {
@@ -69,14 +68,6 @@ interface NetworkModalProps {
 const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
   const { chainId, connector, deactivate } = useWeb3React();
   const rpcUrls = useRpcUrls();
-  const [networkErrorMessage, setNetworkErrorMessage] = useState(false);
-
-  // always reset to options view
-  useEffect(() => {
-    if (isOpen) {
-      setNetworkErrorMessage(false);
-    }
-  }, [isOpen]);
 
   const trySwitching = async chain => {
     if (connector instanceof InjectedConnector) {
@@ -86,17 +77,15 @@ const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
           { chainId: chainIdHex },
         ]);
       } catch (e: any) {
-        if (e?.code == 4902) {
-          window.ethereum?.send('wallet_addEthereumChain', [
-            {
-              chainId: chainIdHex,
-              chainName: chain.displayName,
-              nativeCurrency: chain.nativeAsset,
-              rpcUrls: [chain.rpcUrl, chain.defaultRpc],
-              blockExplorerUrls: [chain.blockExplorer],
-            },
-          ]);
-        }
+        window.ethereum?.send('wallet_addEthereumChain', [
+          {
+            chainId: chainIdHex,
+            chainName: chain.displayName,
+            nativeCurrency: chain.nativeAsset,
+            rpcUrls: [chain.rpcUrl, chain.defaultRpc],
+            blockExplorerUrls: [chain.blockExplorer],
+          },
+        ]);
       }
     } else {
       deactivate();
@@ -121,26 +110,20 @@ const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
     });
   }
 
-  function getModalContent() {
-    return (
-      <UpperSection>
-        <ContentWrapper>
-          <OptionGrid>{getOptions()}</OptionGrid>
-        </ContentWrapper>
-      </UpperSection>
-    );
-  }
-
   return (
     <Modal
       header={<div>Switch network</div>}
       isOpen={isOpen}
       onDismiss={onClose}
+      maxWidth={480}
     >
-      <>
-        <Wrapper>{getModalContent()}</Wrapper>
-        <div>{networkErrorMessage}</div>
-      </>
+      <Wrapper>
+        <UpperSection>
+          <ContentWrapper>
+            <OptionGrid>{getOptions()}</OptionGrid>
+          </ContentWrapper>
+        </UpperSection>
+      </Wrapper>
     </Modal>
   );
 };

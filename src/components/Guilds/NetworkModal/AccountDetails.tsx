@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { injected } from 'provider/connectors';
 
-import Link from '../../../components/common/Link';
+import Link from '../../common/Link';
 import { useWeb3React } from '@web3-react/core';
 import { useContext } from '../../../contexts';
 import { getBlockchainLink } from '../../../utils';
