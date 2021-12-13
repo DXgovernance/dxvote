@@ -48,7 +48,7 @@ const buildConfig = {
   },
 };
 
-const getProposalTitles = false;
+const getProposalTitles = true;
 
 const appConfig: AppConfig = {
   arbitrum,
@@ -172,8 +172,9 @@ async function buildCacheForNetwork(
       web3
     );
 
+    // Get proposal titles
     if (getProposalTitles) {
-      const newTitles = await getProposalTitlesFromIPFS(networkCache, toBlock);
+      const newTitles = await getProposalTitlesFromIPFS(networkCache, proposalTitles);
       Object.assign(proposalTitles, newTitles);
       fs.writeFileSync(
         proposalTitlesPath,
@@ -183,6 +184,12 @@ async function buildCacheForNetwork(
           flag: 'w',
         }
       );
+      // Update proposals with no titles if title is available
+      Object.keys(networkCache.proposals).map(proposalId => {
+        if (!networkCache.proposals[proposalId].title) {
+          networkCache.proposals[proposalId].title = proposalTitles[proposalId] || '';
+        }
+      });
     }
   }
 

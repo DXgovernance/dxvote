@@ -28,6 +28,8 @@ import TokenVestingJSON from '../contracts/TokenVesting.json';
 import { getContracts } from '../contracts';
 import RootContext from '../contexts';
 
+import any from 'promise.any';
+
 export const getUpdatedCache = async function (
   context: RootContext,
   networkCache: DaoNetworkCache,
@@ -1791,14 +1793,11 @@ export const updateProposals = async function (
   networkCache.ipfsHashes.sort((a, b) => a.name.localeCompare(b.name));
 
   if (!isNode()) {
-    const proposalTitles = await getProposalTitlesFromIPFS(
-      networkCache,
-      toBlock
-    );
+    const proposalTitles = await getProposalTitlesFromIPFS(networkCache, {});
     Object.keys(networkCache.proposals).map(proposalId => {
       if (!networkCache.proposals[proposalId].title) {
         networkCache.proposals[proposalId].title =
-          proposalTitles[proposalId] || '';
+        proposalTitles[proposalId] || '';
       }
     });
   }
@@ -1808,9 +1807,8 @@ export const updateProposals = async function (
 
 export async function getProposalTitlesFromIPFS(
   networkCache: DaoNetworkCache,
-  toBlock: number
+  proposalTitles: Record<string, string>
 ) {
-  const proposalTitles = {};
   let retryIntent = 0;
   // Update proposals title
   for (
@@ -1834,28 +1832,46 @@ export async function getProposalTitlesFromIPFS(
       '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
     ];
 
-    // If the script is running on the client side and it alreaady tried three times, continue.
-    if (invalidTitleProposals.indexOf(proposal.id) >= 0 || retryIntent > 3) {
+    // If the script is running on the client side and it already tried three times, continue.
+    if (invalidTitleProposals.indexOf(proposal.id) > -1 || retryIntent > 3) {
       retryIntent = 0;
       continue;
     }
 
     if (
+      !proposalTitles[proposal.id] &&
       !isWalletScheme(networkCache.schemes[proposal.scheme]) &&
       proposal.descriptionHash &&
       proposal.descriptionHash.length > 0 &&
       // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
       proposal.title?.length === 0 &&
       (isNode() ||
-        proposal.creationEvent.blockNumber > Number(toBlock) - 100000)
+        proposal.creationEvent.blockNumber > Number(networkCache.blockNumber) - 100000)
     )
       try {
-        // console.debug(`Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`);
-        const response = await axios.request({
-          url: 'https://ipfs.io/ipfs/' + ipfsHash,
-          method: 'GET',
-          timeout: isNode() ? 2000 : 1000,
-        });
+        console.debug(
+          `Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
+        );
+        const response = await any([
+          axios.request({
+            url: 'https://ipfs.io/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+          }),
+          axios.request({
+            url: 'https://gateway.ipfs.io/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+          }),
+          axios.request({
+            url: 'https://cloudflare-ipfs.com/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+          }),
+          axios.request({
+            url: 'https://gateway.pinata.cloud/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+          }),
+          axios.request({
+            url: 'https://dweb.link/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+          }),
+          axios.request({
+            url: 'https://infura-ipfs.io/ipfs/' + ipfsHash, method: 'GET', timeout: isNode() ? 2000 : 1000,
+          })
+        ]);
         if (response && response.data && response.data.title) {
           proposalTitles[proposal.id] = response.data.title;
         } else {
@@ -1872,7 +1888,6 @@ export async function getProposalTitlesFromIPFS(
           );
           await sleep(10000);
         } else {
-          console.debug((error as Error).message);
           console.error(
             `Error getting title from proposal ${proposal.id} with hash ${ipfsHash} waiting 1 second and trying again..`
           );
