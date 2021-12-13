@@ -80,6 +80,17 @@ export const getWallets = (
   },
 });
 
+
+export const findWalletType = (connector: any) => {
+  if (connector instanceof InjectedConnector) {
+    return 'MetaMask';
+  } else if (connector instanceof WalletConnectConnector) {
+    return 'WalletConnect';
+  } else {
+    return null;
+  }
+};
+
 export const getChains = (
   customRpcUrls?: Record<ChainConfig['id'], string>
 ) => {

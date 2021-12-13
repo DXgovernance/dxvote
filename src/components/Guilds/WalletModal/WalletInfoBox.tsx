@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
-
-import { injected } from 'provider/connectors';
 import {
   getBlockchainLink,
   NETWORK_NAMES,
@@ -13,6 +11,7 @@ import Avatar from '../Avatar';
 import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import useClipboard from '../../../hooks/Guilds/useClipboard';
 import { FiCheckCircle, FiCopy, FiExternalLink } from 'react-icons/fi';
+import { findWalletType } from '../../../provider/connectors';
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -78,24 +77,14 @@ const IconHolder = styled.span`
     margin-right: 0;
   }
 `;
-
-const WalletAction = styled.div`
-  color: ${({ theme }) => theme.chaliceGray};
-  margin-left: 16px;
-  font-weight: 400;
-  :hover {
-    cursor: pointer;
-    text-decoration: underline;
-  }
-`;
 interface Props {
   openOptions: any;
 }
 
 export default function WalletInfoBox({ openOptions }: Props) {
-  const { account, connector, deactivate, chainId } = useWeb3React();
+  const { account, connector, chainId } = useWeb3React();
   const { ensName, imageUrl, avatarUri } = useENSAvatar(account);
-  const [isCopied, copyAddress] = useClipboard(account, 5000);
+  const [isCopied, copyAddress] = useClipboard(account, 3000);
 
   const imageUrlToUse = useMemo(() => {
     if (avatarUri) {
@@ -114,7 +103,7 @@ export default function WalletInfoBox({ openOptions }: Props) {
       <ConnectionStatusRow>
         <ConnectionStatusText>
           <GreenCircle />
-          Connected to MetaMask
+          Connected to {findWalletType(connector)}
         </ConnectionStatusText>
         <div>
           <Button onClick={openOptions}>Change</Button>
@@ -135,7 +124,7 @@ export default function WalletInfoBox({ openOptions }: Props) {
           iconLeft
         >
           {isCopied ? <FiCheckCircle /> : <FiCopy />}
-          Copy Address
+          {isCopied ? 'Copied Address!' : 'Copy Address'}
         </ConnectionActionButton>
 
         <ExternalLink href={getBlockchainLink(account, networkName, 'address')}>
@@ -145,18 +134,6 @@ export default function WalletInfoBox({ openOptions }: Props) {
           </ConnectionActionButton>
         </ExternalLink>
       </Row>
-
-      {connector !== injected && (
-        <WalletAction
-          onClick={() => {
-            //@ts-ignore
-            connector.close();
-            deactivate();
-          }}
-        >
-          Disconnect
-        </WalletAction>
-      )}
     </Wrapper>
   );
 }
