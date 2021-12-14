@@ -1833,7 +1833,11 @@ export async function getProposalTitlesFromIPFS(
     ];
 
     // If the script is running on the client side and it already tried three times, continue.
-    if (invalidTitleProposals.indexOf(proposal.id) > -1 || retryIntent > 3) {
+    if (
+      invalidTitleProposals.indexOf(proposal.id) > -1 ||
+      (!isNode() && retryIntent > 0) ||
+      retryIntent > 3
+    ) {
       retryIntent = 0;
       continue;
     }
@@ -1894,13 +1898,14 @@ export async function getProposalTitlesFromIPFS(
         }
       } catch (error) {
         if (
-          (error as Error).message === 'Request failed with status code 429'
+          (error as Error).message === 'Request failed with status code 429' &&
+          isNode()
         ) {
           console.error(
             `Request failed with status code 429 waiting 10 second and trying again..`
           );
           await sleep(10000);
-        } else {
+        } else if (isNode()) {
           console.error(
             `Error getting title from proposal ${proposal.id} with hash ${ipfsHash} waiting 1 second and trying again..`
           );
