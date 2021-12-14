@@ -159,12 +159,6 @@ export const ContributorProposalPage = observer(() => {
     isStale: isCacheStale,
   } = useMainnetRep(account, 0, moment(startDate).unix());
 
-  // let totalSupply = bnum(0);
-  // let cacheLoading = false;
-  // let isCacheStale = false;
-
-  console.log('ContributorProposalPage', { isCacheStale });
-
   const proposalType = configStore
     .getProposalTypes()
     .find(type => type.id === 'contributor');
@@ -449,9 +443,8 @@ export const ContributorProposalPage = observer(() => {
                 {isCacheStale && (
                   <div>
                     <WarningText>
-                      The REP numbers may not be up to date, please switch to
-                      mainnet and switch back if you want more accurate REP
-                      calculation.
+                      REP out of date - switch to mainnet and back, then try
+                      again
                     </WarningText>
                   </div>
                 )}

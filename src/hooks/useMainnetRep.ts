@@ -4,6 +4,8 @@ import { MAINNET_WEB3_ROOT_KEY } from '../components/MainnetWeb3Manager';
 import { useContext } from '../contexts';
 import { bnum, ZERO_ADDRESS } from '../utils';
 
+const AVG_ETH_BLOCKS_PER_DAY = 6500;
+
 const useMainnetRep = (
   userAddress: string = ZERO_ADDRESS,
   atBlock: number = 0,
@@ -29,8 +31,6 @@ const useMainnetRep = (
         console.error("[useMainnetRep] Couldn't fetch cache locally");
       }
 
-      console.log("ContributorProposal", {localCache});
-
       const newestCacheIpfsHash = configStore.getCacheIPFSHash('mainnet');
 
       if (
@@ -44,13 +44,13 @@ const useMainnetRep = (
           daoStore.parseCache(unparsedCacheData);
         networkCache.baseCacheIpfsHash = newestCacheIpfsHash;
 
-        if (
-          !localCache ||
-          localCache.l1BlockNumber <= networkCache.l1BlockNumber
-        ) {
+        if (!localCache || localCache.blockNumber <= networkCache.blockNumber) {
           localCache = networkCache;
         }
       }
+
+      // TODO: We should actually update the cache data until the current block
+      // instead of using the already existing cache.
 
       return localCache;
     },
@@ -72,18 +72,15 @@ const useMainnetRep = (
 
       if (atBlock === 0) atBlock = currentBlockNumber;
 
-      const isStale = cache.l1BlockNumber < currentBlockNumber;
-      console.log('ContributorProposalPage', {
-        cache: cache.l1BlockNumber,
-        currentBlockNumber,
-        isStale,
-      });
+      // Flag to check if the cache is from past 7 days
+      const isStale =
+        cache.blockNumber < currentBlockNumber - AVG_ETH_BLOCKS_PER_DAY * 7;
 
       for (let i = 0; i < repEvents.length; i++) {
         if (
           atTime > 0
             ? repEvents[i].timestamp < atTime
-            : repEvents[i].l1BlockNumber < atBlock
+            : repEvents[i].blockNumber < atBlock
         ) {
           if (repEvents[i].event === 'Mint') {
             totalSupply = totalSupply.plus(repEvents[i].amount);
