@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
-import { FiChevronLeft } from 'react-icons/fi';
+import { FiArrowLeft } from 'react-icons/fi';
+import { useWeb3React } from '@web3-react/core';
 
 import { usePrevious } from 'utils';
 import { injected, getWallets, isChainIdSupported } from 'provider/connectors';
 import { useRpcUrls } from 'provider/providerHooks';
-import { useWeb3React } from '@web3-react/core';
-import WalletOption from './WalletOption';
+import Option from './components/Option';
 import { Modal } from '../common/Modal';
 import { Heading } from '../common/Typography';
-import WalletInfoBox from './WalletInfoBox';
-import Transaction from './Transaction';
+import WalletInfoBox from './components/WalletInfoBox';
+import Transaction from './components/Transaction';
 import { Button } from '../common/Button';
 
 const Container = styled.div`
@@ -25,7 +25,7 @@ const ErrorHeading = styled(Heading)`
   padding: 0;
 `;
 
-const BackIcon = styled(FiChevronLeft)`
+const BackIcon = styled(FiArrowLeft)`
   height: 1.5rem;
   width: 1.5rem;
   cursor: pointer;
@@ -118,7 +118,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
       if (isMobile) {
         if (!window.ethereum && option.mobile) {
           return (
-            <WalletOption
+            <Option
               onClick={() => {
                 option.connector !== connector &&
                   !option.href &&
@@ -141,7 +141,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
         if (!window.ethereum) {
           if (option.name === 'MetaMask') {
             return (
-              <WalletOption
+              <Option
                 key={key}
                 icon={option.icon}
                 header={'Install Metamask'}
@@ -166,7 +166,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
       return (
         !isMobile &&
         !option.mobileOnly && (
-          <WalletOption
+          <Option
             onClick={() => {
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)

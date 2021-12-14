@@ -5,13 +5,14 @@ import {
   getBlockchainLink,
   NETWORK_NAMES,
   shortenAddress,
-} from '../../../utils';
-import { Button, IconButton } from '../common/Button';
-import Avatar from '../Avatar';
-import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
-import useClipboard from '../../../hooks/Guilds/useClipboard';
+} from '../../../../utils';
+import { Button, IconButton } from '../../common/Button';
+import Avatar from '../../Avatar';
+import useENSAvatar from '../../../../hooks/Guilds/ens/useENSAvatar';
+import useClipboard from '../../../../hooks/Guilds/useClipboard';
 import { FiCheckCircle, FiCopy, FiExternalLink } from 'react-icons/fi';
-import { findWalletType } from '../../../provider/connectors';
+import { findWalletType } from '../../../../provider/connectors';
+import LiveIndicator from './LiveIndicator';
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -56,14 +57,6 @@ const AddressText = styled.span`
   margin-right: 0.3rem;
 `;
 
-const GreenCircle = styled.span`
-  height: 8px;
-  width: 8px;
-  margin-right: 0.5rem;
-  background-color: #4cc7a2;
-  border-radius: 50%;
-`;
-
 const IconHolder = styled.span`
   display: flex;
   justify-content: center;
@@ -102,7 +95,7 @@ export default function WalletInfoBox({ openOptions }: Props) {
     <Wrapper>
       <ConnectionStatusRow>
         <ConnectionStatusText>
-          <GreenCircle />
+          <LiveIndicator />
           Connected to {findWalletType(connector)}
         </ConnectionStatusText>
         <div>

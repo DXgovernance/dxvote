@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 
 import { getChains, isChainIdSupported } from 'provider/connectors';
 import { Button, ButtonIcon, IconButton } from '../common/Button';
-import NetworkModal from '../NetworkModal';
+import NetworkModal from '../Web3Modals/NetworkModal';
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
 import xdaiIcon from '../../../assets/images/xdai.svg';

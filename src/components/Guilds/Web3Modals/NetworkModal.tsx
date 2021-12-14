@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 import { InjectedConnector } from '@web3-react/injected-connector';
+import { useWeb3React } from '@web3-react/core';
+
 import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
-
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
 import xdaiIcon from '../../../assets/images/xdai.svg';
-import Option from '../../NetworkModal/Option';
 import { Modal } from '../common/Modal';
-import { useWeb3React } from '@web3-react/core';
+import Option from './components/Option';
 
 const iconsByChain = {
   1: ethereumIcon,
@@ -92,35 +92,29 @@ const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // get networks user can switch to
-  function getOptions() {
-    if (!rpcUrls) return [];
-
-    const chains = getChains(rpcUrls);
-    return chains.map(chain => {
-      return (
-        <Option
-          onClick={() => trySwitching(chain)}
-          key={chain.name}
-          icon={iconsByChain[chain.id] || null}
-          active={chain.id === chainId}
-          header={chain.displayName}
-        />
-      );
-    });
-  }
-
   return (
     <Modal
       header={<div>Switch network</div>}
       isOpen={isOpen}
       onDismiss={onClose}
-      maxWidth={480}
+      maxWidth={380}
     >
       <Wrapper>
         <UpperSection>
           <ContentWrapper>
-            <OptionGrid>{getOptions()}</OptionGrid>
+            {rpcUrls && (
+              <OptionGrid>
+                {getChains(rpcUrls).map(chain => (
+                  <Option
+                    onClick={() => trySwitching(chain)}
+                    key={chain.name}
+                    icon={iconsByChain[chain.id] || null}
+                    active={chain.id === chainId}
+                    header={chain.displayName}
+                  />
+                ))}
+              </OptionGrid>
+            )}
           </ContentWrapper>
         </UpperSection>
       </Wrapper>

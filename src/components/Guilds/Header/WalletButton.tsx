@@ -8,7 +8,7 @@ import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { useWeb3React } from '@web3-react/core';
-import WalletModal from '../WalletModal';
+import WalletModal from '../Web3Modals/WalletModal';
 
 const IconHolder = styled.span`
   display: flex;

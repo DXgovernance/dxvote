@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Button } from '../common/Button';
+import { Button } from '../../common/Button';
+import LiveIndicator from './LiveIndicator';
 
 const OptionButton = styled(Button)`
   width: 100%;
@@ -28,14 +29,6 @@ const OptionButtonText = styled.div`
   align-items: center;
 `;
 
-const GreenCircle = styled.span`
-  height: 8px;
-  width: 8px;
-  margin-right: 0.5rem;
-  background-color: #4cc7a2;
-  border-radius: 50%;
-`;
-
 const IconWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
   align-items: center;
@@ -50,7 +43,7 @@ const IconWrapper = styled.div`
   `};
 `;
 
-export default function WalletOption({
+export default function Option({
   link = null,
   clickable = true,
   size = null,
@@ -66,7 +59,7 @@ export default function WalletOption({
       active={active}
     >
       <OptionButtonText>
-        {active && <GreenCircle />}
+        {active && <LiveIndicator />}
         {header}
       </OptionButtonText>
       <IconWrapper size={size} active={active}>
