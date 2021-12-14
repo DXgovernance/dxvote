@@ -22,6 +22,13 @@ const variantStyles = (variant = 'primary') =>
       :active:enabled {
         border: 1px solid ${({ theme }) => theme.colors.muted};
       }
+
+      ${({ active, selected }) =>
+        (active || selected) &&
+        css`
+          background-color: ${({ theme }) => theme.colors.primary};
+          color: ${({ theme }) => theme.colors.background};
+        `}
     `,
     minimal: css`
       border: none;
