@@ -26,6 +26,7 @@ import {
 } from '../../utils';
 import { useTokenService } from 'hooks/useTokenService';
 import { InputDate } from 'components/common';
+import useMainnetRep from '../../hooks/useMainnetRep';
 
 const VerticalLayout = styled.div`
   display: flex;
@@ -152,6 +153,18 @@ export const ContributorProposalPage = observer(() => {
 
   const { tokenAth: dxdAth, athDate } = useTokenService('dxdao');
 
+  const {
+    totalSupply,
+    isLoading: cacheLoading,
+    isStale: isCacheStale,
+  } = useMainnetRep(account, 0, moment(startDate).unix());
+
+  // let totalSupply = bnum(0);
+  // let cacheLoading = false;
+  // let isCacheStale = false;
+
+  console.log('ContributorProposalPage', { isCacheStale });
+
   const proposalType = configStore
     .getProposalTypes()
     .find(type => type.id === 'contributor');
@@ -173,12 +186,6 @@ export const ContributorProposalPage = observer(() => {
 
   useEffect(() => {
     if (confirm) {
-      const { totalSupply } = daoStore.getRepAt(
-        account,
-        providerStore.getCurrentBlockNumber(),
-        moment(startDate).unix()
-      );
-
       setDxdAmount(
         denormalizeBalance(
           bnum(
@@ -195,7 +202,16 @@ export const ContributorProposalPage = observer(() => {
           : formatNumberValue(totalSupply.times(0.001667).times(discount), 0)
       );
     }
-  }, [confirm]);
+  }, [
+    confirm,
+    discount,
+    dxdAth,
+    dxdOverride,
+    levels,
+    noRep,
+    selectedLevel,
+    totalSupply,
+  ]);
 
   // Reset stable override when changing level
   useEffect(() => {
@@ -430,6 +446,15 @@ export const ContributorProposalPage = observer(() => {
                   text={'Proposal Start Date:'}
                   width={200}
                 />
+                {isCacheStale && (
+                  <div>
+                    <WarningText>
+                      The REP numbers may not be up to date, please switch to
+                      mainnet and switch back if you want more accurate REP
+                      calculation.
+                    </WarningText>
+                  </div>
+                )}
                 {startDate.isBefore(moment(athDate)) ? (
                   <div>
                     <WarningText>
@@ -451,12 +476,16 @@ export const ContributorProposalPage = observer(() => {
             ) : null}
             <ButtonsWrapper>
               <Button
-                disabled={selectedLevel < 0 || proposalCreated}
+                disabled={selectedLevel < 0 || proposalCreated || cacheLoading}
                 onClick={() => setConfirm(true)}
               >
                 <ButtonContentWrapper>
-                  {proposalCreated ? 'Proposal Submitted' : 'Submit Proposal'}
-                  {loading ? (
+                  {proposalCreated
+                    ? 'Proposal Submitted'
+                    : cacheLoading
+                    ? 'Crunching REP Numbers'
+                    : 'Submit Proposal'}
+                  {loading || cacheLoading ? (
                     <PendingCircle height="10px" width="10px" />
                   ) : null}
                 </ButtonContentWrapper>
