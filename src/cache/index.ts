@@ -1827,13 +1827,21 @@ export async function getProposalTitlesFromIPFS(
       '0xbd5a578170b28eedb9ed05adcd7a904180a18178a7fee5627640bce217601f60',
       '0x216c41327eb0d8e6b64018626193d132d379b43b9b031720ee6a11494ad400a7',
       '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
+      '0x1e6c8f56755897b1aea4f47b009095e9bee23714a87094b48dbb78c8744fd5b2',
+      '0x4cbdd4c473e3c2dc6090cd2842b6884770406a43dd96d1abe36167b7437d9bec',
+      '0x5016d176a2004ff7dfd1a3bf358f2d73c57d9e4b2e64053888f77a2e3555f101',
 
       // TODO: Fix this xdai proposal IPFS content
       '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
     ];
 
-    // If the script is running on the client side and it already tried three times, continue.
-    if (invalidTitleProposals.indexOf(proposal.id) > -1 || retryIntent > 3) {
+    // If the script is running on the client side and it already tried once, or has the title, continue.
+    if (
+      invalidTitleProposals.indexOf(proposal.id) > -1 ||
+      retryIntent > 3 ||
+      (!isNode() && retryIntent > 0) ||
+      proposal.title
+    ) {
       retryIntent = 0;
       continue;
     }
