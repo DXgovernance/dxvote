@@ -43,7 +43,7 @@ const Divider = styled.hr`
 
 const BlockButton = styled(Button)`
   width: 100%;
-  margin-top: 1.5rem;
+  margin: 1.5rem 0 0;
 `;
 
 const TransactionsList = styled.div`
