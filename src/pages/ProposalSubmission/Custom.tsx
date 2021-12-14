@@ -305,7 +305,11 @@ const NewProposalPage = observer(() => {
           } else {
             callData = call.dataValues[0];
           }
-          if (callToController && call.to !== networkContracts.controller) {
+          if (
+            schemeToUse.type === 'WalletScheme' &&
+            callToController &&
+            call.to !== networkContracts.controller
+          ) {
             return daoService.encodeControllerGenericCall(
               call.to,
               callData,
