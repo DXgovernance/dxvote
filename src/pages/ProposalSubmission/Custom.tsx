@@ -306,7 +306,7 @@ const NewProposalPage = observer(() => {
             callData = call.dataValues[0];
           }
           if (
-            schemeToUse.type === 'WalletScheme' &&
+            isWalletScheme(schemeToUse) &&
             callToController &&
             call.to !== networkContracts.controller
           ) {
