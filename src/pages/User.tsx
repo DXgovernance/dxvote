@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
+import { useState } from 'react';
 import {
   BlockchainLink,
   Row,
@@ -11,6 +12,7 @@ import {
   Subtitle,
   Button,
 } from '../components/common';
+import UserVestingInfoModal from '../components/UserVestingInfoModal';
 import { formatBalance } from '../utils';
 import { useContext } from '../contexts';
 import useExporters from '../hooks/useExporters';
@@ -27,19 +29,21 @@ const ListRow = styled.div`
   borderbottom: ${({ borderBottom }) => (borderBottom ? '1px solid' : '')};
 `;
 
-const UserPage = observer(() => {
+const UserPage = observer(() => { 
   let history = useHistory();
 
   const {
     context: { daoStore, configStore },
   } = useContext();
   const userAddress = useLocation().pathname.split('/')[3];
-  const { exportToCSV, triggerDownload } = useExporters();
+  const { exportToCSV, triggerDownload } = useExporters(); 
   const userEvents = daoStore.getUserEvents(userAddress);
   const userInfo = daoStore.getUser(userAddress);
   const networkName = configStore.getActiveChainName();
   const redeemsLeft = daoStore.getUserRedeemsLeft(userAddress);
   const userVestingContracts = daoStore.getUserVestingContracts(userAddress);
+  const [isVestingInfoModalOpen, setIsVestingInfoModalOpen] = useState(false);
+  const [selectedModalVestingContract, setSelectedModalVestingContract] = useState(null);
 
   const getExportFileName = () => {
     return `history_${userAddress}-${moment().format('YYYY-MM-DD')}`;
@@ -58,6 +62,7 @@ const UserPage = observer(() => {
   };
 
   return (
+    <>
     <Box>
       <Subtitle>
         User: <BlockchainLink size="long" text={userAddress} toCopy />
@@ -66,7 +71,7 @@ const UserPage = observer(() => {
         <InfoBox>
           {formatBalance(userInfo.repBalance, 18, 0)} REP (
           {userInfo.repPercentage})
-        </InfoBox>
+        </InfoBox> 
         <InfoBox>
           {userEvents.votes.filter(vote => vote.vote === 1).length} Positive
           Votes
@@ -160,6 +165,7 @@ const UserPage = observer(() => {
           <ListRow
             key={'vestingContract' + i}
             borderBottom={i < arr.length - 1}
+            onClick={() => { setSelectedModalVestingContract(contract); setIsVestingInfoModalOpen(true);}}
           >
             <span>
               {contract.address} / Cliff:{' '}
@@ -170,6 +176,8 @@ const UserPage = observer(() => {
         );
       })}
     </Box>
+      <UserVestingInfoModal contract={selectedModalVestingContract} isOpen={isVestingInfoModalOpen} onDismiss={() => { setIsVestingInfoModalOpen(false); setSelectedModalVestingContract(null); }}/>
+    </>
   );
 });
 
