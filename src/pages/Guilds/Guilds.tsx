@@ -6,6 +6,8 @@ import { Box } from '../../components/Guilds/common/Layout';
 import { Sidebar } from '../../components/Guilds/Sidebar/';
 import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard from '../../components/Guilds/ProposalCard';
+import { useProposals } from 'hooks/Guilds/useProposals';
+import PendingCircle from 'components/common/PendingCircle';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -33,7 +35,7 @@ const ProposalsList = styled(Box)`
   margin-top: 1rem;
 `;
 
-const proposalsMock = [
+export const proposalsMock = [
   {
     title: 'DXD Buyback Program Extension #3 Proposal',
     description:
@@ -47,6 +49,13 @@ const proposalsMock = [
 ];
 
 const GuildsPage: React.FC = () => {
+  // @TODO: parse guild contract address from where?
+  // @TODO: loading designs
+  // @TODO: error designs
+  const GUILDS_ADDRESS = '0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF';
+  const { proposals, loading, error } = useProposals(GUILDS_ADDRESS);
+  console.debug('Guilds Proposals: ', proposals, loading, error);
+
   return (
     <PageContainer>
       <SidebarContent>
@@ -54,13 +63,17 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <Filter />
+        {loading && (
+          <PendingCircle height="100px" width="100px" color="black" />
+        )}
         <ProposalsList>
-          {proposalsMock.map(proposal => (
-            <ProposalCard
-              title={proposal.title}
-              description={proposal.description}
-            />
-          ))}
+          {!loading &&
+            proposals.map(proposal => (
+              <ProposalCard
+                title={proposal.title}
+                description={proposal.contentHash}
+              />
+            ))}
         </ProposalsList>
       </PageContent>
     </PageContainer>

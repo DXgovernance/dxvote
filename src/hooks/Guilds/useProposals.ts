@@ -24,34 +24,30 @@ export interface GuildsProposal {
 
 export const useProposals = (contractAddress: string): useProposalsReturns => {
   const [proposals, setProposals] = useState<GuildsProposal[]>([]);
-  const [proposalIds, setProposalIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const contract = useERC20Guild(contractAddress);
 
   useEffect(() => {
-    setLoading(true);
     if (!contract) return null;
-    const getProposalIds = async () => {
-      const ids = await contract.getProposalsIds();
-      return setProposalIds(ids);
-    };
 
     const getProposals = async () => {
-      const proposals = await Promise.all(
-        proposalIds.map(id => contract.getProposal(id))
-      );
-      return setProposals(proposals);
+      try {
+        setLoading(true);
+        const ids = await contract.getProposalsIds();
+        const proposals = await Promise.all(
+          ids.map(id => contract.getProposal(id))
+        );
+        return setProposals(proposals);
+      } catch (e) {
+        setError(e);
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
     };
-    try {
-      getProposalIds();
-      getProposals();
-    } catch (e) {
-      setError(e);
-    } finally {
-      setLoading(false);
-    }
+    getProposals();
   }, [contractAddress, contract]);
 
   return {
