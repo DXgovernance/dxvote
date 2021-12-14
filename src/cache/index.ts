@@ -1835,8 +1835,7 @@ export async function getProposalTitlesFromIPFS(
       '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
     ];
 
-    // If the script is running on the client side and it already tried three times, continue.
-    console.log(proposal.title);
+    // If the script is running on the client side and it already tried once, or has the title, continue.
     if (
       invalidTitleProposals.indexOf(proposal.id) > -1 ||
       retryIntent > 3 ||
