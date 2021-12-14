@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from 'ethers/providers';
 import { useMemo } from 'react';
 import { getContract } from '../../../utils/contracts';
-import ERC20Guild_ABI from '../../../abis/ERC20Guild.json';
+import ERC20Guild_ABI from '../../../contracts/ERC20Guild.json';
 import { ERC20Guild } from '../../../types/ERC20Guild';
 
 export default function useContract<T extends Contract>(
