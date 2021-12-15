@@ -258,7 +258,9 @@ const NewProposalPage = observer(() => {
           schemeToUse.controllerAddress === networkContracts.controller;
 
         to = calls.map(call => {
-          return callToController ? networkContracts.controller : call.to;
+          return isWalletScheme(schemeToUse) && callToController
+            ? networkContracts.controller
+            : call.to;
         });
 
         data = calls.map(call => {
