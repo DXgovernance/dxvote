@@ -58,7 +58,10 @@ const Stakes = () => {
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
   const votingMachineTokenName =
-    votingMachines.gen && scheme.votingMachine === votingMachines.gen.address
+    (votingMachines.gen &&
+      scheme.votingMachine === votingMachines.gen.address) ||
+    (votingMachines.gen2 &&
+      scheme.votingMachine === votingMachines.gen2.address)
       ? 'GEN'
       : 'DXD';
 
