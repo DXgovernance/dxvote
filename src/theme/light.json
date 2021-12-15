@@ -43,6 +43,7 @@
   },
   "radii": {
     "curved": "6px",
+    "curved2": "10px",
     "pill": "32px",
     "badge": "50%"
   }
