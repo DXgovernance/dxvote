@@ -25,11 +25,16 @@ export default class PinataService {
 
   async isAuthenticated() {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
+    const defaultApiKey = process.env.PINATA_JWT_KEY;
     try {
       const auth = await axios({
         method: 'GET',
         url: 'https://api.pinata.cloud/data/testAuthentication',
-        headers: { Authorization: `Bearer ${pinataApiKey}` },
+        headers: {
+          Authorization: `Bearer ${
+            pinataApiKey ? pinataApiKey : defaultApiKey
+          }`,
+        },
       });
       this.auth = auth.status === 200;
     } catch (error) {
@@ -39,6 +44,7 @@ export default class PinataService {
 
   async pin(hashToPin: String) {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
+    const defaultApiKey = process.env.PINATA_JWT_KEY;
     return axios({
       method: 'POST',
       url: 'https://api.pinata.cloud/pinning/pinByHash',
@@ -51,16 +57,21 @@ export default class PinataService {
           keyValues: { type: 'proposal' },
         },
       },
-      headers: { Authorization: `Bearer ${pinataApiKey}` },
+      headers: {
+        Authorization: `Bearer ${pinataApiKey ? pinataApiKey : defaultApiKey}`,
+      },
     });
   }
 
   async getPinList() {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
+    const defaultApiKey = process.env.PINATA_JWT_KEY;
     return axios({
       method: 'GET',
       url: `https://api.pinata.cloud/data/pinList?pageLimit=1000&metadata[name]=DXdao ${this.context.configStore.getActiveChainName()}`,
-      headers: { Authorization: `Bearer ${pinataApiKey}` },
+      headers: {
+        Authorization: `Bearer ${pinataApiKey ? pinataApiKey : defaultApiKey}`,
+      },
     });
   }
 }
