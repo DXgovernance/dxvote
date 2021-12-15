@@ -27,15 +27,15 @@ const rl = readline.createInterface({ input, output });
 
 const buildConfig = {
   mainnet: {
-    toBlock: 13777562,
+    toBlock: 13797817,
     reset: false,
   },
   xdai: {
-    toBlock: 19505762,
+    toBlock: 19560176,
     reset: false,
   },
   arbitrum: {
-    toBlock: 3726849,
+    toBlock: 3823419,
     reset: false,
   },
   rinkeby: {

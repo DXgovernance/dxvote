@@ -1,10 +1,9 @@
-import { observer } from 'mobx-react';
-import { isChainIdSupported } from 'provider/connectors';
-import NetworkModal from 'components/NetworkModal';
-import { useContext } from '../../../contexts';
-import { toCamelCaseString } from '../../../utils';
-import { Button, ButtonIcon, IconButton } from '../common/Button';
+import { useState } from 'react';
+import { useWeb3React } from '@web3-react/core';
 
+import { getChains, isChainIdSupported } from 'provider/connectors';
+import { Button, ButtonIcon, IconButton } from '../common/Button';
+import NetworkModal from '../Web3Modals/NetworkModal';
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
 import xdaiIcon from '../../../assets/images/xdai.svg';
@@ -18,15 +17,15 @@ const iconsByChain = {
   1337: ethereumIcon,
 };
 
-const NetworkButton = observer(() => {
-  const {
-    context: { modalStore, providerStore, configStore },
-  } = useContext();
+const NetworkButton = () => {
+  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
 
-  const { chainId, error } = providerStore.getActiveWeb3React();
+  const { chainId, error } = useWeb3React();
+  const chainName =
+    getChains().find(chain => chain.id === chainId)?.displayName || null;
 
   const toggleNetworkModal = () => {
-    modalStore.toggleNetworkModal();
+    setIsNetworkModalOpen(!isNetworkModalOpen);
   };
 
   function getNetworkStatus() {
@@ -36,7 +35,7 @@ const NetworkButton = observer(() => {
       return (
         <IconButton onClick={toggleNetworkModal} iconLeft>
           <ButtonIcon src={iconsByChain[chainId]} alt={'Icon'} />
-          {toCamelCaseString(configStore.getActiveChainName())}
+          {chainName}
         </IconButton>
       );
     } else {
@@ -51,9 +50,9 @@ const NetworkButton = observer(() => {
   return (
     <>
       {getNetworkStatus()}
-      <NetworkModal />
+      <NetworkModal isOpen={isNetworkModalOpen} onClose={toggleNetworkModal} />
     </>
   );
-});
+};
 
 export default NetworkButton;
