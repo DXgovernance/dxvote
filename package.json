@@ -4,6 +4,7 @@
   "description": "dxvote application of DXdao.",
   "scripts": {
     "start": "./scripts/start.sh",
+      "postinstall": "typechain",
     "build": "./scripts/build.sh",
     "build-cache": "dotenv -e .env.development ./scripts/buildCache.sh",
     "upload-config": "yarn dotenv -e .env.development node scripts/uploadConfigFile.ts",
