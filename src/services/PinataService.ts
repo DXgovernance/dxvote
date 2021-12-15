@@ -9,6 +9,8 @@ export default class PinataService {
   constructor(context: RootContext) {
     this.context = context;
   }
+  defaultApiKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI4ZTNlZjUzNi0wZWQ5LTQ4YzAtOTFlYS1kNzUwYjk0Nzk4ZDMiLCJlbWFpbCI6Im1lQHJvc3NuZWlsc29uLmRldiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImlkIjoiRlJBMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2V9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiJlNmM5ZDA4ZGY3ODY0YWRhZWIyMyIsInNjb3BlZEtleVNlY3JldCI6ImRmYmY4ZmNiNGQ0YjQxNWViODgyZDM1YjgyMDFlMDVjNjk1MjBkZDllOTg2MzgxZTY3YTI1YTk2N2YyOWQxOGQiLCJpYXQiOjE2Mzk1OTg2MTl9.tkenai9BlBubfnPJmIXz9DkjJg12aCyk3BAtAc-TU1A';
 
   async updatePinList() {
     // const pinList = await this.getPinList();
@@ -25,14 +27,13 @@ export default class PinataService {
 
   async isAuthenticated() {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
-    const defaultApiKey = process.env.PINATA_JWT_KEY;
     try {
       const auth = await axios({
         method: 'GET',
         url: 'https://api.pinata.cloud/data/testAuthentication',
         headers: {
           Authorization: `Bearer ${
-            pinataApiKey ? pinataApiKey : defaultApiKey
+            pinataApiKey ? pinataApiKey : this.defaultApiKey
           }`,
         },
       });
@@ -44,7 +45,6 @@ export default class PinataService {
 
   async pin(hashToPin: String) {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
-    const defaultApiKey = process.env.PINATA_JWT_KEY;
     return axios({
       method: 'POST',
       url: 'https://api.pinata.cloud/pinning/pinByHash',
@@ -58,19 +58,22 @@ export default class PinataService {
         },
       },
       headers: {
-        Authorization: `Bearer ${pinataApiKey ? pinataApiKey : defaultApiKey}`,
+        Authorization: `Bearer ${
+          pinataApiKey ? pinataApiKey : this.defaultApiKey
+        }`,
       },
     });
   }
 
   async getPinList() {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
-    const defaultApiKey = process.env.PINATA_JWT_KEY;
     return axios({
       method: 'GET',
       url: `https://api.pinata.cloud/data/pinList?pageLimit=1000&metadata[name]=DXdao ${this.context.configStore.getActiveChainName()}`,
       headers: {
-        Authorization: `Bearer ${pinataApiKey ? pinataApiKey : defaultApiKey}`,
+        Authorization: `Bearer ${
+          pinataApiKey ? pinataApiKey : this.defaultApiKey
+        }`,
       },
     });
   }
