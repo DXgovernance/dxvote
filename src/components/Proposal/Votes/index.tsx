@@ -236,16 +236,14 @@ const Votes = () => {
         votedAmount.toNumber() !== 0 && (
           <SpaceAroundRow>
             <TextCenter>
-              {' '}
-              Already voted {votedAmount.toNumber() > 0
-                ? 'for'
-                : 'against'}{' '}
+              {`
+              Already voted ${votedAmount.toNumber() > 0 ? 'for' : 'against'}
               with
-              {votedAmount
+              ${votedAmount
                 .times('100')
                 .div(totalRepAtProposalCreation)
                 .toFixed(2)}
-              % REP
+              % REP`}
             </TextCenter>
           </SpaceAroundRow>
         )

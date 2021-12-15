@@ -60,7 +60,7 @@ const Stakes = () => {
   const votingMachineTokenName =
     votingMachines.gen && scheme.votingMachine === votingMachines.gen.address
       ? 'GEN'
-      : 'DX';
+      : 'DXD';
 
   const { dxdApproved, genApproved } = userStore.getUserInfo();
   const votingMachineTokenApproved =
@@ -207,7 +207,9 @@ const Stakes = () => {
 
       {stakedAmount.toNumber() > 0 ? (
         <SpaceAroundRow>
-          Already staked {stakedAmount.toNumber() > 0 ? 'for' : 'against'} with
+          {`Already staked ${
+            stakedAmount.toNumber() > 0 ? 'for' : 'against'
+          } with `}
           {formatBalance(stakedAmount).toString()} {votingMachineTokenName}
         </SpaceAroundRow>
       ) : (
