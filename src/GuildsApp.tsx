@@ -1,4 +1,10 @@
-import { HashRouter, Route, Switch, useHistory } from 'react-router-dom';
+import {
+  HashRouter,
+  Route,
+  Switch,
+  useHistory,
+  Redirect,
+} from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { Container } from './components/Guilds/common/Layout';
 
@@ -30,6 +36,9 @@ const GuildsApp = () => {
             <Header />
             <Container>
               <Switch>
+                <Route exact path="/">
+                  <Redirect to="/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef" />
+                </Route>
                 <Route exact path="/:guild_id">
                   <FilterProvider>
                     <GuildsPage />
