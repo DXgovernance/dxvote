@@ -27,7 +27,6 @@ import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
 import { CreateMetadataPage } from 'pages/Metadata';
 import GuildsApp from './GuildsApp';
-import { ProposalProvider } from 'contexts/proposals';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -51,9 +50,7 @@ const Routes = () => {
     <PageRouter>
       <Route exact path="/">
         {' '}
-        <ProposalProvider>
-          <ProposalsPage />{' '}
-        </ProposalProvider>
+        <ProposalsPage />{' '}
       </Route>
       <Route exact path="/config">
         {' '}
@@ -69,9 +66,7 @@ const Routes = () => {
       </Route>
       <Route exact path="/:network/proposals">
         {' '}
-        <ProposalProvider>
-          <ProposalsPage />{' '}
-        </ProposalProvider>
+        <ProposalsPage />{' '}
       </Route>
       <Route exact path="/:network/create/type">
         {' '}
