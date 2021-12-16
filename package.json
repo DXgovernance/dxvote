@@ -14,7 +14,7 @@
     "postinstall": "typechain --target=ethers-v4 --out-dir src/types/ './src/contracts/*.json'"
   },
   "engines": {
-    "node": "^14.17.6"
+    "node": "^16.13.0"
   },
   "repository": {
     "type": "git",
