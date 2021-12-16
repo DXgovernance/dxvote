@@ -34,7 +34,7 @@
   },
   "include": [
     "src",
-    "scritps"
+    "scripts"
   ],
   "exclude": [
     "node_modules",
