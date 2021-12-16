@@ -95,9 +95,9 @@ const WalletWeb3Manager = ({ children }) => {
     console.debug('[WalletWeb3Manager] Render: Eager load not tried');
     return null;
   }
-  if (networkError) {
+  if (networkError || !networkActive) {
     console.debug(
-      '[WalletWeb3Manager] Render: Network error, showing modal error.'
+      '[WalletWeb3Manager] Render: Network error.'
     );
     return null;
   } else {

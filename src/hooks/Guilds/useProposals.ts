@@ -30,7 +30,7 @@ export const useProposals = (contractAddress: string): useProposalsReturns => {
   const contract = useERC20Guild(contractAddress);
 
   useEffect(() => {
-    // if (!contract);
+    if (!contract) return;
 
     const getProposals = async () => {
       try {
@@ -40,7 +40,7 @@ export const useProposals = (contractAddress: string): useProposalsReturns => {
           ids.map(id => contract.getProposal(id))
         );
         setError(null);
-        return setProposals(proposals);
+        setProposals(proposals);
       } catch (e) {
         setError(e);
         console.error(e);
@@ -49,7 +49,7 @@ export const useProposals = (contractAddress: string): useProposalsReturns => {
       }
     };
     getProposals();
-  }, [contractAddress, contract]);
+  }, [contract]);
 
   return {
     proposals,
