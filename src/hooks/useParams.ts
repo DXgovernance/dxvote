@@ -27,7 +27,7 @@ export const useParams = (searchType: string, defaultSearchtype: string) => {
     history.push({
       location: location.pathname,
       search: `${searchType}=${getParams}`,
-    });
+    } as any);
     setParams(event.target.value);
   }
 

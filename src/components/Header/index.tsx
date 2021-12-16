@@ -49,7 +49,7 @@ const WarningDev = styled.div`
 `;
 
 const Header = observer(() => {
-  const NavItem = withRouter(({ route, history, children }) => {
+  const NavItem = withRouter(({ route, history, children }: any) => {
     return (
       <div
         style={{ cursor: 'pointer' }}

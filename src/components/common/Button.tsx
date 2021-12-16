@@ -22,8 +22,8 @@ export const Button = styled.button`
   }
 `;
 
-export const LinkButton = withRouter(
-  ({ route, history, children, ...rest }) => {
+export const LinkButton: any = withRouter(
+  ({ route, history, children, ...rest }: any) => {
     return (
       <Button
         onClick={() => {

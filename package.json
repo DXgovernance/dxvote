@@ -90,6 +90,7 @@
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@typechain/ethers-v4": "^6.0.0",
     "@types/jsonexport": "^3.0.2",
+    "@types/react-router-dom": "^5.1.2",
     "hardhat": "^2.2.0",
     "hardhat-dependency-compiler": "^1.1.1",
     "prettier": "2.5.0",
