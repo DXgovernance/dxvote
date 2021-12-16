@@ -24,7 +24,7 @@
     "url": "https://github.com/DXgovernance/dxvote/issues"
   },
   "dependencies": {
-    "@types/node": "^13.7.0",
+    "@types/node": "^16.11.7",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.5",
     "@uiw/react-md-editor": "1.14.0",
