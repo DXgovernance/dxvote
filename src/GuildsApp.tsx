@@ -37,14 +37,14 @@ const GuildsApp = () => {
             <Container>
               <Switch>
                 <Route exact path="/">
-                  <Redirect to="/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef" />
+                  <Redirect to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef" />
                 </Route>
-                <Route exact path="/:guild_id">
+                <Route exact path="/:chain_name/:guild_id">
                   <FilterProvider>
                     <GuildsPage />
                   </FilterProvider>
                 </Route>
-                <Route path="/:guild_id/proposal/:proposal_id">
+                <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
                   <ProposalPage />
                 </Route>
               </Switch>
