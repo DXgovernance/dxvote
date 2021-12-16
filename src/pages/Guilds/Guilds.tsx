@@ -35,11 +35,10 @@ const ProposalsList = styled(Box)`
   margin-top: 1rem;
 `;
 
-
 const GuildsPage: React.FC = () => {
   const GUILDS_ADDRESS = '0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF';
   const { proposals, loading, error } = useProposals(GUILDS_ADDRESS);
-  console.debug('Guilds Proposals: ', proposals, loading, error);
+  console.log('Guilds Proposals: ', proposals, loading, error);
 
   return (
     <PageContainer>
@@ -52,7 +51,8 @@ const GuildsPage: React.FC = () => {
           <PendingCircle height="100px" width="100px" color="black" />
         )}
         <ProposalsList>
-          {!loading && !error &&
+          {!loading &&
+            !error &&
             proposals.map(proposal => (
               <ProposalCard
                 title={proposal.title}
@@ -60,11 +60,7 @@ const GuildsPage: React.FC = () => {
               />
             ))}
         </ProposalsList>
-        {error && (
-          <div>
-            {error.message}
-          </div>
-        )}
+        {error && <div>{error.message}</div>}
       </PageContent>
     </PageContainer>
   );

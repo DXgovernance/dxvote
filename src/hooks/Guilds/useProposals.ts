@@ -30,7 +30,7 @@ export const useProposals = (contractAddress: string): useProposalsReturns => {
   const contract = useERC20Guild(contractAddress);
 
   useEffect(() => {
-    if (!contract) return null;
+    // if (!contract);
 
     const getProposals = async () => {
       try {
@@ -39,6 +39,7 @@ export const useProposals = (contractAddress: string): useProposalsReturns => {
         const proposals = await Promise.all(
           ids.map(id => contract.getProposal(id))
         );
+        setError(null);
         return setProposals(proposals);
       } catch (e) {
         setError(e);
