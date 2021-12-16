@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 class GlobalErrorBoundary extends React.Component<{}, { hasError: boolean }> {
   constructor(props) {

@@ -19,7 +19,6 @@ const useENSAvatar = (
   useEffect(() => {
     if (!resolver) return;
 
-
     async function getAvatarUri() {
       try {
         let avatar = await resolver.text(namehash(ensName), 'avatar');

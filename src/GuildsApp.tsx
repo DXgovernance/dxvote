@@ -32,34 +32,34 @@ const GuildsApp = () => {
     <ThemeProvider theme={theme}>
       <HashRouter basename="/guilds">
         <GlobalErrorBoundary>
-        <MainnetWeb3Manager>
-          <WalletWeb3Manager>
-            <GlobalStyle />
-            <Header />
-            <Container>
-              <Switch>
-                <Redirect
-                  exact
-                  from="/"
-                  to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                />
-                <Redirect
-                  exact
-                  from="/:chain_name"
-                  to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                />
-                <Route exact path="/:chain_name/:guild_id">
-                  <FilterProvider>
-                    <GuildsPage />
-                  </FilterProvider>
-                </Route>
-                <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
-                  <ProposalPage />
-                </Route>
-              </Switch>
-            </Container>
-          </WalletWeb3Manager>
-        </MainnetWeb3Manager>
+          <MainnetWeb3Manager>
+            <WalletWeb3Manager>
+              <GlobalStyle />
+              <Header />
+              <Container>
+                <Switch>
+                  <Redirect
+                    exact
+                    from="/"
+                    to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                  />
+                  <Redirect
+                    exact
+                    from="/:chain_name"
+                    to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                  />
+                  <Route exact path="/:chain_name/:guild_id">
+                    <FilterProvider>
+                      <GuildsPage />
+                    </FilterProvider>
+                  </Route>
+                  <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                    <ProposalPage />
+                  </Route>
+                </Switch>
+              </Container>
+            </WalletWeb3Manager>
+          </MainnetWeb3Manager>
         </GlobalErrorBoundary>
       </HashRouter>
     </ThemeProvider>

@@ -37,7 +37,7 @@ const ProposalsList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const { guild_id: guildId } = useParams<{ guild_id?: string}>();
+  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
   const { proposals, loading, error } = useProposals(guildId);
   console.debug('Guilds Proposals: ', proposals, loading, error);
 

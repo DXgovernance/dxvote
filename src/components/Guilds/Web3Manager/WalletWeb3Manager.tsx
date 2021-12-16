@@ -62,7 +62,6 @@ const WalletWeb3Manager = ({ children }) => {
     if (!window.ethereum) return () => {};
 
     const handleChainChange = (chainId: string) => {
-      console.log("WalletWeb3Manager: handleChainChange", chainId);
       const chain = chains.find(
         chain => `0x${chain.id.toString(16)}` == chainId
       );
@@ -96,9 +95,7 @@ const WalletWeb3Manager = ({ children }) => {
     return null;
   }
   if (networkError || !networkActive) {
-    console.debug(
-      '[WalletWeb3Manager] Render: Network error.'
-    );
+    console.debug('[WalletWeb3Manager] Render: Network error.');
     return null;
   } else {
     return children;
