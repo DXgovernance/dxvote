@@ -351,6 +351,7 @@ export interface TokenVesting {
   duration: string;
   owner: string;
   value: string;
+  start: string;
 }
 
 export interface ChainConfig {

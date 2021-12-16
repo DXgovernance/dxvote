@@ -569,6 +569,9 @@ export const updateVestingFactoryCreatedContractsInfo = async function (
           duration: await tokenVestingContract.methods.duration().call(),
           owner: await tokenVestingContract.methods.owner().call(),
           value: transaction?.value ?? '0',
+          start: await tokenVestingContract.methods.start().call(),
+          isOwner: await tokenVestingContract.methods.isOwner().call(),
+          revocable: await tokenVestingContract.methods.revocable().call(),
         };
 
         networkCache.vestingContracts = [

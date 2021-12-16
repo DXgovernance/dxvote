@@ -29,21 +29,22 @@ const ListRow = styled.div`
   borderbottom: ${({ borderBottom }) => (borderBottom ? '1px solid' : '')};
 `;
 
-const UserPage = observer(() => { 
+const UserPage = observer(() => {
   let history = useHistory();
 
   const {
     context: { daoStore, configStore },
   } = useContext();
   const userAddress = useLocation().pathname.split('/')[3];
-  const { exportToCSV, triggerDownload } = useExporters(); 
+  const { exportToCSV, triggerDownload } = useExporters();
   const userEvents = daoStore.getUserEvents(userAddress);
   const userInfo = daoStore.getUser(userAddress);
   const networkName = configStore.getActiveChainName();
   const redeemsLeft = daoStore.getUserRedeemsLeft(userAddress);
   const userVestingContracts = daoStore.getUserVestingContracts(userAddress);
   const [isVestingInfoModalOpen, setIsVestingInfoModalOpen] = useState(false);
-  const [selectedModalVestingContract, setSelectedModalVestingContract] = useState(null);
+  const [selectedModalVestingContract, setSelectedModalVestingContract] =
+    useState(null);
 
   const getExportFileName = () => {
     return `history_${userAddress}-${moment().format('YYYY-MM-DD')}`;
@@ -63,120 +64,131 @@ const UserPage = observer(() => {
 
   return (
     <>
-    <Box>
-      <Subtitle>
-        User: <BlockchainLink size="long" text={userAddress} toCopy />
-      </Subtitle>
-      <Row>
-        <InfoBox>
-          {formatBalance(userInfo.repBalance, 18, 0)} REP (
-          {userInfo.repPercentage})
-        </InfoBox> 
-        <InfoBox>
-          {userEvents.votes.filter(vote => vote.vote === 1).length} Positive
-          Votes
-        </InfoBox>
-        <InfoBox>
-          {userEvents.votes.filter(vote => vote.vote === 2).length} Negative
-          Votes
-        </InfoBox>
-        <InfoBox>{userEvents.newProposal.length} Proposals</InfoBox>
-      </Row>
+      <Box>
+        <Subtitle>
+          User: <BlockchainLink size="long" text={userAddress} toCopy />
+        </Subtitle>
+        <Row>
+          <InfoBox>
+            {formatBalance(userInfo.repBalance, 18, 0)} REP (
+            {userInfo.repPercentage})
+          </InfoBox>
+          <InfoBox>
+            {userEvents.votes.filter(vote => vote.vote === 1).length} Positive
+            Votes
+          </InfoBox>
+          <InfoBox>
+            {userEvents.votes.filter(vote => vote.vote === 2).length} Negative
+            Votes
+          </InfoBox>
+          <InfoBox>{userEvents.newProposal.length} Proposals</InfoBox>
+        </Row>
 
-      <h2> Redeems Left </h2>
-      {redeemsLeft.rep.map((proposalId, i) => {
-        return (
-          <span
-            key={'proposalLink' + i}
-            onClick={() => {
-              history.push(`/${networkName}/proposal/${proposalId}`);
-            }}
-            style={{
-              padding: '6px 0px',
-              cursor: 'pointer',
-            }}
-          >
-            REP redeem in Proposal {proposalId}
-          </span>
-        );
-      })}
-      {redeemsLeft.stake.map((proposalId, i) => {
-        return (
-          <span
-            key={'proposalLink' + i}
-            onClick={() => {
-              history.push(`/${networkName}/proposal/${proposalId}`);
-            }}
-            style={{
-              padding: '6px 0px',
-              cursor: 'pointer',
-            }}
-          >
-            Staking token redeem in Proposal {proposalId}
-          </span>
-        );
-      })}
-      {redeemsLeft.bounty.map((proposalId, i) => {
-        return (
-          <span
-            key={'proposalLink' + i}
-            onClick={() => {
-              history.push(`/${networkName}/proposal/${proposalId}`);
-            }}
-            style={{
-              padding: '6px 0px',
-              cursor: 'pointer',
-            }}
-          >
-            Staking token bounty redeem in Proposal {proposalId}
-          </span>
-        );
-      })}
-
-      <TitleRow>
-        <h2>History</h2>
-        <Button onClick={exportCSV}>Export to CSV</Button>
-      </TitleRow>
-
-      {userEvents.history.map((historyEvent, i) => {
-        return (
-          <ListRow
-            key={'userHistoryEvent' + i}
-            borderBottom={i < userEvents.history.length - 1}
-          >
-            <span> {historyEvent.text} </span>
-            <BlockchainLink
-              type="transaction"
-              size="short"
-              text={historyEvent.event.tx}
-              onlyIcon
-            />
-          </ListRow>
-        );
-      })}
-
-      {userVestingContracts.length && (
-        <TitleRow>
-          <h2>Vesting Contracts</h2>
-        </TitleRow>
-      )}
-      {userVestingContracts.map((contract, i, arr) => {
-        return (
-          <ListRow
-            key={'vestingContract' + i}
-            borderBottom={i < arr.length - 1}
-            onClick={() => { setSelectedModalVestingContract(contract); setIsVestingInfoModalOpen(true);}}
-          >
-            <span>
-              {contract.address} / Cliff:{' '}
-              {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
-              {contract.value} wei
+        <h2> Redeems Left </h2>
+        {redeemsLeft.rep.map((proposalId, i) => {
+          return (
+            <span
+              key={'proposalLink' + i}
+              onClick={() => {
+                history.push(`/${networkName}/proposal/${proposalId}`);
+              }}
+              style={{
+                padding: '6px 0px',
+                cursor: 'pointer',
+              }}
+            >
+              REP redeem in Proposal {proposalId}
             </span>
-          </ListRow>
-        );
-      })}
-    </Box>
-      <UserVestingInfoModal contract={selectedModalVestingContract} isOpen={isVestingInfoModalOpen} onDismiss={() => { setIsVestingInfoModalOpen(false); setSelectedModalVestingContract(null); }}/>
+          );
+        })}
+        {redeemsLeft.stake.map((proposalId, i) => {
+          return (
+            <span
+              key={'proposalLink' + i}
+              onClick={() => {
+                history.push(`/${networkName}/proposal/${proposalId}`);
+              }}
+              style={{
+                padding: '6px 0px',
+                cursor: 'pointer',
+              }}
+            >
+              Staking token redeem in Proposal {proposalId}
+            </span>
+          );
+        })}
+        {redeemsLeft.bounty.map((proposalId, i) => {
+          return (
+            <span
+              key={'proposalLink' + i}
+              onClick={() => {
+                history.push(`/${networkName}/proposal/${proposalId}`);
+              }}
+              style={{
+                padding: '6px 0px',
+                cursor: 'pointer',
+              }}
+            >
+              Staking token bounty redeem in Proposal {proposalId}
+            </span>
+          );
+        })}
+
+        <TitleRow>
+          <h2>History</h2>
+          <Button onClick={exportCSV}>Export to CSV</Button>
+        </TitleRow>
+
+        {userEvents.history.map((historyEvent, i) => {
+          return (
+            <ListRow
+              key={'userHistoryEvent' + i}
+              borderBottom={i < userEvents.history.length - 1}
+            >
+              <span> {historyEvent.text} </span>
+              <BlockchainLink
+                type="transaction"
+                size="short"
+                text={historyEvent.event.tx}
+                onlyIcon
+              />
+            </ListRow>
+          );
+        })}
+
+        {userVestingContracts.length && (
+          <TitleRow>
+            <h2>Vesting Contracts</h2>
+          </TitleRow>
+        )}
+        {userVestingContracts.map((contract, i, arr) => {
+          return (
+            <ListRow
+              key={'vestingContract' + i}
+              borderBottom={i < arr.length - 1}
+              onClick={() => {
+                if (!contract.address) return;
+                setSelectedModalVestingContract(contract);
+                setIsVestingInfoModalOpen(true);
+              }}
+            >
+              <span>
+                {contract.address} / Cliff:{' '}
+                {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
+                {contract.value} wei
+              </span>
+            </ListRow>
+          );
+        })}
+      </Box>
+      <UserVestingInfoModal
+        contract={selectedModalVestingContract}
+        isOpen={isVestingInfoModalOpen}
+        onDismiss={() => {
+          setIsVestingInfoModalOpen(false);
+          setSelectedModalVestingContract(null);
+        }}
+      />
     </>
   );
 });
