@@ -17,6 +17,7 @@ import theme from './theme/light.json';
 import { FilterProvider } from 'contexts/Guilds/filters';
 import MainnetWeb3Manager from './components/Guilds/Web3Manager/MainnetWeb3Manager';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
+import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -30,6 +31,7 @@ const GuildsApp = () => {
   return (
     <ThemeProvider theme={theme}>
       <HashRouter basename="/guilds">
+        <GlobalErrorBoundary>
         <MainnetWeb3Manager>
           <WalletWeb3Manager>
             <GlobalStyle />
@@ -58,6 +60,7 @@ const GuildsApp = () => {
             </Container>
           </WalletWeb3Manager>
         </MainnetWeb3Manager>
+        </GlobalErrorBoundary>
       </HashRouter>
     </ThemeProvider>
   );
