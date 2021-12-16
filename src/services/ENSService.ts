@@ -1,5 +1,4 @@
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import { namehash, labelhash } from '@ensdomains/ensjs';
 import { ethers } from 'ethers';
 import RootContext from '../contexts';
 export default class ENSService {
@@ -37,9 +36,6 @@ export default class ENSService {
 
   async resolveContentHash(ensName: string): Promise<string | null> {
     const web3 = this.web3Context.library;
-
-    console.debug('[ENSService] dxvote.eth namehash:', namehash('dxvote.eth'));
-    console.debug('[ENSService] cache labelhash:', labelhash('cache'));
 
     const contentHash = await web3.eth.ens.getContenthash(ensName);
     return contentHash && contentHash.decoded ? contentHash.decoded : null;
