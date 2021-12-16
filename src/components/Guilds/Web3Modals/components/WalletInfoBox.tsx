@@ -13,6 +13,7 @@ import useClipboard from '../../../../hooks/Guilds/useClipboard';
 import { FiCheckCircle, FiCopy, FiExternalLink } from 'react-icons/fi';
 import { findWalletType } from '../../../../provider/connectors';
 import LiveIndicator from './LiveIndicator';
+import { MAINNET_WEB3_ROOT_KEY } from '../../Web3Manager/MainnetWeb3Manager';
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -76,7 +77,10 @@ interface Props {
 
 export default function WalletInfoBox({ openOptions }: Props) {
   const { account, connector, chainId } = useWeb3React();
-  const { ensName, imageUrl, avatarUri } = useENSAvatar(account);
+  const { ensName, imageUrl, avatarUri } = useENSAvatar(
+    account,
+    MAINNET_WEB3_ROOT_KEY
+  );
   const [isCopied, copyAddress] = useClipboard(account, 3000);
 
   const imageUrlToUse = useMemo(() => {

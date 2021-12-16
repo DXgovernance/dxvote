@@ -7,11 +7,14 @@ import useENSResolver from './useENSResolver';
 import useERC721NFT from '../nft/useERC721NFT';
 import useERC1155NFT from '../nft/useERC1155NFT';
 
-const useENSAvatar = (ethAddress: string) => {
-  const { name: ensName } = useENS(ethAddress);
-  const resolver = useENSResolver(ensName);
+const useENSAvatar = (
+  ethAddress: string,
+  web3Context: string = MAINNET_WEB3_ROOT_KEY
+) => {
+  const { name: ensName } = useENS(ethAddress, web3Context);
+  const resolver = useENSResolver(ensName, web3Context);
   const [avatarUri, setAvatarUri] = useState<string>(null);
-  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress);
+  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, web3Context);
 
   useEffect(() => {
     if (!resolver) return;

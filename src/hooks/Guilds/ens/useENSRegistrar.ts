@@ -5,8 +5,8 @@ import ensRegistrarABI from '../../../abis/ENSRegistrar.json';
 import { ENS_REGISTRAR_ADDRESS } from '../../../constants/addresses';
 import { getContract } from '../../../utils/contracts';
 
-export default function useENSRegistrar() {
-  const { library } = useWeb3React();
+export default function useENSRegistrar(web3Context?: string) {
+  const { library } = useWeb3React(web3Context);
 
   const resolver = useMemo(() => {
     try {
