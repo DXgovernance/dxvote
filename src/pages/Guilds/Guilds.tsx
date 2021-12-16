@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
 import { Box } from '../../components/Guilds/common/Layout';
 
@@ -36,9 +37,9 @@ const ProposalsList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const GUILDS_ADDRESS = '0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF';
-  const { proposals, loading, error } = useProposals(GUILDS_ADDRESS);
-  console.log('Guilds Proposals: ', proposals, loading, error);
+  const guildId = useLocation().pathname.split('/')[1];
+  const { proposals, loading, error } = useProposals(guildId);
+  console.debug('Guilds Proposals: ', proposals, loading, error);
 
   return (
     <PageContainer>

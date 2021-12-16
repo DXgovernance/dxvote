@@ -30,12 +30,12 @@ const GuildsApp = () => {
             <Header />
             <Container>
               <Switch>
-                <Route exact path="/">
+                <Route exact path="/:guild_id">
                   <FilterProvider>
                     <GuildsPage />
                   </FilterProvider>
                 </Route>
-                <Route path="/:proposal_id">
+                <Route path="/:guild_id/proposal/:proposal_id">
                   <ProposalPage />
                 </Route>
               </Switch>
