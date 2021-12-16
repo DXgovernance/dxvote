@@ -20,8 +20,7 @@ import {
   votedBeforeBoosted,
 } from '../utils';
 import { TokenVesting } from '../types/types';
-import { ProposalsExtended } from 'contexts/proposals';
-
+import { ProposalsExtended } from '../types/types';
 export default class DaoStore {
   daoCache: DaoNetworkCache;
   context: RootContext;

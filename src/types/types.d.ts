@@ -398,3 +398,15 @@ export interface RecommendedCallUsed {
   params: CallParameterDefinition[];
   decodeText: string;
 }
+
+export type ProposalsExtended = Proposal &
+  ProposalStateChange &
+  VotingMachineParameters &
+  Pick<Scheme, 'maxSecondsForExecution' | 'type'> & {
+    autoBoost: Boolean;
+    boostTime: BigNumber;
+    finishTime: BigNumber;
+    // @TODO convert PA to enum
+    status: any;
+    pendingAction: any;
+  };

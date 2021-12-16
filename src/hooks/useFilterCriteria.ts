@@ -1,5 +1,4 @@
 import { useContext } from 'contexts';
-import { ProposalsExtended } from 'contexts/proposals';
 import { useState, useEffect } from 'react';
 import {
   orderByNewestTimeToFinish,
@@ -8,6 +7,7 @@ import {
   ZERO_ADDRESS,
 } from 'utils';
 import { useRep } from './useRep';
+import { ProposalsExtended } from '../types/types';
 
 interface useFilterCriteriaReturns {
   proposals: ProposalsExtended[];
