@@ -1,4 +1,4 @@
-import { Interface } from 'ethers/utils';
+import { utils } from 'ethers';
 import { ContractType } from 'stores/Provider';
 import RootContext from '../contexts';
 
@@ -35,19 +35,23 @@ export default class ABIService {
    */
   decodeCall(data: string, contractType?: ContractType, ABI?: any) {
     const { providerStore } = this.context;
-    let contractInterface = new Interface(ABI || this.getAbi(contractType));
+    let contractInterface = new utils.Interface(
+      ABI || this.getAbi(contractType)
+    );
 
     const { library } = providerStore.getActiveWeb3React();
 
     const functionSignature = data.substring(0, 10);
     for (const functionName in contractInterface.functions) {
       if (
-        contractInterface.functions[functionName].sighash === functionSignature
+        utils.Interface.getSighash(
+          contractInterface.getFunction(functionName)
+        ) === functionSignature
       ) {
         return {
-          function: contractInterface.functions[functionName],
+          function: contractInterface.getFunction(functionName),
           args: library.eth.abi.decodeParameters(
-            contractInterface.functions[functionName].inputs.map(input => {
+            contractInterface.getFunction(functionName).inputs.map(input => {
               return input.type;
             }),
             data.substring(10)
