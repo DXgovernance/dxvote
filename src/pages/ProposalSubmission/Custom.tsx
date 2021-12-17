@@ -233,9 +233,9 @@ const NewProposalPage = observer(() => {
 
       let uploaded = false;
       while (!uploaded) {
-        const ipfsContent = await ipfsService.getContent(hash);
+        const ipfsContent = await ipfsService.getContentFromIPFS(hash);
         console.debug('[IPFS CONTENT]', ipfsContent);
-        if (ipfsContent === bodyTextToUpload) uploaded = true;
+        if (JSON.stringify(ipfsContent) === bodyTextToUpload) uploaded = true;
         await sleep(1000);
       }
 
