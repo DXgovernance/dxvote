@@ -64,7 +64,7 @@ export const encodeDxdVestingRelease = (library, token) => {
     library.eth.abi.encodeFunctionSignature('release(address)');
 
   const vestingParamsEncoded = library.eth.abi
-    .encodeParameters(['string'], [token])
+    .encodeParameters(['address'], [token])
     .substring(2);
 
   return vestingFunctionEncoded + vestingParamsEncoded;
