@@ -8,6 +8,7 @@ import {
 import { Modal } from '../Modal';
 import { Row as CommonRow, BlockchainLink, Button } from '../common';
 import { TokenVesting } from '../../types/types';
+import { useContext } from '../../contexts';
 // import TokenVestingJSON from '../../contracts/TokenVesting.json';
 // import useVestingContract from './useVestingContract';
 //
@@ -54,33 +55,17 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
   // const [extraContractData, setextraContractData] = useState<{ start: number }>(
   //   { start: 0 }
   // );
-  // const {
-  //   context: {
-  //     providerStore: { web3Context },
-  //   },
-  // } = useContext();
+  const {
+    context: {
+      // providerStore: { web3Context },
+      daoService,
+    },
+  } = useContext();
 
-  // const vestingContract = useVestingContract(
-  //   contract?.address,
-  //   TokenVestingJSON.abi
-  // );
-
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     const data = {
-  //       start: await vestingContract?.start?.call(),
-  //       isOwner: await vestingContract?.isOwner?.call(),
-  //       revocable: await vestingContract?.revocable?.call(),
-  //     };
-
-  //     setextraContractData({
-  //       ...data,
-  //       start: data?.start?.toNumber(),
-  //     });
-  //   };
-
-  //   getData();
-  // }, [vestingContract]);
+  // const vestingContract = useVestingContract({
+  //   address: contract?.address,
+  //   abi: TokenVestingJSON.abi
+  // });
 
   if (!contract) return null;
   console.log('contractdata', contract);
@@ -88,9 +73,11 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
   const handleRedeemClick = async () => {
     if (!showConfirmation) return setShowConfirmation(true);
 
-    // Do the actual transaction here.
-    // TODO: Add a loading state.
-    // TODO: CALL redeem transaction. if success, close modal.
+    try {
+      await daoService.redeemVestingContractDxd(contract.address);
+    } catch (e) {
+      console.log('error', e);
+    }
 
     onDismiss();
   };

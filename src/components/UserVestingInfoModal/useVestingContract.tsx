@@ -3,7 +3,7 @@ import { Web3Provider } from 'ethers/providers';
 import { useMemo } from 'react';
 import { getContract } from '../../utils/contracts';
 
-export default function useVestingContract(address, abi) {
+export default function useVestingContract({ address, abi }) {
   const { library } = useWeb3React();
 
   const resolver = useMemo(() => {
