@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as IPFS from 'ipfs-core'
+import * as IPFS from 'ipfs-core';
 import CID from 'cids';
 import { sleep } from '../utils';
 import RootContext from '../contexts';
