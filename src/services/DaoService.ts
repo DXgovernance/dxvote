@@ -367,7 +367,7 @@ export default class DaoService {
     return providerStore.sendRawTransaction(
       providerStore.getActiveWeb3React(),
       contractAddress,
-      encodeDxdVestingRelease(library, contracts.votingMachines.dxd.address),
+      encodeDxdVestingRelease(library, contracts.votingMachines.dxd.token),
       '0'
     );
   }

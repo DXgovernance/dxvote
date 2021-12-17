@@ -27,6 +27,10 @@ const ListRow = styled.div`
   alignitems: center;
   padding: 6px 0px;
   borderbottom: ${({ borderBottom }) => (borderBottom ? '1px solid' : '')};
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
+  &:hover {
+    opacity: ${({ clickable }) => (clickable ? '0.5' : '1')};
+  }
 `;
 
 const UserPage = observer(() => {
@@ -164,6 +168,7 @@ const UserPage = observer(() => {
         {userVestingContracts.map((contract, i, arr) => {
           return (
             <ListRow
+              clickable
               key={'vestingContract' + i}
               borderBottom={i < arr.length - 1}
               onClick={() => {
