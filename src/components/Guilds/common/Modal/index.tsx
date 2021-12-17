@@ -84,12 +84,12 @@ export interface ModalProps {
   isOpen: boolean;
   onDismiss: () => void;
   header: JSX.Element | string;
+  children: JSX.Element;
   hideHeader?: boolean;
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
-  children: JSX.Element;
   maxWidth?: number;
 }
 
