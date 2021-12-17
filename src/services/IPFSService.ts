@@ -3,7 +3,6 @@ import * as IPFS from 'ipfs-core';
 import CID from 'cids';
 import { sleep } from '../utils';
 import RootContext from '../contexts';
-import any from 'promise.any';
 
 export default class IPFSService {
   private static SLEEP_MS = 1000;
@@ -50,7 +49,7 @@ export default class IPFSService {
   }
 
   async getContentFromIPFS(hash: string) {
-    const response = await any([
+    const response = await Promise.any([
       axios.request({
         url: 'https://ipfs.io/ipfs/' + hash,
         method: 'GET',
