@@ -11,7 +11,6 @@ import {
   ZERO_ADDRESS,
   ANY_ADDRESS,
   ZERO_HASH,
-  // sleep,
   bnum,
   denormalizeBalance,
   encodePermission,
