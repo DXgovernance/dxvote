@@ -45,11 +45,6 @@ export default class MulticallService {
     const { abiService } = this.context;
     const iface = new utils.Interface(abiService.getAbi(call.contractType));
     call.params = call.params ? call.params : [];
-    console.log('test');
-    console.log(call.method);
-    console.log(iface.functions);
-    console.log(iface.getFunction(call.method));
-    console.log(call.params);
     const encoded = iface.encodeFunctionData(
       iface.getFunction(call.method),
       call.params

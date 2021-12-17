@@ -105,7 +105,7 @@ export default class IPFSService {
     while (!uploaded) {
       const ipfsContent = await this.getContentFromIPFS(hash);
       console.debug('[IPFS CONTENT]', ipfsContent);
-      if (ipfsContent === bodyTextToUpload) uploaded = true;
+      if (JSON.stringify(ipfsContent) === bodyTextToUpload) uploaded = true;
       await sleep(1000);
     }
     return hash;
