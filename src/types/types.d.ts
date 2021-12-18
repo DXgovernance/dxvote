@@ -398,3 +398,16 @@ export interface RecommendedCallUsed {
   params: CallParameterDefinition[];
   decodeText: string;
 }
+export interface ProposalStatus {
+  boostTime: BigNumber;
+  finishTime: BigNumber;
+  status: string;
+  pendingAction: number;
+}
+export type ProposalsExtended = Proposal &
+  ProposalStateChange &
+  VotingMachineParameters &
+  ProposalStatus &
+  Pick<Scheme, 'maxSecondsForExecution' | 'type'> & {
+    autoBoost: Boolean;
+  };

@@ -20,7 +20,7 @@ import {
   votedBeforeBoosted,
 } from '../utils';
 import { TokenVesting } from '../types/types';
-
+import { ProposalsExtended } from '../types/types';
 export default class DaoStore {
   daoCache: DaoNetworkCache;
   context: RootContext;
@@ -442,7 +442,7 @@ export default class DaoStore {
     };
   }
 
-  getAllProposals(): Proposal[] {
+  getAllProposals(): ProposalsExtended[] {
     const allProposals = Object.keys(this.getCache().proposals).map(
       proposalId => {
         return this.getCache().proposals[proposalId];
@@ -456,7 +456,12 @@ export default class DaoStore {
         'creationEvent.logIndex',
       ],
       ['asc', 'asc', 'asc', 'asc']
-    );
+    ).map(cacheProposal => {
+      return Object.assign(
+        cacheProposal,
+        this.getProposalStatus(cacheProposal.id)
+      );
+    });
   }
 
   getAllSchemes(): Scheme[] {
