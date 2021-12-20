@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.17.6]
+        node-version: [16.13.0]
     steps:
       - name: Get build workflow details
         uses: potiuk/get-workflow-origin@v1_3

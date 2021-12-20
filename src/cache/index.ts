@@ -28,8 +28,6 @@ import TokenVestingJSON from '../contracts/TokenVesting.json';
 import { getContracts } from '../contracts';
 import RootContext from '../contexts';
 
-import any from 'promise.any';
-
 export const getUpdatedCache = async function (
   context: RootContext,
   networkCache: DaoNetworkCache,
@@ -1861,7 +1859,7 @@ export async function getProposalTitlesFromIPFS(
         console.debug(
           `Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
         );
-        const response = await any([
+        const response = await Promise.any([
           axios.request({
             url: 'https://ipfs.io/ipfs/' + ipfsHash,
             method: 'GET',

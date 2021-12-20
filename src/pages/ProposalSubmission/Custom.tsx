@@ -11,7 +11,6 @@ import {
   ZERO_ADDRESS,
   ANY_ADDRESS,
   ZERO_HASH,
-  sleep,
   bnum,
   denormalizeBalance,
   encodePermission,
@@ -151,7 +150,7 @@ const NewProposalPage = observer(() => {
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const [submitionState, setSubmitionState] = useState(0);
+  const [submitionState, setSubmissionState] = useState(0);
   // 0 = Proposal Description not uploaded
   // 1 = Uploading proposal description
   // 2 = Proposal description uploaded
@@ -212,40 +211,25 @@ const NewProposalPage = observer(() => {
     } else if (descriptionText.length === 0) {
       setErrorMessage('Description has to be at mimimum 100 characters length');
     } else {
-      setSubmitionState(1);
+      setSubmissionState(1);
       setErrorMessage('');
-      const bodyTextToUpload = JSON.stringify({
-        description: descriptionText,
-        title: titleText,
-        tags: ['dxvote'],
-        url: '',
-      });
 
-      const hash = await ipfsService.add(bodyTextToUpload);
-      setIpfsHash(hash);
+      setIpfsHash(
+        await ipfsService.uploadProposalMetadata(
+          titleText,
+          descriptionText,
+          ['dxvote'],
+          pinataService
+        )
+      );
 
-      if (pinataService.auth) {
-        const pinataPin = await pinataService.pin(hash);
-        console.debug('[PINATA PIN]', pinataPin.data);
-      }
-      const ipfsPin = await ipfsService.pin(hash);
-      console.debug('[IPFS PIN]', ipfsPin);
-
-      let uploaded = false;
-      while (!uploaded) {
-        const ipfsContent = await ipfsService.getContent(hash);
-        console.debug('[IPFS CONTENT]', ipfsContent);
-        if (ipfsContent === bodyTextToUpload) uploaded = true;
-        await sleep(1000);
-      }
-
-      setSubmitionState(2);
+      setSubmissionState(2);
     }
   };
 
   const createProposal = async function () {
     console.debug('[RAW PROPOSAL]', titleText, ipfsHash, calls);
-    setSubmitionState(3);
+    setSubmissionState(3);
 
     const { library } = providerStore.getActiveWeb3React();
 
@@ -369,31 +353,31 @@ const NewProposalPage = observer(() => {
         .createProposal(schemeToUse.address, schemeToUse.type, proposalData)
         .on(TXEvents.TX_HASH, hash => {
           console.debug('[TX_SUBMITTED]', hash);
-          setSubmitionState(4);
+          setSubmissionState(4);
           setErrorMessage('');
         })
         .on(TXEvents.RECEIPT, hash => {
           console.debug('[TX_RECEIPT]', hash);
-          setSubmitionState(5);
+          setSubmissionState(5);
         })
         .on(TXEvents.TX_ERROR, txerror => {
           console.error('[TX_ERROR]', txerror);
-          setSubmitionState(2);
+          setSubmissionState(2);
           setErrorMessage((txerror as Error).message);
         })
         .on(TXEvents.INVARIANT, error => {
           console.error('[ERROR]', error);
-          setSubmitionState(2);
+          setSubmissionState(2);
           setErrorMessage((error as Error).message);
         })
         .catch(error => {
           console.error('[ERROR]', error);
-          setSubmitionState(2);
+          setSubmissionState(2);
           setErrorMessage((error as Error).message);
         });
     } catch (error) {
       console.error('[PROPOSAL_ERROR]', error);
-      setSubmitionState(2);
+      setSubmissionState(2);
       setErrorMessage((error as Error).message);
     }
   };

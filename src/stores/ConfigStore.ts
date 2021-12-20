@@ -66,9 +66,7 @@ export default class ConfigStore {
 
       const configRefs = isTestingEnv
         ? defaultCacheConfig
-        : JSON.parse(
-            await ipfsService.getContent(metadataHash, { timeout: 10000 })
-          );
+        : JSON.parse(await ipfsService.getContentFromIPFS(metadataHash));
 
       const configContentHash = configRefs[networkName];
       if (!configContentHash)
@@ -76,10 +74,9 @@ export default class ConfigStore {
 
       console.info(`[ConfigStore] IPFS config hash: ${configContentHash}`);
 
-      const ipfsConfigString = await ipfsService.getContent(configContentHash, {
-        timeout: 10000,
-      });
-      const ipfsConfig = JSON.parse(ipfsConfigString);
+      const ipfsConfig = await ipfsService.getContentFromIPFS(
+        configContentHash
+      );
       console.debug('[ConfigStore] IPFS config content:', ipfsConfig);
       console.debug('[ConfigStore] Default config:', networkConfig);
 

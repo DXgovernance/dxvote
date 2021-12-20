@@ -1,4 +1,4 @@
-import { ProposalsExtended } from 'contexts/proposals';
+import { useContext } from 'contexts';
 import { useState, useEffect } from 'react';
 import {
   orderByNewestTimeToFinish,
@@ -6,8 +6,8 @@ import {
   VotingMachineProposalState,
   ZERO_ADDRESS,
 } from 'utils';
-import { useProposals } from './useProposals';
 import { useRep } from './useRep';
+import { ProposalsExtended } from '../types/types';
 
 interface useFilterCriteriaReturns {
   proposals: ProposalsExtended[];
@@ -20,7 +20,10 @@ interface useFilterCriteriaReturns {
 }
 
 export const useFilterCriteria = (): useFilterCriteriaReturns => {
-  const { proposals } = useProposals();
+  const {
+    context: { daoStore },
+  } = useContext();
+
   const { getRep } = useRep(ZERO_ADDRESS);
 
   const [filteredProposals, setFilteredProposals] = useState<
@@ -35,7 +38,8 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
 
   useEffect(() => {
     // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
-    const stateEarliestAbove10 = proposals
+    const stateEarliestAbove10 = daoStore
+      .getAllProposals()
       .filter(proposal => {
         const repAtCreation = getRep(
           proposal.creationEvent.blockNumber
@@ -56,14 +60,16 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       .sort(orderByNewestTimeToFinish);
 
     // Proposals Boosted. (Ordered from time to finish, from lower to higher)
-    const stateBoosted = proposals
+    const stateBoosted = daoStore
+      .getAllProposals()
       .filter(
         (proposal): Boolean =>
           proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
       )
       .sort(orderByNewestTimeToFinish);
 
-    const statePreBoosted = proposals
+    const statePreBoosted = daoStore
+      .getAllProposals()
       .filter(
         (proposal): Boolean =>
           proposal.stateInVotingMachine ===
@@ -72,7 +78,8 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       .sort(orderByNewestTimeToFinish);
 
     // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
-    const stateEarliestUnder10 = proposals
+    const stateEarliestUnder10 = daoStore
+      .getAllProposals()
       .filter((proposal): Boolean => {
         const repAtCreation = getRep(
           proposal.creationEvent.blockNumber
@@ -93,7 +100,8 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       .sort(orderByNewestTimeToFinish);
 
     //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
-    const stateExecuted = proposals
+    const stateExecuted = daoStore
+      .getAllProposals()
       .filter(
         (proposal): Boolean =>
           proposal.stateInVotingMachine === VotingMachineProposalState.Executed
@@ -115,7 +123,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     ]);
 
     setLoading(false);
-  }, [proposals]);
+  }, []);
 
   return {
     proposals: filteredProposals,

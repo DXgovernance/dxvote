@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useContext } from '../../contexts';
 import useExporters from '../../hooks/useExporters';
-import { useProposals } from '../../hooks/useProposals';
 import { getChains } from '../../provider/connectors';
 import {
   VotingMachineProposalState,
@@ -50,7 +49,6 @@ const ProposalsExporter = () => {
   const {
     context: { daoStore },
   } = useContext();
-  const { proposals } = useProposals();
   const location = useLocation();
   const { exportToCSV, triggerDownload } = useExporters<ProposalExportRow>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -71,7 +69,7 @@ const ProposalsExporter = () => {
   };
 
   const getFilteredProposalsList = async () => {
-    let filteredProposals = proposals;
+    let filteredProposals = daoStore.getAllProposals();
     if (isDateRange) {
       filteredProposals = filteredProposals.filter(
         proposal =>

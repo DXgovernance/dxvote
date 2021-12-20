@@ -1,10 +1,8 @@
 import axios from 'axios';
-import IPFS from 'ipfs-core';
+import * as IPFS from 'ipfs-core';
 import CID from 'cids';
 import { sleep } from '../utils';
 import RootContext from '../contexts';
-import { GetOptions } from 'ipfs-core/src/components/get';
-import { AbortOptions } from 'ipfs-core/src/utils';
 
 export default class IPFSService {
   private static SLEEP_MS = 1000;
@@ -38,44 +36,46 @@ export default class IPFSService {
 
   async add(content: string) {
     const ipfs = await this.getIpfs();
-    const { cid } = await ipfs.add({ content });
-    console.debug(`[IPFS] Added content with CID ${cid.string}.`);
-    return cid.string;
+    const { cid } = await ipfs.add(content);
+    console.debug(`[IPFS] Added content with CID ${cid.toString()}.`);
+    return cid.toString();
   }
 
   async pin(hash: string) {
     const ipfs = await this.getIpfs();
     const cid = new CID(hash);
     console.debug('[IPFS] Pinning IPFS CID', cid);
-    return ipfs.pin.add(cid);
-  }
-
-  async getContent(hash: string, options?: GetOptions & AbortOptions) {
-    let content = [];
-    try {
-      const ipfs = await this.getIpfs();
-
-      for await (const file of ipfs.get(hash, options)) {
-        console.debug('[IPFS] Getting content', file.type, file.path);
-        if (file.type != 'file' || !file.content) continue;
-        for await (const chunk of file.content) {
-          content = content.concat(chunk);
-        }
-      }
-      return content.toString();
-    } catch (e) {
-      console.error('[IPFS] Error getting content from IPFS', e);
-      return 'Error getting content from IPFS';
-    }
+    return ipfs.pin.add(cid.toString());
   }
 
   async getContentFromIPFS(hash: string) {
-    return (
-      await axios({
+    const response = await Promise.any([
+      axios.request({
+        url: 'https://ipfs.io/ipfs/' + hash,
         method: 'GET',
+      }),
+      axios.request({
+        url: 'https://gateway.ipfs.io/ipfs/' + hash,
+        method: 'GET',
+      }),
+      axios.request({
+        url: 'https://cloudflare-ipfs.com/ipfs/' + hash,
+        method: 'GET',
+      }),
+      axios.request({
         url: 'https://gateway.pinata.cloud/ipfs/' + hash,
-      })
-    ).data;
+        method: 'GET',
+      }),
+      axios.request({
+        url: 'https://dweb.link/ipfs/' + hash,
+        method: 'GET',
+      }),
+      axios.request({
+        url: 'https://infura-ipfs.io/ipfs/' + hash,
+        method: 'GET',
+      }),
+    ]);
+    return response.data;
   }
 
   async uploadProposalMetadata(
@@ -96,16 +96,16 @@ export default class IPFSService {
 
     if (pinataService.auth) {
       const pinataPin = await this.pin(hash);
-      console.debug('[PINATA PIN]', pinataPin.data);
+      console.debug('[PINATA PIN]', pinataPin.toString());
     }
     const ipfsPin = await this.pin(hash);
     console.debug('[IPFS PIN]', ipfsPin);
 
     let uploaded = false;
     while (!uploaded) {
-      const ipfsContent = await this.getContent(hash);
+      const ipfsContent = await this.getContentFromIPFS(hash);
       console.debug('[IPFS CONTENT]', ipfsContent);
-      if (ipfsContent === bodyTextToUpload) uploaded = true;
+      if (JSON.stringify(ipfsContent) === bodyTextToUpload) uploaded = true;
       await sleep(1000);
     }
     return hash;
