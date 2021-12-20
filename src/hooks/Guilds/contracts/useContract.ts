@@ -1,10 +1,10 @@
-import { Contract } from 'ethers/contract';
+import { Contract, providers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
-import { Web3Provider } from 'ethers/providers';
 import { useMemo } from 'react';
 import { getContract } from '../../../utils/contracts';
 import ERC20Guild_ABI from '../../../contracts/ERC20Guild.json';
 import { ERC20Guild } from '../../../types/ERC20Guild';
+// const { Contract } = contract;
 
 export default function useContract<T extends Contract>(
   contractId: string,
@@ -15,7 +15,7 @@ export default function useContract<T extends Contract>(
   return useMemo(() => {
     if (!library) return null;
     try {
-      const provider = new Web3Provider(library.currentProvider);
+      const provider = new providers.Web3Provider(library.currentProvider);
       const contract = getContract(contractId, abi, provider);
       return contract;
     } catch (e) {

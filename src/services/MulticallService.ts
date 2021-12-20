@@ -1,4 +1,4 @@
-import { Interface } from 'ethers/utils';
+import { utils } from 'ethers';
 import RootContext from '../contexts';
 import { ContractType } from '../stores/Provider';
 
@@ -43,17 +43,20 @@ export default class MulticallService {
 
   addContractCall(call: Call) {
     const { abiService } = this.context;
-    const iface = new Interface(abiService.getAbi(call.contractType));
+    const iface = new utils.Interface(abiService.getAbi(call.contractType));
     call.params = call.params ? call.params : [];
-    const encoded = iface.functions[call.method].encode(call.params);
+    const encoded = iface.encodeFunctionData(
+      iface.getFunction(call.method),
+      call.params
+    );
     this.activeCallsRaw.push([call.address, encoded]);
     this.activeCalls.push(call);
   }
 
   decodeCall(call: Call, result: any) {
     const { abiService } = this.context;
-    const iface = new Interface(abiService.getAbi(call.contractType));
-    return iface.functions[call.method].decode(result);
+    const iface = new utils.Interface(abiService.getAbi(call.contractType));
+    return iface.decodeFunctionResult(iface.getFunction(call.method), result);
   }
 
   resetActiveCalls() {

@@ -1,4 +1,4 @@
-import { utils } from 'ethers';
+import { BigNumber as bn } from 'ethers';
 import { BigNumber } from './bignumber';
 import { MAX_UINT } from './constants';
 
@@ -21,9 +21,7 @@ export function toCamelCaseString(text: string): string {
   else return '';
 }
 
-export function bnum(
-  val: string | number | utils.BigNumber | BigNumber
-): BigNumber {
+export function bnum(val: string | number | bn | BigNumber): BigNumber {
   return new BigNumber(val.toString());
 }
 

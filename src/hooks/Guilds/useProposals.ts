@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers/utils';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useERC20Guild } from './contracts/useContract';
 
