@@ -9,6 +9,7 @@ import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard from '../../components/Guilds/ProposalCard';
 import { useProposals } from 'hooks/Guilds/useProposals';
 import PendingCircle from 'components/common/PendingCircle';
+import { TransactionWait } from 'components/Guilds/common/Modal/transaction';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -41,6 +42,7 @@ const GuildsPage: React.FC = () => {
   const { proposals, loading, error } = useProposals(guildId);
   console.debug('Guilds Proposals: ', proposals, loading, error);
 
+  const mockDismiss = () => 'hi';
   return (
     <PageContainer>
       <SidebarContent>
@@ -51,6 +53,7 @@ const GuildsPage: React.FC = () => {
         {loading && (
           <PendingCircle height="100px" width="100px" color="black" />
         )}
+        <TransactionWait isOpen onDismiss={mockDismiss} />
         <ProposalsList>
           {!loading &&
             !error &&
