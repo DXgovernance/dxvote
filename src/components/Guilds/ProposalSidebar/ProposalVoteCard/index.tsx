@@ -1,56 +1,82 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '../../common/Button';
 import { Box } from '../../common/Layout';
 
 import SidebarCard from '../../SidebarCard';
-import { ProposalVotes, VoteSummary, Voter } from './ProposalVotes';
-
-// avatar examples
-import dxIcon from '../../../../assets/images/dxdao-icon.svg';
-import etherIcon from '../../../../assets/images/ether.svg';
-import metaIcon from '../../../../assets/images/metamask.png';
+import { ProposalVotes } from './ProposalVotes';
 
 const SidebarCardHeader = styled(Box)`
   padding: 1rem;
   font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const SidebarCardContent = styled(Box)`
   padding: 1rem;
 `;
 
-const VoteButton = styled(Button)`
-  margin-top: 1rem;
-  display: block;
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.text};
-  color: ${({ theme }) => theme.colors.background};
-
-  &:hover:enabled {
-    background-color: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-  }
+const ButtonsContainer = styled.div`
+  flex-direction: column;
+  display: flex;
+  margin-top: 30px;
 `;
 
+const SmallButton = styled(Button)`
+  margin: 0px;
+  padding: 2px 6px;
+`;
+
+// TODO: remove this when subscribing to real data:
+const voteData = {
+  yes: 124.5,
+  no: 234.76,
+  quorum: 40,
+  totalLocked: 670,
+};
+const TOKEN = 'DXD';
+//
 const ProposalVoteCard = () => {
-  //TODO: we may subscribe to this data from a store.
-  //TODO: remove this hardcoded data when necessary.
-  const votes: VoteSummary = {
-    yes: { dxd: 253, percentage: 80 },
-    no: { dxd: 12, percentage: 10 },
-  };
-  const voters: Voter[] = [
-    { avatar: dxIcon },
-    { avatar: etherIcon },
-    { avatar: metaIcon },
-    { avatar: metaIcon },
-    { avatar: metaIcon },
-  ];
+  const [showToken, setShowToken] = useState(false);
+  const [voted, setVoted] = useState('');
   return (
-    <SidebarCard header={<SidebarCardHeader>Cast your vote</SidebarCardHeader>}>
+    <SidebarCard
+      header={
+        <SidebarCardHeader>
+          Cast your vote{' '}
+          <SmallButton primary onClick={() => setShowToken(!showToken)}>
+            {showToken ? TOKEN : '%'}
+          </SmallButton>
+        </SidebarCardHeader>
+      }
+    >
       <SidebarCardContent>
-        <ProposalVotes summary={votes} voters={voters} />
-        <VoteButton>Vote</VoteButton>
+        <ProposalVotes
+          voteData={voteData}
+          showToken={showToken}
+          token={TOKEN}
+        />
+        <ButtonsContainer>
+          <Button
+            minimal
+            active={voted === 'yes'}
+            onClick={() => setVoted('yes')}
+          >
+            Yes
+          </Button>
+          <Button
+            minimal
+            active={voted === 'no'}
+            onClick={() => setVoted('no')}
+          >
+            No
+          </Button>
+          <Button primary disabled={!voted}>
+            Vote
+          </Button>
+        </ButtonsContainer>
       </SidebarCardContent>
     </SidebarCard>
   );

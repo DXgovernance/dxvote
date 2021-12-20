@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { VotingMachineProposalState, WalletSchemeProposalState } from 'utils';
-import { ProposalsExtended } from '../contexts/proposals';
 import { useFilterCriteria } from './useFilterCriteria';
 import useMiniSearch from './useMiniSearch';
 import useQueryStringValue from './useQueryStringValue';
 
+import { ProposalsExtended } from '../types/types';
 const matchStatus = (proposal: ProposalsExtended, status: string) => {
   if (status === 'Any Status' || !status) {
     return proposal;

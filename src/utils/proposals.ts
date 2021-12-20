@@ -8,7 +8,7 @@ import moment from 'moment';
 
 import DaoStore from 'stores/DaoStore';
 //import { ZERO_ADDRESS } from 'utils';
-import { ProposalsExtended } from 'contexts/proposals';
+import { ProposalsExtended } from '../types/types';
 
 // constant used to the initial order of the proposals (Any Status).
 export const QUEUED_PRIORITY_THRESHOLD = 10;

@@ -58,9 +58,12 @@ const Stakes = () => {
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
   const votingMachineTokenName =
-    votingMachines.gen && scheme.votingMachine === votingMachines.gen.address
+    (votingMachines.gen &&
+      scheme.votingMachine === votingMachines.gen.address) ||
+    (votingMachines.gen2 &&
+      scheme.votingMachine === votingMachines.gen2.address)
       ? 'GEN'
-      : 'DX';
+      : 'DXD';
 
   const { dxdApproved, genApproved } = userStore.getUserInfo();
   const votingMachineTokenApproved =
@@ -207,7 +210,9 @@ const Stakes = () => {
 
       {stakedAmount.toNumber() > 0 ? (
         <SpaceAroundRow>
-          Already staked {stakedAmount.toNumber() > 0 ? 'for' : 'against'} with
+          {`Already staked ${
+            stakedAmount.toNumber() > 0 ? 'for' : 'against'
+          } with `}
           {formatBalance(stakedAmount).toString()} {votingMachineTokenName}
         </SpaceAroundRow>
       ) : (

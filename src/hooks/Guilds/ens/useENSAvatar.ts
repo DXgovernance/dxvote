@@ -1,4 +1,4 @@
-import { namehash } from 'ethers/utils';
+import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
 import { resolveUri } from '../../../utils/url';
@@ -18,7 +18,7 @@ const useENSAvatar = (ethAddress: string) => {
 
     async function getAvatarUri() {
       try {
-        let avatar = await resolver.text(namehash(ensName), 'avatar');
+        let avatar = await resolver.text(utils.namehash(ensName), 'avatar');
         return avatar;
       } catch (e) {
         console.error('[useENSAvatar] Error resolving ENS avatar', e);

@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
 import { Box } from '../../components/Guilds/common/Layout';
 
 import { Sidebar } from '../../components/Guilds/Sidebar/';
 import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard from '../../components/Guilds/ProposalCard';
+import { useProposals } from 'hooks/Guilds/useProposals';
+import PendingCircle from 'components/common/PendingCircle';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -33,20 +36,11 @@ const ProposalsList = styled(Box)`
   margin-top: 1rem;
 `;
 
-const proposalsMock = [
-  {
-    title: 'DXD Buyback Program Extension #3 Proposal',
-    description:
-      'The DXD Buyback Program was passed by REP holders in May of this year. Since then, 6,313 DXD have been purchased on mainnet and xDai for an average price...',
-  },
-  {
-    title: 'Proposal: SWPR single token reward campaign',
-    description:
-      'With the ongoing decentralized distribution of Swapr’s governance token through multi-chain liquidity mining campaigns, and while waiting for the ERC20 Guild structure to be implemented, the Swapr community has identified...',
-  },
-];
-
 const GuildsPage: React.FC = () => {
+  const guildId = useLocation().pathname.split('/')[1];
+  const { proposals, loading, error } = useProposals(guildId);
+  console.debug('Guilds Proposals: ', proposals, loading, error);
+
   return (
     <PageContainer>
       <SidebarContent>
@@ -54,14 +48,20 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <Filter />
+        {loading && (
+          <PendingCircle height="100px" width="100px" color="black" />
+        )}
         <ProposalsList>
-          {proposalsMock.map(proposal => (
-            <ProposalCard
-              title={proposal.title}
-              description={proposal.description}
-            />
-          ))}
+          {!loading &&
+            !error &&
+            proposals.map(proposal => (
+              <ProposalCard
+                title={proposal.title}
+                description={proposal.contentHash}
+              />
+            ))}
         </ProposalsList>
+        {error && <div>{error.message}</div>}
       </PageContent>
     </PageContainer>
   );

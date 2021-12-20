@@ -26,6 +26,7 @@ module.exports = {
       'dxdao-contracts/contracts/daostack/universalSchemes/ContributionReward.sol',
       'dxdao-contracts/contracts/daostack/universalSchemes/SchemeRegistrar.sol',
       'dxdao-contracts/contracts/daostack/utils/Redeemer.sol',
+      'dxdao-contracts/contracts/erc20guild/ERC20Guild.sol',
       '@daostack/infra/contracts/votingMachines/GenesisProtocol.sol'
     ],
   },

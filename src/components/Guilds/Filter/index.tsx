@@ -18,6 +18,7 @@ const FilterContainer = styled(Box)`
 const FilterRow = styled.div`
   display: flex;
   flex-direction: row;
+
   @media only screen and (min-width: 768px) {
     justify-content: space-between;
   }

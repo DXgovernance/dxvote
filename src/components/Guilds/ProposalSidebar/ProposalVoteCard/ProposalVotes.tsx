@@ -1,27 +1,10 @@
 import styled from 'styled-components';
-import { Button } from '../../common/Button';
-import { VotersButton } from '../../common/VotersButton';
 
-// TODO: investigate where the voters data is gonan come from,
-// where the types are gonna sit, and which structure.
-
-interface VoteContent {
-  dxd: number;
-  percentage: number;
-}
-
-export interface VoteSummary {
-  yes?: VoteContent;
-  no?: VoteContent;
-}
+import { VotesChart } from 'components/Guilds/common/VoteChart';
+import { Bullet } from 'components/Guilds/common/Bullet';
 
 export interface Voter {
   avatar: string;
-}
-
-export interface ProposalVotesProps {
-  voters: Voter[];
-  summary: VoteSummary;
 }
 
 const VotesContainer = styled.div`
@@ -33,94 +16,53 @@ const VotesRow = styled.div`
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  font-weight: 600px;
+  font-weight: 600;
   margin: 5px 0px 5px 0px;
+  color: ${({ theme, type = 'yes' }) => theme.colors.votes[type].fg};
 `;
 
-const Voters = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: 14px;
-
-  ${Button} {
-    padding: 5px;
-  }
+const StyledBullet = styled(Bullet)`
+  font-size: 30px;
 `;
 
-const VotesGraphContainer = styled.div`
-  height: 5px;
-  width: 100%;
-  border-radius: 30px;
-  border: 1px solid black;
-  display: flex;
-  flex: 1;
-  justify-content: space-between;
-  margin: 5px 0px;
-`;
+export const ProposalVotes = ({ voteData, showToken, token }) => {
+  const { yes, no, totalLocked } = voteData;
 
-const VoteHalf = styled.div`
-  display: flex;
-  flex: 1;
-`;
-const VoteFill = styled.div`
-  width: ${({ fill }) => (fill ? `${fill}%` : '')};
-  background: black;
-  border-radius: 30px;
-`;
+  const valueToDisplay = value =>
+    showToken ? value : Math.round((value / totalLocked) * 100);
+  const yesDisplay = valueToDisplay(yes);
+  const noDisplay = valueToDisplay(no);
 
-const VoteSeparator = styled.div`
-  width: 1px;
-  border-right: 1px solid black;
-  height: 5px;
-`;
-
-// TODO: I will move as separate reusable component when knowing well
-// the data structure of the props.
-const VotesGraph = ({ value }) => (
-  <VotesGraphContainer>
-    <VoteHalf>
-      <VoteFill fill={value} />
-    </VoteHalf>
-    <VoteSeparator />
-    <VoteHalf></VoteHalf>
-  </VotesGraphContainer>
-);
-
-export const ProposalVotes = ({ summary, voters }: ProposalVotesProps) => {
-  //--- TODO: this may change when we know structure of real data
-  const { yes, no } = summary;
-  const total = yes?.dxd + no?.dxd;
-  const pYes = Math.round((yes.dxd / total) * 100);
-  const pNo = Math.round((no.dxd / total) * 100);
-  //---
+  const unitDisplay = showToken ? token : '%';
 
   return (
     <VotesContainer>
       {yes && (
-        <>
-          <VotesRow>
-            <span>Yes &middot; {yes.dxd} DXD</span>
-            <span>{pYes}%</span>
-          </VotesRow>
-          <VotesGraph value={pYes} />
-        </>
+        <VotesRow type="yes">
+          <span>
+            <StyledBullet />
+            Yes
+          </span>
+          <span>
+            {yesDisplay}
+            {unitDisplay}
+          </span>
+        </VotesRow>
       )}
       {no && (
-        <>
-          <VotesRow>
-            <span>No &middot; {no.dxd} DXD</span>
-            <span>{pNo}%</span>
-          </VotesRow>
-          <VotesGraph value={pNo} />
-        </>
+        <VotesRow type="no">
+          <span>
+            <StyledBullet />
+            No
+          </span>
+          <span>
+            {noDisplay}
+            {unitDisplay}
+          </span>
+        </VotesRow>
       )}
 
-      {voters && (
-        <Voters>
-          <p>Voted by</p>
-          <VotersButton voters={voters} />
-        </Voters>
-      )}
+      <VotesChart voteData={voteData} showToken={showToken} token={token} />
     </VotesContainer>
   );
 };

@@ -4,17 +4,13 @@ import { isDesktop, isMobile } from 'react-device-detect';
 import { FiArrowLeft } from 'react-icons/fi';
 
 import { Button } from 'components/Guilds/common/Button';
-import { Modal } from 'components/Modal';
+import { Modal } from '../common/Modal';
 import { StakeTokens } from './StakeTokens';
 import {
   DropdownMenu,
   DropdownContent,
   DropdownHeader,
 } from '../common/DropdownMenu';
-
-const ModalHeader = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.colors.text};
-`;
 
 const JoinButton = styled(Button)`
   width: 100%;
@@ -28,7 +24,7 @@ export const GuestActions = ({ onJoin }) => {
         <>
           <Button onClick={() => setShowJoin(true)}>Join</Button>
           <Modal
-            header={<ModalHeader>Stake DXdao tokens</ModalHeader>}
+            header="Stake DXdao tokens"
             isOpen={showJoin}
             onDismiss={() => setShowJoin(false)}
             maxWidth={300}

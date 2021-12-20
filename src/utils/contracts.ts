@@ -1,26 +1,27 @@
-import { Contract } from 'ethers';
-import { AddressZero } from 'ethers/constants';
-import { JsonRpcSigner, Web3Provider } from 'ethers/providers';
+import { Contract, constants, providers } from 'ethers';
 import { isAddress } from '.';
 
-function getSigner(library: Web3Provider, account: string): JsonRpcSigner {
+function getSigner(
+  library: providers.Web3Provider,
+  account: string
+): providers.JsonRpcSigner {
   return library.getSigner(account);
 }
 
 function getProviderOrSigner(
-  library: Web3Provider,
+  library: providers.Web3Provider,
   account?: string
-): Web3Provider | JsonRpcSigner {
+): providers.Web3Provider | providers.JsonRpcSigner {
   return account ? getSigner(library, account) : library;
 }
 
 export function getContract(
   address: string,
   ABI: any,
-  library: Web3Provider,
+  library: providers.Web3Provider,
   account?: string
 ): Contract {
-  if (!isAddress(address) || address === AddressZero) {
+  if (!isAddress(address) || address === constants.AddressZero) {
     return null;
   }
 
