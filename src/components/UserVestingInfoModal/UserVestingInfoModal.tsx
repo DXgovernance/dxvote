@@ -1,17 +1,15 @@
 import styled from 'styled-components';
 import moment from 'moment';
 import Web3 from 'web3';
-import {
-  useState,
-  // useEffect
-} from 'react';
+import { useState } from 'react';
 import { Modal } from '../Modal';
 import { Row as CommonRow, BlockchainLink, Button } from '../common';
 import { TokenVesting } from '../../types/types';
 import { useContext } from '../../contexts';
-// import TokenVestingJSON from '../../contracts/TokenVesting.json';
-// import useVestingContract from './useVestingContract';
-//
+import { toast } from 'react-toastify';
+import { TXEvents } from '../../utils';
+import { FiZap } from 'react-icons/fi';
+
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnWrap}
   padding: 0 24px;
@@ -51,68 +49,91 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
   isOpen,
   contract,
 }) => {
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  // const [extraContractData, setextraContractData] = useState<{ start: number }>(
-  //   { start: 0 }
-  // );
+  const [loading, setLoading] = useState(false);
   const {
-    context: {
-      // providerStore: { web3Context },
-      daoService,
-    },
+    context: { daoService },
   } = useContext();
 
-  // const vestingContract = useVestingContract({
-  //   address: contract?.address,
-  //   abi: TokenVestingJSON.abi
-  // });
-
   if (!contract) return null;
-  console.log('contractdata', contract);
 
-  const handleRedeemClick = async () => {
-    if (!showConfirmation) return setShowConfirmation(true);
+  const handleRedeemClick = () => {
+    setLoading(true);
 
-    try {
-      await daoService.redeemVestingContractDxd(contract.address);
-    } catch (e) {
-      console.log('error', e);
-    }
-
-    onDismiss();
+    daoService
+      .redeemVestingContractDxd(contract.address)
+      .on(TXEvents.RECEIPT, hash => {
+        console.debug('[TX_RECEIPT]', hash);
+        toast.success(
+          `Successfully redeemed ${contractValue}ETH from ${contract.address}`
+        );
+      })
+      .on(TXEvents.TX_ERROR, txerror => {
+        console.error('[TX_ERROR]', txerror);
+        setLoading(false);
+        toast.error(`Error: ${txerror?.message}`);
+      })
+      .on(TXEvents.INVARIANT, error => {
+        console.error('[ERROR]', error);
+        setLoading(false);
+        toast.error(`Error: ${error?.message}`);
+      })
+      .on(TXEvents.FINALLY, hash => {
+        console.debug('[TX_FINALLY]', hash);
+        setLoading(false);
+        onDismiss();
+      })
+      .catch(e => {
+        console.log('error', e);
+        toast.error(`Error: ${e?.message}`);
+      });
   };
 
+  const contractValue = parseFloat(
+    Number(Web3.utils.fromWei(contract.value)).toFixed(4)
+  );
+  const cliff = moment.unix(Number(contract.cliff));
   const header = <Title>Vesting Contract</Title>;
+
   return (
     <Modal header={header} isOpen={isOpen} onDismiss={onDismiss}>
       <Wrapper>
-        <Row>
-          <span>Contract Address: </span>
-          <StyledLink text={contract.address} toCopy>
-            {contract.address}↗
-          </StyledLink>
-        </Row>
-        <Row>Start: {moment.unix(Number(contract.start)).format('LLL')}</Row>
-        <Row>Cliff: {moment.unix(Number(contract.cliff)).format('LLL')}</Row>
-        <Row>
-          Duration:{' '}
-          {moment.duration(Number(contract.duration), 'seconds').humanize()}
-        </Row>
+        {loading ? (
+          <div className="loader">
+            <FiZap /> <br /> Loading..
+          </div>
+        ) : (
+          <>
+            <Row>
+              <span>Contract Address: </span>
+              <StyledLink text={contract.address} toCopy>
+                {contract.address}↗
+              </StyledLink>
+            </Row>
+            <Row>
+              Start: {moment.unix(Number(contract.start)).format('LLL')}
+            </Row>
+            <Row>
+              Cliff: {cliff.format('LLL')} (
+              {moment.duration(cliff.diff(moment())).humanize(true)})
+            </Row>
+            <Row>
+              Duration:{' '}
+              {moment.duration(Number(contract.duration), 'seconds').humanize()}
+            </Row>
 
-        <Row>
-          Value:{' '}
-          {parseFloat(
-            Number(Web3.utils.fromWei(contract.value.toString())).toFixed(2)
-          )}{' '}
-          ETH
-        </Row>
-        <Row>
-          <StyledButton onClick={handleRedeemClick}>
-            {showConfirmation
-              ? 'Are you sure you want to redeem your DXD?'
-              : 'Redeem DXD'}
-          </StyledButton>
-        </Row>
+            <Row>Value: {contractValue} ETH</Row>
+            <Row>
+              <StyledButton
+                disabled={
+                  !Number(contract.value.toString()) || moment().isBefore(cliff)
+                }
+                onClick={handleRedeemClick}
+              >
+                Redeem DXD
+              </StyledButton>
+            </Row>
+          </>
+        )}
       </Wrapper>
     </Modal>
   );

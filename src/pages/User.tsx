@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   BlockchainLink,
   Row,
@@ -12,10 +12,13 @@ import {
   Subtitle,
   Button,
 } from '../components/common';
-import UserVestingInfoModal from '../components/UserVestingInfoModal';
-import { formatBalance } from '../utils';
+import UserVestingInfoModal, {
+  useVestingContract,
+} from '../components/UserVestingInfoModal';
+import { formatBalance, BigNumber } from '../utils';
 import { useContext } from '../contexts';
 import useExporters from '../hooks/useExporters';
+import ERC20Json from '../contracts/ERC20.json';
 
 const TitleRow = styled.div`
   display: flex;
@@ -49,6 +52,7 @@ const UserPage = observer(() => {
   const [isVestingInfoModalOpen, setIsVestingInfoModalOpen] = useState(false);
   const [selectedModalVestingContract, setSelectedModalVestingContract] =
     useState(null);
+  const [tokenVestingContracts, setTokenVestingContracts] = useState([]);
 
   const getExportFileName = () => {
     return `history_${userAddress}-${moment().format('YYYY-MM-DD')}`;
@@ -65,6 +69,26 @@ const UserPage = observer(() => {
     const csvString = await exportToCSV(historyItems);
     triggerDownload(csvString, `${getExportFileName()}.csv`, 'text/csv');
   };
+
+  const DXD = useVestingContract({
+    address: configStore.getNetworkContracts().votingMachines.dxd.token,
+    abi: ERC20Json.abi,
+  });
+
+  useEffect(() => {
+    const getUserVestingContracts = () => {
+      return Promise.all(
+        userVestingContracts.map(async contract => {
+          const balance = await DXD?.balanceOf(contract.address);
+          return {
+            ...contract,
+            value: new BigNumber(balance).toFixed(),
+          };
+        })
+      );
+    };
+    getUserVestingContracts().then(setTokenVestingContracts);
+  }, []);
 
   return (
     <>
@@ -165,11 +189,11 @@ const UserPage = observer(() => {
             <h2>Vesting Contracts</h2>
           </TitleRow>
         )}
-        {userVestingContracts.map((contract, i, arr) => {
+        {tokenVestingContracts.map((contract, i, arr) => {
           return (
             <ListRow
               clickable
-              key={'vestingContract' + i}
+              key={contract.address}
               borderBottom={i < arr.length - 1}
               onClick={() => {
                 if (!contract.address) return;

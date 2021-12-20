@@ -350,7 +350,7 @@ export interface TokenVesting {
   cliff: string;
   duration: string;
   owner: string;
-  value: string;
+  value?: BigNumber;
   start: string;
 }
 
