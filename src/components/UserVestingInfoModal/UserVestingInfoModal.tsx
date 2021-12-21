@@ -47,7 +47,7 @@ const SpinAnimation = keyframes`
 `;
 
 const Loading = styled.div`
-  animation: ${SpinAnimation} 1s cubic-bezier(0.42, 0.8, 0.6, 0.83) infinite;\
+  animation: ${SpinAnimation} 1s cubic-bezier(0.42, 0.8, 0.6, 0.83) infinite;
   width: fit-content;
   margin: 0 auto;
 `;
