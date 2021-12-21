@@ -64,7 +64,7 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
   contract,
   onUpdate,
 }) => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const {
     context: { daoService },
   } = useContext();
