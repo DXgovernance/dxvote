@@ -16,12 +16,15 @@ export const Wrapper = styled.div`
   max-width: ${({ maxWidth }) => maxWidth}px;
   outline: 0;
 
+
   @media only screen and (max-width: 768px) {
     max-width: 300px;
     min-width: 300px;
     width: 300px;
   }
 `;
+
+
 
 export const Backdrop = styled.div`
   position: fixed;
@@ -32,17 +35,21 @@ export const Backdrop = styled.div`
   background: rgba(0, 6, 41, 0.5);
   z-index: 500;
 `;
+
 export const StyledModal = styled.div`
   z-index: 100;
   background: ${({ theme }) => theme.colors.background};
   position: relative;
   margin: auto;
-  border: 1px solid ${({ theme }) => theme.colors.muted};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: ${({ theme }) => theme.radii.curved2};
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
 `;
+
 export const Header = styled.div`
-  display: flex;
+ display: flex;
+ justify-content: center;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   position: relative;
@@ -71,7 +78,7 @@ export const Content = styled.div`
   color: ${({ theme }) => theme.colors.text};
   max-height: 80vh;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
 `;
 
 export const Footer = styled.div`
