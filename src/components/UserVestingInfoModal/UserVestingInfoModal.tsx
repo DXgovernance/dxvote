@@ -37,7 +37,7 @@ const Title = styled.h2`
   margin: 0;
 `;
 
-const Spin = keyframes`
+const SpinAnimation = keyframes`
   from {
     transform: rotate(0deg);
   }
@@ -45,8 +45,9 @@ const Spin = keyframes`
     transform: rotate(360deg);
   }
 `;
+
 const Loading = styled.div`
-  animation: ${Spin} 1s cubic-bezier(0.42, 0.8, 0.6, 0.83) infinite;\
+  animation: ${SpinAnimation} 1s cubic-bezier(0.42, 0.8, 0.6, 0.83) infinite;\
   width: fit-content;
   margin: 0 auto;
 `;
@@ -55,14 +56,14 @@ export interface UserVestingInfoModalProps {
   onDismiss?: () => void;
   isOpen: boolean;
   contract?: TokenVesting;
-  onUpdate: () => void;
+  updateContracts: () => void;
 }
 
 const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
   onDismiss,
   isOpen,
   contract,
-  onUpdate,
+  updateContracts,
 }) => {
   const [loading, setLoading] = useState(false);
   const {
@@ -100,11 +101,10 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
       .on(TXEvents.FINALLY, hash => {
         console.debug('[TX_FINALLY]', hash);
         setLoading(false);
-        onUpdate();
+        updateContracts();
         onDismiss();
       })
       .catch(e => {
-        console.log('error', e);
         toast.error(`Error: ${e?.message}`);
       });
   };

@@ -86,7 +86,7 @@ const UserPage = observer(() => {
         } catch (e) {
           return {
             ...contract,
-            value: '0',
+            value: bnum('0'),
           };
         }
       })
@@ -94,131 +94,129 @@ const UserPage = observer(() => {
     contracts.then(setTokenVestingContracts);
   };
 
-  useEffect(updateUserVestingContracts, []);
+  useEffect(updateUserVestingContracts, []); // eslint-disable-line
 
   return (
-    <>
-      <Box>
-        <Subtitle>
-          User: <BlockchainLink size="long" text={userAddress} toCopy />
-        </Subtitle>
-        <Row>
-          <InfoBox>
-            {formatBalance(userInfo.repBalance, 18, 0)} REP (
-            {userInfo.repPercentage})
-          </InfoBox>
-          <InfoBox>
-            {userEvents.votes.filter(vote => vote.vote === 1).length} Positive
-            Votes
-          </InfoBox>
-          <InfoBox>
-            {userEvents.votes.filter(vote => vote.vote === 2).length} Negative
-            Votes
-          </InfoBox>
-          <InfoBox>{userEvents.newProposal.length} Proposals</InfoBox>
-        </Row>
+    <Box>
+      <Subtitle>
+        User: <BlockchainLink size="long" text={userAddress} toCopy />
+      </Subtitle>
+      <Row>
+        <InfoBox>
+          {formatBalance(userInfo.repBalance, 18, 0)} REP (
+          {userInfo.repPercentage})
+        </InfoBox>
+        <InfoBox>
+          {userEvents.votes.filter(vote => vote.vote === 1).length} Positive
+          Votes
+        </InfoBox>
+        <InfoBox>
+          {userEvents.votes.filter(vote => vote.vote === 2).length} Negative
+          Votes
+        </InfoBox>
+        <InfoBox>{userEvents.newProposal.length} Proposals</InfoBox>
+      </Row>
 
-        <h2> Redeems Left </h2>
-        {redeemsLeft.rep.map((proposalId, i) => {
-          return (
-            <span
-              key={'proposalLink' + i}
-              onClick={() => {
-                history.push(`/${networkName}/proposal/${proposalId}`);
-              }}
-              style={{
-                padding: '6px 0px',
-                cursor: 'pointer',
-              }}
-            >
-              REP redeem in Proposal {proposalId}
-            </span>
-          );
-        })}
-        {redeemsLeft.stake.map((proposalId, i) => {
-          return (
-            <span
-              key={'proposalLink' + i}
-              onClick={() => {
-                history.push(`/${networkName}/proposal/${proposalId}`);
-              }}
-              style={{
-                padding: '6px 0px',
-                cursor: 'pointer',
-              }}
-            >
-              Staking token redeem in Proposal {proposalId}
-            </span>
-          );
-        })}
-        {redeemsLeft.bounty.map((proposalId, i) => {
-          return (
-            <span
-              key={'proposalLink' + i}
-              onClick={() => {
-                history.push(`/${networkName}/proposal/${proposalId}`);
-              }}
-              style={{
-                padding: '6px 0px',
-                cursor: 'pointer',
-              }}
-            >
-              Staking token bounty redeem in Proposal {proposalId}
-            </span>
-          );
-        })}
+      <h2> Redeems Left </h2>
+      {redeemsLeft.rep.map((proposalId, i) => {
+        return (
+          <span
+            key={'proposalLink' + i}
+            onClick={() => {
+              history.push(`/${networkName}/proposal/${proposalId}`);
+            }}
+            style={{
+              padding: '6px 0px',
+              cursor: 'pointer',
+            }}
+          >
+            REP redeem in Proposal {proposalId}
+          </span>
+        );
+      })}
+      {redeemsLeft.stake.map((proposalId, i) => {
+        return (
+          <span
+            key={'proposalLink' + i}
+            onClick={() => {
+              history.push(`/${networkName}/proposal/${proposalId}`);
+            }}
+            style={{
+              padding: '6px 0px',
+              cursor: 'pointer',
+            }}
+          >
+            Staking token redeem in Proposal {proposalId}
+          </span>
+        );
+      })}
+      {redeemsLeft.bounty.map((proposalId, i) => {
+        return (
+          <span
+            key={'proposalLink' + i}
+            onClick={() => {
+              history.push(`/${networkName}/proposal/${proposalId}`);
+            }}
+            style={{
+              padding: '6px 0px',
+              cursor: 'pointer',
+            }}
+          >
+            Staking token bounty redeem in Proposal {proposalId}
+          </span>
+        );
+      })}
 
-        <TitleRow>
-          <h2>History</h2>
-          <Button onClick={exportCSV}>Export to CSV</Button>
-        </TitleRow>
+      <TitleRow>
+        <h2>History</h2>
+        <Button onClick={exportCSV}>Export to CSV</Button>
+      </TitleRow>
 
-        {userEvents.history.map((historyEvent, i) => {
+      {userEvents.history.map((historyEvent, i) => {
+        return (
+          <ListRow
+            key={'userHistoryEvent' + i}
+            borderBottom={i < userEvents.history.length - 1}
+          >
+            <span> {historyEvent.text} </span>
+            <BlockchainLink
+              type="transaction"
+              size="short"
+              text={historyEvent.event.tx}
+              onlyIcon
+            />
+          </ListRow>
+        );
+      })}
+
+      <TitleRow>
+        <h2>Vesting Contracts</h2>
+      </TitleRow>
+
+      {tokenVestingContracts.length ? (
+        tokenVestingContracts.map((contract, i, arr) => {
           return (
             <ListRow
-              key={'userHistoryEvent' + i}
-              borderBottom={i < userEvents.history.length - 1}
+              clickable
+              key={contract.address}
+              borderBottom={i < arr.length - 1}
+              onClick={() => {
+                if (!contract.address) return;
+                setSelectedModalVestingContract(contract);
+                setIsVestingInfoModalOpen(true);
+              }}
             >
-              <span> {historyEvent.text} </span>
-              <BlockchainLink
-                type="transaction"
-                size="short"
-                text={historyEvent.event.tx}
-                onlyIcon
-              />
+              <span>
+                {contract.address} / Cliff:{' '}
+                {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
+                {formatBalance(contract.value)} DXD
+              </span>
             </ListRow>
           );
-        })}
-
-        <TitleRow>
-          <h2>Vesting Contracts</h2>
-        </TitleRow>
-
-        {tokenVestingContracts.length ? (
-          tokenVestingContracts.map((contract, i, arr) => {
-            return (
-              <ListRow
-                clickable
-                key={contract.address}
-                borderBottom={i < arr.length - 1}
-                onClick={() => {
-                  if (!contract.address) return;
-                  setSelectedModalVestingContract(contract);
-                  setIsVestingInfoModalOpen(true);
-                }}
-              >
-                <span>
-                  {contract.address} / Cliff:{' '}
-                  {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
-                  {formatBalance(contract.value)} DXD
-                </span>
-              </ListRow>
-            );
-          })
-        ) : (
-          <ListRow> - No Vesting Contracts found for {userAddress} - </ListRow>
-        )}
-      </Box>
+        })
+      ) : (
+        <ListRow> - No Vesting Contracts found for {userAddress} - </ListRow>
+      )}
       <UserVestingInfoModal
         contract={selectedModalVestingContract}
         isOpen={isVestingInfoModalOpen}
@@ -226,9 +224,9 @@ const UserPage = observer(() => {
           setSelectedModalVestingContract(null);
           setIsVestingInfoModalOpen(false);
         }}
-        onUpdate={updateUserVestingContracts}
+        updateContracts={updateUserVestingContracts}
       />
-    </>
+    </Box>
   );
 });
 
