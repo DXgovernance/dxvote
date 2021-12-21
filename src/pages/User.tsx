@@ -12,10 +12,9 @@ import {
   Subtitle,
   Button,
 } from '../components/common';
-import UserVestingInfoModal, {
-  useVestingContract,
-} from '../components/UserVestingInfoModal';
-import { formatBalance, BigNumber } from '../utils';
+import UserVestingInfoModal from '../components/UserVestingInfoModal'; // useVestingContract,
+import useContract from '../hooks/useContract';
+import { formatBalance } from '../utils';
 import { useContext } from '../contexts';
 import useExporters from '../hooks/useExporters';
 import ERC20Json from '../contracts/ERC20.json';
@@ -70,19 +69,20 @@ const UserPage = observer(() => {
     triggerDownload(csvString, `${getExportFileName()}.csv`, 'text/csv');
   };
 
-  const DXD = useVestingContract({
-    address: configStore.getNetworkContracts().votingMachines.dxd.token,
-    abi: ERC20Json.abi,
-  });
+  const DXD = useContract(
+    configStore.getNetworkContracts().votingMachines.dxd.token,
+    ERC20Json.abi
+  );
 
   useEffect(() => {
     const getUserVestingContracts = () => {
       return Promise.all(
         userVestingContracts.map(async contract => {
           const balance = await DXD?.balanceOf(contract.address);
+          const value = balance.toString();
           return {
             ...contract,
-            value: new BigNumber(balance).toFixed(),
+            value,
           };
         })
       );

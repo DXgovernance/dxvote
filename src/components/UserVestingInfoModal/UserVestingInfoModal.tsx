@@ -81,6 +81,7 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
         console.debug('[TX_FINALLY]', hash);
         setLoading(false);
         onDismiss();
+        window.location.reload();
       })
       .catch(e => {
         console.log('error', e);
@@ -89,8 +90,9 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
   };
 
   const contractValue = parseFloat(
-    Number(Web3.utils.fromWei(contract.value)).toFixed(4)
+    Number(Web3.utils.fromWei(contract.value, 'ether')).toFixed(4)
   );
+
   const cliff = moment.unix(Number(contract.cliff));
   const header = <Title>Vesting Contract</Title>;
 
