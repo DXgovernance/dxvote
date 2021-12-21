@@ -36,6 +36,10 @@ const ProposalsList = styled(Box)`
   margin-top: 1rem;
 `;
 
+const ErrorList = styled(Box)`
+  overflow: hidden;
+`;
+
 const GuildsPage: React.FC = () => {
   const guildId = useLocation().pathname.split('/')[1];
   const { proposals, loading, error } = useProposals(guildId);
@@ -61,7 +65,7 @@ const GuildsPage: React.FC = () => {
               />
             ))}
         </ProposalsList>
-        {error && <div>{error.message}</div>}
+        {error && <ErrorList>{error.message}</ErrorList>}
       </PageContent>
     </PageContainer>
   );
