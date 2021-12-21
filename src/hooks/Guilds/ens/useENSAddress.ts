@@ -2,18 +2,21 @@ import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
+import useSessionStorage from '../useSessionStorage';
 
 export default function useENSAddress(
   ensName: string,
   web3Context = MAINNET_WEB3_ROOT_KEY
 ) {
   const [isLoading, setIsLoading] = useState(true);
-  const [ensAddress, setENSAddress] = useState<string | null>(null);
+  const [ensAddress, setENSAddress] = useSessionStorage<string | null>(
+    `ens/address/${ensName}`,
+    null
+  );
   const { library } = useWeb3React(web3Context);
 
   useEffect(() => {
-    setENSAddress(null);
-    if (!ensName) return;
+    if (!ensName || ensAddress) return;
 
     setIsLoading(true);
     try {
@@ -26,7 +29,7 @@ export default function useENSAddress(
     } finally {
       setIsLoading(false);
     }
-  }, [ensName, library]);
+  }, [ensName, library, ensAddress, setENSAddress]);
 
   return {
     address: ensAddress,
