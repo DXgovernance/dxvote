@@ -1,14 +1,13 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import moment from 'moment';
-import Web3 from 'web3';
 import { useState } from 'react';
 import { Modal } from '../Modal';
 import { Row as CommonRow, BlockchainLink, Button } from '../common';
 import { TokenVesting } from '../../types/types';
 import { useContext } from '../../contexts';
 import { toast } from 'react-toastify';
-import { TXEvents } from '../../utils';
-import { FiZap } from 'react-icons/fi';
+import { TXEvents, formatBalance } from '../../utils';
+import { AiOutlineLoading } from 'react-icons/ai';
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnWrap}
@@ -38,27 +37,41 @@ const Title = styled.h2`
   margin: 0;
 `;
 
+const Spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+const Loading = styled.div`
+  animation: ${Spin} 1s cubic-bezier(0.42, 0.8, 0.6, 0.83) infinite;\
+  width: fit-content;
+  margin: 0 auto;
+`;
+
 export interface UserVestingInfoModalProps {
   onDismiss?: () => void;
   isOpen: boolean;
   contract?: TokenVesting;
+  onUpdate: () => void;
 }
 
 const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
   onDismiss,
   isOpen,
   contract,
+  onUpdate,
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const {
     context: { daoService },
   } = useContext();
 
   if (!contract) return null;
 
-  const contractValue = parseFloat(
-    Number(Web3.utils.fromWei(contract.value.toString(), 'ether')).toFixed(4)
-  );
+  const contractValue = formatBalance(contract.value);
   const cliff = moment.unix(Number(contract.cliff));
   const canRelease = !(
     !Number(contract.value.toString()) || moment().isBefore(cliff)
@@ -87,8 +100,8 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
       .on(TXEvents.FINALLY, hash => {
         console.debug('[TX_FINALLY]', hash);
         setLoading(false);
+        onUpdate();
         onDismiss();
-        window.location.reload(); // TODO: find a better way to refresh
       })
       .catch(e => {
         console.log('error', e);
@@ -100,12 +113,16 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
     <Modal
       header={<Title>Vesting Contract</Title>}
       isOpen={isOpen}
-      onDismiss={onDismiss}
+      onDismiss={!loading && onDismiss}
+      maxWidth={450}
     >
       <Wrapper>
         {loading ? (
           <div>
-            <FiZap /> <br /> Loading..
+            <Loading>
+              <AiOutlineLoading size={40} />
+            </Loading>
+            <br /> Waiting transaction..
           </div>
         ) : (
           <>
@@ -127,7 +144,7 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
               {moment.duration(contract.duration, 'seconds').humanize()}
             </Row>
 
-            <Row>Value: {contractValue} ETH</Row>
+            <Row>Value: {contractValue} DXD</Row>
             <Row>Can Release: {canRelease ? 'Yes' : 'No'}</Row>
             <Row>
               <StyledButton disabled={!canRelease} onClick={handleRedeemClick}>

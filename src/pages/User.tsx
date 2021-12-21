@@ -14,7 +14,7 @@ import {
 } from '../components/common';
 import UserVestingInfoModal from '../components/UserVestingInfoModal';
 import useContract from '../hooks/useContract';
-import { formatBalance } from '../utils';
+import { formatBalance, bnum } from '../utils';
 import { useContext } from '../contexts';
 import useExporters from '../hooks/useExporters';
 import ERC20Json from '../contracts/ERC20.json';
@@ -74,28 +74,27 @@ const UserPage = observer(() => {
     ERC20Json.abi
   );
 
-  useEffect(() => {
-    const getUserVestingContracts = () => {
-      return Promise.all(
-        userVestingContracts.map(async contract => {
-          try {
-            const value = await DXD?.balanceOf(contract.address);
-            // const value = balance.toString();
-            return {
-              ...contract,
-              value,
-            };
-          } catch (e) {
-            return {
-              ...contract,
-              value: '0',
-            };
-          }
-        })
-      );
-    };
-    getUserVestingContracts().then(setTokenVestingContracts);
-  }, []);
+  const updateUserVestingContracts = () => {
+    const contracts = Promise.all(
+      userVestingContracts.map(async contract => {
+        try {
+          const balance = await DXD?.balanceOf(contract.address);
+          return {
+            ...contract,
+            value: bnum(balance),
+          };
+        } catch (e) {
+          return {
+            ...contract,
+            value: '0',
+          };
+        }
+      })
+    );
+    contracts.then(setTokenVestingContracts);
+  };
+
+  useEffect(updateUserVestingContracts, []);
 
   return (
     <>
@@ -211,7 +210,7 @@ const UserPage = observer(() => {
                 <span>
                   {contract.address} / Cliff:{' '}
                   {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
-                  {contract.value.toString()} wei
+                  {formatBalance(contract.value)} DXD
                 </span>
               </ListRow>
             );
@@ -227,6 +226,7 @@ const UserPage = observer(() => {
           setSelectedModalVestingContract(null);
           setIsVestingInfoModalOpen(false);
         }}
+        onUpdate={updateUserVestingContracts}
       />
     </>
   );
