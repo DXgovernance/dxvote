@@ -84,7 +84,7 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
       .on(TXEvents.RECEIPT, hash => {
         console.debug('[TX_RECEIPT]', hash);
         toast.success(
-          `Successfully redeemed ${contractValue}ETH from ${contract.address}`
+          `Successfully redeemed ${contractValue}DXD from ${contract.address}`
         );
       })
       .on(TXEvents.TX_ERROR, txerror => {
