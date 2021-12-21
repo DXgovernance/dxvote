@@ -56,9 +56,16 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
 
   if (!contract) return null;
 
+  const contractValue = parseFloat(
+    Number(Web3.utils.fromWei(contract.value.toString(), 'ether')).toFixed(4)
+  );
+  const cliff = moment.unix(Number(contract.cliff));
+  const canRelease = !(
+    !Number(contract.value.toString()) || moment().isBefore(cliff)
+  );
+
   const handleRedeemClick = () => {
     setLoading(true);
-
     daoService
       .redeemVestingContractDxd(contract.address)
       .on(TXEvents.RECEIPT, hash => {
@@ -81,7 +88,7 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
         console.debug('[TX_FINALLY]', hash);
         setLoading(false);
         onDismiss();
-        window.location.reload();
+        window.location.reload(); // TODO: find a better way to refresh
       })
       .catch(e => {
         console.log('error', e);
@@ -89,18 +96,15 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
       });
   };
 
-  const contractValue = parseFloat(
-    Number(Web3.utils.fromWei(contract.value, 'ether')).toFixed(4)
-  );
-
-  const cliff = moment.unix(Number(contract.cliff));
-  const header = <Title>Vesting Contract</Title>;
-
   return (
-    <Modal header={header} isOpen={isOpen} onDismiss={onDismiss}>
+    <Modal
+      header={<Title>Vesting Contract</Title>}
+      isOpen={isOpen}
+      onDismiss={onDismiss}
+    >
       <Wrapper>
         {loading ? (
-          <div className="loader">
+          <div>
             <FiZap /> <br /> Loading..
           </div>
         ) : (
@@ -120,17 +124,13 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
             </Row>
             <Row>
               Duration:{' '}
-              {moment.duration(Number(contract.duration), 'seconds').humanize()}
+              {moment.duration(contract.duration, 'seconds').humanize()}
             </Row>
 
             <Row>Value: {contractValue} ETH</Row>
+            <Row>Can Release: {canRelease ? 'Yes' : 'No'}</Row>
             <Row>
-              <StyledButton
-                disabled={
-                  !Number(contract.value.toString()) || moment().isBefore(cliff)
-                }
-                onClick={handleRedeemClick}
-              >
+              <StyledButton disabled={!canRelease} onClick={handleRedeemClick}>
                 Redeem DXD
               </StyledButton>
             </Row>

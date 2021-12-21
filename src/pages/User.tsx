@@ -12,7 +12,7 @@ import {
   Subtitle,
   Button,
 } from '../components/common';
-import UserVestingInfoModal from '../components/UserVestingInfoModal'; // useVestingContract,
+import UserVestingInfoModal from '../components/UserVestingInfoModal';
 import useContract from '../hooks/useContract';
 import { formatBalance } from '../utils';
 import { useContext } from '../contexts';
@@ -78,12 +78,19 @@ const UserPage = observer(() => {
     const getUserVestingContracts = () => {
       return Promise.all(
         userVestingContracts.map(async contract => {
-          const balance = await DXD?.balanceOf(contract.address);
-          const value = balance.toString();
-          return {
-            ...contract,
-            value,
-          };
+          try {
+            const value = await DXD?.balanceOf(contract.address);
+            // const value = balance.toString();
+            return {
+              ...contract,
+              value,
+            };
+          } catch (e) {
+            return {
+              ...contract,
+              value: '0',
+            };
+          }
         })
       );
     };
@@ -184,38 +191,41 @@ const UserPage = observer(() => {
           );
         })}
 
-        {userVestingContracts.length && (
-          <TitleRow>
-            <h2>Vesting Contracts</h2>
-          </TitleRow>
+        <TitleRow>
+          <h2>Vesting Contracts</h2>
+        </TitleRow>
+
+        {tokenVestingContracts.length ? (
+          tokenVestingContracts.map((contract, i, arr) => {
+            return (
+              <ListRow
+                clickable
+                key={contract.address}
+                borderBottom={i < arr.length - 1}
+                onClick={() => {
+                  if (!contract.address) return;
+                  setSelectedModalVestingContract(contract);
+                  setIsVestingInfoModalOpen(true);
+                }}
+              >
+                <span>
+                  {contract.address} / Cliff:{' '}
+                  {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
+                  {contract.value.toString()} wei
+                </span>
+              </ListRow>
+            );
+          })
+        ) : (
+          <ListRow> - No Vesting Contracts found for {userAddress} - </ListRow>
         )}
-        {tokenVestingContracts.map((contract, i, arr) => {
-          return (
-            <ListRow
-              clickable
-              key={contract.address}
-              borderBottom={i < arr.length - 1}
-              onClick={() => {
-                if (!contract.address) return;
-                setSelectedModalVestingContract(contract);
-                setIsVestingInfoModalOpen(true);
-              }}
-            >
-              <span>
-                {contract.address} / Cliff:{' '}
-                {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
-                {contract.value} wei
-              </span>
-            </ListRow>
-          );
-        })}
       </Box>
       <UserVestingInfoModal
         contract={selectedModalVestingContract}
         isOpen={isVestingInfoModalOpen}
         onDismiss={() => {
-          setIsVestingInfoModalOpen(false);
           setSelectedModalVestingContract(null);
+          setIsVestingInfoModalOpen(false);
         }}
       />
     </>
