@@ -2,14 +2,14 @@ import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
-import useSessionStorage from '../useSessionStorage';
+import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
 
 export default function useENSName(
   ensAddress?: string,
   web3Context = MAINNET_WEB3_ROOT_KEY
 ) {
   const [isLoading, setIsLoading] = useState(true);
-  const [ensName, setENSName] = useSessionStorage<string | null>(
+  const [ensName, setENSName] = useLocalStorageWithExpiry<string>(
     `ens/name/${ensAddress}`,
     null
   );

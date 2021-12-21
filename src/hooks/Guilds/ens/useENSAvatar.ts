@@ -6,15 +6,13 @@ import useENS from './useENS';
 import useENSResolver from './useENSResolver';
 import useERC721NFT from '../nft/useERC721NFT';
 import useERC1155NFT from '../nft/useERC1155NFT';
-import useSessionStorage from '../useSessionStorage';
+import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
 
-const useENSAvatar = (
-  ethAddress: string,
-) => {
+const useENSAvatar = (ethAddress: string) => {
   const { name: ensName } = useENS(ethAddress);
   const resolver = useENSResolver(ensName);
 
-  const [avatarUri, setAvatarUri] = useSessionStorage<string | null>(
+  const [avatarUri, setAvatarUri] = useLocalStorageWithExpiry<string>(
     `ens/avatar/${ethAddress}`,
     null
   );
