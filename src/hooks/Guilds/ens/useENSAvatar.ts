@@ -10,17 +10,16 @@ import useSessionStorage from '../useSessionStorage';
 
 const useENSAvatar = (
   ethAddress: string,
-  web3Context: string = MAINNET_WEB3_ROOT_KEY
 ) => {
-  const { name: ensName } = useENS(ethAddress, web3Context);
-  const resolver = useENSResolver(ensName, web3Context);
+  const { name: ensName } = useENS(ethAddress);
+  const resolver = useENSResolver(ensName);
 
   const [avatarUri, setAvatarUri] = useSessionStorage<string | null>(
     `ens/avatar/${ethAddress}`,
     null
   );
 
-  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, web3Context);
+  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress);
 
   useEffect(() => {
     if (!resolver || avatarUri) return;
