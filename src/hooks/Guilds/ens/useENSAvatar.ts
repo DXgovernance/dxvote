@@ -8,16 +8,17 @@ import useERC721NFT from '../nft/useERC721NFT';
 import useERC1155NFT from '../nft/useERC1155NFT';
 import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
 
-const useENSAvatar = (ethAddress: string) => {
-  const { name: ensName } = useENS(ethAddress);
-  const resolver = useENSResolver(ensName);
-
+const useENSAvatar = (
+  ethAddress: string,
+  web3Context: string = MAINNET_WEB3_ROOT_KEY
+) => {
+  const { name: ensName } = useENS(ethAddress, web3Context);
+  const resolver = useENSResolver(ensName, web3Context);
   const [avatarUri, setAvatarUri] = useLocalStorageWithExpiry<string>(
     `ens/avatar/${ethAddress}`,
     null
   );
-
-  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress);
+  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, web3Context);
 
   useEffect(() => {
     if (!resolver || avatarUri) return;

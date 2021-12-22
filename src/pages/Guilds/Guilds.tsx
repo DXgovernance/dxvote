@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Box } from '../../components/Guilds/common/Layout';
 
@@ -41,7 +41,7 @@ const ErrorList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const guildId = useLocation().pathname.split('/')[1];
+  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
   const { proposals, loading, error } = useProposals(guildId);
   console.debug('Guilds Proposals: ', proposals, loading, error);
 
