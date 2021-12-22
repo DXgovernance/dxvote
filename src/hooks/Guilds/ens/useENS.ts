@@ -12,7 +12,10 @@ export default function useENS(
     validAddress ? validAddress : undefined,
     web3Context
   );
-  const lookup = useENSAddress(nameOrAddress, web3Context);
+  const lookup = useENSAddress(
+    !validAddress ? nameOrAddress : undefined,
+    web3Context
+  );
 
   return {
     loading: reverseLookup.loading || lookup.loading,
