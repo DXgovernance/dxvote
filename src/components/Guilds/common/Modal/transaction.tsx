@@ -3,6 +3,7 @@ import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from 'components/Modal';
 import { AiOutlineArrowUp } from 'react-icons/ai';
 import { Button } from '../Button';
+import { FiX } from 'react-icons/fi';
 
 type TransasctionModalProps = Pick<
   ModalProps,
@@ -31,7 +32,12 @@ export const Flex = styled.div`
 
 export const ModalButton = styled(Button)`
 width: 90%;
-
+background-color: ${({ theme }) => theme.colors.primary};
+color: ${({ theme }) => theme.colors.background};
+      :hover:enabled {
+        background-color: ${({ theme }) => theme.colors.background};
+        color: ${({ theme }) => theme.colors.primary};
+      }
 `
 
 type ContainerTextProps = {
@@ -80,16 +86,17 @@ const TransactionSubmittedContent: React.ReactElement = (
     <Container>
       <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
     </Container>
-    <ModalButton>Dismiss</ModalButton>
+    <ModalButton variant='primary'>Close</ModalButton>
   </Flex>
 );
 
 const TransactionRejectedContent: React.ReactElement = (
   <Flex>
-    <ContainerText>Transaction Rejected</ContainerText>
+    <ContainerText variant='bold'>Transaction Rejected</ContainerText>
     <Container>
       <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
     </Container>
+    <ModalButton variant='primary'>Dismiss</ModalButton>
   </Flex>
 );
 
@@ -119,6 +126,14 @@ const TransactionSubmittedHeader = (
   <Flex>
     <Circle>
       <AiOutlineArrowUp size={40} />
+    </Circle>
+  </Flex>
+);
+
+const TransactionRejectedHeader = (
+  <Flex>
+    <Circle>
+      <FiX size={40} />
     </Circle>
   </Flex>
 );
@@ -155,7 +170,6 @@ export const TransactionSubmitted: React.FC<TransasctionModalProps> = ({
 
 export const TransactionRejected: React.FC<TransasctionModalProps> = ({
   isOpen,
-  onCancel,
   onDismiss,
 }) => {
   return (
@@ -163,8 +177,8 @@ export const TransactionRejected: React.FC<TransasctionModalProps> = ({
       children={TransactionRejectedContent}
       isOpen={isOpen}
       onDismiss={onDismiss}
-      header={<div>hi</div>}
-      onCancel={onCancel}
+      header={TransactionRejectedHeader}
+      maxWidth={300}
     />
   );
 };
