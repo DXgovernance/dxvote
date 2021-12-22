@@ -16,15 +16,12 @@ export const Wrapper = styled.div`
   max-width: ${({ maxWidth }) => maxWidth}px;
   outline: 0;
 
-
   @media only screen and (max-width: 768px) {
     max-width: 300px;
     min-width: 300px;
     width: 300px;
   }
 `;
-
-
 
 export const Backdrop = styled.div`
   position: fixed;
@@ -48,8 +45,8 @@ export const StyledModal = styled.div`
 `;
 
 export const Header = styled.div`
- display: flex;
- justify-content: center;
+  display: flex;
+  justify-content: center;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   position: relative;
@@ -133,7 +130,6 @@ export const Modal: React.FC<ModalProps> = ({
             <Footer>
               {onCancel && (
                 <ModalButton
-                  variant="secondary"
                   onClick={() => {
                     onCancel();
                     onDismiss();
