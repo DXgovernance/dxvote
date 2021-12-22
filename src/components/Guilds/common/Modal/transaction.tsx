@@ -15,6 +15,7 @@ export const Circle = styled.div`
   height: 86px;
   width: 86px;
   display: flex;
+  align-items: center;
   justify-content: center;
 `;
 
@@ -35,19 +36,19 @@ const variantStyles = (variant = 'regular') =>
 ({
   regular: css`
       font-weight: 500;
-      font-size: '12px';
-      line-height: '16px';
+      font-size: 12px;
+      line-height: 16px;
     `,
   medium: css`
       font-weight: 500;
-      font-size: '14px';
-      line-height: '20px';
+      font-size: 14px;
+      line-height: 20px;
     `,
 
   bold: css`
       font-weight: 600;
-      font-size: '16px';
-      line-height: '24px';
+      font-size: 16px;
+      line-height: 24px;
     `,
 }[variant]);
 
@@ -63,20 +64,25 @@ ContainerText.defaultProps = {
 };
 
 export const Container = styled.div`
-  margin-bottom: 16px;
+  margin: 8px 0 24px 0;
 `;
+
 
 const TransactionSubmittedContent: React.ReactElement = (
   <Flex>
     <ContainerText variant='bold'>Transaction Submitted</ContainerText>
-    <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
+    <Container>
+      <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
+    </Container>
   </Flex>
 );
 
 const TransactionRejectedContent: React.ReactElement = (
   <Flex>
     <ContainerText>Transaction Rejected</ContainerText>
-    <ContainerText color='grey'>View on Block Explorer</ContainerText>
+    <Container>
+      <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
+    </Container>
   </Flex>
 );
 
@@ -105,7 +111,7 @@ const TransactionWaitHeader = (
 const TransactionSubmittedHeader = (
   <Flex>
     <Circle>
-      <AiOutlineArrowUp height="30px" width="20px" />
+      <AiOutlineArrowUp size={40} />
     </Circle>
   </Flex>
 );
