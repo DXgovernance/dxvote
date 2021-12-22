@@ -9,6 +9,7 @@ import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { useWeb3React } from '@web3-react/core';
 import WalletModal from '../Web3Modals/WalletModal';
+import { Badge } from '../common/Badge';
 
 const IconHolder = styled.span`
   display: flex;
@@ -31,6 +32,15 @@ const AccountButton = styled(IconButton)`
 
   @media only screen and (min-width: 768px) {
     padding: 0.3rem 0.5rem;
+  }
+
+  /* hover state for when having child Badge */
+  &:hover,
+  &:active {
+    ${Badge} {
+      background-color: ${({ theme }) => theme.colors.background};
+      color: ${({ theme }) => theme.colors.primary};
+    }
   }
 `;
 
@@ -89,6 +99,9 @@ const Web3Status = () => {
     }
   };
 
+  // TODO: change this based on store.
+  const transactionsCounter = 2;
+
   function getWalletStatus() {
     if (injectedWalletAuthorized && !account) {
       const chains = getChains(rpcUrls);
@@ -111,6 +124,7 @@ const Web3Status = () => {
           {isDesktop && (
             <AddressText>{ensName || shortenAddress(account)}</AddressText>
           )}
+          {transactionsCounter && <Badge>{transactionsCounter}</Badge>}
         </AccountButton>
       );
     } else {
