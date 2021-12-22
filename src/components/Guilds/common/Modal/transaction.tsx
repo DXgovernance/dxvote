@@ -1,12 +1,22 @@
+import styled, { css } from 'styled-components';
 import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from 'components/Modal';
-
-import styled from 'styled-components';
+import { AiOutlineArrowUp } from 'react-icons/ai';
 
 type TransasctionModalProps = Pick<
   ModalProps,
   'isOpen' | 'onDismiss' | 'onCancel'
 >;
+
+export const Circle = styled.div`
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.background};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  height: 86px;
+  width: 86px;
+  display: flex;
+  justify-content: center;
+`;
 
 export const Flex = styled.div`
   display: Flex;
@@ -14,60 +24,94 @@ export const Flex = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: #ffffff;
-`
-
-
-export const ContainerText = styled(Flex)`
-  font-family: Inter;
-  font-style: normal;
-  font-weight: ${props => props.fontWeight || 600};
-  font-size: ${props => props.fontSize || '16px'};
-  line-height: ${props => props.lineHeight || '24px'};
-  color: ${props => props.color || '#000000'};
+  background: ${({ theme }) => theme.colors.background};
 `;
 
-// small, medium , large text
+type ContainerTextProps = {
+  variant?: 'regular' | 'medium' | 'bold';
+};
 
+const variantStyles = (variant = 'regular') =>
+({
+  regular: css`
+      font-weight: 500;
+      font-size: '12px';
+      line-height: '16px';
+    `,
+  medium: css`
+      font-weight: 500;
+      font-size: '14px';
+      line-height: '20px';
+    `,
+
+  bold: css`
+      font-weight: 600;
+      font-size: '16px';
+      line-height: '24px';
+    `,
+}[variant]);
+
+export const ContainerText = styled(Flex) <ContainerTextProps>`
+  font-family: Inter;
+  font-style: normal;
+  color: ${props => props.color || '#000000'};
+  ${({ variant }) => variantStyles(variant)}
+`;
+
+ContainerText.defaultProps = {
+  variant: 'primary',
+};
+
+export const Container = styled.div`
+  margin-bottom: 16px;
+`;
 
 const TransactionSubmittedContent: React.ReactElement = (
-  <div>
-    <div>Transaction Submitted</div>
-    <div>View on Block Explorer</div>
-  </div>
+  <Flex>
+    <ContainerText variant='bold'>Transaction Submitted</ContainerText>
+    <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
+  </Flex>
 );
 
 const TransactionRejectedContent: React.ReactElement = (
-  <div>
-    <div>Transaction Rejected</div>
-    <div>View on Block Explorer</div>
-  </div>
+  <Flex>
+    <ContainerText>Transaction Rejected</ContainerText>
+    <ContainerText color='grey'>View on Block Explorer</ContainerText>
+  </Flex>
 );
-
 
 const WaitingForTransactionContent: React.ReactElement = (
   <Flex>
-    <div style={{ marginBottom: '16px' }}>
-      <ContainerText>Waiting For Confirmation</ContainerText>
-      <ContainerText lineHeight="20px" fontSize="14px" fontWeight="500">
+    <Container>
+      <ContainerText variant='bold'>Waiting For Confirmation</ContainerText>
+      <ContainerText variant='medium'>
         Stake 52.42DXD for 324 Days
       </ContainerText>
-    </div>
-    <ContainerText color="grey" lineHeight="16px" fontSize="12px">
+    </Container>
+    <ContainerText
+      color="grey"
+    >
       Confirm this Transaction in your Wallet
     </ContainerText>
   </Flex>
 );
 
-const TransactionHeader = (
+const TransactionWaitHeader = (
   <Flex>
     <PendingCircle height="86px" width="86px" color="black" />
   </Flex>
-)
+);
+
+const TransactionSubmittedHeader = (
+  <Flex>
+    <Circle>
+      <AiOutlineArrowUp height="30px" width="20px" />
+    </Circle>
+  </Flex>
+);
 
 export const TransactionWait: React.FC<TransasctionModalProps> = ({
   isOpen,
-
   onDismiss,
 }) => {
   return (
@@ -75,7 +119,7 @@ export const TransactionWait: React.FC<TransasctionModalProps> = ({
       isOpen={isOpen}
       onDismiss={onDismiss}
       children={WaitingForTransactionContent}
-      header={TransactionHeader}
+      header={TransactionWaitHeader}
       maxWidth={300}
     />
   );
@@ -83,33 +127,34 @@ export const TransactionWait: React.FC<TransasctionModalProps> = ({
 
 export const TransactionSubmitted: React.FC<TransasctionModalProps> = ({
   isOpen,
-
   onDismiss,
+  onCancel,
 }) => {
   return (
     <Modal
       isOpen={isOpen}
       onDismiss={onDismiss}
-      hideHeader
+      onCancel={onCancel}
       children={TransactionSubmittedContent}
       cancelText="Dismiss"
-      header={<div>hi</div>}
+      header={TransactionSubmittedHeader}
+      maxWidth={300}
     />
   );
 };
 
 export const TransactionRejected: React.FC<TransasctionModalProps> = ({
   isOpen,
-
+  onCancel,
   onDismiss,
 }) => {
   return (
     <Modal
-      hideHeader
       children={TransactionRejectedContent}
       isOpen={isOpen}
       onDismiss={onDismiss}
       header={<div>hi</div>}
+      onCancel={onCancel}
     />
   );
 };
