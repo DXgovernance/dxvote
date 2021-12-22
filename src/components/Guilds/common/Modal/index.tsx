@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import ReactDOM from 'react-dom';
 
-import { Button } from '../Button';
 import { FiX } from 'react-icons/fi';
 import { Heading } from '../Typography';
+import { Button } from '../Button';
 
 export const Wrapper = styled.div`
   position: fixed;
@@ -130,6 +130,7 @@ export const Modal: React.FC<ModalProps> = ({
             <Footer>
               {onCancel && (
                 <ModalButton
+                  variant='primary'
                   onClick={() => {
                     onCancel();
                     onDismiss();

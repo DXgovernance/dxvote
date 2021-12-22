@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from 'components/Modal';
 import { AiOutlineArrowUp } from 'react-icons/ai';
+import { Button } from '../Button';
 
 type TransasctionModalProps = Pick<
   ModalProps,
@@ -27,6 +28,11 @@ export const Flex = styled.div`
   text-align: center;
   background: ${({ theme }) => theme.colors.background};
 `;
+
+export const ModalButton = styled(Button)`
+width: 90%;
+
+`
 
 type ContainerTextProps = {
   variant?: 'regular' | 'medium' | 'bold';
@@ -74,6 +80,7 @@ const TransactionSubmittedContent: React.ReactElement = (
     <Container>
       <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
     </Container>
+    <ModalButton>Dismiss</ModalButton>
   </Flex>
 );
 
@@ -134,15 +141,12 @@ export const TransactionWait: React.FC<TransasctionModalProps> = ({
 export const TransactionSubmitted: React.FC<TransasctionModalProps> = ({
   isOpen,
   onDismiss,
-  onCancel,
 }) => {
   return (
     <Modal
       isOpen={isOpen}
       onDismiss={onDismiss}
-      onCancel={onCancel}
       children={TransactionSubmittedContent}
-      cancelText="Dismiss"
       header={TransactionSubmittedHeader}
       maxWidth={300}
     />
