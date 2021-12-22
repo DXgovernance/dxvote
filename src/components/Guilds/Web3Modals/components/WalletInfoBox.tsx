@@ -1,19 +1,22 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
+import { FiCheckCircle, FiCopy, FiExternalLink } from 'react-icons/fi';
+import { isMobile, isDesktop } from 'react-device-detect';
+
 import {
   getBlockchainLink,
   NETWORK_NAMES,
   shortenAddress,
 } from '../../../../utils';
-import { Button, IconButton } from '../../common/Button';
-import Avatar from '../../Avatar';
 import useENSAvatar from '../../../../hooks/Guilds/ens/useENSAvatar';
 import useClipboard from '../../../../hooks/Guilds/useClipboard';
-import { FiCheckCircle, FiCopy, FiExternalLink } from 'react-icons/fi';
 import { findWalletType } from '../../../../provider/connectors';
+
 import LiveIndicator from './LiveIndicator';
 import { MAINNET_WEB3_ROOT_KEY } from '../../Web3Manager/MainnetWeb3Manager';
+import { Button, IconButton } from '../../common/Button';
+import Avatar from '../../Avatar';
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -71,6 +74,13 @@ const IconHolder = styled.span`
     margin-right: 0;
   }
 `;
+
+const CenteredButton = styled(Button)`
+  margin: auto;
+  display: flex;
+  margin-top: 20px;
+`;
+
 interface Props {
   openOptions: any;
 }
@@ -102,9 +112,11 @@ export default function WalletInfoBox({ openOptions }: Props) {
           <LiveIndicator />
           Connected to {findWalletType(connector)}
         </ConnectionStatusText>
-        <div>
-          <Button onClick={openOptions}>Change</Button>
-        </div>
+        {isDesktop && (
+          <div>
+            <Button onClick={openOptions}>Change</Button>
+          </div>
+        )}
       </ConnectionStatusRow>
 
       <WalletAddressRow>
@@ -131,6 +143,9 @@ export default function WalletInfoBox({ openOptions }: Props) {
           </ConnectionActionButton>
         </ExternalLink>
       </Row>
+      {isMobile && (
+        <CenteredButton onClick={openOptions}>Change Connection</CenteredButton>
+      )}
     </Wrapper>
   );
 }
