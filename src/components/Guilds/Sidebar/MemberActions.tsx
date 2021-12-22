@@ -13,6 +13,11 @@ import { IconButton, Button } from '../common/Button';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
+import {
+  TransactionRejected,
+  TransactionSubmitted,
+  TransactionWait,
+} from '../common/Modal/transaction';
 
 const Icon = styled.img`
   height: 1.1rem;
@@ -44,10 +49,32 @@ const LockButton = styled(Button)`
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isRejected, setIsRejected] = useState(false);
+
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
   return (
     <DropdownMenu ref={memberMenuRef}>
+      <TransactionWait
+        isOpen={isOpen}
+        onDismiss={() => {
+          setIsOpen(false);
+          setIsSubmitted(true);
+        }}
+      />
+      <TransactionSubmitted
+        isOpen={isSubmitted}
+        onDismiss={() => {
+          setIsSubmitted(false);
+          setIsRejected(true);
+        }}
+      />
+      <TransactionRejected
+        isOpen={isRejected}
+        onDismiss={() => setIsRejected(false)}
+      />
       <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
         <Icon src={dxIcon} alt={'Icon'} />
         <span>geronimo.eth</span>
@@ -69,7 +96,7 @@ export const MemberActions = () => {
           <ContentItem>
             Unlocked in <span>542 days</span>
           </ContentItem>
-          <LockButton onClick={() => alert('lock dxd')}> Lock DXD</LockButton>
+          <LockButton onClick={() => setIsOpen(true)}> Lock DXD</LockButton>
         </MemberContainer>
       </DropdownContent>
     </DropdownMenu>

@@ -130,7 +130,7 @@ export const Modal: React.FC<ModalProps> = ({
             <Footer>
               {onCancel && (
                 <ModalButton
-                  variant='primary'
+                  variant="primary"
                   onClick={() => {
                     onCancel();
                     onDismiss();

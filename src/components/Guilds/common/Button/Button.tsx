@@ -5,8 +5,8 @@ type ButtonProps = {
 };
 
 const variantStyles = (variant = 'primary') =>
-({
-  primary: css`
+  ({
+    primary: css`
       border: 1px solid ${({ theme }) => theme.colors.primary};
       background-color: ${({ theme }) => theme.colors.background};
       color: ${({ theme }) => theme.colors.text};
@@ -24,13 +24,13 @@ const variantStyles = (variant = 'primary') =>
       }
 
       ${({ active, selected }) =>
-      (active || selected) &&
-      css`
+        (active || selected) &&
+        css`
           background-color: ${({ theme }) => theme.colors.primary};
           color: ${({ theme }) => theme.colors.background};
         `}
     `,
-  minimal: css`
+    minimal: css`
       border: none;
       background-color: transparent;
       color: ${({ theme }) => theme.colors.text};
@@ -39,7 +39,7 @@ const variantStyles = (variant = 'primary') =>
         color: ${({ theme }) => theme.colors.muted};
       }
     `,
-}[variant]);
+  }[variant]);
 
 export const Button = styled.button<ButtonProps>`
   display: inline-flex;

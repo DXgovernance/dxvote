@@ -31,41 +31,42 @@ export const Flex = styled.div`
 `;
 
 export const ModalButton = styled(Button)`
-width: 90%;
-background-color: ${({ theme }) => theme.colors.primary};
-color: ${({ theme }) => theme.colors.background};
-      :hover:enabled {
-        background-color: ${({ theme }) => theme.colors.background};
-        color: ${({ theme }) => theme.colors.primary};
-      }
-`
+  width: 90%;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.background};
+  :hover:enabled {
+    background-color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
 
 type ContainerTextProps = {
   variant?: 'regular' | 'medium' | 'bold';
 };
 
 const variantStyles = (variant = 'regular') =>
-({
-  regular: css`
+  ({
+    regular: css`
       font-weight: 500;
       font-size: 12px;
       line-height: 16px;
     `,
-  medium: css`
+    medium: css`
       font-weight: 500;
       font-size: 14px;
       line-height: 20px;
     `,
 
-  bold: css`
+    bold: css`
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
     `,
-}[variant]);
+  }[variant]);
 
-export const ContainerText = styled(Flex) <ContainerTextProps>`
+export const ContainerText = styled(Flex)<ContainerTextProps>`
   font-family: Inter;
+  margin: 4px;
   font-style: normal;
   color: ${props => props.color || '#000000'};
   ${({ variant }) => variantStyles(variant)}
@@ -79,38 +80,39 @@ export const Container = styled.div`
   margin: 8px 0 24px 0;
 `;
 
-
 const TransactionSubmittedContent: React.ReactElement = (
   <Flex>
-    <ContainerText variant='bold'>Transaction Submitted</ContainerText>
+    <ContainerText variant="bold">Transaction Submitted</ContainerText>
     <Container>
-      <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
+      <ContainerText variant="regular" color="grey">
+        View on Block Explorer
+      </ContainerText>
     </Container>
-    <ModalButton variant='primary'>Close</ModalButton>
+    <ModalButton variant="primary">Close</ModalButton>
   </Flex>
 );
 
 const TransactionRejectedContent: React.ReactElement = (
   <Flex>
-    <ContainerText variant='bold'>Transaction Rejected</ContainerText>
+    <ContainerText variant="bold">Transaction Rejected</ContainerText>
     <Container>
-      <ContainerText variant='regular' color='grey'>View on Block Explorer</ContainerText>
+      <ContainerText variant="regular" color="grey">
+        View on Block Explorer
+      </ContainerText>
     </Container>
-    <ModalButton variant='primary'>Dismiss</ModalButton>
+    <ModalButton variant="primary">Dismiss</ModalButton>
   </Flex>
 );
 
 const WaitingForTransactionContent: React.ReactElement = (
   <Flex>
     <Container>
-      <ContainerText variant='bold'>Waiting For Confirmation</ContainerText>
-      <ContainerText variant='medium'>
+      <ContainerText variant="bold">Waiting For Confirmation</ContainerText>
+      <ContainerText variant="medium">
         Stake 52.42DXD for 324 Days
       </ContainerText>
     </Container>
-    <ContainerText
-      color="grey"
-    >
+    <ContainerText color="grey">
       Confirm this Transaction in your Wallet
     </ContainerText>
   </Flex>
