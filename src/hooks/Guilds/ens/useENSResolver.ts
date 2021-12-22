@@ -6,11 +6,11 @@ import ensResolverABI from '../../../abis/ENSPublicResolver.json';
 import { getContract } from '../../../utils/contracts';
 import useENSRegistrar from './useENSRegistrar';
 
-export default function useENSResolver(ensName: string) {
+export default function useENSResolver(ensName: string, web3Context?: string) {
   const [resolver, setResolver] = useState<Contract | null>(null);
 
-  const { library } = useWeb3React();
-  const registrarContract = useENSRegistrar();
+  const { library } = useWeb3React(web3Context);
+  const registrarContract = useENSRegistrar(web3Context);
 
   useEffect(() => {
     if (!ensName) return setResolver(null);

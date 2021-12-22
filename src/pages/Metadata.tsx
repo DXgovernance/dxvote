@@ -91,7 +91,7 @@ export const CreateMetadataPage = observer(() => {
   } = useContext();
 
   const history = useHistory();
-  const { proposalType } = useParams();
+  const { proposalType } = useParams<{ proposalType?: string }>();
 
   const [proposalConfig, setProposalConfig] = useState({});
 

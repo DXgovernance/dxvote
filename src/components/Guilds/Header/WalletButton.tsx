@@ -10,6 +10,7 @@ import { shortenAddress } from '../../../utils';
 import { useWeb3React } from '@web3-react/core';
 import WalletModal from '../Web3Modals/WalletModal';
 import { Badge } from '../common/Badge';
+import { MAINNET_WEB3_ROOT_KEY } from '../Web3Manager/MainnetWeb3Manager';
 
 const IconHolder = styled.span`
   display: flex;
@@ -51,7 +52,10 @@ const AddressText = styled.span`
 
 const Web3Status = () => {
   const { account, chainId } = useWeb3React();
-  const { ensName, imageUrl, avatarUri } = useENSAvatar(account);
+  const { ensName, imageUrl, avatarUri } = useENSAvatar(
+    account,
+    MAINNET_WEB3_ROOT_KEY
+  );
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   let imageUrlToUse = useMemo(() => {
@@ -124,7 +128,9 @@ const Web3Status = () => {
           {isDesktop && (
             <AddressText>{ensName || shortenAddress(account)}</AddressText>
           )}
-          {transactionsCounter && <Badge>{transactionsCounter}</Badge>}
+          {transactionsCounter && (
+            <Badge size="25">{transactionsCounter}</Badge>
+          )}
         </AccountButton>
       );
     } else {

@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import ReactDOM from 'react-dom';
+import { isMobile, isDesktop } from 'react-device-detect';
 
 import { Button } from '../Button';
-import { FiX } from 'react-icons/fi';
+import { FiArrowLeft, FiX } from 'react-icons/fi';
 import { Heading } from '../Typography';
 
 export const Wrapper = styled.div`
@@ -15,12 +16,6 @@ export const Wrapper = styled.div`
   min-width: 400px;
   max-width: ${({ maxWidth }) => maxWidth}px;
   outline: 0;
-
-  @media only screen and (max-width: 768px) {
-    max-width: 300px;
-    min-width: 300px;
-    width: 300px;
-  }
 `;
 
 export const Backdrop = styled.div`
@@ -32,6 +27,7 @@ export const Backdrop = styled.div`
   background: rgba(0, 6, 41, 0.5);
   z-index: 500;
 `;
+
 export const StyledModal = styled.div`
   z-index: 100;
   background: ${({ theme }) => theme.colors.background};
@@ -40,12 +36,20 @@ export const StyledModal = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved2};
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+
+  @media only screen and (max-width: 768px) {
+    padding: 0px 20px;
+    height: 100vh;
+  }
 `;
+
 export const Header = styled.div`
   display: flex;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   position: relative;
+  align-items: center;
+  display: flex;
 `;
 
 export const HeaderText = styled(Heading)`
@@ -115,12 +119,19 @@ export const Modal: React.FC<ModalProps> = ({
       <Backdrop onClick={onDismiss} />
       <Wrapper maxWidth={maxWidth}>
         <StyledModal>
-          {!hideHeader && (
+          {!hideHeader && isDesktop && (
             <Header>
               <HeaderText>{header}</HeaderText>
               <CloseIcon onClick={onDismiss} />
             </Header>
           )}
+          {!hideHeader && isMobile && (
+            <Header onClick={onDismiss}>
+              <FiArrowLeft />
+              <HeaderText>{header}</HeaderText>
+            </Header>
+          )}
+
           <Content>{children}</Content>
           {(onCancel || onConfirm) && (
             <Footer>

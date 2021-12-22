@@ -1,20 +1,27 @@
 import { utils } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
 import { resolveUri } from '../../../utils/url';
 import useENS from './useENS';
 import useENSResolver from './useENSResolver';
 import useERC721NFT from '../nft/useERC721NFT';
 import useERC1155NFT from '../nft/useERC1155NFT';
+import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
 
-const useENSAvatar = (ethAddress: string) => {
-  const { name: ensName } = useENS(ethAddress);
-  const resolver = useENSResolver(ensName);
-  const [avatarUri, setAvatarUri] = useState<string>(null);
-  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress);
+const useENSAvatar = (
+  ethAddress: string,
+  web3Context: string = MAINNET_WEB3_ROOT_KEY
+) => {
+  const { name: ensName } = useENS(ethAddress, web3Context);
+  const resolver = useENSResolver(ensName, web3Context);
+  const [avatarUri, setAvatarUri] = useLocalStorageWithExpiry<string>(
+    `ens/avatar/${ethAddress}`,
+    null
+  );
+  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, web3Context);
 
   useEffect(() => {
-    if (!resolver) return;
+    if (!resolver || avatarUri) return;
 
     async function getAvatarUri() {
       try {
@@ -27,7 +34,7 @@ const useENSAvatar = (ethAddress: string) => {
     }
 
     getAvatarUri().then(setAvatarUri);
-  }, [resolver, ensName]);
+  }, [resolver, ensName, avatarUri, setAvatarUri]);
 
   return { ensName, avatarUri, imageUrl };
 };
