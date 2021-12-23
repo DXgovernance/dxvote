@@ -5,8 +5,6 @@ import { isMobile, isDesktop } from 'react-device-detect';
 import { Button } from '../Button';
 import { FiArrowLeft, FiX } from 'react-icons/fi';
 import { Heading } from '../Typography';
-import { Button } from '../Button';
-import { isMobile } from 'react-device-detect';
 
 export const Wrapper = styled.div`
   position: fixed;
