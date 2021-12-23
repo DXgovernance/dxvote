@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import PendingCircle from 'components/common/PendingCircle';
-import { Modal, ModalProps } from 'components/Modal';
+import { Modal, ModalProps } from '../Modal';
 import { AiOutlineArrowUp } from 'react-icons/ai';
 import { Button } from '../Button';
 import { FiX } from 'react-icons/fi';
@@ -28,9 +28,12 @@ export const Flex = styled.div`
   align-items: center;
   text-align: center;
   background: ${({ theme }) => theme.colors.background};
+
+  border-radius: ${({ theme }) => theme.radii.curved2};
 `;
 
 export const ModalButton = styled(Button)`
+  margin: 0 0 16px 0;
   width: 90%;
   background-color: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.background};
@@ -45,26 +48,26 @@ type ContainerTextProps = {
 };
 
 const variantStyles = (variant = 'regular') =>
-  ({
-    regular: css`
+({
+  regular: css`
       font-weight: 500;
       font-size: 12px;
       line-height: 16px;
     `,
-    medium: css`
+  medium: css`
       font-weight: 500;
       font-size: 14px;
       line-height: 20px;
     `,
 
-    bold: css`
+  bold: css`
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
     `,
-  }[variant]);
+}[variant]);
 
-export const ContainerText = styled(Flex)<ContainerTextProps>`
+export const ContainerText = styled(Flex) <ContainerTextProps>`
   font-family: Inter;
   margin: 4px;
   font-style: normal;
@@ -149,6 +152,7 @@ export const TransactionWait: React.FC<TransasctionModalProps> = ({
       isOpen={isOpen}
       onDismiss={onDismiss}
       children={WaitingForTransactionContent}
+      maxWidth={300}
       header={TransactionWaitHeader}
     />
   );
@@ -164,6 +168,7 @@ export const TransactionSubmitted: React.FC<TransasctionModalProps> = ({
       onDismiss={onDismiss}
       children={TransactionSubmittedContent}
       header={TransactionSubmittedHeader}
+      maxWidth={300}
     />
   );
 };
@@ -178,6 +183,7 @@ export const TransactionRejected: React.FC<TransasctionModalProps> = ({
       isOpen={isOpen}
       onDismiss={onDismiss}
       header={TransactionRejectedHeader}
+      maxWidth={300}
     />
   );
 };

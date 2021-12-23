@@ -5,6 +5,8 @@ import { FiX } from 'react-icons/fi';
 import { Heading } from '../Typography';
 import { Button } from '../Button';
 
+
+
 export const Wrapper = styled.div`
   position: fixed;
   top: 50%;
@@ -17,9 +19,9 @@ export const Wrapper = styled.div`
   outline: 0;
 
   @media only screen and (max-width: 768px) {
-    max-width: 300px;
-    min-width: 300px;
-    width: 300px;
+    width: 100%;
+    height: 100vh;
+    background: ${({ theme }) => theme.colors.background}
   }
 `;
 
@@ -42,13 +44,18 @@ export const StyledModal = styled.div`
   border-radius: ${({ theme }) => theme.radii.curved2};
   box-sizing: border-box;
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
+
+  @media only screen and (max-width: 768px) {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+  }
 `;
 
 export const Header = styled.div`
   display: flex;
   justify-content: center;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   position: relative;
 `;
 
@@ -59,8 +66,8 @@ export const HeaderText = styled(Heading)`
 const CloseIcon = styled(FiX)`
   position: absolute;
   color: ${({ theme }) => theme.colors.text};
-  right: 1.5rem;
-  top: 50%;
+  right: 20px;
+  top: 25px;
   transform: translateY(-50%);
   height: 1.5rem;
   width: 1.5rem;
@@ -119,10 +126,10 @@ export const Modal: React.FC<ModalProps> = ({
       <Backdrop onClick={onDismiss} />
       <Wrapper maxWidth={maxWidth}>
         <StyledModal>
+          <CloseIcon onClick={onDismiss} />
           {!hideHeader && (
             <Header>
               <HeaderText>{header}</HeaderText>
-              <CloseIcon onClick={onDismiss} />
             </Header>
           )}
           <Content>{children}</Content>
