@@ -4,8 +4,7 @@ import ReactDOM from 'react-dom';
 import { FiX } from 'react-icons/fi';
 import { Heading } from '../Typography';
 import { Button } from '../Button';
-
-
+import { isMobile } from 'react-device-detect';
 
 export const Wrapper = styled.div`
   position: fixed;
@@ -19,9 +18,7 @@ export const Wrapper = styled.div`
   outline: 0;
 
   @media only screen and (max-width: 768px) {
-    width: 100%;
     height: 100vh;
-    background: ${({ theme }) => theme.colors.background}
   }
 `;
 
@@ -33,6 +30,12 @@ export const Backdrop = styled.div`
   left: 0;
   background: rgba(0, 6, 41, 0.5);
   z-index: 500;
+
+  @media only screen and (max-width: 768px) {
+    width: 100%;
+    height: 100vh;
+    background: ${({ theme }) => theme.colors.background};
+  }
 `;
 
 export const StyledModal = styled.div`
@@ -46,9 +49,11 @@ export const StyledModal = styled.div`
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
 
   @media only screen and (max-width: 768px) {
-      position: fixed;
-      top: 50%;
-      left: 50%;
+    border: none;
+    box-shadow: none;
+    position: fixed;
+    width: 100%;
+    height: 100vh;
   }
 `;
 
@@ -71,6 +76,7 @@ const CloseIcon = styled(FiX)`
   transform: translateY(-50%);
   height: 1.5rem;
   width: 1.5rem;
+  z-index: 500;
 
   &:hover {
     cursor: pointer;
@@ -109,6 +115,14 @@ export const ModalButton = styled(Button)`
   flex: 1;
 `;
 
+export const Divider = styled.hr`
+  background: ${({ theme }) => theme.colors.text};
+  width: 100%;
+  position: fixed;
+  z-index: 800;
+  top: 64px;
+`;
+
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onDismiss,
@@ -124,9 +138,15 @@ export const Modal: React.FC<ModalProps> = ({
   const modal = (
     <div>
       <Backdrop onClick={onDismiss} />
-      <Wrapper maxWidth={maxWidth}>
-        <StyledModal>
+      {isMobile && (
+        <>
+          <Divider />
           <CloseIcon onClick={onDismiss} />
+        </>
+      )}
+      <Wrapper maxWidth={maxWidth}>
+        {!isMobile && <CloseIcon onClick={onDismiss} />}
+        <StyledModal>
           {!hideHeader && (
             <Header>
               <HeaderText>{header}</HeaderText>
