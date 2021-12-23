@@ -84,11 +84,11 @@ const ProposalPage = observer(() => {
   try {
     if (proposalDescription === '## Getting proposal description from IPFS...')
       ipfsService
-        .getContent(contentHash.decode(proposal.descriptionHash))
+        .getContentFromIPFS(contentHash.decode(proposal.descriptionHash))
         .then(data => {
           try {
-            setProposalTitle(JSON.parse(data).title);
-            setProposalDescription(JSON.parse(data).description);
+            setProposalTitle(data.title);
+            setProposalDescription(data.description);
           } catch (error) {
             setProposalDescription(data);
           }

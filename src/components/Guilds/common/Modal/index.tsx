@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import ReactDOM from 'react-dom';
+import { isMobile, isDesktop } from 'react-device-detect';
 
-import { FiX } from 'react-icons/fi';
+import { Button } from '../Button';
+import { FiArrowLeft, FiX } from 'react-icons/fi';
 import { Heading } from '../Typography';
 import { Button } from '../Button';
 import { isMobile } from 'react-device-detect';
@@ -62,6 +64,8 @@ export const Header = styled.div`
   justify-content: center;
   padding: 1.25rem 1.5rem;
   position: relative;
+  align-items: center;
+  display: flex;
 `;
 
 export const HeaderText = styled(Heading)`
@@ -147,11 +151,18 @@ export const Modal: React.FC<ModalProps> = ({
       <Wrapper maxWidth={maxWidth}>
         {!isMobile && <CloseIcon onClick={onDismiss} />}
         <StyledModal>
-          {!hideHeader && (
+          {!hideHeader && isDesktop && (
             <Header>
               <HeaderText>{header}</HeaderText>
             </Header>
           )}
+          {!hideHeader && isMobile && (
+            <Header onClick={onDismiss}>
+              <FiArrowLeft />
+              <HeaderText>{header}</HeaderText>
+            </Header>
+          )}
+
           <Content>{children}</Content>
           {(onCancel || onConfirm) && (
             <Footer>
