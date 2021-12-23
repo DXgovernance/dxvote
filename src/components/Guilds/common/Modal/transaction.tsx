@@ -112,7 +112,7 @@ const WaitingForTransactionContent: React.ReactElement = (
         Stake 52.42DXD for 324 Days
       </ContainerText>
     </Container>
-    <ContainerText color="grey">
+    <ContainerText variant="medium" color="grey">
       Confirm this Transaction in your Wallet
     </ContainerText>
   </Flex>
@@ -150,7 +150,6 @@ export const TransactionWait: React.FC<TransasctionModalProps> = ({
       onDismiss={onDismiss}
       children={WaitingForTransactionContent}
       header={TransactionWaitHeader}
-      maxWidth={300}
     />
   );
 };
@@ -165,7 +164,6 @@ export const TransactionSubmitted: React.FC<TransasctionModalProps> = ({
       onDismiss={onDismiss}
       children={TransactionSubmittedContent}
       header={TransactionSubmittedHeader}
-      maxWidth={300}
     />
   );
 };
@@ -180,7 +178,6 @@ export const TransactionRejected: React.FC<TransasctionModalProps> = ({
       isOpen={isOpen}
       onDismiss={onDismiss}
       header={TransactionRejectedHeader}
-      maxWidth={300}
     />
   );
 };
