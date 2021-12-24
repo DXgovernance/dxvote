@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import ReactDOM from 'react-dom';
-import { isMobile, isDesktop } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 import { Button } from '../Button';
 import { FiArrowLeft, FiX } from 'react-icons/fi';
@@ -51,9 +51,8 @@ export const StyledModal = styled.div`
   @media only screen and (max-width: 768px) {
     border: none;
     box-shadow: none;
-    position: fixed;
-    width: 100%;
-    height: 100vh;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;
 
@@ -78,7 +77,7 @@ const CloseIcon = styled(FiX)`
   transform: translateY(-50%);
   height: 1.5rem;
   width: 1.5rem;
-  z-index: 500;
+  z-index: 800;
 
   &:hover {
     cursor: pointer;
@@ -142,6 +141,7 @@ export const Modal: React.FC<ModalProps> = ({
       <Backdrop onClick={onDismiss} />
       {isMobile && (
         <>
+          <FiArrowLeft />
           <Divider />
           <CloseIcon onClick={onDismiss} />
         </>
@@ -149,18 +149,11 @@ export const Modal: React.FC<ModalProps> = ({
       <Wrapper maxWidth={maxWidth}>
         {!isMobile && <CloseIcon onClick={onDismiss} />}
         <StyledModal>
-          {!hideHeader && isDesktop && (
+          {!hideHeader && (
             <Header>
               <HeaderText>{header}</HeaderText>
             </Header>
           )}
-          {!hideHeader && isMobile && (
-            <Header onClick={onDismiss}>
-              <FiArrowLeft />
-              <HeaderText>{header}</HeaderText>
-            </Header>
-          )}
-
           <Content>{children}</Content>
           {(onCancel || onConfirm) && (
             <Footer>
