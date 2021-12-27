@@ -1,7 +1,6 @@
 import { useContext } from 'contexts';
 import { useState, useEffect } from 'react';
 import {
-  orderByNewestTimeToFinish,
   QUEUED_PRIORITY_THRESHOLD,
   VotingMachineProposalState,
   ZERO_ADDRESS,
@@ -18,6 +17,12 @@ interface useFilterCriteriaReturns {
   executed: ProposalsExtended[];
   loading: boolean;
 }
+
+export const orderByNewestTimeToFinish = (a: any, b: any) =>
+  a.finishTime - b.finishTime;
+
+export const orderByOldestTimeToFinish = (a: any, b: any) =>
+  b.finishTime - a.finishTime;
 
 export const useFilterCriteria = (): useFilterCriteriaReturns => {
   const {
@@ -99,14 +104,16 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       })
       .sort(orderByNewestTimeToFinish);
 
-    //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
+    //Proposals in Executed status. (Ordered in time passed since finish, from higher to lower)
     const stateExecuted = daoStore
       .getAllProposals()
       .filter(
         (proposal): Boolean =>
           proposal.stateInVotingMachine === VotingMachineProposalState.Executed
       )
-      .sort(orderByNewestTimeToFinish);
+      .sort(orderByOldestTimeToFinish);
+
+    console.log({ stateExecuted });
 
     setEarliestAbove10(stateEarliestAbove10);
     setEarliestUnder10(stateEarliestUnder10);
