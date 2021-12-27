@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
 import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
@@ -85,6 +87,7 @@ const ProposalStatusWrapper = styled.div`
   flex: 1;
   justify-content: flex-end;
 `;
+
 interface ProposalCardProps {
   title: string;
   description: string;
@@ -131,6 +134,57 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
           </Icon>
           <Detail>5.25%</Detail>
         </BorderedIconDetailWrapper>
+      </CardFooter>
+    </CardWrapper>
+  );
+};
+
+const Flex = styled.div`
+  display: Flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+export const SkeletonProposalCard: React.FC = () => {
+  return (
+    <CardWrapper>
+      <CardHeader>
+        <IconDetailWrapper>
+          <Flex style={{ marginRight: '8px' }}>
+            <Skeleton circle width="24px" height="24px" borderRadius="32px" />
+          </Flex>
+          <Flex>
+            <Skeleton
+              width="90px"
+              height="12px"
+              borderRadius="32px"
+              style={{ marginTop: '8px' }}
+            />
+          </Flex>
+        </IconDetailWrapper>
+        <ProposalStatusWrapper>
+          <Flex>
+            <Skeleton
+              width="30px"
+              height="12px"
+              borderRadius="32px"
+              style={{ marginRight: '8px' }}
+            />
+          </Flex>
+          <Flex>
+            <Skeleton width="60px" height="32px" borderRadius="32px" />
+          </Flex>
+        </ProposalStatusWrapper>
+      </CardHeader>
+      <CardContent>
+        <Skeleton width="100%" height="12px" borderRadius="32px" />
+        <CardContent>
+          <Skeleton width="100%" height="40px" borderRadius="32px" />
+        </CardContent>
+      </CardContent>
+      <CardFooter>
+        <Skeleton width="200px" height="30px" borderRadius="32px" />
+        <Skeleton width="200px" height="30px" borderRadius="32px" />
       </CardFooter>
     </CardWrapper>
   );
