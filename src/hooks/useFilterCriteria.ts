@@ -113,8 +113,6 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       )
       .sort(orderByOldestTimeToFinish);
 
-    console.log({ stateExecuted });
-
     setEarliestAbove10(stateEarliestAbove10);
     setEarliestUnder10(stateEarliestUnder10);
     setPreBoosted(statePreBoosted);
