@@ -67,7 +67,7 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const {
-    context: { daoService },
+    context: { tokenVestingService },
   } = useContext();
 
   if (!contract) return null;
@@ -80,8 +80,8 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
 
   const handleRedeemClick = () => {
     setLoading(true);
-    daoService
-      .redeemVestingContractDxd(contract.address)
+    tokenVestingService
+      .redeemVestedDxd(contract.address)
       .on(TXEvents.RECEIPT, hash => {
         console.debug('[TX_RECEIPT]', hash);
         toast.success(
@@ -109,11 +109,15 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
       });
   };
 
+  const handleDismiss = () => {
+    if (!loading) onDismiss();
+  };
+
   return (
     <Modal
       header={<Title>Vesting Contract</Title>}
       isOpen={isOpen}
-      onDismiss={!loading && onDismiss}
+      onDismiss={handleDismiss}
       maxWidth={450}
     >
       <Wrapper>
