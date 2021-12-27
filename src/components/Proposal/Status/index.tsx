@@ -1,11 +1,11 @@
 import moment from 'moment';
 import Countdown from 'react-countdown';
-import { FiPlayCircle, FiFastForward } from 'react-icons/fi';
+import { FiPlayCircle } from 'react-icons/fi';
 import { useContext } from 'contexts';
 
 import { useLocation } from 'react-router-dom';
 
-import { bnum, isWalletScheme } from 'utils';
+import { bnum, isWalletScheme, PendingAction } from 'utils';
 import { Question } from 'components/common';
 
 import { SpaceAroundRow, ActionButton } from '../styles';
@@ -27,23 +27,26 @@ const Status = () => {
     ? proposal.submittedTime.plus(scheme.maxSecondsForExecution)
     : bnum(0);
 
-  const executeProposal = function () {
-    daoService.execute(proposalId);
+  const executePendingAction = function (pendingAction) {
+    switch (pendingAction) {
+      case 4:
+        daoService.redeemContributionReward(
+          networkContracts.daostack.contributionRewardRedeemer,
+          scheme.address,
+          scheme.votingMachine,
+          proposalId,
+          proposal.to[0]
+        );
+        break;
+      case 5:
+        daoService.executeMulticall(scheme.address, proposalId);
+        break;
+      default:
+        daoService.execute(proposalId);
+        break;
+    }
   };
 
-  const redeemBeneficiary = function () {
-    daoService.redeemContributionReward(
-      networkContracts.daostack.contributionRewardRedeemer,
-      scheme.address,
-      scheme.votingMachine,
-      proposalId,
-      proposal.to[0]
-    );
-  };
-
-  const executeMulticall = function () {
-    daoService.executeMulticall(scheme.address, proposalId);
-  };
   const votingMachineUsed = daoStore.getVotingMachineOfProposal(proposalId);
 
   const { status, boostTime, finishTime, pendingAction } =
@@ -82,33 +85,16 @@ const Status = () => {
           </span>
         )}
       </SpaceAroundRow>
-      {account && (
+      {account && pendingAction > 0 && (
         <SpaceAroundRow
           style={{ flexDirection: 'column', alignItems: 'center' }}
         >
-          {pendingAction === 1 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiFastForward /> Boost{' '}
-            </ActionButton>
-          ) : pendingAction === 2 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiPlayCircle /> Execute{' '}
-            </ActionButton>
-          ) : pendingAction === 3 ? (
-            <ActionButton color="blue" onClick={executeProposal}>
-              <FiPlayCircle /> Finish{' '}
-            </ActionButton>
-          ) : pendingAction === 4 ? (
-            <ActionButton color="blue" onClick={redeemBeneficiary}>
-              <FiPlayCircle /> Redeem 4 Beneficiary{' '}
-            </ActionButton>
-          ) : (
-            pendingAction === 5 && (
-              <ActionButton color="blue" onClick={executeMulticall}>
-                <FiPlayCircle /> Execute Multicall{' '}
-              </ActionButton>
-            )
-          )}
+          <ActionButton
+            color="blue"
+            onClick={() => executePendingAction(pendingAction)}
+          >
+            <FiPlayCircle /> {PendingAction[pendingAction]}{' '}
+          </ActionButton>
         </SpaceAroundRow>
       )}
     </>

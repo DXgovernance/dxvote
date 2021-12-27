@@ -7,7 +7,7 @@ import {
 import moment from 'moment';
 
 import DaoStore from 'stores/DaoStore';
-//import { ZERO_ADDRESS } from 'utils';
+import { PendingAction } from 'utils';
 import { ProposalsExtended } from '../types/types';
 
 // constant used to the initial order of the proposals (Any Status).
@@ -110,10 +110,29 @@ export const decodeProposalStatus = function (
               ).timestamp
             )
           : bnum(0),
-        pendingAction: 0,
+        pendingAction: PendingAction.None,
       };
     case VotingMachineProposalState.Executed:
-      if (proposal.stateInScheme === WalletSchemeProposalState.Rejected)
+      if (
+        proposal.stateInScheme === WalletSchemeProposalState.Rejected &&
+        schemeType === 'ContributionReward'
+      )
+        return {
+          status: 'Passed',
+          boostTime: boostedPhaseTime,
+          finishTime: proposalStateChangeEvents.find(
+            event => Number(event.state) === VotingMachineProposalState.Executed
+          )
+            ? bnum(
+                proposalStateChangeEvents.find(
+                  event =>
+                    Number(event.state) === VotingMachineProposalState.Executed
+                ).timestamp
+              )
+            : bnum(0),
+          pendingAction: PendingAction.Redeem,
+        };
+      else if (proposal.stateInScheme === WalletSchemeProposalState.Rejected)
         return {
           status: 'Proposal Rejected',
           boostTime: boostedPhaseTime,
@@ -127,7 +146,11 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction: 0,
+          pendingAction:
+            schemeType === 'ContributionReward' &&
+            proposal.stateInVotingMachine < 3
+              ? PendingAction.Redeem
+              : PendingAction.None,
         };
       else if (
         proposal.stateInScheme === WalletSchemeProposalState.ExecutionSucceded
@@ -145,7 +168,7 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       else if (
         proposal.stateInScheme === WalletSchemeProposalState.ExecutionTimeout
@@ -163,7 +186,7 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       else if (proposal.stateInScheme === WalletSchemeProposalState.Submitted)
         return {
@@ -181,10 +204,10 @@ export const decodeProposalStatus = function (
             : bnum(0),
           pendingAction:
             schemeType === 'ContributionReward'
-              ? 4
+              ? PendingAction.Redeem
               : schemeType === 'GenericMulticall'
               ? 5
-              : 0,
+              : PendingAction.RedeemForBeneficiary,
         };
       else
         return {
@@ -200,7 +223,7 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
     case VotingMachineProposalState.Queued:
       if (timeNow > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
@@ -208,14 +231,14 @@ export const decodeProposalStatus = function (
           status: 'Expired in Queue',
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
-          pendingAction: 3,
+          pendingAction: PendingAction.Finish,
         };
       } else {
         return {
           status: 'In Queue',
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       }
     case VotingMachineProposalState.PreBoosted:
@@ -234,7 +257,7 @@ export const decodeProposalStatus = function (
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
             .plus(boostedVotePeriodLimit),
-          pendingAction: 3,
+          pendingAction: PendingAction.Finish,
         };
       } else if (
         timeNow >
@@ -250,7 +273,7 @@ export const decodeProposalStatus = function (
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
             .plus(boostedVotePeriodLimit),
-          pendingAction: 2,
+          pendingAction: PendingAction.Execute,
         };
       } else if (
         timeNow >
@@ -265,7 +288,7 @@ export const decodeProposalStatus = function (
                 .plus(preBoostedVotePeriodLimit)
                 .plus(boostedVotePeriodLimit)
             : timeNow.plus(boostedVotePeriodLimit),
-          pendingAction: 1,
+          pendingAction: PendingAction.Boost,
         };
       } else if (
         autoBoost &&
@@ -282,7 +305,7 @@ export const decodeProposalStatus = function (
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
             .plus(boostedVotePeriodLimit),
-          pendingAction: 2,
+          pendingAction: PendingAction.Execute,
         };
       } else if (
         timeNow > submittedTime.plus(queuedVotePeriodLimit) &&
@@ -292,7 +315,7 @@ export const decodeProposalStatus = function (
           status: 'Pending Execution',
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
-          pendingAction: 2,
+          pendingAction: PendingAction.Execute,
         };
       } else if (
         timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit) &&
@@ -302,7 +325,7 @@ export const decodeProposalStatus = function (
           status: 'In Queue',
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       } else {
         return {
@@ -313,7 +336,7 @@ export const decodeProposalStatus = function (
                 .plus(preBoostedVotePeriodLimit)
                 .plus(boostedVotePeriodLimit)
             : timeNow.plus(boostedVotePeriodLimit),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       }
     case VotingMachineProposalState.Boosted:
@@ -322,14 +345,14 @@ export const decodeProposalStatus = function (
           status: 'Pending Execution',
           boostTime: boostedPhaseTime,
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
-          pendingAction: 2,
+          pendingAction: PendingAction.Boost,
         };
       } else {
         return {
           status: 'Boosted',
           boostTime: boostedPhaseTime,
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       }
     case VotingMachineProposalState.QuietEndingPeriod:
@@ -345,7 +368,9 @@ export const decodeProposalStatus = function (
         status: 'Quiet Ending Period',
         boostTime: boostedPhaseTime,
         finishTime: finishTime,
-        pendingAction: finishTime.lt(timeNow) ? 3 : 0,
+        pendingAction: finishTime.lt(timeNow)
+          ? PendingAction.Finish
+          : PendingAction.None,
       };
   }
 };
