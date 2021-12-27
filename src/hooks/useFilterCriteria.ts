@@ -18,11 +18,15 @@ interface useFilterCriteriaReturns {
   loading: boolean;
 }
 
-export const orderByNewestTimeToFinish = (a: any, b: any) =>
-  a.finishTime - b.finishTime;
+export const orderByNewestTimeToFinish = (
+  a: ProposalsExtended,
+  b: ProposalsExtended
+) => a.finishTime - b.finishTime;
 
-export const orderByOldestTimeToFinish = (a: any, b: any) =>
-  b.finishTime - a.finishTime;
+export const orderByOldestTimeToFinish = (
+  a: ProposalsExtended,
+  b: ProposalsExtended
+) => b.finishTime - a.finishTime;
 
 export const useFilterCriteria = (): useFilterCriteriaReturns => {
   const {
