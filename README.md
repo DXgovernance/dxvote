@@ -2,7 +2,7 @@
 
 > DXdao recognizes the need to adapt and build new systems that reach consensus in a scalable, decentralized and effective way. Consensus is not an end, but a process.
 >
-> *DXdao Manifesto https://ipfs.io/ipfs/QmfGgQYwL4ZrXLVshYuwH2WHeSvPFQCDXeYTzPPFReCJqJ*
+> _DXdao Manifesto https://ipfs.io/ipfs/QmfGgQYwL4ZrXLVshYuwH2WHeSvPFQCDXeYTzPPFReCJqJ_
 
 With the requirements mentioned above DXdao built DXvote, an application that instead of trusting external and centralized services commonly used by other dapps DXvote brings complete control and maintenance responsibilities to the DXdao members, a huge responsibility that brings the decentralized freedom that DXdao needs.
 
@@ -48,6 +48,10 @@ The configuration is even easier than the cache, it is just one file that stores
 Each network in the config file has a token array, recommended calls array and templates array, if you want to add new tokens, templates and recommended calls to the dapp just add them in the config file. You only change the file when you want to change the values mentioned before.
 
 ## Install
+
+Be sure you are using correct node version listed in `./package.json` (`engines.node`)
+
+`nvm use`
 
 Install all dependencies with yarn.
 
