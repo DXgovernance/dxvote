@@ -49,7 +49,7 @@ export default class ConfigStore {
     const { ensService, ipfsService } = this.context;
 
     let networkConfig = defaultAppConfigs[networkName];
-    const isTestingEnv = !window?.location?.href?.includes('dxvote.eth.link');
+    const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
     try {
       const metadataHash = await ensService.resolveContentHash(
