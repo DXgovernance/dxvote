@@ -554,9 +554,6 @@ export const updateVestingFactoryCreatedContractsInfo = async function (
       );
 
       for (let event of vestingFactoryEvents) {
-        const transaction = await web3.eth.getTransaction(
-          event.transactionHash
-        );
         const tokenVestingContract = await new web3.eth.Contract(
           TokenVestingJSON.abi,
           event.returnValues.vestingContractAddress
@@ -568,7 +565,9 @@ export const updateVestingFactoryCreatedContractsInfo = async function (
           cliff: await tokenVestingContract.methods.cliff().call(),
           duration: await tokenVestingContract.methods.duration().call(),
           owner: await tokenVestingContract.methods.owner().call(),
-          value: transaction?.value ?? '0',
+          start: await tokenVestingContract.methods.start().call(),
+          isOwner: await tokenVestingContract.methods.isOwner().call(),
+          revocable: await tokenVestingContract.methods.revocable().call(),
         };
 
         networkCache.vestingContracts = [

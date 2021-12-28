@@ -6,9 +6,10 @@ import { Box } from '../../components/Guilds/common/Layout';
 
 import { Sidebar } from '../../components/Guilds/Sidebar/';
 import { Filter } from '../../components/Guilds/Filter';
-import ProposalCard from '../../components/Guilds/ProposalCard';
+import ProposalCard, {
+  SkeletonProposalCard,
+} from '../../components/Guilds/ProposalCard';
 import { useProposals } from 'hooks/Guilds/useProposals';
-import PendingCircle from 'components/common/PendingCircle';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -52,12 +53,15 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <Filter />
-        {loading && (
-          <PendingCircle height="100px" width="100px" color="black" />
-        )}
         <ProposalsList>
-          {!loading &&
-            !error &&
+          {loading && (
+            <>
+              <SkeletonProposalCard />
+              <SkeletonProposalCard />
+            </>
+          )}
+          {!error &&
+            !loading &&
             proposals.map(proposal => (
               <ProposalCard
                 title={proposal.title}

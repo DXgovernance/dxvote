@@ -49,6 +49,10 @@ Each network in the config file has a token array, recommended calls array and t
 
 ## Install
 
+Be sure you are using correct node version listed in `./package.json` (`engines.node`)
+
+`nvm use`
+
 Install all dependencies with yarn.
 
 `yarn`
