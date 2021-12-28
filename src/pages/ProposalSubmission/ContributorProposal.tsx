@@ -366,7 +366,7 @@ export const ContributorProposalPage = observer(() => {
           (levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : dxdAth)) *
           discount
         ).toFixed(2)}{' '}
-        DXD vested for 2 years and 1 year cliff
+        DXD vested for 3 years and 1 year cliff
       </Values>
       {noRep ? (
         <Values>No REP</Values>
