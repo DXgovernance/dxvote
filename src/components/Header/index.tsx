@@ -82,7 +82,7 @@ const Header = observer(() => {
 
   const { active, account } = providerStore.getActiveWeb3React();
 
-  const isTestingEnv = !window?.location?.href?.includes('dxvote.eth.link');
+  const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
   if (!active) {
     return (
