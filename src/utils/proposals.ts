@@ -342,7 +342,7 @@ export const decodeProposalStatus = function (
           status: 'Pending Execution',
           boostTime: boostedPhaseTime,
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
-          pendingAction: PendingAction.Boost,
+          pendingAction: PendingAction.Execute,
         };
       } else {
         return {
