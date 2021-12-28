@@ -467,7 +467,6 @@ export const updateVotingMachine = async function (
           break;
       }
   });
-
   networkCache.votingMachines[votingMachine._address].events =
     votingMachineEventsInCache;
 
