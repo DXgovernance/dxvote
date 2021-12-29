@@ -6,12 +6,14 @@ import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
 import moment from 'moment';
 
+import { useContext } from '../../contexts';
+import useMainnetRep from '../../hooks/useMainnetRep';
+import { useAvgPrice } from 'hooks/useSwaprPrice';
+
 import { LevelSelect } from '../../components/LevelSelect';
 import { Button } from '../../components/common/Button';
 import PendingCircle from 'components/common/PendingCircle';
 import Toggle from 'components/Toggle';
-
-import { useContext } from '../../contexts';
 import { Modal } from '../../components/Modal';
 import {
   TXEvents,
@@ -24,9 +26,7 @@ import {
   encodeErc20Transfer,
   normalizeBalance,
 } from '../../utils';
-import { useTokenService } from 'hooks/useTokenService';
 import { InputDate } from 'components/common';
-import useMainnetRep from '../../hooks/useMainnetRep';
 
 const VerticalLayout = styled.div`
   display: flex;
@@ -151,7 +151,8 @@ export const ContributorProposalPage = observer(() => {
   const [startDate, setStartDate] = useState(moment());
   const [noRep, setNoRep] = useState(false);
 
-  const { tokenAth: dxdAth, athDate } = useTokenService('dxdao');
+  const { avgPrice, loading: dxdLoading } = useAvgPrice(startDate, 30);
+  console.log({ dxdLoading });
 
   const {
     totalSupply,
@@ -168,7 +169,6 @@ export const ContributorProposalPage = observer(() => {
     .find(scheme => scheme.name === proposalType.scheme);
 
   const levels = configStore.getContributorLevels();
-
   const contracts = configStore.getNetworkContracts();
   const tokens = configStore.getTokensOfNetwork();
 
@@ -184,7 +184,7 @@ export const ContributorProposalPage = observer(() => {
         denormalizeBalance(
           bnum(
             (levels[selectedLevel]?.dxd /
-              (dxdOverride ? dxdOverride : dxdAth)) *
+              (dxdOverride ? dxdOverride : avgPrice)) *
               discount
           )
         ).toString()
@@ -199,7 +199,7 @@ export const ContributorProposalPage = observer(() => {
   }, [
     confirm,
     discount,
-    dxdAth,
+    avgPrice,
     dxdOverride,
     levels,
     noRep,
@@ -236,10 +236,10 @@ export const ContributorProposalPage = observer(() => {
               stableOverride
             )
           } \n ${calculateDiscountedValue(
-            levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : dxdAth),
+            levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : avgPrice),
             discount
           ).toFixed(2)} DXD vested for 2 years and 1 year cliff @ $${
-            dxdOverride ? dxdOverride : dxdAth
+            dxdOverride ? dxdOverride : avgPrice
           }/DXD
           \n ${
             noRep
@@ -363,7 +363,8 @@ export const ContributorProposalPage = observer(() => {
       </Values>
       <Values>
         {(
-          (levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : dxdAth)) *
+          (levels[selectedLevel]?.dxd /
+            (dxdOverride ? dxdOverride : avgPrice)) *
           discount
         ).toFixed(2)}{' '}
         DXD vested for 3 years and 1 year cliff
@@ -416,10 +417,10 @@ export const ContributorProposalPage = observer(() => {
                   )}
                 </Value>
                 <Value>
-                  {dxdAth ? (
+                  {avgPrice ? (
                     (
                       (levels[selectedLevel]?.dxd /
-                        (dxdOverride ? dxdOverride : dxdAth)) *
+                        (dxdOverride ? dxdOverride : avgPrice)) *
                       discount
                     ).toFixed(2)
                   ) : (
@@ -448,23 +449,6 @@ export const ContributorProposalPage = observer(() => {
                     </WarningText>
                   </div>
                 )}
-                {startDate.isBefore(moment(athDate)) ? (
-                  <div>
-                    <WarningText>
-                      DXD all time high (ATH) has changed, please manually
-                      provide correct ATH as of start date
-                    </WarningText>
-                    <InputWrapper>
-                      $
-                      <TextInput
-                        placeholder="DXD ATH"
-                        type="number"
-                        onChange={event => setDXDOverride(event.target.value)}
-                        value={dxdOverride}
-                      />
-                    </InputWrapper>
-                  </div>
-                ) : null}
               </Values>
             ) : null}
             <ButtonsWrapper>
@@ -477,8 +461,10 @@ export const ContributorProposalPage = observer(() => {
                     ? 'Proposal Submitted'
                     : cacheLoading
                     ? 'Crunching REP Numbers'
+                    : dxdLoading
+                    ? 'Combing DXD price archives'
                     : 'Submit Proposal'}
-                  {loading || cacheLoading ? (
+                  {loading || cacheLoading || dxdLoading ? (
                     <PendingCircle height="10px" width="10px" />
                   ) : null}
                 </ButtonContentWrapper>
