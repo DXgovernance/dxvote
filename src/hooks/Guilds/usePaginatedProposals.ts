@@ -13,7 +13,7 @@ export interface usePaginatedProposalsReturns {
 
 export const usePaginatedProposals = (
   contractAddress: string,
-  itemsPerPage: number = 1,
+  itemsPerPage: number = 5,
   currentPage: number = 1
 ): usePaginatedProposalsReturns => {
   const [proposals, setProposals] = useState<GuildsProposal[]>([]);
