@@ -8,7 +8,7 @@ import moment from 'moment';
 
 import { useContext } from '../../contexts';
 import useMainnetRep from '../../hooks/useMainnetRep';
-import { useAvgPrice } from 'hooks/useSwaprPrice';
+import { useDXDPrice } from 'hooks/useDXDPriceForPayment';
 
 import { LevelSelect } from '../../components/LevelSelect';
 import { Button } from '../../components/common/Button';
@@ -151,8 +151,7 @@ export const ContributorProposalPage = observer(() => {
   const [startDate, setStartDate] = useState(moment());
   const [noRep, setNoRep] = useState(false);
 
-  const { avgPrice, loading: dxdLoading } = useAvgPrice(startDate, 30);
-  console.log({ dxdLoading });
+  const { dxdPrice, loading: dxdLoading } = useDXDPrice(startDate, 30);
 
   const {
     totalSupply,
@@ -184,7 +183,7 @@ export const ContributorProposalPage = observer(() => {
         denormalizeBalance(
           bnum(
             (levels[selectedLevel]?.dxd /
-              (dxdOverride ? dxdOverride : avgPrice)) *
+              (dxdOverride ? dxdOverride : dxdPrice)) *
               discount
           )
         ).toString()
@@ -199,7 +198,7 @@ export const ContributorProposalPage = observer(() => {
   }, [
     confirm,
     discount,
-    avgPrice,
+    dxdPrice,
     dxdOverride,
     levels,
     noRep,
@@ -236,10 +235,10 @@ export const ContributorProposalPage = observer(() => {
               stableOverride
             )
           } \n ${calculateDiscountedValue(
-            levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : avgPrice),
+            levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : dxdPrice),
             discount
           ).toFixed(2)} DXD vested for 2 years and 1 year cliff @ $${
-            dxdOverride ? dxdOverride : avgPrice
+            dxdOverride ? dxdOverride : dxdPrice
           }/DXD
           \n ${
             noRep
@@ -364,7 +363,7 @@ export const ContributorProposalPage = observer(() => {
       <Values>
         {(
           (levels[selectedLevel]?.dxd /
-            (dxdOverride ? dxdOverride : avgPrice)) *
+            (dxdOverride ? dxdOverride : dxdPrice)) *
           discount
         ).toFixed(2)}{' '}
         DXD vested for 3 years and 1 year cliff
@@ -417,10 +416,10 @@ export const ContributorProposalPage = observer(() => {
                   )}
                 </Value>
                 <Value>
-                  {avgPrice ? (
+                  {dxdPrice ? (
                     (
                       (levels[selectedLevel]?.dxd /
-                        (dxdOverride ? dxdOverride : avgPrice)) *
+                        (dxdOverride ? dxdOverride : dxdPrice)) *
                       discount
                     ).toFixed(2)
                   ) : (

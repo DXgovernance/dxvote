@@ -2,16 +2,16 @@ import moment from 'moment';
 import { useState, useEffect } from 'react';
 import { useContext } from '../contexts';
 
-interface UseAvgPriceReturns {
-  avgPrice: any;
+interface UseDXDPriceReturns {
+  dxdPrice: any;
   loading: boolean;
 }
 
-export const useAvgPrice = (
+export const useDXDPrice = (
   toDate: moment.Moment,
   days: number
-): UseAvgPriceReturns => {
-  const [avgPrice, setAvgPrice] = useState<number>();
+): UseDXDPriceReturns => {
+  const [dxdPrice, setDXDPrice] = useState<number>();
   const [loading, setLoading] = useState<boolean>(true);
 
   const {
@@ -22,7 +22,7 @@ export const useAvgPrice = (
 
   const getData = async () => {
     setLoading(true);
-    setAvgPrice(null);
+    setDXDPrice(null);
     const { data } = await subgraphService.dailyTokenPrice(
       networkContracts.votingMachines.dxd.token,
       moment(toDate).subtract(days, 'days'),
@@ -33,7 +33,8 @@ export const useAvgPrice = (
       ({ derivedNativeCurrency }) =>
         (total = total + parseInt(derivedNativeCurrency))
     );
-    setAvgPrice(total / Object.values(data).length);
+    const avg = total / Object.values(data).length;
+    setDXDPrice(avg < 523 ? 523 : avg);
     setLoading(false);
   };
 
@@ -42,7 +43,7 @@ export const useAvgPrice = (
   }, [toDate]);
 
   return {
-    avgPrice,
+    dxdPrice,
     loading,
   };
 };
