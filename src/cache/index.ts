@@ -295,9 +295,11 @@ export const updateVotingMachine = async function (
   let newVotingMachineEvents = sortEvents(
     await getEvents(web3, votingMachine, fromBlock, toBlock, 'allEvents')
   );
+  const avatarAddress = web3.utils.toChecksumAddress(
+    networkContractsConfig.avatar
+  );
   const votingMachineEventsInCache =
     networkCache.votingMachines[votingMachine._address].events;
-
   newVotingMachineEvents.map(votingMachineEvent => {
     const proposalCreated =
       votingMachineEventsInCache.newProposal.findIndex(
@@ -309,8 +311,7 @@ export const updateVotingMachine = async function (
     let existEvent;
 
     if (
-      votingMachineEvent.returnValues._organization ===
-        networkContractsConfig.avatar ||
+      votingMachineEvent.returnValues._organization === avatarAddress ||
       (votingMachineEvent.event === 'StateChange' && proposalCreated)
     )
       switch (votingMachineEvent.event) {
@@ -466,7 +467,6 @@ export const updateVotingMachine = async function (
           break;
       }
   });
-
   networkCache.votingMachines[votingMachine._address].events =
     votingMachineEventsInCache;
 
