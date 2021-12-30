@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useERC20Guild } from './contracts/useContract';
-import { GuildsProposal } from './useProposals';
+import { Proposal } from '../../types/types.guilds';
+import { useProposalsContext } from '../../contexts/Guilds';
 
 export interface usePaginatedProposalsReturns {
-  proposals: GuildsProposal[];
+  proposals: Proposal[];
   error: null | Error;
   loading: boolean;
   pagesCount: number;
@@ -13,11 +14,10 @@ export interface usePaginatedProposalsReturns {
 
 export const usePaginatedProposals = (
   contractAddress: string,
-  itemsPerPage: number = 5,
-  currentPage: number = 1
+  currentPage: number = 1,
+  itemsPerPage: number = 5
 ): usePaginatedProposalsReturns => {
-  const [proposals, setProposals] = useState<GuildsProposal[]>([]);
-  const [_internalProposalsList, _setInternalProposalList] = useState<{}>({});
+  const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [ids, setIds] = useState<string[]>([]);
@@ -25,8 +25,9 @@ export const usePaginatedProposals = (
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPrevPage, setHasPrevPage] = useState(false);
   const contract = useERC20Guild(contractAddress);
+  const context = useProposalsContext();
 
-  const getCurrentIds = useCallback(() => {
+  const getCurrentPageIds = useCallback(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return ids.slice(start, end);
@@ -55,21 +56,11 @@ export const usePaginatedProposals = (
     if (!contract) return;
     const getProposals = async () => {
       if (!ids.length) return;
+      setLoading(true);
       try {
-        setLoading(true);
-        const searchIds = getCurrentIds();
-        if (_internalProposalsList[currentPage]) {
-          setProposals(_internalProposalsList[currentPage]);
-        } else {
-          const result = await Promise.all(
-            searchIds.map(id => contract.getProposal(id))
-          );
-          setProposals(result);
-          _setInternalProposalList(prev => ({
-            ...prev,
-            [currentPage]: result,
-          }));
-        }
+        const searchIds = getCurrentPageIds();
+        const result = await context.getProposals(contract, searchIds);
+        setProposals(result);
         setError(null);
       } catch (e) {
         setError(e);
@@ -79,7 +70,7 @@ export const usePaginatedProposals = (
       }
     };
     getProposals();
-  }, [contract, ids, getCurrentIds, _internalProposalsList, currentPage]);
+  }, [contract, ids, getCurrentPageIds, currentPage, context]);
 
   useEffect(() => {
     setHasNextPage(currentPage < availablePages);
