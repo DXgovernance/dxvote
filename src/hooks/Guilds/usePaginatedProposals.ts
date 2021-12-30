@@ -18,12 +18,12 @@ export const usePaginatedProposals = (
   itemsPerPage: number = 5
 ): usePaginatedProposalsReturns => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
   const [ids, setIds] = useState<string[]>([]);
   const [availablePages, setAvailablePages] = useState<number>(0);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [hasPrevPage, setHasPrevPage] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+  const [hasPrevPage, setHasPrevPage] = useState<boolean>(false);
   const contract = useERC20Guild(contractAddress);
   const context = useProposalsContext();
 
