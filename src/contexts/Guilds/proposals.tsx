@@ -29,7 +29,10 @@ export class ProposalsProvider extends React.Component<
     }));
   };
 
-  getProposals = async (contract: ERC20Guild, ids: string[]): Promise<any> => {
+  getProposals = async (
+    contract: ERC20Guild,
+    ids: string[]
+  ): Promise<Proposal[]> => {
     const result = [];
     const newProposalsData = [];
     for (let proposalId of ids) {
