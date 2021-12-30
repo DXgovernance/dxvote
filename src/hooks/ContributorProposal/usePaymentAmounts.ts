@@ -10,7 +10,7 @@ interface UsePaymentAmountsReturns {
   calculateDiscountedValue: any;
   setDiscount: any;
 }
-// Store as objects!
+
 export const usePaymentAmounts = (
   confirm: boolean,
   dxdPrice: number,
@@ -26,7 +26,6 @@ export const usePaymentAmounts = (
   const [discount, setDiscount] = useState(1);
 
   useEffect(() => {
-    // if (confirm) {
     setDxdAmount(
       denormalizeBalance(
         bnum(
@@ -46,7 +45,6 @@ export const usePaymentAmounts = (
         ? 0
         : formatNumberValue(totalSupply.times(0.001667).times(discount), 0)
     );
-    // }
   }, [
     confirm,
     discount,
