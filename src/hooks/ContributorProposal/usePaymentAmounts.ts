@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '../../utils/bignumber';
 import { bnum, denormalizeBalance, formatNumberValue } from 'utils';
 
 interface UsePaymentAmountsReturns {
