@@ -12,8 +12,8 @@ import { useContext } from 'contexts';
 const contentHash = require('content-hash');
 
 interface UsePaymentAmountsReturns {
-  submitProposal: any;
-  loading: any;
+  submitProposal: () => Promise<any>;
+  loading: boolean;
   proposalCreated: boolean;
   errorMessage: string;
 }
