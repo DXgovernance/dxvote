@@ -1,12 +1,13 @@
 import moment from 'moment';
 import { useState, useEffect } from 'react';
-import { useContext } from '../contexts';
+import { useContext } from '../../contexts';
 
 interface UseDXDPriceReturns {
   dxdPrice: any;
   loading: boolean;
 }
 
+// DXD price used for contributor compensation calculations
 export const useDXDPrice = (
   toDate: moment.Moment,
   days: number
@@ -34,6 +35,8 @@ export const useDXDPrice = (
         (total = total + parseInt(derivedNativeCurrency))
     );
     const avg = total / Object.values(data).length;
+
+    // Minimum DXD price for compensation limited to $523
     setDXDPrice(avg < 523 ? 523 : avg);
     setLoading(false);
   };
