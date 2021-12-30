@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '../../utils/bignumber';
 import {
   encodeDxdVestingCreate,
   encodeErc20Approval,
