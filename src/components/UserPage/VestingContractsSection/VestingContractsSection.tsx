@@ -25,7 +25,8 @@ const VestingContractsSection: React.FC<VestingContractsSectionProps> = ({
   const [loading, setLoading] = useState(false);
 
   const DXD = useContract(
-    configStore.getNetworkContracts().votingMachines.dxd.token,
+    configStore.getTokensOfNetwork().find(token => token.symbol === 'DXD')
+      .address,
     ERC20Json.abi
   );
 
