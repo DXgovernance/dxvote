@@ -22,7 +22,7 @@ const defaultAppConfigs = {
   arbitrum,
   arbitrumTestnet,
   mainnet,
-  xdai,
+  gnosis: xdai,
   rinkeby,
   localhost,
 };

@@ -47,7 +47,7 @@ export const NETWORKS: ChainConfig[] = [
   {
     id: 100,
     name: 'xdai',
-    displayName: 'xDai Chain',
+    displayName: 'Gnosis Chain',
     defaultRpc: `https://poa-xdai.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a`,
     nativeAsset: {
       name: 'xDai',
