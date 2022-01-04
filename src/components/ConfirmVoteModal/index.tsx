@@ -18,6 +18,7 @@ export interface ModalProps {
   positive: number;
   negative: number;
   toAdd: number;
+  signedVote: boolean;
 }
 
 export const ConfirmVoteModal: React.FC<ModalProps> = ({
@@ -27,6 +28,7 @@ export const ConfirmVoteModal: React.FC<ModalProps> = ({
   positive,
   negative,
   toAdd,
+  signedVote,
 }) => {
   const header = (
     <div>Confirm vote {voteDecision === 1 ? 'for' : 'against'} proposal</div>
@@ -41,7 +43,11 @@ export const ConfirmVoteModal: React.FC<ModalProps> = ({
       onConfirm={() => onConfirm(voteDecision)}
     >
       <Wrapper>
-        <b>State after your vote</b>
+        {signedVote ? (
+          <b>Confirm vote signature</b>
+        ) : (
+          <b>Confirm vote transaction</b>
+        )}
         <div>For: {voteDecision === 1 ? positive + toAdd : positive}%</div>
         <div>Against: {voteDecision === 2 ? negative + toAdd : negative}%</div>
       </Wrapper>

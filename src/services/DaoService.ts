@@ -35,6 +35,47 @@ export default class DaoService {
       .encodeABI();
   }
 
+  hashVote(
+    votingMachineAddress: string,
+    proposalId: string,
+    voter: string,
+    decision: string,
+    repAmount: string
+  ) {
+    const { providerStore } = this.context;
+    const { library } = providerStore.getActiveWeb3React();
+
+    return library.utils.soliditySha3(
+      { type: 'address', value: votingMachineAddress },
+      { type: 'bytes32', value: proposalId },
+      { type: 'address', value: voter },
+      { type: 'uint256', value: decision },
+      { type: 'uint256', value: repAmount }
+    );
+  }
+
+  verifySignedVote(
+    votingMachineAddress: string,
+    proposalId: string,
+    voter: string,
+    decision: string,
+    repAmount: string,
+    signature: string
+  ) {
+    const hashedVote = this.hashVote(
+      votingMachineAddress,
+      proposalId,
+      voter,
+      decision,
+      repAmount
+    );
+    const signer = utils.recoverAddress(
+      toEthSignedMessageHash(hashedVote),
+      signature
+    );
+    return signer == voter;
+  }
+
   createProposal(
     scheme: string,
     schemeType: string,
@@ -197,6 +238,25 @@ export default class DaoService {
       daoStore.getVotingMachineOfProposal(proposalId),
       'vote',
       [proposalId, decision, amount, account],
+      {}
+    );
+  }
+
+  executeSignedVote(
+    votingMachineAddress: string,
+    proposalId: string,
+    voter: string,
+    decision: string,
+    amount: string,
+    signature: string
+  ): PromiEvent<any> {
+    const { providerStore } = this.context;
+    return providerStore.sendTransaction(
+      providerStore.getActiveWeb3React(),
+      ContractType.DXDVotingMachine,
+      votingMachineAddress,
+      'executeSignedVote',
+      [votingMachineAddress, proposalId, voter, decision, amount, signature],
       {}
     );
   }

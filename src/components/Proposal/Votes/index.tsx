@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import moment from 'moment';
-import { FiThumbsDown, FiThumbsUp } from 'react-icons/fi';
+import {
+  FiThumbsDown,
+  FiThumbsUp,
+  FiWifi,
+  FiWifiOff,
+  FiArrowUp,
+} from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
 import {
   Question,
@@ -26,12 +32,21 @@ import { bnum, toPercentage } from 'utils';
 
 const Votes = () => {
   const {
-    context: { daoStore, providerStore, daoService },
+    context: {
+      configStore,
+      daoStore,
+      providerStore,
+      daoService,
+      messageLoggerService,
+    },
   } = useContext();
 
   //State
+  const [signVote, setSignVote] = useState(false);
   const [decision, setDecision] = useState(null);
   const [votePercentage, setVotePercentage] = useState(0);
+  const [signedVotesOfProposal, setSignedVotesOfProposal] = useState([]);
+  const [loadingSignedVotes, setLoadingSignedVotes] = useState(true);
 
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
@@ -39,6 +54,57 @@ const Votes = () => {
   const proposal = daoStore.getProposal(proposalId);
   const proposalEvents = daoStore.getProposalEvents(proposalId);
   const { account } = providerStore.getActiveWeb3React();
+
+  if (signedVotesOfProposal.length == 0)
+    messageLoggerService
+      .getMessages(`dxvote:${proposalId}`)
+      .then(messagesEvents => {
+        console.debug(`[Proposal messages] ${messagesEvents}`);
+        messagesEvents.map(messagesEvent => {
+          if (
+            messagesEvent.returnValues.message &&
+            messagesEvent.returnValues.message.length > 0 &&
+            messagesEvent.returnValues.message.split(':').length > 6
+          ) {
+            const signedVote = messagesEvent.returnValues.message.split(':');
+            const validSignature = daoService.verifySignedVote(
+              signedVote[1],
+              signedVote[2],
+              signedVote[3],
+              signedVote[4],
+              signedVote[5],
+              signedVote[6]
+            );
+
+            const alreadyAdded =
+              signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) >
+                -1 ||
+              proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) >
+                -1;
+
+            const repOfVoterForProposal = daoStore.getRepAt(
+              signedVote[3],
+              proposal.creationEvent.blockNumber
+            ).userRep;
+
+            if (
+              validSignature &&
+              !alreadyAdded &&
+              repOfVoterForProposal >= signedVote[5]
+            ) {
+              signedVotesOfProposal.push({
+                voter: signedVote[3],
+                vote: signedVote[4],
+                amount: bnum(signedVote[5]),
+                signature: signedVote[6],
+              });
+            }
+          }
+        });
+        console.debug(`[Signed votes] ${signedVotesOfProposal}`);
+        setSignedVotesOfProposal(signedVotesOfProposal);
+        setLoadingSignedVotes(false);
+      });
 
   let votedAmount = bnum(0);
 
@@ -72,13 +138,36 @@ const Votes = () => {
     proposal.negativeVotes.div(totalRepAtProposalCreation)
   ).toFixed(2);
 
+  const totalPositiveSignedVotes = toPercentage(
+    signedVotesOfProposal
+      .filter(signedVote => signedVote.vote.toString() === '1')
+      .reduce(function (acc, obj) {
+        return acc.plus(obj.amount);
+      }, bnum(0))
+      .div(totalRepAtProposalCreation)
+  ).toFixed(2);
+
+  const totalNegativeSignedVotes = toPercentage(
+    signedVotesOfProposal
+      .filter(signedVote => signedVote.vote.toString() === '2')
+      .reduce(function (acc, obj) {
+        return acc.plus(obj.amount);
+      }, bnum(0))
+      .div(totalRepAtProposalCreation)
+  ).toFixed(2);
+
   if (Number(repPercentageAtCreation) > 0 && votePercentage === 0) {
     setVotePercentage(Number(repPercentageAtCreation));
   }
 
   const { finishTime } = daoStore.getProposalStatus(proposalId);
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
+  const votingMachineAddress = daoStore.getVotingMachineOfProposal(proposalId);
   const finishTimeReached = finishTime.toNumber() < moment().unix();
+  const isDXDVotingMachine =
+    configStore.getNetworkContracts().votingMachines.dxd &&
+    configStore.getNetworkContracts().votingMachines.dxd.address ==
+      votingMachineAddress;
 
   // Events Handlers
   const onVoteValueChange = event => {
@@ -86,6 +175,17 @@ const Votes = () => {
       event.target.value < repPercentageAtCreation
         ? event.target.value
         : repPercentageAtCreation
+    );
+  };
+
+  const executeSignedVote = function (signedVote) {
+    daoService.executeSignedVote(
+      votingMachineAddress,
+      proposalId,
+      signedVote.voter,
+      signedVote.vote,
+      signedVote.amount.toString(),
+      signedVote.signature
     );
   };
 
@@ -98,6 +198,21 @@ const Votes = () => {
     setDecision(null);
   };
 
+  const submitSignedVote = function (decision) {
+    const repAmount = totalRepAtProposalCreation
+      .times(bnum(votePercentage))
+      .div('100')
+      .toFixed(0);
+
+    messageLoggerService.broadcastVote(
+      votingMachineAddress,
+      proposalId,
+      decision.toString(),
+      repAmount.toString()
+    );
+    setDecision(null);
+  };
+
   // TODO:
   // This Component could be abstracted so much!
   // <Counts> <NewVote> each one getting proposalEvents and iterating and counting.
@@ -106,7 +221,7 @@ const Votes = () => {
     <>
       <SpaceAroundRow>
         <strong>
-          Votes <Question question="4" />
+          Confirmed Votes <Question question="4" />
         </strong>
       </SpaceAroundRow>
       <SpaceAroundRow>
@@ -167,6 +282,99 @@ const Votes = () => {
         </NegativeSummary>
       </SpaceAroundRow>
 
+      {!loadingSignedVotes && (
+        <div>
+          <SpaceAroundRow>
+            <strong>
+              Signed Votes <Question question="4" />
+            </strong>
+          </SpaceAroundRow>
+          <SpaceAroundRow>
+            <PositiveSummary>
+              <SummaryTotal>
+                <AmountBadge color="green">
+                  {
+                    signedVotesOfProposal.filter(
+                      signedVote => signedVote.vote.toString() === '1'
+                    ).length
+                  }
+                </AmountBadge>
+                {`${totalPositiveSignedVotes}%`}
+              </SummaryTotal>
+              <HorizontalSeparator />
+              <SummaryDetails>
+                {signedVotesOfProposal
+                  .filter(signedVote => signedVote?.vote.toString() === '1')
+                  .map((signedVote, i) => (
+                    <Vote key={`vote-pos-${i}`}>
+                      <BlockchainLink
+                        size="short"
+                        type="user"
+                        text={signedVote.voter}
+                      />
+                      <span>
+                        {bnum(signedVote.amount)
+                          .times('100')
+                          .div(totalRepAtProposalCreation)
+                          .toFixed(2)}
+                        %
+                      </span>
+                      {isDXDVotingMachine && (
+                        <ActionButton
+                          style={{
+                            height: '15px',
+                            margin: '0px 0px 0px 2px',
+                            maxWidth: '15px',
+                            textAlign: 'center',
+                          }}
+                          color="#536DFE"
+                          onClick={() => executeSignedVote(signedVote)}
+                        >
+                          <FiArrowUp />
+                        </ActionButton>
+                      )}
+                    </Vote>
+                  ))}
+              </SummaryDetails>
+            </PositiveSummary>
+            <NegativeSummary>
+              <SummaryTotal>
+                <AmountBadge color="red">
+                  {
+                    signedVotesOfProposal.filter(
+                      signedVote => signedVote.vote.toString() === '2'
+                    ).length
+                  }
+                </AmountBadge>
+                {`${totalNegativeSignedVotes}%`}
+              </SummaryTotal>
+              <HorizontalSeparator />
+              <SummaryDetails>
+                {signedVotesOfProposal
+                  ?.filter(signedVote => signedVote.vote.toString() === '2')
+                  .map((signedVote, i) => (
+                    <Vote key={`vote-neg-${i}`}>
+                      <BlockchainLink
+                        size="short"
+                        type="user"
+                        text={signedVote.voter}
+                      />
+                      <span>
+                        {bnum(signedVote.amount)
+                          .times('100')
+                          .div(totalRepAtProposalCreation)
+                          .toNumber()
+                          .toFixed(2)}
+                        %
+                      </span>
+                    </Vote>
+                  ))}
+              </SummaryDetails>
+            </NegativeSummary>
+          </SpaceAroundRow>
+        </div>
+      )}
+
       {Number(repPercentageAtCreation) > 0 && (
         <small>{repPercentageAtCreation} % REP at proposal creation</small>
       )}
@@ -194,8 +402,9 @@ const Votes = () => {
             toAdd={votePercentage}
             positive={parseFloat(positiveVotes)}
             negative={parseFloat(negativeVotes)}
-            onConfirm={submitVote}
+            onConfirm={signVote ? submitSignedVote : submitVote}
             onCancel={() => setDecision(null)}
+            signedVote={signVote}
           />
           <AmountInput
             type="number"
@@ -230,6 +439,13 @@ const Votes = () => {
             onClick={() => setDecision(2)}
           >
             <FiThumbsDown />
+          </ActionButton>
+          <ActionButton
+            style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
+            color="#536DFE"
+            onClick={() => setSignVote(!signVote)}
+          >
+            {signVote ? <FiWifiOff /> : <FiWifi />}
           </ActionButton>
         </SpaceAroundRow>
       ) : (
