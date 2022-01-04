@@ -59,7 +59,7 @@ const Votes = () => {
     messageLoggerService
       .getMessages(`dxvote:${proposalId}`)
       .then(messagesEvents => {
-        console.debug(`[Proposal messages] ${messagesEvents}`);
+        console.debug('[Proposal messages]',messagesEvents);
         messagesEvents.map(messagesEvent => {
           if (
             messagesEvent.returnValues.message &&
@@ -101,7 +101,7 @@ const Votes = () => {
             }
           }
         });
-        console.debug(`[Signed votes] ${signedVotesOfProposal}`);
+        console.debug('[Signed votes]',signedVotesOfProposal);
         setSignedVotesOfProposal(signedVotesOfProposal);
         setLoadingSignedVotes(false);
       });

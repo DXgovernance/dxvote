@@ -177,11 +177,10 @@ export default class MessageLoggerService {
       signature = signature.result.substr(2);
       const r = '0x' + signature.substr(0, 64);
       const s = '0x' + signature.substr(64, 64);
-      const v =
-        '0x' +
-        (rinkebyWeb3.utils.hexToNumber('0x' + signature.substr(128)) - 27);
-      console.log(`Rinkeby tx object:${{ ...txData, v, r, s }}`);
-
+      const v = signature.substr(128) == "1c" ? "0x1" : "0x0";
+      console.log('Rinkeby tx object:', txData);
+      console.log(`Rinkeby tx signature: ${v}${r}${s}`);
+    
       const signedTx = FeeMarketEIP1559Transaction.fromTxData({
         ...txData,
         v,
