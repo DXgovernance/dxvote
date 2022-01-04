@@ -14,7 +14,7 @@ import ProposalPage from './pages/Guilds/Proposal';
 import GlobalStyle from './theme/GlobalTheme';
 import theme from './theme/light.json';
 
-import { FilterProvider } from 'contexts/Guilds/filters';
+import { GuildsContextProvider } from 'contexts/Guilds';
 import MainnetWeb3Manager from './components/Guilds/Web3Manager/MainnetWeb3Manager';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
@@ -49,9 +49,9 @@ const GuildsApp = () => {
                     to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
                   />
                   <Route exact path="/:chain_name/:guild_id">
-                    <FilterProvider>
+                    <GuildsContextProvider>
                       <GuildsPage />
-                    </FilterProvider>
+                    </GuildsContextProvider>
                   </Route>
                   <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
                     <ProposalPage />
