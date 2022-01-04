@@ -63,7 +63,6 @@ const ProposalPage = observer(() => {
 
   const proposalId = useLocation().pathname.split('/')[3];
   const proposal = daoStore.getProposal(proposalId);
-
   const [proposalDescription, setProposalDescription] = React.useState(
     '## Getting proposal description from IPFS...'
   );

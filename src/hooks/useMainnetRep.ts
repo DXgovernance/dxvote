@@ -1,6 +1,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useEffect, useState } from 'react';
-import { MAINNET_WEB3_ROOT_KEY } from '../components/MainnetWeb3Manager';
+import { MAINNET_WEB3_ROOT_KEY } from '../components/RootWeb3Manager';
 import { useContext } from '../contexts';
 import { bnum, ZERO_ADDRESS } from '../utils';
 

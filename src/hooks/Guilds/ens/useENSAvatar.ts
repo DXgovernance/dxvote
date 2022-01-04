@@ -1,6 +1,6 @@
 import { utils } from 'ethers';
 import { useEffect, useMemo } from 'react';
-import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
+import { MAINNET_WEB3_ROOT_KEY } from '../../../components/RootWeb3Manager';
 import { resolveUri } from '../../../utils/url';
 import useENS from './useENS';
 import useENSResolver from './useENSResolver';

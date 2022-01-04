@@ -11,9 +11,10 @@ import ThemeProvider, { GlobalStyle } from './theme';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
-import MainnetWeb3Manager, {
+import RootWeb3Provider, {
   MAINNET_WEB3_ROOT_KEY,
-} from './components/MainnetWeb3Manager';
+  RINKEBY_WEB3_ROOT_KEY,
+} from './components/RootWeb3Manager';
 import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/proposals';
@@ -99,6 +100,7 @@ const Routes = () => {
 };
 
 const MainnetWeb3Provider: any = createWeb3ReactRoot(MAINNET_WEB3_ROOT_KEY);
+const RinkebyWeb3Provider: any = createWeb3ReactRoot(RINKEBY_WEB3_ROOT_KEY);
 
 const SplitApp = () => {
   // This split between DXvote and Guilds frontends are temporary.
@@ -110,14 +112,14 @@ const SplitApp = () => {
     <>
       {!isGuilds ? (
         <Switch>
-          <MainnetWeb3Manager>
+          <RootWeb3Provider>
             <Web3ReactManager>
               <GlobalStyle />
               <Header />
               <Routes />
               <ToastContainer />
             </Web3ReactManager>
-          </MainnetWeb3Manager>
+          </RootWeb3Provider>
         </Switch>
       ) : (
         <GuildsApp />
@@ -130,11 +132,13 @@ const Root = () => {
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
       <MainnetWeb3Provider getLibrary={getLibrary}>
-        <ThemeProvider>
-          <HashRouter>
-            <SplitApp />
-          </HashRouter>
-        </ThemeProvider>
+        <RinkebyWeb3Provider getLibrary={getLibrary}>
+          <ThemeProvider>
+            <HashRouter>
+              <SplitApp />
+            </HashRouter>
+          </ThemeProvider>
+        </RinkebyWeb3Provider>
       </MainnetWeb3Provider>
     </Web3ReactProvider>
   );

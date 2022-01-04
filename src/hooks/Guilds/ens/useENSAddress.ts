@@ -1,8 +1,8 @@
 import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
 import { useEffect, useState } from 'react';
-import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
 import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
+import { MAINNET_WEB3_ROOT_KEY } from '../../../components/RootWeb3Manager';
 
 export default function useENSAddress(
   ensName: string,

@@ -3,7 +3,8 @@ import contentHash from 'content-hash';
 import PromiEvent from 'promievent';
 import RootContext from '../contexts';
 import { ContractType } from '../stores/Provider';
-import { BigNumber, MAX_UINT } from '../utils';
+import { BigNumber, MAX_UINT, toEthSignedMessageHash } from '../utils';
+import { utils } from 'ethers';
 
 export default class DaoService {
   context: RootContext;

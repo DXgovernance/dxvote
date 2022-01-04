@@ -12,3 +12,5 @@ export * from './proposals';
 export * from './scheme';
 export * from './transaction';
 export * from './encodingCalls';
+export * from './signature';
+export * from './array';

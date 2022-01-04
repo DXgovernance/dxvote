@@ -16,7 +16,8 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
   const { context } = useContext();
-  const { providerStore, blockchainStore, userStore } = context;
+  const { providerStore, blockchainStore, userStore, messageLoggerService } =
+    context;
 
   const location = useLocation();
   const history = useHistory();
@@ -82,6 +83,9 @@ const Web3ReactManager = ({ children }) => {
     if (prevChainId !== chainId || prevAccount !== account) {
       try {
         context.reset();
+        messageLoggerService.setUserWeb3Context(
+          providerStore.getActiveWeb3React()
+        );
         blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
       } catch (e) {
         // Fallback if something goes wrong
@@ -124,6 +128,10 @@ const Web3ReactManager = ({ children }) => {
       if (networkActive) {
         userStore.update(providerStore.getActiveWeb3React());
         blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
+        if (account)
+          messageLoggerService.setUserWeb3Context(
+            providerStore.getActiveWeb3React()
+          );
       }
     },
     networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10

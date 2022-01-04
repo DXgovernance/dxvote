@@ -1,4 +1,4 @@
-import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
+import { MAINNET_WEB3_ROOT_KEY } from '../../../components/RootWeb3Manager';
 import { isAddress } from '../../../utils';
 import useENSAddress from './useENSAddress';
 import useENSName from './useENSName';
