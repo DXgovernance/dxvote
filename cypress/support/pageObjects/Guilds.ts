@@ -3,7 +3,7 @@ class Guilds {
   public sidebarId: string;
 
   constructor() {
-    this.proposalsListId = 'proposal-list';
+    this.proposalsListId = 'proposals-list';
     this.sidebarId = 'sidebar';
   }
 

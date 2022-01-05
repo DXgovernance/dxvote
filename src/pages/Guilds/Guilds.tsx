@@ -53,7 +53,7 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <Filter />
-        <ProposalsList data-testid="proposal-list">
+        <ProposalsList data-testid="proposals-list">
           {loading && (
             <>
               <SkeletonProposalCard />
