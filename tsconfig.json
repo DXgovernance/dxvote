@@ -42,5 +42,7 @@
     "cache",
     "artifacts",
     "public"
-  ]
+  ],
+  "types": ["node"],
+  "typeRoots": ["node_modules/@types"],
 }
