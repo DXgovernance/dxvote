@@ -9,9 +9,6 @@
 // https://on.cypress.io/plugins-guide
 // ***********************************************************
 
-// This function is called when a project is opened or re-opened (e.g. due to
-// the project's config changing)
-
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -38,5 +35,6 @@ module.exports = async (on, config) => {
     ...config,
     ...envConfig,
   };
+  console.debug(`Using baseUrl: ${result.baseUrl}`);
   return result;
 };
