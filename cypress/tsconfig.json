@@ -4,7 +4,7 @@
       "target": "es5",
       "lib": ["es5", "dom"],
       "types": ["node", "cypress", "@testing-library/cypress"], 
-      "typeRoots": ["node_modules/@types", "../node_modules/@types"],
+      "typeRoots": ["../node_modules/@types"],
       "isolatedModules": false,
     },
     "include": ["**/*.ts"]
