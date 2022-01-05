@@ -44,9 +44,6 @@ jobs:
         run: |
           echo -e 'pcm.!default {\n type hw\n card 0\n}\n\nctl.!default {\n type hw\n card 0\n}' > ~/.asoundrc
 
-      - name: Create Cypress Directories for Artifacts
-        run: mkdir -p cypress/screenshots && mkdir -p cypress/videos
-
       - name: Cypress run
         uses: cypress-io/github-action@v2
         env:
