@@ -1,20 +1,19 @@
-import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
 import { isAddress } from '../../../utils';
 import useENSAddress from './useENSAddress';
 import useENSName from './useENSName';
 
 export default function useENS(
   nameOrAddress: string,
-  web3Context: string = MAINNET_WEB3_ROOT_KEY
+  chainId?: number
 ) {
   const validAddress = isAddress(nameOrAddress);
   const reverseLookup = useENSName(
     validAddress ? validAddress : undefined,
-    web3Context
+    chainId
   );
   const lookup = useENSAddress(
     !validAddress ? nameOrAddress : undefined,
-    web3Context
+    chainId
   );
 
   return {

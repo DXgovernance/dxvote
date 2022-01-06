@@ -1,6 +1,6 @@
 import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
-import { getChains, injected } from 'provider/connectors';
+import { DEFAULT_ETH_CHAIN_ID, getChains, injected } from 'provider/connectors';
 import { useEffect, useMemo, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
 import { Button, IconButton } from '../common/Button';
@@ -10,7 +10,6 @@ import { shortenAddress } from '../../../utils';
 import { useWeb3React } from '@web3-react/core';
 import WalletModal from '../Web3Modals/WalletModal';
 import { Badge } from '../common/Badge';
-import { MAINNET_WEB3_ROOT_KEY } from '../Web3Manager/MainnetWeb3Manager';
 
 const IconHolder = styled.span`
   display: flex;
@@ -54,7 +53,7 @@ const Web3Status = () => {
   const { account, chainId } = useWeb3React();
   const { ensName, imageUrl, avatarUri } = useENSAvatar(
     account,
-    MAINNET_WEB3_ROOT_KEY
+    DEFAULT_ETH_CHAIN_ID
   );
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 

@@ -7,9 +7,9 @@ export default function useERC1155NFT(
   contractId: string,
   tokenId: string,
   ownerAddress?: string,
-  web3Context?: string
+  chainId?: number
 ) {
-  const contract = useContract(contractId, ERC1155abi, web3Context);
+  const contract = useContract(contractId, ERC1155abi, chainId);
   const [metadata, setMetadata] = useState<any>({});
   const [balance, setBalance] = useState<number>(0);
 

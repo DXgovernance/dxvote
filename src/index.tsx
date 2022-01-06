@@ -28,9 +28,10 @@ import GuildsApp from './GuildsApp';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MultichainProvider from './contexts/MultichainProvider';
-import useMultichainJsonRpcProvider from './hooks/useMultichainJsonRpcProvider';
+import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
 import { useEffect } from 'react';
 import { useContext } from './contexts';
+import { DEFAULT_ETH_CHAIN_ID } from './provider/connectors';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -106,7 +107,7 @@ const SplitApp = () => {
   const isGuilds = location.pathname.startsWith('/guilds');
 
   const { context: { ensService } } = useContext();
-  const mainnetProvider = useMultichainJsonRpcProvider(1);
+  const mainnetProvider = useJsonRpcProvider(DEFAULT_ETH_CHAIN_ID);
 
   useEffect(() => {
     ensService.setWeb3Provider(mainnetProvider);

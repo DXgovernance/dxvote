@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useContext } from '../contexts';
+import { DEFAULT_ETH_CHAIN_ID } from '../provider/connectors';
 import { bnum, ZERO_ADDRESS } from '../utils';
-import useMultichainJsonRpcProvider from './useMultichainJsonRpcProvider';
+import useJsonRpcProvider from './Guilds/web3/useJsonRpcProvider';
 
 const AVG_ETH_BLOCKS_PER_DAY = 6500;
 
@@ -13,7 +14,7 @@ const useMainnetRep = (
   const {
     context: { configStore, ipfsService, daoStore },
   } = useContext();
-  const provider = useMultichainJsonRpcProvider(1);
+  const provider = useJsonRpcProvider(DEFAULT_ETH_CHAIN_ID);
   const [isLoading, setIsLoading] = useState(false);
   const [isStale, setIsStale] = useState(false);
   const [userRep, setUserRep] = useState(bnum(0));

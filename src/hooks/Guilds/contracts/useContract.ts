@@ -1,30 +1,29 @@
-import { Contract, providers } from 'ethers';
-import { useWeb3React } from '@web3-react/core';
+import { Contract } from 'ethers';
 import { useMemo } from 'react';
 import { getContract } from '../../../utils/contracts';
 import ERC20Guild_ABI from '../../../contracts/ERC20Guild.json';
 import { ERC20Guild } from '../../../types/ERC20Guild';
-// const { Contract } = contract;
+import useJsonRpcProvider from '../web3/useJsonRpcProvider';
 
 export default function useContract<T extends Contract>(
   contractId: string,
   abi: any,
-  web3Context?: string
+  chainId?: number
 ): T | null {
-  const { library } = useWeb3React(web3Context);
+  const provider = useJsonRpcProvider(chainId);
+  console.log("useContract", contractId, abi, chainId, provider);
   return useMemo(() => {
-    if (!library) return null;
+    if (!provider) return null;
     try {
-      const provider = new providers.Web3Provider(library.currentProvider);
       const contract = getContract(contractId, abi, provider);
       return contract;
     } catch (e) {
       console.error(e);
       return null;
     }
-  }, [contractId, abi, web3Context, library]) as unknown as T;
+  }, [contractId, abi, provider]) as unknown as T;
 }
 
-export function useERC20Guild(contractId: string, web3Context?: string) {
-  return useContract<ERC20Guild>(contractId, ERC20Guild_ABI.abi, web3Context);
+export function useERC20Guild(contractId: string, chainId?: number) {
+  return useContract<ERC20Guild>(contractId, ERC20Guild_ABI.abi, chainId);
 }

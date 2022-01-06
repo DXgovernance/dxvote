@@ -1,24 +1,25 @@
 import { utils } from 'ethers';
 import { useEffect, useMemo } from 'react';
-import { MAINNET_WEB3_ROOT_KEY } from '../../../components/MainnetWeb3Manager';
 import { resolveUri } from '../../../utils/url';
 import useENS from './useENS';
 import useENSResolver from './useENSResolver';
 import useERC721NFT from '../nft/useERC721NFT';
 import useERC1155NFT from '../nft/useERC1155NFT';
 import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
+import { useWeb3React } from '@web3-react/core';
 
 const useENSAvatar = (
   ethAddress: string,
-  web3Context: string = MAINNET_WEB3_ROOT_KEY
+  chainId?: number
 ) => {
-  const { name: ensName } = useENS(ethAddress, web3Context);
-  const resolver = useENSResolver(ensName, web3Context);
+  const { chainId: walletChainId }= useWeb3React();
+  const { name: ensName } = useENS(ethAddress, chainId);
+  const resolver = useENSResolver(ensName, chainId);
   const [avatarUri, setAvatarUri] = useLocalStorageWithExpiry<string>(
-    `ens/avatar/${ethAddress}`,
+    `ens/avatar/${chainId || walletChainId}/${ethAddress}`,
     null
   );
-  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, web3Context);
+  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, chainId);
 
   useEffect(() => {
     if (!resolver || avatarUri) return;
@@ -42,7 +43,7 @@ const useENSAvatar = (
 const useENSAvatarNFT = (
   nftUri: string,
   ownerAddress: string,
-  web3Context = MAINNET_WEB3_ROOT_KEY
+  chainId?: number
 ) => {
   const decodedUrl = useMemo(() => {
     if (!nftUri) return {};
@@ -85,13 +86,13 @@ const useENSAvatarNFT = (
   const { ownerAddress: ERC721Owner, metadata: ERC721Metadata } = useERC721NFT(
     decodedUrl.type === 'erc721' ? decodedUrl.contractId : null,
     decodedUrl.tokenId,
-    web3Context
+    chainId
   );
   const { balance: ERC1155Balance, metadata: ERC1155Metadata } = useERC1155NFT(
     decodedUrl.type === 'erc1155' ? decodedUrl.contractId : null,
     decodedUrl.tokenId,
     ownerAddress,
-    web3Context
+    chainId
   );
 
   let imageUrl: string = useMemo(() => {
