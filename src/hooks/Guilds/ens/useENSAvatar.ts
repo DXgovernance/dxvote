@@ -8,11 +8,8 @@ import useERC1155NFT from '../nft/useERC1155NFT';
 import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
 import { useWeb3React } from '@web3-react/core';
 
-const useENSAvatar = (
-  ethAddress: string,
-  chainId?: number
-) => {
-  const { chainId: walletChainId }= useWeb3React();
+const useENSAvatar = (ethAddress: string, chainId?: number) => {
+  const { chainId: walletChainId } = useWeb3React();
   const { name: ensName } = useENS(ethAddress, chainId);
   const resolver = useENSResolver(ensName, chainId);
   const [avatarUri, setAvatarUri] = useLocalStorageWithExpiry<string>(

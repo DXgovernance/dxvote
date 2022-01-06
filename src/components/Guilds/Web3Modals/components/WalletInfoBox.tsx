@@ -11,7 +11,10 @@ import {
 } from '../../../../utils';
 import useENSAvatar from '../../../../hooks/Guilds/ens/useENSAvatar';
 import useClipboard from '../../../../hooks/Guilds/useClipboard';
-import { DEFAULT_ETH_CHAIN_ID, findWalletType } from '../../../../provider/connectors';
+import {
+  DEFAULT_ETH_CHAIN_ID,
+  findWalletType,
+} from '../../../../provider/connectors';
 
 import LiveIndicator from './LiveIndicator';
 import { Button, IconButton } from '../../common/Button';

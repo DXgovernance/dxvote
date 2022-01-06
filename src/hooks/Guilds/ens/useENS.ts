@@ -2,10 +2,7 @@ import { isAddress } from '../../../utils';
 import useENSAddress from './useENSAddress';
 import useENSName from './useENSName';
 
-export default function useENS(
-  nameOrAddress: string,
-  chainId?: number
-) {
+export default function useENS(nameOrAddress: string, chainId?: number) {
   const validAddress = isAddress(nameOrAddress);
   const reverseLookup = useENSName(
     validAddress ? validAddress : undefined,

@@ -2,16 +2,13 @@ import { useEffect, useState } from 'react';
 import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
 import useJsonRpcProvider from '../web3/useJsonRpcProvider';
 
-export default function useENSName(
-  ensAddress?: string,
-  chainId?: number
-) {
+export default function useENSName(ensAddress?: string, chainId?: number) {
   const [isLoading, setIsLoading] = useState(true);
   const [ensName, setENSName] = useLocalStorageWithExpiry<string>(
     `ens/name/${ensAddress}`,
     null
   );
-  const provider = useJsonRpcProvider(chainId)
+  const provider = useJsonRpcProvider(chainId);
 
   useEffect(() => {
     if (!ensAddress || ensName) return;

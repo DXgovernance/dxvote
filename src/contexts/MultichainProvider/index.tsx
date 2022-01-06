@@ -3,10 +3,11 @@ import { createContext, useMemo } from 'react';
 import { useRpcUrls } from '../../provider/providerHooks';
 
 interface MultichainContextInterface {
-  providers: Record<number, JsonRpcProvider>
+  providers: Record<number, JsonRpcProvider>;
 }
 
-export const MultichainContext = createContext<MultichainContextInterface>(null);
+export const MultichainContext =
+  createContext<MultichainContextInterface>(null);
 
 const MultichainProvider = ({ children }) => {
   const rpcUrls = useRpcUrls();

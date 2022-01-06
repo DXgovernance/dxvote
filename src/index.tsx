@@ -106,7 +106,9 @@ const SplitApp = () => {
   const location = useLocation();
   const isGuilds = location.pathname.startsWith('/guilds');
 
-  const { context: { ensService } } = useContext();
+  const {
+    context: { ensService },
+  } = useContext();
   const mainnetProvider = useJsonRpcProvider(DEFAULT_ETH_CHAIN_ID);
 
   useEffect(() => {
@@ -117,12 +119,12 @@ const SplitApp = () => {
     <>
       {!isGuilds ? (
         <Switch>
-            <Web3ReactManager>
-              <GlobalStyle />
-              <Header />
-              <Routes />
-              <ToastContainer />
-            </Web3ReactManager>
+          <Web3ReactManager>
+            <GlobalStyle />
+            <Header />
+            <Routes />
+            <ToastContainer />
+          </Web3ReactManager>
         </Switch>
       ) : (
         <GuildsApp />
