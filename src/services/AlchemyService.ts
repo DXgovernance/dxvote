@@ -43,7 +43,7 @@ export default class AlchemyService {
     return ETH_NETWORKS_IDS.reduce((prevUrls, chainId) => {
       const networkUrl = ALCHEMY_NETWORK_URLS[chainId];
 
-      let alchemyUrl = null;
+      let alchemyUrl: string = null;
       if (networkUrl) {
         alchemyUrl = `https://${networkUrl}/v2/${alchemyAPIKey}`;
       } else {
@@ -52,6 +52,6 @@ export default class AlchemyService {
 
       prevUrls[chainId] = alchemyUrl;
       return prevUrls;
-    }, {});
+    }, {} as Record<number, string>);
   }
 }

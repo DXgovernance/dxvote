@@ -80,7 +80,7 @@ export function useRpcUrls() {
     },
   } = useContext();
   const preferredRpc = configStore.getLocalConfig().rpcType;
-  const [rpcUrls, setRpcUrls] = useState(null);
+  const [rpcUrls, setRpcUrls] = useState<Record<number, string>>(null);
 
   useEffect(() => {
     getRpcUrls().then(urls => setRpcUrls(urls));
