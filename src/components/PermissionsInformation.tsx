@@ -105,7 +105,7 @@ const PermissionsInformation = observer(() => {
   });
 
   const permissions = [];
-
+  console.log({ rawPermissions });
   for (const assetAddress in rawPermissions) {
     for (const fromAddress in rawPermissions[assetAddress]) {
       for (const toAddress in rawPermissions[assetAddress][fromAddress]) {
@@ -138,6 +138,7 @@ const PermissionsInformation = observer(() => {
       }
     }
   }
+  console.log({ permissions });
   return (
     <PermissionsTable>
       <TableHeader>
