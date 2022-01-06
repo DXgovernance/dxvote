@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import { useContext } from '../../contexts';
 import { useRpcUrls } from '../../provider/providerHooks';
 import {
   DEFAULT_ETH_CHAIN_ID,
@@ -11,9 +10,7 @@ export const MAINNET_WEB3_ROOT_KEY = 'MAINNET';
 
 const MainnetWeb3Manager = ({ children }) => {
   const web3Context = useWeb3React(MAINNET_WEB3_ROOT_KEY);
-  const { context } = useContext();
   const rpcUrls = useRpcUrls();
-  const { ensService } = context;
 
   const { activate, active, error } = web3Context;
 
@@ -31,9 +28,9 @@ const MainnetWeb3Manager = ({ children }) => {
   }, [rpcUrls]);
 
   // Make sure ensService is synchronized with web3-react
-  useEffect(() => {
-    ensService.setENSWeb3Context(web3Context);
-  }, [web3Context]);
+  // useEffect(() => {
+  //   ensService.setENSWeb3Context(web3Context);
+  // }, [web3Context]);
 
   if (error) {
     console.debug('[MainnetWeb3Manager] Render: Network error.');
