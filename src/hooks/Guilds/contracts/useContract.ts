@@ -11,7 +11,6 @@ export default function useContract<T extends Contract>(
   chainId?: number
 ): T | null {
   const provider = useJsonRpcProvider(chainId);
-  console.log('useContract', contractId, abi, chainId, provider);
   return useMemo(() => {
     if (!provider) return null;
     try {
