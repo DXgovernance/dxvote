@@ -108,7 +108,6 @@ const ProposalPage = observer(() => {
             source={proposalDescription}
             style={{
               padding: '20px 10px',
-              lineBreak: 'anywhere',
               whiteSpace: 'pre-line',
             }}
           />
