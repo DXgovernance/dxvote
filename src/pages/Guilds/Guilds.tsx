@@ -49,10 +49,10 @@ const GuildsPage: React.FC = () => {
   const { proposals, loading, error } = useProposals(guildId);
 
   const provider = useJsonRpcProvider();
-  const { data: loadedData, error: loadError } = useEtherSWR(['0x6b175474e89094c44da98b954eedeac495271d0f', 'getProposalsIds'], {
+  const { data: loadedData, error: loadError } = useEtherSWR(['0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF', 'getProposalsIds'], {
     web3Provider: provider,
     ABIs: new Map([
-      ['0x6b175474e89094c44da98b954eedeac495271d0f', ERC20GuildContract.abi]
+      ['0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF', ERC20GuildContract.abi]
     ])
   });
 
