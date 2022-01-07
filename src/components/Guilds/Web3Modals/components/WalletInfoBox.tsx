@@ -11,10 +11,12 @@ import {
 } from '../../../../utils';
 import useENSAvatar from '../../../../hooks/Guilds/ens/useENSAvatar';
 import useClipboard from '../../../../hooks/Guilds/useClipboard';
-import { findWalletType } from '../../../../provider/connectors';
+import {
+  DEFAULT_ETH_CHAIN_ID,
+  findWalletType,
+} from '../../../../provider/connectors';
 
 import LiveIndicator from './LiveIndicator';
-import { MAINNET_WEB3_ROOT_KEY } from '../../Web3Manager/MainnetWeb3Manager';
 import { Button, IconButton } from '../../common/Button';
 import Avatar from '../../Avatar';
 
@@ -89,7 +91,7 @@ export default function WalletInfoBox({ openOptions }: Props) {
   const { account, connector, chainId } = useWeb3React();
   const { ensName, imageUrl, avatarUri } = useENSAvatar(
     account,
-    MAINNET_WEB3_ROOT_KEY
+    DEFAULT_ETH_CHAIN_ID
   );
   const [isCopied, copyAddress] = useClipboard(account, 3000);
 

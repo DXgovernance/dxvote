@@ -25,7 +25,7 @@ const Web3ReactManager = ({ children }) => {
   // Overriding default fetch to check for RPC url and setting correct headers if matched
   const originalFetch = window.fetch;
   window.fetch = (url, opts): Promise<Response> => {
-    if (rpcUrls && Object.values(rpcUrls).includes(url) && opts) {
+    if (rpcUrls && Object.values(rpcUrls).includes(url.toString()) && opts) {
       opts.headers = opts.headers || {
         'Content-Type': 'application/json',
       };
