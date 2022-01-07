@@ -16,7 +16,7 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
   const { context } = useContext();
-  const { providerStore, blockchainStore, userStore, messageLoggerService } =
+  const { providerStore, blockchainStore, userStore } =
     context;
 
   const location = useLocation();
@@ -26,7 +26,7 @@ const Web3ReactManager = ({ children }) => {
   // Overriding default fetch to check for RPC url and setting correct headers if matched
   const originalFetch = window.fetch;
   window.fetch = (url, opts): Promise<Response> => {
-    if (rpcUrls && Object.values(rpcUrls).includes(url) && opts) {
+    if (rpcUrls && Object.values(rpcUrls).includes(url.toString()) && opts) {
       opts.headers = opts.headers || {
         'Content-Type': 'application/json',
       };
@@ -83,9 +83,6 @@ const Web3ReactManager = ({ children }) => {
     if (prevChainId !== chainId || prevAccount !== account) {
       try {
         context.reset();
-        messageLoggerService.setUserWeb3Context(
-          providerStore.getActiveWeb3React()
-        );
         blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
       } catch (e) {
         // Fallback if something goes wrong
@@ -128,10 +125,6 @@ const Web3ReactManager = ({ children }) => {
       if (networkActive) {
         userStore.update(providerStore.getActiveWeb3React());
         blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
-        if (account)
-          messageLoggerService.setUserWeb3Context(
-            providerStore.getActiveWeb3React()
-          );
       }
     },
     networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10

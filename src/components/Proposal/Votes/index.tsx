@@ -30,6 +30,7 @@ import {
 import { useContext } from 'contexts';
 import { bnum, toPercentage, verifySignedVote } from 'utils';
 import { utils } from 'ethers';
+import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 
 const Votes = () => {
   const {
@@ -66,18 +67,20 @@ const Votes = () => {
     configStore.getNetworkContracts().votingMachines.dxd &&
     configStore.getNetworkContracts().votingMachines.dxd.address ==
       votingMachineAddress;
+
+  const rinkebyProvider = useJsonRpcProvider(4);
   
   messageLoggerService
-    .getMessages(signedVoteMessageId)
+    .getMessages(signedVoteMessageId, rinkebyProvider)
     .then(messagesEvents => {
       console.debug('[Rinkeby Proposal messages]',messagesEvents);
       messagesEvents.map(messagesEvent => {
         if (
-          messagesEvent.returnValues.message &&
-          messagesEvent.returnValues.message.length > 0 &&
-          messagesEvent.returnValues.message.split(':').length > 6
+          messagesEvent.args &&
+          messagesEvent.args.message.length > 0 &&
+          messagesEvent.args.message.split(':').length > 6
         ) {
-          const signedVote = messagesEvent.returnValues.message.split(':');
+          const signedVote = messagesEvent.args.message.split(':');
           const validSignature = verifySignedVote(
             signedVote[1],
             signedVote[2],
@@ -101,7 +104,7 @@ const Votes = () => {
           if (
             validSignature &&
             !alreadyAdded &&
-            repOfVoterForProposal >= signedVote[5]
+            repOfVoterForProposal >= bnum(signedVote[5])
           ) {
             signedVotesOfProposal.push({
               voter: signedVote[3],
@@ -264,7 +267,8 @@ const Votes = () => {
           voteDetails.votingMachine,
           voteDetails.proposalId,
           voteDetails.decision,
-          voteDetails.repAmount
+          voteDetails.repAmount,
+          rinkebyProvider
         );
     } else {
       daoService.vote(voteDetails.decision, voteDetails.repAmount, voteDetails.proposalId);

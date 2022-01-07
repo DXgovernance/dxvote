@@ -6,9 +6,9 @@ import ERC721abi from '../../../abis/ERC721.json';
 export default function useERC721NFT(
   contractId: string,
   tokenId: string,
-  web3Context?: string
+  chainId?: number
 ) {
-  const contract = useContract(contractId, ERC721abi, web3Context);
+  const contract = useContract(contractId, ERC721abi, chainId);
   const [ownerAddress, setOwnerAddress] = useState<string>(null);
   const [metadata, setMetadata] = useState<any>({});
 

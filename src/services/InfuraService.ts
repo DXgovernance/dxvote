@@ -43,7 +43,7 @@ export default class InfuraService {
     return ETH_NETWORKS_IDS.reduce((prevUrls, chainId) => {
       const infuraNetworkName = INFURA_NETWORK_NAMES[chainId];
 
-      let infuraUrl = null;
+      let infuraUrl: string = null;
       if (infuraNetworkName) {
         infuraUrl = `https://${infuraNetworkName}.infura.io/v3/${infuraAPIKey}`;
       } else {
@@ -52,6 +52,6 @@ export default class InfuraService {
 
       prevUrls[chainId] = infuraUrl;
       return prevUrls;
-    }, {});
+    }, {} as Record<number, string>);
   }
 }

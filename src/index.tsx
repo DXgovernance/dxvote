@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
-import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core';
+import { Web3ReactProvider } from '@web3-react/core';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Web3 from 'web3';
 import moment from 'moment';
@@ -11,10 +11,6 @@ import ThemeProvider, { GlobalStyle } from './theme';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
-import RootWeb3Provider, {
-  MAINNET_WEB3_ROOT_KEY,
-  RINKEBY_WEB3_ROOT_KEY,
-} from './components/RootWeb3Manager';
 import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/proposals';
@@ -31,6 +27,11 @@ import GuildsApp from './GuildsApp';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import MultichainProvider from './contexts/MultichainProvider';
+import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
+import { useEffect } from 'react';
+import { useContext } from './contexts';
+import { DEFAULT_ETH_CHAIN_ID } from './provider/connectors';
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -99,27 +100,31 @@ const Routes = () => {
   );
 };
 
-const MainnetWeb3Provider: any = createWeb3ReactRoot(MAINNET_WEB3_ROOT_KEY);
-const RinkebyWeb3Provider: any = createWeb3ReactRoot(RINKEBY_WEB3_ROOT_KEY);
-
 const SplitApp = () => {
   // This split between DXvote and Guilds frontends are temporary.
   // We'll eventually converge changes on the Guilds side to DXvote.
   const location = useLocation();
   const isGuilds = location.pathname.startsWith('/guilds');
 
+  const {
+    context: { ensService },
+  } = useContext();
+  const mainnetProvider = useJsonRpcProvider(DEFAULT_ETH_CHAIN_ID);
+
+  useEffect(() => {
+    ensService.setWeb3Provider(mainnetProvider);
+  }, [mainnetProvider, ensService]);
+
   return (
     <>
       {!isGuilds ? (
         <Switch>
-          <RootWeb3Provider>
-            <Web3ReactManager>
-              <GlobalStyle />
-              <Header />
-              <Routes />
-              <ToastContainer />
-            </Web3ReactManager>
-          </RootWeb3Provider>
+          <Web3ReactManager>
+            <GlobalStyle />
+            <Header />
+            <Routes />
+            <ToastContainer />
+          </Web3ReactManager>
         </Switch>
       ) : (
         <GuildsApp />
@@ -131,15 +136,13 @@ const SplitApp = () => {
 const Root = () => {
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
-      <MainnetWeb3Provider getLibrary={getLibrary}>
-        <RinkebyWeb3Provider getLibrary={getLibrary}>
-          <ThemeProvider>
-            <HashRouter>
-              <SplitApp />
-            </HashRouter>
-          </ThemeProvider>
-        </RinkebyWeb3Provider>
-      </MainnetWeb3Provider>
+      <MultichainProvider>
+        <ThemeProvider>
+          <HashRouter>
+            <SplitApp />
+          </HashRouter>
+        </ThemeProvider>
+      </MultichainProvider>
     </Web3ReactProvider>
   );
 };

@@ -1,123 +1,32 @@
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import Common, { Chain, Hardfork } from '@ethereumjs/common';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 import RootContext from '../contexts';
 import { toEthSignedMessageHash, arrayBufferHex, hashVote } from 'utils';
-import { utils } from 'ethers';
+import { ethers, utils } from 'ethers';
+import { JsonRpcProvider } from '@ethersproject/providers';
 
 export default class MessageLoggerService {
   context: RootContext;
-  userWeb3Context: Web3ReactContextInterface;
-  rinkebyWeb3Context: Web3ReactContextInterface;
 
   messageLoggerAddress: string = '0xA490faF0DC4F26101a15bAc6ECad55b59db014a7';
-  messageLoggerABI: Object = [
-    { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: 'bytes32',
-          name: 'topic',
-          type: 'bytes32',
-        },
-        {
-          indexed: false,
-          internalType: 'string',
-          name: 'message',
-          type: 'string',
-        },
-        {
-          indexed: false,
-          internalType: 'address',
-          name: 'sender',
-          type: 'address',
-        },
-      ],
-      name: 'Message',
-      type: 'event',
-    },
-    {
-      inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-      name: 'DOMAIN_SEPARATORS',
-      outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [],
-      name: 'PERMIT_TYPEHASH',
-      outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-      stateMutability: 'view',
-      type: 'function',
-    },
-    {
-      inputs: [
-        { internalType: 'bytes32', name: 'topic', type: 'bytes32' },
-        { internalType: 'string', name: 'message', type: 'string' },
-      ],
-      name: 'broadcast',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        { internalType: 'bytes32', name: 'topic', type: 'bytes32' },
-        { internalType: 'string', name: 'message', type: 'string' },
-        { internalType: 'uint256', name: 'chainId', type: 'uint256' },
-        { internalType: 'uint8', name: 'v', type: 'uint8' },
-        { internalType: 'bytes32', name: 'r', type: 'bytes32' },
-        { internalType: 'bytes32', name: 's', type: 'bytes32' },
-      ],
-      name: 'broadcastEIP712',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-    {
-      inputs: [
-        { internalType: 'bytes32', name: 'topic', type: 'bytes32' },
-        { internalType: 'string', name: 'message', type: 'string' },
-        { internalType: 'address', name: 'sender', type: 'address' },
-      ],
-      name: 'broadcastPublic',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-  ];
+  messageLoggerABI: ethers.utils.Interface = new ethers.utils.Interface([
+    "event Message(bytes32 indexed topic, string message, address sender)",
+    "function broadcast(bytes32 topic, string message)"
+  ]);
   fromBlock: number = 9904867;
 
   constructor(context: RootContext) {
     this.context = context;
-    this.rinkebyWeb3Context = null;
-  }
-
-  getMessageLoggerWeb3Context(): Web3ReactContextInterface {
-    return this.rinkebyWeb3Context;
-  }
-
-  setUserWeb3Context(context: Web3ReactContextInterface) {
-    this.userWeb3Context = context;
-  }
-
-  setRinkebyWeb3Context(context: Web3ReactContextInterface) {
-    this.rinkebyWeb3Context = context;
   }
 
   async broadcastVote(
     votingMachineAddress: string,
     proposalId: string,
     decision: string,
-    repAmount: string
+    repAmount: string,
+    rinkebyWeb3: JsonRpcProvider
   ) {
-    const rinkebyWeb3 = this.rinkebyWeb3Context.library;
-    const messageLogger = new rinkebyWeb3.eth.Contract(
-      this.messageLoggerABI,
-      this.messageLoggerAddress
-    );
+
     const { account } = this.context.providerStore.getActiveWeb3React();
     const common = new Common({
       chain: Chain.Rinkeby,
@@ -145,18 +54,14 @@ export default class MessageLoggerService {
     // Step 2: Create the TX to send in rinkeby with the signature of the vote.
     let txData = {
       from: account,
-      data: messageLogger.methods
-        .broadcast(
+      data: this.messageLoggerABI.encodeFunctionData("broadcast", [
           utils.id(`dxvote:${proposalId}`),
           `signedVote:${votingMachineAddress}:${proposalId}:${account}:${decision}:${repAmount}:${voteSignature.result}`
-        )
-        .encodeABI(),
-      nonce: rinkebyWeb3.utils.numberToHex(
-        await rinkebyWeb3.eth.getTransactionCount(account)
-      ),
-      gasLimit: rinkebyWeb3.utils.numberToHex('500000'),
-      maxPriorityFeePerGas: rinkebyWeb3.utils.numberToHex('10000000000'),
-      maxFeePerGas: rinkebyWeb3.utils.numberToHex('10000000000'),
+      ]),
+      nonce: await rinkebyWeb3.getTransactionCount(account),
+      gasLimit: 500000,
+      maxPriorityFeePerGas: 10000000000,
+      maxFeePerGas: 10000000000,
       to: this.messageLoggerAddress,
       type: '0x02',
       chainId: '0x04',
@@ -170,7 +75,7 @@ export default class MessageLoggerService {
     // Step 3: Sign the transaction with the vote signature to be shared in rinkeby executing a tx in rinkeby network
     let signature = await this.context.providerStore.sign(
       this.context.providerStore.getActiveWeb3React(),
-      rinkebyWeb3.utils.sha3('0x' + arrayBufferHex(unsignedTx))
+      utils.keccak256('0x' + arrayBufferHex(unsignedTx))
     );
 
     // Step 3: Send the raw transaction signed to the rinkeby network
@@ -195,38 +100,21 @@ export default class MessageLoggerService {
           .toString('hex')}\n Rinkeby tx Signer: ${from}`
       );
 
-      rinkebyWeb3.eth
-        .sendSignedTransaction('0x' + signedTx.serialize().toString('hex'))
-        .once('sending', function (payload) {
-          console.log('sending', payload);
-        })
-        .once('sent', function (payload) {
-          console.log('sent', payload);
-        })
-        .once('transactionHash', function (hash) {
-          console.log('tx hash', hash);
-        })
-        .once('receipt', function (receipt) {
-          console.log('receipt', receipt);
-        })
-        .on('error', function (error) {
-          console.log('error', error);
-        });
+      rinkebyWeb3.send("eth_sendRawTransaction",['0x' + signedTx.serialize().toString('hex')]);
     }
   }
 
-  async getMessages(topic: string) {
-    const web3 = this.rinkebyWeb3Context.library;
-    const messageLogger = new web3.eth.Contract(
+  async getMessages(topic: string, rinkebyWeb3: JsonRpcProvider) {
+    const messageLogger = new ethers.Contract(
+      this.messageLoggerAddress,
       this.messageLoggerABI,
-      this.messageLoggerAddress
+      rinkebyWeb3,
     );
-    const events = await messageLogger.getPastEvents('Message', {
-      fromBlock: this.fromBlock,
-      filter: {
-        topic: utils.id(topic),
-      },
-    });
+
+    let filter = messageLogger.filters.Message(topic);
+    console.log(filter);
+
+    const events = await messageLogger.queryFilter(filter, this.fromBlock);
     return events;
   }
 }

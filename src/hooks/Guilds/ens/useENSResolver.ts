@@ -1,16 +1,16 @@
-import { useWeb3React } from '@web3-react/core';
 import { Contract } from 'ethers';
-import { providers, utils } from 'ethers';
+import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import ensResolverABI from '../../../abis/ENSPublicResolver.json';
 import { getContract } from '../../../utils/contracts';
+import useJsonRpcProvider from '../web3/useJsonRpcProvider';
 import useENSRegistrar from './useENSRegistrar';
 
-export default function useENSResolver(ensName: string, web3Context?: string) {
+export default function useENSResolver(ensName: string, chainId?: number) {
   const [resolver, setResolver] = useState<Contract | null>(null);
 
-  const { library } = useWeb3React(web3Context);
-  const registrarContract = useENSRegistrar(web3Context);
+  const provider = useJsonRpcProvider(chainId);
+  const registrarContract = useENSRegistrar(chainId);
 
   useEffect(() => {
     if (!ensName) return setResolver(null);
@@ -20,7 +20,6 @@ export default function useENSResolver(ensName: string, web3Context?: string) {
         const resolverAddress = await registrarContract.resolver(
           utils.namehash(ensName)
         );
-        const provider = new providers.Web3Provider(library.currentProvider);
         const resolver = getContract(resolverAddress, ensResolverABI, provider);
         return resolver;
       } catch (e) {
@@ -33,7 +32,7 @@ export default function useENSResolver(ensName: string, web3Context?: string) {
     }
 
     getResolver(ensName).then(setResolver);
-  }, [ensName, library, registrarContract]);
+  }, [ensName, provider, registrarContract]);
 
   return resolver;
 }
