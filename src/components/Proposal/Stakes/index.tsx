@@ -161,7 +161,7 @@ const Stakes = () => {
                 .map((stakeEvent, i) => (
                   <Vote
                     key={`stakeUp${i}`}
-                    style={{ 'flex-direction': 'column' }}
+                    style={{ 'flexDirection': 'column' }}
                   >
                     <BlockchainLink
                       size="short"
@@ -191,7 +191,7 @@ const Stakes = () => {
                 .map((stakeEvent, i) => (
                   <Vote
                     key={`stakeDown${i}`}
-                    style={{ 'flex-direction': 'column' }}
+                    style={{ 'flexDirection': 'column' }}
                   >
                     <BlockchainLink
                       size="short"

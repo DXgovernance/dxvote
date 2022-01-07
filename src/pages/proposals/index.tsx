@@ -10,6 +10,7 @@ import {
   HeaderCell,
   TableBody,
   DataCell,
+  TableRow,
 } from '../../components/common';
 import PulsingIcon from '../../components/common/LoadingIcon';
 import Footer from '../../components/Footer';
@@ -93,11 +94,13 @@ const ProposalsPage = observer(() => {
       {!loading && (
         <TableProposal>
           <TableHeader>
-            <HeaderCell>Title</HeaderCell>
-            <HeaderCell>Scheme</HeaderCell>
-            <HeaderCell>Status</HeaderCell>
-            <HeaderCell>Stakes</HeaderCell>
-            <HeaderCell>Votes</HeaderCell>
+            <TableRow>
+              <HeaderCell>Title</HeaderCell>
+              <HeaderCell>Scheme</HeaderCell>
+              <HeaderCell>Status</HeaderCell>
+              <HeaderCell>Stakes</HeaderCell>
+              <HeaderCell>Votes</HeaderCell>
+            </TableRow>
           </TableHeader>
           <TableBody>
             {proposals.map((proposal, i) => {
