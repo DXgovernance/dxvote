@@ -14,3 +14,4 @@ export * from './transaction';
 export * from './encodingCalls';
 export * from './signature';
 export * from './array';
+export * from './votes';

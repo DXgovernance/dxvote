@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 700;
-  width: 40%;
+  width: auto;
   max-width: ${({ maxWidth }) => maxWidth}px;
   min-width: 400px;
   outline: 0;

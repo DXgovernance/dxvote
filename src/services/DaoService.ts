@@ -3,8 +3,7 @@ import contentHash from 'content-hash';
 import PromiEvent from 'promievent';
 import RootContext from '../contexts';
 import { ContractType } from '../stores/Provider';
-import { BigNumber, MAX_UINT, toEthSignedMessageHash } from '../utils';
-import { utils } from 'ethers';
+import { BigNumber, MAX_UINT } from '../utils';
 
 export default class DaoService {
   context: RootContext;
@@ -33,47 +32,6 @@ export default class DaoService {
     return controller.methods
       .genericCall(to, callData, avatarAddress, value)
       .encodeABI();
-  }
-
-  hashVote(
-    votingMachineAddress: string,
-    proposalId: string,
-    voter: string,
-    decision: string,
-    repAmount: string
-  ) {
-    const { providerStore } = this.context;
-    const { library } = providerStore.getActiveWeb3React();
-
-    return library.utils.soliditySha3(
-      { type: 'address', value: votingMachineAddress },
-      { type: 'bytes32', value: proposalId },
-      { type: 'address', value: voter },
-      { type: 'uint256', value: decision },
-      { type: 'uint256', value: repAmount }
-    );
-  }
-
-  verifySignedVote(
-    votingMachineAddress: string,
-    proposalId: string,
-    voter: string,
-    decision: string,
-    repAmount: string,
-    signature: string
-  ) {
-    const hashedVote = this.hashVote(
-      votingMachineAddress,
-      proposalId,
-      voter,
-      decision,
-      repAmount
-    );
-    const signer = utils.recoverAddress(
-      toEthSignedMessageHash(hashedVote),
-      signature
-    );
-    return signer == voter;
   }
 
   createProposal(

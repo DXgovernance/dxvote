@@ -2,7 +2,8 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import Common, { Chain, Hardfork } from '@ethereumjs/common';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 import RootContext from '../contexts';
-import { toEthSignedMessageHash, arrayBufferHex } from 'utils';
+import { toEthSignedMessageHash, arrayBufferHex, hashVote } from 'utils';
+import { utils } from 'ethers';
 
 export default class MessageLoggerService {
   context: RootContext;
@@ -125,7 +126,7 @@ export default class MessageLoggerService {
 
     // Step 1: The Vote is hashed, and the hash is signed.
     // keccak256(abi.encodePacked( votingMachine, proposalId, voter, voteDecision, amount ));
-    const hashedVote = this.context.daoService.hashVote(
+    const hashedVote = hashVote(
       votingMachineAddress,
       proposalId,
       account,
@@ -146,7 +147,7 @@ export default class MessageLoggerService {
       from: account,
       data: messageLogger.methods
         .broadcast(
-          rinkebyWeb3.utils.sha3(`dxvote:${proposalId}`),
+          utils.id(`dxvote:${proposalId}`),
           `signedVote:${votingMachineAddress}:${proposalId}:${account}:${decision}:${repAmount}:${voteSignature.result}`
         )
         .encodeABI(),
@@ -223,7 +224,7 @@ export default class MessageLoggerService {
     const events = await messageLogger.getPastEvents('Message', {
       fromBlock: this.fromBlock,
       filter: {
-        topic: web3.utils.sha3(topic),
+        topic: utils.id(topic),
       },
     });
     return events;

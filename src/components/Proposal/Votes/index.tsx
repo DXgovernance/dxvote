@@ -28,7 +28,8 @@ import {
 } from '../styles';
 
 import { useContext } from 'contexts';
-import { bnum, toPercentage } from 'utils';
+import { bnum, toPercentage, verifySignedVote } from 'utils';
+import { utils } from 'ethers';
 
 const Votes = () => {
   const {
@@ -38,36 +39,96 @@ const Votes = () => {
       providerStore,
       daoService,
       messageLoggerService,
+      orbitDBService
     },
   } = useContext();
 
   //State
   const [signVote, setSignVote] = useState(false);
-  const [decision, setDecision] = useState(null);
+  const [decision, setDecision] = useState(0);
   const [votePercentage, setVotePercentage] = useState(0);
   const [signedVotesOfProposal, setSignedVotesOfProposal] = useState([]);
-  const [loadingSignedVotes, setLoadingSignedVotes] = useState(true);
-
+  const [loadingSignedRinkebyVotes, setLoadingSignedRinkebyVotes] = useState(true);
+  const [loadingSignedOrbitDBVotes, setLoadingSignedOrbitDBVotes] = useState(true);
+  
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
-
+  
   const proposal = daoStore.getProposal(proposalId);
   const proposalEvents = daoStore.getProposalEvents(proposalId);
   const { account } = providerStore.getActiveWeb3React();
+  const signedVoteMessageId = utils.id(`dxvote:${proposalId}`);
+  const { finishTime } = daoStore.getProposalStatus(proposalId);
+  const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
+  const votingMachineAddress = daoStore.getVotingMachineOfProposal(proposalId);
+  const finishTimeReached = finishTime.toNumber() < moment().unix();
+  const isDXDVotingMachine =
+    configStore.getNetworkContracts().votingMachines.dxd &&
+    configStore.getNetworkContracts().votingMachines.dxd.address ==
+      votingMachineAddress;
+  
+  messageLoggerService
+    .getMessages(signedVoteMessageId)
+    .then(messagesEvents => {
+      console.debug('[Rinkeby Proposal messages]',messagesEvents);
+      messagesEvents.map(messagesEvent => {
+        if (
+          messagesEvent.returnValues.message &&
+          messagesEvent.returnValues.message.length > 0 &&
+          messagesEvent.returnValues.message.split(':').length > 6
+        ) {
+          const signedVote = messagesEvent.returnValues.message.split(':');
+          const validSignature = verifySignedVote(
+            signedVote[1],
+            signedVote[2],
+            signedVote[3],
+            signedVote[4],
+            signedVote[5],
+            signedVote[6]
+          );
 
-  if (signedVotesOfProposal.length == 0)
-    messageLoggerService
-      .getMessages(`dxvote:${proposalId}`)
-      .then(messagesEvents => {
-        console.debug('[Proposal messages]',messagesEvents);
-        messagesEvents.map(messagesEvent => {
+          const alreadyAdded =
+            signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) >
+              -1 ||
+            proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) >
+              -1;
+
+          const repOfVoterForProposal = daoStore.getRepAt(
+            signedVote[3],
+            proposal.creationEvent.blockNumber
+          ).userRep;
+
           if (
-            messagesEvent.returnValues.message &&
-            messagesEvent.returnValues.message.length > 0 &&
-            messagesEvent.returnValues.message.split(':').length > 6
+            validSignature &&
+            !alreadyAdded &&
+            repOfVoterForProposal >= signedVote[5]
           ) {
-            const signedVote = messagesEvent.returnValues.message.split(':');
-            const validSignature = daoService.verifySignedVote(
+            signedVotesOfProposal.push({
+              voter: signedVote[3],
+              vote: signedVote[4],
+              amount: bnum(signedVote[5]),
+              signature: signedVote[6],
+              source: "rinkeby"
+            });
+          }
+        }
+      });
+      setSignedVotesOfProposal(signedVotesOfProposal);
+      setLoadingSignedRinkebyVotes(false);
+    });
+
+    orbitDBService
+      .getFeed(signedVoteMessageId)
+      .then(signedVoteMessages => {
+        console.debug('[OrbitDB messages]',signedVoteMessages);
+        signedVoteMessages.map(signedVoteMessage => {
+          if (
+            signedVoteMessage &&
+            signedVoteMessage.length > 0 &&
+            signedVoteMessage.split(':').length > 6
+          ) {
+            const signedVote = signedVoteMessage.split(':');
+            const validSignature = verifySignedVote(
               signedVote[1],
               signedVote[2],
               signedVote[3],
@@ -77,7 +138,7 @@ const Votes = () => {
             );
 
             const alreadyAdded =
-              signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) >
+            signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) >
                 -1 ||
               proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) >
                 -1;
@@ -97,13 +158,13 @@ const Votes = () => {
                 vote: signedVote[4],
                 amount: bnum(signedVote[5]),
                 signature: signedVote[6],
+                source: "orbitDB"
               });
             }
           }
         });
-        console.debug('[Signed votes]',signedVotesOfProposal);
         setSignedVotesOfProposal(signedVotesOfProposal);
-        setLoadingSignedVotes(false);
+        setLoadingSignedOrbitDBVotes(false);
       });
 
   let votedAmount = bnum(0);
@@ -160,14 +221,6 @@ const Votes = () => {
     setVotePercentage(Number(repPercentageAtCreation));
   }
 
-  const { finishTime } = daoStore.getProposalStatus(proposalId);
-  const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
-  const votingMachineAddress = daoStore.getVotingMachineOfProposal(proposalId);
-  const finishTimeReached = finishTime.toNumber() < moment().unix();
-  const isDXDVotingMachine =
-    configStore.getNetworkContracts().votingMachines.dxd &&
-    configStore.getNetworkContracts().votingMachines.dxd.address ==
-      votingMachineAddress;
 
   // Events Handlers
   const onVoteValueChange = event => {
@@ -189,28 +242,35 @@ const Votes = () => {
     );
   };
 
-  const submitVote = function (decision) {
-    const repAmount = totalRepAtProposalCreation
-      .times(bnum(votePercentage))
-      .div('100')
-      .toFixed(0);
-    daoService.vote(decision, repAmount, proposalId);
-    setDecision(null);
-  };
+  const submitVote = function (voteDetails:{
+    votingMachine: string,
+    proposalId: string,
+    voter: string,
+    decision: string,
+    repAmount: string,
+    signVote: boolean
+    networks: boolean[]
+  }) {
+    if (voteDetails.signVote) {
+      if (voteDetails.networks[0])
+        orbitDBService.broadcastVote(
+          voteDetails.votingMachine,
+          voteDetails.proposalId,
+          voteDetails.decision,
+          voteDetails.repAmount
+        );
+      if (voteDetails.networks[1])
+        messageLoggerService.broadcastVote(
+          voteDetails.votingMachine,
+          voteDetails.proposalId,
+          voteDetails.decision,
+          voteDetails.repAmount
+        );
+    } else {
+      daoService.vote(voteDetails.decision, voteDetails.repAmount, voteDetails.proposalId);
+    }
 
-  const submitSignedVote = function (decision) {
-    const repAmount = totalRepAtProposalCreation
-      .times(bnum(votePercentage))
-      .div('100')
-      .toFixed(0);
-
-    messageLoggerService.broadcastVote(
-      votingMachineAddress,
-      proposalId,
-      decision.toString(),
-      repAmount.toString()
-    );
-    setDecision(null);
+    setDecision(0);
   };
 
   // TODO:
@@ -282,11 +342,12 @@ const Votes = () => {
         </NegativeSummary>
       </SpaceAroundRow>
 
-      {!loadingSignedVotes && (
+      {!loadingSignedRinkebyVotes && !loadingSignedOrbitDBVotes && (
         <div>
           <SpaceAroundRow>
             <strong>
-              Signed Votes <Question question="4" />
+              Signed Votes <Question question="4" /> <br/>
+              {!isDXDVotingMachine && <small>Non-Executable</small> }
             </strong>
           </SpaceAroundRow>
           <SpaceAroundRow>
@@ -402,9 +463,19 @@ const Votes = () => {
             toAdd={votePercentage}
             positive={parseFloat(positiveVotes)}
             negative={parseFloat(negativeVotes)}
-            onConfirm={signVote ? submitSignedVote : submitVote}
-            onCancel={() => setDecision(null)}
-            signedVote={signVote}
+            onConfirm={submitVote}
+            onCancel={() => setDecision(0)}
+            voteDetails={{
+              votingMachine: votingMachineAddress,
+              proposalId: proposalId,
+              voter: account,
+              decision: decision.toString(),
+              repAmount: totalRepAtProposalCreation
+                .times(bnum(votePercentage))
+                .div('100')
+                .toFixed(0).toString(),
+              signVote: signVote
+            }}
           />
           <AmountInput
             type="number"
