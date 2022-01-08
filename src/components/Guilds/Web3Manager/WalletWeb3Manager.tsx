@@ -8,10 +8,12 @@ import {
 } from 'provider/connectors';
 import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { NetworkConnector } from '@web3-react/network-connector';
+// import { useGuildConfigContext } from '../../../contexts/Guilds';
 
 const WalletWeb3Manager = ({ children }) => {
   const history = useHistory();
   const routeMatch = useRouteMatch<{ chain_name?: string }>('/:chain_name');
+  // const guildConfigContext = useGuildConfigContext();
   const urlNetworkName = routeMatch?.params?.chain_name;
 
   const rpcUrls = useRpcUrls();
@@ -27,14 +29,14 @@ const WalletWeb3Manager = ({ children }) => {
     }
     return originalFetch(url, opts);
   };
-
+  const web3Context = useWeb3React();
   const {
     active: networkActive,
     error: networkError,
     connector,
     activate,
     chainId,
-  } = useWeb3React();
+  } = web3Context;
 
   // try to eagerly connect to a provider if possible
   const { triedEager, tryConnecting } = useEagerConnect();
@@ -88,6 +90,11 @@ const WalletWeb3Manager = ({ children }) => {
       history.push(`/${currentChain}`);
     }
   }, [urlNetworkName, chains, history, chainId]);
+
+  useEffect(() => {
+    // guildConfigContext.setWeb3Context(web3Context);
+    // guildConfigContext.initialize(web3Context);
+  }, [web3Context, chainId]);
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {

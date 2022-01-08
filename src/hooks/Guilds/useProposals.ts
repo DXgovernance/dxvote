@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useERC20Guild } from './contracts/useContract';
+import { useGuildConfigContext } from '../../contexts/Guilds';
 import { Proposal } from '../../types/types.guilds';
 
 export interface useProposalsReturns {
@@ -8,12 +8,11 @@ export interface useProposalsReturns {
   loading: boolean;
 }
 
-export const useProposals = (contractAddress: string): useProposalsReturns => {
+export const useProposals = (): useProposalsReturns => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const contract = useERC20Guild(contractAddress);
+  const { contract } = useGuildConfigContext();
 
   useEffect(() => {
     if (!contract) return;

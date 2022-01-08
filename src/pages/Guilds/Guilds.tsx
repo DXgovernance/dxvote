@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
 
 import { Box } from '../../components/Guilds/common/Layout';
 
@@ -42,10 +41,7 @@ const ErrorList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
-  const { proposals, loading, error } = useProposals(guildId);
-  console.debug('Guilds Proposals: ', proposals, loading, error);
-
+  const { proposals, loading, error } = useProposals();
   return (
     <PageContainer>
       <SidebarContent>
@@ -64,6 +60,7 @@ const GuildsPage: React.FC = () => {
             !loading &&
             proposals.map(proposal => (
               <ProposalCard
+                key={proposal.contentHash}
                 title={proposal.title}
                 description={proposal.contentHash}
               />

@@ -1,12 +1,22 @@
 import React from 'react';
-import { FilterProvider, ProposalsProvider } from '.';
+import {
+  FilterProvider,
+  ProposalsProvider,
+  GuildConfigProvider,
+  GuildServiceProvider,
+} from '.';
 
-export const GuildsContextProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const GuildsContextProvider: React.FC<{
+  children: React.ReactNode;
+  guildAddress: string;
+}> = ({ children, guildAddress }) => {
   return (
-    <FilterProvider>
-      <ProposalsProvider>{children}</ProposalsProvider>
-    </FilterProvider>
+    <GuildServiceProvider>
+      <GuildConfigProvider guildAddress={guildAddress}>
+        <FilterProvider>
+          <ProposalsProvider>{children}</ProposalsProvider>
+        </FilterProvider>
+      </GuildConfigProvider>
+    </GuildServiceProvider>
   );
 };
