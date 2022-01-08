@@ -99,7 +99,7 @@ export const Sidebar = () => {
   const [isMember, setIsMember] = useState(false);
 
   return (
-    <SidebarWrapper>
+    <SidebarWrapper data-testid="sidebar">
       <DaoInfoPanel>
         <DaoInfo>
           <DaoBrand>

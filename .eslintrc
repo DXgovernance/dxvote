@@ -1,12 +1,15 @@
 {
   "root": true,
-  "extends": ["react-app"],
-  "plugins": ["@typescript-eslint"],
+  "extends": ["react-app", "plugin:cypress/recommended"],
+  "plugins": ["@typescript-eslint", "cypress"],
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }
+  },
+  "env": {
+    "cypress/globals": true
   }
 }
