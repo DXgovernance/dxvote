@@ -4,9 +4,7 @@ import {
   Switch,
   useHistory,
   Redirect,
-  // useLocation,
 } from 'react-router-dom';
-// import { matchPath } from 'react-router';
 import { ThemeProvider } from 'styled-components';
 import { Container } from './components/Guilds/common/Layout';
 
@@ -21,11 +19,6 @@ import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBo
 
 const GuildsApp = () => {
   const history = useHistory();
-  // const {
-  //   params: { address },
-  // } = matchPath(useLocation().pathname, {
-  //   path: '/guilds/:chain_name/:address',
-  // });
 
   const isTestingEnv = !window.location?.hostname?.startsWith('dxvote.eth');
   if (!isTestingEnv) {
@@ -38,7 +31,6 @@ const GuildsApp = () => {
       <HashRouter basename="/guilds">
         <GlobalErrorBoundary>
           <WalletWeb3Manager>
-            {/* <GuildsContextProvider guildAddress={address}> */}
             <GuildsContextProvider>
               <GlobalStyle />
               <Header />
