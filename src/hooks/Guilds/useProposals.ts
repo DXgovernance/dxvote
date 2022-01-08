@@ -12,8 +12,8 @@ export const useProposals = (): useProposalsReturns => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { contract } = useGuildConfigContext();
-
+  const { contract, ...rest } = useGuildConfigContext();
+  console.log('rest', rest);
   useEffect(() => {
     if (!contract) return;
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BigNumber } from 'ethers';
+import { matchPath } from 'react-router';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { ERC20Guild } from '../../../types/ERC20Guild';
 import { useGuildProviderService } from '../providerService';
@@ -29,9 +30,13 @@ export const GuildConfigProvider = (props: GuildConfigProviderProps) => {
   const web3React = useWeb3React();
   const providerService = useGuildProviderService();
 
+  const location = matchPath<{ address: string }>(window?.location?.hash, {
+    path: '#/guilds/:chain_name/:address',
+  });
+
   React.useEffect(() => {
-    providerService.initialize(web3React, props.guildAddress);
-  }, [web3React, props.guildAddress]); // eslint-disable-line react-hooks/exhaustive-deps
+    providerService.initialize(web3React, location?.params?.address);
+  }, [web3React, location?.params?.address]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <GuildConfigContext.Provider

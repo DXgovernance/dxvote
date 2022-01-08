@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   FilterProvider,
   ProposalsProvider,
@@ -8,11 +9,10 @@ import {
 
 export const GuildsContextProvider: React.FC<{
   children: React.ReactNode;
-  guildAddress: string;
-}> = ({ children, guildAddress }) => {
+}> = ({ children }) => {
   return (
     <GuildServiceProvider>
-      <GuildConfigProvider guildAddress={guildAddress}>
+      <GuildConfigProvider>
         <FilterProvider>
           <ProposalsProvider>{children}</ProposalsProvider>
         </FilterProvider>
