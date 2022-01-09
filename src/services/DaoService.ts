@@ -3,7 +3,12 @@ import contentHash from 'content-hash';
 import PromiEvent from 'promievent';
 import RootContext from '../contexts';
 import { ContractType } from '../stores/Provider';
-import { BigNumber, MAX_UINT } from '../utils';
+import {
+  BigNumber,
+  hashVote,
+  MAX_UINT,
+  toEthSignedMessageHash,
+} from '../utils';
 
 export default class DaoService {
   context: RootContext;
@@ -198,6 +203,34 @@ export default class DaoService {
       [proposalId, decision, amount, account],
       {}
     );
+  }
+
+  async signVote(
+    votingMachineAddress: string,
+    proposalId: string,
+    decision: string,
+    repAmount: string,
+    addSignatureDomain: boolean = true
+  ): Promise<string> {
+    const { account } = this.context.providerStore.getActiveWeb3React();
+
+    // Step 1: The Vote is hashed, and the hash is signed.
+    // keccak256(abi.encodePacked( votingMachine, proposalId, voter, voteDecision, amount ));
+    const hashedVote = hashVote(
+      votingMachineAddress,
+      proposalId,
+      account,
+      decision,
+      repAmount
+    );
+    console.log('Hashed vote:', hashedVote);
+
+    const voteSignature = await this.context.providerStore.sign(
+      this.context.providerStore.getActiveWeb3React(),
+      addSignatureDomain ? toEthSignedMessageHash(hashedVote) : hashedVote
+    );
+
+    return voteSignature.result;
   }
 
   executeSignedVote(

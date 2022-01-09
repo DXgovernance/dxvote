@@ -40,7 +40,7 @@ const Votes = () => {
       providerStore,
       daoService,
       messageLoggerService,
-      orbitDBService
+      orbitDBService,
     },
   } = useContext();
 
@@ -121,55 +121,51 @@ const Votes = () => {
       setLoadingSignedRinkebyVotes(false);
     });
 
-    orbitDBService
-      .getFeed(signedVoteMessageId)
-      .then(signedVoteMessages => {
-        console.debug('[OrbitDB messages]',signedVoteMessages);
-        signedVoteMessages.map(signedVoteMessage => {
-          if (
-            signedVoteMessage &&
-            signedVoteMessage.length > 0 &&
-            signedVoteMessage.split(':').length > 6
-          ) {
-            const signedVote = signedVoteMessage.split(':');
-            const validSignature = verifySignedVote(
-              signedVote[1],
-              signedVote[2],
-              signedVote[3],
-              signedVote[4],
-              signedVote[5],
-              signedVote[6]
-            );
+  orbitDBService.getLogs(signedVoteMessageId).then(signedVoteMessages => {
+    console.debug('[OrbitDB messages]', signedVoteMessages);
+    signedVoteMessages.map(signedVoteMessage => {
+      if (
+        signedVoteMessage &&
+        signedVoteMessage.length > 0 &&
+        signedVoteMessage.split(':').length > 6
+      ) {
+        const signedVote = signedVoteMessage.split(':');
+        const validSignature = verifySignedVote(
+          signedVote[1],
+          signedVote[2],
+          signedVote[3],
+          signedVote[4],
+          signedVote[5],
+          signedVote[6]
+        );
 
-            const alreadyAdded =
-            signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) >
-                -1 ||
-              proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) >
-                -1;
+        const alreadyAdded =
+          signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) > -1 ||
+          proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) > -1;
 
-            const repOfVoterForProposal = daoStore.getRepAt(
-              signedVote[3],
-              proposal.creationEvent.blockNumber
-            ).userRep;
+        const repOfVoterForProposal = daoStore.getRepAt(
+          signedVote[3],
+          proposal.creationEvent.blockNumber
+        ).userRep;
 
-            if (
-              validSignature &&
-              !alreadyAdded &&
-              repOfVoterForProposal >= signedVote[5]
-            ) {
-              signedVotesOfProposal.push({
-                voter: signedVote[3],
-                vote: signedVote[4],
-                amount: bnum(signedVote[5]),
-                signature: signedVote[6],
-                source: "orbitDB"
-              });
-            }
-          }
-        });
-        setSignedVotesOfProposal(signedVotesOfProposal);
-        setLoadingSignedOrbitDBVotes(false);
-      });
+        if (
+          validSignature &&
+          !alreadyAdded &&
+          repOfVoterForProposal >= signedVote[5]
+        ) {
+          signedVotesOfProposal.push({
+            voter: signedVote[3],
+            vote: signedVote[4],
+            amount: bnum(signedVote[5]),
+            signature: signedVote[6],
+            source: 'orbitDB',
+          });
+        }
+      }
+    });
+    setSignedVotesOfProposal(signedVotesOfProposal);
+    setLoadingSignedOrbitDBVotes(false);
+  });
 
   let votedAmount = bnum(0);
 
@@ -245,33 +241,52 @@ const Votes = () => {
     );
   };
 
-  const submitVote = function (voteDetails:{
-    votingMachine: string,
-    proposalId: string,
-    voter: string,
-    decision: string,
-    repAmount: string,
-    signVote: boolean
-    networks: boolean[]
+  const submitVote = async function (voteDetails: {
+    votingMachine: string;
+    proposalId: string;
+    voter: string;
+    decision: string;
+    repAmount: string;
+    signVote: boolean;
+    networks: boolean[];
+    hashToETHMessage: boolean;
   }) {
     if (voteDetails.signVote) {
-      if (voteDetails.networks[0])
-        orbitDBService.broadcastVote(
+      const voteSignature = await daoService.signVote(
+        voteDetails.votingMachine,
+        voteDetails.proposalId,
+        voteDetails.decision,
+        voteDetails.repAmount,
+        voteDetails.hashToETHMessage
+      );
+      if (
+        verifySignedVote(
           voteDetails.votingMachine,
           voteDetails.proposalId,
-          voteDetails.decision,
-          voteDetails.repAmount
-        );
-      if (voteDetails.networks[1])
-        messageLoggerService.broadcastVote(
-          voteDetails.votingMachine,
-          voteDetails.proposalId,
+          voteDetails.voter,
           voteDetails.decision,
           voteDetails.repAmount,
-          rinkebyProvider
-        );
+          voteSignature
+        )
+      ) {
+        if (voteDetails.networks[0])
+          orbitDBService.addLog(
+            utils.id(`dxvote:${proposalId}`),
+            `signedVote:${voteDetails.votingMachine}:${voteDetails.proposalId}:${voteDetails.voter}:${voteDetails.decision}:${voteDetails.repAmount}:${voteSignature}`
+          );
+        if (voteDetails.networks[1])
+          messageLoggerService.broadcast(
+            utils.id(`dxvote:${proposalId}`),
+            `signedVote:${voteDetails.votingMachine}:${voteDetails.proposalId}:${voteDetails.voter}:${voteDetails.decision}:${voteDetails.repAmount}:${voteSignature}`,
+            rinkebyProvider
+          );
+      }
     } else {
-      daoService.vote(voteDetails.decision, voteDetails.repAmount, voteDetails.proposalId);
+      daoService.vote(
+        voteDetails.decision,
+        voteDetails.repAmount,
+        voteDetails.proposalId
+      );
     }
 
     setDecision(0);

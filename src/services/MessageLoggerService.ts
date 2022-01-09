@@ -1,7 +1,7 @@
 import Common, { Chain, Hardfork } from '@ethereumjs/common';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 import RootContext from '../contexts';
-import { toEthSignedMessageHash, arrayBufferHex, hashVote } from 'utils';
+import { arrayBufferHex } from 'utils';
 import { ethers, utils } from 'ethers';
 import { JsonRpcProvider } from '@ethersproject/providers';
 
