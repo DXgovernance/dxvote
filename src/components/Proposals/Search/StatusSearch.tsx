@@ -13,7 +13,9 @@ const StatusSearch = ({ value, onFilter }) => {
       {enumKeys(VotingMachineProposalState).map(
         i =>
           i !== 'None' && (
-            <option key={i} value={VotingMachineProposalState[i]}>{i}</option>
+            <option key={i} value={VotingMachineProposalState[i]}>
+              {i}
+            </option>
           )
       )}
     </ProposalsFilter>

@@ -34,10 +34,15 @@ const renderEvents = ({ text, textParams }) => {
   else {
     componentsList = text.map((phrase, key) => {
       let components = [];
-      components.push(<span key={"event-0-"+key}>{phrase}</span>);
+      components.push(<span key={'event-0-' + key}>{phrase}</span>);
       if (textParams[key])
         components.push(
-          <BlockchainLink key={"event-1-"+key} text={textParams[0]} toCopy={false} size="short" />
+          <BlockchainLink
+            key={'event-1-' + key}
+            text={textParams[0]}
+            toCopy={false}
+            size="short"
+          />
         );
       return components;
     });
@@ -49,7 +54,7 @@ const History = ({ proposalEvents }) => (
   <ProposalInfoBox style={{ marginTop: '15px' }}>
     <Title noMargins> History </Title>
     {proposalEvents.history.map((historyEvent, i) => (
-      <ProposalHistoryEvent key={"historyEvent"+i}>
+      <ProposalHistoryEvent key={'historyEvent' + i}>
         <HistoryEventText>{renderEvents(historyEvent)}</HistoryEventText>
         <BlockchainLink
           type="transaction"

@@ -27,12 +27,12 @@ export interface ModalProps {
   negative: number;
   toAdd: number;
   voteDetails: {
-    votingMachine: string,
-    proposalId: string,
-    voter: string,
-    decision: string,
-    repAmount: string,
-    signVote: boolean
+    votingMachine: string;
+    proposalId: string;
+    voter: string;
+    decision: string;
+    repAmount: string;
+    signVote: boolean;
   };
 }
 

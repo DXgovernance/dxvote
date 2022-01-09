@@ -16,8 +16,7 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
   const { context } = useContext();
-  const { providerStore, blockchainStore, userStore } =
-    context;
+  const { providerStore, blockchainStore, userStore } = context;
 
   const location = useLocation();
   const history = useHistory();

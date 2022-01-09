@@ -10,8 +10,8 @@ export default class MessageLoggerService {
 
   messageLoggerAddress: string = '0xA490faF0DC4F26101a15bAc6ECad55b59db014a7';
   messageLoggerABI: ethers.utils.Interface = new ethers.utils.Interface([
-    "event Message(bytes32 indexed topic, string message, address sender)",
-    "function broadcast(bytes32 topic, string message)"
+    'event Message(bytes32 indexed topic, string message, address sender)',
+    'function broadcast(bytes32 topic, string message)',
   ]);
   fromBlock: number = 9904867;
 
@@ -19,50 +19,30 @@ export default class MessageLoggerService {
     this.context = context;
   }
 
-  async broadcastVote(
-    votingMachineAddress: string,
-    proposalId: string,
-    decision: string,
-    repAmount: string,
+  async broadcast(
+    topic: string,
+    message: string,
     rinkebyWeb3: JsonRpcProvider
   ) {
-
     const { account } = this.context.providerStore.getActiveWeb3React();
     const common = new Common({
       chain: Chain.Rinkeby,
       hardfork: Hardfork.London,
     });
 
-    // Step 1: The Vote is hashed, and the hash is signed.
-    // keccak256(abi.encodePacked( votingMachine, proposalId, voter, voteDecision, amount ));
-    const hashedVote = hashVote(
-      votingMachineAddress,
-      proposalId,
-      account,
-      decision,
-      repAmount
-    );
-    console.log('Hashed vote:', hashedVote);
-
-    let voteSignature = await this.context.providerStore.sign(
-      this.context.providerStore.getActiveWeb3React(),
-      toEthSignedMessageHash(hashedVote)
-    );
-
-    console.log('Vote signature object:', voteSignature);
-
-    // Step 2: Create the TX to send in rinkeby with the signature of the vote.
+    // Step 1: Create the TX to send in rinkeby with the signature of the vote.
     let txData = {
       from: account,
-      data: this.messageLoggerABI.encodeFunctionData("broadcast", [
-          utils.id(`dxvote:${proposalId}`),
-          `signedVote:${votingMachineAddress}:${proposalId}:${account}:${decision}:${repAmount}:${voteSignature.result}`
+      data: this.messageLoggerABI.encodeFunctionData('broadcast', [
+        topic,
+        message,
       ]),
       nonce: await rinkebyWeb3.getTransactionCount(account),
-      gasLimit: 500000,
-      maxPriorityFeePerGas: 10000000000,
-      maxFeePerGas: 10000000000,
+      gasLimit: 50000,
+      maxPriorityFeePerGas: 1000000000,
+      maxFeePerGas: 1000000000,
       to: this.messageLoggerAddress,
+      value: 0,
       type: '0x02',
       chainId: '0x04',
       DEFAULT_CHAIN: 'rinkeby',
@@ -72,7 +52,7 @@ export default class MessageLoggerService {
     const unsignedTx = tx.getMessageToSign(false);
     console.log('Unsigned Rinkeby tx:', tx);
 
-    // Step 3: Sign the transaction with the vote signature to be shared in rinkeby executing a tx in rinkeby network
+    // Step 2: Sign the transaction with the vote signature to be shared in rinkeby executing a tx in rinkeby network
     let signature = await this.context.providerStore.sign(
       this.context.providerStore.getActiveWeb3React(),
       utils.keccak256('0x' + arrayBufferHex(unsignedTx))
@@ -83,10 +63,10 @@ export default class MessageLoggerService {
       signature = signature.result.substr(2);
       const r = '0x' + signature.substr(0, 64);
       const s = '0x' + signature.substr(64, 64);
-      const v = signature.substr(128) == "1c" ? "0x1" : "0x0";
+      const v = signature.substr(128) == '1c' ? '0x1' : '0x0';
       console.log('Rinkeby tx object:', txData);
       console.log(`Rinkeby tx signature: ${v}${r}${s}`);
-    
+
       const signedTx = FeeMarketEIP1559Transaction.fromTxData({
         ...txData,
         v,
@@ -100,7 +80,9 @@ export default class MessageLoggerService {
           .toString('hex')}\n Rinkeby tx Signer: ${from}`
       );
 
-      rinkebyWeb3.send("eth_sendRawTransaction",['0x' + signedTx.serialize().toString('hex')]);
+      rinkebyWeb3.send('eth_sendRawTransaction', [
+        '0x' + signedTx.serialize().toString('hex'),
+      ]);
     }
   }
 
@@ -108,13 +90,17 @@ export default class MessageLoggerService {
     const messageLogger = new ethers.Contract(
       this.messageLoggerAddress,
       this.messageLoggerABI,
-      rinkebyWeb3,
+      rinkebyWeb3
     );
 
     let filter = messageLogger.filters.Message(topic);
     console.log(filter);
 
-    const events = await messageLogger.queryFilter(filter, this.fromBlock);
+    const events = await messageLogger.queryFilter(
+      filter,
+      this.fromBlock,
+      await rinkebyWeb3.getBlockNumber()
+    );
     return events;
   }
 }

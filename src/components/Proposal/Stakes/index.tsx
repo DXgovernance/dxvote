@@ -159,10 +159,7 @@ const Stakes = () => {
               proposalEvents.stakes
                 .filter(stakeEvent => stakeEvent?.vote?.toString() === '1')
                 .map((stakeEvent, i) => (
-                  <Vote
-                    key={`stakeUp${i}`}
-                    style={{ 'flexDirection': 'column' }}
-                  >
+                  <Vote key={`stakeUp${i}`} style={{ flexDirection: 'column' }}>
                     <BlockchainLink
                       size="short"
                       type="user"
@@ -191,7 +188,7 @@ const Stakes = () => {
                 .map((stakeEvent, i) => (
                   <Vote
                     key={`stakeDown${i}`}
-                    style={{ 'flexDirection': 'column' }}
+                    style={{ flexDirection: 'column' }}
                   >
                     <BlockchainLink
                       size="short"

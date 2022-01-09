@@ -49,12 +49,14 @@ const Votes = () => {
   const [decision, setDecision] = useState(0);
   const [votePercentage, setVotePercentage] = useState(0);
   const [signedVotesOfProposal, setSignedVotesOfProposal] = useState([]);
-  const [loadingSignedRinkebyVotes, setLoadingSignedRinkebyVotes] = useState(true);
-  const [loadingSignedOrbitDBVotes, setLoadingSignedOrbitDBVotes] = useState(true);
-  
+  const [loadingSignedRinkebyVotes, setLoadingSignedRinkebyVotes] =
+    useState(true);
+  const [loadingSignedOrbitDBVotes, setLoadingSignedOrbitDBVotes] =
+    useState(true);
+
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
-  
+
   const proposal = daoStore.getProposal(proposalId);
   const proposalEvents = daoStore.getProposalEvents(proposalId);
   const { account } = providerStore.getActiveWeb3React();
@@ -69,11 +71,11 @@ const Votes = () => {
       votingMachineAddress;
 
   const rinkebyProvider = useJsonRpcProvider(4);
-  
+
   messageLoggerService
     .getMessages(signedVoteMessageId, rinkebyProvider)
     .then(messagesEvents => {
-      console.debug('[Rinkeby Proposal messages]',messagesEvents);
+      console.debug('[Rinkeby Proposal messages]', messagesEvents);
       messagesEvents.map(messagesEvent => {
         if (
           messagesEvent.args &&
@@ -93,8 +95,7 @@ const Votes = () => {
           const alreadyAdded =
             signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) >
               -1 ||
-            proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) >
-              -1;
+            proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) > -1;
 
           const repOfVoterForProposal = daoStore.getRepAt(
             signedVote[3],
@@ -111,7 +112,7 @@ const Votes = () => {
               vote: signedVote[4],
               amount: bnum(signedVote[5]),
               signature: signedVote[6],
-              source: "rinkeby"
+              source: 'rinkeby',
             });
           }
         }
@@ -223,7 +224,6 @@ const Votes = () => {
   if (Number(repPercentageAtCreation) > 0 && votePercentage === 0) {
     setVotePercentage(Number(repPercentageAtCreation));
   }
-
 
   // Events Handlers
   const onVoteValueChange = event => {
@@ -350,8 +350,8 @@ const Votes = () => {
         <div>
           <SpaceAroundRow>
             <strong>
-              Signed Votes <Question question="4" /> <br/>
-              {!isDXDVotingMachine && <small>Non-Executable</small> }
+              Signed Votes <Question question="4" /> <br />
+              {!isDXDVotingMachine && <small>Non-Executable</small>}
             </strong>
           </SpaceAroundRow>
           <SpaceAroundRow>
@@ -432,6 +432,20 @@ const Votes = () => {
                           .toFixed(2)}
                         %
                       </span>
+                      {isDXDVotingMachine && (
+                        <ActionButton
+                          style={{
+                            height: '15px',
+                            margin: '0px 0px 0px 2px',
+                            maxWidth: '15px',
+                            textAlign: 'center',
+                          }}
+                          color="#536DFE"
+                          onClick={() => executeSignedVote(signedVote)}
+                        >
+                          <FiArrowUp />
+                        </ActionButton>
+                      )}
                     </Vote>
                   ))}
               </SummaryDetails>
@@ -477,8 +491,9 @@ const Votes = () => {
               repAmount: totalRepAtProposalCreation
                 .times(bnum(votePercentage))
                 .div('100')
-                .toFixed(0).toString(),
-              signVote: signVote
+                .toFixed(0)
+                .toString(),
+              signVote: signVote,
             }}
           />
           <AmountInput
