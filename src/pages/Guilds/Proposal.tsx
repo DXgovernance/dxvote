@@ -6,17 +6,17 @@ import contentHash from 'content-hash';
 import Markdown from 'markdown-to-jsx';
 import Skeleton from 'react-loading-skeleton';
 
-import { ButtonIcon, IconButton } from '../../components/Guilds/common/Button';
+import { IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
 import ProposalInfoCard from '../../components/Guilds/ProposalSidebar/ProposalInfoCard';
 import ProposalVoteCard from '../../components/Guilds/ProposalSidebar/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
 import ProposalActionsCard from '../../components/Guilds/ProposalActionsCard';
 import { useProposal } from '../../hooks/Guilds/proposals/useProposal';
-import dxIcon from '../../assets/images/dxdao-icon.svg';
 import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
 import useIPFSFile from '../../hooks/Guilds/ipfs/useIPFSFile';
 import { ProposalMetadata } from '../../types/types.guilds';
+import AddressButton from '../../components/Guilds/AddressButton';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -124,10 +124,11 @@ const ProposalPage: React.FC = () => {
           )}
         </ProposalDescription>
 
-        <IconButton iconLeft>
-          <ButtonIcon src={dxIcon} alt={'Icon'} />
-          geronimo.eth
-        </IconButton>
+        {proposal?.creator ? (
+          <AddressButton address={proposal.creator} />
+        ) : (
+          <Skeleton />
+        )}
 
         <ProposalActionsWrapper>
           <ProposalActionsCard />
