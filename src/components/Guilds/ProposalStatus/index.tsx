@@ -1,5 +1,10 @@
+import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
+import Skeleton from 'react-loading-skeleton';
+import moment, { unix } from 'moment';
+
 import { Box } from '../common/Layout';
+import { Proposal, ProposalState } from '../../../types/types.guilds.d';
 
 const Status = styled.div`
   font-size: 0.8rem;
@@ -31,7 +36,7 @@ const Pill = styled(Box)`
 `;
 
 const DetailText = styled(Box)`
-  padding-right: 0.2rem;
+  padding: 0 0.2rem;
 
   @media only screen and (min-width: 768px) {
     padding-right: 0.5rem;
@@ -39,21 +44,53 @@ const DetailText = styled(Box)`
 `;
 
 interface ProposalStatusProps {
-  status: string;
-  detail: string;
+  proposal: Proposal;
   bordered?: boolean;
+  showRemainingTime?: boolean;
 }
 
 const ProposalStatus: React.FC<ProposalStatusProps> = ({
   bordered,
-  status,
-  detail,
+  proposal,
+  showRemainingTime,
 }) => {
+  const timeDetail = useMemo(() => {
+    if (!proposal?.endTime) return null;
+
+    const currentTime = moment();
+    const timestamp = unix(proposal.endTime.toNumber());
+
+    if (timestamp.isBefore(currentTime) || showRemainingTime) {
+      return timestamp.fromNow();
+    } else {
+      return timestamp.toNow();
+    }
+  }, [proposal, showRemainingTime]);
+
+  const statusDetail = useMemo(() => {
+    if (!proposal?.state) return null;
+
+    if (proposal.state === ProposalState.Submitted) {
+      const currentTime = moment();
+      const timestamp = unix(proposal.state);
+
+      if (timestamp.isBefore(currentTime)) {
+        return 'Ended';
+      } else {
+        return 'Active';
+      }
+    }
+
+    return proposal.state;
+  }, [proposal]);
+
   return (
     <Status bordered={bordered}>
-      <DetailText>{detail}</DetailText>
+      <DetailText>{statusDetail || <Skeleton width={50} />}</DetailText>
       <Pill filled padded>
-        {status}
+        {timeDetail || (
+          <Skeleton width={50} baseColor="#333" highlightColor="#555" />
+        )}
       </Pill>
     </Status>
   );

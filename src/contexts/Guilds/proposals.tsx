@@ -1,6 +1,7 @@
 import React from 'react';
 import { ERC20Guild } from '../../types/ERC20Guild';
 import { Proposal } from '../../types/types.guilds';
+import { mapStructToProposal } from '../../utils/guildsProposals';
 
 export const ProposalsContext = React.createContext(null);
 
@@ -41,10 +42,7 @@ export class ProposalsProvider extends React.Component<
       } else {
         const proposalPromise: Promise<Proposal> = contract
           .getProposal(proposalId)
-          .then(data => {
-            const proposal: Proposal = { ...data, id: proposalId };
-            return proposal;
-          });
+          .then(data => mapStructToProposal(data, proposalId));
         result.push(proposalPromise);
         newProposalsData.push({ idx: result.length - 1 });
       }

@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
+import contentHash from 'content-hash';
+import Markdown from 'markdown-to-jsx';
+import Skeleton from 'react-loading-skeleton';
+
 import { ButtonIcon, IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
 import ProposalInfoCard from '../../components/Guilds/ProposalSidebar/ProposalInfoCard';
 import ProposalVoteCard from '../../components/Guilds/ProposalSidebar/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
-import dxIcon from '../../assets/images/dxdao-icon.svg';
 import ProposalActionsCard from '../../components/Guilds/ProposalActionsCard';
+import { useProposal } from '../../hooks/Guilds/proposals/useProposal';
+import dxIcon from '../../assets/images/dxdao-icon.svg';
+import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
+import useIPFSFile from '../../hooks/Guilds/ipfs/useIPFSFile';
+import { ProposalMetadata } from '../../types/types.guilds';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -42,6 +51,7 @@ const PageTitle = styled.h3`
     font-size: 1.4rem;
     font-weight: 700;
   }
+
   margin: 0;
   margin: 1rem 0;
 `;
@@ -67,32 +77,51 @@ const ProposalStatusWrapper = styled.div`
 `;
 
 const ProposalPage: React.FC = () => {
+  const {
+    chain_name: chainName,
+    guild_id: guildId,
+    proposal_id: proposalId,
+  } = useParams<{
+    chain_name: string;
+    guild_id?: string;
+    proposal_id?: string;
+  }>();
+  const { proposal, loading, error } = useProposal(guildId, proposalId);
+
+  const decodedContentHash = useMemo(() => {
+    if (!proposal) return null;
+
+    try {
+      return contentHash.decode(proposal.contentHash);
+    } catch (e) {
+      return null;
+    }
+  }, [proposal]);
+  const metadata = useIPFSFile<ProposalMetadata>(decodedContentHash);
+
+  console.log({ proposal, loading, error, metadata });
+
   return (
     <PageContainer>
       <PageContent>
         <PageHeader>
-          <StyledIconButton variant="minimal" iconLeft>
-            <FiArrowLeft /> DXdao
-          </StyledIconButton>
-          <PageTitle>DXLisbon Contributor Stipend and Funds</PageTitle>
+          <UnstyledLink to={`/${chainName}/${guildId}`}>
+            <StyledIconButton variant="minimal" iconLeft>
+              <FiArrowLeft /> DXdao
+            </StyledIconButton>
+          </UnstyledLink>
+          <PageTitle>{proposal?.title || <Skeleton />}</PageTitle>
           <ProposalStatusWrapper>
-            <ProposalStatus bordered status="Active" detail="Ends in 34 days" />
+            <ProposalStatus bordered proposal={proposal} />
           </ProposalStatusWrapper>
         </PageHeader>
 
         <ProposalDescription>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed leo quam,
-          blandit eu sapien eu, commodo dapibus nisl. Phasellus id risus in
-          mauris pharetra tristique. Pellentesque euismod at velit a auctor.
-          Quisque ipsum odio, molestie maximus dignissim sit amet, rutrum id
-          tortor. Mauris non dolor turpis. Duis ut pharetra ex. Pellentesque
-          dignissim quis tellus eget mattis. Nunc tellus augue, dignissim nec
-          fermentum ac, euismod vel nunc. Fusce mi justo, facilisis eu dui
-          tincidunt, tristique aliquet dolor. Ut rhoncus velit a orci maximus
-          dapibus. Proin vulputate sem et ipsum sagittis, in fermentum lacus
-          auctor. Mauris dictum mi ante, sed condimentum leo tincidunt non. Ut
-          gravida libero accumsan magna dapibus tristique ut convallis ipsum.
-          Mauris congue odio et imperdiet ullamcorper.
+          {metadata?.description ? (
+            <Markdown>{metadata.description}</Markdown>
+          ) : (
+            <Skeleton count={10} />
+          )}
         </ProposalDescription>
 
         <IconButton iconLeft>

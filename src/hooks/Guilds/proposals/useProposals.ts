@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useERC20Guild } from '../contracts/useContract';
 import { Proposal } from '../../../types/types.guilds';
+import { mapStructToProposal } from '../../../utils/guildsProposals';
 
 export interface useProposalsReturns {
   proposals: Proposal[];
@@ -25,8 +26,7 @@ export const useProposals = (contractAddress: string): useProposalsReturns => {
         const proposals = await Promise.all(
           ids.map(async id => {
             const data = await contract.getProposal(id);
-            const proposal: Proposal = { ...data, id };
-            return proposal;
+            return mapStructToProposal(data, id);
           })
         );
         setError(null);

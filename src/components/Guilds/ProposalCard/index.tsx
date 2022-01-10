@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
-import { Link } from 'react-router-dom';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
 import { Box } from '../common/Layout';
@@ -9,11 +8,7 @@ import ProposalStatus from '../ProposalStatus';
 import { Heading } from '../common/Typography';
 import { Proposal } from '../../../types/types.guilds';
 import 'react-loading-skeleton/dist/skeleton.css';
-
-const UnstyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-`;
+import UnstyledLink from '../common/UnstyledLink';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -111,9 +106,9 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, href }) => {
           </IconDetailWrapper>
           <ProposalStatusWrapper>
             <ProposalStatus
+              proposal={proposal}
               bordered={false}
-              status="Active"
-              detail="4 days left"
+              showRemainingTime
             />
           </ProposalStatusWrapper>
         </CardHeader>

@@ -13,6 +13,13 @@ export interface Proposal {
   totalActions: BigNumber;
   title: string;
   contentHash: string;
-  state: number;
+  state: ProposalState;
   totalVotes: BigNumber[];
+}
+
+export enum ProposalState {
+  None, Submitted, Rejected, Executed, Failed
+}
+export interface ProposalMetadata {
+  description: string;
 }
