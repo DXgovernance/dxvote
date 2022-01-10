@@ -1,17 +1,15 @@
-import { providers } from 'ethers';
 import React from 'react';
+import { providers } from 'ethers';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { BigNumber } from 'ethers';
+import { matchPath } from 'react-router';
 import { getContract } from '../../../utils/contracts';
 import { abi as ERC20Guild_ABI } from '../../../contracts/ERC20Guild.json';
 import { ERC20Guild } from '../../../types/ERC20Guild';
+import { useWeb3React } from '@web3-react/core';
+import { GuildConfigContext } from './context';
 
-interface ServiceContext extends GuildServiceProviderState {
-  initialize: (context: Web3ReactContextInterface, address: string) => void;
-}
-export const GuildServiceContext = React.createContext<ServiceContext>(null);
-
-interface GuildServiceProviderState {
+export interface GuildServiceProviderState {
   web3Context: Web3ReactContextInterface;
   contract: ERC20Guild;
   address: string;
@@ -25,9 +23,11 @@ interface GuildServiceProviderState {
 
 interface GuildServiceProviderProps {
   children: React.ReactNode;
+  web3Context: Web3ReactContextInterface;
+  address: string;
 }
 
-export class GuildServiceProvider extends React.Component<
+export class GuildService extends React.Component<
   GuildServiceProviderProps,
   GuildServiceProviderState
 > {
@@ -42,6 +42,18 @@ export class GuildServiceProvider extends React.Component<
     timeForExecution: null,
     maxActiveProposals: null,
   };
+
+  componentDidMount(): void {
+    this.initialize(this.props.web3Context, this.props.address);
+  }
+  componentDidUpdate(prevProps: Readonly<GuildServiceProviderProps>) {
+    if (
+      prevProps.address !== this.props.address ||
+      prevProps.web3Context?.chainId !== this.props.web3Context?.chainId
+    ) {
+      this.initialize(this.props.web3Context, this.props.address);
+    }
+  }
 
   initialize = async (
     web3Context: Web3ReactContextInterface,
@@ -131,17 +143,32 @@ export class GuildServiceProvider extends React.Component<
 
   render() {
     return (
-      <GuildServiceContext.Provider
+      <GuildConfigContext.Provider
         value={{
           ...this.state,
           initialize: this.initialize,
         }}
       >
         {this.props.children}
-      </GuildServiceContext.Provider>
+      </GuildConfigContext.Provider>
     );
   }
 }
 
-export const useGuildProviderService = () =>
-  React.useContext(GuildServiceContext);
+const withWeb3ReactAndAddress =
+  (Component: React.ComponentType<GuildServiceProviderProps>) =>
+  (props: { children: React.ReactNode }) => {
+    const web3React = useWeb3React();
+    const location = matchPath<{ address: string }>(window?.location?.hash, {
+      path: '#/guilds/:chain_name/:address',
+    });
+    return (
+      <Component
+        {...props}
+        web3Context={web3React}
+        address={location?.params?.address}
+      />
+    );
+  };
+
+export const GuildConfigProvider = withWeb3ReactAndAddress(GuildService);

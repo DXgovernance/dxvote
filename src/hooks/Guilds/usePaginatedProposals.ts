@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useERC20Guild } from './contracts/useContract';
 import { Proposal } from '../../types/types.guilds';
-import { useProposalsContext } from '../../contexts/Guilds';
+import { useProposalsContext, useGuildConfig } from '../../contexts/Guilds';
 
 export interface usePaginatedProposalsReturns {
   proposals: Proposal[];
@@ -13,7 +12,6 @@ export interface usePaginatedProposalsReturns {
 }
 
 export const usePaginatedProposals = (
-  contractAddress: string,
   currentPage: number = 1,
   itemsPerPage: number = 5
 ): usePaginatedProposalsReturns => {
@@ -24,7 +22,7 @@ export const usePaginatedProposals = (
   const [availablePages, setAvailablePages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [hasPrevPage, setHasPrevPage] = useState<boolean>(false);
-  const contract = useERC20Guild(contractAddress);
+  const { contract } = useGuildConfig();
   const context = useProposalsContext();
 
   const getCurrentPageIds = useCallback(() => {

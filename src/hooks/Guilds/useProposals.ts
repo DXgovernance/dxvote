@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useGuildConfigContext } from '../../contexts/Guilds';
+import { useGuildConfig } from '../../contexts/Guilds';
 import { Proposal } from '../../types/types.guilds';
 
 export interface useProposalsReturns {
@@ -12,8 +12,8 @@ export const useProposals = (): useProposalsReturns => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { contract, ...rest } = useGuildConfigContext();
-  console.log('rest', rest);
+  const { contract } = useGuildConfig();
+
   useEffect(() => {
     if (!contract) return;
 
