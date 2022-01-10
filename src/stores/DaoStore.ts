@@ -705,7 +705,6 @@ export default class DaoStore {
     };
 
     Object.keys(cache.votingMachines).map(votingMachine => {
-      console.log(votingMachine);
       proposalEvents.votes = proposalEvents.votes.concat(
         cache.votingMachines[votingMachine].events.votes.filter(vote => {
           return userAddress === vote.voter;
