@@ -9,7 +9,7 @@ import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard, {
   SkeletonProposalCard,
 } from '../../components/Guilds/ProposalCard';
-import { useProposals } from 'hooks/Guilds/useProposals';
+import { useProposals } from 'hooks/Guilds/proposals/useProposals';
 
 const PageContainer = styled(Box)`
   display: grid;

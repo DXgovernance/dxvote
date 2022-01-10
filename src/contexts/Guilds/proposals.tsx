@@ -23,9 +23,9 @@ export class ProposalsProvider extends React.Component<
 
   exists = (id: string) => !!this.state.proposals[id];
 
-  saveProposal = ({ proposal, proposalId }) => {
+  saveProposal = ({ proposal }) => {
     this.setState(prevState => ({
-      proposals: { ...prevState.proposals, [proposalId]: proposal },
+      proposals: { ...prevState.proposals, [proposal.id]: proposal },
     }));
   };
 
@@ -39,17 +39,20 @@ export class ProposalsProvider extends React.Component<
       if (this.exists(proposalId)) {
         result.push(this.state.proposals[proposalId]);
       } else {
-        const proposalPromise: Promise<Proposal> =
-          contract.getProposal(proposalId);
+        const proposalPromise: Promise<Proposal> = contract
+          .getProposal(proposalId)
+          .then(data => {
+            const proposal: Proposal = { ...data, id: proposalId };
+            return proposal;
+          });
         result.push(proposalPromise);
-        // Since getProposals() does not return id I need to keep track of it to be able to avoid awaiting on each fetch
-        newProposalsData.push({ idx: result.length - 1, proposalId });
+        newProposalsData.push({ idx: result.length - 1 });
       }
     }
     const resolvedProposals = await Promise.all(result);
 
-    newProposalsData.forEach(({ idx, proposalId }) =>
-      this.saveProposal({ proposal: resolvedProposals[idx], proposalId })
+    newProposalsData.forEach(({ idx }) =>
+      this.saveProposal({ proposal: resolvedProposals[idx] })
     );
 
     return resolvedProposals;
