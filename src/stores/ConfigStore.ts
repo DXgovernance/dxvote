@@ -42,7 +42,7 @@ export default class ConfigStore {
       darkMode: observable,
       loadNetworkConfig: action,
       toggleDarkMode: action,
-      reset: action
+      reset: action,
     });
   }
 
@@ -102,7 +102,7 @@ export default class ConfigStore {
   }
 
   getActiveChainName() {
-    const {chainId} = this.context.providerStore.getActiveWeb3React();
+    const { chainId } = this.context.providerStore.getActiveWeb3React();
     return NETWORK_NAMES[chainId];
   }
 

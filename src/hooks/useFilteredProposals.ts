@@ -32,14 +32,13 @@ const matchScheme = (proposal: ProposalsExtended, scheme: string) => {
 };
 
 export const useFilteredProposals = () => {
-
   const {
     context: { providerStore },
   } = useContext();
 
   const { proposals, loading } = useFilterCriteria();
 
-  const {chainId} = providerStore.getActiveWeb3React();
+  const { chainId } = providerStore.getActiveWeb3React();
 
   const minisearch = useMiniSearch<ProposalsExtended>({
     fields: ['title'],
