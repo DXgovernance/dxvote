@@ -81,8 +81,10 @@ const Web3ReactManager = ({ children }) => {
     // Listen to chain / account changes and reset the app
     if (prevChainId !== chainId || prevAccount !== account) {
       try {
+        providerStore.setWeb3Context(web3Context);
         context.reset();
-        blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
+
+        blockchainStore.fetchData(web3Context, true);
       } catch (e) {
         // Fallback if something goes wrong
         window.location.reload();
