@@ -33,22 +33,27 @@ const defaultCacheConfig = require('../configs/default.json');
 export default class ConfigStore {
   darkMode: boolean;
   context: RootContext;
-  appConfig: AppConfig = defaultAppConfigs;
+  networkConfig: NetworkConfig;
 
   constructor(context) {
     this.context = context;
     this.darkMode = false;
     makeObservable(this, {
       darkMode: observable,
-      loadAppConfigs: action,
+      loadNetworkConfig: action,
       toggleDarkMode: action,
+      reset: action
     });
   }
 
-  async loadAppConfigs(networkName: string) {
+  reset() {
+    this.networkConfig = defaultAppConfigs[this.getActiveChainName()];
+  }
+
+  async loadNetworkConfig() {
     const { ensService, ipfsService } = this.context;
 
-    let networkConfig = defaultAppConfigs[networkName];
+    this.networkConfig = defaultAppConfigs[this.getActiveChainName()];
     const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
     try {
@@ -68,7 +73,7 @@ export default class ConfigStore {
         ? defaultCacheConfig
         : JSON.parse(await ipfsService.getContentFromIPFS(metadataHash));
 
-      const configContentHash = configRefs[networkName];
+      const configContentHash = configRefs[this.getActiveChainName()];
       if (!configContentHash)
         throw new Error('Cannot resolve config metadata hash.');
 
@@ -78,19 +83,18 @@ export default class ConfigStore {
         configContentHash
       );
       console.debug('[ConfigStore] IPFS config content:', ipfsConfig);
-      console.debug('[ConfigStore] Default config:', networkConfig);
+      console.debug('[ConfigStore] Default config:', this.networkConfig);
 
       // Override defaultConfig to ipfsConfig
-      networkConfig = Object.assign(ipfsConfig, networkConfig);
+      this.networkConfig = Object.assign(ipfsConfig, this.networkConfig);
     } catch (e) {
       console.error(
         '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
-        networkConfig
+        this.networkConfig
       );
     }
 
-    this.appConfig[networkName] = networkConfig;
-    return networkConfig;
+    return this.networkConfig;
   }
 
   getProposalTitlesInBuild() {
@@ -98,8 +102,8 @@ export default class ConfigStore {
   }
 
   getActiveChainName() {
-    const activeWeb3 = this.context.providerStore.getActiveWeb3React();
-    return activeWeb3 ? NETWORK_NAMES[activeWeb3.chainId] : 'none';
+    const {chainId} = this.context.providerStore.getActiveWeb3React();
+    return NETWORK_NAMES[chainId];
   }
 
   getLocalConfig() {
@@ -129,7 +133,7 @@ export default class ConfigStore {
   }
 
   getCacheIPFSHash(networkName) {
-    return this.appConfig[networkName].cache.ipfsHash;
+    return this.networkConfig.cache.ipfsHash;
   }
 
   getSchemeTypeData(schemeAddress) {
@@ -261,35 +265,35 @@ export default class ConfigStore {
   }
 
   getTokenData(tokenAddress) {
-    return this.appConfig[this.getActiveChainName()].tokens.find(
+    return this.networkConfig.tokens.find(
       tokenInFile => tokenInFile.address === tokenAddress
     );
   }
 
   getNetworkContracts() {
-    return this.appConfig[this.getActiveChainName()].contracts;
+    return this.networkConfig.contracts;
   }
 
   getTokensOfNetwork() {
-    return this.appConfig[this.getActiveChainName()].tokens;
+    return this.networkConfig.tokens;
   }
 
   getTokensToFetchPrice() {
-    return this.appConfig[this.getActiveChainName()].tokens.filter(
+    return this.networkConfig.tokens.filter(
       tokenInFile => tokenInFile.fetchPrice
     );
   }
 
   getProposalTemplates() {
-    return this.appConfig[this.getActiveChainName()].proposalTemplates;
+    return this.networkConfig.proposalTemplates;
   }
 
   getProposalTypes() {
-    return this.appConfig[this.getActiveChainName()].proposalTypes;
+    return this.networkConfig.proposalTypes;
   }
 
   getContributorLevels() {
-    return this.appConfig[this.getActiveChainName()].contributionLevels;
+    return this.networkConfig.contributionLevels;
   }
 
   getRecommendedCalls() {
@@ -623,11 +627,11 @@ export default class ConfigStore {
     }
 
     if (
-      this.appConfig[networkName].recommendedCalls &&
-      this.appConfig[networkName].recommendedCalls.length > 0
+      this.networkConfig.recommendedCalls &&
+      this.networkConfig.recommendedCalls.length > 0
     )
       recommendedCalls = recommendedCalls.concat(
-        this.appConfig[networkName].recommendedCalls
+        this.networkConfig.recommendedCalls
       );
 
     networkTokens.map(networkToken => {
