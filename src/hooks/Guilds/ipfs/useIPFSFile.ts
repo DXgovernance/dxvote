@@ -32,6 +32,5 @@ export default function useIPFSFile<T>(contentHash: string) {
     getContentFromIPFS(contentHash).then(setFile);
   }, [contentHash]);
 
-
   return file;
 }
