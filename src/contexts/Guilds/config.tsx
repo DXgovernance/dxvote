@@ -3,12 +3,17 @@ import { providers, BigNumber } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { matchPath } from 'react-router';
-import { getContract } from '../../../utils/contracts';
-import { abi as ERC20Guild_ABI } from '../../../contracts/ERC20Guild.json';
-import { ERC20Guild } from '../../../types/ERC20Guild';
-import { GuildConfigContext } from './context';
+import { getContract } from '../../utils/contracts';
+import { abi as ERC20Guild_ABI } from '../../contracts/ERC20Guild.json';
+import { ERC20Guild } from '../../types/ERC20Guild';
 
-export interface GuildServiceProviderState {
+export interface ConfigContext extends GuildServiceProviderState {
+  initialize: (context: Web3ReactContextInterface, address: string) => void;
+}
+
+export const GuildConfigContext = React.createContext<ConfigContext>(null);
+
+interface GuildServiceProviderState {
   web3Context: Web3ReactContextInterface;
   contract: ERC20Guild;
   address: string;
@@ -26,7 +31,7 @@ interface GuildServiceProviderProps {
   address: string;
 }
 
-export class GuildService extends React.Component<
+class GuildService extends React.Component<
   GuildServiceProviderProps,
   GuildServiceProviderState
 > {

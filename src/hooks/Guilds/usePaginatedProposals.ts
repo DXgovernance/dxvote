@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Proposal } from '../../types/types.guilds';
-import { useProposalsContext, useGuildConfig } from '../../contexts/Guilds';
+import { useProposalsContext } from '../../contexts/Guilds';
+import { useGuildConfig } from './useGuildConfig';
 
 export interface usePaginatedProposalsReturns {
   proposals: Proposal[];

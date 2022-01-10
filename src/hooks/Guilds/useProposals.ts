@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useGuildConfig } from '../../contexts/Guilds';
+import { useGuildConfig } from './useGuildConfig';
 import { Proposal } from '../../types/types.guilds';
 
 export interface useProposalsReturns {
