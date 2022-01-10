@@ -109,7 +109,6 @@ class GuildService extends React.Component<
   };
   private _getGuildConfig = async (contract: ERC20Guild) => {
     if (!contract) {
-      console.log('_getGuildConfig contract', contract);
       console.debug(
         '[GuildServiceContext - updateGuildConfig]: No contract found'
       );
