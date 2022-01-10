@@ -5,7 +5,7 @@ import {
 } from './index';
 import moment from 'moment';
 
-import { PendingAction } from 'utils';
+import { PendingAction } from '../utils';
 
 // constant used to the initial order of the proposals (Any Status).
 export const QUEUED_PRIORITY_THRESHOLD = 10;
