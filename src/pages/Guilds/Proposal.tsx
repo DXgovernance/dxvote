@@ -86,7 +86,7 @@ const ProposalPage: React.FC = () => {
     guild_id?: string;
     proposal_id?: string;
   }>();
-  const { proposal, loading, error } = useProposal(guildId, proposalId);
+  const { proposal, error } = useProposal(guildId, proposalId);
 
   const decodedContentHash = useMemo(() => {
     if (!proposal) return null;
@@ -99,7 +99,9 @@ const ProposalPage: React.FC = () => {
   }, [proposal]);
   const metadata = useIPFSFile<ProposalMetadata>(decodedContentHash);
 
-  console.log({ proposal, loading, error, metadata });
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <PageContainer>

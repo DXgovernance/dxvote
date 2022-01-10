@@ -10,7 +10,6 @@ const Web3Status = () => {
   const { account, chainId } = useWeb3React();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
-
   const [injectedWalletAuthorized, setInjectedWalletAuthorized] =
     useState(false);
   const rpcUrls = useRpcUrls();

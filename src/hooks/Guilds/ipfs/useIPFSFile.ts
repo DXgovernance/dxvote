@@ -12,8 +12,7 @@ export default function useIPFSFile<T>(contentHash: string) {
         if (response.ok) {
           return response.json() as Promise<T>;
         } else {
-          console.error('[DiscourseImporter] Error while obtaining topic.');
-          throw new Error('Unable to get topic.');
+          throw new Error('Unable to get content.');
         }
       }
 

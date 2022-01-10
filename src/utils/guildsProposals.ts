@@ -1,4 +1,4 @@
-import { Proposal } from "../types/types.guilds.d";
+import { Proposal } from '../types/types.guilds.d';
 
 export function mapStructToProposal(
   proposalStruct: any,

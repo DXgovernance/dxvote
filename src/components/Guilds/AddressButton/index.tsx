@@ -8,7 +8,6 @@ import { shortenAddress } from '../../../utils';
 import { Badge } from '../common/Badge';
 import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
 
-
 const IconHolder = styled.span`
   display: flex;
   justify-content: center;
