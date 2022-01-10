@@ -22,7 +22,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 1,
     name: 'mainnet',
     displayName: 'Ethereum Mainnet',
-    defaultRpc: `https://eth-mainnet.gateway.pokt.network/v1/lb/610e4d3118656e00369b9b05`,
+    defaultRpc: `https://eth-mainnet.gateway.pokt.network/v1/lb/61d8970ca065f5003a112e86`,
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -48,7 +48,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 100,
     name: 'xdai',
     displayName: 'xDai Chain',
-    defaultRpc: `https://poa-xdai.gateway.pokt.network/v1/lb/610e4ed818656e00369b9ccc`,
+    defaultRpc: `https://poa-xdai.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a`,
     nativeAsset: {
       name: 'xDai',
       symbol: 'xDAI',
@@ -142,9 +142,9 @@ export const ALCHEMY_NETWORK_URLS = {
 };
 
 export const POKT_NETWORK_URLS = {
-  '1': 'https://eth-mainnet.gateway.pokt.network/v1/lb/610e4d3118656e00369b9b05',
+  '1': 'https://eth-mainnet.gateway.pokt.network/v1/lb/61d8970ca065f5003a112e86',
   '4': 'https://eth-rinkeby.gateway.pokt.network/v1/lb/61116c81a585a20035149067',
-  '100': 'https://poa-xdai.gateway.pokt.network/v1/lb/610e4ed818656e00369b9ccc',
+  '100': 'https://poa-xdai.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a',
 };
 
 export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(

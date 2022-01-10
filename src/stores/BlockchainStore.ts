@@ -182,7 +182,7 @@ export default class BlockchainStore {
           true,
           'Looking for latest chain configurations'
         );
-        await configStore.loadAppConfigs(networkName);
+        await configStore.loadNetworkConfig();
 
         notificationStore.setGlobalLoading(
           true,

@@ -98,12 +98,13 @@ export default class RootContext {
   }
 
   reset() {
+    this.configStore.reset();
     this.notificationStore.reset();
     this.transactionStore.reset();
     this.modalStore.reset();
-    this.daoStore.reset();
     this.userStore.reset();
     this.blockchainStore.reset();
+    this.daoStore.reset();
   }
 }
 
