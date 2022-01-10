@@ -2,13 +2,10 @@ import {
   bnum,
   WalletSchemeProposalState,
   VotingMachineProposalState,
-  ZERO_ADDRESS,
 } from './index';
 import moment from 'moment';
 
-import DaoStore from 'stores/DaoStore';
-//import { ZERO_ADDRESS } from 'utils';
-import { ProposalsExtended } from '../types/types';
+import { PendingAction } from '../utils';
 
 // constant used to the initial order of the proposals (Any Status).
 export const QUEUED_PRIORITY_THRESHOLD = 10;
@@ -110,10 +107,29 @@ export const decodeProposalStatus = function (
               ).timestamp
             )
           : bnum(0),
-        pendingAction: 0,
+        pendingAction: PendingAction.None,
       };
     case VotingMachineProposalState.Executed:
-      if (proposal.stateInScheme === WalletSchemeProposalState.Rejected)
+      if (
+        proposal.stateInScheme === WalletSchemeProposalState.Rejected &&
+        schemeType === 'ContributionReward'
+      )
+        return {
+          status: 'Passed',
+          boostTime: boostedPhaseTime,
+          finishTime: proposalStateChangeEvents.find(
+            event => Number(event.state) === VotingMachineProposalState.Executed
+          )
+            ? bnum(
+                proposalStateChangeEvents.find(
+                  event =>
+                    Number(event.state) === VotingMachineProposalState.Executed
+                ).timestamp
+              )
+            : bnum(0),
+          pendingAction: PendingAction.Redeem,
+        };
+      else if (proposal.stateInScheme === WalletSchemeProposalState.Rejected)
         return {
           status: 'Proposal Rejected',
           boostTime: boostedPhaseTime,
@@ -127,7 +143,11 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction: 0,
+          pendingAction:
+            schemeType === 'ContributionReward' &&
+            proposal.stateInVotingMachine < 3
+              ? PendingAction.Redeem
+              : PendingAction.None,
         };
       else if (
         proposal.stateInScheme === WalletSchemeProposalState.ExecutionSucceded
@@ -145,7 +165,7 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       else if (
         proposal.stateInScheme === WalletSchemeProposalState.ExecutionTimeout
@@ -163,7 +183,7 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       else if (proposal.stateInScheme === WalletSchemeProposalState.Submitted)
         return {
@@ -181,10 +201,10 @@ export const decodeProposalStatus = function (
             : bnum(0),
           pendingAction:
             schemeType === 'ContributionReward'
-              ? 4
+              ? PendingAction.Redeem
               : schemeType === 'GenericMulticall'
               ? 5
-              : 0,
+              : PendingAction.RedeemForBeneficiary,
         };
       else
         return {
@@ -200,7 +220,7 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
     case VotingMachineProposalState.Queued:
       if (timeNow > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
@@ -208,14 +228,14 @@ export const decodeProposalStatus = function (
           status: 'Expired in Queue',
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
-          pendingAction: 3,
+          pendingAction: PendingAction.Finish,
         };
       } else {
         return {
           status: 'In Queue',
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       }
     case VotingMachineProposalState.PreBoosted:
@@ -234,7 +254,7 @@ export const decodeProposalStatus = function (
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
             .plus(boostedVotePeriodLimit),
-          pendingAction: 3,
+          pendingAction: PendingAction.Finish,
         };
       } else if (
         timeNow >
@@ -250,7 +270,7 @@ export const decodeProposalStatus = function (
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
             .plus(boostedVotePeriodLimit),
-          pendingAction: 2,
+          pendingAction: PendingAction.Execute,
         };
       } else if (
         timeNow >
@@ -265,7 +285,7 @@ export const decodeProposalStatus = function (
                 .plus(preBoostedVotePeriodLimit)
                 .plus(boostedVotePeriodLimit)
             : timeNow.plus(boostedVotePeriodLimit),
-          pendingAction: 1,
+          pendingAction: PendingAction.Boost,
         };
       } else if (
         autoBoost &&
@@ -282,7 +302,7 @@ export const decodeProposalStatus = function (
           finishTime: preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
             .plus(boostedVotePeriodLimit),
-          pendingAction: 2,
+          pendingAction: PendingAction.Execute,
         };
       } else if (
         timeNow > submittedTime.plus(queuedVotePeriodLimit) &&
@@ -292,7 +312,7 @@ export const decodeProposalStatus = function (
           status: 'Pending Execution',
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
-          pendingAction: 2,
+          pendingAction: PendingAction.Execute,
         };
       } else if (
         timeNow > preBoostedPhaseTime.plus(preBoostedVotePeriodLimit) &&
@@ -302,7 +322,7 @@ export const decodeProposalStatus = function (
           status: 'In Queue',
           boostTime: bnum(0),
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       } else {
         return {
@@ -313,7 +333,7 @@ export const decodeProposalStatus = function (
                 .plus(preBoostedVotePeriodLimit)
                 .plus(boostedVotePeriodLimit)
             : timeNow.plus(boostedVotePeriodLimit),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       }
     case VotingMachineProposalState.Boosted:
@@ -322,14 +342,14 @@ export const decodeProposalStatus = function (
           status: 'Pending Execution',
           boostTime: boostedPhaseTime,
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
-          pendingAction: 2,
+          pendingAction: PendingAction.Execute,
         };
       } else {
         return {
           status: 'Boosted',
           boostTime: boostedPhaseTime,
           finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
-          pendingAction: 0,
+          pendingAction: PendingAction.None,
         };
       }
     case VotingMachineProposalState.QuietEndingPeriod:
@@ -345,89 +365,9 @@ export const decodeProposalStatus = function (
         status: 'Quiet Ending Period',
         boostTime: boostedPhaseTime,
         finishTime: finishTime,
-        pendingAction: finishTime.lt(timeNow) ? 3 : 0,
+        pendingAction: finishTime.lt(timeNow)
+          ? PendingAction.Finish
+          : PendingAction.None,
       };
   }
-};
-
-//a: Proposal, b: Proposal but boostTIme is not in Proposal interface.
-//is it added in Cache?
-export const orderByNewestTimeToFinish = (a: any, b: any) =>
-  a.finishTime - b.finishTime;
-
-export const orderByOldestTimeToFinish = (a: any, b: any) =>
-  b.finishTime - a.finishTime;
-
-/// filtering and sorting proposals for All States, All Schemas criteria
-export const filterInitialCriteria = (
-  proposals: ProposalsExtended[],
-  daoStore: DaoStore
-) => {
-  // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
-  let earliestAbove10 = proposals.filter((proposal: Proposal) => {
-    const repAtCreation = daoStore.getRepAt(
-      ZERO_ADDRESS,
-      proposal.creationEvent.blockNumber
-    ).totalSupply;
-
-    return (
-      (proposal.stateInVotingMachine ===
-        VotingMachineProposalState.QuietEndingPeriod ||
-        proposal.stateInVotingMachine === VotingMachineProposalState.Queued) &&
-      proposal.positiveVotes
-        .div(repAtCreation)
-        .times(100)
-        .decimalPlaces(2)
-        .gte(QUEUED_PRIORITY_THRESHOLD)
-    );
-  });
-  earliestAbove10.sort(orderByNewestTimeToFinish);
-
-  // Proposals Boosted. (Ordered from time to finish, from lower to higher)
-  let boosted = proposals.filter(
-    (proposal: Proposal): Boolean =>
-      proposal.stateInVotingMachine === VotingMachineProposalState.Boosted
-  );
-  boosted.sort(orderByNewestTimeToFinish);
-
-  let preBoosted = proposals.filter(
-    (proposal: Proposal): Boolean =>
-      proposal.stateInVotingMachine === VotingMachineProposalState.PreBoosted
-  );
-  preBoosted.sort(orderByNewestTimeToFinish);
-
-  // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
-  let earliestUnder10 = proposals.filter((proposal: Proposal): Boolean => {
-    const repAtCreation = daoStore.getRepAt(
-      ZERO_ADDRESS,
-      proposal.creationEvent.blockNumber
-    ).totalSupply;
-
-    return (
-      (proposal.stateInVotingMachine ===
-        VotingMachineProposalState.QuietEndingPeriod ||
-        proposal.stateInVotingMachine === VotingMachineProposalState.Queued) &&
-      proposal.positiveVotes
-        .div(repAtCreation)
-        .times(100)
-        .decimalPlaces(2)
-        .lt(QUEUED_PRIORITY_THRESHOLD)
-    );
-  });
-  earliestUnder10.sort(orderByNewestTimeToFinish);
-
-  //Proposals in Executed status. (Ordered in time passed since finish, from lower to higher)
-  let executed = proposals.filter(
-    (proposal: Proposal): Boolean =>
-      proposal.stateInVotingMachine === VotingMachineProposalState.Executed
-  );
-  executed.sort(orderByOldestTimeToFinish);
-
-  return [
-    ...earliestAbove10,
-    ...boosted,
-    ...preBoosted,
-    ...earliestUnder10,
-    ...executed,
-  ];
 };

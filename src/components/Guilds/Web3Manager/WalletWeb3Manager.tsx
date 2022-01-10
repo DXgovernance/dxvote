@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import {
   DEFAULT_ETH_CHAIN_ID,
@@ -10,13 +10,17 @@ import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { NetworkConnector } from '@web3-react/network-connector';
 
 const WalletWeb3Manager = ({ children }) => {
-  const location = useLocation();
+  const history = useHistory();
+  const routeMatch = useRouteMatch<{ chain_name?: string }>('/:chain_name');
+  const urlNetworkName = routeMatch?.params?.chain_name;
+
   const rpcUrls = useRpcUrls();
+  const chains = getChains(rpcUrls);
 
   // Overriding default fetch to check for RPC url and setting correct headers if matched
   const originalFetch = window.fetch;
   window.fetch = (url, opts): Promise<Response> => {
-    if (rpcUrls && Object.values(rpcUrls).includes(url) && opts) {
+    if (rpcUrls && Object.values(rpcUrls).includes(url.toString()) && opts) {
       opts.headers = opts.headers || {
         'Content-Type': 'application/json',
       };
@@ -29,6 +33,7 @@ const WalletWeb3Manager = ({ children }) => {
     error: networkError,
     connector,
     activate,
+    chainId,
   } = useWeb3React();
 
   // try to eagerly connect to a provider if possible
@@ -38,10 +43,8 @@ const WalletWeb3Manager = ({ children }) => {
   // If no chain in the URL, fallback to default chain
   useEffect(() => {
     if (triedEager && !networkActive && rpcUrls) {
-      const chains = getChains(rpcUrls);
-      const urlNetworkName = location.pathname.split('/')[1];
       const chainId =
-        chains.find(chain => chain.name == urlNetworkName)?.id ||
+        chains.find(chain => chain.name === urlNetworkName)?.id ||
         DEFAULT_ETH_CHAIN_ID;
       const networkConnector = getNetworkConnector(rpcUrls, chainId);
 
@@ -52,21 +55,19 @@ const WalletWeb3Manager = ({ children }) => {
         );
       });
     }
-  }, [triedEager, networkActive, activate, rpcUrls, location]);
+  }, [triedEager, networkActive, activate, rpcUrls, chains, urlNetworkName]);
 
   // Setup listener to handle injected wallet events
   useEffect(() => {
     if (!window.ethereum) return () => {};
 
     const handleChainChange = (chainId: string) => {
-      const chains = getChains();
       const chain = chains.find(
         chain => `0x${chain.id.toString(16)}` == chainId
       );
 
       // If currently connected to an injected wallet, keep synced with it
       if (connector instanceof NetworkConnector) {
-        const urlNetworkName = location.pathname.split('/')[1];
         if (urlNetworkName === chain.name) {
           tryConnecting();
         }
@@ -78,23 +79,25 @@ const WalletWeb3Manager = ({ children }) => {
     return () => {
       window.ethereum?.removeListener('accountsChanged', handleChainChange);
     };
-  }, [location, connector, tryConnecting]);
+  }, [urlNetworkName, connector, tryConnecting, chains]);
+
+  // Update the URL when the network changes
+  useEffect(() => {
+    const currentChain = chains.find(chain => chain.id === chainId)?.name;
+    if (currentChain && currentChain !== urlNetworkName) {
+      history.push(`/${currentChain}`);
+    }
+  }, [urlNetworkName, chains, history, chainId]);
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
-    console.debug('[Web3ReactManager] Render: Eager load not tried');
+    console.debug('[WalletWeb3Manager] Render: Eager load not tried');
     return null;
   }
-  if (networkError) {
-    console.debug(
-      '[Web3ReactManager] Render: Network error, showing modal error.'
-    );
+  if (networkError || !networkActive) {
+    console.debug('[WalletWeb3Manager] Render: Network error.');
     return null;
   } else {
-    console.debug(
-      '[Web3ReactManager] Render: Active network, render children',
-      { networkActive }
-    );
     return children;
   }
 };

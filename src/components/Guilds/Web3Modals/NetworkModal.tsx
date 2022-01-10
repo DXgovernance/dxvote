@@ -9,6 +9,7 @@ import ethereumIcon from '../../../assets/images/ethereum.svg';
 import xdaiIcon from '../../../assets/images/xdai.svg';
 import { Modal } from '../common/Modal';
 import Option from './components/Option';
+import { useHistory } from 'react-router-dom';
 
 const iconsByChain = {
   1: ethereumIcon,
@@ -67,6 +68,7 @@ interface NetworkModalProps {
 
 const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
   const { chainId, connector, deactivate } = useWeb3React();
+  const history = useHistory();
   const rpcUrls = useRpcUrls();
 
   const trySwitching = async chain => {
@@ -87,9 +89,12 @@ const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
           },
         ]);
       }
-    } else {
-      deactivate();
     }
+
+    deactivate();
+    onClose();
+
+    history.push(`/${chain.name}`);
   };
 
   return (

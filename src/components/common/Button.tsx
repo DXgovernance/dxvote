@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
 
 export const Button = styled.button`
   background-color: ${({ theme }) => theme.activeButtonBackground};
@@ -22,8 +23,19 @@ export const Button = styled.button`
   }
 `;
 
-export const LinkButton = withRouter(
-  ({ route, history, children, ...rest }) => {
+interface LinkButtonProps {
+  route: string;
+  children: React.ReactNode;
+}
+
+// Using `any` type as workaround to https://github.com/microsoft/TypeScript/issues/42873
+export const LinkButton: any = withRouter(
+  ({
+    route,
+    history,
+    children,
+    ...rest
+  }: LinkButtonProps & RouteComponentProps) => {
     return (
       <Button
         onClick={() => {

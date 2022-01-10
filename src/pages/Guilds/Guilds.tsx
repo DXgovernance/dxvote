@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Box } from '../../components/Guilds/common/Layout';
 
 import { Sidebar } from '../../components/Guilds/Sidebar/';
 import { Filter } from '../../components/Guilds/Filter';
-import ProposalCard from '../../components/Guilds/ProposalCard';
+import ProposalCard, {
+  SkeletonProposalCard,
+} from '../../components/Guilds/ProposalCard';
 import { useProposals } from 'hooks/Guilds/useProposals';
-import PendingCircle from 'components/common/PendingCircle';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -36,8 +37,12 @@ const ProposalsList = styled(Box)`
   margin-top: 1rem;
 `;
 
+const ErrorList = styled(Box)`
+  overflow: hidden;
+`;
+
 const GuildsPage: React.FC = () => {
-  const guildId = useLocation().pathname.split('/')[1];
+  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
   const { proposals, loading, error } = useProposals(guildId);
   console.debug('Guilds Proposals: ', proposals, loading, error);
 
@@ -48,12 +53,15 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <Filter />
-        {loading && (
-          <PendingCircle height="100px" width="100px" color="black" />
-        )}
-        <ProposalsList>
-          {!loading &&
-            !error &&
+        <ProposalsList data-testid="proposals-list">
+          {loading && (
+            <>
+              <SkeletonProposalCard />
+              <SkeletonProposalCard />
+            </>
+          )}
+          {!error &&
+            !loading &&
             proposals.map(proposal => (
               <ProposalCard
                 title={proposal.title}
@@ -61,7 +69,7 @@ const GuildsPage: React.FC = () => {
               />
             ))}
         </ProposalsList>
-        {error && <div>{error.message}</div>}
+        {error && <ErrorList>{error.message}</ErrorList>}
       </PageContent>
     </PageContainer>
   );

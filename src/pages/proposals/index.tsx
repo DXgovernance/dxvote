@@ -18,6 +18,7 @@ import {
   normalizeBalance,
   timeToTimestamp,
   formatNumberValue,
+  PendingAction,
 } from '../../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 import {
@@ -196,7 +197,7 @@ const ProposalsPage = observer(() => {
                       ) : (
                         <span></span>
                       )}
-                      {proposal.pendingAction === 3 ? (
+                      {proposal.pendingAction === PendingAction.Execute ? (
                         <small> Pending Finish Execution </small>
                       ) : (
                         <span></span>

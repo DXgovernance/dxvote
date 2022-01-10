@@ -50,10 +50,21 @@ export const encodeDxdVestingCreate = (library, to, dxdAmount, start) => {
         to,
         start.unix(),
         moment.duration(1, 'years').asSeconds(),
-        moment.duration(2, 'years').asSeconds(),
+        moment.duration(3, 'years').asSeconds(),
         dxdAmount,
       ]
     )
+    .substring(2);
+
+  return vestingFunctionEncoded + vestingParamsEncoded;
+};
+
+export const encodeDxdVestingRelease = (library, token) => {
+  const vestingFunctionEncoded =
+    library.eth.abi.encodeFunctionSignature('release(address)');
+
+  const vestingParamsEncoded = library.eth.abi
+    .encodeParameters(['address'], [token])
     .substring(2);
 
   return vestingFunctionEncoded + vestingParamsEncoded;

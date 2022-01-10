@@ -3,30 +3,21 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
-import contentHash from 'content-hash';
 import moment from 'moment';
+
+import { useContext } from '../../contexts';
+import useMainnetRep from '../../hooks/useMainnetRep';
+import { useDXDPrice } from 'hooks/ContributorProposal/useDXDPriceForPayment';
 
 import { LevelSelect } from '../../components/LevelSelect';
 import { Button } from '../../components/common/Button';
 import PendingCircle from 'components/common/PendingCircle';
 import Toggle from 'components/Toggle';
-
-import { useContext } from '../../contexts';
 import { Modal } from '../../components/Modal';
-import {
-  TXEvents,
-  formatNumberValue,
-  denormalizeBalance,
-  bnum,
-  encodeRepMint,
-  encodeErc20Approval,
-  encodeDxdVestingCreate,
-  encodeErc20Transfer,
-  normalizeBalance,
-} from '../../utils';
-import { useTokenService } from 'hooks/useTokenService';
+import { bnum, normalizeBalance } from '../../utils';
 import { InputDate } from 'components/common';
-import useMainnetRep from '../../hooks/useMainnetRep';
+import { usePaymentAmounts } from 'hooks/ContributorProposal/usePaymentAmounts';
+import { useSubmitProposal } from 'hooks/ContributorProposal/useSubmitProposal';
 
 const VerticalLayout = styled.div`
   display: flex;
@@ -80,6 +71,8 @@ const Values = styled.div`
   margin: 5% 0;
 `;
 const Value = styled.h2`
+  display: flex;
+  justify-content: center;
   font-size: xx-large;
 `;
 
@@ -119,39 +112,25 @@ const TextInput = styled.input`
 
 export const ContributorProposalPage = observer(() => {
   const {
-    context: {
-      configStore,
-      daoStore,
-      daoService,
-      providerStore,
-      ipfsService,
-      pinataService,
-    },
+    context: { configStore, providerStore },
   } = useContext();
-  const { library, account } = providerStore.getActiveWeb3React();
+  const { account } = providerStore.getActiveWeb3React();
 
   const history = useHistory();
 
   // UI states
   const [confirm, setConfirm] = useState(false);
   const [advanced, setAdvanced] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [proposalCreated, setProposalCreated] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
-  // Amounts
-  const [dxdAmount, setDxdAmount] = useState(null);
-  const [repReward, setRepReward] = useState(null);
-  const [discount, setDiscount] = useState(1);
   // Modifiers
   const [selectedLevel, setSelectedLevel] = useState(-1);
   const [percentage, setPercentage] = useState(null);
-  const [trialPeriod, setTrialPeriod] = useState(false);
+  const [trialPeriod, setTrialPeriod] = useState<boolean>(false);
   const [stableOverride, setStableOverride] = useState<number>(null);
   const [dxdOverride, setDXDOverride] = useState<number>(null);
-  const [startDate, setStartDate] = useState(moment());
-  const [noRep, setNoRep] = useState(false);
+  const [startDate, setStartDate] = useState<moment.Moment>(moment());
+  const [noRep, setNoRep] = useState<boolean>(false);
 
-  const { tokenAth: dxdAth, athDate } = useTokenService('dxdao');
+  const levels = configStore.getContributorLevels();
 
   const {
     totalSupply,
@@ -159,18 +138,30 @@ export const ContributorProposalPage = observer(() => {
     isStale: isCacheStale,
   } = useMainnetRep(account, 0, moment(startDate).unix());
 
-  const proposalType = configStore
-    .getProposalTypes()
-    .find(type => type.id === 'contributor');
-
-  const scheme = daoStore
-    .getAllSchemes()
-    .find(scheme => scheme.name === proposalType.scheme);
-
-  const levels = configStore.getContributorLevels();
-
-  const contracts = configStore.getNetworkContracts();
-  const tokens = configStore.getTokensOfNetwork();
+  const { dxdPrice, loading: dxdLoading } = useDXDPrice(startDate, 30);
+  const { dxdAmount, stableAmount, repReward, setDiscount } = usePaymentAmounts(
+    confirm,
+    dxdPrice,
+    dxdOverride,
+    stableOverride,
+    noRep,
+    levels[selectedLevel],
+    totalSupply
+  );
+  const {
+    submitProposal,
+    loading: submitLoading,
+    proposalCreated,
+    errorMessage,
+  } = useSubmitProposal(
+    stableAmount,
+    dxdAmount,
+    repReward,
+    dxdPrice,
+    startDate,
+    setConfirm,
+    levels[selectedLevel]
+  );
 
   useEffect(() => {
     setDiscount(
@@ -178,174 +169,14 @@ export const ContributorProposalPage = observer(() => {
     );
   }, [trialPeriod, percentage]);
 
-  useEffect(() => {
-    if (confirm) {
-      setDxdAmount(
-        denormalizeBalance(
-          bnum(
-            (levels[selectedLevel]?.dxd /
-              (dxdOverride ? dxdOverride : dxdAth)) *
-              discount
-          )
-        ).toString()
-      );
-
-      setRepReward(
-        noRep
-          ? 0
-          : formatNumberValue(totalSupply.times(0.001667).times(discount), 0)
-      );
-    }
-  }, [
-    confirm,
-    discount,
-    dxdAth,
-    dxdOverride,
-    levels,
-    noRep,
-    selectedLevel,
-    totalSupply,
-  ]);
-
   // Reset stable override when changing level
   useEffect(() => {
     setStableOverride(null);
   }, [selectedLevel]);
 
-  const calculateDiscountedValue = (amount, discount, override = null) => {
-    return override || amount * discount;
-  };
-
   const setStartDateAndDxdOverride = newDate => {
     if (newDate.isSameOrAfter(moment())) setDXDOverride(null);
     setStartDate(newDate);
-  };
-
-  const submitProposal = async () => {
-    try {
-      setLoading(true);
-
-      const hash = await ipfsService.uploadProposalMetadata(
-        localStorage.getItem('dxvote-newProposal-title'),
-        localStorage.getItem('dxvote-newProposal-description') +
-          `${
-            '\n$' +
-            calculateDiscountedValue(
-              levels[selectedLevel]?.stable,
-              discount,
-              stableOverride
-            )
-          } \n ${calculateDiscountedValue(
-            levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : dxdAth),
-            discount
-          ).toFixed(2)} DXD vested for 2 years and 1 year cliff @ $${
-            dxdOverride ? dxdOverride : dxdAth
-          }/DXD
-          \n ${
-            noRep
-              ? 'No REP'
-              : calculateDiscountedValue(levels[selectedLevel]?.rep, discount) +
-                '%'
-          } - ${repReward} REP \n `,
-        [
-          'Contributor Proposal',
-          `Level ${selectedLevel + 1}`,
-          `${trialPeriod ? 'Trial Period' : ''}`,
-          `${percentage && percentage < 100 ? '' : 'Full time worker'}`,
-          `${noRep ? 'No REP' : ''}`,
-        ],
-        pinataService
-      );
-
-      // Encode rep mint call
-      const repCallData = encodeRepMint(
-        library,
-        repReward,
-        account,
-        contracts.avatar
-      );
-
-      // Encode WXDAI transfer
-      const wxdaiTransferCallData = encodeErc20Transfer(
-        library,
-        account,
-        denormalizeBalance(
-          bnum(
-            calculateDiscountedValue(
-              levels[selectedLevel]?.stable,
-              discount,
-              stableOverride
-            )
-          )
-        ).toString()
-      );
-
-      // Encode DXD approval
-      const dxdApprovalCallData = encodeErc20Approval(
-        library,
-        contracts.utils.dxdVestingFactory,
-        dxdAmount
-      );
-
-      // Encode vesting contract call
-      const vestingCallData = encodeDxdVestingCreate(
-        library,
-        account,
-        dxdAmount,
-        startDate
-      );
-
-      const proposalData = {
-        to: [
-          contracts.controller,
-          // Needs new stables coin value in config for other networks
-          tokens.find(token => token.symbol === 'WXDAI').address,
-          tokens.find(token => token.symbol === 'DXD').address,
-          contracts.utils.dxdVestingFactory,
-        ],
-        data: [
-          repCallData,
-          wxdaiTransferCallData,
-          dxdApprovalCallData,
-          vestingCallData,
-        ],
-
-        value: [0, 0, 0, 0],
-        titleText: localStorage.getItem('dxvote-newProposal-title'),
-        descriptionHash: contentHash.fromIpfs(hash),
-      };
-
-      console.debug('[PROPOSAL]', scheme.address, proposalData);
-
-      daoService
-        .createProposal(scheme.address, scheme.type, proposalData)
-        .on(TXEvents.TX_HASH, hash => {
-          console.debug('[TX_SUBMITTED]', hash);
-          setConfirm(false);
-        })
-        .on(TXEvents.RECEIPT, hash => {
-          console.debug('[TX_RECEIPT]', hash);
-          setLoading(false);
-          setProposalCreated(true);
-        })
-        .on(TXEvents.TX_ERROR, txerror => {
-          console.error('[TX_ERROR]', txerror);
-          setLoading(false);
-          setErrorMessage((txerror as Error).message);
-        })
-        .on(TXEvents.INVARIANT, error => {
-          console.error('[ERROR]', error);
-          setLoading(false);
-          setErrorMessage((error as Error).message);
-        })
-        .catch(error => {
-          console.error('[ERROR]', error);
-          setLoading(false);
-          setErrorMessage((error as Error).message);
-        });
-    } catch (error) {
-      console.error('[PROPOSAL_ERROR]', error);
-    }
   };
 
   const header = <div>Submit worker proposal</div>;
@@ -353,28 +184,15 @@ export const ContributorProposalPage = observer(() => {
   const ModalContent = () => (
     <ModalContentWrap>
       <b>Payment:</b>
+      <Values>${normalizeBalance(stableAmount).toString()}</Values>
       <Values>
-        $
-        {calculateDiscountedValue(
-          levels[selectedLevel]?.stable,
-          discount,
-          stableOverride
-        )}
-      </Values>
-      <Values>
-        {(
-          (levels[selectedLevel]?.dxd / (dxdOverride ? dxdOverride : dxdAth)) *
-          discount
-        ).toFixed(2)}{' '}
-        DXD vested for 2 years and 1 year cliff
+        {parseFloat(normalizeBalance(dxdAmount).toString())}
+        DXD vested for 3 years and 1 year cliff
       </Values>
       {noRep ? (
         <Values>No REP</Values>
       ) : (
-        <Values>
-          {calculateDiscountedValue(levels[selectedLevel]?.rep, discount)}% -{' '}
-          {normalizeBalance(bnum(repReward ? repReward : '0')).toString()} REP
-        </Values>
+        <Values>{normalizeBalance(bnum(repReward)).toString()} REP</Values>
       )}
     </ModalContentWrap>
   );
@@ -407,23 +225,14 @@ export const ContributorProposalPage = observer(() => {
             </div>
             {selectedLevel >= 0 ? (
               <Values>
+                <Value>${normalizeBalance(stableAmount).toString()}</Value>
                 <Value>
-                  $
-                  {calculateDiscountedValue(
-                    levels[selectedLevel]?.stable,
-                    discount,
-                    stableOverride
-                  )}
-                </Value>
-                <Value>
-                  {dxdAth ? (
-                    (
-                      (levels[selectedLevel]?.dxd /
-                        (dxdOverride ? dxdOverride : dxdAth)) *
-                      discount
-                    ).toFixed(2)
+                  {dxdPrice?.toString() ? (
+                    parseFloat(normalizeBalance(dxdAmount).toString()).toFixed(
+                      2
+                    )
                   ) : (
-                    <PendingCircle height="10px" width="10px" />
+                    <PendingCircle height="25px" width="25px" color="black" />
                   )}{' '}
                   DXD
                 </Value>
@@ -448,28 +257,16 @@ export const ContributorProposalPage = observer(() => {
                     </WarningText>
                   </div>
                 )}
-                {startDate.isBefore(moment(athDate)) ? (
-                  <div>
-                    <WarningText>
-                      DXD all time high (ATH) has changed, please manually
-                      provide correct ATH as of start date
-                    </WarningText>
-                    <InputWrapper>
-                      $
-                      <TextInput
-                        placeholder="DXD ATH"
-                        type="number"
-                        onChange={event => setDXDOverride(event.target.value)}
-                        value={dxdOverride}
-                      />
-                    </InputWrapper>
-                  </div>
-                ) : null}
               </Values>
             ) : null}
             <ButtonsWrapper>
               <Button
-                disabled={selectedLevel < 0 || proposalCreated || cacheLoading}
+                disabled={
+                  selectedLevel < 0 ||
+                  proposalCreated ||
+                  cacheLoading ||
+                  dxdLoading
+                }
                 onClick={() => setConfirm(true)}
               >
                 <ButtonContentWrapper>
@@ -477,8 +274,10 @@ export const ContributorProposalPage = observer(() => {
                     ? 'Proposal Submitted'
                     : cacheLoading
                     ? 'Crunching REP Numbers'
+                    : dxdLoading
+                    ? 'Combing DXD price archives'
                     : 'Submit Proposal'}
-                  {loading || cacheLoading ? (
+                  {submitLoading || cacheLoading || dxdLoading ? (
                     <PendingCircle height="10px" width="10px" />
                   ) : null}
                 </ButtonContentWrapper>

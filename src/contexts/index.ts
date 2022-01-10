@@ -13,6 +13,8 @@ import PoktService from '../services/PoktService';
 import AlchemyService from '../services/AlchemyService';
 import CustomRpcService from '../services/CustomRpcService';
 import ENSService from '../services/ENSService';
+import TokenVestingService from '../services/TokenVestingService';
+import SubgraphService from '../services/SubgraphService';
 
 import ProviderStore from '../stores/Provider';
 import TransactionStore from '../stores/Transaction';
@@ -59,6 +61,8 @@ export default class RootContext {
   alchemyService: AlchemyService;
   customRpcService: CustomRpcService;
   ensService: ENSService;
+  tokenVestingService: TokenVestingService;
+  subgraphService: SubgraphService;
 
   constructor() {
     this.providerStore = new ProviderStore(this);
@@ -83,15 +87,18 @@ export default class RootContext {
     this.alchemyService = new AlchemyService(this);
     this.customRpcService = new CustomRpcService(this);
     this.ensService = new ENSService(this);
+    this.tokenVestingService = new TokenVestingService(this);
+    this.subgraphService = new SubgraphService(this);
   }
 
   reset() {
+    this.configStore.reset();
     this.notificationStore.reset();
     this.transactionStore.reset();
     this.modalStore.reset();
-    this.daoStore.reset();
     this.userStore.reset();
     this.blockchainStore.reset();
+    this.daoStore.reset();
   }
 }
 

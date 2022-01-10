@@ -89,7 +89,7 @@ export const FilterMenu = () => {
         >
           Scheme <FiChevronDown />
           {countSchemeSelected > 0 && (
-            <FilterBadge>{countSchemeSelected}</FilterBadge>
+            <FilterBadge reverse={true}>{countSchemeSelected}</FilterBadge>
           )}
         </FilterButton>
         <DropdownContent fullScreenMobile={true} show={showScheme}>
@@ -127,7 +127,7 @@ export const FilterMenu = () => {
         >
           Status <FiChevronDown />
           {countStatusSelected > 0 && (
-            <FilterBadge>{countStatusSelected}</FilterBadge>
+            <FilterBadge reverse={true}>{countStatusSelected}</FilterBadge>
           )}
         </FilterButton>
         <DropdownContent fullScreenMobile={true} show={showStatus}>

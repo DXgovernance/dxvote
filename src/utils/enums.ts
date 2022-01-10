@@ -38,12 +38,12 @@ export enum VotingMachineProposalState {
 }
 
 export enum PendingAction {
-  None,
-  Boost,
-  Execute,
-  Finish,
-  Redeem,
-  RedeemForBeneficiary,
+  'None',
+  'Boost',
+  'Execute',
+  'Finish',
+  'Redeem',
+  'RedeemForBeneficiary',
 }
 
 export const enumKeys = <O extends object, K extends keyof O = keyof O>(

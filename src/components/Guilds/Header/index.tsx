@@ -1,3 +1,4 @@
+import { useWeb3React } from '@web3-react/core';
 import styled from 'styled-components';
 import { Box, Container } from '../common/Layout';
 import { Heading } from '../common/Typography';
@@ -28,16 +29,20 @@ const MenuItems = styled(Box)`
 `;
 
 const Header = () => {
+  const { active, error } = useWeb3React();
+
   return (
     <HeaderWrapper as="header">
       <HeaderContainer>
         <Heading size={2}>
           <strong>DXvote</strong>
         </Heading>
-        <MenuItems>
-          <NetworkButton />
-          <WalletButton />
-        </MenuItems>
+        {active && !error && (
+          <MenuItems>
+            <NetworkButton />
+            <WalletButton />
+          </MenuItems>
+        )}
       </HeaderContainer>
     </HeaderWrapper>
   );

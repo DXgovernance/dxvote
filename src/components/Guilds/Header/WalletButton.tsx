@@ -1,6 +1,6 @@
 import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
-import { getChains, injected } from 'provider/connectors';
+import { DEFAULT_ETH_CHAIN_ID, getChains, injected } from 'provider/connectors';
 import { useEffect, useMemo, useState } from 'react';
 import { useRpcUrls } from 'provider/providerHooks';
 import { Button, IconButton } from '../common/Button';
@@ -9,6 +9,7 @@ import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { useWeb3React } from '@web3-react/core';
 import WalletModal from '../Web3Modals/WalletModal';
+import { Badge } from '../common/Badge';
 
 const IconHolder = styled.span`
   display: flex;
@@ -32,6 +33,15 @@ const AccountButton = styled(IconButton)`
   @media only screen and (min-width: 768px) {
     padding: 0.3rem 0.5rem;
   }
+
+  /* hover state for when having child Badge */
+  &:hover,
+  &:active {
+    ${Badge} {
+      background-color: ${({ theme }) => theme.colors.background};
+      color: ${({ theme }) => theme.colors.primary};
+    }
+  }
 `;
 
 const AddressText = styled.span`
@@ -41,7 +51,10 @@ const AddressText = styled.span`
 
 const Web3Status = () => {
   const { account, chainId } = useWeb3React();
-  const { ensName, imageUrl, avatarUri } = useENSAvatar(account);
+  const { ensName, imageUrl, avatarUri } = useENSAvatar(
+    account,
+    DEFAULT_ETH_CHAIN_ID
+  );
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   let imageUrlToUse = useMemo(() => {
@@ -89,6 +102,9 @@ const Web3Status = () => {
     }
   };
 
+  // TODO: change this based on store.
+  const transactionsCounter = 2;
+
   function getWalletStatus() {
     if (injectedWalletAuthorized && !account) {
       const chains = getChains(rpcUrls);
@@ -110,6 +126,9 @@ const Web3Status = () => {
           </IconHolder>
           {isDesktop && (
             <AddressText>{ensName || shortenAddress(account)}</AddressText>
+          )}
+          {transactionsCounter && (
+            <Badge size="25">{transactionsCounter}</Badge>
           )}
         </AccountButton>
       );

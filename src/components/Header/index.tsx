@@ -1,4 +1,4 @@
-import { withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import Web3ConnectStatus from '../Web3ConnectStatus';
@@ -48,20 +48,27 @@ const WarningDev = styled.div`
   color: red;
 `;
 
+interface NavItemProps {
+  route: string;
+  children: React.ReactNode;
+}
+
 const Header = observer(() => {
-  const NavItem = withRouter(({ route, history, children }) => {
-    return (
-      <div
-        style={{ cursor: 'pointer' }}
-        onClick={() => {
-          history.push(route);
-        }}
-      >
-        {' '}
-        {children}{' '}
-      </div>
-    );
-  });
+  const NavItem = withRouter(
+    ({ route, history, children }: NavItemProps & RouteComponentProps) => {
+      return (
+        <div
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            history.push(route);
+          }}
+        >
+          {' '}
+          {children}{' '}
+        </div>
+      );
+    }
+  );
 
   const {
     context: {
@@ -75,7 +82,7 @@ const Header = observer(() => {
 
   const { active, account } = providerStore.getActiveWeb3React();
 
-  const isTestingEnv = !window?.location?.href?.includes('dxvote.eth.link');
+  const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
   if (!active) {
     return (

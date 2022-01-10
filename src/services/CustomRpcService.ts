@@ -41,6 +41,6 @@ export default class CustomRpcService {
     return ETH_NETWORKS_IDS.reduce((prevUrls, chainId) => {
       prevUrls[chainId] = customRpcUrl;
       return prevUrls;
-    }, {});
+    }, {} as Record<number, string>);
   }
 }

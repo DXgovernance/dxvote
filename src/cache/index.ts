@@ -295,9 +295,11 @@ export const updateVotingMachine = async function (
   let newVotingMachineEvents = sortEvents(
     await getEvents(web3, votingMachine, fromBlock, toBlock, 'allEvents')
   );
+  const avatarAddress = web3.utils.toChecksumAddress(
+    networkContractsConfig.avatar
+  );
   const votingMachineEventsInCache =
     networkCache.votingMachines[votingMachine._address].events;
-
   newVotingMachineEvents.map(votingMachineEvent => {
     const proposalCreated =
       votingMachineEventsInCache.newProposal.findIndex(
@@ -309,8 +311,7 @@ export const updateVotingMachine = async function (
     let existEvent;
 
     if (
-      votingMachineEvent.returnValues._organization ===
-        networkContractsConfig.avatar ||
+      votingMachineEvent.returnValues._organization === avatarAddress ||
       (votingMachineEvent.event === 'StateChange' && proposalCreated)
     )
       switch (votingMachineEvent.event) {
@@ -466,7 +467,6 @@ export const updateVotingMachine = async function (
           break;
       }
   });
-
   networkCache.votingMachines[votingMachine._address].events =
     votingMachineEventsInCache;
 
@@ -554,9 +554,6 @@ export const updateVestingFactoryCreatedContractsInfo = async function (
       );
 
       for (let event of vestingFactoryEvents) {
-        const transaction = await web3.eth.getTransaction(
-          event.transactionHash
-        );
         const tokenVestingContract = await new web3.eth.Contract(
           TokenVestingJSON.abi,
           event.returnValues.vestingContractAddress
@@ -568,7 +565,9 @@ export const updateVestingFactoryCreatedContractsInfo = async function (
           cliff: await tokenVestingContract.methods.cliff().call(),
           duration: await tokenVestingContract.methods.duration().call(),
           owner: await tokenVestingContract.methods.owner().call(),
-          value: transaction?.value ?? '0',
+          start: await tokenVestingContract.methods.start().call(),
+          isOwner: await tokenVestingContract.methods.isOwner().call(),
+          revocable: await tokenVestingContract.methods.revocable().call(),
         };
 
         networkCache.vestingContracts = [

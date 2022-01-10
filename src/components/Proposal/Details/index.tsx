@@ -72,7 +72,7 @@ const Details = () => {
           <small>
             {moment
               .unix(proposal.submittedTime.toNumber())
-              .format('MMMM Do YYYY, h:mm:ss')}
+              .format('MMMM Do YYYY, HH:mm:ss')}
           </small>
         </Detail>
         <Detail>
@@ -81,14 +81,16 @@ const Details = () => {
             {boostTime.toNumber() > 0
               ? moment
                   .unix(boostTime.toNumber())
-                  .format('MMMM Do YYYY, h:mm:ss')
+                  .format('MMMM Do YYYY, HH:mm:ss')
               : '-'}
           </small>
         </Detail>
         <Detail>
           <strong>Finish Date</strong>
           <small>
-            {moment.unix(finishTime.toNumber()).format('MMMM Do YYYY, h:mm:ss')}
+            {moment
+              .unix(finishTime.toNumber())
+              .format('MMMM Do YYYY, HH:mm:ss')}
           </small>
         </Detail>
 

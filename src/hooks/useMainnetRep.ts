@@ -1,8 +1,8 @@
-import { useWeb3React } from '@web3-react/core';
 import { useCallback, useEffect, useState } from 'react';
-import { MAINNET_WEB3_ROOT_KEY } from '../components/MainnetWeb3Manager';
 import { useContext } from '../contexts';
+import { DEFAULT_ETH_CHAIN_ID } from '../provider/connectors';
 import { bnum, ZERO_ADDRESS } from '../utils';
+import useJsonRpcProvider from './Guilds/web3/useJsonRpcProvider';
 
 const AVG_ETH_BLOCKS_PER_DAY = 6500;
 
@@ -14,7 +14,7 @@ const useMainnetRep = (
   const {
     context: { configStore, ipfsService, daoStore },
   } = useContext();
-  const { library } = useWeb3React(MAINNET_WEB3_ROOT_KEY);
+  const provider = useJsonRpcProvider(DEFAULT_ETH_CHAIN_ID);
   const [isLoading, setIsLoading] = useState(false);
   const [isStale, setIsStale] = useState(false);
   const [userRep, setUserRep] = useState(bnum(0));
@@ -68,7 +68,7 @@ const useMainnetRep = (
       let userRep = bnum(0),
         totalSupply = bnum(0);
 
-      const currentBlockNumber = await library.eth.getBlockNumber();
+      const currentBlockNumber = await provider.getBlockNumber();
 
       if (atBlock === 0) atBlock = currentBlockNumber;
 
@@ -95,11 +95,11 @@ const useMainnetRep = (
       }
       return { userRep, totalSupply, isStale };
     },
-    [fetchLatestCache, library]
+    [fetchLatestCache, provider]
   );
 
   useEffect(() => {
-    if (library) {
+    if (provider) {
       setIsLoading(true);
       getRepAt(userAddress, atBlock, atTime)
         .then(({ userRep, totalSupply, isStale }) => {
@@ -114,7 +114,7 @@ const useMainnetRep = (
           setIsLoading(false);
         });
     }
-  }, [library, atBlock, atTime, getRepAt, userAddress]);
+  }, [provider, atBlock, atTime, getRepAt, userAddress]);
 
   return { isLoading, userRep, totalSupply, isStale };
 };
