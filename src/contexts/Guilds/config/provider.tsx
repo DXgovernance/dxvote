@@ -1,12 +1,11 @@
 import React from 'react';
-import { providers } from 'ethers';
+import { providers, BigNumber } from 'ethers';
+import { useWeb3React } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import { BigNumber } from 'ethers';
 import { matchPath } from 'react-router';
 import { getContract } from '../../../utils/contracts';
 import { abi as ERC20Guild_ABI } from '../../../contracts/ERC20Guild.json';
 import { ERC20Guild } from '../../../types/ERC20Guild';
-import { useWeb3React } from '@web3-react/core';
 import { GuildConfigContext } from './context';
 
 export interface GuildServiceProviderState {
@@ -43,7 +42,7 @@ export class GuildService extends React.Component<
     maxActiveProposals: null,
   };
 
-  componentDidMount(): void {
+  componentDidMount() {
     this.initialize(this.props.web3Context, this.props.address);
   }
   componentDidUpdate(prevProps: Readonly<GuildServiceProviderProps>) {

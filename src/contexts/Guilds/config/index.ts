@@ -1,3 +1,3 @@
-export { GuildConfigProvider } from './configProvider';
+export { GuildConfigProvider } from './provider';
 export { GuildConfigContext } from './context';
 export { useGuildConfig } from './hook';

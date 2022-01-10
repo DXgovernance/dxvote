@@ -1,7 +1,5 @@
 import React from 'react';
-
-import { FilterProvider, ProposalsProvider } from '.';
-import { GuildConfigProvider } from './config';
+import { FilterProvider, ProposalsProvider, GuildConfigProvider } from '.';
 
 export const GuildsContextProvider: React.FC<{
   children: React.ReactNode;
