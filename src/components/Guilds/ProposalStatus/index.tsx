@@ -57,7 +57,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   const endTime = useMemo(() => {
     if (!proposal) return null;
     return unix(proposal.endTime.toNumber());
-  }, []);
+  }, [proposal]);
 
   const timeDetail = useMemo(() => {
     if (!endTime) return null;
