@@ -54,27 +54,28 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   proposal,
   showRemainingTime,
 }) => {
+  const endTime = useMemo(() => {
+    if (!proposal) return null;
+    return unix(proposal.endTime.toNumber());
+  }, []);
+
   const timeDetail = useMemo(() => {
-    if (!proposal?.endTime) return null;
+    if (!endTime) return null;
 
     const currentTime = moment();
-    const timestamp = unix(proposal.endTime.toNumber());
-
-    if (timestamp.isBefore(currentTime) || showRemainingTime) {
-      return timestamp.fromNow();
+    if (endTime.isBefore(currentTime) || showRemainingTime) {
+      return endTime.fromNow();
     } else {
-      return timestamp.toNow();
+      return endTime.toNow();
     }
-  }, [proposal, showRemainingTime]);
+  }, [endTime, showRemainingTime]);
 
   const statusDetail = useMemo(() => {
-    if (!proposal?.state) return null;
+    if (!proposal || !endTime) return null;
 
     if (proposal.state === ProposalState.Submitted) {
       const currentTime = moment();
-      const timestamp = unix(proposal.state);
-
-      if (timestamp.isBefore(currentTime)) {
+      if (endTime.isBefore(currentTime)) {
         return 'Ended';
       } else {
         return 'Active';
@@ -82,13 +83,17 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
     }
 
     return proposal.state;
-  }, [proposal]);
+  }, [endTime, proposal]);
 
   return (
     <Status bordered={bordered}>
       <DetailText>{statusDetail || <Skeleton width={50} />}</DetailText>
       <Pill filled padded>
-        {timeDetail || (
+        {endTime && timeDetail ? (
+          <span title={endTime?.format('MMMM Do, YYYY - h:mm a')}>
+            {timeDetail}
+          </span>
+        ) : (
           <Skeleton width={50} baseColor="#333" highlightColor="#555" />
         )}
       </Pill>
