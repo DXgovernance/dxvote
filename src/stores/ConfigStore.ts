@@ -565,7 +565,7 @@ export default class ConfigStore {
           { type: 'bool', name: 'allowed', defaultValue: '' },
         ],
         decodeText:
-          'Set [PARAM_5] permission in asset [PARAM_0] from [FROM] to [PARAM_2] with function signature [PARAM_3] and value [PARAM_4]',
+          'Set permission in asset [PARAM_0] for scheme [FROM] to [PARAM_1] with function signature [PARAM_2] and value [PARAM_3]',
       },
       {
         asset: ZERO_ADDRESS,

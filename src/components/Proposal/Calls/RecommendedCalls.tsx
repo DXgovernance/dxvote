@@ -67,9 +67,13 @@ export const RecommendedCalls = ({
       const component = getComponentToRender(param, callParameters[paramIndex]);
 
       decodedCallDetail = reactStringReplace(
-        decodedCallDetail,
-        `[PARAM_${paramIndex}]`,
-        () => component
+        reactStringReplace(
+          decodedCallDetail,
+          `[PARAM_${paramIndex}]`,
+          () => component
+        ),
+        'FROM',
+        () => proposal.scheme
       );
     });
   }
