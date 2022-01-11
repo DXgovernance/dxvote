@@ -39,3 +39,55 @@ export const verifySignedVote = function (
     return false;
   }
 };
+
+export const parseSignedVoteMessage = function (signedVoteMessage: string): {
+  valid: boolean;
+  votingMachine: string;
+  proposalId: string;
+  voter: string;
+  decision: string;
+  repAmount: string;
+  signature: string;
+} {
+  if (
+    signedVoteMessage &&
+    signedVoteMessage.length > 0 &&
+    signedVoteMessage.split(':').length > 6
+  ) {
+    const signedVoteMessageSplitted = signedVoteMessage.split(':');
+    return {
+      valid: verifySignedVote(
+        signedVoteMessageSplitted[1],
+        signedVoteMessageSplitted[2],
+        signedVoteMessageSplitted[3],
+        signedVoteMessageSplitted[4],
+        signedVoteMessageSplitted[5],
+        signedVoteMessageSplitted[6]
+      ),
+      votingMachine: signedVoteMessageSplitted[1],
+      proposalId: signedVoteMessageSplitted[2],
+      voter: signedVoteMessageSplitted[3],
+      decision: signedVoteMessageSplitted[4],
+      repAmount: signedVoteMessageSplitted[5],
+      signature: signedVoteMessageSplitted[6],
+    };
+  } else {
+    return {
+      valid: false,
+      votingMachine: '',
+      proposalId: '',
+      voter: '',
+      decision: '',
+      repAmount: '',
+      signature: '',
+    };
+  }
+};
+
+export const isVoteYes = function (vote) {
+  return vote && vote.toString() == '1';
+};
+
+export const isVoteNo = function (vote) {
+  return vote && vote.toString() == '2';
+};

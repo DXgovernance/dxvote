@@ -93,8 +93,7 @@ export default class MessageLoggerService {
       rinkebyWeb3
     );
 
-    let filter = messageLogger.filters.Message(topic);
-    console.log(filter);
+    const filter = messageLogger.filters.Message(topic);
 
     const events = await messageLogger.queryFilter(
       filter,

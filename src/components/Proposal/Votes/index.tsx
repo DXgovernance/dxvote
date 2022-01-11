@@ -28,7 +28,14 @@ import {
 } from '../styles';
 
 import { useContext } from 'contexts';
-import { bnum, toPercentage, verifySignedVote } from 'utils';
+import {
+  bnum,
+  isVoteNo,
+  isVoteYes,
+  parseSignedVoteMessage,
+  toPercentage,
+  verifySignedVote,
+} from 'utils';
 import { utils } from 'ethers';
 import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 
@@ -123,41 +130,31 @@ const Votes = () => {
 
   orbitDBService.getLogs(signedVoteMessageId).then(signedVoteMessages => {
     console.debug('[OrbitDB messages]', signedVoteMessages);
-    signedVoteMessages.map(signedVoteMessage => {
-      if (
-        signedVoteMessage &&
-        signedVoteMessage.length > 0 &&
-        signedVoteMessage.split(':').length > 6
-      ) {
-        const signedVote = signedVoteMessage.split(':');
-        const validSignature = verifySignedVote(
-          signedVote[1],
-          signedVote[2],
-          signedVote[3],
-          signedVote[4],
-          signedVote[5],
-          signedVote[6]
-        );
-
+    signedVoteMessages.map(signedVoteMessageRaw => {
+      const signedVoteMessage = parseSignedVoteMessage(signedVoteMessageRaw);
+      if (signedVoteMessage.valid) {
         const alreadyAdded =
-          signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) > -1 ||
-          proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) > -1;
+          signedVotesOfProposal.findIndex(
+            s => s.voter == signedVoteMessage.voter
+          ) > -1 ||
+          proposalEvents.votes.findIndex(
+            s => s.voter == signedVoteMessage.voter
+          ) > -1;
 
         const repOfVoterForProposal = daoStore.getRepAt(
-          signedVote[3],
+          signedVoteMessage.voter,
           proposal.creationEvent.blockNumber
         ).userRep;
 
         if (
-          validSignature &&
           !alreadyAdded &&
-          repOfVoterForProposal >= signedVote[5]
+          repOfVoterForProposal >= bnum(signedVoteMessage.repAmount)
         ) {
           signedVotesOfProposal.push({
-            voter: signedVote[3],
-            vote: signedVote[4],
-            amount: bnum(signedVote[5]),
-            signature: signedVote[6],
+            voter: signedVoteMessage.voter,
+            vote: signedVoteMessage.decision,
+            amount: bnum(signedVoteMessage.repAmount),
+            signature: signedVoteMessage.signature,
             source: 'orbitDB',
           });
         }
@@ -175,11 +172,11 @@ const Votes = () => {
     }
   });
 
-  let positiveVotesCount = proposalEvents.votes.filter(
-    vote => vote.vote.toString() === '1'
+  let positiveVotesCount = proposalEvents.votes.filter(vote =>
+    isVoteYes(vote.vote)
   ).length;
-  let negativeVotesCount = proposalEvents.votes.filter(
-    vote => vote.vote.toString() === '2'
+  let negativeVotesCount = proposalEvents.votes.filter(vote =>
+    isVoteNo(vote.vote)
   ).length;
 
   const {
@@ -201,7 +198,7 @@ const Votes = () => {
 
   const totalPositiveSignedVotes = toPercentage(
     signedVotesOfProposal
-      .filter(signedVote => signedVote.vote.toString() === '1')
+      .filter(signedVote => isVoteYes(signedVote.vote))
       .reduce(function (acc, obj) {
         return acc.plus(obj.amount);
       }, bnum(0))
@@ -210,7 +207,7 @@ const Votes = () => {
 
   const totalNegativeSignedVotes = toPercentage(
     signedVotesOfProposal
-      .filter(signedVote => signedVote.vote.toString() === '2')
+      .filter(signedVote => isVoteNo(signedVote.vote))
       .reduce(function (acc, obj) {
         return acc.plus(obj.amount);
       }, bnum(0))
@@ -312,7 +309,7 @@ const Votes = () => {
           <HorizontalSeparator />
           <SummaryDetails>
             {proposalEvents?.votes
-              .filter(voteEvent => voteEvent?.vote.toString() === '1')
+              .filter(voteEvent => isVoteYes(voteEvent.vote))
               .map((voteEvent, i) => (
                 <Vote key={`vote-pos-${i}`}>
                   <BlockchainLink
@@ -339,7 +336,7 @@ const Votes = () => {
           <HorizontalSeparator />
           <SummaryDetails>
             {proposalEvents?.votes
-              ?.filter(voteEvent => voteEvent.vote.toString() === '2')
+              ?.filter(voteEvent => isVoteNo(voteEvent.vote))
               .map((voteEvent, i) => (
                 <Vote key={`vote-neg-${i}`}>
                   <BlockchainLink
@@ -374,8 +371,8 @@ const Votes = () => {
               <SummaryTotal>
                 <AmountBadge color="green">
                   {
-                    signedVotesOfProposal.filter(
-                      signedVote => signedVote.vote.toString() === '1'
+                    signedVotesOfProposal.filter(signedVote =>
+                      isVoteYes(signedVote.vote)
                     ).length
                   }
                 </AmountBadge>
@@ -384,7 +381,7 @@ const Votes = () => {
               <HorizontalSeparator />
               <SummaryDetails>
                 {signedVotesOfProposal
-                  .filter(signedVote => signedVote?.vote.toString() === '1')
+                  .filter(signedVote => isVoteYes(signedVote.vote))
                   .map((signedVote, i) => (
                     <Vote key={`vote-pos-${i}`}>
                       <BlockchainLink
@@ -421,8 +418,8 @@ const Votes = () => {
               <SummaryTotal>
                 <AmountBadge color="red">
                   {
-                    signedVotesOfProposal.filter(
-                      signedVote => signedVote.vote.toString() === '2'
+                    signedVotesOfProposal.filter(signedVote =>
+                      isVoteNo(signedVote.vote)
                     ).length
                   }
                 </AmountBadge>
@@ -431,7 +428,7 @@ const Votes = () => {
               <HorizontalSeparator />
               <SummaryDetails>
                 {signedVotesOfProposal
-                  ?.filter(signedVote => signedVote.vote.toString() === '2')
+                  ?.filter(signedVote => isVoteNo(signedVote.vote))
                   .map((signedVote, i) => (
                     <Vote key={`vote-neg-${i}`}>
                       <BlockchainLink

@@ -142,7 +142,6 @@ export default class ProviderStore {
     if (!chainId) {
       throw new Error(ERRORS.BlockchainActionNoChainId);
     }
-    console.log(dataToSign);
     return new Promise((resolve, reject) => {
       web3React.library.eth.currentProvider.sendAsync(
         {
@@ -151,7 +150,7 @@ export default class ProviderStore {
           from: account,
         },
         function (err, result) {
-          console.log(err, result);
+          if (err) console.error(err);
           resolve(result);
         }
       );
@@ -171,7 +170,6 @@ export default class ProviderStore {
     if (!chainId) {
       throw new Error(ERRORS.BlockchainActionNoChainId);
     }
-    console.log(dataToSign);
     const msgParams = JSON.stringify({
       types: {
         EIP712Domain: [
@@ -203,7 +201,7 @@ export default class ProviderStore {
           from: account,
         },
         function (err, result) {
-          console.log(err, result);
+          if (err) console.error(err);
           resolve(result);
         }
       );
