@@ -8,6 +8,10 @@ import ProposalStatus from '../ProposalStatus';
 import { isDesktop } from 'react-device-detect';
 import { Heading } from '../common/Typography';
 
+import useEtherSWR from 'ether-swr';
+import useJsonRpcProvider from '../../../hooks/Guilds/web3/useJsonRpcProvider';
+import ERC20GuildContract from '../../../contracts/ERC20Guild.json';
+
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
@@ -89,11 +93,23 @@ const ProposalStatusWrapper = styled.div`
 `;
 
 interface ProposalCardProps {
-  title: string;
-  description: string;
+  id: any;
 }
 
-const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
+const ProposalCard: React.FC<ProposalCardProps> = ({ id }) => {
+  const provider = useJsonRpcProvider();
+  const { data } = useEtherSWR(
+    ['0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF', 'getProposal', id],
+    {
+      web3Provider: provider,
+      ABIs: new Map([
+        ['0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF', ERC20GuildContract.abi],
+      ]),
+    }
+  );
+
+  const { title, description } = data || { title: '', description: '' };
+
   return (
     <CardWrapper>
       <CardHeader>
