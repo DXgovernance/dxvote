@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import useEtherSWR from 'ether-swr';
 
 import { Box } from '../../components/Guilds/common/Layout';
 
@@ -10,7 +9,8 @@ import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard, {
   SkeletonProposalCard,
 } from '../../components/Guilds/ProposalCard';
-import { useProposals } from 'hooks/Guilds/useProposals';
+
+import useEtherSWR from 'ether-swr';
 import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from '../../contracts/ERC20Guild.json';
 
@@ -46,17 +46,19 @@ const ErrorList = styled(Box)`
 
 const GuildsPage: React.FC = () => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
-  const { proposals, loading, error } = useProposals(guildId);
 
   const provider = useJsonRpcProvider();
-  const { data: loadedData, error: loadError } = useEtherSWR(['0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF', 'getProposalsIds'], {
-    web3Provider: provider,
-    ABIs: new Map([
-      ['0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF', ERC20GuildContract.abi]
-    ])
-  });
 
-  console.log('loadedData', loadedData, loadError);
+  const GUILDS_CONFIG = {
+    web3Provider: provider,
+    ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
+  };
+
+  const {
+    data: proposalsIds,
+    error,
+    isValidating: loading,
+  } = useEtherSWR([guildId, 'getProposalsIds'], GUILDS_CONFIG);
 
   return (
     <PageContainer>
@@ -74,12 +76,7 @@ const GuildsPage: React.FC = () => {
           )}
           {!error &&
             !loading &&
-            proposals.map(proposal => (
-              <ProposalCard
-                title={proposal.title}
-                description={proposal.contentHash}
-              />
-            ))}
+            proposalsIds.map(proposalId => <ProposalCard id={proposalId} />)}
         </ProposalsList>
         {error && <ErrorList>{error.message}</ErrorList>}
       </PageContent>
