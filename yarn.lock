@@ -7391,9 +7391,9 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-"dxdao-contracts@git://github.com/DXgovernance/dxdao-contracts.git#b7eb732c0c3c81ea53ed928a3077d71781941b50":
+"dxdao-contracts@https://github.com/DXgovernance/dxdao-contracts.git#b7eb732c0c3c81ea53ed928a3077d71781941b50":
   version "0.0.1"
-  resolved "git://github.com/DXgovernance/dxdao-contracts.git#b7eb732c0c3c81ea53ed928a3077d71781941b50"
+  resolved "https://github.com/DXgovernance/dxdao-contracts.git#b7eb732c0c3c81ea53ed928a3077d71781941b50"
   dependencies:
     "@daostack/infra" "0.0.1-rc.19"
     "@maticnetwork/eth-decoder" "^0.0.4"
