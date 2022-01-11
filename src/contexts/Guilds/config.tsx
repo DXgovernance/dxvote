@@ -129,7 +129,7 @@ export const GuildConfigProvider: React.FunctionComponent<
         contract,
         web3Context,
         address,
-        token: config?.token,
+        token: config.token,
         permissionRegistry: config.permissionRegistry,
         name: config.name,
         proposalTime: config.proposalTime,
