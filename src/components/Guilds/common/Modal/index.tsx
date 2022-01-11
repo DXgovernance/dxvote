@@ -65,7 +65,6 @@ export const Header = styled.div`
   display: flex;
 `;
 
-
 export const HeaderText = styled(Heading)`
   margin: 0;
 `;
@@ -157,9 +156,7 @@ export const Modal: React.FC<ModalProps> = ({
               <HeaderText>{header}</HeaderText>
             </Header>
           )}
-          {!hideDivider && (
-            <Divider />
-          )}
+          {!hideDivider && <Divider />}
           <Content>{children}</Content>
           {(onCancel || onConfirm) && (
             <Footer>

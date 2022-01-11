@@ -49,7 +49,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
           (proposal.stateInVotingMachine ===
             VotingMachineProposalState.QuietEndingPeriod ||
             proposal.stateInVotingMachine ===
-            VotingMachineProposalState.Queued) &&
+              VotingMachineProposalState.Queued) &&
           proposal.positiveVotes
             .div(repAtCreation)
             .times(100)
@@ -89,7 +89,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
           (proposal.stateInVotingMachine ===
             VotingMachineProposalState.QuietEndingPeriod ||
             proposal.stateInVotingMachine ===
-            VotingMachineProposalState.Queued) &&
+              VotingMachineProposalState.Queued) &&
           proposal.positiveVotes
             .div(repAtCreation)
             .times(100)
@@ -124,7 +124,6 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
 
     setLoading(false);
   }, [daoStore]);
-
 
   return {
     proposals: filteredProposals,
