@@ -46,12 +46,14 @@ const DetailText = styled(Box)`
 interface ProposalStatusProps {
   proposal: Proposal;
   bordered?: boolean;
+  hideTime?: boolean;
   showRemainingTime?: boolean;
 }
 
 const ProposalStatus: React.FC<ProposalStatusProps> = ({
   bordered,
   proposal,
+  hideTime,
   showRemainingTime,
 }) => {
   const endTime = useMemo(() => {
@@ -60,7 +62,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   }, [proposal]);
 
   const timeDetail = useMemo(() => {
-    if (!endTime) return null;
+    if (!endTime || hideTime) return null;
 
     const currentTime = moment();
     if (endTime.isBefore(currentTime) || showRemainingTime) {
@@ -68,7 +70,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
     } else {
       return endTime.toNow();
     }
-  }, [endTime, showRemainingTime]);
+  }, [endTime, showRemainingTime, hideTime]);
 
   const statusDetail = useMemo(() => {
     if (!proposal || !endTime) return null;
@@ -86,14 +88,20 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   }, [endTime, proposal]);
 
   return (
-    <Status bordered={bordered}>
-      <DetailText>{statusDetail || <Skeleton width={50} />}</DetailText>
+    <Status bordered={hideTime ? false : bordered}>
+      {!hideTime && (
+        <DetailText>
+          {endTime && timeDetail ? (
+            <span title={endTime?.format('MMMM Do, YYYY - h:mm a')}>
+              {timeDetail}
+            </span>
+          ) : (
+            <Skeleton width={50} />
+          )}
+        </DetailText>
+      )}
       <Pill filled padded>
-        {endTime && timeDetail ? (
-          <span title={endTime?.format('MMMM Do, YYYY - h:mm a')}>
-            {timeDetail}
-          </span>
-        ) : (
+        {statusDetail || (
           <Skeleton width={50} baseColor="#333" highlightColor="#555" />
         )}
       </Pill>

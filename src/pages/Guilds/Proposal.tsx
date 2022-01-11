@@ -76,6 +76,13 @@ const ProposalStatusWrapper = styled.div`
   justify-content: flex-start;
 `;
 
+const HeaderTopRow = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
 const ProposalPage: React.FC = () => {
   const {
     chain_name: chainName,
@@ -107,16 +114,21 @@ const ProposalPage: React.FC = () => {
     <PageContainer>
       <PageContent>
         <PageHeader>
-          <UnstyledLink to={`/${chainName}/${guildId}`}>
-            <StyledIconButton variant="minimal" iconLeft>
-              <FiArrowLeft /> DXdao
-            </StyledIconButton>
-          </UnstyledLink>
+          <HeaderTopRow>
+            <UnstyledLink to={`/${chainName}/${guildId}`}>
+              <StyledIconButton variant="minimal" iconLeft>
+                <FiArrowLeft /> DXdao
+              </StyledIconButton>
+            </UnstyledLink>
+
+            <ProposalStatusWrapper>
+              <ProposalStatus proposal={proposal} bordered hideTime />
+            </ProposalStatusWrapper>
+          </HeaderTopRow>
           <PageTitle>{proposal?.title || <Skeleton />}</PageTitle>
-          <ProposalStatusWrapper>
-            <ProposalStatus bordered proposal={proposal} />
-          </ProposalStatusWrapper>
         </PageHeader>
+
+        <AddressButton address={proposal?.creator} />
 
         <ProposalDescription>
           {metadata?.description ? (
@@ -125,12 +137,6 @@ const ProposalPage: React.FC = () => {
             <Skeleton count={10} />
           )}
         </ProposalDescription>
-
-        {proposal?.creator ? (
-          <AddressButton address={proposal.creator} />
-        ) : (
-          <Skeleton />
-        )}
 
         <ProposalActionsWrapper>
           <ProposalActionsCard />

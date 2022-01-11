@@ -1,6 +1,7 @@
 import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
 import React, { useMemo } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { IconButton } from '../common/Button';
 import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
@@ -47,7 +48,7 @@ const AddressText = styled.span`
 `;
 
 interface AddressButtonProps {
-  address: string;
+  address?: string;
   chainId?: number;
   transactionsCounter?: number;
   onClick?: () => void;
@@ -61,7 +62,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({
 }) => {
   const { ensName, imageUrl, avatarUri } = useENSAvatar(address, chainId);
 
-  let imageUrlToUse = useMemo(() => {
+  const imageUrlToUse = useMemo(() => {
     if (avatarUri) {
       // TODO: Consider chainId when generating ENS metadata service fallback URL
       return (
@@ -75,10 +76,20 @@ const AddressButton: React.FC<AddressButtonProps> = ({
   return (
     <StyledAddressButton onClick={onClick} iconLeft>
       <IconHolder>
-        <Avatar src={imageUrlToUse} defaultSeed={address} size={24} />
+        {address ? (
+          <Avatar src={imageUrlToUse} defaultSeed={address} size={24} />
+        ) : (
+          <Skeleton circle width={24} height={24} />
+        )}
       </IconHolder>
       {isDesktop && (
-        <AddressText>{ensName || shortenAddress(address)}</AddressText>
+        <AddressText>
+          {ensName || address ? (
+            shortenAddress(address)
+          ) : (
+            <Skeleton width={100} />
+          )}
+        </AddressText>
       )}
       {transactionsCounter && <Badge size="25">{transactionsCounter}</Badge>}
     </StyledAddressButton>
