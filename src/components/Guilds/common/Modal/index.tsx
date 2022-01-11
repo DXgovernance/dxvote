@@ -65,6 +65,7 @@ export const Header = styled.div`
   display: flex;
 `;
 
+
 export const HeaderText = styled(Heading)`
   margin: 0;
 `;
@@ -109,6 +110,7 @@ export interface ModalProps {
   onConfirm?: () => void;
   onCancel?: () => void;
   maxWidth?: number;
+  hideDivider?: boolean;
 }
 
 export const ModalButton = styled(Button)`
@@ -135,6 +137,7 @@ export const Modal: React.FC<ModalProps> = ({
   hideHeader,
   children,
   maxWidth,
+  hideDivider,
 }) => {
   const modal = (
     <div>
@@ -153,6 +156,9 @@ export const Modal: React.FC<ModalProps> = ({
             <Header>
               <HeaderText>{header}</HeaderText>
             </Header>
+          )}
+          {!hideDivider && (
+            <Divider />
           )}
           <Content>{children}</Content>
           {(onCancel || onConfirm) && (
