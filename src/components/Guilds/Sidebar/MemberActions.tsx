@@ -45,13 +45,17 @@ const LockButton = styled(Button)`
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [isOpen, setIsOpen] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const toggleModal = () => {
+    setModalOpen(!modalOpen)
+  }
 
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
   return (
     <DropdownMenu ref={memberMenuRef}>
-      <TransactionModal isOpen={isOpen} />
+      <TransactionModal isOpen={modalOpen} onCancel={toggleModal} />
       <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
         <Icon src={dxIcon} alt={'Icon'} />
         <span>geronimo.eth</span>
@@ -73,7 +77,7 @@ export const MemberActions = () => {
           <ContentItem>
             Unlocked in <span>542 days</span>
           </ContentItem>
-          <LockButton onClick={() => setIsOpen(true)}> Lock DXD</LockButton>
+          <LockButton onClick={() => setModalOpen(true)}> Lock DXD</LockButton>
         </MemberContainer>
       </DropdownContent>
     </DropdownMenu>

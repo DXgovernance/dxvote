@@ -1,32 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from '../common/Modal';
 import { AiOutlineArrowUp } from 'react-icons/ai';
 import { Button } from '../common/Button';
 import { FiX } from 'react-icons/fi';
+import { Circle, Flex } from '../common/Layout';
 
-export const Circle = styled.div`
-  border-radius: 50%;
-  background: ${({ theme }) => theme.colors.background};
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  height: 86px;
-  width: 86px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const Flex = styled.div`
-  display: Flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: ${({ theme }) => theme.colors.background};
-
-  border-radius: ${({ theme }) => theme.radii.curved2};
-`;
 
 export const ModalButton = styled(Button)`
   margin: 0 0 16px 0;
@@ -85,20 +65,29 @@ enum TransactionModalView {
   Reject,
 }
 
-type TransactionModalProps = Pick<ModalProps, 'isOpen'>
+type TransactionModalProps = Pick<ModalProps, 'isOpen' | 'onCancel'>
 
-const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen }) => {
-  // @TODO rework with SWR data integration
-  // @TODO integrate contract interaction
+const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCancel }) => {
 
   const [modalView, setModalView] = useState<TransactionModalView>(
     TransactionModalView.Confirm
   );
 
+  useEffect(() => {
+    // resets view for testing
+    // remove when integrating new data flow
+    setModalView(
+      TransactionModalView.Confirm
+    )
+  }, [isOpen])
+
   let header = null;
   let children = null;
 
   const switchModalViews = () => {
+
+    // purely for review
+    // remove when integrating new data flow
     if (modalView === TransactionModalView.Confirm) {
       setModalView(TransactionModalView.Submit)
     }
@@ -107,7 +96,14 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen }) => {
       setModalView(TransactionModalView.Reject)
     }
 
+    if (modalView === TransactionModalView.Reject) {
+      return onCancel()
+    }
+
+    return null
+
   }
+
 
 
   switch (modalView) {
@@ -149,8 +145,8 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen }) => {
               View on Block Explorer
             </ContainerText>
           </Container>
-          <ModalButton variant="primary">Close</ModalButton>
-        </Flex>
+          <ModalButton variant="primary" onClick={switchModalViews}>Close</ModalButton>
+        </Flex >
       );
       break;
     case TransactionModalView.Reject:
@@ -169,7 +165,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen }) => {
               View on Block Explorer
             </ContainerText>
           </Container>
-          <ModalButton variant="primary">Dismiss</ModalButton>
+          <ModalButton variant="primary" onClick={onCancel}>Dismiss</ModalButton>
         </Flex>
       );
       break;
@@ -181,8 +177,8 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen }) => {
       onDismiss={switchModalViews}
       children={children}
       header={header}
-      maxWidth={300}
       hideDivider
+      maxWidth={300}
     />
   );
 
