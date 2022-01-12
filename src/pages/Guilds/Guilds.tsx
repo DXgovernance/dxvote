@@ -44,7 +44,8 @@ const ErrorList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
+  const { chain_name: chainName, guild_id: guildId } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
 
   const provider = useJsonRpcProvider();
 
@@ -76,7 +77,10 @@ const GuildsPage: React.FC = () => {
           {!error &&
             !loading &&
             proposalsIds.map(proposalId => (
-              <ProposalCard id={proposalId} href={'/'} />
+              <ProposalCard
+                id={proposalId}
+                href={`/${chainName}/${guildId}/proposals/${proposalId}`}
+              />
             ))}
         </ProposalsList>
         {error && <ErrorList>{error.message}</ErrorList>}
