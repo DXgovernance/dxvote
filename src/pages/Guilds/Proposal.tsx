@@ -18,6 +18,9 @@ import useIPFSFile from '../../hooks/Guilds/ipfs/useIPFSFile';
 import { ProposalMetadata } from '../../types/types.guilds';
 import AddressButton from '../../components/Guilds/AddressButton';
 
+import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
+import ERC20GuildContract from '../../contracts/ERC20Guild.json';
+
 const PageContainer = styled(Box)`
   display: grid;
   grid-template-columns: 1fr;
@@ -94,12 +97,27 @@ const ProposalPage: React.FC = () => {
     proposal_id?: string;
   }>();
 
+  const provider = useJsonRpcProvider();
+  const CONFIG = {
+    web3Provider: provider,
+    ABIs: new Map([
+      [
+        // If we need to generate this for each guildId we may need this wrapping after each route
+        '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+        ERC20GuildContract.abi,
+      ],
+    ]),
+    refreshInterval: 30000,
+  };
+
+  console.log(chainName);
+  console.log(guildId);
+  console.log(proposalId);
   const {
     data: proposal,
     error,
     isValidating,
-  } = useEtherSWR([guildId, 'getProposal', proposalId]);
-  console.log(proposal);
+  } = useEtherSWR([guildId, 'getProposal', proposalId], CONFIG);
 
   const decodedContentHash = useMemo(() => {
     if (!proposal) return null;

@@ -12,6 +12,9 @@ import { Heading } from '../common/Typography';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UnstyledLink from '../common/UnstyledLink';
 
+import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
+import ERC20GuildContract from 'contracts/ERC20Guild.json';
+
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
@@ -100,7 +103,19 @@ interface ProposalCardProps {
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
 
-  const { data } = useEtherSWR([guildId, 'getProposal', id]);
+  const provider = useJsonRpcProvider();
+  const CONFIG = {
+    web3Provider: provider,
+    ABIs: new Map([
+      [
+        // If we need to generate this for each guildId we may need this wrapping after each route
+        '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+        ERC20GuildContract.abi,
+      ],
+    ]),
+    refreshInterval: 30000,
+  };
+  const { data } = useEtherSWR([guildId, 'getProposal', id], CONFIG);
 
   const { title, contentHash } = data || {
     title: '',
