@@ -695,8 +695,7 @@ export default class DaoStore {
     }[] = [];
 
     const cache = this.getCache();
-    const votingMachines =
-      this.context.configStore.getNetworkContracts().votingMachines;
+
     let proposalEvents = {
       votes: [],
       stakes: [],
@@ -705,44 +704,37 @@ export default class DaoStore {
       redeemsDaoBounty: [],
     };
 
-    for (const votingMachineName in votingMachines) {
-      const votingMachine = votingMachines[votingMachineName];
+    Object.keys(cache.votingMachines).map(votingMachine => {
       proposalEvents.votes = proposalEvents.votes.concat(
-        cache.votingMachines[votingMachine.address].events.votes.filter(
-          vote => {
-            return userAddress === vote.voter;
-          }
-        )
+        cache.votingMachines[votingMachine].events.votes.filter(vote => {
+          return userAddress === vote.voter;
+        })
       );
       proposalEvents.stakes = proposalEvents.stakes.concat(
-        cache.votingMachines[votingMachine.address].events.stakes.filter(
-          stake => {
-            return userAddress === stake.staker;
-          }
-        )
+        cache.votingMachines[votingMachine].events.stakes.filter(stake => {
+          return userAddress === stake.staker;
+        })
       );
       proposalEvents.redeems = proposalEvents.redeems.concat(
-        cache.votingMachines[votingMachine.address].events.redeems.filter(
-          redeem => {
-            return userAddress === redeem.beneficiary;
-          }
-        )
+        cache.votingMachines[votingMachine].events.redeems.filter(redeem => {
+          return userAddress === redeem.beneficiary;
+        })
       );
       proposalEvents.redeemsRep = proposalEvents.redeemsRep.concat(
-        cache.votingMachines[votingMachine.address].events.redeemsRep.filter(
+        cache.votingMachines[votingMachine].events.redeemsRep.filter(
           redeemRep => {
             return userAddress === redeemRep.beneficiary;
           }
         )
       );
       proposalEvents.redeemsDaoBounty = proposalEvents.redeemsDaoBounty.concat(
-        cache.votingMachines[
-          votingMachine.address
-        ].events.redeemsDaoBounty.filter(redeemDaoBounty => {
-          return userAddress === redeemDaoBounty.beneficiary;
-        })
+        cache.votingMachines[votingMachine].events.redeemsDaoBounty.filter(
+          redeemDaoBounty => {
+            return userAddress === redeemDaoBounty.beneficiary;
+          }
+        )
       );
-    }
+    });
 
     const newProposalEvents: ProposalEvent[] = Object.keys(
       _.pickBy(cache.proposals, proposal => proposal.proposer === userAddress)

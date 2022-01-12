@@ -108,9 +108,12 @@ export const GuildConfigProvider: React.FunctionComponent<
     maxActiveProposals: null,
   });
 
-  const location = matchPath<{ address: string }>(window?.location?.hash, {
-    path: '#/guilds/:chain_name/:address',
-  });
+  const location = matchPath<{ address: string; chain: string }>(
+    window?.location?.hash,
+    {
+      path: '#/guilds/:chain/:address',
+    }
+  );
   const address = location?.params?.address;
 
   React.useEffect(() => {
@@ -138,7 +141,7 @@ export const GuildConfigProvider: React.FunctionComponent<
       });
     };
     initialize();
-  }, [web3Context.chainId, address]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [web3Context, address]);
 
   return (
     <GuildConfigContext.Provider value={state}>

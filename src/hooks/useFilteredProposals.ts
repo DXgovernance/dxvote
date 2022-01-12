@@ -3,6 +3,7 @@ import { VotingMachineProposalState, WalletSchemeProposalState } from 'utils';
 import { useFilterCriteria } from './useFilterCriteria';
 import useMiniSearch from './useMiniSearch';
 import useQueryStringValue from './useQueryStringValue';
+import { useContext } from 'contexts';
 
 import { ProposalsExtended } from '../types/types';
 const matchStatus = (proposal: ProposalsExtended, status: string) => {
@@ -31,7 +32,13 @@ const matchScheme = (proposal: ProposalsExtended, scheme: string) => {
 };
 
 export const useFilteredProposals = () => {
+  const {
+    context: { providerStore },
+  } = useContext();
+
   const { proposals, loading } = useFilterCriteria();
+
+  const { chainId } = providerStore.getActiveWeb3React();
 
   const minisearch = useMiniSearch<ProposalsExtended>({
     fields: ['title'],
@@ -57,7 +64,7 @@ export const useFilteredProposals = () => {
   // Rebuild search index when proposals list changes
   useEffect(() => {
     minisearch.buildIndex(proposals);
-  }, [proposals]);
+  }, [proposals, chainId]);
 
   // Compute search results when search criteria changes
   const searchResults = useMemo(() => {
@@ -73,7 +80,7 @@ export const useFilteredProposals = () => {
         matchScheme(proposal, schemesFilter)
     );
     return filteredProposals;
-  }, [minisearch, proposals, titleFilter, stateFilter, schemesFilter]);
+  }, [minisearch, proposals, titleFilter, stateFilter, schemesFilter, chainId]);
 
   return {
     proposals: searchResults,

@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
 
 import { Box } from '../../components/Guilds/common/Layout';
-
-import { Sidebar } from '../../components/Guilds/Sidebar/';
+import { Sidebar } from '../../components/Guilds/Sidebar';
 import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard, {
   SkeletonProposalCard,
 } from '../../components/Guilds/ProposalCard';
-import { useProposals } from 'hooks/Guilds/useProposals';
+import { useProposals } from 'hooks/Guilds/proposals/useProposals';
+import { useGuildConfig } from 'hooks/Guilds/useGuildConfig';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -41,7 +42,10 @@ const ErrorList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
+  const { chain_name: chainName } = useParams<{ chain_name?: string }>();
   const { proposals, loading, error } = useProposals();
+  const { address } = useGuildConfig();
+  console.debug('Guilds Proposals: ', proposals, loading, error);
   return (
     <PageContainer>
       <SidebarContent>
@@ -60,9 +64,9 @@ const GuildsPage: React.FC = () => {
             !loading &&
             proposals.map(proposal => (
               <ProposalCard
-                key={proposal.contentHash}
-                title={proposal.title}
-                description={proposal.contentHash}
+                key={proposal.id}
+                proposal={proposal}
+                href={`/${chainName}/${address}/proposals/${proposal.id}`}
               />
             ))}
         </ProposalsList>

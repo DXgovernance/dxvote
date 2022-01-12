@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useGuildConfig } from './useGuildConfig';
-import { Proposal } from '../../types/types.guilds';
+import { useGuildConfig } from '../useGuildConfig';
+import { Proposal } from '../../../types/types.guilds';
+import { mapStructToProposal } from '../../../utils/guildsProposals';
 
 export interface useProposalsReturns {
   proposals: Proposal[];
@@ -22,7 +23,10 @@ export const useProposals = (): useProposalsReturns => {
         setLoading(true);
         const ids = await contract.getProposalsIds();
         const proposals = await Promise.all(
-          ids.map(id => contract.getProposal(id))
+          ids.map(async id => {
+            const data = await contract.getProposal(id);
+            return mapStructToProposal(data, id);
+          })
         );
         setError(null);
         setProposals(proposals);
