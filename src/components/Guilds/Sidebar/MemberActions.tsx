@@ -45,11 +45,11 @@ const LockButton = styled(Button)`
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false);
 
   const toggleModal = () => {
-    setModalOpen(!modalOpen)
-  }
+    setModalOpen(!modalOpen);
+  };
 
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));

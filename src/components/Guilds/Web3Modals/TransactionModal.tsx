@@ -7,7 +7,6 @@ import { Button } from '../common/Button';
 import { FiX } from 'react-icons/fi';
 import { Circle, Flex } from '../common/Layout';
 
-
 export const ModalButton = styled(Button)`
   margin: 0 0 16px 0;
   width: 90%;
@@ -24,26 +23,26 @@ type ContainerTextProps = {
 };
 
 const variantStyles = (variant = 'regular') =>
-({
-  regular: css`
+  ({
+    regular: css`
       font-weight: 500;
       font-size: 12px;
       line-height: 16px;
     `,
-  medium: css`
+    medium: css`
       font-weight: 500;
       font-size: 14px;
       line-height: 20px;
     `,
 
-  bold: css`
+    bold: css`
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
     `,
-}[variant]);
+  }[variant]);
 
-export const ContainerText = styled(Flex) <ContainerTextProps>`
+export const ContainerText = styled(Flex)<ContainerTextProps>`
   font-family: Inter;
   margin: 4px;
   font-style: normal;
@@ -65,10 +64,12 @@ enum TransactionModalView {
   Reject,
 }
 
-type TransactionModalProps = Pick<ModalProps, 'isOpen' | 'onCancel'>
+type TransactionModalProps = Pick<ModalProps, 'isOpen' | 'onCancel'>;
 
-const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCancel }) => {
-
+const TransactionModal: React.FC<TransactionModalProps> = ({
+  isOpen,
+  onCancel,
+}) => {
   const [modalView, setModalView] = useState<TransactionModalView>(
     TransactionModalView.Confirm
   );
@@ -76,35 +77,29 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCancel })
   useEffect(() => {
     // resets view for testing
     // remove when integrating new data flow
-    setModalView(
-      TransactionModalView.Confirm
-    )
-  }, [isOpen])
+    setModalView(TransactionModalView.Confirm);
+  }, [isOpen]);
 
   let header = null;
   let children = null;
 
   const switchModalViews = () => {
-
     // purely for review
     // remove when integrating new data flow
     if (modalView === TransactionModalView.Confirm) {
-      setModalView(TransactionModalView.Submit)
+      setModalView(TransactionModalView.Submit);
     }
 
     if (modalView === TransactionModalView.Submit) {
-      setModalView(TransactionModalView.Reject)
+      setModalView(TransactionModalView.Reject);
     }
 
     if (modalView === TransactionModalView.Reject) {
-      return onCancel()
+      return onCancel();
     }
 
-    return null
-
-  }
-
-
+    return null;
+  };
 
   switch (modalView) {
     case TransactionModalView.Confirm:
@@ -145,8 +140,10 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCancel })
               View on Block Explorer
             </ContainerText>
           </Container>
-          <ModalButton variant="primary" onClick={switchModalViews}>Close</ModalButton>
-        </Flex >
+          <ModalButton variant="primary" onClick={switchModalViews}>
+            Close
+          </ModalButton>
+        </Flex>
       );
       break;
     case TransactionModalView.Reject:
@@ -165,7 +162,9 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCancel })
               View on Block Explorer
             </ContainerText>
           </Container>
-          <ModalButton variant="primary" onClick={onCancel}>Dismiss</ModalButton>
+          <ModalButton variant="primary" onClick={onCancel}>
+            Dismiss
+          </ModalButton>
         </Flex>
       );
       break;
@@ -181,7 +180,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCancel })
       maxWidth={300}
     />
   );
-
 };
 
-export default TransactionModal
+export default TransactionModal;
