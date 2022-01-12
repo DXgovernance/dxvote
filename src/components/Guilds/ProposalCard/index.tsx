@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
 import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
 import ProposalStatus from '../ProposalStatus';
-import { isDesktop } from 'react-device-detect';
 import { Heading } from '../common/Typography';
+import { Proposal } from '../../../types/types.guilds';
+import 'react-loading-skeleton/dist/skeleton.css';
+import UnstyledLink from '../common/UnstyledLink';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -89,53 +91,55 @@ const ProposalStatusWrapper = styled.div`
 `;
 
 interface ProposalCardProps {
-  title: string;
-  description: string;
+  proposal: Proposal;
+  href: string;
 }
 
-const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
+const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, href }) => {
   return (
-    <CardWrapper>
-      <CardHeader>
-        <IconDetailWrapper>
-          <Icon src={dxIcon} spaceRight />
-          <Detail>Swapr von 0x01Cf...2712</Detail>
-        </IconDetailWrapper>
-        <ProposalStatusWrapper>
-          <ProposalStatus
-            bordered={false}
-            status="Active"
-            detail="4 days left"
-          />
-        </ProposalStatusWrapper>
-      </CardHeader>
-      <CardContent>
-        <CardTitle size={2}>
-          <strong>{title}</strong>
-        </CardTitle>
-        <p>{description}</p>
-      </CardContent>
-      <CardFooter>
-        <BorderedIconDetailWrapper>
-          <Detail>150 ETH</Detail>
-          {isDesktop && (
-            <>
-              <Icon as="div" spaceLeft spaceRight>
-                <FiArrowRight />
-              </Icon>{' '}
-              <Detail>geronimo.eth</Detail>
-            </>
-          )}
-        </BorderedIconDetailWrapper>
-        <BorderedIconDetailWrapper>
-          <Detail>15.60%</Detail>
-          <Icon as="div" spaceLeft spaceRight>
-            <FiCircle />
-          </Icon>
-          <Detail>5.25%</Detail>
-        </BorderedIconDetailWrapper>
-      </CardFooter>
-    </CardWrapper>
+    <UnstyledLink to={href}>
+      <CardWrapper>
+        <CardHeader>
+          <IconDetailWrapper>
+            <Icon src={dxIcon} spaceRight />
+            <Detail>Swapr von 0x01Cf...2712</Detail>
+          </IconDetailWrapper>
+          <ProposalStatusWrapper>
+            <ProposalStatus
+              proposal={proposal}
+              bordered={false}
+              showRemainingTime
+            />
+          </ProposalStatusWrapper>
+        </CardHeader>
+        <CardContent>
+          <CardTitle size={2}>
+            <strong>{proposal?.title}</strong>
+          </CardTitle>
+          <p>{proposal?.contentHash}</p>
+        </CardContent>
+        <CardFooter>
+          <BorderedIconDetailWrapper>
+            <Detail>150 ETH</Detail>
+            {isDesktop && (
+              <>
+                <Icon as="div" spaceLeft spaceRight>
+                  <FiArrowRight />
+                </Icon>{' '}
+                <Detail>geronimo.eth</Detail>
+              </>
+            )}
+          </BorderedIconDetailWrapper>
+          <BorderedIconDetailWrapper>
+            <Detail>15.60%</Detail>
+            <Icon as="div" spaceLeft spaceRight>
+              <FiCircle />
+            </Icon>
+            <Detail>5.25%</Detail>
+          </BorderedIconDetailWrapper>
+        </CardFooter>
+      </CardWrapper>
+    </UnstyledLink>
   );
 };
 

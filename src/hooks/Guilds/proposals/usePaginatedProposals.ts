@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useERC20Guild } from './contracts/useContract';
-import { Proposal } from '../../types/types.guilds';
-import { useProposalsContext } from '../../contexts/Guilds';
+import { useERC20Guild } from '../contracts/useContract';
+import { Proposal } from '../../../types/types.guilds';
+import { useProposalsContext } from '../../../contexts/Guilds';
 
 export interface usePaginatedProposalsReturns {
   proposals: Proposal[];
