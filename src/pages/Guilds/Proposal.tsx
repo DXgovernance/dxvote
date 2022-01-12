@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
+import useEtherSWR from 'ether-swr';
 import { useParams } from 'react-router-dom';
 import contentHash from 'content-hash';
 import Markdown from 'markdown-to-jsx';
@@ -12,7 +13,6 @@ import ProposalInfoCard from '../../components/Guilds/ProposalSidebar/ProposalIn
 import ProposalVoteCard from '../../components/Guilds/ProposalSidebar/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
 import ProposalActionsCard from '../../components/Guilds/ProposalActionsCard';
-import { useProposal } from '../../hooks/Guilds/proposals/useProposal';
 import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
 import useIPFSFile from '../../hooks/Guilds/ipfs/useIPFSFile';
 import { ProposalMetadata } from '../../types/types.guilds';
@@ -93,7 +93,13 @@ const ProposalPage: React.FC = () => {
     guild_id?: string;
     proposal_id?: string;
   }>();
-  const { proposal, error } = useProposal(guildId, proposalId);
+
+  const {
+    data: proposal,
+    error,
+    isValidating,
+  } = useEtherSWR([guildId, 'getProposal', proposalId]);
+  console.log(proposal);
 
   const decodedContentHash = useMemo(() => {
     if (!proposal) return null;
@@ -109,7 +115,7 @@ const ProposalPage: React.FC = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
+  if (isValidating) return <div>loading...</div>;
   return (
     <PageContainer>
       <PageContent>
