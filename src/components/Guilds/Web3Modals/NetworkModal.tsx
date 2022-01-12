@@ -6,7 +6,7 @@ import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
-import xdaiIcon from '../../../assets/images/xdai.svg';
+import gnosisIcon from '../../../assets/images/gnosis-icon.svg';
 import { Modal } from '../common/Modal';
 import Option from './components/Option';
 import { useHistory } from 'react-router-dom';
@@ -14,7 +14,7 @@ import { useHistory } from 'react-router-dom';
 const iconsByChain = {
   1: ethereumIcon,
   4: ethereumIcon,
-  100: xdaiIcon,
+  100: gnosisIcon,
   42161: arbitrumIcon,
   421611: arbitrumIcon,
   1337: ethereumIcon,

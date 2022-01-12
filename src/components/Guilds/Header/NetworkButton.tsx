@@ -6,12 +6,12 @@ import { Button, ButtonIcon, IconButton } from '../common/Button';
 import NetworkModal from '../Web3Modals/NetworkModal';
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
-import xdaiIcon from '../../../assets/images/xdai.svg';
+import gnosisIcon from '../../../assets/images/gnosis-icon.svg';
 
 const iconsByChain = {
   1: ethereumIcon,
   4: ethereumIcon,
-  100: xdaiIcon,
+  100: gnosisIcon,
   42161: arbitrumIcon,
   421611: arbitrumIcon,
   1337: ethereumIcon,
