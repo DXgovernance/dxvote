@@ -38,3 +38,8 @@ yarn-error.log*
 #typechain
 src/types/*
 !src/types/types.d.ts
+!src/types/types.guilds.d.ts
+
+# cypress
+cypress/screenshots
+cypress/videos

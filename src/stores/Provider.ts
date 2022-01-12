@@ -129,6 +129,85 @@ export default class ProviderStore {
     return response;
   };
 
+  sign = (
+    web3React: Web3ReactContextInterface,
+    dataToSign: any
+  ): Promise<any> => {
+    const { chainId, account } = web3React;
+
+    if (!account) {
+      throw new Error(ERRORS.BlockchainActionNoAccount);
+    }
+
+    if (!chainId) {
+      throw new Error(ERRORS.BlockchainActionNoChainId);
+    }
+    return new Promise((resolve, reject) => {
+      web3React.library.eth.currentProvider.sendAsync(
+        {
+          method: 'eth_sign',
+          params: [account, dataToSign],
+          from: account,
+        },
+        function (err, result) {
+          if (err) console.error(err);
+          resolve(result);
+        }
+      );
+    });
+  };
+
+  signTypedV3 = (
+    web3React: Web3ReactContextInterface,
+    dataToSign: any
+  ): Promise<any> => {
+    const { chainId, account } = web3React;
+
+    if (!account) {
+      throw new Error(ERRORS.BlockchainActionNoAccount);
+    }
+
+    if (!chainId) {
+      throw new Error(ERRORS.BlockchainActionNoChainId);
+    }
+    const msgParams = JSON.stringify({
+      types: {
+        EIP712Domain: [
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
+        ],
+        Broadcast: [
+          { name: 'topic', type: 'bytes32' },
+          { name: 'message', type: 'string' },
+        ],
+      },
+      primaryType: 'Broadcast',
+      domain: {
+        name: 'MessageLogger',
+        version: '1',
+        chainId: '0x04',
+        verifyingContract: '0x0c850e40f72bdc012578788e25a02aadc0da85da',
+      },
+      message: dataToSign,
+    });
+
+    return new Promise((resolve, reject) => {
+      web3React.library.eth.currentProvider.sendAsync(
+        {
+          method: 'eth_signTypedData_v3',
+          params: [account, msgParams],
+          from: account,
+        },
+        function (err, result) {
+          if (err) console.error(err);
+          resolve(result);
+        }
+      );
+    });
+  };
+
   sendRawTransaction = (
     web3React: Web3ReactContextInterface,
     to: string,

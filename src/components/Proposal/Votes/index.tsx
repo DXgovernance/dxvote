@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import moment from 'moment';
-import { FiThumbsDown, FiThumbsUp } from 'react-icons/fi';
+import {
+  FiThumbsDown,
+  FiThumbsUp,
+  FiWifi,
+  FiWifiOff,
+  FiArrowUp,
+} from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
 import {
   Question,
@@ -22,16 +28,38 @@ import {
 } from '../styles';
 
 import { useContext } from 'contexts';
-import { bnum, toPercentage } from 'utils';
+import {
+  bnum,
+  isVoteNo,
+  isVoteYes,
+  parseSignedVoteMessage,
+  toPercentage,
+  verifySignedVote,
+} from 'utils';
+import { utils } from 'ethers';
+import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 
 const Votes = () => {
   const {
-    context: { daoStore, providerStore, daoService },
+    context: {
+      configStore,
+      daoStore,
+      providerStore,
+      daoService,
+      messageLoggerService,
+      orbitDBService,
+    },
   } = useContext();
 
   //State
-  const [decision, setDecision] = useState(null);
+  const [signVote, setSignVote] = useState(false);
+  const [decision, setDecision] = useState(0);
   const [votePercentage, setVotePercentage] = useState(0);
+  const [signedVotesOfProposal, setSignedVotesOfProposal] = useState([]);
+  const [loadingSignedRinkebyVotes, setLoadingSignedRinkebyVotes] =
+    useState(true);
+  const [loadingSignedOrbitDBVotes, setLoadingSignedOrbitDBVotes] =
+    useState(true);
 
   // We should get the ID in another way
   const proposalId = useLocation().pathname.split('/')[3];
@@ -39,6 +67,102 @@ const Votes = () => {
   const proposal = daoStore.getProposal(proposalId);
   const proposalEvents = daoStore.getProposalEvents(proposalId);
   const { account } = providerStore.getActiveWeb3React();
+  const signedVoteMessageId = utils.id(`dxvote:${proposalId}`);
+  const { finishTime } = daoStore.getProposalStatus(proposalId);
+  const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
+  const votingMachineAddress = daoStore.getVotingMachineOfProposal(proposalId);
+  const finishTimeReached = finishTime.toNumber() < moment().unix();
+  const isDXDVotingMachine =
+    configStore.getNetworkContracts().votingMachines.dxd &&
+    configStore.getNetworkContracts().votingMachines.dxd.address ==
+      votingMachineAddress;
+
+  const rinkebyProvider = useJsonRpcProvider(4);
+
+  messageLoggerService
+    .getMessages(signedVoteMessageId, rinkebyProvider)
+    .then(messagesEvents => {
+      console.debug('[Rinkeby Proposal messages]', messagesEvents);
+      messagesEvents.map(messagesEvent => {
+        if (
+          messagesEvent.args &&
+          messagesEvent.args.message.length > 0 &&
+          messagesEvent.args.message.split(':').length > 6
+        ) {
+          const signedVote = messagesEvent.args.message.split(':');
+          const validSignature = verifySignedVote(
+            signedVote[1],
+            signedVote[2],
+            signedVote[3],
+            signedVote[4],
+            signedVote[5],
+            signedVote[6]
+          );
+
+          const alreadyAdded =
+            signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) >
+              -1 ||
+            proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) > -1;
+
+          const repOfVoterForProposal = daoStore.getRepAt(
+            signedVote[3],
+            proposal.creationEvent.blockNumber
+          ).userRep;
+
+          if (
+            validSignature &&
+            !alreadyAdded &&
+            repOfVoterForProposal >= bnum(signedVote[5])
+          ) {
+            signedVotesOfProposal.push({
+              voter: signedVote[3],
+              vote: signedVote[4],
+              amount: bnum(signedVote[5]),
+              signature: signedVote[6],
+              source: 'rinkeby',
+            });
+          }
+        }
+      });
+      setSignedVotesOfProposal(signedVotesOfProposal);
+      setLoadingSignedRinkebyVotes(false);
+    });
+
+  orbitDBService.getLogs(signedVoteMessageId).then(signedVoteMessages => {
+    console.debug('[OrbitDB messages]', signedVoteMessages);
+    signedVoteMessages.map(signedVoteMessageRaw => {
+      const signedVoteMessage = parseSignedVoteMessage(signedVoteMessageRaw);
+      if (signedVoteMessage.valid) {
+        const alreadyAdded =
+          signedVotesOfProposal.findIndex(
+            s => s.voter == signedVoteMessage.voter
+          ) > -1 ||
+          proposalEvents.votes.findIndex(
+            s => s.voter == signedVoteMessage.voter
+          ) > -1;
+
+        const repOfVoterForProposal = daoStore.getRepAt(
+          signedVoteMessage.voter,
+          proposal.creationEvent.blockNumber
+        ).userRep;
+
+        if (
+          !alreadyAdded &&
+          repOfVoterForProposal >= bnum(signedVoteMessage.repAmount)
+        ) {
+          signedVotesOfProposal.push({
+            voter: signedVoteMessage.voter,
+            vote: signedVoteMessage.decision,
+            amount: bnum(signedVoteMessage.repAmount),
+            signature: signedVoteMessage.signature,
+            source: 'orbitDB',
+          });
+        }
+      }
+    });
+    setSignedVotesOfProposal(signedVotesOfProposal);
+    setLoadingSignedOrbitDBVotes(false);
+  });
 
   let votedAmount = bnum(0);
 
@@ -48,11 +172,11 @@ const Votes = () => {
     }
   });
 
-  let positiveVotesCount = proposalEvents.votes.filter(
-    vote => vote.vote.toString() === '1'
+  let positiveVotesCount = proposalEvents.votes.filter(vote =>
+    isVoteYes(vote.vote)
   ).length;
-  let negativeVotesCount = proposalEvents.votes.filter(
-    vote => vote.vote.toString() === '2'
+  let negativeVotesCount = proposalEvents.votes.filter(vote =>
+    isVoteNo(vote.vote)
   ).length;
 
   const {
@@ -72,13 +196,27 @@ const Votes = () => {
     proposal.negativeVotes.div(totalRepAtProposalCreation)
   ).toFixed(2);
 
+  const totalPositiveSignedVotes = toPercentage(
+    signedVotesOfProposal
+      .filter(signedVote => isVoteYes(signedVote.vote))
+      .reduce(function (acc, obj) {
+        return acc.plus(obj.amount);
+      }, bnum(0))
+      .div(totalRepAtProposalCreation)
+  ).toFixed(2);
+
+  const totalNegativeSignedVotes = toPercentage(
+    signedVotesOfProposal
+      .filter(signedVote => isVoteNo(signedVote.vote))
+      .reduce(function (acc, obj) {
+        return acc.plus(obj.amount);
+      }, bnum(0))
+      .div(totalRepAtProposalCreation)
+  ).toFixed(2);
+
   if (Number(repPercentageAtCreation) > 0 && votePercentage === 0) {
     setVotePercentage(Number(repPercentageAtCreation));
   }
-
-  const { finishTime } = daoStore.getProposalStatus(proposalId);
-  const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
-  const finishTimeReached = finishTime.toNumber() < moment().unix();
 
   // Events Handlers
   const onVoteValueChange = event => {
@@ -89,13 +227,66 @@ const Votes = () => {
     );
   };
 
-  const submitVote = function (decision) {
-    const repAmount = totalRepAtProposalCreation
-      .times(bnum(votePercentage))
-      .div('100')
-      .toFixed(0);
-    daoService.vote(decision, repAmount, proposalId);
-    setDecision(null);
+  const executeSignedVote = function (signedVote) {
+    daoService.executeSignedVote(
+      votingMachineAddress,
+      proposalId,
+      signedVote.voter,
+      signedVote.vote,
+      signedVote.amount.toString(),
+      signedVote.signature
+    );
+  };
+
+  const submitVote = async function (voteDetails: {
+    votingMachine: string;
+    proposalId: string;
+    voter: string;
+    decision: string;
+    repAmount: string;
+    signVote: boolean;
+    networks: boolean[];
+    hashToETHMessage: boolean;
+  }) {
+    if (voteDetails.signVote) {
+      const voteSignature = await daoService.signVote(
+        voteDetails.votingMachine,
+        voteDetails.proposalId,
+        voteDetails.decision,
+        voteDetails.repAmount,
+        voteDetails.hashToETHMessage
+      );
+      if (
+        verifySignedVote(
+          voteDetails.votingMachine,
+          voteDetails.proposalId,
+          voteDetails.voter,
+          voteDetails.decision,
+          voteDetails.repAmount,
+          voteSignature
+        )
+      ) {
+        if (voteDetails.networks[0])
+          orbitDBService.addLog(
+            utils.id(`dxvote:${proposalId}`),
+            `signedVote:${voteDetails.votingMachine}:${voteDetails.proposalId}:${voteDetails.voter}:${voteDetails.decision}:${voteDetails.repAmount}:${voteSignature}`
+          );
+        if (voteDetails.networks[1])
+          messageLoggerService.broadcast(
+            utils.id(`dxvote:${proposalId}`),
+            `signedVote:${voteDetails.votingMachine}:${voteDetails.proposalId}:${voteDetails.voter}:${voteDetails.decision}:${voteDetails.repAmount}:${voteSignature}`,
+            rinkebyProvider
+          );
+      }
+    } else {
+      daoService.vote(
+        voteDetails.decision,
+        voteDetails.repAmount,
+        voteDetails.proposalId
+      );
+    }
+
+    setDecision(0);
   };
 
   // TODO:
@@ -106,7 +297,7 @@ const Votes = () => {
     <>
       <SpaceAroundRow>
         <strong>
-          Votes <Question question="4" />
+          Confirmed Votes <Question question="4" />
         </strong>
       </SpaceAroundRow>
       <SpaceAroundRow>
@@ -118,7 +309,7 @@ const Votes = () => {
           <HorizontalSeparator />
           <SummaryDetails>
             {proposalEvents?.votes
-              .filter(voteEvent => voteEvent?.vote.toString() === '1')
+              .filter(voteEvent => isVoteYes(voteEvent.vote))
               .map((voteEvent, i) => (
                 <Vote key={`vote-pos-${i}`}>
                   <BlockchainLink
@@ -145,7 +336,7 @@ const Votes = () => {
           <HorizontalSeparator />
           <SummaryDetails>
             {proposalEvents?.votes
-              ?.filter(voteEvent => voteEvent.vote.toString() === '2')
+              ?.filter(voteEvent => isVoteNo(voteEvent.vote))
               .map((voteEvent, i) => (
                 <Vote key={`vote-neg-${i}`}>
                   <BlockchainLink
@@ -166,6 +357,114 @@ const Votes = () => {
           </SummaryDetails>
         </NegativeSummary>
       </SpaceAroundRow>
+
+      {!loadingSignedRinkebyVotes && !loadingSignedOrbitDBVotes && (
+        <div>
+          <SpaceAroundRow>
+            <strong>
+              Signed Votes <Question question="4" /> <br />
+              {!isDXDVotingMachine && <small>Non-Executable</small>}
+            </strong>
+          </SpaceAroundRow>
+          <SpaceAroundRow>
+            <PositiveSummary>
+              <SummaryTotal>
+                <AmountBadge color="green">
+                  {
+                    signedVotesOfProposal.filter(signedVote =>
+                      isVoteYes(signedVote.vote)
+                    ).length
+                  }
+                </AmountBadge>
+                {`${totalPositiveSignedVotes}%`}
+              </SummaryTotal>
+              <HorizontalSeparator />
+              <SummaryDetails>
+                {signedVotesOfProposal
+                  .filter(signedVote => isVoteYes(signedVote.vote))
+                  .map((signedVote, i) => (
+                    <Vote key={`vote-pos-${i}`}>
+                      <BlockchainLink
+                        size="short"
+                        type="user"
+                        text={signedVote.voter}
+                      />
+                      <span>
+                        {bnum(signedVote.amount)
+                          .times('100')
+                          .div(totalRepAtProposalCreation)
+                          .toFixed(2)}
+                        %
+                      </span>
+                      {isDXDVotingMachine && (
+                        <ActionButton
+                          style={{
+                            height: '15px',
+                            margin: '0px 0px 0px 2px',
+                            maxWidth: '15px',
+                            textAlign: 'center',
+                          }}
+                          color="#536DFE"
+                          onClick={() => executeSignedVote(signedVote)}
+                        >
+                          <FiArrowUp />
+                        </ActionButton>
+                      )}
+                    </Vote>
+                  ))}
+              </SummaryDetails>
+            </PositiveSummary>
+            <NegativeSummary>
+              <SummaryTotal>
+                <AmountBadge color="red">
+                  {
+                    signedVotesOfProposal.filter(signedVote =>
+                      isVoteNo(signedVote.vote)
+                    ).length
+                  }
+                </AmountBadge>
+                {`${totalNegativeSignedVotes}%`}
+              </SummaryTotal>
+              <HorizontalSeparator />
+              <SummaryDetails>
+                {signedVotesOfProposal
+                  ?.filter(signedVote => isVoteNo(signedVote.vote))
+                  .map((signedVote, i) => (
+                    <Vote key={`vote-neg-${i}`}>
+                      <BlockchainLink
+                        size="short"
+                        type="user"
+                        text={signedVote.voter}
+                      />
+                      <span>
+                        {bnum(signedVote.amount)
+                          .times('100')
+                          .div(totalRepAtProposalCreation)
+                          .toNumber()
+                          .toFixed(2)}
+                        %
+                      </span>
+                      {isDXDVotingMachine && (
+                        <ActionButton
+                          style={{
+                            height: '15px',
+                            margin: '0px 0px 0px 2px',
+                            maxWidth: '15px',
+                            textAlign: 'center',
+                          }}
+                          color="#536DFE"
+                          onClick={() => executeSignedVote(signedVote)}
+                        >
+                          <FiArrowUp />
+                        </ActionButton>
+                      )}
+                    </Vote>
+                  ))}
+              </SummaryDetails>
+            </NegativeSummary>
+          </SpaceAroundRow>
+        </div>
+      )}
 
       {Number(repPercentageAtCreation) > 0 && (
         <small>{repPercentageAtCreation} % REP at proposal creation</small>
@@ -195,7 +494,19 @@ const Votes = () => {
             positive={parseFloat(positiveVotes)}
             negative={parseFloat(negativeVotes)}
             onConfirm={submitVote}
-            onCancel={() => setDecision(null)}
+            onCancel={() => setDecision(0)}
+            voteDetails={{
+              votingMachine: votingMachineAddress,
+              proposalId: proposalId,
+              voter: account,
+              decision: decision.toString(),
+              repAmount: totalRepAtProposalCreation
+                .times(bnum(votePercentage))
+                .div('100')
+                .toFixed(0)
+                .toString(),
+              signVote: signVote,
+            }}
           />
           <AmountInput
             type="number"
@@ -230,6 +541,13 @@ const Votes = () => {
             onClick={() => setDecision(2)}
           >
             <FiThumbsDown />
+          </ActionButton>
+          <ActionButton
+            style={{ flex: 1, maxWidth: '20px', textAlign: 'center' }}
+            color="#536DFE"
+            onClick={() => setSignVote(!signVote)}
+          >
+            {signVote ? <FiWifiOff /> : <FiWifi />}
           </ActionButton>
         </SpaceAroundRow>
       ) : (

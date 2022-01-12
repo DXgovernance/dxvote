@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 13060713,
-    "ipfsHash": "QmSGacyGLjY3DNEPYKTQkAn7FcXmbq8g8xPrmFDL57TaZN",
-    "toBlock": 19560176
+    "ipfsHash": "QmQv3ztfhZHPVdkdniLh5PDGempxZXFH6Z5tvGS6razMEy",
+    "toBlock": 20032743
   },
   "contracts": {
     "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
@@ -127,11 +127,14 @@
     }
   },
   "contributionLevels": [
-    { "dxd": 2000, "id": "1", "rep": 0.1667, "stable": 4000 },
-    { "dxd": 3000, "id": "2", "rep": 0.1667, "stable": 5000 },
-    { "dxd": 4000, "id": "3", "rep": 0.1667, "stable": 6000 },
-    { "dxd": 5000, "id": "4", "rep": 0.1667, "stable": 7000 },
-    { "dxd": 6000, "id": "5", "rep": 0.1667, "stable": 8000 }
+    { "dxd": 1500, "id": "1", "rep": 0.1667, "stable": 3000 },
+    { "dxd": 2000, "id": "2", "rep": 0.1667, "stable": 4000 },
+    { "dxd": 3000, "id": "3", "rep": 0.1667, "stable": 5000 },
+    { "dxd": 4000, "id": "4", "rep": 0.1667, "stable": 6000 },
+    { "dxd": 5000, "id": "5", "rep": 0.1667, "stable": 7000 },
+    { "dxd": 6000, "id": "6", "rep": 0.1667, "stable": 8000 },
+    { "dxd": 7500, "id": "7", "rep": 0.1667, "stable": 9000 },
+    { "dxd": 9500, "id": "8", "rep": 0.1667, "stable": 9000 }
   ],
   "proposalTemplates": [
     {

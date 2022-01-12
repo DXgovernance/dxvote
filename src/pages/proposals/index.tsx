@@ -10,6 +10,7 @@ import {
   HeaderCell,
   TableBody,
   DataCell,
+  TableRow,
 } from '../../components/common';
 import PulsingIcon from '../../components/common/LoadingIcon';
 import Footer from '../../components/Footer';
@@ -18,6 +19,7 @@ import {
   normalizeBalance,
   timeToTimestamp,
   formatNumberValue,
+  PendingAction,
 } from '../../utils';
 import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
 import {
@@ -92,11 +94,13 @@ const ProposalsPage = observer(() => {
       {!loading && (
         <TableProposal>
           <TableHeader>
-            <HeaderCell>Title</HeaderCell>
-            <HeaderCell>Scheme</HeaderCell>
-            <HeaderCell>Status</HeaderCell>
-            <HeaderCell>Stakes</HeaderCell>
-            <HeaderCell>Votes</HeaderCell>
+            <TableRow>
+              <HeaderCell>Title</HeaderCell>
+              <HeaderCell>Scheme</HeaderCell>
+              <HeaderCell>Status</HeaderCell>
+              <HeaderCell>Stakes</HeaderCell>
+              <HeaderCell>Votes</HeaderCell>
+            </TableRow>
           </TableHeader>
           <TableBody>
             {proposals.map((proposal, i) => {
@@ -196,7 +200,7 @@ const ProposalsPage = observer(() => {
                       ) : (
                         <span></span>
                       )}
-                      {proposal.pendingAction === 3 ? (
+                      {proposal.pendingAction === PendingAction.Execute ? (
                         <small> Pending Finish Execution </small>
                       ) : (
                         <span></span>

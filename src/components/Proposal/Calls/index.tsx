@@ -82,7 +82,7 @@ const Calls = observer(() => {
           i
         ) => {
           return (
-            <div>
+            <div key={i}>
               {i > 0 ? <Divider></Divider> : null}
               <strong> Call #{i + 1}</strong>
               {recommendedCallUsed ? (

@@ -42,7 +42,7 @@ export default class poktService {
     return ETH_NETWORKS_IDS.reduce((prevUrls, chainId) => {
       const poktNetworkName = POKT_NETWORK_URLS[chainId];
 
-      let poktUrl = null;
+      let poktUrl: string = null;
       if (poktNetworkName) {
         poktUrl = poktNetworkName;
       } else {
@@ -51,6 +51,6 @@ export default class poktService {
 
       prevUrls[chainId] = poktUrl;
       return prevUrls;
-    }, {});
+    }, {} as Record<number, string>);
   }
 }

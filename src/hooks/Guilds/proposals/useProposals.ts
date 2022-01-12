@@ -1,29 +1,16 @@
-import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useERC20Guild } from './contracts/useContract';
+import { useERC20Guild } from '../contracts/useContract';
+import { Proposal } from '../../../types/types.guilds';
+import { mapStructToProposal } from '../../../utils/guildsProposals';
 
 export interface useProposalsReturns {
-  proposals: GuildsProposal[];
+  proposals: Proposal[];
   error: null | Error;
   loading: boolean;
 }
 
-export interface GuildsProposal {
-  creator: string;
-  startTime: BigNumber;
-  endTime: BigNumber;
-  to: string[];
-  data: string[];
-  value: BigNumber[];
-  totalActions: BigNumber;
-  title: string;
-  contentHash: string;
-  state: number;
-  totalVotes: BigNumber[];
-}
-
 export const useProposals = (contractAddress: string): useProposalsReturns => {
-  const [proposals, setProposals] = useState<GuildsProposal[]>([]);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -37,7 +24,10 @@ export const useProposals = (contractAddress: string): useProposalsReturns => {
         setLoading(true);
         const ids = await contract.getProposalsIds();
         const proposals = await Promise.all(
-          ids.map(id => contract.getProposal(id))
+          ids.map(async id => {
+            const data = await contract.getProposal(id);
+            return mapStructToProposal(data, id);
+          })
         );
         setError(null);
         setProposals(proposals);

@@ -2,23 +2,23 @@ import { Contract, constants, providers } from 'ethers';
 import { isAddress } from '.';
 
 function getSigner(
-  library: providers.Web3Provider,
+  library: providers.JsonRpcProvider,
   account: string
 ): providers.JsonRpcSigner {
   return library.getSigner(account);
 }
 
 function getProviderOrSigner(
-  library: providers.Web3Provider,
+  library: providers.JsonRpcProvider,
   account?: string
-): providers.Web3Provider | providers.JsonRpcSigner {
+): providers.JsonRpcProvider | providers.JsonRpcSigner {
   return account ? getSigner(library, account) : library;
 }
 
 export function getContract(
   address: string,
   ABI: any,
-  library: providers.Web3Provider,
+  library: providers.JsonRpcProvider,
   account?: string
 ): Contract {
   if (!isAddress(address) || address === constants.AddressZero) {

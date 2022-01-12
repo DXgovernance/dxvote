@@ -1,31 +1,28 @@
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
-import { ethers } from 'ethers';
+import { ethers, providers } from 'ethers';
 import RootContext from '../contexts';
 export default class ENSService {
   context: RootContext;
-  web3Context: Web3ReactContextInterface;
+  web3Provider: providers.JsonRpcProvider;
 
   constructor(context: RootContext) {
     this.context = context;
-    this.web3Context = null;
+    this.web3Provider = null;
   }
 
-  getENSWeb3Context(): Web3ReactContextInterface {
-    return this.web3Context;
+  getWeb3Provider() {
+    return this.web3Provider;
   }
 
-  setENSWeb3Context(context: Web3ReactContextInterface) {
-    console.debug('[ENSService] Setting Mainnet Web3 context', context);
-    this.web3Context = context;
+  setWeb3Provider(web3Provider: providers.JsonRpcProvider) {
+    console.debug('[ENSService] Setting Mainnet Web3 provider', web3Provider);
+    this.web3Provider = web3Provider;
   }
 
   async resolveENSName(address: string) {
     let name = null;
     try {
-      const web3 = this.web3Context.library;
-      const provider = new ethers.providers.Web3Provider(web3.currentProvider);
       const checksumed = ethers.utils.getAddress(address);
-      name = await provider.lookupAddress(checksumed);
+      name = await this.web3Provider.lookupAddress(checksumed);
     } catch (e) {
       console.warn(
         '[ENSService] Error while trying to reverse resolve ENS address.'
@@ -35,9 +32,8 @@ export default class ENSService {
   }
 
   async resolveContentHash(ensName: string): Promise<string | null> {
-    const web3 = this.web3Context.library;
-
-    const contentHash = await web3.eth.ens.getContenthash(ensName);
-    return contentHash && contentHash.decoded ? contentHash.decoded : null;
+    const resolver = await this.web3Provider.getResolver(ensName);
+    const contentHash = await resolver.getContentHash();
+    return contentHash.replace('ipfs://', '');
   }
 }

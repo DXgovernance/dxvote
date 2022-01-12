@@ -13,9 +13,7 @@ import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
 import GlobalStyle from './theme/GlobalTheme';
 import theme from './theme/light.json';
-
-import { FilterProvider } from 'contexts/Guilds/filters';
-import MainnetWeb3Manager from './components/Guilds/Web3Manager/MainnetWeb3Manager';
+import { GuildsContextProvider } from 'contexts/Guilds';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
 
@@ -32,34 +30,32 @@ const GuildsApp = () => {
     <ThemeProvider theme={theme}>
       <HashRouter basename="/guilds">
         <GlobalErrorBoundary>
-          <MainnetWeb3Manager>
-            <WalletWeb3Manager>
-              <GlobalStyle />
-              <Header />
-              <Container>
-                <Switch>
-                  <Redirect
-                    exact
-                    from="/"
-                    to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                  />
-                  <Redirect
-                    exact
-                    from="/:chain_name"
-                    to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                  />
-                  <Route exact path="/:chain_name/:guild_id">
-                    <FilterProvider>
-                      <GuildsPage />
-                    </FilterProvider>
-                  </Route>
-                  <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
-                    <ProposalPage />
-                  </Route>
-                </Switch>
-              </Container>
-            </WalletWeb3Manager>
-          </MainnetWeb3Manager>
+          <WalletWeb3Manager>
+            <GlobalStyle />
+            <Header />
+            <Container>
+              <Switch>
+                <Redirect
+                  exact
+                  from="/"
+                  to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                />
+                <Redirect
+                  exact
+                  from="/:chain_name"
+                  to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                />
+                <Route exact path="/:chain_name/:guild_id">
+                  <GuildsContextProvider>
+                    <GuildsPage />
+                  </GuildsContextProvider>
+                </Route>
+                <Route path="/:chain_name/:guild_id/proposals/:proposal_id">
+                  <ProposalPage />
+                </Route>
+              </Switch>
+            </Container>
+          </WalletWeb3Manager>
         </GlobalErrorBoundary>
       </HashRouter>
     </ThemeProvider>

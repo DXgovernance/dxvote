@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react';
 import { useHistory } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
 import moment from 'moment';
 import {
   BlockchainLink,
@@ -14,18 +13,11 @@ import {
 import { formatBalance } from '../utils';
 import { useContext } from '../contexts';
 import useExporters from '../hooks/useExporters';
-
-const TitleRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const ListRow = styled.div`
-  display: flex;
-  alignitems: center;
-  padding: 6px 0px;
-  borderbottom: ${({ borderBottom }) => (borderBottom ? '1px solid' : '')};
-`;
+import {
+  TitleRow,
+  ListRow,
+  VestingContractsSection,
+} from 'components/UserPage';
 
 const UserPage = observer(() => {
   let history = useHistory();
@@ -39,7 +31,6 @@ const UserPage = observer(() => {
   const userInfo = daoStore.getUser(userAddress);
   const networkName = configStore.getActiveChainName();
   const redeemsLeft = daoStore.getUserRedeemsLeft(userAddress);
-  const userVestingContracts = daoStore.getUserVestingContracts(userAddress);
 
   const getExportFileName = () => {
     return `history_${userAddress}-${moment().format('YYYY-MM-DD')}`;
@@ -149,26 +140,7 @@ const UserPage = observer(() => {
           </ListRow>
         );
       })}
-
-      {userVestingContracts.length && (
-        <TitleRow>
-          <h2>Vesting Contracts</h2>
-        </TitleRow>
-      )}
-      {userVestingContracts.map((contract, i, arr) => {
-        return (
-          <ListRow
-            key={'vestingContract' + i}
-            borderBottom={i < arr.length - 1}
-          >
-            <span>
-              {contract.address} / Cliff:{' '}
-              {moment.unix(Number(contract.cliff)).format('LL')}/ Value:{' '}
-              {contract.value} wei
-            </span>
-          </ListRow>
-        );
-      })}
+      <VestingContractsSection userAddress={userAddress} />
     </Box>
   );
 });
