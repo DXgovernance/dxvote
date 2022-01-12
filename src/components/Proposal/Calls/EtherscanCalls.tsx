@@ -42,7 +42,7 @@ export const EtherscanCalls = ({
         </p>
         {Object.keys(abi.args)
           .filter(item => item != '__length__')
-          .map(item => {
+          .map((item, i) => {
             const check = abi.function.inputs[item];
             const functionName = check
               ? abi.function.inputs[item].name.replace(/[^a-zA-Z0-9]/g, '')
@@ -51,7 +51,7 @@ export const EtherscanCalls = ({
               ? abi.function.inputs[item].type
               : 'failed';
             return (
-              <p>
+              <p key={i}>
                 <CallParams fontSize="14px" fontWeight={700}>
                   {functionName}:{' '}
                 </CallParams>
