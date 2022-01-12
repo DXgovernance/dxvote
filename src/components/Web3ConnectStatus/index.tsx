@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { toCamelCaseString } from '../../utils';
+import { toCamelCaseString, NETWORK_NAMES } from '../../utils';
 import WalletModal from 'components/WalletModal';
 import { getChains, injected, isChainIdSupported } from 'provider/connectors';
 import { useContext } from '../../contexts';
@@ -124,6 +124,7 @@ const Web3ConnectStatus = observer(props => {
 
   function getNetworkStatus() {
     console.debug('[GetNetworkStatus]', { chainId, error });
+    const activeChainName = configStore.getActiveChainName();
     // Wrong network
     if ((chainId && !isChainIdSupported(chainId)) || error) {
       return (
@@ -135,7 +136,11 @@ const Web3ConnectStatus = observer(props => {
       return (
         <div style={{ display: 'flex' }}>
           <ChainButton onClick={toggleNetworkModal}>
-            {toCamelCaseString(configStore.getActiveChainName())}
+            {toCamelCaseString(
+              activeChainName === NETWORK_NAMES[100]
+                ? 'gnosis'
+                : activeChainName
+            )}
           </ChainButton>
         </div>
       );

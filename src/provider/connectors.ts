@@ -7,10 +7,10 @@ import walletConnectIcon from 'assets/images/walletconnect.png';
 import { ChainConfig } from '../types/types';
 export const ACTIVE_NETWORK_NAMES =
   process.env.NODE_ENV === 'production'
-    ? ['mainnet', 'gnosis', 'arbitrum', 'rinkeby', 'arbitrumTestnet']
+    ? ['mainnet', 'xdai', 'arbitrum', 'rinkeby', 'arbitrumTestnet']
     : [
         'mainnet',
-        'gnosis',
+        'xdai',
         'arbitrum',
         'rinkeby',
         'arbitrumTestnet',
