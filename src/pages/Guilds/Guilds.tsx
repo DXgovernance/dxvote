@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
 import { Box } from '../../components/Guilds/common/Layout';
-
-import { Sidebar } from '../../components/Guilds/Sidebar/';
+import { Sidebar } from '../../components/Guilds/Sidebar';
 import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard, {
   SkeletonProposalCard,
@@ -67,7 +66,7 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <Filter />
-        <ProposalsList>
+        <ProposalsList data-testid="proposals-list">
           {loading && (
             <>
               <SkeletonProposalCard />
@@ -76,7 +75,9 @@ const GuildsPage: React.FC = () => {
           )}
           {!error &&
             !loading &&
-            proposalsIds.map(proposalId => <ProposalCard id={proposalId} />)}
+            proposalsIds.map(proposalId => (
+              <ProposalCard id={proposalId} href={'/'} />
+            ))}
         </ProposalsList>
         {error && <ErrorList>{error.message}</ErrorList>}
       </PageContent>

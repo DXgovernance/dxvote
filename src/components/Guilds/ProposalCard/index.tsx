@@ -1,14 +1,17 @@
 import styled from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import useEtherSWR from 'ether-swr';
+import { useParams } from 'react-router';
+import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
+
 import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
 import ProposalStatus from '../ProposalStatus';
-import { isDesktop } from 'react-device-detect';
 import { Heading } from '../common/Typography';
+import 'react-loading-skeleton/dist/skeleton.css';
+import UnstyledLink from '../common/UnstyledLink';
 
-import useEtherSWR from 'ether-swr';
 import useJsonRpcProvider from '../../../hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from '../../../contracts/ERC20Guild.json';
 
@@ -94,64 +97,68 @@ const ProposalStatusWrapper = styled.div`
 
 interface ProposalCardProps {
   id: any;
+  href: string;
 }
 
-const ProposalCard: React.FC<ProposalCardProps> = ({ id }) => {
+const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const provider = useJsonRpcProvider();
-  const { data } = useEtherSWR(
-    ['0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF', 'getProposal', id],
-    {
-      web3Provider: provider,
-      ABIs: new Map([
-        ['0x9cDC16b5f95229b856cBA5F38095fD8E00f8edeF', ERC20GuildContract.abi],
-      ]),
-    }
-  );
 
-  const { title, description } = data || { title: '', description: '' };
+  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
+
+  const { data } = useEtherSWR([guildId, 'getProposal', id], {
+    web3Provider: provider,
+    ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
+  });
+
+  const { title, contentHash } = data || {
+    title: '',
+    description: '',
+  };
 
   return (
-    <CardWrapper>
-      <CardHeader>
-        <IconDetailWrapper>
-          <Icon src={dxIcon} spaceRight />
-          <Detail>Swapr von 0x01Cf...2712</Detail>
-        </IconDetailWrapper>
-        <ProposalStatusWrapper>
-          <ProposalStatus
-            bordered={false}
-            status="Active"
-            detail="4 days left"
-          />
-        </ProposalStatusWrapper>
-      </CardHeader>
-      <CardContent>
-        <CardTitle size={2}>
-          <strong>{title}</strong>
-        </CardTitle>
-        <p>{description}</p>
-      </CardContent>
-      <CardFooter>
-        <BorderedIconDetailWrapper>
-          <Detail>150 ETH</Detail>
-          {isDesktop && (
-            <>
-              <Icon as="div" spaceLeft spaceRight>
-                <FiArrowRight />
-              </Icon>{' '}
-              <Detail>geronimo.eth</Detail>
-            </>
-          )}
-        </BorderedIconDetailWrapper>
-        <BorderedIconDetailWrapper>
-          <Detail>15.60%</Detail>
-          <Icon as="div" spaceLeft spaceRight>
-            <FiCircle />
-          </Icon>
-          <Detail>5.25%</Detail>
-        </BorderedIconDetailWrapper>
-      </CardFooter>
-    </CardWrapper>
+    <UnstyledLink to={href}>
+      <CardWrapper>
+        <CardHeader>
+          <IconDetailWrapper>
+            <Icon src={dxIcon} spaceRight />
+            <Detail>Swapr von 0x01Cf...2712</Detail>
+          </IconDetailWrapper>
+          <ProposalStatusWrapper>
+            <ProposalStatus
+              proposal={data}
+              bordered={false}
+              showRemainingTime
+            />
+          </ProposalStatusWrapper>
+        </CardHeader>
+        <CardContent>
+          <CardTitle size={2}>
+            <strong>{title}</strong>
+          </CardTitle>
+          <p>{contentHash}</p>
+        </CardContent>
+        <CardFooter>
+          <BorderedIconDetailWrapper>
+            <Detail>150 ETH</Detail>
+            {isDesktop && (
+              <>
+                <Icon as="div" spaceLeft spaceRight>
+                  <FiArrowRight />
+                </Icon>{' '}
+                <Detail>geronimo.eth</Detail>
+              </>
+            )}
+          </BorderedIconDetailWrapper>
+          <BorderedIconDetailWrapper>
+            <Detail>15.60%</Detail>
+            <Icon as="div" spaceLeft spaceRight>
+              <FiCircle />
+            </Icon>
+            <Detail>5.25%</Detail>
+          </BorderedIconDetailWrapper>
+        </CardFooter>
+      </CardWrapper>
+    </UnstyledLink>
   );
 };
 

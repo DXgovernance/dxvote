@@ -50,7 +50,7 @@ const GuildsApp = () => {
                     <GuildsPage />
                   </GuildsContextProvider>
                 </Route>
-                <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                <Route path="/:chain_name/:guild_id/proposals/:proposal_id">
                   <ProposalPage />
                 </Route>
               </Switch>

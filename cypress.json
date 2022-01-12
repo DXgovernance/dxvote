@@ -1,0 +1,17 @@
+{
+    "integrationFolder": "cypress/integration",
+    "experimentalStudio": true,
+    "viewportWidth": 1920,
+    "viewportHeight": 1080,
+    "waitForAnimations": true,
+    "chromeWebSecurity": false,
+    "watchForFileChanges": false,
+    "defaultCommandTimeout": 10000,
+    "videoUploadOnPasses": false,
+    "video": true,
+    "retries": {
+      "runMode": 2,
+      "openMode": 1
+    }
+  }
+  

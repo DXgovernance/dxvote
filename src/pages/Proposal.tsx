@@ -63,7 +63,6 @@ const ProposalPage = observer(() => {
 
   const proposalId = useLocation().pathname.split('/')[3];
   const proposal = daoStore.getProposal(proposalId);
-
   const [proposalDescription, setProposalDescription] = React.useState(
     '## Getting proposal description from IPFS...'
   );
@@ -108,7 +107,6 @@ const ProposalPage = observer(() => {
             source={proposalDescription}
             style={{
               padding: '20px 10px',
-              lineBreak: 'anywhere',
               whiteSpace: 'pre-line',
             }}
           />

@@ -67,9 +67,13 @@ export const RecommendedCalls = ({
       const component = getComponentToRender(param, callParameters[paramIndex]);
 
       decodedCallDetail = reactStringReplace(
-        decodedCallDetail,
-        `[PARAM_${paramIndex}]`,
-        () => component
+        reactStringReplace(
+          decodedCallDetail,
+          `[PARAM_${paramIndex}]`,
+          () => component
+        ),
+        'FROM',
+        () => proposal.scheme
       );
     });
   }
@@ -102,9 +106,9 @@ export const RecommendedCalls = ({
           <small>{encodedFunctionName}</small>
         </p>
         <strong>Params: </strong>
-        {Object.keys(callParameters).map(paramIndex => {
+        {Object.keys(callParameters).map((paramIndex, i) => {
           return (
-            <p>
+            <p key={i}>
               <small>{callParameters[paramIndex]} </small>
             </p>
           );
