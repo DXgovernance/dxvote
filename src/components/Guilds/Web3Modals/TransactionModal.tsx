@@ -40,23 +40,23 @@ export const ModalButton = styled(Button)`
 `;
 
 type ContainerTextProps = {
-    variant?: 'regular' | 'medium' | 'bold';
+  variant?: 'regular' | 'medium' | 'bold';
 };
 
 const variantStyles = (variant = 'regular') =>
 ({
-    regular: css`
+  regular: css`
       font-weight: 500;
       font-size: 12px;
       line-height: 16px;
     `,
-    medium: css`
+  medium: css`
       font-weight: 500;
       font-size: 14px;
       line-height: 20px;
     `,
 
-    bold: css`
+  bold: css`
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
@@ -72,7 +72,7 @@ export const ContainerText = styled(Flex) <ContainerTextProps>`
 `;
 
 ContainerText.defaultProps = {
-    variant: 'primary',
+  variant: 'primary',
 };
 
 export const Container = styled.div`
@@ -80,98 +80,112 @@ export const Container = styled.div`
 `;
 
 enum TransactionModalView {
-    Confirm,
-    Submit,
-    Reject,
+  Confirm,
+  Submit,
+  Reject,
 }
 
 type TransactionModalProps = Pick<ModalProps, 'isOpen'>
 
-export const TransactionModal = ({ isOpen }: TransactionModalProps) => {
-    // @TODO rework with SWR data integration
+const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen }) => {
+  // @TODO rework with SWR data integration
+  // @TODO integrate contract interaction
 
-    const [modalView, setModalView] = useState<TransactionModalView>(
-        TransactionModalView.Confirm
-    );
+  const [modalView, setModalView] = useState<TransactionModalView>(
+    TransactionModalView.Confirm
+  );
 
-    let header = null;
-    let children = null;
+  let header = null;
+  let children = null;
 
-
-    switch (modalView) {
-        case TransactionModalView.Confirm:
-            header = (
-                <Flex>
-                    <PendingCircle height="86px" width="86px" color="black" />
-                </Flex>
-            );
-            children = (
-                <Flex>
-                    <Container>
-                        <ContainerText variant="bold">
-                            Waiting For Confirmation
-                        </ContainerText>
-                        <ContainerText variant="medium">
-                            Stake 52.42DXD for 324 Days
-                        </ContainerText>
-                    </Container>
-                    <ContainerText variant="medium" color="grey">
-                        Confirm this Transaction in your Wallet
-                    </ContainerText>
-                </Flex>
-            );
-            break;
-        case TransactionModalView.Submit:
-            header = (
-                <Flex>
-                    <Circle>
-                        <AiOutlineArrowUp size={40} />
-                    </Circle>
-                </Flex>
-            );
-            children = (
-                <Flex>
-                    <ContainerText variant="bold">Transaction Submitted</ContainerText>
-                    <Container>
-                        <ContainerText variant="regular" color="grey">
-                            View on Block Explorer
-                        </ContainerText>
-                    </Container>
-                    <ModalButton variant="primary">Close</ModalButton>
-                </Flex>
-            );
-            break;
-        case TransactionModalView.Reject:
-            header = (
-                <Flex>
-                    <Circle>
-                        <FiX size={40} />
-                    </Circle>
-                </Flex>
-            );
-            children = (
-                <Flex>
-                    <ContainerText variant="bold">Transaction Rejected</ContainerText>
-                    <Container>
-                        <ContainerText variant="regular" color="grey">
-                            View on Block Explorer
-                        </ContainerText>
-                    </Container>
-                    <ModalButton variant="primary">Dismiss</ModalButton>
-                </Flex>
-            );
-            break;
+  const switchModalViews = () => {
+    if (modalView === TransactionModalView.Confirm) {
+      setModalView(TransactionModalView.Submit)
     }
 
-    return (
-        <Modal
-            isOpen={isOpen}
-            onDismiss={() => setModalView(TransactionModalView.Submit)}
-            children={children}
-            header={header}
-            maxWidth={300}
-            hideDivider
-        />
-    );
+    if (modalView === TransactionModalView.Submit) {
+      setModalView(TransactionModalView.Reject)
+    }
+
+  }
+
+
+  switch (modalView) {
+    case TransactionModalView.Confirm:
+      header = (
+        <Flex>
+          <PendingCircle height="86px" width="86px" color="black" />
+        </Flex>
+      );
+      children = (
+        <Flex>
+          <Container>
+            <ContainerText variant="bold">
+              Waiting For Confirmation
+            </ContainerText>
+            <ContainerText variant="medium">
+              Stake 52.42DXD for 324 Days
+            </ContainerText>
+          </Container>
+          <ContainerText variant="medium" color="grey">
+            Confirm this Transaction in your Wallet
+          </ContainerText>
+        </Flex>
+      );
+      break;
+    case TransactionModalView.Submit:
+      header = (
+        <Flex>
+          <Circle>
+            <AiOutlineArrowUp size={40} />
+          </Circle>
+        </Flex>
+      );
+      children = (
+        <Flex>
+          <ContainerText variant="bold">Transaction Submitted</ContainerText>
+          <Container>
+            <ContainerText variant="regular" color="grey">
+              View on Block Explorer
+            </ContainerText>
+          </Container>
+          <ModalButton variant="primary">Close</ModalButton>
+        </Flex>
+      );
+      break;
+    case TransactionModalView.Reject:
+      header = (
+        <Flex>
+          <Circle>
+            <FiX size={40} />
+          </Circle>
+        </Flex>
+      );
+      children = (
+        <Flex>
+          <ContainerText variant="bold">Transaction Rejected</ContainerText>
+          <Container>
+            <ContainerText variant="regular" color="grey">
+              View on Block Explorer
+            </ContainerText>
+          </Container>
+          <ModalButton variant="primary">Dismiss</ModalButton>
+        </Flex>
+      );
+      break;
+  }
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onDismiss={switchModalViews}
+      children={children}
+      header={header}
+      maxWidth={300}
+      hideDivider
+    />
+  );
 
 };
+
+export default TransactionModal

@@ -13,7 +13,7 @@ import { IconButton, Button } from '../common/Button';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
-import { TransactionModal } from '../Web3Modals/TransactionModal';
+import TransactionModal from '../Web3Modals/TransactionModal';
 
 const Icon = styled.img`
   height: 1.1rem;
