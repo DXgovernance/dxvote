@@ -1,14 +1,19 @@
 import styled from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
+import useEtherSWR from 'ether-swr';
+import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
+
 import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
 import ProposalStatus from '../ProposalStatus';
 import { Heading } from '../common/Typography';
-import { Proposal } from '../../../types/types.guilds';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UnstyledLink from '../common/UnstyledLink';
+
+import useJsonRpcProvider from '../../../hooks/Guilds/web3/useJsonRpcProvider';
+import ERC20GuildContract from '../../../contracts/ERC20Guild.json';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -91,11 +96,25 @@ const ProposalStatusWrapper = styled.div`
 `;
 
 interface ProposalCardProps {
-  proposal: Proposal;
+  id: any;
   href: string;
 }
 
-const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, href }) => {
+const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
+  const provider = useJsonRpcProvider();
+
+  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
+
+  const { data } = useEtherSWR([guildId, 'getProposal', id], {
+    web3Provider: provider,
+    ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
+  });
+
+  const { title, contentHash } = data || {
+    title: '',
+    description: '',
+  };
+
   return (
     <UnstyledLink to={href}>
       <CardWrapper>
@@ -106,7 +125,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, href }) => {
           </IconDetailWrapper>
           <ProposalStatusWrapper>
             <ProposalStatus
-              proposal={proposal}
+              proposal={data}
               bordered={false}
               showRemainingTime
             />
@@ -114,9 +133,9 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, href }) => {
         </CardHeader>
         <CardContent>
           <CardTitle size={2}>
-            <strong>{proposal?.title}</strong>
+            <strong>{title}</strong>
           </CardTitle>
-          <p>{proposal?.contentHash}</p>
+          <p>{contentHash}</p>
         </CardContent>
         <CardFooter>
           <BorderedIconDetailWrapper>
