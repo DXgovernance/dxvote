@@ -10,7 +10,6 @@ import ProposalCard, {
 } from '../../components/Guilds/ProposalCard';
 
 import useEtherSWR from 'ether-swr';
-import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from '../../contracts/ERC20Guild.json';
 
 const PageContainer = styled(Box)`
@@ -47,10 +46,7 @@ const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
 
-  const provider = useJsonRpcProvider();
-
   const GUILDS_CONFIG = {
-    web3Provider: provider,
     ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
   };
 
