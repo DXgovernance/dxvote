@@ -8,8 +8,10 @@ import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard, {
   SkeletonProposalCard,
 } from '../../components/Guilds/ProposalCard';
-import { useProposals } from 'hooks/Guilds/proposals/useProposals';
-import { useGuildConfig } from 'hooks/Guilds/useGuildConfig';
+
+import useEtherSWR from 'ether-swr';
+import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
+import ERC20GuildContract from '../../contracts/ERC20Guild.json';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -42,10 +44,22 @@ const ErrorList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const { chain_name: chainName } = useParams<{ chain_name?: string }>();
-  const { proposals, loading, error } = useProposals();
-  const { address } = useGuildConfig();
-  console.debug('Guilds Proposals: ', proposals, loading, error);
+  const { chain_name: chainName, guild_id: guildId } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
+
+  const provider = useJsonRpcProvider();
+
+  const GUILDS_CONFIG = {
+    web3Provider: provider,
+    ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
+  };
+
+  const {
+    data: proposalsIds,
+    error,
+    isValidating: loading,
+  } = useEtherSWR([guildId, 'getProposalsIds'], GUILDS_CONFIG);
+
   return (
     <PageContainer>
       <SidebarContent>
@@ -62,11 +76,10 @@ const GuildsPage: React.FC = () => {
           )}
           {!error &&
             !loading &&
-            proposals.map(proposal => (
+            proposalsIds.map(proposalId => (
               <ProposalCard
-                key={proposal.id}
-                proposal={proposal}
-                href={`/${chainName}/${address}/proposals/${proposal.id}`}
+                id={proposalId}
+                href={`/${chainName}/${guildId}/proposals/${proposalId}`}
               />
             ))}
         </ProposalsList>
