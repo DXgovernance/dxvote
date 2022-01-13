@@ -35,7 +35,7 @@ const Status = () => {
           scheme.address,
           scheme.votingMachine,
           proposalId,
-          proposal.to[0]
+          account
         );
         break;
       case 5:
