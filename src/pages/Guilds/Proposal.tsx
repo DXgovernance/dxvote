@@ -113,6 +113,7 @@ const ProposalPage: React.FC = () => {
   console.log(chainName);
   console.log(guildId);
   console.log(proposalId);
+  debugger;
   const {
     data: proposal,
     error,
@@ -133,7 +134,8 @@ const ProposalPage: React.FC = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  if (isValidating) return <div>loading...</div>;
+  if (!error && isValidating) return <div>loading...</div>;
+
   return (
     <PageContainer>
       <PageContent>

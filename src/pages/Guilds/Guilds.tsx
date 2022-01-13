@@ -74,7 +74,7 @@ const GuildsPage: React.FC = () => {
       <PageContent>
         <Filter />
         <ProposalsList data-testid="proposals-list">
-          {loading && (
+          {loading && !error && (
             <>
               <SkeletonProposalCard />
               <SkeletonProposalCard />
@@ -85,7 +85,7 @@ const GuildsPage: React.FC = () => {
             proposalsIds.map(proposalId => (
               <ProposalCard
                 id={proposalId}
-                href={`/${chainName}/${guildId}/proposals/${proposalId}`}
+                href={`/${chainName}/${guildId}/proposal/${proposalId}`}
               />
             ))}
         </ProposalsList>
