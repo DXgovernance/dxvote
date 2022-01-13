@@ -18,9 +18,6 @@ import useIPFSFile from '../../hooks/Guilds/ipfs/useIPFSFile';
 import { ProposalMetadata } from '../../types/types.guilds';
 import AddressButton from '../../components/Guilds/AddressButton';
 
-import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
-import ERC20GuildContract from '../../contracts/ERC20Guild.json';
-
 const PageContainer = styled(Box)`
   display: grid;
   grid-template-columns: 1fr;
@@ -59,7 +56,7 @@ const PageTitle = styled.h3`
   margin: 1rem 0;
 `;
 
-const ProposalDescription = styled.p`
+const ProposalDescription = styled.div`
   margin: 1.5rem 0;
   line-height: 1.5;
   font-size: 16px;
@@ -86,6 +83,42 @@ const HeaderTopRow = styled(Box)`
   margin-bottom: 1rem;
 `;
 
+//TODO: separate as a different SubComponent
+const Description = () => {
+  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
+    chain_name: string;
+    guild_id?: string;
+    proposal_id?: string;
+  }>();
+  const {
+    data: proposal,
+    error,
+    isValidating,
+  } = useEtherSWR([guildId, 'getProposal', proposalId]);
+
+  const decodedContentHash = useMemo(() => {
+    try {
+      return contentHash.decode(proposal.contentHash);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }, [proposal]);
+  const metadata = useIPFSFile<ProposalMetadata>(decodedContentHash);
+
+  return (
+    <>
+      {!isValidating && !error && metadata?.description && (
+        <ProposalDescription>
+          <Markdown>{metadata?.description}</Markdown>
+        </ProposalDescription>
+      )}
+      {error && !isValidating && <div>Errror IFPS</div>}
+      {!error && isValidating && <div>loading</div>}
+    </>
+  );
+};
+
 const ProposalPage: React.FC = () => {
   const {
     chain_name: chainName,
@@ -97,39 +130,11 @@ const ProposalPage: React.FC = () => {
     proposal_id?: string;
   }>();
 
-  const provider = useJsonRpcProvider();
-  const CONFIG = {
-    web3Provider: provider,
-    ABIs: new Map([
-      [
-        // If we need to generate this for each guildId we may need this wrapping after each route
-        '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
-        ERC20GuildContract.abi,
-      ],
-    ]),
-    refreshInterval: 30000,
-  };
-
-  console.log(chainName);
-  console.log(guildId);
-  console.log(proposalId);
-  debugger;
   const {
     data: proposal,
     error,
     isValidating,
-  } = useEtherSWR([guildId, 'getProposal', proposalId], CONFIG);
-
-  const decodedContentHash = useMemo(() => {
-    if (!proposal) return null;
-
-    try {
-      return contentHash.decode(proposal.contentHash);
-    } catch (e) {
-      return null;
-    }
-  }, [proposal]);
-  const metadata = useIPFSFile<ProposalMetadata>(decodedContentHash);
+  } = useEtherSWR([guildId, 'getProposal', proposalId]);
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -156,13 +161,7 @@ const ProposalPage: React.FC = () => {
 
         <AddressButton address={proposal?.creator} />
 
-        <ProposalDescription>
-          {metadata?.description ? (
-            <Markdown>{metadata.description}</Markdown>
-          ) : (
-            <Skeleton count={10} />
-          )}
-        </ProposalDescription>
+        <Description />
 
         <ProposalActionsWrapper>
           <ProposalActionsCard />

@@ -10,8 +10,6 @@ import ProposalCard, {
 } from '../../components/Guilds/ProposalCard';
 
 import useEtherSWR from 'ether-swr';
-import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
-import ERC20GuildContract from '../../contracts/ERC20Guild.json';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -47,24 +45,11 @@ const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
 
-  const provider = useJsonRpcProvider();
-  const CONFIG = {
-    web3Provider: provider,
-    ABIs: new Map([
-      [
-        // If we need to generate this for each guildId we may need this wrapping after each route
-        '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
-        ERC20GuildContract.abi,
-      ],
-    ]),
-    refreshInterval: 30000,
-  };
-
   const {
     data: proposalsIds,
     error,
     isValidating: loading,
-  } = useEtherSWR([guildId, 'getProposalsIds'], CONFIG);
+  } = useEtherSWR([guildId, 'getProposalsIds']);
 
   return (
     <PageContainer>
