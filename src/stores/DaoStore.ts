@@ -1058,6 +1058,13 @@ export default class DaoStore {
         );
       recommendedCalls[i]['value'] = callAllowance.value;
       recommendedCalls[i]['fromTime'] = callAllowance.fromTime;
+
+      if (
+        recommendedCalls[i].to == networkContracts.permissionRegistry &&
+        recommendedCalls[i].functionName ==
+          'setPermission(address,address,bytes4,uint256,bool)'
+      )
+        recommendedCalls[i]['fromTime'] = 1;
     }
 
     return { assetLimits, recommendedCalls };
