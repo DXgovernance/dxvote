@@ -59,7 +59,7 @@ const GuildsApp = () => {
                         web3Provider: provider,
                         ABIs: new Map([
                           [
-                            // If we need to generate this for each guildId we may need this wrapping after each route
+                            // we can move this probably to a hook to reduce repeat ourselves in each route.
                             '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
                             ERC20GuildContract.abi,
                           ],
@@ -77,7 +77,6 @@ const GuildsApp = () => {
                       web3Provider: provider,
                       ABIs: new Map([
                         [
-                          // If we need to generate this for each guildId we may need this wrapping after each route
                           '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
                           ERC20GuildContract.abi,
                         ],
