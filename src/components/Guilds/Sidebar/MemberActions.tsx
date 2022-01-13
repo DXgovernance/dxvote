@@ -13,7 +13,7 @@ import { IconButton, Button } from '../common/Button';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
-import TransactionModal from '../Web3Modals/TransactionModal';
+import { useTransactionModal } from '../Web3Modals/TransactionModal';
 
 const Icon = styled.img`
   height: 1.1rem;
@@ -45,17 +45,12 @@ const LockButton = styled(Button)`
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setModalOpen(!modalOpen);
-  };
+  const { toggleModal } = useTransactionModal()
 
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
   return (
     <DropdownMenu ref={memberMenuRef}>
-      <TransactionModal isOpen={modalOpen} onCancel={toggleModal} />
       <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
         <Icon src={dxIcon} alt={'Icon'} />
         <span>geronimo.eth</span>
@@ -77,7 +72,7 @@ export const MemberActions = () => {
           <ContentItem>
             Unlocked in <span>542 days</span>
           </ContentItem>
-          <LockButton onClick={() => setModalOpen(true)}> Lock DXD</LockButton>
+          <LockButton onClick={() => toggleModal()}> Lock DXD</LockButton>
         </MemberContainer>
       </DropdownContent>
     </DropdownMenu>

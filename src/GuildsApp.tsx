@@ -16,6 +16,7 @@ import theme from './theme/light.json';
 import { GuildsContextProvider } from 'contexts/Guilds';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
+import { TransactionModalProvider } from 'components/Guilds/Web3Modals/TransactionModal';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -31,30 +32,32 @@ const GuildsApp = () => {
       <HashRouter basename="/guilds">
         <GlobalErrorBoundary>
           <WalletWeb3Manager>
-            <GlobalStyle />
-            <Header />
-            <Container>
-              <Switch>
-                <Redirect
-                  exact
-                  from="/"
-                  to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                />
-                <Redirect
-                  exact
-                  from="/:chain_name"
-                  to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                />
-                <Route exact path="/:chain_name/:guild_id">
-                  <GuildsContextProvider>
-                    <GuildsPage />
-                  </GuildsContextProvider>
-                </Route>
-                <Route path="/:chain_name/:guild_id/proposals/:proposal_id">
-                  <ProposalPage />
-                </Route>
-              </Switch>
-            </Container>
+            <TransactionModalProvider>
+              <GlobalStyle />
+              <Header />
+              <Container>
+                <Switch>
+                  <Redirect
+                    exact
+                    from="/"
+                    to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                  />
+                  <Redirect
+                    exact
+                    from="/:chain_name"
+                    to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                  />
+                  <Route exact path="/:chain_name/:guild_id">
+                    <GuildsContextProvider>
+                      <GuildsPage />
+                    </GuildsContextProvider>
+                  </Route>
+                  <Route path="/:chain_name/:guild_id/proposals/:proposal_id">
+                    <ProposalPage />
+                  </Route>
+                </Switch>
+              </Container>
+            </TransactionModalProvider>
           </WalletWeb3Manager>
         </GlobalErrorBoundary>
       </HashRouter>
