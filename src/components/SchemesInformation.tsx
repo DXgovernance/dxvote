@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { bnum, encodePermission, isWalletScheme } from '../utils';
+import { bnum, encodePermission, isWalletScheme, ZERO_ADDRESS } from '../utils';
 import moment from 'moment';
 import { useContext } from '../contexts';
 import {
@@ -60,6 +60,11 @@ const SchemesInformation = observer(() => {
                 </DataCell>
                 <DataCell>
                   <small>Params Hash: {scheme.paramsHash}</small>
+                  <br />
+                  <small>
+                    Do Avatar Generic Calls:{' '}
+                    {scheme.controllerAddress !== ZERO_ADDRESS ? 'YES' : 'NO'}
+                  </small>
                   <br />
                   <small>
                     Queued Proposal Period:{' '}
