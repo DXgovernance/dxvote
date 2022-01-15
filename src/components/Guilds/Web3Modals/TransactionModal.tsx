@@ -1,4 +1,10 @@
-import { useState, useEffect, useContext, createContext, ReactNode } from 'react';
+import {
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  ReactNode,
+} from 'react';
 import styled, { css } from 'styled-components';
 import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from '../common/Modal';
@@ -23,26 +29,26 @@ type ContainerTextProps = {
 };
 
 const variantStyles = (variant = 'regular') =>
-({
-  regular: css`
+  ({
+    regular: css`
       font-weight: 500;
       font-size: 12px;
       line-height: 16px;
     `,
-  medium: css`
+    medium: css`
       font-weight: 500;
       font-size: 14px;
       line-height: 20px;
     `,
 
-  bold: css`
+    bold: css`
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
     `,
-}[variant]);
+  }[variant]);
 
-export const ContainerText = styled(Flex) <ContainerTextProps>`
+export const ContainerText = styled(Flex)<ContainerTextProps>`
   font-family: Inter;
   margin: 4px;
   font-style: normal;
@@ -176,38 +182,42 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       onDismiss={switchModalViews}
       children={children}
       header={header}
-      hideDivider
+      hideHeader
+      showSecondaryHeader
       maxWidth={300}
     />
   );
 };
 
-
-
 const TransactionModalContext = createContext(null);
 
 interface TransactionModalProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
-export const TransactionModalProvider = ({ children }: TransactionModalProviderProps) => {
+export const TransactionModalProvider = ({
+  children,
+}: TransactionModalProviderProps) => {
+  //@TODO create a way to intake transaction data
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
-  const toggleModal = () => setIsOpen(!isOpen)
+  const toggleModal = () => setIsOpen(!isOpen);
 
   return (
-    <TransactionModalContext.Provider value={{ isOpen, toggleModal }} >
+    <TransactionModalContext.Provider value={{ isOpen, toggleModal }}>
       {children}
       <TransactionModal isOpen={isOpen} onCancel={toggleModal} />
-    </TransactionModalContext.Provider >
-  )
-}
+    </TransactionModalContext.Provider>
+  );
+};
 
 export const useTransactionModal = () => {
-  const context = useContext(TransactionModalContext)
+  const context = useContext(TransactionModalContext);
   if (context === undefined) {
-    throw new Error('useTransactionModal must be used within a TransactionModalProvider')
+    throw new Error(
+      'useTransactionModal must be used within a TransactionModalProvider'
+    );
   }
 
-  return context
-}
+  return context;
+};

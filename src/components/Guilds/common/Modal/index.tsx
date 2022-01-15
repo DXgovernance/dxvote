@@ -58,11 +58,15 @@ export const StyledModal = styled.div`
 
 export const Header = styled.div`
   display: flex;
-  justify-content: center;
   padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   position: relative;
   align-items: center;
-  display: flex;
+`;
+
+export const SecondaryHeader = styled(Header)`
+  justify-content: center;
+  border-bottom: none;
 `;
 
 export const HeaderText = styled(Heading)`
@@ -72,8 +76,8 @@ export const HeaderText = styled(Heading)`
 const CloseIcon = styled(FiX)`
   position: absolute;
   color: ${({ theme }) => theme.colors.text};
-  right: 20px;
-  top: 25px;
+  right: 1.5rem;
+  top: 50%;
   transform: translateY(-50%);
   height: 1.5rem;
   width: 1.5rem;
@@ -83,6 +87,10 @@ const CloseIcon = styled(FiX)`
     cursor: pointer;
     opacity: 0.6;
   }
+`;
+
+const SecondaryCloseIcon = styled(CloseIcon)`
+  top: 25px;
 `;
 
 export const Content = styled.div`
@@ -109,20 +117,12 @@ export interface ModalProps {
   onConfirm?: () => void;
   onCancel?: () => void;
   maxWidth?: number;
-  hideDivider?: boolean;
+  showSecondaryHeader?: boolean;
 }
 
 export const ModalButton = styled(Button)`
   margin: 8px;
   flex: 1;
-`;
-
-export const Divider = styled.hr`
-  background: ${({ theme }) => theme.colors.text};
-  width: 100%;
-  position: fixed;
-  z-index: 800;
-  top: 64px;
 `;
 
 export const Modal: React.FC<ModalProps> = ({
@@ -136,7 +136,7 @@ export const Modal: React.FC<ModalProps> = ({
   hideHeader,
   children,
   maxWidth,
-  hideDivider,
+  showSecondaryHeader,
 }) => {
   const modal = (
     <div>
@@ -144,19 +144,23 @@ export const Modal: React.FC<ModalProps> = ({
       {isMobile && (
         <>
           <FiArrowLeft />
-          <Divider />
           <CloseIcon onClick={onDismiss} />
         </>
       )}
       <Wrapper maxWidth={maxWidth}>
-        {!isMobile && <CloseIcon onClick={onDismiss} />}
+        {!isMobile && hideHeader && <SecondaryCloseIcon onClick={onDismiss} />}
         <StyledModal>
+          {showSecondaryHeader && (
+            <SecondaryHeader>
+              <HeaderText>{header}</HeaderText>
+            </SecondaryHeader>
+          )}
           {!hideHeader && (
             <Header>
               <HeaderText>{header}</HeaderText>
+              <CloseIcon onClick={onDismiss} />
             </Header>
           )}
-          {!hideDivider && <Divider />}
           <Content>{children}</Content>
           {(onCancel || onConfirm) && (
             <Footer>
