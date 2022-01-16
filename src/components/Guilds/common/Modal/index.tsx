@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ReactDOM from 'react-dom';
 import { isMobile } from 'react-device-detect';
 
@@ -92,10 +92,14 @@ export const Content = styled.div`
   overflow-x: hidden;
   overflow-y: hidden;
 
-  @media only screen and (max-width: 768px) {
-    position: relative;
-    top: 25%;
-  }
+  ${props =>
+    props.modal === true &&
+    css`
+      @media only screen and (max-width: 768px) {
+        position: relative;
+        top: 25%;
+      }
+    `}
 `;
 
 export const Footer = styled.div`
@@ -103,10 +107,14 @@ export const Footer = styled.div`
   justify-content: space-around;
   padding: 0 1.5rem 1.5rem 1.5rem;
 
-  @media only screen and (max-width: 768px) {
-    position: relative;
-    top: 60%;
-  }
+  ${props =>
+    props.modal === true &&
+    css`
+      @media only screen and (max-width: 768px) {
+        position: relative;
+        top: 60%;
+      }
+    `}
 `;
 
 export interface ModalProps {
@@ -168,9 +176,9 @@ export const Modal: React.FC<ModalProps> = ({
               {!isMobile && <SecondaryCloseIcon onClick={onDismiss} />}
             </SecondaryHeader>
           )}
-          <Content>{children}</Content>
+          <Content modal={cross ? true : false}>{children}</Content>
           {(onCancel || onConfirm) && (
-            <Footer>
+            <Footer modal={cross ? true : false}>
               {cancelText && (
                 <ModalButton
                   variant="primary"
