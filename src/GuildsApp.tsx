@@ -5,6 +5,8 @@ import {
   useHistory,
   Redirect,
 } from 'react-router-dom';
+import { EtherSWRConfig } from 'ether-swr';
+
 import { ThemeProvider } from 'styled-components';
 import { Container } from './components/Guilds/common/Layout';
 
@@ -18,10 +20,15 @@ import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
 import { TransactionModalProvider } from 'components/Guilds/Web3Modals/TransactionModal';
 
+import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
+import ERC20GuildContract from 'contracts/ERC20Guild.json';
+
 const GuildsApp = () => {
   const history = useHistory();
 
   const isTestingEnv = !window.location?.hostname?.startsWith('dxvote.eth');
+  const provider = useJsonRpcProvider();
+
   if (!isTestingEnv) {
     history.push('/');
     return null;
@@ -49,19 +56,47 @@ const GuildsApp = () => {
                   />
                   <Route exact path="/:chain_name/:guild_id">
                     <GuildsContextProvider>
-                      <GuildsPage />
+                      <EtherSWRConfig
+                        value={{
+                          web3Provider: provider,
+                          ABIs: new Map([
+                            [
+                              // we can move this probably to a hook to reduce repeat ourselves in each route.
+                              '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+                              ERC20GuildContract.abi,
+                            ],
+                          ]),
+                          refreshInterval: 30000,
+                        }}
+                      >
+                        <GuildsPage />
+                      </EtherSWRConfig>
                     </GuildsContextProvider>
                   </Route>
-                  <Route path="/:chain_name/:guild_id/proposals/:proposal_id">
-                    <ProposalPage />
+                  <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                    <EtherSWRConfig
+                      value={{
+                        web3Provider: provider,
+                        ABIs: new Map([
+                          [
+                            '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+                            ERC20GuildContract.abi,
+                          ],
+                        ]),
+                        refreshInterval: 0,
+                      }}
+                    >
+                      {' '}
+                      <ProposalPage />
+                    </EtherSWRConfig>
                   </Route>
                 </Switch>
               </Container>
             </TransactionModalProvider>
-          </WalletWeb3Manager>
-        </GlobalErrorBoundary>
-      </HashRouter>
-    </ThemeProvider>
+          </WalletWeb3Manager >
+        </GlobalErrorBoundary >
+      </HashRouter >
+    </ThemeProvider >
   );
 };
 

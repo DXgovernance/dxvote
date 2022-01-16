@@ -10,8 +10,6 @@ import ProposalCard, {
 } from '../../components/Guilds/ProposalCard';
 
 import useEtherSWR from 'ether-swr';
-import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
-import ERC20GuildContract from '../../contracts/ERC20Guild.json';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -47,18 +45,11 @@ const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
 
-  const provider = useJsonRpcProvider();
-
-  const GUILDS_CONFIG = {
-    web3Provider: provider,
-    ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
-  };
-
   const {
     data: proposalsIds,
     error,
     isValidating: loading,
-  } = useEtherSWR([guildId, 'getProposalsIds'], GUILDS_CONFIG);
+  } = useEtherSWR([guildId, 'getProposalsIds']);
 
   return (
     <PageContainer>
@@ -68,7 +59,7 @@ const GuildsPage: React.FC = () => {
       <PageContent>
         <Filter />
         <ProposalsList data-testid="proposals-list">
-          {loading && (
+          {loading && !error && (
             <>
               <SkeletonProposalCard />
               <SkeletonProposalCard />
@@ -79,7 +70,7 @@ const GuildsPage: React.FC = () => {
             proposalsIds.map(proposalId => (
               <ProposalCard
                 id={proposalId}
-                href={`/${chainName}/${guildId}/proposals/${proposalId}`}
+                href={`/${chainName}/${guildId}/proposal/${proposalId}`}
               />
             ))}
         </ProposalsList>

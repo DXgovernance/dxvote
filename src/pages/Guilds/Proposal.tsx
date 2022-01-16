@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
+import useEtherSWR from 'ether-swr';
 import { useParams } from 'react-router-dom';
 import contentHash from 'content-hash';
 import Markdown from 'markdown-to-jsx';
@@ -12,7 +13,6 @@ import ProposalInfoCard from '../../components/Guilds/ProposalSidebar/ProposalIn
 import ProposalVoteCard from '../../components/Guilds/ProposalSidebar/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
 import ProposalActionsCard from '../../components/Guilds/ProposalActionsCard';
-import { useProposal } from '../../hooks/Guilds/proposals/useProposal';
 import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
 import useIPFSFile from '../../hooks/Guilds/ipfs/useIPFSFile';
 import { ProposalMetadata } from '../../types/types.guilds';
@@ -56,7 +56,7 @@ const PageTitle = styled.h3`
   margin: 1rem 0;
 `;
 
-const ProposalDescription = styled.p`
+const ProposalDescription = styled.div`
   margin: 1.5rem 0;
   line-height: 1.5;
   font-size: 16px;
@@ -83,6 +83,42 @@ const HeaderTopRow = styled(Box)`
   margin-bottom: 1rem;
 `;
 
+//TODO: separate as a different SubComponent
+const Description = () => {
+  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
+    chain_name: string;
+    guild_id?: string;
+    proposal_id?: string;
+  }>();
+  const {
+    data: proposal,
+    error,
+    isValidating,
+  } = useEtherSWR([guildId, 'getProposal', proposalId]);
+
+  const decodedContentHash = useMemo(() => {
+    try {
+      return contentHash.decode(proposal.contentHash);
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }, [proposal]);
+  const metadata = useIPFSFile<ProposalMetadata>(decodedContentHash);
+
+  return (
+    <>
+      {!isValidating && !error && metadata?.description && (
+        <ProposalDescription>
+          <Markdown>{metadata?.description}</Markdown>
+        </ProposalDescription>
+      )}
+      {error && !isValidating && <div>Errror IFPS</div>}
+      {!error && isValidating && <div>loading</div>}
+    </>
+  );
+};
+
 const ProposalPage: React.FC = () => {
   const {
     chain_name: chainName,
@@ -93,22 +129,17 @@ const ProposalPage: React.FC = () => {
     guild_id?: string;
     proposal_id?: string;
   }>();
-  const { proposal, error } = useProposal(guildId, proposalId);
 
-  const decodedContentHash = useMemo(() => {
-    if (!proposal) return null;
-
-    try {
-      return contentHash.decode(proposal.contentHash);
-    } catch (e) {
-      return null;
-    }
-  }, [proposal]);
-  const metadata = useIPFSFile<ProposalMetadata>(decodedContentHash);
+  const {
+    data: proposal,
+    error,
+    isValidating,
+  } = useEtherSWR([guildId, 'getProposal', proposalId]);
 
   if (error) {
     return <div>Error: {error.message}</div>;
   }
+  if (!error && isValidating) return <div>loading...</div>;
 
   return (
     <PageContainer>
@@ -130,13 +161,7 @@ const ProposalPage: React.FC = () => {
 
         <AddressButton address={proposal?.creator} />
 
-        <ProposalDescription>
-          {metadata?.description ? (
-            <Markdown>{metadata.description}</Markdown>
-          ) : (
-            <Skeleton count={10} />
-          )}
-        </ProposalDescription>
+        <Description />
 
         <ProposalActionsWrapper>
           <ProposalActionsCard />
