@@ -93,10 +93,10 @@ const GuildsApp = () => {
                 </Switch>
               </Container>
             </TransactionModalProvider>
-          </WalletWeb3Manager >
-        </GlobalErrorBoundary >
-      </HashRouter >
-    </ThemeProvider >
+          </WalletWeb3Manager>
+        </GlobalErrorBoundary>
+      </HashRouter>
+    </ThemeProvider>
   );
 };
 

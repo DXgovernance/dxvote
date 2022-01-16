@@ -181,7 +181,7 @@ export const Modal: React.FC<ModalProps> = ({
             <Footer modal={cross ? true : false}>
               {cancelText && (
                 <ModalButton
-                  variant="primary"
+                  variant={cross ? 'secondary' : 'primary'}
                   onClick={() => {
                     onCancel();
                     onDismiss();
