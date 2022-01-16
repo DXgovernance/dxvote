@@ -88,6 +88,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
 
   let header = null;
   let children = null;
+  let footerText = null;
 
   const switchModalViews = () => {
     // purely for review
@@ -146,11 +147,9 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
               View on Block Explorer
             </ContainerText>
           </Container>
-          <ModalButton variant="primary" onClick={switchModalViews}>
-            Close
-          </ModalButton>
         </Flex>
       );
+      footerText = 'Close';
       break;
     case TransactionModalView.Reject:
       header = (
@@ -168,11 +167,9 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
               View on Block Explorer
             </ContainerText>
           </Container>
-          <ModalButton variant="primary" onClick={onCancel}>
-            Dismiss
-          </ModalButton>
         </Flex>
       );
+      footerText = 'Dismiss';
       break;
   }
 
@@ -181,10 +178,13 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       isOpen={isOpen}
       onDismiss={switchModalViews}
       children={children}
-      header={header}
+      contentHeader={header}
+      cross
       hideHeader
       showSecondaryHeader
+      onCancel={switchModalViews}
       maxWidth={300}
+      cancelText={footerText}
     />
   );
 };

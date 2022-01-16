@@ -16,10 +16,6 @@ export const Wrapper = styled.div`
   min-width: 400px;
   max-width: ${({ maxWidth }) => maxWidth}px;
   outline: 0;
-
-  @media only screen and (max-width: 768px) {
-    height: 100vh;
-  }
 `;
 
 export const Backdrop = styled.div`
@@ -30,12 +26,6 @@ export const Backdrop = styled.div`
   left: 0;
   background: rgba(0, 6, 41, 0.5);
   z-index: 500;
-
-  @media only screen and (max-width: 768px) {
-    width: 100%;
-    height: 100vh;
-    background: ${({ theme }) => theme.colors.background};
-  }
 `;
 
 export const StyledModal = styled.div`
@@ -49,10 +39,8 @@ export const StyledModal = styled.div`
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
 
   @media only screen and (max-width: 768px) {
-    border: none;
-    box-shadow: none;
-    top: 50%;
-    transform: translateY(-50%);
+    padding: 0px 20px;
+    height: 100vh;
   }
 `;
 
@@ -67,6 +55,11 @@ export const Header = styled.div`
 export const SecondaryHeader = styled(Header)`
   justify-content: center;
   border-bottom: none;
+
+  @media only screen and (max-width: 768px) {
+    position: relative;
+    top: 25%;
+  }
 `;
 
 export const HeaderText = styled(Heading)`
@@ -98,19 +91,30 @@ export const Content = styled.div`
   max-height: 80vh;
   overflow-x: hidden;
   overflow-y: hidden;
+
+  @media only screen and (max-width: 768px) {
+    position: relative;
+    top: 25%;
+  }
 `;
 
 export const Footer = styled.div`
   display: flex;
   justify-content: space-around;
   padding: 0 1.5rem 1.5rem 1.5rem;
+
+  @media only screen and (max-width: 768px) {
+    position: relative;
+    top: 60%;
+  }
 `;
 
 export interface ModalProps {
   isOpen: boolean;
   onDismiss: () => void;
-  header: JSX.Element | string;
   children: JSX.Element;
+  header?: JSX.Element | string;
+  contentHeader?: JSX.Element | string;
   hideHeader?: boolean;
   confirmText?: string;
   cancelText?: string;
@@ -118,6 +122,7 @@ export interface ModalProps {
   onCancel?: () => void;
   maxWidth?: number;
   showSecondaryHeader?: boolean;
+  cross?: boolean;
 }
 
 export const ModalButton = styled(Button)`
@@ -129,6 +134,7 @@ export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onDismiss,
   header,
+  contentHeader,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   onConfirm,
@@ -137,34 +143,35 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   maxWidth,
   showSecondaryHeader,
+  cross,
 }) => {
   const modal = (
     <div>
       <Backdrop onClick={onDismiss} />
-      {isMobile && (
-        <>
-          <FiArrowLeft />
-          <CloseIcon onClick={onDismiss} />
-        </>
-      )}
       <Wrapper maxWidth={maxWidth}>
-        {!isMobile && hideHeader && <SecondaryCloseIcon onClick={onDismiss} />}
         <StyledModal>
-          {showSecondaryHeader && (
-            <SecondaryHeader>
+          {isMobile && (
+            <Header onClick={onDismiss}>
+              {cross ? <CloseIcon /> : <FiArrowLeft />}
               <HeaderText>{header}</HeaderText>
-            </SecondaryHeader>
-          )}
-          {!hideHeader && (
+            </Header>
+          )}{' '}
+          {!hideHeader && !isMobile && (
             <Header>
               <HeaderText>{header}</HeaderText>
               <CloseIcon onClick={onDismiss} />
             </Header>
           )}
+          {showSecondaryHeader && (
+            <SecondaryHeader>
+              <HeaderText>{contentHeader}</HeaderText>
+              {!isMobile && <SecondaryCloseIcon onClick={onDismiss} />}
+            </SecondaryHeader>
+          )}
           <Content>{children}</Content>
           {(onCancel || onConfirm) && (
             <Footer>
-              {onCancel && (
+              {cancelText && (
                 <ModalButton
                   variant="primary"
                   onClick={() => {
