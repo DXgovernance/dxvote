@@ -1,5 +1,9 @@
+import moment, { unix } from 'moment';
+import React, { useMemo } from 'react';
 import { FiCheck, FiInbox } from 'react-icons/fi';
+import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
+import { useProposal } from '../../../../hooks/Guilds/proposals/useProposal';
 import { Box } from '../../common/Layout';
 import { Heading } from '../../common/Typography';
 import SidebarCard from '../../SidebarCard';
@@ -34,7 +38,40 @@ const UserInfoDetail = styled(Box)`
   font-weight: 600;
 `;
 
-const ProposalInfoCard = () => {
+interface ProposalInfoCardProps {
+  proposalId: string;
+  guildId: string;
+}
+
+const ProposalInfoCard: React.FC<ProposalInfoCardProps> = ({
+  guildId,
+  proposalId,
+}) => {
+  const { proposal, error } = useProposal(guildId, proposalId);
+
+  const startTime = useMemo(() => {
+    if (!proposal) return null;
+    return unix(proposal.startTime.toNumber());
+  }, [proposal]);
+
+  const endTime = useMemo(() => {
+    if (!proposal) return null;
+    return unix(proposal.endTime.toNumber());
+  }, [proposal]);
+
+  const endDetail = useMemo(() => {
+    if (!proposal || !endTime) return null;
+
+    const currentTime = moment();
+    if (endTime.isBefore(currentTime)) {
+      return `Ended ${endTime.fromNow()}`;
+    } else {
+      return `Ends ${endTime.toNow()}`;
+    }
+  }, [endTime, proposal]);
+
+  if (error) return <div>Error</div>;
+
   return (
     <SidebarCard
       header={
@@ -44,18 +81,24 @@ const ProposalInfoCard = () => {
       }
     >
       <SidebarCardContent>
-        <InfoItem
-          icon={<FiCheck />}
-          title="Proposal created"
-          description="March 31rd, 2021 - 2:32 am"
-          link="/"
-        />
-        <InfoItemLinkerLine />
-        <InfoItem
-          icon={<FiInbox />}
-          title="Ends in 43 days"
-          description="March 31rd, 2021 - 2:32 am"
-        />
+        {!proposal ? (
+          <Skeleton />
+        ) : (
+          <>
+            <InfoItem
+              icon={<FiCheck />}
+              title="Proposal created"
+              description={startTime.format('MMM Do, YYYY - h:mm a')}
+              link="/"
+            />
+            <InfoItemLinkerLine />
+            <InfoItem
+              icon={<FiInbox />}
+              title={endDetail}
+              description={endTime.format('MMM Do, YYYY - h:mm a')}
+            />
+          </>
+        )}
 
         <Separator />
 
