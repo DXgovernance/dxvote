@@ -39,10 +39,10 @@ const GuildsApp = () => {
       <HashRouter basename="/guilds">
         <GlobalErrorBoundary>
           <WalletWeb3Manager>
-            <TransactionModalProvider>
-              <GlobalStyle />
-              <Header />
-              <Container>
+            <GlobalStyle />
+            <Header />
+            <Container>
+              <TransactionModalProvider>
                 <Switch>
                   <Redirect
                     exact
@@ -91,8 +91,8 @@ const GuildsApp = () => {
                     </EtherSWRConfig>
                   </Route>
                 </Switch>
-              </Container>
-            </TransactionModalProvider>
+              </TransactionModalProvider>
+            </Container>
           </WalletWeb3Manager>
         </GlobalErrorBoundary>
       </HashRouter>

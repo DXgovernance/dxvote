@@ -113,7 +113,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     ]);
 
     setLoading(false);
-  }, [daoStore]);
+  }, []);
 
   return {
     proposals: filteredProposals,
