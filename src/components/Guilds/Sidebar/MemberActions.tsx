@@ -13,6 +13,7 @@ import { IconButton, Button } from '../common/Button';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
+import { useTransactionModal } from '../Web3Modals/TransactionModal';
 
 const Icon = styled.img`
   height: 1.1rem;
@@ -44,6 +45,8 @@ const LockButton = styled(Button)`
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const { toggleModal } = useTransactionModal();
+
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
   return (
@@ -69,7 +72,7 @@ export const MemberActions = () => {
           <ContentItem>
             Unlocked in <span>542 days</span>
           </ContentItem>
-          <LockButton onClick={() => alert('lock dxd')}> Lock DXD</LockButton>
+          <LockButton onClick={() => toggleModal()}> Lock DXD</LockButton>
         </MemberContainer>
       </DropdownContent>
     </DropdownMenu>
