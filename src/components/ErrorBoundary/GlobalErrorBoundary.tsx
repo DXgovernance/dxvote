@@ -35,12 +35,6 @@ class GlobalErrorBoundary extends React.Component<
   }
 
   private promiseRejectionHandler = (event: PromiseRejectionEvent) => {
-    console.log(
-      'GlobalErrorBoundary.promiseRejectionHandler()',
-      event,
-      new Error(event?.reason)
-    );
-
     const errorMessage = GlobalErrorBoundary.getErrorMessage(
       event?.reason?.name
     );
