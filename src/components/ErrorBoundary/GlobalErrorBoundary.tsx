@@ -3,7 +3,7 @@ import GlobalNotification from '../GlobalNotification';
 
 const handledErrorTypes = {
   CacheLoadError:
-    'We ran into an error while trying to update data. Data shown below might be incorrect or outdated. Please reload the page and try again.',
+    'We ran into an error while trying to update the cache. Data shown below might be incorrect or outdated. Please reload the page and try again.',
 };
 
 class GlobalErrorBoundary extends React.Component<
