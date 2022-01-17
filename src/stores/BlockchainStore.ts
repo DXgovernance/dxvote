@@ -4,7 +4,6 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
 import { bnum } from '../utils';
-import { getUpdatedCache } from '../cache';
 
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;
@@ -167,6 +166,7 @@ export default class BlockchainStore {
         ipfsService,
         daoStore,
         notificationStore,
+        cacheService,
       } = this.context;
 
       this.initialLoadComplete = reset ? false : this.initialLoadComplete;
@@ -236,7 +236,7 @@ export default class BlockchainStore {
               '';
           });
 
-          networkCache = await getUpdatedCache(
+          networkCache = await cacheService.getUpdatedCache(
             this.context,
             networkCache,
             networkContracts,

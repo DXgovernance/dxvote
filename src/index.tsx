@@ -22,6 +22,7 @@ import InfoPage from './pages/Info';
 import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
+import CachePage from 'pages/Cache';
 import { CreateMetadataPage } from 'pages/Metadata';
 import GuildsApp from './GuildsApp';
 
@@ -65,6 +66,10 @@ const Routes = () => {
       <Route exact path="/faq">
         {' '}
         <FAQPage />{' '}
+      </Route>
+      <Route exact path="/cache">
+        {' '}
+        <CachePage />{' '}
       </Route>
       <Route exact path="/:network/proposals">
         {' '}

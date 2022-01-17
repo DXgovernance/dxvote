@@ -95,7 +95,6 @@ const Web3ConnectStatus = observer(props => {
   };
 
   function getWalletStatus() {
-    console.debug('[GetWalletStatus]', { account });
     if (injectedWalletAuthorized && !account) {
       const chains = getChains(rpcUrls);
       const activeChain =
@@ -123,7 +122,6 @@ const Web3ConnectStatus = observer(props => {
   }
 
   function getNetworkStatus() {
-    console.debug('[GetNetworkStatus]', { chainId, error });
     // Wrong network
     if ((chainId && !isChainIdSupported(chainId)) || error) {
       return (

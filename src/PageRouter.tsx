@@ -50,7 +50,7 @@ const PageRouter = observer(({ children }) => {
 
   const history = useHistory();
   const location = useLocation();
-  const noLoading = ['/faq', '/config', '/forum'];
+  const noLoading = ['/faq', '/config', '/forum', '/cache'];
   const networkName = configStore.getActiveChainName();
   const { active: providerActive } = useWeb3React();
 
