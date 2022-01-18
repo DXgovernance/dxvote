@@ -39,7 +39,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
   useEffect(() => {
     const allProposals = daoStore.getAllProposals();
 
-    // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
+    // Queded && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestAbove10 = allProposals
       .filter(proposal => {
         const repAtCreation = getRep(
@@ -82,7 +82,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       )
       .sort(orderByNewestTimeToFinish);
 
-    // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
+    //   Queded && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestUnder10 = allProposals
       .filter((proposal): Boolean => {
         const repAtCreation = getRep(
