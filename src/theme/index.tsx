@@ -167,7 +167,7 @@ export const GlobalStyle = createGlobalStyle`
     font-family: var(--roboto);
     background-color: var(--background-color);
   }
-  
+
   :root {
     --active-button-border: #304ffe;
     --orange: #f9aa33;
@@ -200,20 +200,15 @@ export const GlobalStyle = createGlobalStyle`
     --turquois-text-onHover: #226C96;
     --white: #ffffff;
     --gridLine: rgba(232, 234, 246, 0.5);
-  
+
     --roboto: 'Roboto', sans-serif;
-  
+
     height: 100%;
     width: 100%;
   }
-  
-  #root{
-    height: 100%;
-    width: 85%;
+
+  #root {
     margin: auto;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
   }
 `;
