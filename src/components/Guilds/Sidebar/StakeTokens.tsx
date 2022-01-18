@@ -102,12 +102,12 @@ export const StakeTokens = ({ onJoin }) => {
     <GuestContainer>
       <DaoBrand>
         <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-        <Loading text loading={!name}>
+        <Loading text loading={!name && !error}>
           <DaoTitle>{error ? 'DxDao' : name}</DaoTitle>
         </Loading>
       </DaoBrand>
       <InfoItem>40% Quorum</InfoItem>
-      <Loading text loading={!token}>
+      <Loading text loading={!token && !error}>
         <InfoItem>
           {!error && (
             <>
@@ -117,7 +117,7 @@ export const StakeTokens = ({ onJoin }) => {
           )}
         </InfoItem>
       </Loading>
-      <Loading text loading={proposalTime.isNegative()}>
+      <Loading text loading={proposalTime.isNegative() && !error}>
         <InfoItem>
           {!error &&
             `${moment
@@ -125,7 +125,7 @@ export const StakeTokens = ({ onJoin }) => {
               .humanize()} proposal duration`}
         </InfoItem>
       </Loading>
-      <Loading text loading={timeForExecution.isNegative()}>
+      <Loading text loading={timeForExecution.isNegative() && !error}>
         <InfoItem>
           {!error &&
             `(${moment

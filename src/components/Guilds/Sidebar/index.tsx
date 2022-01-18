@@ -106,7 +106,7 @@ export const Sidebar = () => {
         <DaoInfo>
           <DaoBrand>
             <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-            <Loading text loading={!name}>
+            <Loading text loading={!name && !error}>
               <DaoTitle size={2} as="h1">
                 {error ? 'DXdao' : name}
               </DaoTitle>

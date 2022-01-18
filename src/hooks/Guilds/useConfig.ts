@@ -1,6 +1,6 @@
 import useEtherSWR from 'ether-swr';
 import { useParams } from 'react-router-dom';
-import { bnum } from 'utils';
+import { bnum } from '../../utils';
 
 const emptyData = ['', '', '', '-0', '-0', '-0'];
 
@@ -16,7 +16,7 @@ export const useConfig = () => {
       [guildAddress, 'getMaxActiveProposals'], // Get the maxActiveProposals
     ],
     {
-      refreshInterval: 0,
+      // refreshInterval: 0,
       initialData: emptyData,
     }
   );
