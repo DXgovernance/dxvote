@@ -16,7 +16,7 @@ export const useConfig = () => {
       [guildAddress, 'getMaxActiveProposals'], // Get the maxActiveProposals
     ],
     {
-      // refreshInterval: 0,
+      refreshInterval: 0,
       initialData: emptyData,
     }
   );
