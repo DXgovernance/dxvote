@@ -6,7 +6,7 @@ import { Button, ButtonIcon, IconButton } from '../common/Button';
 import NetworkModal from '../Web3Modals/NetworkModal';
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
-import gnosisIcon from '../../../assets/images/gnosis-icon.svg';
+import gnosisIcon from '../../../assets/images/gnosis-icon-green.svg';
 
 const iconsByChain = {
   1: ethereumIcon,

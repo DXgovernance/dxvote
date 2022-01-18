@@ -6,7 +6,7 @@ import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
-import gnosisIcon from '../../../assets/images/gnosis-icon.svg';
+import gnosisIcon from '../../../assets/images/gnosis-icon-green.svg';
 import { Modal } from '../common/Modal';
 import Option from './components/Option';
 import { useHistory } from 'react-router-dom';

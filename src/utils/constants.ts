@@ -101,6 +101,14 @@ export const NETWORK_NAMES: Record<ChainConfig['id'], ChainConfig['name']> =
     return acc;
   }, {});
 
+export const NETWORK_DISPLAY_NAMES: Record<
+  ChainConfig['id'],
+  ChainConfig['displayName']
+> = NETWORKS.reduce((acc, network) => {
+  acc[network.id] = network.displayName;
+  return acc;
+}, {});
+
 export const DEFAULT_RPC_URLS: Record<
   ChainConfig['id'],
   ChainConfig['defaultRpc']
