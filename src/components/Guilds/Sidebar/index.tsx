@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { useConfig } from 'hooks/Guilds/useConfig';
 import { Box } from '../common/Layout';
 import { Menu, MenuItem } from '../common/Menu';
 import { MemberActions } from './MemberActions';
 import { GuestActions } from './GuestActions';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
+import { Loading } from '../../../components/Guilds/common/Loading';
 
 const SidebarWrapper = styled(Box)`
   @media only screen and (min-width: 768px) {
@@ -97,6 +99,10 @@ const SidebarMenuItem = styled(MenuItem)`
 
 export const Sidebar = () => {
   const [isMember, setIsMember] = useState(false);
+  const {
+    data: { name },
+    error,
+  } = useConfig();
 
   return (
     <SidebarWrapper data-testid="sidebar">
@@ -104,9 +110,11 @@ export const Sidebar = () => {
         <DaoInfo>
           <DaoBrand>
             <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-            <DaoTitle size={2} as="h1">
-              DXdao
-            </DaoTitle>
+            <Loading text loading={!name}>
+              <DaoTitle size={2} as="h1">
+                {error ? 'DXdao' : name}
+              </DaoTitle>
+            </Loading>
           </DaoBrand>
           <DaoMemberCount>464 Members</DaoMemberCount>
         </DaoInfo>
