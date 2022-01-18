@@ -9,7 +9,6 @@ export default class BlockchainStore {
   activeFetchLoop: boolean = false;
   initialLoadComplete: boolean;
   contractStorage: ContractStorage = {};
-  eventsStorage: EventStorage = {};
   context: RootContext;
 
   constructor(context) {
@@ -27,7 +26,6 @@ export default class BlockchainStore {
     this.activeFetchLoop = false;
     this.initialLoadComplete = false;
     this.contractStorage = {};
-    this.eventsStorage = {};
   }
 
   reduceMulticall(
@@ -82,12 +80,6 @@ export default class BlockchainStore {
     } else {
       return undefined;
     }
-  }
-
-  getCachedEvents(address: string, eventName: string) {
-    if (this.eventsStorage[address] && this.eventsStorage[address][eventName])
-      return this.eventsStorage[address][eventName].emitions;
-    else return [];
   }
 
   get(entry: Call): CallValue | undefined {
