@@ -165,6 +165,7 @@ const CachePage = observer(() => {
                       )
                     }
                     value={localConfig[networkName + '_toBlock']}
+                    style={{ width: '100px' }}
                   ></InputBox>
                   <FormLabel>RPC:</FormLabel>
                   <InputBox
@@ -176,10 +177,11 @@ const CachePage = observer(() => {
                       )
                     }
                     value={localConfig[networkName + '_rpcURL']}
+                    style={{ width: '100%' }}
                   ></InputBox>
                 </RowAlignedLeft>
                 <RowAlignedLeft>
-                  <FormLabel>Target Hash:</FormLabel>
+                  <FormLabel>Target Config Hash:</FormLabel>
                   <InputBox
                     type="text"
                     onChange={event =>
@@ -189,6 +191,7 @@ const CachePage = observer(() => {
                       )
                     }
                     value={localConfig[networkName + '_targetHash']}
+                    style={{ width: '400px' }}
                   ></InputBox>
                   {updatedCacheHash.configs[networkName] && (
                     <div>
@@ -212,18 +215,24 @@ const CachePage = observer(() => {
                       >
                         <FiDownload></FiDownload> Cache
                       </Button>
-                      <span>{updatedCacheHash.configHashes[networkName]}</span>
-                      <FormLabel>
-                        {updatedCacheHash.configHashes[networkName] ==
-                        localConfig[networkName + '_targetHash'] ? (
-                          <FiCheckCircle />
-                        ) : (
-                          <FiX />
-                        )}
-                      </FormLabel>
                     </div>
                   )}
                 </RowAlignedLeft>
+                {updatedCacheHash.configs[networkName] && (
+                  <RowAlignedLeft>
+                    Received Config Hash:{' '}
+                    {updatedCacheHash.configHashes[networkName]}
+                    {'  '}
+                    <FormLabel>
+                      {updatedCacheHash.configHashes[networkName] ==
+                      localConfig[networkName + '_targetHash'] ? (
+                        <FiCheckCircle />
+                      ) : (
+                        <FiX />
+                      )}
+                    </FormLabel>
+                  </RowAlignedLeft>
+                )}
               </div>
             )
           );
