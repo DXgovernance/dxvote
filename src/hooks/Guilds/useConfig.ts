@@ -8,12 +8,12 @@ export const useConfig = () => {
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { data, error, isValidating } = useEtherSWR(
     [
-      [guildAddress, 'getToken'], // @dev Get the address of the ERC20Token used for voting
-      [guildAddress, 'getPermissionRegistry'], // @dev Get the address of the permission registry contract
-      [guildAddress, 'getName'], // @dev Get the name of the ERC20Guild
-      [guildAddress, 'getProposalTime'], // @dev Get the proposalTime (seconds)
-      [guildAddress, 'getTimeForExecution'], // @dev Get the timeForExecution (seconds)
-      [guildAddress, 'getMaxActiveProposals'], // @dev Get the maxActiveProposals
+      [guildAddress, 'getToken'], // Get the address of the ERC20Token used for voting
+      [guildAddress, 'getPermissionRegistry'], // Get the address of the permission registry contract
+      [guildAddress, 'getName'], // Get the name of the ERC20Guild
+      [guildAddress, 'getProposalTime'], // Get the proposalTime (seconds)
+      [guildAddress, 'getTimeForExecution'], // Get the timeForExecution (seconds)
+      [guildAddress, 'getMaxActiveProposals'], // Get the maxActiveProposals
     ],
     {
       refreshInterval: 0,

@@ -5,11 +5,11 @@ import moment from 'moment';
 
 import { Heading } from '../common/Typography';
 import CopyHelper from '../../common/Copy';
-import { Button } from 'components/Guilds/common/Button';
+import { Button } from '../common/Button';
+import { Loading } from '../common/Loading';
 import { shortenAddress, isAddress } from 'utils';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { useConfig } from 'hooks/Guilds/useConfig';
-import { Loading } from '../../../components/Guilds/common/Loading';
 
 const GuestContainer = styled.div`
   display: flex;
