@@ -1,11 +1,4 @@
-import {
-  useState,
-  useEffect,
-  useContext,
-  createContext,
-  ReactNode,
-  useMemo,
-} from 'react';
+import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from '../common/Modal';
@@ -83,20 +76,15 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   txCancelled,
   onCancel,
 }) => {
-  const [modalView, setModalView] = useState<TransactionModalView>(
-    TransactionModalView.Confirm
-  );
-
-  useEffect(() => {
-    console.log({ message, transactionHash, txCancelled });
+  const modalView = useMemo<TransactionModalView>(() => {
     if (txCancelled) {
-      setModalView(TransactionModalView.Reject);
+      return TransactionModalView.Reject;
     } else if (transactionHash) {
-      setModalView(TransactionModalView.Submit);
+      return TransactionModalView.Submit;
     } else {
-      setModalView(TransactionModalView.Confirm);
+      return TransactionModalView.Confirm;
     }
-  }, [message, transactionHash, txCancelled]);
+  }, [txCancelled, transactionHash]);
 
   const [header, children, footerText] = useMemo(() => {
     let header: JSX.Element, children: JSX.Element, footerText: string;
@@ -185,67 +173,4 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   );
 };
 
-interface TransactionModalContextInterface {
-  isOpen: boolean;
-  openModal: (message: string) => void;
-  setModalTransactionHash: (transactionHash: string) => void;
-  setModalTransactionCancelled: (txCancelled: boolean) => void;
-  closeModal: () => void;
-}
-
-const TransactionModalContext =
-  createContext<TransactionModalContextInterface>(null);
-
-interface TransactionModalProviderProps {
-  children: ReactNode;
-}
-export const TransactionModalProvider = ({
-  children,
-}: TransactionModalProviderProps) => {
-  const [message, setMessage] = useState(null);
-  const [txCancelled, setTxCancelled] = useState(false);
-  const [transactionHash, setTransactionHash] = useState(null);
-
-  const openModal = (message: string) => {
-    setMessage(message);
-    setTransactionHash(null);
-    setTxCancelled(false);
-  };
-
-  const closeModal = () => {
-    setMessage(null);
-    setTransactionHash(null);
-    setTxCancelled(false);
-  };
-
-  return (
-    <TransactionModalContext.Provider
-      value={{
-        isOpen: !!message,
-        openModal,
-        closeModal,
-        setModalTransactionHash: setTransactionHash,
-        setModalTransactionCancelled: setTxCancelled,
-      }}
-    >
-      {children}
-      <TransactionModal
-        message={message}
-        transactionHash={transactionHash}
-        onCancel={closeModal}
-        txCancelled={txCancelled}
-      />
-    </TransactionModalContext.Provider>
-  );
-};
-
-export const useTransactionModal = () => {
-  const context = useContext(TransactionModalContext);
-  if (context === undefined) {
-    throw new Error(
-      'useTransactionModal must be used within a TransactionModalProvider'
-    );
-  }
-
-  return context;
-};
+export default TransactionModal;

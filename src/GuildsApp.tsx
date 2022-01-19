@@ -18,8 +18,6 @@ import theme from './theme/light.json';
 import { GuildsContextProvider, TransactionsProvider } from 'contexts/Guilds';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
-import { TransactionModalProvider } from 'components/Guilds/Web3Modals/TransactionModal';
-
 import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 
@@ -43,7 +41,6 @@ const GuildsApp = () => {
               <GlobalStyle />
               <Header />
               <Container>
-                <TransactionModalProvider>
                   <Switch>
                     <Redirect
                       exact
@@ -92,7 +89,6 @@ const GuildsApp = () => {
                       </EtherSWRConfig>
                     </Route>
                   </Switch>
-                </TransactionModalProvider>
               </Container>
             </TransactionsProvider>
           </WalletWeb3Manager>
