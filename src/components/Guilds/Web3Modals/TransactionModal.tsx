@@ -6,6 +6,9 @@ import { AiOutlineArrowUp } from 'react-icons/ai';
 import { Button } from '../common/Button';
 import { FiX } from 'react-icons/fi';
 import { Circle, Flex } from '../common/Layout';
+import { getBlockchainLink } from '../../../utils';
+import { getChains } from '../../../provider/connectors';
+import { useWeb3React } from '@web3-react/core';
 
 export const ModalButton = styled(Button)`
   margin: 0 0 16px 0;
@@ -47,6 +50,7 @@ export const ContainerText = styled(Flex)<ContainerTextProps>`
   margin: 4px;
   font-style: normal;
   color: ${props => props.color || '#000000'};
+  text-decoration: none;
   ${({ variant }) => variantStyles(variant)}
 `;
 
@@ -55,8 +59,12 @@ ContainerText.defaultProps = {
 };
 
 export const Container = styled.div`
-  margin: 8px 0 24px 0;
+  margin: 0.5rem 0 1rem 0;
 `;
+
+export const Header = styled(Flex)`
+  margin-top: 2rem;
+`
 
 enum TransactionModalView {
   Confirm,
@@ -76,6 +84,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   txCancelled,
   onCancel,
 }) => {
+  const { chainId } = useWeb3React();
   const modalView = useMemo<TransactionModalView>(() => {
     if (txCancelled) {
       return TransactionModalView.Reject;
@@ -92,9 +101,9 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     switch (modalView) {
       case TransactionModalView.Confirm:
         header = (
-          <Flex>
+          <Header>
             <PendingCircle height="86px" width="86px" color="black" />
-          </Flex>
+          </Header>
         );
         children = (
           <Flex>
@@ -102,9 +111,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
               <ContainerText variant="bold">
                 Waiting For Confirmation
               </ContainerText>
-              <ContainerText variant="medium">
-                Stake 52.42DXD for 324 Days
-              </ContainerText>
+              <ContainerText variant="medium">{message}</ContainerText>
             </Container>
             <ContainerText variant="medium" color="grey">
               Confirm this Transaction in your Wallet
@@ -114,17 +121,25 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
         break;
       case TransactionModalView.Submit:
         header = (
-          <Flex>
+          <Header>
             <Circle>
               <AiOutlineArrowUp size={40} />
             </Circle>
-          </Flex>
+          </Header>
         );
+
+        const networkName = getChains().find(chain => chain.id === chainId).name;
         children = (
           <Flex>
             <ContainerText variant="bold">Transaction Submitted</ContainerText>
             <Container>
-              <ContainerText variant="regular" color="grey">
+              <ContainerText
+                as="a"
+                variant="regular"
+                color="grey"
+                href={getBlockchainLink(transactionHash, networkName)}
+                target="_blank"
+              >
                 View on Block Explorer
               </ContainerText>
             </Container>
@@ -134,20 +149,15 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
         break;
       case TransactionModalView.Reject:
         header = (
-          <Flex>
+          <Header>
             <Circle>
               <FiX size={40} />
             </Circle>
-          </Flex>
+          </Header>
         );
         children = (
           <Flex>
             <ContainerText variant="bold">Transaction Rejected</ContainerText>
-            <Container>
-              <ContainerText variant="regular" color="grey">
-                View on Block Explorer
-              </ContainerText>
-            </Container>
           </Flex>
         );
         footerText = 'Dismiss';
@@ -155,7 +165,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     }
 
     return [header, children, footerText];
-  }, [modalView]);
+  }, [modalView, chainId, message, transactionHash]);
 
   return (
     <Modal

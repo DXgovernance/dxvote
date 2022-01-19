@@ -5,7 +5,12 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { useWeb3React } from '@web3-react/core';
 
 import { usePrevious } from 'utils';
-import { injected, getWallets, isChainIdSupported } from 'provider/connectors';
+import {
+  injected,
+  getWallets,
+  isChainIdSupported,
+  getChains,
+} from 'provider/connectors';
 import { useRpcUrls } from 'provider/providerHooks';
 import Option from './components/Option';
 import { Modal } from '../common/Modal';
@@ -13,6 +18,8 @@ import { Heading } from '../common/Typography';
 import WalletInfoBox from './components/WalletInfoBox';
 import Transaction from './components/Transaction';
 import { Button } from '../common/Button';
+import { useTransactions } from '../../../contexts/Guilds';
+import { getBlockchainLink } from '../../../utils';
 
 const Container = styled.div`
   margin: 2rem;
@@ -68,6 +75,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
   const rpcUrls = useRpcUrls();
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
   const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);
+  const { transactions, clearAllTransactions } = useTransactions();
 
   // always reset to account view
   useEffect(() => {
@@ -216,6 +224,8 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
     }
 
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
+      const networkName = getChains().find(chain => chain.id === chainId).name;
+
       return (
         <>
           <WalletInfoBox
@@ -225,14 +235,16 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
           <TransactionsList>
             <Heading>Recent Transactions</Heading>
             <Divider />
-            <Transaction link="#" pending={false}>
-              Vote Yes on DXdao Treasury Diversification #27 || ETH to Stables ↗
-            </Transaction>
-            <Transaction link="#" pending={true}>
-              Vote Yes on DXdao Treasury Diversification #27 || ETH to Stables ↗
-            </Transaction>
+            {transactions.map(transaction => (
+              <Transaction
+                link={getBlockchainLink(transaction.hash, networkName)}
+                pending={!transaction.receipt}
+              >
+                {transaction.summary}
+              </Transaction>
+            ))}
 
-            <BlockButton>Clear all</BlockButton>
+            <BlockButton onClick={clearAllTransactions}>Clear all</BlockButton>
           </TransactionsList>
         </>
       );
