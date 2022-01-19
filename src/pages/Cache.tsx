@@ -6,6 +6,7 @@ import React from 'react';
 import { FiCheckCircle, FiDownload, FiX } from 'react-icons/fi';
 import { NETWORKS, toCamelCaseString } from 'utils';
 import PulsingIcon from 'components/common/LoadingIcon';
+import copy from 'copy-to-clipboard';
 
 const FormLabel = styled.label`
   padding: 10px 0px;
@@ -130,6 +131,34 @@ const CachePage = observer(() => {
     a.href = URL.createObjectURL(file);
     a.download = name;
     a.click();
+  }
+
+  if (window.location.hash.length > 7) {
+    const searchParams = new URLSearchParams(window.location.hash.substring(7));
+    NETWORKS.map((network, i) => {
+      const networkName = network.name;
+      if (searchParams.get(networkName + '_toBlock'))
+        localConfig[networkName + '_toBlock'] = searchParams.get(networkName + '_toBlock');
+      if (searchParams.get(networkName + '_targetHash'))
+        localConfig[networkName + '_targetHash'] = searchParams.get(networkName + '_targetHash');
+    });
+    setLocalConfig(localConfig);
+    configStore.setLocalConfig(localConfig);
+    window.location.assign(window.location.origin+"/#cache");
+    forceUpdate();
+  }
+
+  function copyOptionsLink() {
+    let optionsLinkUrl = window.location.origin+"/"+window.location.hash+"?"
+    NETWORKS.map((network, i) => {
+      const networkName = network.name;
+      if (localConfig[networkName + '_toBlock'])
+        optionsLinkUrl = optionsLinkUrl + networkName + '_toBlock=' + localConfig[networkName + '_toBlock'] + "&";
+      if (localConfig[networkName + '_targetHash'])
+        optionsLinkUrl = optionsLinkUrl + networkName + '_targetHash=' + localConfig[networkName + '_targetHash'] + "&";
+    });
+    optionsLinkUrl = optionsLinkUrl.slice(0,-1);
+    copy(optionsLinkUrl);
   }
 
   return BuildingCacheState == 1 ? (
@@ -260,6 +289,7 @@ const CachePage = observer(() => {
         )}
         <Button onClick={runCacheScript}>Build Cache</Button>
         <Button onClick={resetCacheOptions}>Reset Options</Button>
+        <Button onClick={copyOptionsLink}>Copy Options Link</Button>
       </Row>
     </Box>
   );
