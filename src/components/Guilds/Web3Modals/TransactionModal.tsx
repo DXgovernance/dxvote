@@ -13,8 +13,6 @@ import { AiOutlineArrowUp } from 'react-icons/ai';
 import { Button } from '../common/Button';
 import { FiX } from 'react-icons/fi';
 import { Circle, Flex } from '../common/Layout';
-import { TransactionResponse } from 'ethers/node_modules/@ethersproject/abstract-provider';
-import { useTransactions } from '../../../contexts/Guilds';
 
 export const ModalButton = styled(Button)`
   margin: 0 0 16px 0;
@@ -190,10 +188,8 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
 interface TransactionModalContextInterface {
   isOpen: boolean;
   openModal: (message: string) => void;
-  createTransaction: (
-    summary: string,
-    txFunction: () => Promise<TransactionResponse>
-  ) => void;
+  setModalTransactionHash: (transactionHash: string) => void;
+  setModalTransactionCancelled: (txCancelled: boolean) => void;
   closeModal: () => void;
 }
 
@@ -206,25 +202,9 @@ interface TransactionModalProviderProps {
 export const TransactionModalProvider = ({
   children,
 }: TransactionModalProviderProps) => {
-  const { addTransaction } = useTransactions();
   const [message, setMessage] = useState(null);
   const [txCancelled, setTxCancelled] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
-
-  const createTransaction = async (
-    summary: string,
-    txFunction: () => Promise<TransactionResponse>
-  ) => {
-    openModal(summary);
-    try {
-      const txResponse = await txFunction();
-      addTransaction(txResponse, summary);
-      setTransactionHash(txResponse.hash);
-    } catch (e) {
-      console.error('Transaction execution failed', e);
-      setTxCancelled(true);
-    }
-  };
 
   const openModal = (message: string) => {
     setMessage(message);
@@ -240,7 +220,13 @@ export const TransactionModalProvider = ({
 
   return (
     <TransactionModalContext.Provider
-      value={{ isOpen: !!message, openModal, createTransaction, closeModal }}
+      value={{
+        isOpen: !!message,
+        openModal,
+        closeModal,
+        setModalTransactionHash: setTransactionHash,
+        setModalTransactionCancelled: setTxCancelled,
+      }}
     >
       {children}
       <TransactionModal

@@ -13,10 +13,10 @@ import { IconButton, Button } from '../common/Button';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
-import { useTransactionModal } from '../Web3Modals/TransactionModal';
 import { useERC20 } from '../../../hooks/Guilds/contracts/useContract';
 import { ZERO_ADDRESS } from '../../../utils';
 import { BigNumber } from 'ethers';
+import { useTransactions } from '../../../contexts/Guilds';
 
 const Icon = styled.img`
   height: 1.1rem;
@@ -48,7 +48,7 @@ const LockButton = styled(Button)`
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const { createTransaction } = useTransactionModal();
+  const { createTransaction } = useTransactions();
 
   // Temporary code to test transactions provider
   const contract = useERC20('0x022E292b44B5a146F2e8ee36Ff44D3dd863C915c');

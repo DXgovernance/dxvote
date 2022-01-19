@@ -11,7 +11,7 @@ import { providers } from 'ethers';
 
 import { Transaction } from '../../types/types.guilds';
 import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
-
+import { useTransactionModal } from '../../components/Guilds/Web3Modals/TransactionModal';
 export interface TransactionState {
   [chainId: number]: {
     [txHash: string]: Transaction;
@@ -20,17 +20,18 @@ export interface TransactionState {
 
 interface TransactionsContextInterface {
   transactions: Transaction[];
-  addTransaction: (
-    transaction: providers.TransactionResponse,
-    summary?: string
+  createTransaction: (
+    summary: string,
+    txFunction: () => Promise<providers.TransactionResponse>
   ) => void;
   clearAllTransactions: () => void;
 }
-
 const TransactionsContext = createContext<TransactionsContextInterface>(null);
 
 export const TransactionsProvider = ({ children }) => {
   const [transactions, setTransactions] = useState<TransactionState>({});
+  const { openModal, setModalTransactionCancelled, setModalTransactionHash } =
+    useTransactionModal();
 
   const { chainId } = useWeb3React();
   const provider = useJsonRpcProvider();
@@ -93,6 +94,7 @@ export const TransactionsProvider = ({ children }) => {
     [transactions, chainId]
   );
 
+  // Mark the transactions as finalized when they are mined
   useEffect(() => {
     let isSubscribed = true;
 
@@ -109,13 +111,26 @@ export const TransactionsProvider = ({ children }) => {
     };
   }, [allTransactions, finalizeTransaction, provider]);
 
-  console.log(transactions);
+  const createTransaction = async (
+    summary: string,
+    txFunction: () => Promise<providers.TransactionResponse>
+  ) => {
+    openModal(summary);
+    try {
+      const txResponse = await txFunction();
+      addTransaction(txResponse, summary);
+      setModalTransactionHash(txResponse.hash);
+    } catch (e) {
+      console.error('Transaction execution failed', e);
+      setModalTransactionCancelled(true);
+    }
+  };
 
   return (
     <TransactionsContext.Provider
       value={{
         transactions: allTransactions,
-        addTransaction,
+        createTransaction,
         clearAllTransactions,
       }}
     >
