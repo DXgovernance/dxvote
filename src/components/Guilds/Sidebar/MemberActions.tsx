@@ -14,6 +14,9 @@ import dxIcon from '../../../assets/images/dxdao-icon.svg';
 
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
 import { useTransactionModal } from '../Web3Modals/TransactionModal';
+import { useERC20 } from '../../../hooks/Guilds/contracts/useContract';
+import { ZERO_ADDRESS } from '../../../utils';
+import { BigNumber } from 'ethers';
 
 const Icon = styled.img`
   height: 1.1rem;
@@ -45,7 +48,17 @@ const LockButton = styled(Button)`
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const { toggleModal } = useTransactionModal();
+  const { createTransaction } = useTransactionModal();
+
+  // Temporary code to test transactions provider
+  const contract = useERC20('0x022E292b44B5a146F2e8ee36Ff44D3dd863C915c');
+
+  const lockDXD = async () => {
+    // Sends a hardcoded transaction to test transactions provider
+    createTransaction(`Approve token for ${ZERO_ADDRESS}`, async () =>
+      contract.approve(ZERO_ADDRESS, BigNumber.from(1))
+    );
+  };
 
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
@@ -72,7 +85,7 @@ export const MemberActions = () => {
           <ContentItem>
             Unlocked in <span>542 days</span>
           </ContentItem>
-          <LockButton onClick={() => toggleModal()}> Lock DXD</LockButton>
+          <LockButton onClick={() => lockDXD()}> Lock DXD</LockButton>
         </MemberContainer>
       </DropdownContent>
     </DropdownMenu>
