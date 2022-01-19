@@ -23,3 +23,25 @@ export enum ProposalState {
 export interface ProposalMetadata {
   description: string;
 }
+export interface Transaction {
+  hash: string
+  approval?: { tokenAddress: string; spender: string }
+  summary?: string
+  claim?: { recipient: string }
+  receipt?: TransactionReceipt
+  lastCheckedBlockNumber?: number
+  addedTime: number
+  confirmedTime?: number
+  from: string
+}
+
+export interface TransactionReceipt {
+  to: string
+  from: string
+  contractAddress: string
+  transactionIndex: number
+  blockHash: string
+  transactionHash: string
+  blockNumber: number
+  status?: number
+}
