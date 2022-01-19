@@ -1,7 +1,7 @@
+import { providers } from 'ethers';
 import {
   BigNumber,
 } from './utils';
-
 export interface Proposal {
   id: string;
   creator: string;
@@ -25,23 +25,13 @@ export interface ProposalMetadata {
 }
 export interface Transaction {
   hash: string
-  approval?: { tokenAddress: string; spender: string }
+  from: string
   summary?: string
-  claim?: { recipient: string }
-  receipt?: TransactionReceipt
+  receipt?: {
+    transactionHash: string,
+    blockNumber: number,
+  }
   lastCheckedBlockNumber?: number
   addedTime: number
   confirmedTime?: number
-  from: string
-}
-
-export interface TransactionReceipt {
-  to: string
-  from: string
-  contractAddress: string
-  transactionIndex: number
-  blockHash: string
-  transactionHash: string
-  blockNumber: number
-  status?: number
 }

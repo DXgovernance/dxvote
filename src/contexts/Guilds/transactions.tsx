@@ -1,6 +1,16 @@
 import { useWeb3React } from '@web3-react/core';
-import { createContext, useContext, useMemo, useState } from 'react';
-import { Transaction, TransactionReceipt } from '../../types/types.guilds';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { providers } from 'ethers';
+
+import { Transaction } from '../../types/types.guilds';
+import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
 
 export interface TransactionState {
   [chainId: number]: {
@@ -10,23 +20,38 @@ export interface TransactionState {
 
 interface TransactionsContextInterface {
   transactions: Transaction[];
-  addTransaction: (transaction: Transaction) => void;
+  addTransaction: (
+    transaction: providers.TransactionResponse,
+    summary?: string
+  ) => void;
   clearAllTransactions: () => void;
-  updateTransaction: (hash: string, blockNumber: string) => void;
-  finalizeTransaction: (hash: string, receipt: TransactionReceipt) => void;
 }
 
 const TransactionsContext = createContext<TransactionsContextInterface>(null);
 
 export const TransactionsProvider = ({ children }) => {
-  const { chainId } = useWeb3React();
   const [transactions, setTransactions] = useState<TransactionState>({});
+
+  const { chainId } = useWeb3React();
+  const provider = useJsonRpcProvider();
 
   const allTransactions = useMemo(() => {
     return transactions[chainId] ? Object.values(transactions[chainId]) : [];
   }, [transactions, chainId]);
 
-  const addTransaction = (transaction: Transaction) => {
+  const addTransaction = (
+    txResponse: providers.TransactionResponse,
+    summary?: string
+  ) => {
+    if (!txResponse.hash) return;
+
+    const transaction: Transaction = {
+      hash: txResponse.hash,
+      from: txResponse.from,
+      summary,
+      addedTime: Date.now(),
+    };
+
     setTransactions(prevState => ({
       ...prevState,
       [chainId]: {
@@ -43,40 +68,48 @@ export const TransactionsProvider = ({ children }) => {
     }));
   };
 
-  const updateTransaction = (hash: string, blockNumber: string) => {
-    if (!transactions[chainId] || !transactions[chainId][hash]) {
-      return;
-    }
+  const finalizeTransaction = useCallback(
+    (hash: string, receipt: providers.TransactionReceipt) => {
+      if (!transactions[chainId] || !transactions[chainId][hash]) {
+        return;
+      }
 
-    setTransactions(prevState => ({
-      ...prevState,
-      [chainId]: {
-        ...prevState[chainId],
-        [hash]: {
-          ...prevState[chainId][hash],
-          blockNumber,
+      setTransactions(prevState => ({
+        ...prevState,
+        [chainId]: {
+          ...prevState[chainId],
+          [hash]: {
+            ...prevState[chainId][hash],
+            receipt: {
+              transactionHash: receipt.transactionHash,
+              blockNumber: receipt.blockNumber,
+              status: receipt.status,
+            },
+            confirmedTime: Date.now(),
+          },
         },
-      },
-    }));
-  };
+      }));
+    },
+    [transactions, chainId]
+  );
 
-  const finalizeTransaction = (hash: string, receipt: TransactionReceipt) => {
-    if (!transactions[chainId] || !transactions[chainId][hash]) {
-      return;
-    }
+  useEffect(() => {
+    let isSubscribed = true;
 
-    setTransactions(prevState => ({
-      ...prevState,
-      [chainId]: {
-        ...prevState[chainId],
-        [hash]: {
-          ...prevState[chainId][hash],
-          receipt,
-          confirmedTime: Date.now(),
-        },
-      },
-    }));
-  };
+    allTransactions
+      .filter(transaction => !transaction.receipt)
+      .forEach(transaction => {
+        provider.waitForTransaction(transaction.hash).then(receipt => {
+          if (isSubscribed) finalizeTransaction(transaction.hash, receipt);
+        });
+      });
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [allTransactions, finalizeTransaction, provider]);
+
+  console.log(transactions);
 
   return (
     <TransactionsContext.Provider
@@ -84,8 +117,6 @@ export const TransactionsProvider = ({ children }) => {
         transactions: allTransactions,
         addTransaction,
         clearAllTransactions,
-        updateTransaction,
-        finalizeTransaction,
       }}
     >
       {children}
