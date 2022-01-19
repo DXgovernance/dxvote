@@ -96,6 +96,7 @@ const Description = () => {
     isValidating,
   } = useEtherSWR([guildId, 'getProposal', proposalId]);
 
+  /*
   const decodedContentHash = useMemo(() => {
     try {
       return contentHash.decode(proposal.contentHash);
@@ -105,7 +106,10 @@ const Description = () => {
     }
   }, [proposal]);
   const metadata = useIPFSFile<ProposalMetadata>(decodedContentHash);
-
+  */
+  const metadata = {
+    description: 'hola',
+  };
   return (
     <>
       {!isValidating && !error && metadata?.description && (
