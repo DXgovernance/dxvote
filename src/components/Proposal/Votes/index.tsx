@@ -175,6 +175,7 @@ const Votes = () => {
   let positiveVotesCount = proposalEvents.votes.filter(vote =>
     isVoteYes(vote.vote)
   ).length;
+
   let negativeVotesCount = proposalEvents.votes.filter(vote =>
     isVoteNo(vote.vote)
   ).length;
@@ -186,15 +187,15 @@ const Votes = () => {
 
   const repPercentageAtCreation = toPercentage(
     userRepAtProposalCreation.div(totalRepAtProposalCreation)
-  ).toFixed(2);
+  ).toFixed(2, 4);
 
   const positiveVotes = toPercentage(
     proposal.positiveVotes.div(totalRepAtProposalCreation)
-  ).toFixed(2);
+  ).toFixed(2, 4);
 
   const negativeVotes = toPercentage(
     proposal.negativeVotes.div(totalRepAtProposalCreation)
-  ).toFixed(2);
+  ).toFixed(2, 4);
 
   const totalPositiveSignedVotes = toPercentage(
     signedVotesOfProposal
@@ -203,7 +204,7 @@ const Votes = () => {
         return acc.plus(obj.amount);
       }, bnum(0))
       .div(totalRepAtProposalCreation)
-  ).toFixed(2);
+  ).toFixed(2, 4);
 
   const totalNegativeSignedVotes = toPercentage(
     signedVotesOfProposal
@@ -212,7 +213,7 @@ const Votes = () => {
         return acc.plus(obj.amount);
       }, bnum(0))
       .div(totalRepAtProposalCreation)
-  ).toFixed(2);
+  ).toFixed(2, 4);
 
   if (Number(repPercentageAtCreation) > 0 && votePercentage === 0) {
     setVotePercentage(Number(repPercentageAtCreation));
@@ -321,7 +322,7 @@ const Votes = () => {
                     {bnum(voteEvent.amount)
                       .times('100')
                       .div(totalRepAtProposalCreation)
-                      .toFixed(2)}
+                      .toFixed(2, 4)}
                     %
                   </span>
                 </Vote>
@@ -348,8 +349,7 @@ const Votes = () => {
                     {bnum(voteEvent.amount)
                       .times('100')
                       .div(totalRepAtProposalCreation)
-                      .toNumber()
-                      .toFixed(2)}
+                      .toFixed(2, 4)}
                     %
                   </span>
                 </Vote>
@@ -393,7 +393,7 @@ const Votes = () => {
                         {bnum(signedVote.amount)
                           .times('100')
                           .div(totalRepAtProposalCreation)
-                          .toFixed(2)}
+                          .toFixed(2, 4)}
                         %
                       </span>
                       {isDXDVotingMachine && (
@@ -440,8 +440,7 @@ const Votes = () => {
                         {bnum(signedVote.amount)
                           .times('100')
                           .div(totalRepAtProposalCreation)
-                          .toNumber()
-                          .toFixed(2)}
+                          .toFixed(2, 4)}
                         %
                       </span>
                       {isDXDVotingMachine && (
@@ -503,7 +502,7 @@ const Votes = () => {
               repAmount: totalRepAtProposalCreation
                 .times(bnum(votePercentage))
                 .div('100')
-                .toFixed(0)
+                .toFixed(0, 1)
                 .toString(),
               signVote: signVote,
             }}
@@ -560,7 +559,7 @@ const Votes = () => {
               ${votedAmount
                 .times('100')
                 .div(totalRepAtProposalCreation)
-                .toFixed(2)}
+                .toFixed(2, 4)}
               % REP`}
             </TextCenter>
           </SpaceAroundRow>
