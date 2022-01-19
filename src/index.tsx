@@ -4,13 +4,14 @@ import { Web3ReactProvider } from '@web3-react/core';
 import Web3ReactManager from 'components/Web3ReactManager';
 import Web3 from 'web3';
 import moment from 'moment';
-
+import styled from 'styled-components';
 import * as serviceWorker from './serviceWorker';
 
 import ThemeProvider, { GlobalStyle } from './theme';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
+import GlobalErrorBoundary from './components/ErrorBoundary/GlobalErrorBoundary';
 import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/proposals';
@@ -33,6 +34,15 @@ import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
 import { useEffect } from 'react';
 import { useContext } from './contexts';
 import { DEFAULT_ETH_CHAIN_ID } from './provider/connectors';
+
+const Content = styled.div`
+  margin: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 85%;
+`;
 
 moment.updateLocale('en', {
   relativeTime: {
@@ -126,9 +136,11 @@ const SplitApp = () => {
         <Switch>
           <Web3ReactManager>
             <GlobalStyle />
-            <Header />
-            <Routes />
-            <ToastContainer />
+            <Content>
+              <Header />
+              <Routes />
+              <ToastContainer />
+            </Content>
           </Web3ReactManager>
         </Switch>
       ) : (
@@ -140,15 +152,17 @@ const SplitApp = () => {
 
 const Root = () => {
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <MultichainProvider>
-        <ThemeProvider>
-          <HashRouter>
-            <SplitApp />
-          </HashRouter>
-        </ThemeProvider>
-      </MultichainProvider>
-    </Web3ReactProvider>
+    <GlobalErrorBoundary>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <MultichainProvider>
+          <ThemeProvider>
+            <HashRouter>
+              <SplitApp />
+            </HashRouter>
+          </ThemeProvider>
+        </MultichainProvider>
+      </Web3ReactProvider>
+    </GlobalErrorBoundary>
   );
 };
 ReactDOM.render(<Root />, document.getElementById('root'));
