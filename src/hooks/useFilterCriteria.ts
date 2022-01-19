@@ -38,7 +38,8 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
 
   useEffect(() => {
     const allProposals = daoStore.getAllProposals();
-    // (QuitedEndingPeriod || Queded) && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
+
+    // Queded && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestAbove10 = allProposals
       .filter(proposal => {
         const repAtCreation = getRep(
@@ -46,10 +47,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
         ).totalSupply;
 
         return (
-          (proposal.stateInVotingMachine ===
-            VotingMachineProposalState.QuietEndingPeriod ||
-            proposal.stateInVotingMachine ===
-              VotingMachineProposalState.Queued) &&
+          proposal.stateInVotingMachine === VotingMachineProposalState.Queued &&
           proposal.positiveVotes
             .div(repAtCreation)
             .times(100)
@@ -67,6 +65,15 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       )
       .sort(orderByNewestTimeToFinish);
 
+    const stateQuiteEndingProposals = allProposals
+      .filter(proposal => {
+        return (
+          proposal.stateInVotingMachine ===
+          VotingMachineProposalState.QuietEndingPeriod
+        );
+      })
+      .sort(orderByNewestTimeToFinish);
+
     const statePreBoosted = allProposals
       .filter(
         (proposal): Boolean =>
@@ -75,7 +82,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       )
       .sort(orderByNewestTimeToFinish);
 
-    // (QuitedEndingPeriod || Queded) && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
+    //   Queded && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestUnder10 = allProposals
       .filter((proposal): Boolean => {
         const repAtCreation = getRep(
@@ -83,10 +90,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
         ).totalSupply;
 
         return (
-          (proposal.stateInVotingMachine ===
-            VotingMachineProposalState.QuietEndingPeriod ||
-            proposal.stateInVotingMachine ===
-              VotingMachineProposalState.Queued) &&
+          proposal.stateInVotingMachine === VotingMachineProposalState.Queued &&
           proposal.positiveVotes
             .div(repAtCreation)
             .times(100)
@@ -105,9 +109,10 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       .sort(orderByOldestTimeToFinish);
 
     setFilteredProposals([
-      ...stateEarliestAbove10,
       ...stateBoosted,
       ...statePreBoosted,
+      ...stateQuiteEndingProposals,
+      ...stateEarliestAbove10,
       ...stateEarliestUnder10,
       ...stateExecuted,
     ]);
