@@ -138,26 +138,41 @@ const CachePage = observer(() => {
     NETWORKS.map((network, i) => {
       const networkName = network.name;
       if (searchParams.get(networkName + '_toBlock'))
-        localConfig[networkName + '_toBlock'] = searchParams.get(networkName + '_toBlock');
+        localConfig[networkName + '_toBlock'] = searchParams.get(
+          networkName + '_toBlock'
+        );
       if (searchParams.get(networkName + '_targetHash'))
-        localConfig[networkName + '_targetHash'] = searchParams.get(networkName + '_targetHash');
+        localConfig[networkName + '_targetHash'] = searchParams.get(
+          networkName + '_targetHash'
+        );
     });
     setLocalConfig(localConfig);
     configStore.setLocalConfig(localConfig);
-    window.location.assign(window.location.origin+"/#cache");
+    window.location.assign(window.location.origin + '/#cache');
     forceUpdate();
   }
 
   function copyOptionsLink() {
-    let optionsLinkUrl = window.location.origin+"/"+window.location.hash+"?"
+    let optionsLinkUrl =
+      window.location.origin + '/' + window.location.hash + '?';
     NETWORKS.map((network, i) => {
       const networkName = network.name;
       if (localConfig[networkName + '_toBlock'])
-        optionsLinkUrl = optionsLinkUrl + networkName + '_toBlock=' + localConfig[networkName + '_toBlock'] + "&";
+        optionsLinkUrl =
+          optionsLinkUrl +
+          networkName +
+          '_toBlock=' +
+          localConfig[networkName + '_toBlock'] +
+          '&';
       if (localConfig[networkName + '_targetHash'])
-        optionsLinkUrl = optionsLinkUrl + networkName + '_targetHash=' + localConfig[networkName + '_targetHash'] + "&";
+        optionsLinkUrl =
+          optionsLinkUrl +
+          networkName +
+          '_targetHash=' +
+          localConfig[networkName + '_targetHash'] +
+          '&';
     });
-    optionsLinkUrl = optionsLinkUrl.slice(0,-1);
+    optionsLinkUrl = optionsLinkUrl.slice(0, -1);
     copy(optionsLinkUrl);
   }
 
