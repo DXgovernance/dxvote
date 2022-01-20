@@ -30,6 +30,7 @@ export interface Transaction {
   receipt?: {
     transactionHash: string,
     blockNumber: number,
+    status: number,
   }
   lastCheckedBlockNumber?: number
   addedTime: number

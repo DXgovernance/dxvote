@@ -8,11 +8,17 @@ import {
   useState,
 } from 'react';
 import { providers } from 'ethers';
+import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
 
 import { Transaction } from '../../types/types.guilds';
 import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
 import useLocalStorage from '../../hooks/Guilds/useLocalStorage';
 import TransactionModal from '../../components/Guilds/Web3Modals/TransactionModal';
+import { toast } from 'react-toastify';
+import {
+  TransactionOutcome,
+  TransactionPending,
+} from '../../components/Guilds/ToastNotifications/TransactionToasts';
 export interface TransactionState {
   [chainId: number]: {
     [txHash: string]: Transaction;
@@ -123,6 +129,43 @@ export const TransactionsProvider = ({ children }) => {
     };
   }, [allTransactions, finalizeTransaction, provider]);
 
+  // Update the pending transaction notifications when finalized
+  useEffect(() => {
+    allTransactions.forEach(transaction => {
+      if (transaction.receipt && toast.isActive(transaction.hash)) {
+        if (transaction.receipt.status === 1) {
+          toast.update(transaction.hash, {
+            isLoading: false,
+            render: (
+              <TransactionOutcome
+                summary={transaction.summary}
+                chainId={chainId}
+                transactionHash={transaction.hash}
+              />
+            ),
+            icon: <FiCheckCircle />,
+            type: toast.TYPE.SUCCESS,
+            autoClose: 15000,
+          });
+        } else {
+          toast.update(transaction.hash, {
+            isLoading: false,
+            render: (
+              <TransactionOutcome
+                summary={transaction.summary}
+                chainId={chainId}
+                transactionHash={transaction.hash}
+              />
+            ),
+            icon: <FiXCircle />,
+            type: toast.TYPE.ERROR,
+            autoClose: 15000,
+          });
+        }
+      }
+    });
+  }, [allTransactions, chainId]);
+
   // Trigger a new transaction request to the user wallet and track its progress
   const createTransaction = async (
     summary: string,
@@ -135,13 +178,20 @@ export const TransactionsProvider = ({ children }) => {
       cancelled: false,
       transactionHash: null,
     });
+    let transactionHash = null;
     try {
       const txResponse = await txFunction();
+      transactionHash = txResponse.hash;
       addTransaction(txResponse, summary);
       setPendingTransaction(pendingTransaction => ({
         ...pendingTransaction,
-        transactionHash: txResponse.hash,
+        transactionHash,
       }));
+      toast(<TransactionPending summary={summary} />, {
+        toastId: transactionHash,
+        autoClose: false,
+        isLoading: true,
+      });
     } catch (e) {
       console.error('Transaction execution failed', e);
       setPendingTransaction(pendingTransaction => ({

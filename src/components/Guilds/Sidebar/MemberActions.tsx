@@ -55,7 +55,7 @@ export const MemberActions = () => {
 
   const lockDXD = async () => {
     // Sends a hardcoded transaction to test transactions provider
-    createTransaction(`Approve token for ${ZERO_ADDRESS}`, async () =>
+    createTransaction(`Approve token`, async () =>
       contract.approve(ZERO_ADDRESS, BigNumber.from(1))
     );
   };
