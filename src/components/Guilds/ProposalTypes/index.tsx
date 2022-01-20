@@ -6,6 +6,9 @@ import { Button } from '../common/Button';
 import { Flex } from '../common/Layout';
 import { ContainerText } from '../common/Layout/Text';
 
+import Vector from '../../../assets/images/vector.svg';
+import Signal from '../../../assets/images/signal.svg';
+
 const Container = styled(Flex)`
   border: 1px solid ${({ theme }) => theme.colors.primary};
   width: 386px;
@@ -26,6 +29,7 @@ const Header = styled(Flex)`
 `;
 
 
+
 const ProposalTypeDescription: React.FC = () => {
     return (
         <Container>
@@ -43,14 +47,16 @@ const ProposalTypeDescription: React.FC = () => {
     );
 };
 const ProposalTypes: React.FC = () => {
-    //@TODO import the SVG images of icons
-    // @TODO create text box CSS
     return (
         <Flex>
             <Container>
                 <Header>Choose Proposal Type</Header>
-                <ProposalTypeButton>Signal</ProposalTypeButton>
                 <ProposalTypeButton>
+                    <Signal />
+                    Signal
+                </ProposalTypeButton>
+                <ProposalTypeButton>
+                    <Vector />
                     Transfer Funds
                 </ProposalTypeButton>
                 <ProposalTypeButton>
@@ -67,6 +73,7 @@ const ProposalTypes: React.FC = () => {
                 </ProposalTypeButton>
             </Container>
             <ProposalTypeDescription />
+            <Button variant='secondary'>Continue</Button>
         </Flex>
     );
 };
