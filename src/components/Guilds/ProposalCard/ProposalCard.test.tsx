@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
-import { useProposal } from 'hooks/Guilds/useProposal';
 import { default as ProposalCard } from './';
-import { renderWithTheme } from '../../../utils/tests';
+
+import { render } from '../../../utils/tests';
 
 jest.mock('hooks/Guilds/useProposal', () => ({
   useProposal: () => ({
@@ -17,7 +17,7 @@ jest.mock('hooks/Guilds/useProposal', () => ({
 }));
 
 test('ProposalCard with mocked data', async () => {
-  renderWithTheme(<ProposalCard id="" href="" />);
+  render(<ProposalCard id="" href="" />);
 
   //Title is rendered
   expect(screen.queryByText('Proposal Title')).toBeTruthy();

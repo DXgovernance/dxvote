@@ -1,8 +1,9 @@
 import { fireEvent, screen } from '@testing-library/react';
+import { render } from '../../../../utils/tests';
+
 import { Button } from './Button';
-import { renderWithTheme } from '../../../../utils/tests';
 
 test('renders button', async () => {
-  renderWithTheme(<Button>hola</Button>);
+  render(<Button>hola</Button>);
   fireEvent.click(screen.getByText('hola'));
 });
