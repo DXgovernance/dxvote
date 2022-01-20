@@ -65,6 +65,26 @@ const CachePage = observer(() => {
     context: { cacheService, configStore, notificationStore },
   } = useContext();
 
+  const [updateProposalTitles, setUpdateProposalTitles] = React.useState(true);
+  const [buildingCacheState, setBuildingCacheState] = React.useState(0);
+  const [updatedCacheHash, setUpdatedCacheHash] = React.useState({
+    proposalTitles: {},
+    configHashes: {},
+    configs: {},
+    caches: {},
+  });
+  const [resetCache, setResetCache] = React.useState({
+    mainnet: false,
+    rinkeby: false,
+    xdai: false,
+    arbitrum: false,
+    arbitrumTestnet: false
+  });
+  const [localConfig, setLocalConfig] = React.useState(
+    configStore.getLocalConfig()
+  );
+  const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+
   async function resetCacheOptions() {
     configStore.resetLocalConfig();
     forceUpdate();
@@ -76,45 +96,34 @@ const CachePage = observer(() => {
       1: {
         rpcUrl: localConfig.mainnet_rpcURL,
         toBlock: localConfig.mainnet_toBlock,
-        reset: false,
+        reset: resetCache.mainnet,
       },
       4: {
         rpcUrl: localConfig.rinkeby_rpcURL,
         toBlock: localConfig.rinkeby_toBlock,
-        reset: false,
+        reset: resetCache.rinkeby,
       },
       100: {
         rpcUrl: localConfig.xdai_rpcURL,
         toBlock: localConfig.xdai_toBlock,
-        reset: false,
+        reset: resetCache.xdai,
       },
       42161: {
         rpcUrl: localConfig.arbitrum_rpcURL,
         toBlock: localConfig.arbitrum_toBlock,
-        reset: false,
+        reset: resetCache.arbitrum,
       },
       421611: {
         rpcUrl: localConfig.arbitrumTestnet_rpcURL,
         toBlock: localConfig.arbitrumTestnet_toBlock,
-        reset: false,
+        reset: resetCache.arbitrumTestnet,
       },
-    });
+    }, updateProposalTitles);
     console.log('[Updated Cache]', updatedCache);
     setUpdatedCacheHash(updatedCache);
     setBuildingCacheState(2);
     forceUpdate();
   }
-
-  const [BuildingCacheState, setBuildingCacheState] = React.useState(0);
-  const [updatedCacheHash, setUpdatedCacheHash] = React.useState({
-    configHashes: {},
-    configs: {},
-    caches: {},
-  });
-  const [localConfig, setLocalConfig] = React.useState(
-    configStore.getLocalConfig()
-  );
-  const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
   function onApiKeyValueChange(value, key) {
     localConfig[key] = value;
@@ -176,7 +185,7 @@ const CachePage = observer(() => {
     copy(optionsLinkUrl);
   }
 
-  return BuildingCacheState == 1 ? (
+  return buildingCacheState == 1 ? (
     <LoadingBox>
       <div className="loader">
         {' '}
@@ -223,6 +232,16 @@ const CachePage = observer(() => {
                     value={localConfig[networkName + '_rpcURL']}
                     style={{ width: '100%' }}
                   ></InputBox>
+                  <FormLabel>Reset</FormLabel>
+                  <InputBox
+                    type="checkbox"
+                    checked={resetCache[networkName]}
+                    onChange={() => {
+                      resetCache[networkName] = !resetCache[networkName];
+                      setResetCache(resetCache);
+                      forceUpdate();
+                    }}
+                  ></InputBox>
                 </RowAlignedLeft>
                 <RowAlignedLeft>
                   <FormLabel>Target Config Hash:</FormLabel>
@@ -243,7 +262,7 @@ const CachePage = observer(() => {
                         onClick={() =>
                           download(
                             updatedCacheHash.configs[networkName],
-                            networkName + '_config.json'
+                            networkName + '.json'
                           )
                         }
                       >
@@ -282,8 +301,17 @@ const CachePage = observer(() => {
           );
         })}
       </FormContainer>
+      <Row style={{justifyContent: "left"}}>
+        <FormLabel>Update Proposal Titles</FormLabel>
+        <InputBox
+          type="checkbox"
+          checked={updateProposalTitles}
+          onChange={() => setUpdateProposalTitles(!updateProposalTitles)
+          }
+        ></InputBox>
+      </Row>
       <Row>
-        {BuildingCacheState == 2 && (
+        {buildingCacheState == 2 && (
           <Button
             onClick={() =>
               download(
@@ -300,6 +328,15 @@ const CachePage = observer(() => {
             }
           >
             <FiDownload></FiDownload> Cache Hashes
+          </Button>
+        )}
+        {buildingCacheState == 2 && (
+          <Button
+            onClick={() =>
+              download(updatedCacheHash.proposalTitles, 'proposalTitles.json')
+            }
+          >
+            <FiDownload></FiDownload> Proposal Titles
           </Button>
         )}
         <Button onClick={runCacheScript}>Build Cache</Button>

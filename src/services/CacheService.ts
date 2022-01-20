@@ -135,24 +135,6 @@ export default class UtilsService {
         toBlock,
         web3
       );
-
-      this.context.notificationStore.setGlobalLoading(
-        true,
-        `Getting proposal titles form ipfs`
-      );
-      // Get proposal titles
-      const updatedTitles = Object.assign(
-        proposalTitles,
-        await this.getProposalTitlesFromIPFS(networkCache, proposalTitles)
-      );
-
-      // Update proposals with no titles if title is available
-      Object.keys(networkCache.proposals).map(proposalId => {
-        if (!networkCache.proposals[proposalId].title) {
-          networkCache.proposals[proposalId].title =
-            updatedTitles[proposalId] || '';
-        }
-      });
     }
 
     // Write network cache file
@@ -177,7 +159,10 @@ export default class UtilsService {
       rpcUrl: string;
       reset: boolean;
     };
-  }): Promise<{
+  }, updateProposalTitles:boolean): Promise<{
+    proposalTitles: {
+      [proposalId: string]: string;
+    }
     configHashes: {
       [networkName: string]: string;
     };
@@ -188,7 +173,7 @@ export default class UtilsService {
       [networkName: string]: DaoNetworkCache;
     };
   }> {
-    const updatedCacheConfig = { configHashes: {}, configs: {}, caches: {} };
+    const updatedCacheConfig = { proposalTitles: proposalTitles, configHashes: {}, configs: {}, caches: {} };
     // Update the cache and config for each network
     for (let i = 0; i < Object.keys(networksConfig).length; i++) {
       const networkId = Number(Object.keys(networksConfig)[i]);
@@ -205,7 +190,20 @@ export default class UtilsService {
       updatedCacheConfig.configHashes[networkName] = cacheForNetwork.configHash;
       updatedCacheConfig.configs[networkName] = cacheForNetwork.config;
       updatedCacheConfig.caches[networkName] = cacheForNetwork.cache;
+      
+      // Get proposal titles
+      if (updateProposalTitles){
+        this.context.notificationStore.setGlobalLoading(
+          true,
+          `Getting proposal titles form ipfs`
+        );
+        updatedCacheConfig.proposalTitles = Object.assign(
+          updatedCacheConfig.proposalTitles,
+          await this.getProposalTitlesFromIPFS(cacheForNetwork.cache, proposalTitles)
+        );
+      }
     }
+
     return updatedCacheConfig;
   }
 
