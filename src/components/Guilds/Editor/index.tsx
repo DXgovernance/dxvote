@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Focus from '@tiptap/extension-focus';
@@ -7,6 +8,25 @@ import TurndownService from 'turndown';
 import './styles.scss';
 
 var turndownService = new TurndownService();
+
+const EditorWrap = styled.div`
+  background-color: #fff;
+  border: 1px solid #0d0d0d;
+  border-radius: 10px;
+  color: #0d0d0d;
+  display: flex;
+  flex-direction: column;
+  max-height: 26rem;
+}
+`;
+
+const Content = styled(EditorContent)`
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 1rem;
+  -webkit-overflow-scrolling: touch;
+`;
 
 const Editor = () => {
   const initialJson = localStorage.getItem(
@@ -47,11 +67,10 @@ const Editor = () => {
 
   return (
     <div>
-      <div className="editor">
+      <EditorWrap>
         {editor && <MenuBar editor={editor} />}
-        <EditorContent className="editor__content" editor={editor} />
-        <div className="editor__footer"></div>
-      </div>
+        <Content editor={editor} />
+      </EditorWrap>
     </div>
   );
 };

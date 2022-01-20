@@ -1,6 +1,23 @@
 import { Fragment } from 'react';
+import styled from 'styled-components';
+
 import MenuItem from './MenuItem';
-import './MenuBar.scss';
+
+const Header = styled.div`
+  align-items: center;
+  border-bottom: 1px solid #0d0d0d;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  padding: 0.25rem;
+`;
+const Divider = styled.div`
+  background-color: rgba(#000, 0.1);
+  height: 1.25rem;
+  margin-left: 0.5rem;
+  margin-right: 0.75rem;
+  width: 2px;
+`;
 
 const MenuBar = ({ editor }) => {
   const items = [
@@ -17,7 +34,7 @@ const MenuBar = ({ editor }) => {
       isActive: () => editor.isActive('heading', { level: 2 }),
     },
     {
-      type: 'divider',
+      title: 'divider',
     },
     {
       icon: 'bold',
@@ -39,7 +56,7 @@ const MenuBar = ({ editor }) => {
     },
 
     {
-      type: 'divider',
+      title: 'divider',
     },
     {
       icon: 'code-view',
@@ -60,7 +77,7 @@ const MenuBar = ({ editor }) => {
       isActive: () => editor.isActive('highlight'),
     },
     {
-      type: 'divider',
+      title: 'divider',
     },
     {
       icon: 'paragraph',
@@ -104,17 +121,13 @@ const MenuBar = ({ editor }) => {
   ];
 
   return (
-    <div className="editor__header">
+    <Header>
       {items.map((item, index) => (
         <Fragment key={index}>
-          {item.title === 'divider' ? (
-            <div className="divider" />
-          ) : (
-            <MenuItem {...item} />
-          )}
+          {item.title === 'divider' ? <Divider /> : <MenuItem {...item} />}
         </Fragment>
       ))}
-    </div>
+    </Header>
   );
 };
 

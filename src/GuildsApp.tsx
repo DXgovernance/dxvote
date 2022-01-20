@@ -16,6 +16,7 @@ import theme from './theme/light.json';
 import { GuildsContextProvider } from 'contexts/Guilds';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
+import CreateProposalPage from 'pages/Guilds/CreateProposal';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -52,6 +53,9 @@ const GuildsApp = () => {
                 </Route>
                 <Route path="/:chain_name/:guild_id/proposals/:proposal_id">
                   <ProposalPage />
+                </Route>
+                <Route path="/:chain_name/:guild_id/createProposal/:proposal_type">
+                  <CreateProposalPage />
                 </Route>
               </Switch>
             </Container>

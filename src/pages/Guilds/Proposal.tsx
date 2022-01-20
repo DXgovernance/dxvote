@@ -18,8 +18,6 @@ import useIPFSFile from '../../hooks/Guilds/ipfs/useIPFSFile';
 import { ProposalMetadata } from '../../types/types.guilds';
 import AddressButton from '../../components/Guilds/AddressButton';
 
-import Editor from '../../components/Guilds/Editor/index';
-
 const PageContainer = styled(Box)`
   display: grid;
   grid-template-columns: 1fr;
@@ -148,7 +146,6 @@ const ProposalPage: React.FC = () => {
         <ProposalInfoCard />
         <ProposalVoteCard />
       </SidebarContent>
-      <Editor />
     </PageContainer>
   );
 };
