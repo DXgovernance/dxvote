@@ -6,6 +6,7 @@ import {
   getNetworkByName,
   NETWORK_ASSET_SYMBOL,
   NETWORK_NAMES,
+  NETWORK_DISPLAY_NAMES,
 } from '../utils';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
@@ -105,6 +106,11 @@ export default class ConfigStore {
   getActiveChainName() {
     const { chainId } = this.context.providerStore.getActiveWeb3React();
     return NETWORK_NAMES[chainId];
+  }
+
+  getActiveChainDisplayName() {
+    const { chainId } = this.context.providerStore.getActiveWeb3React();
+    return NETWORK_DISPLAY_NAMES[chainId];
   }
 
   getLocalConfig() {

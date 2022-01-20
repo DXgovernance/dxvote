@@ -133,7 +133,7 @@ const Web3ConnectStatus = observer(props => {
       return (
         <div style={{ display: 'flex' }}>
           <ChainButton onClick={toggleNetworkModal}>
-            {toCamelCaseString(configStore.getActiveChainName())}
+            {toCamelCaseString(configStore.getActiveChainDisplayName())}
           </ChainButton>
         </div>
       );

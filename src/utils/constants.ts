@@ -47,7 +47,7 @@ export const NETWORKS: ChainConfig[] = [
   {
     id: 100,
     name: 'xdai',
-    displayName: 'xDai Chain',
+    displayName: 'Gnosis Chain',
     defaultRpc: `https://poa-xdai.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a`,
     nativeAsset: {
       name: 'xDai',
@@ -108,6 +108,14 @@ export const getNetworkByName = function (networkName: string): ChainConfig {
 export const getNetworkById = function (networkId: number): ChainConfig {
   return NETWORKS.find(network => network.id == networkId);
 };
+
+export const NETWORK_DISPLAY_NAMES: Record<
+  ChainConfig['id'],
+  ChainConfig['displayName']
+> = NETWORKS.reduce((acc, network) => {
+  acc[network.id] = network.displayName;
+  return acc;
+}, {});
 
 export const DEFAULT_RPC_URLS: Record<
   ChainConfig['id'],
