@@ -88,7 +88,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   }, [endTime, proposal]);
 
   return (
-    <Status bordered={hideTime ? false : bordered}>
+    <Status test-id="proposal-status" bordered={hideTime ? false : bordered}>
       {!hideTime && (
         <DetailText>
           {endTime && timeDetail ? (
