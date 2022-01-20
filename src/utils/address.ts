@@ -52,7 +52,11 @@ export function toAddressStub(address, size = 'default') {
   }
 }
 
-export function getBlockchainLink(address: string, networkName: string, type?: string) {
+export function getBlockchainLink(
+  address: string,
+  networkName: string,
+  type?: string
+) {
   switch (type) {
     case 'user':
       return `${window.location.pathname}#/user/${address}`;

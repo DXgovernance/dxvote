@@ -64,7 +64,7 @@ export const Container = styled.div`
 
 export const Header = styled(Flex)`
   margin-top: 2rem;
-`
+`;
 
 enum TransactionModalView {
   Confirm,
@@ -128,7 +128,9 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
           </Header>
         );
 
-        const networkName = getChains().find(chain => chain.id === chainId).name;
+        const networkName = getChains().find(
+          chain => chain.id === chainId
+        ).name;
         children = (
           <Flex>
             <ContainerText variant="bold">Transaction Submitted</ContainerText>

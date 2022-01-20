@@ -5,12 +5,7 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { useWeb3React } from '@web3-react/core';
 
 import { usePrevious } from 'utils';
-import {
-  injected,
-  getWallets,
-  isChainIdSupported,
-  getChains,
-} from 'provider/connectors';
+import { injected, getWallets, isChainIdSupported } from 'provider/connectors';
 import { useRpcUrls } from 'provider/providerHooks';
 import Option from './components/Option';
 import { Modal } from '../common/Modal';
@@ -19,7 +14,6 @@ import WalletInfoBox from './components/WalletInfoBox';
 import Transaction from './components/Transaction';
 import { Button } from '../common/Button';
 import { useTransactions } from '../../../contexts/Guilds';
-import { getBlockchainLink } from '../../../utils';
 
 const Container = styled.div`
   margin: 2rem;
@@ -48,13 +42,24 @@ const Divider = styled.hr`
   border-top: 1px solid ${({ theme }) => theme.colors.muted};
 `;
 
-const BlockButton = styled(Button)`
-  width: 100%;
-  margin: 1.5rem 0 0;
+const GreyDivider = styled(Divider)`
+  border-top: 1px solid #c4c4c4;
+  margin: 0;
+`;
+
+const ButtonContainer = styled.div`
+  margin: 1.5rem;
+  text-align: center;
 `;
 
 const TransactionsList = styled.div`
-  margin: 1.5rem;
+  margin: 1.5rem 0;
+`;
+
+const TransactionsListHeading = styled(Heading)`
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.body};
 `;
 
 const WALLET_VIEWS = {
@@ -224,8 +229,9 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
     }
 
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
-      const networkName = getChains().find(chain => chain.id === chainId).name;
-
+      const recentTransactions = transactions
+        .sort((tx1, tx2) => tx2.addedTime - tx1.addedTime)
+        .slice(0, 5);
       return (
         <>
           <WalletInfoBox
@@ -233,18 +239,26 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
           />
           <Divider />
           <TransactionsList>
-            <Heading>Recent Transactions</Heading>
-            <Divider />
-            {transactions.map(transaction => (
-              <Transaction
-                link={getBlockchainLink(transaction.hash, networkName)}
-                pending={!transaction.receipt}
-              >
-                {transaction.summary}
-              </Transaction>
-            ))}
-
-            <BlockButton onClick={clearAllTransactions}>Clear all</BlockButton>
+            {recentTransactions.length === 0 ? (
+              <TransactionsListHeading>
+                Your transactions will appear here...
+              </TransactionsListHeading>
+            ) : (
+              <>
+                <TransactionsListHeading>
+                  Recent Transactions
+                </TransactionsListHeading>
+                <GreyDivider />
+                {recentTransactions.map(transaction => (
+                  <Transaction transaction={transaction} />
+                ))}
+                {recentTransactions.length > 0 && (
+                  <ButtonContainer>
+                    <Button onClick={clearAllTransactions}>Clear all</Button>
+                  </ButtonContainer>
+                )}
+              </>
+            )}
           </TransactionsList>
         </>
       );
