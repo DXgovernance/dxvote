@@ -6,7 +6,7 @@ import React from 'react';
 import { FiCheckCircle, FiDownload, FiX } from 'react-icons/fi';
 import { NETWORKS, toCamelCaseString } from 'utils';
 import PulsingIcon from 'components/common/LoadingIcon';
-import copy from 'copy-to-clipboard';
+import Copy from '../components/common/Copy';
 
 const FormLabel = styled.label`
   padding: 10px 0px;
@@ -60,6 +60,23 @@ const RowAlignedLeft = styled(Row)`
   justify-content: start;
 `;
 
+const CopyButton = styled(Button)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  a {
+    color: inherit;
+    text-decoration: none;
+    margin-right: 0;
+    :hover,
+    :active,
+    :focus {
+      text-decoration: none;
+      color: ${({ theme }) => theme.white};
+    }
+  }
+`;
+
 const CachePage = observer(() => {
   const {
     context: { cacheService, configStore, notificationStore },
@@ -78,7 +95,7 @@ const CachePage = observer(() => {
     rinkeby: false,
     xdai: false,
     arbitrum: false,
-    arbitrumTestnet: false
+    arbitrumTestnet: false,
   });
   const [localConfig, setLocalConfig] = React.useState(
     configStore.getLocalConfig()
@@ -92,33 +109,36 @@ const CachePage = observer(() => {
 
   async function runCacheScript() {
     setBuildingCacheState(1);
-    const updatedCache = await cacheService.getUpdatedCacheConfig({
-      1: {
-        rpcUrl: localConfig.mainnet_rpcURL,
-        toBlock: localConfig.mainnet_toBlock,
-        reset: resetCache.mainnet,
+    const updatedCache = await cacheService.getUpdatedCacheConfig(
+      {
+        1: {
+          rpcUrl: localConfig.mainnet_rpcURL,
+          toBlock: localConfig.mainnet_toBlock,
+          reset: resetCache.mainnet,
+        },
+        4: {
+          rpcUrl: localConfig.rinkeby_rpcURL,
+          toBlock: localConfig.rinkeby_toBlock,
+          reset: resetCache.rinkeby,
+        },
+        100: {
+          rpcUrl: localConfig.xdai_rpcURL,
+          toBlock: localConfig.xdai_toBlock,
+          reset: resetCache.xdai,
+        },
+        42161: {
+          rpcUrl: localConfig.arbitrum_rpcURL,
+          toBlock: localConfig.arbitrum_toBlock,
+          reset: resetCache.arbitrum,
+        },
+        421611: {
+          rpcUrl: localConfig.arbitrumTestnet_rpcURL,
+          toBlock: localConfig.arbitrumTestnet_toBlock,
+          reset: resetCache.arbitrumTestnet,
+        },
       },
-      4: {
-        rpcUrl: localConfig.rinkeby_rpcURL,
-        toBlock: localConfig.rinkeby_toBlock,
-        reset: resetCache.rinkeby,
-      },
-      100: {
-        rpcUrl: localConfig.xdai_rpcURL,
-        toBlock: localConfig.xdai_toBlock,
-        reset: resetCache.xdai,
-      },
-      42161: {
-        rpcUrl: localConfig.arbitrum_rpcURL,
-        toBlock: localConfig.arbitrum_toBlock,
-        reset: resetCache.arbitrum,
-      },
-      421611: {
-        rpcUrl: localConfig.arbitrumTestnet_rpcURL,
-        toBlock: localConfig.arbitrumTestnet_toBlock,
-        reset: resetCache.arbitrumTestnet,
-      },
-    }, updateProposalTitles);
+      updateProposalTitles
+    );
     console.log('[Updated Cache]', updatedCache);
     setUpdatedCacheHash(updatedCache);
     setBuildingCacheState(2);
@@ -161,7 +181,7 @@ const CachePage = observer(() => {
     forceUpdate();
   }
 
-  function copyOptionsLink() {
+  function getOptionsLink(): string {
     let optionsLinkUrl =
       window.location.origin + '/' + window.location.hash + '?';
     NETWORKS.map((network, i) => {
@@ -182,7 +202,7 @@ const CachePage = observer(() => {
           '&';
     });
     optionsLinkUrl = optionsLinkUrl.slice(0, -1);
-    copy(optionsLinkUrl);
+    return optionsLinkUrl;
   }
 
   return buildingCacheState == 1 ? (
@@ -236,7 +256,7 @@ const CachePage = observer(() => {
                   <InputBox
                     type="checkbox"
                     checked={resetCache[networkName]}
-                    onChange={() => {
+                    onClick={() => {
                       resetCache[networkName] = !resetCache[networkName];
                       setResetCache(resetCache);
                       forceUpdate();
@@ -301,13 +321,12 @@ const CachePage = observer(() => {
           );
         })}
       </FormContainer>
-      <Row style={{justifyContent: "left"}}>
+      <Row style={{ justifyContent: 'left' }}>
         <FormLabel>Update Proposal Titles</FormLabel>
         <InputBox
           type="checkbox"
           checked={updateProposalTitles}
-          onChange={() => setUpdateProposalTitles(!updateProposalTitles)
-          }
+          onChange={() => setUpdateProposalTitles(!updateProposalTitles)}
         ></InputBox>
       </Row>
       <Row>
@@ -341,7 +360,9 @@ const CachePage = observer(() => {
         )}
         <Button onClick={runCacheScript}>Build Cache</Button>
         <Button onClick={resetCacheOptions}>Reset Options</Button>
-        <Button onClick={copyOptionsLink}>Copy Options Link</Button>
+        <CopyButton>
+          Build Link <Copy toCopy={getOptionsLink()}></Copy>
+        </CopyButton>
       </Row>
     </Box>
   );

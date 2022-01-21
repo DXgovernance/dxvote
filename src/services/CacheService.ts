@@ -153,16 +153,19 @@ export default class UtilsService {
     };
   }
 
-  async getUpdatedCacheConfig(networksConfig: {
-    [netwokId: number]: {
-      toBlock: number;
-      rpcUrl: string;
-      reset: boolean;
-    };
-  }, updateProposalTitles:boolean): Promise<{
+  async getUpdatedCacheConfig(
+    networksConfig: {
+      [netwokId: number]: {
+        toBlock: number;
+        rpcUrl: string;
+        reset: boolean;
+      };
+    },
+    updateProposalTitles: boolean
+  ): Promise<{
     proposalTitles: {
       [proposalId: string]: string;
-    }
+    };
     configHashes: {
       [networkName: string]: string;
     };
@@ -173,7 +176,12 @@ export default class UtilsService {
       [networkName: string]: DaoNetworkCache;
     };
   }> {
-    const updatedCacheConfig = { proposalTitles: proposalTitles, configHashes: {}, configs: {}, caches: {} };
+    const updatedCacheConfig = {
+      proposalTitles: proposalTitles,
+      configHashes: {},
+      configs: {},
+      caches: {},
+    };
     // Update the cache and config for each network
     for (let i = 0; i < Object.keys(networksConfig).length; i++) {
       const networkId = Number(Object.keys(networksConfig)[i]);
@@ -190,16 +198,19 @@ export default class UtilsService {
       updatedCacheConfig.configHashes[networkName] = cacheForNetwork.configHash;
       updatedCacheConfig.configs[networkName] = cacheForNetwork.config;
       updatedCacheConfig.caches[networkName] = cacheForNetwork.cache;
-      
+
       // Get proposal titles
-      if (updateProposalTitles){
+      if (updateProposalTitles) {
         this.context.notificationStore.setGlobalLoading(
           true,
           `Getting proposal titles form ipfs`
         );
         updatedCacheConfig.proposalTitles = Object.assign(
           updatedCacheConfig.proposalTitles,
-          await this.getProposalTitlesFromIPFS(cacheForNetwork.cache, proposalTitles)
+          await this.getProposalTitlesFromIPFS(
+            cacheForNetwork.cache,
+            proposalTitles
+          )
         );
       }
     }
