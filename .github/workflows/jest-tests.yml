@@ -1,5 +1,4 @@
 name: Jest Tests
-
 on:
   push:
     branches:
