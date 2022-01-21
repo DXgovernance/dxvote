@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { FiArrowRight, FiInfo } from 'react-icons/fi';
+import moment from 'moment';
 
 import { Heading } from '../common/Typography';
-import { Button } from 'components/Guilds/common/Button';
+import CopyHelper from '../../common/Copy';
+import { Button } from '../common/Button';
+import { Loading } from '../common/Loading';
+import { shortenAddress, isAddress } from 'utils';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
+import { useConfig } from 'hooks/Guilds/useConfig';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -33,6 +38,7 @@ const DaoTitle = styled(Heading)`
 `;
 
 const InfoItem = styled.p`
+  display: flex;
   margin: 0px 0px 4px 0px;
   font-size: 14px;
 `;
@@ -87,14 +93,46 @@ const ButtonLock = styled(Button)`
 
 export const StakeTokens = ({ onJoin }) => {
   const [dxdValue, setDXDValue] = useState(0);
+  const {
+    data: { timeForExecution, proposalTime, name, token },
+    error,
+  } = useConfig();
+
   return (
     <GuestContainer>
       <DaoBrand>
         <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-        <DaoTitle>DXdao</DaoTitle>
+        <Loading text loading={!name && !error}>
+          <DaoTitle>{name}</DaoTitle>
+        </Loading>
       </DaoBrand>
       <InfoItem>40% Quorum</InfoItem>
-      <InfoItem>6 days proposal duration</InfoItem>
+      <Loading text loading={!token && !error}>
+        <InfoItem>
+          {!error && isAddress(token) && (
+            <>
+              Token: {shortenAddress(token)}
+              <CopyHelper toCopy={token} />
+            </>
+          )}
+        </InfoItem>
+      </Loading>
+      <Loading text loading={proposalTime.isNegative() && !error}>
+        <InfoItem>
+          {!error &&
+            `${moment
+              .duration(proposalTime, 'seconds')
+              .humanize()} proposal duration`}
+        </InfoItem>
+      </Loading>
+      <Loading text loading={timeForExecution.isNegative() && !error}>
+        <InfoItem>
+          {!error &&
+            `(${moment
+              .duration(timeForExecution, 'seconds')
+              .humanize()} for execution)`}
+        </InfoItem>
+      </Loading>
       <InfoItem>2.5 DXD min. deposit</InfoItem>
       <BalanceWidget>
         <InfoRow>
