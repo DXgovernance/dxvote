@@ -116,7 +116,12 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
       )}
       <Pill filled padded>
         {statusDetail || (
-          <Skeleton width={50} baseColor="#333" highlightColor="#555" />
+          <Skeleton
+            test-id="skeleton"
+            width={50}
+            baseColor="#333"
+            highlightColor="#555"
+          />
         )}
       </Pill>
     </Status>

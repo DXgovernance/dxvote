@@ -21,3 +21,15 @@ test('renders Ended Proposal Status', async () => {
   expect(screen.queryAllByText('Ended')).toBeTruthy();
   expect(screen.queryAllByText('Active')).toHaveLength(0);
 });
+
+jest.mock('hooks/Guilds/useProposal', () => ({
+  useProposal: () => ({
+    data: {},
+    loading: true,
+  }),
+}));
+
+test('renders Sleleton loading component', async () => {
+  render(<ProposalStatus />);
+  expect(screen.queryAllByTestId('skeleton')).toBeTruthy();
+});
