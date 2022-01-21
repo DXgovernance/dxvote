@@ -21,9 +21,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
         run: yarn
-      - name: Generate coverage report
-        uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-script: yarn run test --silent --ci --coverage --coverageReporters="text" --coverageReporters="text-summary"
-          # threshold: 20 # TODO: Include this when we reach aceptable coverage %
+      - name: Run Jests Test
+        run: yarn test
