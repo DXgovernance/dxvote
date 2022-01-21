@@ -27,4 +27,5 @@ jobs:
         uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          threshold: 10 # TODO: Increase when reached%
+          test-script: yarn run test --silent --ci --coverage --coverageReporters="text" --coverageReporters="text-summary"
+          # threshold: 20 # TODO: Include this when we reach aceptable coverage %
