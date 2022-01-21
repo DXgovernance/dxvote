@@ -103,15 +103,15 @@ export const StakeTokens = ({ onJoin }) => {
       <DaoBrand>
         <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
         <Loading text loading={!name && !error}>
-          <DaoTitle>{error ? 'DxDao' : name}</DaoTitle>
+          <DaoTitle>{name}</DaoTitle>
         </Loading>
       </DaoBrand>
       <InfoItem>40% Quorum</InfoItem>
       <Loading text loading={!token && !error}>
         <InfoItem>
-          {!error && (
+          {!error && isAddress(token) && (
             <>
-              Token: {isAddress(token) ? shortenAddress(token) : ''}
+              Token: {shortenAddress(token)}
               <CopyHelper toCopy={token} />
             </>
           )}
