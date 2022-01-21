@@ -34,6 +34,9 @@ import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
 import { useEffect } from 'react';
 import { useContext } from './contexts';
 import { DEFAULT_ETH_CHAIN_ID } from './provider/connectors';
+import { EtherSWRConfig } from 'ether-swr';
+
+import ERC20GuildContract from 'contracts/ERC20Guild.json';
 
 const Content = styled.div`
   margin: auto;
@@ -130,8 +133,21 @@ const SplitApp = () => {
     ensService.setWeb3Provider(mainnetProvider);
   }, [mainnetProvider, ensService]);
 
+  const provider = useJsonRpcProvider();
+
   return (
-    <>
+    <EtherSWRConfig
+      value={{
+        web3Provider: provider,
+        ABIs: new Map([
+          [
+            '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+            ERC20GuildContract.abi,
+          ],
+        ]),
+        refreshInterval: 0,
+      }}
+    >
       {!isGuilds ? (
         <Switch>
           <Web3ReactManager>
@@ -146,7 +162,7 @@ const SplitApp = () => {
       ) : (
         <GuildsApp />
       )}
-    </>
+    </EtherSWRConfig>
   );
 };
 

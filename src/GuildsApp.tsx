@@ -5,7 +5,6 @@ import {
   useHistory,
   Redirect,
 } from 'react-router-dom';
-import { EtherSWRConfig } from 'ether-swr';
 import { ThemeProvider } from 'styled-components';
 
 import { Container } from './components/Guilds/common/Layout';
@@ -17,16 +16,12 @@ import theme from './theme/light.json';
 import { GuildsContextProvider, TransactionsProvider } from 'contexts/Guilds';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
-import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
-import ERC20GuildContract from 'contracts/ERC20Guild.json';
-import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
-import loggerMiddleware from './hooks/Guilds/ether-swr/middleware/logger';
+import ToastNotificationContainer from 'components/Guilds/ToastNotifications/ToastNotificationContainer';
 
 const GuildsApp = () => {
   const history = useHistory();
 
   const isTestingEnv = !window.location?.hostname?.startsWith('dxvote.eth');
-  const provider = useJsonRpcProvider();
 
   if (!isTestingEnv) {
     history.push('/');
@@ -55,41 +50,12 @@ const GuildsApp = () => {
                   />
                   <Route exact path="/:chain_name/:guild_id">
                     <GuildsContextProvider>
-                      <EtherSWRConfig
-                        value={{
-                          web3Provider: provider,
-                          ABIs: new Map([
-                            [
-                              // we can move this probably to a hook to reduce repeat ourselves in each route.
-                              '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
-                              ERC20GuildContract.abi,
-                            ],
-                          ]),
-                          refreshInterval: 30000,
-                          use: [loggerMiddleware],
-                        }}
-                      >
-                        <GuildsPage />
-                      </EtherSWRConfig>
+                      <GuildsPage />
                     </GuildsContextProvider>
                   </Route>
                   <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
-                    <EtherSWRConfig
-                      value={{
-                        web3Provider: provider,
-                        ABIs: new Map([
-                          [
-                            '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
-                            ERC20GuildContract.abi,
-                          ],
-                        ]),
-                        refreshInterval: 0,
-                        use: [loggerMiddleware],
-                      }}
-                    >
-                      {' '}
-                      <ProposalPage />
-                    </EtherSWRConfig>
+                    {' '}
+                    <ProposalPage />
                   </Route>
                 </Switch>
               </Container>
