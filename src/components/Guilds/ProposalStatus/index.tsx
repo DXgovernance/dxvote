@@ -4,7 +4,7 @@ import Skeleton from 'react-loading-skeleton';
 import moment, { unix } from 'moment';
 
 import { Box } from '../common/Layout';
-import { Proposal, ProposalState } from '../../../types/types.guilds.d';
+import { ProposalState } from '../../../types/types.guilds.d';
 import { useProposal } from 'hooks/Guilds/useProposal';
 import { useParams } from 'react-router';
 
@@ -97,6 +97,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
         return 'Active';
       }
     }
+    return 'Ended';
 
     // return proposal.state;
   }, [endTime, proposal]);

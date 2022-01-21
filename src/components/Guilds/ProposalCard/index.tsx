@@ -116,7 +116,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
           </IconDetailWrapper>
           <ProposalStatusWrapper>
             <ProposalStatus
-              proposal={data}
+              proposalId={id}
               bordered={false}
               showRemainingTime
             />
