@@ -100,6 +100,9 @@ export const Calls = ({
                   onChange={e => {
                     onToSelectChange(i, e.target.value);
                   }}
+                  onClick={e => {
+                    onToSelectChange(i, e.target.value);
+                  }}
                   width={'20%'}
                 >
                   {allowedToCall.map((allowedCall, allowedCallIndex) => {
@@ -119,6 +122,9 @@ export const Calls = ({
                     onChange={e => {
                       onToSelectChange(i, e.target.value);
                     }}
+                    onClick={e => {
+                      onToSelectChange(i, e.target.value);
+                    }}
                     width={'20%'}
                   />
                 )
@@ -134,6 +140,20 @@ export const Calls = ({
                   <SelectInput
                     value={calls[i].functionName || ''}
                     onChange={event => {
+                      const selectedFunction = calls[i].allowedFunctions.find(
+                        allowedFunction => {
+                          return (
+                            allowedFunction.functionName === event.target.value
+                          );
+                        }
+                      );
+                      onFunctionSelectChange(
+                        i,
+                        event.target.value,
+                        selectedFunction ? selectedFunction.params : ''
+                      );
+                    }}
+                    onClick={event => {
                       const selectedFunction = calls[i].allowedFunctions.find(
                         allowedFunction => {
                           return (
@@ -190,6 +210,9 @@ export const Calls = ({
                               onChange={value =>
                                 onFunctionParamsChange(i, value, funcParamIndex)
                               }
+                              onClick={value =>
+                                onFunctionParamsChange(i, value, funcParamIndex)
+                              }
                               value={calls[i].dataValues[funcParamIndex] || ''}
                               placeholder={funcParam.name}
                               width="100%"
@@ -207,6 +230,7 @@ export const Calls = ({
                 <TextInput
                   type="text"
                   onChange={value => onFunctionParamsChange(i, value, 0)}
+                  onClick={value => onFunctionParamsChange(i, value, 0)}
                   value={calls[i].dataValues[0] || ''}
                   placeholder="0x..."
                   width="100%"
@@ -216,6 +240,7 @@ export const Calls = ({
               <TextInput
                 type="text"
                 onChange={value => onValueChange(i, value)}
+                onClick={value => onValueChange(i, value)}
                 value={calls[i].value || ''}
                 width="10%"
                 placeholder={

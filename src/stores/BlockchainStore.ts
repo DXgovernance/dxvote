@@ -5,6 +5,7 @@ import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
 import { bnum } from '../utils';
 import { getUpdatedCache } from '../cache';
+import { CacheLoadError } from '../utils/errors';
 
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;
@@ -304,9 +305,10 @@ export default class BlockchainStore {
         notificationStore.setFirstLoadComplete();
         this.activeFetchLoop = false;
       } catch (error) {
-        console.error(error);
         if (!this.initialLoadComplete) {
           notificationStore.setGlobalError(true, (error as Error).message);
+        } else {
+          throw new CacheLoadError(error.message);
         }
         this.activeFetchLoop = false;
       }

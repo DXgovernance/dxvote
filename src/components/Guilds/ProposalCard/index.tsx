@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
-import useEtherSWR from 'ether-swr';
+
 import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
@@ -11,9 +11,7 @@ import ProposalStatus from '../ProposalStatus';
 import { Heading } from '../common/Typography';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UnstyledLink from '../common/UnstyledLink';
-
-import useJsonRpcProvider from '../../../hooks/Guilds/web3/useJsonRpcProvider';
-import ERC20GuildContract from '../../../contracts/ERC20Guild.json';
+import { useProposal } from 'hooks/Guilds/useProposal';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -101,15 +99,8 @@ interface ProposalCardProps {
 }
 
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
-  const provider = useJsonRpcProvider();
-
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
-
-  const { data } = useEtherSWR([guildId, 'getProposal', id], {
-    web3Provider: provider,
-    ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
-  });
-
+  const { data } = useProposal(guildId, id);
   const { title, contentHash } = data || {
     title: '',
     description: '',
