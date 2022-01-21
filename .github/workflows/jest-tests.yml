@@ -23,3 +23,8 @@ jobs:
         run: yarn
       - name: Run Jests Test
         run: yarn test
+      - name: Generate coverage report
+        uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          threshold: 10 # TODO: Increase when reached%
