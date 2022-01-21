@@ -68,7 +68,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   }>();
 
   // we need to type useProposal
-  const { proposal }: any = useProposal(guild_id, proposal_id);
+  const { proposal }: any = useProposal(guild_id, proposalId || proposal_id);
 
   const endTime = useMemo(() => {
     if (!proposal) return null;
@@ -98,7 +98,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
       }
     }
 
-    return proposal.state;
+    // return proposal.state;
   }, [endTime, proposal]);
 
   return (
