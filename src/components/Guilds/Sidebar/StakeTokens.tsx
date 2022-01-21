@@ -2,6 +2,8 @@ import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { FiArrowRight, FiInfo } from 'react-icons/fi';
 import moment from 'moment';
+import { useParams } from 'react-router-dom';
+import { useWeb3React } from '@web3-react/core';
 
 import { Heading } from '../common/Typography';
 import CopyHelper from '../../common/Copy';
@@ -9,7 +11,16 @@ import { Button } from '../common/Button';
 import { Loading } from '../common/Loading';
 import { shortenAddress, isAddress } from 'utils';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
-import { useConfig } from 'hooks/Guilds/useConfig';
+import {
+  useConfig,
+  useVotingPowerOf,
+  useVotingPowerForProposalCreation,
+  useVotingPowerForProposalExecution,
+  useTokenVault,
+  useLockTime,
+  useTotalLocked,
+  useVoterLockTimestamp,
+} from 'hooks/Guilds';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -98,6 +109,42 @@ export const StakeTokens = ({ onJoin }) => {
     error,
   } = useConfig();
 
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+
+  const { account: userAddress } = useWeb3React();
+
+  const { data: userVotingPower } = useVotingPowerOf({
+    contractAddress: guildAddress,
+    userAddress,
+  });
+
+  const { data: votingPowerForProposalCreation } =
+    useVotingPowerForProposalCreation({
+      contractAddress: guildAddress,
+    });
+
+  const { data: votingPowerForProposalExecution } =
+    useVotingPowerForProposalExecution({
+      contractAddress: guildAddress,
+    });
+
+  const { data: tokenVault } = useTokenVault({
+    contractAddress: guildAddress,
+  });
+
+  const { data: lockTime } = useLockTime({
+    contractAddress: guildAddress,
+  });
+
+  const { data: totalLocked } = useTotalLocked({
+    contractAddress: guildAddress,
+  });
+
+  const { data: voterLockTimestamp } = useVoterLockTimestamp({
+    contractAddress: guildAddress,
+    userAddress,
+  });
+
   return (
     <GuestContainer>
       <DaoBrand>
@@ -107,6 +154,45 @@ export const StakeTokens = ({ onJoin }) => {
         </Loading>
       </DaoBrand>
       <InfoItem>40% Quorum</InfoItem>
+      {userVotingPower && (
+        <InfoItem>User Voting Power: {userVotingPower?.toString()}</InfoItem>
+      )}
+      {votingPowerForProposalCreation && (
+        <InfoItem>
+          Voting Power for proposal creation:{' '}
+          {votingPowerForProposalCreation?.toString()}
+        </InfoItem>
+      )}
+      {votingPowerForProposalExecution && (
+        <InfoItem>
+          Voting Power for proposal execution:{' '}
+          {votingPowerForProposalExecution?.toString()}
+        </InfoItem>
+      )}
+      {tokenVault && isAddress(tokenVault) && (
+        <InfoItem>
+          Token Vault: {shortenAddress(tokenVault)}{' '}
+          <CopyHelper toCopy={tokenVault} />
+        </InfoItem>
+      )}
+      {lockTime && lockTime?.toNumber() > 0 && (
+        <InfoItem>
+          Lock Time:{' '}
+          {moment.duration(lockTime?.toNumber(), 'seconds').humanize()}
+        </InfoItem>
+      )}
+      {totalLocked && totalLocked?.toNumber() > 0 && (
+        <InfoItem>
+          Total Locked:{' '}
+          {moment.duration(totalLocked?.toString(), 'seconds').humanize()}
+        </InfoItem>
+      )}
+      {voterLockTimestamp && voterLockTimestamp?.toNumber() > 0 && (
+        <InfoItem>
+          Voter Lock Timestamp:{' '}
+          {moment.unix(voterLockTimestamp?.toNumber()).format('LL')}
+        </InfoItem>
+      )}
       <Loading text loading={!token && !error}>
         <InfoItem>
           {!error && isAddress(token) && (
