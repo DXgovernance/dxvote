@@ -16,7 +16,7 @@ jest.mock('hooks/Guilds/useProposal', () => ({
   }),
 }));
 
-test('renders ProposalStatus', async () => {
+test('renders Ended Proposal Status', async () => {
   render(<ProposalStatus />);
   expect(screen.queryAllByText('Ended')).toBeTruthy();
   expect(screen.queryAllByText('Active')).toHaveLength(0);
