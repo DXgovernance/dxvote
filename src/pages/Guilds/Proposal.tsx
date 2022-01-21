@@ -84,16 +84,20 @@ const ProposalPage: React.FC = () => {
     proposal_id?: string;
   }>();
 
-  const {
-    data: proposal,
-    error,
-    isValidating,
-  } = useEtherSWR([guildId, 'getProposal', proposalId]);
+  const { data: proposal, error } = useEtherSWR([
+    guildId,
+    'getProposal',
+    proposalId,
+  ]);
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <div>
+        We ran into some issues trying to load this proposal. Please try again
+        later.
+      </div>
+    );
   }
-  if (!error && isValidating) return <div>loading...</div>;
 
   return (
     <PageContainer>
