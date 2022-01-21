@@ -5,8 +5,8 @@ import Markdown from 'markdown-to-jsx';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from "styled-components"
-import useIPFSFile from '../../../hooks/Guilds/ipfs/useIPFSFile';
-import { ProposalMetadata } from '../../../types/types.guilds';
+import useIPFSFile from '../../../../hooks/Guilds/ipfs/useIPFSFile';
+import { ProposalMetadata } from '../../../../types/types.guilds';
 
 const ProposalDescriptionWrapper = styled.div`
   margin: 1.5rem 0;

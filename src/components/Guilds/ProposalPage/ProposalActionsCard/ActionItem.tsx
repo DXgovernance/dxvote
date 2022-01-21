@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
 import { FiArrowRight } from 'react-icons/fi';
 import styled from 'styled-components';
-import dxIcon from '../../../assets/images/dxdao-icon.svg';
-import { ButtonIcon, IconButton } from '../common/Button';
-import { Box } from '../common/Layout';
+import dxIcon from '../../../../assets/images/dxdao-icon.svg';
+import { ButtonIcon, IconButton } from '../../common/Button';
+import { Box } from '../../common/Layout';
 import ActionDetails from './ActionDetails';
 
 const ProposalActionItem = styled(Box)`

@@ -7,13 +7,13 @@ import Skeleton from 'react-loading-skeleton';
 
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
-import ProposalInfoCard from '../../components/Guilds/ProposalSidebar/ProposalInfoCard';
-import ProposalVoteCard from '../../components/Guilds/ProposalSidebar/ProposalVoteCard';
+import ProposalInfoCard from '../../components/Guilds/ProposalPage/ProposalInfoCard';
+import ProposalVoteCard from '../../components/Guilds/ProposalPage/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
-import ProposalActionsCard from '../../components/Guilds/ProposalActionsCard';
+import ProposalActionsCard from '../../components/Guilds/ProposalPage/ProposalActionsCard';
 import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
 import AddressButton from '../../components/Guilds/AddressButton';
-import ProposalDescription from '../../components/Guilds/ProposalDescription';
+import ProposalDescription from '../../components/Guilds/ProposalPage/ProposalDescription';
 
 const PageContainer = styled(Box)`
   display: grid;
