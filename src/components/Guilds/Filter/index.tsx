@@ -8,6 +8,7 @@ import { Box, Flex } from '../common/Layout/Box';
 
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
 import { Button } from '../common/Button';
+import { useHistory, useLocation } from 'react-router';
 
 const FilterContainer = styled(Box)`
   display: flex;
@@ -35,6 +36,10 @@ export const Filter = () => {
   const [createProposal, setCreateProposal] = useState(true);
   const { totalFilters } = useFilter();
 
+  const history = useHistory();
+  const location = useLocation();
+  console.log(location);
+
   return (
     <FilterContainer>
       <FilterRow>
@@ -44,7 +49,14 @@ export const Filter = () => {
             <Button onClick={() => setCreateProposal(false)}>
               Proposal state
             </Button>
-            <Button variant="secondary">Create Proposal</Button>
+            <Button
+              variant="secondary"
+              onClick={() =>
+                history.push(location.pathname + '/proposalselection')
+              }
+            >
+              Create Proposal
+            </Button>
           </ButtonContainer>
         )}
         {isDesktop && !createProposal && <FilterMenu />}

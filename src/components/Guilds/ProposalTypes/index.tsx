@@ -1,11 +1,12 @@
 import React from 'react';
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlineArrowLeft, AiOutlinePlus } from 'react-icons/ai';
 import { ImPencil } from 'react-icons/im';
 import { MdCreditCard } from 'react-icons/md';
 import styled from 'styled-components';
 import { Button } from '../common/Button';
 import { Flex } from '../common/Layout';
 import { ContainerText } from '../common/Layout/Text';
+import { useHistory } from 'react-router-dom';
 
 import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
 import { ReactComponent as Signal } from '../../../assets/images/signal.svg';
@@ -95,12 +96,18 @@ const Header = styled(Flex)`
 `;
 
 const ProposalTypes: React.FC = () => {
+  const history = useHistory();
+  // @TODO replace onlick in continue button to redirect to create a proposals page
+
   return (
     <Flex>
       <Wrapper>
         <Header>
-          <Button>Back to overview</Button>
-          <Heading>Create Proposal</Heading>
+          <Button onClick={() => history.push('/')}>
+            <StyledIcon src={AiOutlineArrowLeft} />
+            Back to overview
+          </Button>
+          <Heading size={2}>Create Proposal</Heading>
         </Header>
         <Container>
           <PaddingWrapper>
@@ -129,7 +136,9 @@ const ProposalTypes: React.FC = () => {
         </Container>
         <ProposalTypeDescription />
         <Footer>
-          <Button variant="secondary">Continue</Button>
+          <Button variant="secondary" onClick={() => history.push('/')}>
+            Continue
+          </Button>
         </Footer>
       </Wrapper>
     </Flex>
