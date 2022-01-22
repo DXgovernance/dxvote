@@ -9,6 +9,7 @@ import { ContainerText } from '../common/Layout/Text';
 
 import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
 import { ReactComponent as Signal } from '../../../assets/images/signal.svg';
+import { Heading } from '../common/Typography';
 
 const Wrapper = styled(Flex)`
   width: 386px;
@@ -16,18 +17,24 @@ const Wrapper = styled(Flex)`
 
 const Container = styled(Flex)`
   border: 1px solid ${({ theme }) => theme.colors.primary};
-  padding: 24px;
   margin: 10px 0;
   width: 100%;
 `;
 
-const ProposalTypeButton = styled(Button)`
-  width: 90%;
-  margin: 6px 0;
-
+const PaddingWrapper = styled(Flex)`
+  margin: 24px;
+  width: 362px;
 `;
 
-const Header = styled(Flex)`
+const ProposalTypeButton = styled(Button)`
+  width: 90%;
+  height: 40px;
+  margin: 6px 0;
+  flex-direction: row;
+  justify-content: left;
+`;
+
+const ContainerHeader = styled(Flex)`
   width: 90%;
   justify-content: initial;
   flex-direction: row;
@@ -41,7 +48,7 @@ const Footer = styled(Flex)`
 `;
 
 type StyledIconProps = {
-    src: React.FC<React.SVGProps<SVGSVGElement>>;
+  src: React.FC<React.SVGProps<SVGSVGElement>>;
 };
 
 const StyledIconWrapper = styled.div<StyledIconProps>`
@@ -54,64 +61,79 @@ const StyledIconWrapper = styled.div<StyledIconProps>`
 `;
 
 export const StyledIcon = React.memo((props: StyledIconProps) => {
-    const { src, ...rest } = props;
+  const { src, ...rest } = props;
 
-    const Icon = src;
+  const Icon = src;
 
-    return (
-        <StyledIconWrapper {...rest}>
-            <Icon />
-        </StyledIconWrapper>
-    );
+  return (
+    <StyledIconWrapper {...rest}>
+      <Icon />
+    </StyledIconWrapper>
+  );
 });
 
 const ProposalTypeDescription: React.FC = () => {
-    return (
-        <Container>
-            <ContainerText variant="bold">Signal Proposal</ContainerText>
-            <ContainerText variant="medium">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed leo quam,
-                blandit eu sapien eu, commodo dapibus nisl.
-            </ContainerText>
-            <ContainerText variant="medium" color="grey">
-                No on-chain action
-            </ContainerText>
-        </Container>
-    );
+  return (
+    <Container>
+      <PaddingWrapper>
+        <ContainerText variant="bold">Signal Proposal</ContainerText>
+        <ContainerText variant="medium">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed leo quam,
+          blandit eu sapien eu, commodo dapibus nisl.
+        </ContainerText>
+        <ContainerText variant="medium" color="grey">
+          No on-chain action
+        </ContainerText>
+      </PaddingWrapper>
+    </Container>
+  );
 };
 
+const Header = styled(Flex)`
+  align-items: flex-start;
+  width: 100%;
+`;
+
 const ProposalTypes: React.FC = () => {
-    return (
-        <Wrapper>
-            <Container>
-                <Header>Choose Proposal Type</Header>
-                <ProposalTypeButton>
-                    <StyledIcon src={Signal} />
-                    Signal
-                </ProposalTypeButton>
-                <ProposalTypeButton>
-                    <StyledIcon src={Vector} />
-                    Transfer Funds
-                </ProposalTypeButton>
-                <ProposalTypeButton>
-                    <StyledIcon src={MdCreditCard} />
-                    Contributer Payment
-                </ProposalTypeButton>
-                <ProposalTypeButton>
-                    <StyledIcon src={AiOutlinePlus} />
-                    Mint Reputation
-                </ProposalTypeButton>
-                <ProposalTypeButton>
-                    <StyledIcon src={ImPencil} />
-                    Custom Proposal
-                </ProposalTypeButton>
-            </Container>
-            <ProposalTypeDescription />
-            <Footer>
-                <Button variant="secondary">Continue</Button>
-            </Footer>
-        </Wrapper>
-    );
+  return (
+    <Flex>
+      <Wrapper>
+        <Header>
+          <Button>Back to overview</Button>
+          <Heading>Create Proposal</Heading>
+        </Header>
+        <Container>
+          <PaddingWrapper>
+            <ContainerHeader>Choose Proposal</ContainerHeader>
+            <ProposalTypeButton>
+              <StyledIcon src={Signal} />
+              Signal
+            </ProposalTypeButton>
+            <ProposalTypeButton>
+              <StyledIcon src={Vector} />
+              Transfer Funds
+            </ProposalTypeButton>
+            <ProposalTypeButton>
+              <StyledIcon src={MdCreditCard} />
+              Contributer Payment
+            </ProposalTypeButton>
+            <ProposalTypeButton>
+              <StyledIcon src={AiOutlinePlus} />
+              Mint Reputation
+            </ProposalTypeButton>
+            <ProposalTypeButton>
+              <StyledIcon src={ImPencil} />
+              Custom Proposal
+            </ProposalTypeButton>
+          </PaddingWrapper>
+        </Container>
+        <ProposalTypeDescription />
+        <Footer>
+          <Button variant="secondary">Continue</Button>
+        </Footer>
+      </Wrapper>
+    </Flex>
+  );
 };
 
 export default ProposalTypes;
