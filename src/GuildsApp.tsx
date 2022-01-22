@@ -22,6 +22,7 @@ import { TransactionModalProvider } from 'components/Guilds/Web3Modals/Transacti
 
 import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
+import ProposalTypes from 'components/Guilds/ProposalTypes';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -56,6 +57,7 @@ const GuildsApp = () => {
                   />
                   <Route exact path="/:chain_name/:guild_id">
                     <GuildsContextProvider>
+                      <ProposalTypes />
                       <EtherSWRConfig
                         value={{
                           web3Provider: provider,

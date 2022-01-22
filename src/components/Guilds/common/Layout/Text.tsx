@@ -1,13 +1,12 @@
-
 import styled, { css } from 'styled-components';
 import { Flex } from '.';
 
 type ContainerTextProps = {
-    variant?: 'regular' | 'medium' | 'bold';
+  variant?: 'regular' | 'medium' | 'bold';
 };
 
 const variantStyles = (variant = 'regular') =>
-({
+  ({
     regular: css`
       font-weight: 500;
       font-size: 12px;
@@ -24,9 +23,9 @@ const variantStyles = (variant = 'regular') =>
       font-size: 16px;
       line-height: 24px;
     `,
-}[variant]);
+  }[variant]);
 
-export const ContainerText = styled(Flex) <ContainerTextProps>`
+export const ContainerText = styled(Flex)<ContainerTextProps>`
   font-family: Inter;
   margin: 4px;
   font-style: normal;
@@ -35,5 +34,5 @@ export const ContainerText = styled(Flex) <ContainerTextProps>`
 `;
 
 ContainerText.defaultProps = {
-    variant: 'regular',
+  variant: 'regular',
 };

@@ -5,13 +5,14 @@ import {
   createContext,
   ReactNode,
 } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from '../common/Modal';
 import { AiOutlineArrowUp } from 'react-icons/ai';
 import { Button } from '../common/Button';
 import { FiX } from 'react-icons/fi';
 import { Circle, Flex } from '../common/Layout';
+import { ContainerText } from '../common/Layout/Text';
 
 export const ModalButton = styled(Button)`
   margin: 0 0 16px 0;
