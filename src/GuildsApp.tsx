@@ -56,8 +56,10 @@ const GuildsApp = () => {
                     to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
                   />
                   <Route exact path="/:chain_name/:guild_id">
+                    <GuildsPage />
+                  </Route>
+                  <Route exact path="/:chain_name/:guild_id/proposalselection">
                     <GuildsContextProvider>
-                      <ProposalTypes />
                       <EtherSWRConfig
                         value={{
                           web3Provider: provider,
@@ -71,7 +73,7 @@ const GuildsApp = () => {
                           refreshInterval: 30000,
                         }}
                       >
-                        <GuildsPage />
+                        <ProposalTypes />
                       </EtherSWRConfig>
                     </GuildsContextProvider>
                   </Route>
