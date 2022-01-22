@@ -43,20 +43,11 @@ export default class DaoStore {
 
   // Parse bignnumbers
   parseCache(unparsedCache: DaoNetworkCache): DaoNetworkCache {
-    unparsedCache.daoInfo.ethBalance = bnum(
-      unparsedCache.daoInfo.ethBalance || '0'
-    );
-
     if (unparsedCache.daoInfo.repEvents)
       unparsedCache.daoInfo.repEvents.map((repEvent, i) => {
         unparsedCache.daoInfo.repEvents[i].amount = bnum(repEvent.amount);
       });
 
-    Object.keys(unparsedCache.schemes).map(schemeAddress => {
-      unparsedCache.schemes[schemeAddress].ethBalance = bnum(
-        unparsedCache.schemes[schemeAddress].ethBalance
-      );
-    });
     Object.keys(unparsedCache.callPermissions).map(asset => {
       Object.keys(unparsedCache.callPermissions[asset]).map(from => {
         Object.keys(unparsedCache.callPermissions[asset][from]).map(to => {

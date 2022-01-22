@@ -351,11 +351,6 @@ export default class UtilsService {
   ): Promise<DaoNetworkCache> {
     let callsToExecute = [
       [networkWeb3Contracts.reputation, 'totalSupply', []],
-      [
-        networkWeb3Contracts.multicall,
-        'getEthBalance',
-        [networkWeb3Contracts.avatar._address],
-      ],
     ];
     const callsResponse = await executeMulticall(
       web3,
@@ -368,9 +363,6 @@ export default class UtilsService {
       ? []
       : networkCache.daoInfo.repEvents;
     networkCache.daoInfo.totalRep = bnum(callsResponse.decodedReturnData[0]);
-    networkCache.daoInfo.ethBalance = bnum(callsResponse.decodedReturnData[1]);
-    if (!networkCache.daoInfo.tokenBalances)
-      networkCache.daoInfo.tokenBalances = {};
     return networkCache;
   }
 
@@ -976,8 +968,6 @@ export default class UtilsService {
             controllerAddress,
             name: schemeName,
             type: schemeType,
-            ethBalance: bnum(0),
-            tokenBalances: {},
             votingMachine: schemeTypeData.votingMachine,
             paramsHash: paramsHash,
             permissions,
@@ -1013,7 +1003,6 @@ export default class UtilsService {
           schemeTypeData.name
         );
         let callsToExecute = [
-          [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
           [
             votingMachine,
             'orgBoostedProposalsCnt',
@@ -1046,10 +1035,8 @@ export default class UtilsService {
           : 0;
 
         // Update the scheme values a last time
-        networkCache.schemes[schemeAddress].ethBalance =
-          callsResponse.decodedReturnData[0];
         networkCache.schemes[schemeAddress].boostedProposals =
-          callsResponse.decodedReturnData[1];
+          callsResponse.decodedReturnData[0];
         networkCache.schemes[schemeAddress].maxSecondsForExecution =
           maxSecondsForExecution;
         networkCache.schemes[schemeAddress].registered = false;
@@ -1068,7 +1055,6 @@ export default class UtilsService {
               .contract;
 
           let callsToExecute = [
-            [networkWeb3Contracts.multicall, 'getEthBalance', [schemeAddress]],
             [
               votingMachine,
               'orgBoostedProposalsCnt',
@@ -1123,10 +1109,8 @@ export default class UtilsService {
               )['0']
             : 0;
 
-          networkCache.schemes[schemeAddress].ethBalance =
-            callsResponse.decodedReturnData[0];
           networkCache.schemes[schemeAddress].boostedProposals =
-            callsResponse.decodedReturnData[1];
+            callsResponse.decodedReturnData[0];
           networkCache.schemes[schemeAddress].maxSecondsForExecution =
             maxSecondsForExecution;
           networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage =

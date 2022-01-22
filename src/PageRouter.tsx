@@ -48,6 +48,7 @@ const PageRouter = observer(({ children }) => {
     },
   } = useContext();
 
+
   const history = useHistory();
   const location = useLocation();
   const noLoading = ['/faq', '/config', '/forum', '/cache'];

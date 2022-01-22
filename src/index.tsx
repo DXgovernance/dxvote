@@ -145,7 +145,7 @@ const SplitApp = () => {
             ERC20GuildContract.abi,
           ],
         ]),
-        refreshInterval: 0,
+        refreshInterval: 5000,
       }}
     >
       {!isGuilds ? (

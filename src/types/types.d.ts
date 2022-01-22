@@ -182,10 +182,6 @@ declare global {
     name: string;
     type: string;
     controllerAddress: string;
-    ethBalance: BigNumber;
-    tokenBalances: {
-      [tokenAddress: string]: BigNumber;
-    };
     votingMachine: string;
     paramsHash: string;
     permissions: SchemePermissions;
@@ -201,10 +197,6 @@ declare global {
     address: string;
     totalRep: BigNumber;
     repEvents: RepEvent[];
-    ethBalance: BigNumber;
-    tokenBalances: {
-      [tokenAddress: string]: BigNumber;
-    };
   }
 
   interface VotingMachine {
@@ -316,10 +308,6 @@ export interface DaoInfo {
   address: string;
   totalRep: BigNumber;
   repEvents: RepEvent[];
-  ethBalance: BigNumber;
-  tokenBalances: {
-    [tokenAddress: string]: BigNumber;
-  };
 }
 
 export interface DaoNetworkCache {
