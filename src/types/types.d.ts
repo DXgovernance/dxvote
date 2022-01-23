@@ -85,20 +85,22 @@ declare global {
     to: string[];
     callData: string[];
     values: BigNumber[];
-    stateInScheme: WalletSchemeProposalState;
-    stateInVotingMachine: VotingMachineProposalState;
     descriptionHash: string;
     creationEvent: BlockchainEvent;
     winningVote: number;
     proposer: string;
-    currentBoostedVotePeriodLimit: BigNumber;
     paramsHash: string;
+    submittedTime: BigNumber;
+    
+    // mutable data
+    stateInScheme: WalletSchemeProposalState;
+    stateInVotingMachine: VotingMachineProposalState;
+    currentBoostedVotePeriodLimit: BigNumber;
     daoBountyRemain: BigNumber;
     daoBounty: BigNumber;
     totalStakes: BigNumber;
     confidenceThreshold: BigNumber;
     secondsFromTimeOutTillExecuteBoosted: BigNumber;
-    submittedTime: BigNumber;
     boostedPhaseTime: BigNumber;
     preBoostedPhaseTime: BigNumber;
     daoRedeemItsWinnings: boolean;
@@ -146,11 +148,13 @@ declare global {
 
   interface Scheme {
     address: string;
-    registered: boolean;
     name: string;
     type: string;
     controllerAddress: string;
     votingMachine: string;
+    
+    // mutable data
+    registered: boolean;
     paramsHash: string;
     permissions: SchemePermissions;
     boostedVoteRequiredPercentage: number;
@@ -161,6 +165,7 @@ declare global {
     newProposalEvents: ProposalEvent[];
   }
 
+  // move this to dao network cache
   interface DaoInfo {
     address: string;
     totalRep: BigNumber;
