@@ -1710,8 +1710,6 @@ export default class UtilsService {
                     shouldBoost: false,
                     positiveVotes: bnum(positiveVotes),
                     negativeVotes: bnum(negativeVotes),
-                    preBoostedPositiveVotes: bnum(proposalStatusWithVotes[0]),
-                    preBoostedNegativeVotes: bnum(proposalStatusWithVotes[1]),
                     positiveStakes: bnum(proposalStatusWithVotes[2]),
                     negativeStakes: bnum(proposalStatusWithVotes[3]),
                   };
@@ -1975,12 +1973,6 @@ export default class UtilsService {
                 bnum(positiveVotes);
               networkCache.proposals[proposalId].negativeVotes =
                 bnum(negativeVotes);
-              networkCache.proposals[proposalId].preBoostedPositiveVotes = bnum(
-                proposalStatusWithVotes[0]
-              );
-              networkCache.proposals[proposalId].preBoostedNegativeVotes = bnum(
-                proposalStatusWithVotes[1]
-              );
               networkCache.proposals[proposalId].positiveStakes = bnum(
                 proposalStatusWithVotes[2]
               );

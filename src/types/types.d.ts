@@ -105,8 +105,6 @@ declare global {
     shouldBoost: boolean;
     positiveVotes: BigNumber;
     negativeVotes: BigNumber;
-    preBoostedPositiveVotes: BigNumber;
-    preBoostedNegativeVotes: BigNumber;
     positiveStakes: BigNumber;
     negativeStakes: BigNumber;
   }

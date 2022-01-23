@@ -110,12 +110,6 @@ export default class DaoStore {
       unparsedCache.proposals[proposalId].negativeVotes = bnum(
         unparsedCache.proposals[proposalId].negativeVotes
       );
-      unparsedCache.proposals[proposalId].preBoostedPositiveVotes = bnum(
-        unparsedCache.proposals[proposalId].preBoostedPositiveVotes
-      );
-      unparsedCache.proposals[proposalId].preBoostedNegativeVotes = bnum(
-        unparsedCache.proposals[proposalId].preBoostedNegativeVotes
-      );
       unparsedCache.proposals[proposalId].positiveStakes = bnum(
         unparsedCache.proposals[proposalId].positiveStakes
       );
