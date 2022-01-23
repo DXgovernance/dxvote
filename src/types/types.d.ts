@@ -98,7 +98,6 @@ declare global {
     currentBoostedVotePeriodLimit: BigNumber;
     daoBountyRemain: BigNumber;
     daoBounty: BigNumber;
-    totalStakes: BigNumber;
     confidenceThreshold: BigNumber;
     secondsFromTimeOutTillExecuteBoosted: BigNumber;
     boostedPhaseTime: BigNumber;

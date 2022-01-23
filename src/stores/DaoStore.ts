@@ -84,9 +84,6 @@ export default class DaoStore {
       unparsedCache.proposals[proposalId].daoBounty = bnum(
         unparsedCache.proposals[proposalId].daoBounty
       );
-      unparsedCache.proposals[proposalId].totalStakes = bnum(
-        unparsedCache.proposals[proposalId].totalStakes
-      );
       unparsedCache.proposals[proposalId].confidenceThreshold = bnum(
         unparsedCache.proposals[proposalId].confidenceThreshold
       );

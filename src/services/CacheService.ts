@@ -1697,7 +1697,6 @@ export default class UtilsService {
                       votingMachineProposalInfo.daoBountyRemain
                     ),
                     daoBounty: bnum(votingMachineProposalInfo.daoBounty),
-                    totalStakes: bnum(votingMachineProposalInfo.totalStakes),
                     confidenceThreshold:
                       votingMachineProposalInfo.confidenceThreshold,
                     secondsFromTimeOutTillExecuteBoosted:
@@ -1949,9 +1948,6 @@ export default class UtilsService {
               );
               networkCache.proposals[proposalId].daoBounty = bnum(
                 votingMachineProposalInfo.daoBounty
-              );
-              networkCache.proposals[proposalId].totalStakes = bnum(
-                votingMachineProposalInfo.totalStakes
               );
               networkCache.proposals[proposalId].confidenceThreshold =
                 votingMachineProposalInfo.confidenceThreshold;
