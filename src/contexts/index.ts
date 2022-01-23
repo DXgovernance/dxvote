@@ -1,7 +1,6 @@
 import React from 'react';
 
 import ABIService from '../services/ABIService';
-import MulticallService from '../services/MulticallService';
 import DaoService from '../services/DaoService';
 import EventsService from '../services/EventsService';
 import IPFSService from '../services/IPFSService';
@@ -52,7 +51,6 @@ export default class RootContext {
   blockchainStore: BlockchainStore;
 
   abiService: ABIService;
-  multicallService: MulticallService;
   daoService: DaoService;
   eventsService: EventsService;
   ipfsService: IPFSService;
@@ -81,7 +79,6 @@ export default class RootContext {
     this.blockchainStore = new BlockchainStore(this);
 
     this.abiService = new ABIService(this);
-    this.multicallService = new MulticallService(this);
     this.eventsService = new EventsService(this);
     this.daoService = new DaoService(this);
     this.ipfsService = new IPFSService(this);

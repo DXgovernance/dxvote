@@ -12,36 +12,6 @@ declare global {
     ethereum?: EthereumProvider;
   }
 
-  // Multicall Types
-
-  interface Call {
-    contractType: ContractType;
-    address: string;
-    method: string;
-    params?: any[];
-  }
-
-  interface CallValue {
-    value: any;
-    lastFetched: number;
-  }
-
-  interface CallEntry extends Call {
-    response: CallValue;
-  }
-
-  // BlockchainStore Types
-
-  interface ContractStorage {
-    [contractType: string]: {
-      [address: string]: {
-        [method: string]: {
-          [parameters: string]: CallValue;
-        };
-      };
-    };
-  }
-
   // DaoStore types
 
   interface BlockchainEvent {
