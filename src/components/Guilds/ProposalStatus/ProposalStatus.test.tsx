@@ -12,7 +12,7 @@ jest.mock('hooks/Guilds/useProposal', () => ({
       contentHash: '0x0',
       endTime: { toNumber: () => 1642768798 },
     },
-    loading: false,
+    isValidating: false,
   }),
 }));
 
@@ -25,7 +25,7 @@ test('renders Ended Proposal Status', async () => {
 jest.mock('hooks/Guilds/useProposal', () => ({
   useProposal: () => ({
     data: {},
-    loading: true,
+    isValidating: true,
   }),
 }));
 
