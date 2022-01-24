@@ -11,16 +11,14 @@ import { Button } from '../common/Button';
 import { Loading } from '../common/Loading';
 import { shortenAddress, isAddress } from 'utils';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
-import {
-  useConfig,
-  useVotingPowerOf,
-  useVotingPowerForProposalCreation,
-  useVotingPowerForProposalExecution,
-  useTokenVault,
-  useLockTime,
-  useTotalLocked,
-  useVoterLockTimestamp,
-} from 'hooks/Guilds';
+import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
+import { useVotingPowerForProposalCreation } from '../../../hooks/Guilds/ether-swr/useVotingPowerForProposalCreation';
+import { useVotingPowerForProposalExecution } from '../../../hooks/Guilds/ether-swr/useVotingPowerForProposalExecution';
+import { useTokenVault } from '../../../hooks/Guilds/ether-swr/useTokenVault';
+import { useLockTime } from '../../../hooks/Guilds/ether-swr/useLockTime';
+import { useTotalLocked } from '../../../hooks/Guilds/ether-swr/useTotalLocked';
+import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/useVoterLockTimestamp';
+import { useConfig } from '../../../hooks/Guilds/useConfig';
 
 const GuestContainer = styled.div`
   display: flex;

@@ -11,7 +11,7 @@ import ProposalStatus from '../ProposalStatus';
 import { Heading } from '../common/Typography';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UnstyledLink from '../common/UnstyledLink';
-import { useProposal } from 'hooks/Guilds/useProposal';
+import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
