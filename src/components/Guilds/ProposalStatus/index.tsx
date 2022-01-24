@@ -4,7 +4,9 @@ import Skeleton from 'react-loading-skeleton';
 import moment, { unix } from 'moment';
 
 import { Box } from '../common/Layout';
-import { Proposal, ProposalState } from '../../../types/types.guilds.d';
+import { ProposalState } from '../../../types/types.guilds.d';
+import { useProposal } from 'hooks/Guilds/useProposal';
+import { useParams } from 'react-router';
 
 const Status = styled.div`
   font-size: 0.8rem;
@@ -44,18 +46,30 @@ const DetailText = styled(Box)`
 `;
 
 interface ProposalStatusProps {
-  proposal: Proposal;
+  //optional cause
+  //if not present can { guild_id, proposal_id } = useParams()
+  proposalId?: string;
+  // proposal: Proposal;
   bordered?: boolean;
   hideTime?: boolean;
   showRemainingTime?: boolean;
 }
 
 const ProposalStatus: React.FC<ProposalStatusProps> = ({
+  proposalId,
   bordered,
-  proposal,
+  // proposal,
   hideTime,
   showRemainingTime,
 }) => {
+  const { guild_id, proposal_id } = useParams<{
+    guild_id?: string;
+    proposal_id?: string;
+  }>();
+
+  // we need to type useProposal
+  const { proposal }: any = useProposal(guild_id, proposalId || proposal_id);
+
   const endTime = useMemo(() => {
     if (!proposal) return null;
     return unix(proposal.endTime.toNumber());
@@ -83,8 +97,9 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
         return 'Active';
       }
     }
+    return 'Ended';
 
-    return proposal.state;
+    // return proposal.state;
   }, [endTime, proposal]);
 
   return (
@@ -96,13 +111,18 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
               {timeDetail}
             </span>
           ) : (
-            <Skeleton width={50} />
+            <Skeleton test-id="skeleton" width={50} />
           )}
         </DetailText>
       )}
       <Pill filled padded>
         {statusDetail || (
-          <Skeleton width={50} baseColor="#333" highlightColor="#555" />
+          <Skeleton
+            test-id="skeleton"
+            width={50}
+            baseColor="#333"
+            highlightColor="#555"
+          />
         )}
       </Pill>
     </Status>

@@ -12,7 +12,7 @@ jest.mock('hooks/Guilds/useProposal', () => ({
       contentHash: '0x0',
       endTime: { toNumber: () => 3 },
     },
-    loading: false,
+    isValidating: false,
   }),
 }));
 
