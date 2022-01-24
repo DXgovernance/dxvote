@@ -1,8 +1,8 @@
 import { FiExternalLink } from 'react-icons/fi';
 import styled from 'styled-components';
-import { Button, IconButton } from '../common/Button';
-import { Box } from '../common/Layout';
-import SidebarCard from '../SidebarCard';
+import { Button, IconButton } from '../../common/Button';
+import { Box } from '../../common/Layout';
+import SidebarCard from '../../SidebarCard';
 
 const ActionTitle = styled(Box)`
   display: flex;

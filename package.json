@@ -17,7 +17,8 @@
     "cy:run": "cypress run",
     "cy:run:development": "cypress run --env configFile=development",
     "cy:run:production": "cypress run --env configFile=production",
-    "test:e2e": "start-server-and-test 'yarn start --no-browser' 3000 cy:run:development"
+    "test:e2e": "start-server-and-test 'yarn start --no-browser' 3000 cy:run:development",
+    "test": "react-app-rewired test --watchAll=false --coverage --verbose"
   },
   "engines": {
     "node": "^16.13.0"
@@ -89,7 +90,7 @@
     "ts-node": "^9.1.1",
     "turndown": "^7.1.1",
     "typescript": "^4.2.4",
-    "webpack": "^4.44.2",
+    "webpack": "4.44.2",
     "webpack-manifest-plugin": "^2.2.0",
     "workbox-webpack-plugin": "^5.1.4"
   },
@@ -97,7 +98,10 @@
     "@nomiclabs/hardhat-truffle5": "^2.0.0",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@testing-library/cypress": "^8.0.2",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^12.1.2",
     "@typechain/ethers-v5": "^8.0.5",
+    "@types/jest": "^27.4.0",
     "@types/jsonexport": "^3.0.2",
     "@types/react-router-dom": "^5.1.2",
     "cra-bundle-analyzer": "^0.1.0",
