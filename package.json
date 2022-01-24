@@ -1,6 +1,6 @@
 {
   "name": "dxvote",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "dxvote application of DXdao.",
   "scripts": {
     "start": "./scripts/start.sh",
