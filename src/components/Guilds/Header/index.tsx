@@ -41,7 +41,6 @@ const Header = () => {
 
   return (
     <HeaderWrapper as="header">
-      <div></div>
       <HeaderContainer>
         <Heading size={2}>
           <strong>DXvote</strong>
