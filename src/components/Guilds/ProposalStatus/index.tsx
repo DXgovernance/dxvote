@@ -49,6 +49,7 @@ interface ProposalStatusProps {
   //optional cause
   //if not present can { guild_id, proposal_id } = useParams()
   proposalId?: string;
+  // proposal: Proposal;
   bordered?: boolean;
   hideTime?: boolean;
   showRemainingTime?: boolean;
@@ -57,19 +58,17 @@ interface ProposalStatusProps {
 const ProposalStatus: React.FC<ProposalStatusProps> = ({
   proposalId,
   bordered,
+  // proposal,
   hideTime,
   showRemainingTime,
 }) => {
-  const { guild_id, proposal_id: paramProposalId } = useParams<{
+  const { guild_id, proposal_id } = useParams<{
     guild_id?: string;
     proposal_id?: string;
   }>();
 
   // we need to type useProposal
-  const { data: proposal, isValidating }: any = useProposal(
-    guild_id,
-    proposalId || paramProposalId
-  );
+  const { data: proposal }: any = useProposal(guild_id, proposal_id);
 
   const endTime = useMemo(() => {
     if (!proposal) return null;
@@ -88,7 +87,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   }, [endTime, showRemainingTime, hideTime]);
 
   const statusDetail = useMemo(() => {
-    if (!proposal || !endTime || isValidating) return null;
+    if (!proposal || !endTime) return null;
 
     if (proposal.state === ProposalState.Submitted) {
       const currentTime = moment();
@@ -98,10 +97,9 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
         return 'Active';
       }
     }
-    return 'Ended';
 
-    // return proposal.state;
-  }, [endTime, proposal, isValidating]);
+    return proposal.state;
+  }, [endTime, proposal]);
 
   return (
     <Status test-id="proposal-status" bordered={hideTime ? false : bordered}>
@@ -117,7 +115,9 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
         </DetailText>
       )}
       <Pill filled padded>
-        {statusDetail || <Skeleton test-id="skeleton-pill" width={50} />}
+        {statusDetail || (
+          <Skeleton width={50} baseColor="#333" highlightColor="#555" />
+        )}
       </Pill>
     </Status>
   );
