@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useConfig } from 'hooks/Guilds/useConfig';
+import { useConfig } from 'hooks/Guilds';
 import { Box } from '../common/Layout';
 import { Menu, MenuItem } from '../common/Menu';
 import { MemberActions } from './MemberActions';
