@@ -1,12 +1,17 @@
 import styled from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+
+import { useParams } from 'react-router';
+import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
+
 import { Box } from '../common/Layout';
 import dxIcon from '../../../assets/images/ether.svg';
 import ProposalStatus from '../ProposalStatus';
-import { isDesktop } from 'react-device-detect';
 import { Heading } from '../common/Typography';
+import 'react-loading-skeleton/dist/skeleton.css';
+import UnstyledLink from '../common/UnstyledLink';
+import { useProposal } from 'hooks/Guilds/useProposal';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -89,53 +94,62 @@ const ProposalStatusWrapper = styled.div`
 `;
 
 interface ProposalCardProps {
-  title: string;
-  description: string;
+  id: any;
+  href: string;
 }
 
-const ProposalCard: React.FC<ProposalCardProps> = ({ title, description }) => {
+const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
+  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
+  const { data } = useProposal(guildId, id);
+  const { title, contentHash } = data || {
+    title: '',
+    description: '',
+  };
+
   return (
-    <CardWrapper>
-      <CardHeader>
-        <IconDetailWrapper>
-          <Icon src={dxIcon} spaceRight />
-          <Detail>Swapr von 0x01Cf...2712</Detail>
-        </IconDetailWrapper>
-        <ProposalStatusWrapper>
-          <ProposalStatus
-            bordered={false}
-            status="Active"
-            detail="4 days left"
-          />
-        </ProposalStatusWrapper>
-      </CardHeader>
-      <CardContent>
-        <CardTitle size={2}>
-          <strong>{title}</strong>
-        </CardTitle>
-        <p>{description}</p>
-      </CardContent>
-      <CardFooter>
-        <BorderedIconDetailWrapper>
-          <Detail>150 ETH</Detail>
-          {isDesktop && (
-            <>
-              <Icon as="div" spaceLeft spaceRight>
-                <FiArrowRight />
-              </Icon>{' '}
-              <Detail>geronimo.eth</Detail>
-            </>
-          )}
-        </BorderedIconDetailWrapper>
-        <BorderedIconDetailWrapper>
-          <Detail>15.60%</Detail>
-          <Icon as="div" spaceLeft spaceRight>
-            <FiCircle />
-          </Icon>
-          <Detail>5.25%</Detail>
-        </BorderedIconDetailWrapper>
-      </CardFooter>
-    </CardWrapper>
+    <UnstyledLink to={href}>
+      <CardWrapper>
+        <CardHeader>
+          <IconDetailWrapper>
+            <Icon src={dxIcon} spaceRight />
+            <Detail>Swapr von 0x01Cf...2712</Detail>
+          </IconDetailWrapper>
+          <ProposalStatusWrapper>
+            <ProposalStatus
+              proposalId={id}
+              bordered={false}
+              showRemainingTime
+            />
+          </ProposalStatusWrapper>
+        </CardHeader>
+        <CardContent>
+          <CardTitle size={2}>
+            <strong>{title}</strong>
+          </CardTitle>
+          <p>{contentHash}</p>
+        </CardContent>
+        <CardFooter>
+          <BorderedIconDetailWrapper>
+            <Detail>150 ETH</Detail>
+            {isDesktop && (
+              <>
+                <Icon as="div" spaceLeft spaceRight>
+                  <FiArrowRight />
+                </Icon>{' '}
+                <Detail>geronimo.eth</Detail>
+              </>
+            )}
+          </BorderedIconDetailWrapper>
+          <BorderedIconDetailWrapper>
+            <Detail>15.60%</Detail>
+            <Icon as="div" spaceLeft spaceRight>
+              <FiCircle />
+            </Icon>
+            <Detail>5.25%</Detail>
+          </BorderedIconDetailWrapper>
+        </CardFooter>
+      </CardWrapper>
+    </UnstyledLink>
   );
 };
 

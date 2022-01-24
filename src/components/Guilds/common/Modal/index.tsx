@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ReactDOM from 'react-dom';
-import { isMobile, isDesktop } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 import { Button } from '../Button';
 import { FiArrowLeft, FiX } from 'react-icons/fi';
@@ -33,9 +33,10 @@ export const StyledModal = styled.div`
   background: ${({ theme }) => theme.colors.background};
   position: relative;
   margin: auto;
-  border: 1px solid ${({ theme }) => theme.colors.muted};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: ${({ theme }) => theme.radii.curved2};
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
 
   @media only screen and (max-width: 768px) {
     padding: 0px 20px;
@@ -49,7 +50,16 @@ export const Header = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   position: relative;
   align-items: center;
-  display: flex;
+`;
+
+export const SecondaryHeader = styled(Header)`
+  justify-content: center;
+  border-bottom: none;
+
+  @media only screen and (max-width: 768px) {
+    position: relative;
+    top: 25%;
+  }
 `;
 
 export const HeaderText = styled(Heading)`
@@ -64,6 +74,7 @@ const CloseIcon = styled(FiX)`
   transform: translateY(-50%);
   height: 1.5rem;
   width: 1.5rem;
+  z-index: 800;
 
   &:hover {
     cursor: pointer;
@@ -71,30 +82,55 @@ const CloseIcon = styled(FiX)`
   }
 `;
 
+const SecondaryCloseIcon = styled(CloseIcon)`
+  top: 25px;
+`;
+
 export const Content = styled.div`
   color: ${({ theme }) => theme.colors.text};
   max-height: 80vh;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
+
+  ${props =>
+    props.modal === true &&
+    css`
+      @media only screen and (max-width: 768px) {
+        position: relative;
+        top: 25%;
+      }
+    `}
 `;
 
 export const Footer = styled.div`
   display: flex;
   justify-content: space-around;
   padding: 0 1.5rem 1.5rem 1.5rem;
+
+  ${props =>
+    props.modal === true &&
+    css`
+      @media only screen and (max-width: 768px) {
+        position: relative;
+        top: 60%;
+      }
+    `}
 `;
 
 export interface ModalProps {
   isOpen: boolean;
   onDismiss: () => void;
-  header: JSX.Element | string;
+  children: JSX.Element;
+  header?: JSX.Element | string;
+  contentHeader?: JSX.Element | string;
   hideHeader?: boolean;
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
-  children: JSX.Element;
   maxWidth?: number;
+  showSecondaryHeader?: boolean;
+  cross?: boolean;
 }
 
 export const ModalButton = styled(Button)`
@@ -106,6 +142,7 @@ export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onDismiss,
   header,
+  contentHeader,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   onConfirm,
@@ -113,31 +150,38 @@ export const Modal: React.FC<ModalProps> = ({
   hideHeader,
   children,
   maxWidth,
+  showSecondaryHeader,
+  cross,
 }) => {
   const modal = (
     <div>
       <Backdrop onClick={onDismiss} />
       <Wrapper maxWidth={maxWidth}>
         <StyledModal>
-          {!hideHeader && isDesktop && (
+          {isMobile && (
+            <Header onClick={onDismiss}>
+              {cross ? <CloseIcon /> : <FiArrowLeft />}
+              <HeaderText>{header}</HeaderText>
+            </Header>
+          )}{' '}
+          {!hideHeader && !isMobile && (
             <Header>
               <HeaderText>{header}</HeaderText>
               <CloseIcon onClick={onDismiss} />
             </Header>
           )}
-          {!hideHeader && isMobile && (
-            <Header onClick={onDismiss}>
-              <FiArrowLeft />
-              <HeaderText>{header}</HeaderText>
-            </Header>
+          {showSecondaryHeader && (
+            <SecondaryHeader>
+              <HeaderText>{contentHeader}</HeaderText>
+              {!isMobile && <SecondaryCloseIcon onClick={onDismiss} />}
+            </SecondaryHeader>
           )}
-
-          <Content>{children}</Content>
+          <Content modal={cross ? true : false}>{children}</Content>
           {(onCancel || onConfirm) && (
-            <Footer>
-              {onCancel && (
+            <Footer modal={cross ? true : false}>
+              {cancelText && (
                 <ModalButton
-                  variant="secondary"
+                  variant={cross ? 'secondary' : 'primary'}
                   onClick={() => {
                     onCancel();
                     onDismiss();

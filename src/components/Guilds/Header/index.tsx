@@ -5,12 +5,20 @@ import { Heading } from '../common/Typography';
 import NetworkButton from './NetworkButton';
 import WalletButton from './WalletButton';
 
-const HeaderWrapper = styled(Box)`
+const HeaderWrapper = styled.nav`
   padding: 0.75rem 0;
+
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background: white;
+
+  z-index: 999999;
 
   @media only screen and(min-width: 768px) {
     padding: 1.5rem 0;
   }
+
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
 `;
 
