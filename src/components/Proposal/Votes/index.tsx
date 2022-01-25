@@ -187,7 +187,7 @@ const Votes = () => {
 
   const repPercentageAtCreation = toPercentage(
     userRepAtProposalCreation.div(totalRepAtProposalCreation)
-  ).toFixed(2, 4);
+  ).toFixed(2);
 
   const positiveVotes = toPercentage(
     proposal.positiveVotes.div(totalRepAtProposalCreation)
