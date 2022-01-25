@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { transparentize } from 'polished';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Focus from '@tiptap/extension-focus';
@@ -10,9 +11,9 @@ var turndownService = new TurndownService();
 
 const EditorWrap = styled.div`
   background-color: #fff;
-  border: 1px solid #0d0d0d;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: 10px;
-  color: #0d0d0d;
+  color: ${({ theme }) => theme.colors.primary};
   display: flex;
   flex-direction: column;
   max-height: 26rem;
@@ -49,15 +50,15 @@ const Content = styled(EditorContent)`
       }
 
       code {
-        background-color: rgba(#616161, 0.1);
-        color: #616161;
+        background-color: ${({ theme }) =>
+          transparentize(0.8, theme.colors.muted)};
+        color: ${({ theme }) => theme.colors.muted};
       }
 
       pre {
-        background: #0d0d0d;
+        background: ${({ theme }) => theme.colors.primary};
         border-radius: 10px;
-        color: #fff;
-        font-family: 'JetBrainsMono', monospace;
+        color: ${({ theme }) => theme.colors.background};
         padding: 0.75rem 1rem;
 
         code {
@@ -82,13 +83,15 @@ const Content = styled(EditorContent)`
       }
 
       blockquote {
-        border-left: 2px solid rgba(#0d0d0d, 0.1);
+        border-left: 2px solid
+          ${({ theme }) => transparentize(0.9, theme.colors.primary)};
         padding-left: 1rem;
       }
 
       hr {
         border: none;
-        border-top: 2px solid rgba(#0d0d0d, 0.1);
+        border-top: 2px solid
+          ${({ theme }) => transparentize(0.8, theme.colors.primary)};
         margin: 2rem 0;
       }
 

@@ -1,18 +1,19 @@
 import { Fragment } from 'react';
 import styled from 'styled-components';
+import { transparentize } from 'polished';
 
 import MenuItem from './MenuItem';
 
 const Header = styled.div`
   align-items: center;
-  border-bottom: 1px solid #0d0d0d;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary};
   display: flex;
   flex: 0 0 auto;
   flex-wrap: wrap;
   padding: 0.25rem;
 `;
 const Divider = styled.div`
-  background-color: rgba(#000, 0.1);
+  background-color: ${({ theme }) => transparentize(0.9, theme.colors.primary)};
   height: 1.25rem;
   margin-left: 0.5rem;
   margin-right: 0.75rem;
