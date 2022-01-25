@@ -2,8 +2,9 @@ import moment, { unix } from 'moment';
 import React, { useMemo } from 'react';
 import { FiCheck, FiInbox } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useProposal } from '../../../../hooks/Guilds/proposals/useProposal';
+import { useProposal } from '../../../../hooks/Guilds/ether-swr/useProposal';
 import { Box } from '../../common/Layout';
 import { Heading } from '../../common/Typography';
 import SidebarCard from '../../SidebarCard';
@@ -38,16 +39,13 @@ const UserInfoDetail = styled(Box)`
   font-weight: 600;
 `;
 
-interface ProposalInfoCardProps {
-  proposalId: string;
-  guildId: string;
-}
-
-const ProposalInfoCard: React.FC<ProposalInfoCardProps> = ({
-  guildId,
-  proposalId,
-}) => {
-  const { proposal, error } = useProposal(guildId, proposalId);
+const ProposalInfoCard: React.FC = () => {
+  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
+    chain_name: string;
+    guild_id?: string;
+    proposal_id?: string;
+  }>();
+  const { data: proposal, error } = useProposal(guildId, proposalId);
 
   const startTime = useMemo(() => {
     if (!proposal) return null;

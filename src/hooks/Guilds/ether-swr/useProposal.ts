@@ -1,17 +1,15 @@
 import useEtherSWR from 'ether-swr';
+import { Middleware, SWRHook } from 'swr';
+import { Proposal } from '../../../types/types.guilds';
 
-function myMiddleware (useSWRNext) {
-  return (key, fetcher, config) => {
-    // Before hook runs...
-
-    // Handle the next middleware, or the `useSWR` hook if this is the last one.
-    const swr = useSWRNext(key, fetcher, config)
-
-    // After hook runs...
-    return swr
-  }
-}
+const formatterMiddleware: Middleware =
+  (useSWRNext: SWRHook) => (key, fetcher, config) => {
+    const swr = useSWRNext(key, fetcher, config);
+    return swr;
+  };
 
 export const useProposal = (guildId: string, proposalId: string) => {
-  return useEtherSWR([guildId, 'getProposal', proposalId], { use: [myMiddleware] });
+  return useEtherSWR<Proposal>([guildId, 'getProposal', proposalId], {
+    use: [formatterMiddleware],
+  });
 };
