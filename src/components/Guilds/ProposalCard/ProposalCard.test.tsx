@@ -4,13 +4,19 @@ import { default as ProposalCard } from './';
 
 import { render } from '../../../utils/tests';
 
-jest.mock('hooks/Guilds/useProposal', () => ({
+jest.mock('hooks/Guilds/ether-swr/useProposal', () => ({
   useProposal: () => ({
     data: {
       title: 'Proposal Title',
       description: 'Proposal Description',
       contentHash: '0x0',
-      endTime: { toNumber: () => 3 },
+      endTime: {
+        toNumber: () => 3,
+        isBefore: () => false,
+        fromNow: () => 'now',
+        toNow: () => 'later',
+        format: () => 'A Date Formate',
+      },
     },
     isValidating: false,
   }),
