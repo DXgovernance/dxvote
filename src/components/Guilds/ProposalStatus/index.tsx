@@ -58,21 +58,23 @@ interface ProposalStatusProps {
 const ProposalStatus: React.FC<ProposalStatusProps> = ({
   proposalId,
   bordered,
-  // proposal,
   hideTime,
   showRemainingTime,
 }) => {
-  const { guild_id, proposal_id } = useParams<{
+  const { guild_id, proposal_id: paramProposalId } = useParams<{
     guild_id?: string;
     proposal_id?: string;
   }>();
 
   // we need to type useProposal
-  const { proposal }: any = useProposal(guild_id, proposalId || proposal_id);
+  const { data: proposal }: any = useProposal(
+    guild_id,
+    proposalId || paramProposalId
+  );
 
   const endTime = useMemo(() => {
     if (!proposal) return null;
-    return unix(proposal.endTime.toNumber());
+    return unix(proposal?.endTime?.toNumber());
   }, [proposal]);
 
   const timeDetail = useMemo(() => {
@@ -97,9 +99,8 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
         return 'Active';
       }
     }
-    return 'Ended';
 
-    // return proposal.state;
+    return proposal.state;
   }, [endTime, proposal]);
 
   return (
