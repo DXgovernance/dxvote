@@ -75,7 +75,7 @@ const GuildsApp = () => {
                       </EtherSWRConfig>
                     </GuildsContextProvider>
                   </Route>
-                  <Route exact path="/:chain_name/:guild_id/proposalselection">
+                  <Route exact path="/:chain_name/:guild_id/proposalType">
                     <GuildsContextProvider>
                       <EtherSWRConfig
                         value={{

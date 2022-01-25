@@ -31,14 +31,12 @@ const ButtonContainer = styled(Flex)`
 `;
 
 export const Filter = () => {
-  //@TODO talk to whoever made this how best to refactor
   const [viewFilter, setViewFilter] = useState(false);
   const [createProposal, setCreateProposal] = useState(true);
   const { totalFilters } = useFilter();
 
   const history = useHistory();
   const location = useLocation();
-  console.log(location);
 
   return (
     <FilterContainer>
