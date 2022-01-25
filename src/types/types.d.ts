@@ -96,6 +96,8 @@ declare global {
     staker: string;
     amount: BigNumber;
     vote: number;
+
+    // this can be removed
     amount4Bounty: BigNumber;
   }
 

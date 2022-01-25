@@ -311,7 +311,7 @@ const Stakes = () => {
 
       {account &&
         proposal.stateInVotingMachine < 3 &&
-        redeemsLeft.bounty.indexOf(proposalId) > -1 && (
+        redeemsLeft.bounty[proposalId] && (
           <SpaceAroundRow
             style={{
               borderTop: '1px solid gray',
