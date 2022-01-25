@@ -1,3 +1,4 @@
+
 import {
   useState,
   useEffect,
@@ -6,13 +7,21 @@ import {
   ReactNode,
 } from 'react';
 import styled from 'styled-components';
+import { useMemo } from 'react';
+
 import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from '../common/Modal';
 import { AiOutlineArrowUp } from 'react-icons/ai';
 import { Button } from '../common/Button';
 import { FiX } from 'react-icons/fi';
 import { Circle, Flex } from '../common/Layout';
+
 import { ContainerText } from '../common/Layout/Text';
+
+import { getBlockchainLink } from '../../../utils';
+import { getChains } from '../../../provider/connectors';
+import { useWeb3React } from '@web3-react/core';
+
 
 export const ModalButton = styled(Button)`
   margin: 0 0 16px 0;
@@ -25,8 +34,13 @@ export const ModalButton = styled(Button)`
   }
 `;
 
+
 export const Container = styled.div`
-  margin: 8px 0 24px 0;
+  margin: 0.5rem 0 1rem 0;
+`;
+
+export const Header = styled(Flex)`
+  margin-top: 2rem;
 `;
 
 enum TransactionModalView {
@@ -35,154 +49,117 @@ enum TransactionModalView {
   Reject,
 }
 
-type TransactionModalProps = Pick<ModalProps, 'isOpen' | 'onCancel'>;
+type TransactionModalProps = {
+  message: string;
+  transactionHash: string;
+  txCancelled: boolean;
+} & Pick<ModalProps, 'onCancel'>;
 
 const TransactionModal: React.FC<TransactionModalProps> = ({
-  isOpen,
+  message,
+  transactionHash,
+  txCancelled,
   onCancel,
 }) => {
-  const [modalView, setModalView] = useState<TransactionModalView>(
-    TransactionModalView.Confirm
-  );
+  const { chainId } = useWeb3React();
+  const modalView = useMemo<TransactionModalView>(() => {
+    if (txCancelled) {
+      return TransactionModalView.Reject;
+    } else if (transactionHash) {
+      return TransactionModalView.Submit;
+    } else {
+      return TransactionModalView.Confirm;
+    }
+  }, [txCancelled, transactionHash]);
 
-  useEffect(() => {
-    // resets view for testing
-    // remove when integrating new data flow
-    setModalView(TransactionModalView.Confirm);
-  }, [isOpen]);
+  const [header, children, footerText] = useMemo(() => {
+    let header: JSX.Element, children: JSX.Element, footerText: string;
 
-  let header = null;
-  let children = null;
-  let footerText = null;
+    switch (modalView) {
+      case TransactionModalView.Confirm:
+        header = (
+          <Header>
+            <PendingCircle height="86px" width="86px" color="black" />
+          </Header>
+        );
+        children = (
+          <Flex>
+            <Container>
+              <ContainerText variant="bold">
+                Waiting For Confirmation
+              </ContainerText>
+              <ContainerText variant="medium">{message}</ContainerText>
+            </Container>
+            <ContainerText variant="medium" color="grey">
+              Confirm this Transaction in your Wallet
+            </ContainerText>
+          </Flex>
+        );
+        break;
+      case TransactionModalView.Submit:
+        header = (
+          <Header>
+            <Circle>
+              <AiOutlineArrowUp size={40} />
+            </Circle>
+          </Header>
+        );
 
-  const switchModalViews = () => {
-    // purely for review
-    // remove when integrating new data flow
-    if (modalView === TransactionModalView.Confirm) {
-      setModalView(TransactionModalView.Submit);
+        const networkName = getChains().find(
+          chain => chain.id === chainId
+        ).name;
+        children = (
+          <Flex>
+            <ContainerText variant="bold">Transaction Submitted</ContainerText>
+            <Container>
+              <ContainerText
+                as="a"
+                variant="regular"
+                color="grey"
+                href={getBlockchainLink(transactionHash, networkName)}
+                target="_blank"
+              >
+                View on Block Explorer
+              </ContainerText>
+            </Container>
+          </Flex>
+        );
+        footerText = 'Close';
+        break;
+      case TransactionModalView.Reject:
+        header = (
+          <Header>
+            <Circle>
+              <FiX size={40} />
+            </Circle>
+          </Header>
+        );
+        children = (
+          <Flex>
+            <ContainerText variant="bold">Transaction Rejected</ContainerText>
+          </Flex>
+        );
+        footerText = 'Dismiss';
+        break;
     }
 
-    if (modalView === TransactionModalView.Submit) {
-      setModalView(TransactionModalView.Reject);
-    }
-
-    if (modalView === TransactionModalView.Reject) {
-      return onCancel();
-    }
-
-    return null;
-  };
-
-  switch (modalView) {
-    case TransactionModalView.Confirm:
-      header = (
-        <Flex>
-          <PendingCircle height="86px" width="86px" color="black" />
-        </Flex>
-      );
-      children = (
-        <Flex>
-          <Container>
-            <ContainerText variant="bold">
-              Waiting For Confirmation
-            </ContainerText>
-            <ContainerText variant="medium">
-              Stake 52.42DXD for 324 Days
-            </ContainerText>
-          </Container>
-          <ContainerText variant="medium" color="grey">
-            Confirm this Transaction in your Wallet
-          </ContainerText>
-        </Flex>
-      );
-      break;
-    case TransactionModalView.Submit:
-      header = (
-        <Flex>
-          <Circle>
-            <AiOutlineArrowUp size={40} />
-          </Circle>
-        </Flex>
-      );
-      children = (
-        <Flex>
-          <ContainerText variant="bold">Transaction Submitted</ContainerText>
-          <Container>
-            <ContainerText variant="regular" color="grey">
-              View on Block Explorer
-            </ContainerText>
-          </Container>
-        </Flex>
-      );
-      footerText = 'Close';
-      break;
-    case TransactionModalView.Reject:
-      header = (
-        <Flex>
-          <Circle>
-            <FiX size={40} />
-          </Circle>
-        </Flex>
-      );
-      children = (
-        <Flex>
-          <ContainerText variant="bold">Transaction Rejected</ContainerText>
-          <Container>
-            <ContainerText variant="regular" color="grey">
-              View on Block Explorer
-            </ContainerText>
-          </Container>
-        </Flex>
-      );
-      footerText = 'Dismiss';
-      break;
-  }
+    return [header, children, footerText];
+  }, [modalView, chainId, message, transactionHash]);
 
   return (
     <Modal
-      isOpen={isOpen}
-      onDismiss={switchModalViews}
+      isOpen={!!message}
+      onDismiss={onCancel}
       children={children}
       contentHeader={header}
       cross
       hideHeader
       showSecondaryHeader
-      onCancel={switchModalViews}
+      onCancel={onCancel}
       maxWidth={300}
       cancelText={footerText}
     />
   );
 };
 
-const TransactionModalContext = createContext(null);
-
-interface TransactionModalProviderProps {
-  children: ReactNode;
-}
-export const TransactionModalProvider = ({
-  children,
-}: TransactionModalProviderProps) => {
-  //@TODO create a way to intake transaction data
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleModal = () => setIsOpen(!isOpen);
-
-  return (
-    <TransactionModalContext.Provider value={{ isOpen, toggleModal }}>
-      {children}
-      <TransactionModal isOpen={isOpen} onCancel={toggleModal} />
-    </TransactionModalContext.Provider>
-  );
-};
-
-export const useTransactionModal = () => {
-  const context = useContext(TransactionModalContext);
-  if (context === undefined) {
-    throw new Error(
-      'useTransactionModal must be used within a TransactionModalProvider'
-    );
-  }
-
-  return context;
-};
+export default TransactionModal;

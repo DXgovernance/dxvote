@@ -13,6 +13,7 @@ import { Heading } from '../common/Typography';
 import WalletInfoBox from './components/WalletInfoBox';
 import Transaction from './components/Transaction';
 import { Button } from '../common/Button';
+import { useTransactions } from '../../../contexts/Guilds';
 
 const Container = styled.div`
   margin: 2rem;
@@ -41,13 +42,24 @@ const Divider = styled.hr`
   border-top: 1px solid ${({ theme }) => theme.colors.muted};
 `;
 
-const BlockButton = styled(Button)`
-  width: 100%;
-  margin: 1.5rem 0 0;
+const GreyDivider = styled(Divider)`
+  border-top: 1px solid #c4c4c4;
+  margin: 0;
+`;
+
+const ButtonContainer = styled.div`
+  margin: 1.5rem;
+  text-align: center;
 `;
 
 const TransactionsList = styled.div`
-  margin: 1.5rem;
+  margin: 1.5rem 0;
+`;
+
+const TransactionsListHeading = styled(Heading)`
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  font-size: ${({ theme }) => theme.fontSizes.body};
 `;
 
 const WALLET_VIEWS = {
@@ -68,6 +80,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
   const rpcUrls = useRpcUrls();
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
   const [connectionErrorMessage, setConnectionErrorMessage] = useState(false);
+  const { transactions, clearAllTransactions } = useTransactions();
 
   // always reset to account view
   useEffect(() => {
@@ -216,6 +229,9 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
     }
 
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
+      const recentTransactions = transactions
+        .sort((tx1, tx2) => tx2.addedTime - tx1.addedTime)
+        .slice(0, 5);
       return (
         <>
           <WalletInfoBox
@@ -223,16 +239,26 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
           />
           <Divider />
           <TransactionsList>
-            <Heading>Recent Transactions</Heading>
-            <Divider />
-            <Transaction link="#" pending={false}>
-              Vote Yes on DXdao Treasury Diversification #27 || ETH to Stables ↗
-            </Transaction>
-            <Transaction link="#" pending={true}>
-              Vote Yes on DXdao Treasury Diversification #27 || ETH to Stables ↗
-            </Transaction>
-
-            <BlockButton>Clear all</BlockButton>
+            {recentTransactions.length === 0 ? (
+              <TransactionsListHeading>
+                Your transactions will appear here...
+              </TransactionsListHeading>
+            ) : (
+              <>
+                <TransactionsListHeading>
+                  Recent Transactions
+                </TransactionsListHeading>
+                <GreyDivider />
+                {recentTransactions.map(transaction => (
+                  <Transaction transaction={transaction} />
+                ))}
+                {recentTransactions.length > 0 && (
+                  <ButtonContainer>
+                    <Button onClick={clearAllTransactions}>Clear all</Button>
+                  </ButtonContainer>
+                )}
+              </>
+            )}
           </TransactionsList>
         </>
       );

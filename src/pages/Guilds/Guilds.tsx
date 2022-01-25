@@ -45,11 +45,10 @@ const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
 
-  const {
-    data: proposalsIds,
-    error,
-    isValidating: loading,
-  } = useEtherSWR([guildId, 'getProposalsIds']);
+  const { data: proposalsIds, error } = useEtherSWR([
+    guildId,
+    'getProposalsIds',
+  ]);
 
   return (
     <PageContainer>
@@ -58,23 +57,25 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <Filter />
-        <ProposalsList data-testid="proposals-list">
-          {loading && !error && (
-            <>
-              <SkeletonProposalCard />
-              <SkeletonProposalCard />
-            </>
-          )}
-          {!error &&
-            !loading &&
-            proposalsIds.map(proposalId => (
-              <ProposalCard
-                id={proposalId}
-                href={`/${chainName}/${guildId}/proposal/${proposalId}`}
-              />
-            ))}
-        </ProposalsList>
-        {error && <ErrorList>{error.message}</ErrorList>}
+        {!error ? (
+          <ProposalsList data-testid="proposals-list">
+            {!proposalsIds ? (
+              <>
+                <SkeletonProposalCard />
+                <SkeletonProposalCard />
+              </>
+            ) : (
+              proposalsIds.map(proposalId => (
+                <ProposalCard
+                  id={proposalId}
+                  href={`/${chainName}/${guildId}/proposal/${proposalId}`}
+                />
+              ))
+            )}
+          </ProposalsList>
+        ) : (
+          <ErrorList>{error.message}</ErrorList>
+        )}
       </PageContent>
     </PageContainer>
   );

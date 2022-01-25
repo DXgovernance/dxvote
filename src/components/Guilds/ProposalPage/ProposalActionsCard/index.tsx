@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Heading } from '../common/Typography';
-import SidebarCard from '../SidebarCard';
+import { Heading } from '../../common/Typography';
+import SidebarCard from '../../SidebarCard';
 import ActionItem from './ActionItem';
 
 const ProposalCardHeader = styled(Heading)`
