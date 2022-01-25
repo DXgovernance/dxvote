@@ -4,7 +4,9 @@ import Skeleton from 'react-loading-skeleton';
 import moment from 'moment';
 
 import { Box } from '../common/Layout';
-import { Proposal, ProposalState } from '../../../types/types.guilds.d';
+import { ProposalState } from '../../../types/types.guilds.d';
+import { useParams } from 'react-router';
+import { useProposal } from '../../../hooks/Guilds/ether-swr/useProposal';
 
 const Status = styled.div`
   font-size: 0.8rem;
@@ -44,18 +46,31 @@ const DetailText = styled(Box)`
 `;
 
 interface ProposalStatusProps {
-  proposal: Proposal;
+  //optional cause
+  //if not present can { guild_id, proposal_id } = useParams()
+  proposalId?: string;
+  // proposal: Proposal;
   bordered?: boolean;
   hideTime?: boolean;
   showRemainingTime?: boolean;
 }
 
 const ProposalStatus: React.FC<ProposalStatusProps> = ({
+  proposalId,
   bordered,
-  proposal,
   hideTime,
   showRemainingTime,
 }) => {
+  const { guild_id, proposal_id: paramProposalId } = useParams<{
+    guild_id?: string;
+    proposal_id?: string;
+  }>();
+
+  const { data: proposal } = useProposal(
+    guild_id,
+    proposalId || paramProposalId
+  );
+
   const timeDetail = useMemo(() => {
     if (!proposal?.endTime || hideTime) return null;
 
@@ -91,13 +106,18 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
               {timeDetail}
             </span>
           ) : (
-            <Skeleton width={50} />
+            <Skeleton test-id="skeleton" width={50} />
           )}
         </DetailText>
       )}
       <Pill filled padded>
         {statusDetail || (
-          <Skeleton width={50} baseColor="#333" highlightColor="#555" />
+          <Skeleton
+            test-id="skeleton"
+            width={50}
+            baseColor="#333"
+            highlightColor="#555"
+          />
         )}
       </Pill>
     </Status>

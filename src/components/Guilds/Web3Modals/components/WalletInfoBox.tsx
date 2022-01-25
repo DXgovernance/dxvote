@@ -138,7 +138,10 @@ export default function WalletInfoBox({ openOptions }: Props) {
           {isCopied ? 'Copied Address!' : 'Copy Address'}
         </ConnectionActionButton>
 
-        <ExternalLink href={getBlockchainLink(account, networkName, 'address')}>
+        <ExternalLink
+          href={getBlockchainLink(account, networkName, 'address')}
+          target="_blank"
+        >
           <ConnectionActionButton variant="minimal" iconLeft>
             <FiExternalLink />
             View on Explorer

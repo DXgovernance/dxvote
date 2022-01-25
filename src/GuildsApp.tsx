@@ -6,22 +6,20 @@ import {
   Redirect,
 } from 'react-router-dom';
 import { EtherSWRConfig } from 'ether-swr';
-
 import { ThemeProvider } from 'styled-components';
-import { Container } from './components/Guilds/common/Layout';
 
+import { Container } from './components/Guilds/common/Layout';
 import Header from './components/Guilds/Header';
 import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
 import GlobalStyle from './theme/GlobalTheme';
 import theme from './theme/light.json';
-import { GuildsContextProvider } from 'contexts/Guilds';
+import { GuildsContextProvider, TransactionsProvider } from 'contexts/Guilds';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
-import { TransactionModalProvider } from 'components/Guilds/Web3Modals/TransactionModal';
-
 import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
+import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
 import loggerMiddleware from './hooks/Guilds/ether-swr/middleware/logger';
 
 const GuildsApp = () => {
@@ -40,10 +38,10 @@ const GuildsApp = () => {
       <HashRouter basename="/guilds">
         <GlobalErrorBoundary>
           <WalletWeb3Manager>
-            <GlobalStyle />
-            <Header />
-            <Container>
-              <TransactionModalProvider>
+            <TransactionsProvider>
+              <GlobalStyle />
+              <Header />
+              <Container>
                 <Switch>
                   <Redirect
                     exact
@@ -94,11 +92,13 @@ const GuildsApp = () => {
                     </EtherSWRConfig>
                   </Route>
                 </Switch>
-              </TransactionModalProvider>
-            </Container>
+              </Container>
+            </TransactionsProvider>
           </WalletWeb3Manager>
         </GlobalErrorBoundary>
       </HashRouter>
+
+      <ToastNotificationContainer autoClose={10000} limit={4} />
     </ThemeProvider>
   );
 };

@@ -111,7 +111,7 @@ const ProposalPage: React.FC = () => {
             </UnstyledLink>
 
             <ProposalStatusWrapper>
-              <ProposalStatus proposal={proposal} bordered hideTime />
+              <ProposalStatus proposalId={proposalId} bordered hideTime />
             </ProposalStatusWrapper>
           </HeaderTopRow>
           <PageTitle>{proposal?.title || <Skeleton />}</PageTitle>

@@ -5,9 +5,11 @@ import { Button } from '../common/Button';
 import { useWeb3React } from '@web3-react/core';
 import WalletModal from '../Web3Modals/WalletModal';
 import AddressButton from '../AddressButton';
+import { useTransactions } from '../../../contexts/Guilds';
 
 const Web3Status = () => {
   const { account, chainId } = useWeb3React();
+  const { transactions } = useTransactions();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   const [injectedWalletAuthorized, setInjectedWalletAuthorized] =
@@ -45,9 +47,6 @@ const Web3Status = () => {
     }
   };
 
-  // TODO: change this based on store.
-  const transactionsCounter = 2;
-
   function getWalletStatus() {
     if (injectedWalletAuthorized && !account) {
       const chains = getChains(rpcUrls);
@@ -65,7 +64,9 @@ const Web3Status = () => {
       return (
         <AddressButton
           address={account}
-          transactionsCounter={transactionsCounter}
+          transactionsCounter={
+            transactions.filter(transaction => !transaction.receipt).length
+          }
           onClick={toggleWalletModal}
         />
       );

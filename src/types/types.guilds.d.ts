@@ -2,7 +2,6 @@ import { Moment } from 'moment';
 import {
   BigNumber,
 } from './utils';
-
 export interface Proposal {
   id: string;
   creator: string;
@@ -23,4 +22,17 @@ export enum ProposalState {
 }
 export interface ProposalMetadata {
   description: string;
+}
+export interface Transaction {
+  hash: string
+  from: string
+  summary?: string
+  receipt?: {
+    transactionHash: string,
+    blockNumber: number,
+    status: number,
+  }
+  lastCheckedBlockNumber?: number
+  addedTime: number
+  confirmedTime?: number
 }
