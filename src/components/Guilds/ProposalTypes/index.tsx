@@ -7,6 +7,7 @@ import { ContainerText } from '../common/Layout/Text';
 import { useHistory } from 'react-router-dom';
 
 import { Heading } from '../common/Typography';
+import StyledIcon from '../common/SVG';
 
 const Wrapper = styled(Flex)`
   width: 386px;
@@ -44,31 +45,6 @@ const Footer = styled(Flex)`
   width: 100%;
 `;
 
-type StyledIconProps = {
-  src: React.FC<React.SVGProps<SVGSVGElement>>;
-};
-
-const StyledIconWrapper = styled.div<StyledIconProps>`
-  margin: 0 8px;
-  & svg {
-    & path {
-      fill: currentColor;
-    }
-  }
-`;
-
-export const StyledIcon = React.memo((props: StyledIconProps) => {
-  const { src, ...rest } = props;
-
-  const Icon = src;
-
-  return (
-    <StyledIconWrapper {...rest}>
-      <Icon />
-    </StyledIconWrapper>
-  );
-});
-
 const Header = styled(Flex)`
   align-items: flex-start;
   width: 100%;
@@ -92,7 +68,7 @@ const ProposalTypeDescription: React.FC<ProposalTypeDescriptionProps> = ({
         <ContainerText variant="bold">{title}</ContainerText>
         <ContainerText variant="medium">{description}</ContainerText>
         <ContainerText variant="medium" color="grey">
-          {onChainAction ? 'on-chain Action' : 'No on-chain action'}
+          {onChainAction ? 'On-chain Action' : 'No on-chain action'}
         </ContainerText>
       </PaddingWrapper>
     </Container>
@@ -105,14 +81,15 @@ interface ProposalTypesProps {
 const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
   const history = useHistory();
 
-  const [proposalDescription, setProposalDescription] = useState(data[0]);
+  const [proposalDescription, setProposalDescription] =
+    useState<ProposalTypeDescriptionProps>(data[0]);
 
   return (
     <Flex>
       <Wrapper>
         <Header>
           <Button onClick={() => history.push('/')}>
-            <StyledIcon src={AiOutlineArrowLeft} />
+            <StyledIcon margin="0 10px 0 0" src={AiOutlineArrowLeft} />
             Back to overview
           </Button>
           <Heading size={2}>Create Proposal</Heading>
