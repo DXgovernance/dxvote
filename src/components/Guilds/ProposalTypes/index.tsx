@@ -1,15 +1,11 @@
-import React from 'react';
-import { AiOutlineArrowLeft, AiOutlinePlus } from 'react-icons/ai';
-import { ImPencil } from 'react-icons/im';
-import { MdCreditCard } from 'react-icons/md';
+import React, { useState } from 'react';
+import { AiOutlineArrowLeft } from 'react-icons/ai';
 import styled from 'styled-components';
 import { Button } from '../common/Button';
 import { Flex } from '../common/Layout';
 import { ContainerText } from '../common/Layout/Text';
 import { useHistory } from 'react-router-dom';
 
-import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
-import { ReactComponent as Signal } from '../../../assets/images/signal.svg';
 import { Heading } from '../common/Typography';
 
 const Wrapper = styled(Flex)`
@@ -73,31 +69,43 @@ export const StyledIcon = React.memo((props: StyledIconProps) => {
   );
 });
 
-const ProposalTypeDescription: React.FC = () => {
+const Header = styled(Flex)`
+  align-items: flex-start;
+  width: 100%;
+`;
+
+interface ProposalTypeDescriptionProps {
+  title: string;
+  description: string;
+  icon?: React.FC<React.SVGProps<SVGSVGElement>>;
+  onChainAction: boolean;
+}
+
+const ProposalTypeDescription: React.FC<ProposalTypeDescriptionProps> = ({
+  description,
+  title,
+  onChainAction,
+}) => {
   return (
     <Container>
       <PaddingWrapper>
-        <ContainerText variant="bold">Signal Proposal</ContainerText>
-        <ContainerText variant="medium">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed leo quam,
-          blandit eu sapien eu, commodo dapibus nisl.
-        </ContainerText>
+        <ContainerText variant="bold">{title}</ContainerText>
+        <ContainerText variant="medium">{description}</ContainerText>
         <ContainerText variant="medium" color="grey">
-          No on-chain action
+          {onChainAction ? 'on-chain Action' : 'No on-chain action'}
         </ContainerText>
       </PaddingWrapper>
     </Container>
   );
 };
 
-const Header = styled(Flex)`
-  align-items: flex-start;
-  width: 100%;
-`;
-
-const ProposalTypes: React.FC = () => {
+interface ProposalTypesProps {
+  data: ProposalTypeDescriptionProps[];
+}
+const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
   const history = useHistory();
-  // @TODO replace onlick in continue button to redirect to create a proposals page
+
+  const [proposalDescription, setProposalDescription] = useState(data[0]);
 
   return (
     <Flex>
@@ -112,29 +120,27 @@ const ProposalTypes: React.FC = () => {
         <Container>
           <PaddingWrapper>
             <ContainerHeader>Choose Proposal</ContainerHeader>
-            <ProposalTypeButton>
-              <StyledIcon src={Signal} />
-              Signal
-            </ProposalTypeButton>
-            <ProposalTypeButton>
-              <StyledIcon src={Vector} />
-              Transfer Funds
-            </ProposalTypeButton>
-            <ProposalTypeButton>
-              <StyledIcon src={MdCreditCard} />
-              Contributer Payment
-            </ProposalTypeButton>
-            <ProposalTypeButton>
-              <StyledIcon src={AiOutlinePlus} />
-              Mint Reputation
-            </ProposalTypeButton>
-            <ProposalTypeButton>
-              <StyledIcon src={ImPencil} />
-              Custom Proposal
-            </ProposalTypeButton>
+            {data.map(({ title, description, onChainAction, icon }) => (
+              <ProposalTypeButton
+                onClick={() =>
+                  setProposalDescription({
+                    title: title,
+                    description: description,
+                    onChainAction: onChainAction,
+                  })
+                }
+              >
+                <StyledIcon src={icon} />
+                {title}
+              </ProposalTypeButton>
+            ))}
           </PaddingWrapper>
         </Container>
-        <ProposalTypeDescription />
+        <ProposalTypeDescription
+          title={proposalDescription.title}
+          description={proposalDescription.description}
+          onChainAction={proposalDescription.onChainAction}
+        />
         <Footer>
           <Button variant="secondary" onClick={() => history.push('/')}>
             Continue

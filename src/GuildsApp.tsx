@@ -23,6 +23,7 @@ import { TransactionModalProvider } from 'components/Guilds/Web3Modals/Transacti
 import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import ProposalTypes from 'components/Guilds/ProposalTypes';
+import { ProposalTypesConfig } from 'configs/proposalTypes';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -89,7 +90,7 @@ const GuildsApp = () => {
                           refreshInterval: 30000,
                         }}
                       >
-                        <ProposalTypes />
+                        <ProposalTypes data={ProposalTypesConfig} />
                       </EtherSWRConfig>
                     </GuildsContextProvider>
                   </Route>
