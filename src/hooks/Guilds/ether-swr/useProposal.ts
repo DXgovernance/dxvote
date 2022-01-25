@@ -7,7 +7,17 @@ const formatterMiddleware: Middleware =
   (useSWRNext: SWRHook) => (key, fetcher, config) => {
     const swr = useSWRNext(key, fetcher, config);
     if (swr.data) {
-      swr.data['startTime'] = unix(swr.data['startTime'].toNumber());
+      const original = swr.data as any;
+
+      const clone: any = Object.assign({}, swr.data);
+      clone.startTime = original.startTime
+        ? unix(original.startTime.toNumber())
+        : null;
+      clone.endTime = original.endTime
+        ? unix(original.endTime.toNumber())
+        : null;
+
+      return { ...swr, data: clone };
     }
     return swr;
   };

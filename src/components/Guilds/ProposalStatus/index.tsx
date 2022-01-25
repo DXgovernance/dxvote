@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
-import moment, { unix } from 'moment';
+import moment from 'moment';
 
 import { Box } from '../common/Layout';
 import { Proposal, ProposalState } from '../../../types/types.guilds.d';
@@ -56,28 +56,23 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   hideTime,
   showRemainingTime,
 }) => {
-  const endTime = useMemo(() => {
-    if (!proposal) return null;
-    return unix(proposal.endTime.toNumber());
-  }, [proposal]);
-
   const timeDetail = useMemo(() => {
-    if (!endTime || hideTime) return null;
+    if (!proposal?.endTime || hideTime) return null;
 
     const currentTime = moment();
-    if (endTime.isBefore(currentTime) || showRemainingTime) {
-      return endTime.fromNow();
+    if (proposal.endTime?.isBefore(currentTime) || showRemainingTime) {
+      return proposal.endTime.fromNow();
     } else {
-      return endTime.toNow();
+      return proposal.endTime.toNow();
     }
-  }, [endTime, showRemainingTime, hideTime]);
+  }, [proposal, showRemainingTime, hideTime]);
 
   const statusDetail = useMemo(() => {
-    if (!proposal || !endTime) return null;
+    if (!proposal?.endTime) return null;
 
     if (proposal.state === ProposalState.Submitted) {
       const currentTime = moment();
-      if (endTime.isBefore(currentTime)) {
+      if (currentTime.isSameOrAfter(proposal.endTime)) {
         return 'Ended';
       } else {
         return 'Active';
@@ -85,14 +80,14 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
     }
 
     return proposal.state;
-  }, [endTime, proposal]);
+  }, [proposal]);
 
   return (
     <Status test-id="proposal-status" bordered={hideTime ? false : bordered}>
       {!hideTime && (
         <DetailText>
-          {endTime && timeDetail ? (
-            <span title={endTime?.format('MMMM Do, YYYY - h:mm a')}>
+          {proposal?.endTime && timeDetail ? (
+            <span title={proposal.endTime?.format('MMMM Do, YYYY - h:mm a')}>
               {timeDetail}
             </span>
           ) : (

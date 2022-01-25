@@ -1,4 +1,4 @@
-import moment, { unix } from 'moment';
+import moment from 'moment';
 import React, { useMemo } from 'react';
 import { FiCheck, FiInbox } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
@@ -47,26 +47,16 @@ const ProposalInfoCard: React.FC = () => {
   }>();
   const { data: proposal, error } = useProposal(guildId, proposalId);
 
-  const startTime = useMemo(() => {
-    if (!proposal) return null;
-    return unix(proposal.startTime.toNumber());
-  }, [proposal]);
-
-  const endTime = useMemo(() => {
-    if (!proposal) return null;
-    return unix(proposal.endTime.toNumber());
-  }, [proposal]);
-
   const endDetail = useMemo(() => {
-    if (!proposal || !endTime) return null;
+    if (!proposal || !proposal.endTime) return null;
 
     const currentTime = moment();
-    if (endTime.isBefore(currentTime)) {
-      return `Ended ${endTime.fromNow()}`;
+    if (proposal.endTime.isBefore(currentTime)) {
+      return `Ended ${proposal.endTime.fromNow()}`;
     } else {
-      return `Ends ${endTime.toNow()}`;
+      return `Ends ${proposal.endTime.toNow()}`;
     }
-  }, [endTime, proposal]);
+  }, [proposal]);
 
   if (error) return <div>Error</div>;
 
@@ -86,14 +76,14 @@ const ProposalInfoCard: React.FC = () => {
             <InfoItem
               icon={<FiCheck />}
               title="Proposal created"
-              description={startTime.format('MMM Do, YYYY - h:mm a')}
+              description={proposal.startTime.format('MMM Do, YYYY - h:mm a')}
               link="/"
             />
             <InfoItemLinkerLine />
             <InfoItem
               icon={<FiInbox />}
               title={endDetail}
-              description={endTime.format('MMM Do, YYYY - h:mm a')}
+              description={proposal.endTime.format('MMM Do, YYYY - h:mm a')}
             />
           </>
         )}

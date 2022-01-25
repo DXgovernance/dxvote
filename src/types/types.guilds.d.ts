@@ -1,3 +1,4 @@
+import { Moment } from 'moment';
 import {
   BigNumber,
 } from './utils';
@@ -5,8 +6,8 @@ import {
 export interface Proposal {
   id: string;
   creator: string;
-  startTime: BigNumber;
-  endTime: BigNumber;
+  startTime: Moment;
+  endTime: Moment;
   to: string[];
   data: string[];
   value: BigNumber[];
