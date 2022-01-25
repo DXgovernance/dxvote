@@ -25,7 +25,7 @@ export const ProposalTypesConfig: ProposalTypesConfigProps[] = [
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed leo quam, blandit eu sapien eu, commodo dapibus nisl.',
     icon: Vector,
-    onChainAction: false,
+    onChainAction: true,
   },
   {
     title: 'Contributer Payment',
