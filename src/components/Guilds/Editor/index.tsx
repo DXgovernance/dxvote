@@ -132,7 +132,7 @@ const Editor = () => {
     ttlMs
   );
   const [storedMarkdown, setStoredMarkdown] = useLocalStorageWithExpiry<string>(
-    `guild/newProposal/description/html`,
+    `guild/newProposal/description/markdown`,
     null,
     ttlMs
   );
