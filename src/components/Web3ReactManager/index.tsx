@@ -83,8 +83,9 @@ const Web3ReactManager = ({ children }) => {
       try {
         providerStore.setWeb3Context(web3Context);
         context.reset();
-
-        blockchainStore.fetchData(web3Context, true);
+        if (location.pathname !== '/cache') {
+          blockchainStore.fetchData(web3Context, true);
+        }
       } catch (e) {
         // Fallback if something goes wrong
         window.location.reload();
@@ -125,7 +126,9 @@ const Web3ReactManager = ({ children }) => {
     async () => {
       if (networkActive) {
         userStore.update(providerStore.getActiveWeb3React());
-        blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
+        if (location.pathname !== '/cache') {
+          blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
+        }
       }
     },
     networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10
