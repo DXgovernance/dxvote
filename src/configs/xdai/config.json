@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 13060713,
-    "ipfsHash": "QmQv3ztfhZHPVdkdniLh5PDGempxZXFH6Z5tvGS6razMEy",
-    "toBlock": 20032743
+    "ipfsHash": "QmWjsy4mxt9its79N2gxfFbx6YoajW5E3MdaHaHNuyKHZN",
+    "toBlock": "20276969"
   },
   "contracts": {
     "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
@@ -13,11 +13,26 @@
         "contractToCall": "0x0000000000000000000000000000000000000000",
         "creationLogEncoding": [
           [
-            { "name": "_descriptionHash", "type": "string" },
-            { "name": "_reputationChange", "type": "int256" },
-            { "name": "_rewards", "type": "uint256[5]" },
-            { "name": "_externalToken", "type": "address" },
-            { "name": "_beneficiary", "type": "address" }
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_reputationChange",
+              "type": "int256"
+            },
+            {
+              "name": "_rewards",
+              "type": "uint256[5]"
+            },
+            {
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "name": "_beneficiary",
+              "type": "address"
+            }
           ]
         ],
         "newProposalTopics": [
@@ -33,11 +48,26 @@
         "contractToCall": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
         "creationLogEncoding": [
           [
-            { "name": "_descriptionHash", "type": "string" },
-            { "name": "_reputationChange", "type": "int256" },
-            { "name": "_rewards", "type": "uint256[5]" },
-            { "name": "_externalToken", "type": "address" },
-            { "name": "_beneficiary", "type": "address" }
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_reputationChange",
+              "type": "int256"
+            },
+            {
+              "name": "_rewards",
+              "type": "uint256[5]"
+            },
+            {
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "name": "_beneficiary",
+              "type": "address"
+            }
           ]
         ],
         "newProposalTopics": [
@@ -64,10 +94,22 @@
         },
         "creationLogEncoding": [
           [
-            { "name": "_callsData", "type": "bytes[]" },
-            { "name": "_values", "type": "uint256[]" },
-            { "name": "_descriptionHash", "type": "string" },
-            { "name": "_contractsToCall", "type": "address[]" }
+            {
+              "name": "_callsData",
+              "type": "bytes[]"
+            },
+            {
+              "name": "_values",
+              "type": "uint256[]"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_contractsToCall",
+              "type": "address[]"
+            }
           ]
         ],
         "newProposalTopics": [
@@ -82,14 +124,32 @@
         "contractToCall": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
         "creationLogEncoding": [
           [
-            { "name": "_scheme ", "type": "address" },
-            { "name": "_parametersHash", "type": "bytes32" },
-            { "name": "_permissions", "type": "bytes4" },
-            { "name": "_descriptionHash", "type": "string" }
+            {
+              "name": "_scheme ",
+              "type": "address"
+            },
+            {
+              "name": "_parametersHash",
+              "type": "bytes32"
+            },
+            {
+              "name": "_permissions",
+              "type": "bytes4"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            }
           ],
           [
-            { "name": "_scheme ", "type": "address" },
-            { "name": "_descriptionHash", "type": "string" }
+            {
+              "name": "_scheme ",
+              "type": "address"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            }
           ]
         ],
         "newProposalTopics": [
@@ -127,14 +187,54 @@
     }
   },
   "contributionLevels": [
-    { "dxd": 1500, "id": "1", "rep": 0.1667, "stable": 3000 },
-    { "dxd": 2000, "id": "2", "rep": 0.1667, "stable": 4000 },
-    { "dxd": 3000, "id": "3", "rep": 0.1667, "stable": 5000 },
-    { "dxd": 4000, "id": "4", "rep": 0.1667, "stable": 6000 },
-    { "dxd": 5000, "id": "5", "rep": 0.1667, "stable": 7000 },
-    { "dxd": 6000, "id": "6", "rep": 0.1667, "stable": 8000 },
-    { "dxd": 7500, "id": "7", "rep": 0.1667, "stable": 9000 },
-    { "dxd": 9500, "id": "8", "rep": 0.1667, "stable": 9000 }
+    {
+      "dxd": 1500,
+      "id": "1",
+      "rep": 0.1667,
+      "stable": 3000
+    },
+    {
+      "dxd": 2000,
+      "id": "2",
+      "rep": 0.1667,
+      "stable": 4000
+    },
+    {
+      "dxd": 3000,
+      "id": "3",
+      "rep": 0.1667,
+      "stable": 5000
+    },
+    {
+      "dxd": 4000,
+      "id": "4",
+      "rep": 0.1667,
+      "stable": 6000
+    },
+    {
+      "dxd": 5000,
+      "id": "5",
+      "rep": 0.1667,
+      "stable": 7000
+    },
+    {
+      "dxd": 6000,
+      "id": "6",
+      "rep": 0.1667,
+      "stable": 8000
+    },
+    {
+      "dxd": 7500,
+      "id": "7",
+      "rep": 0.1667,
+      "stable": 9000
+    },
+    {
+      "dxd": 9500,
+      "id": "8",
+      "rep": 0.1667,
+      "stable": 9000
+    }
   ],
   "proposalTemplates": [
     {
@@ -156,7 +256,10 @@
       "calls": [
         {
           "functionName": "approve(address,uint256)",
-          "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C", ""],
+          "params": [
+            "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            ""
+          ],
           "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30"
         },
         {
@@ -184,7 +287,10 @@
       "scheme": "QuickWalletScheme",
       "title": "Contributor"
     },
-    { "id": "custom", "title": "Custom" }
+    {
+      "id": "custom",
+      "title": "Custom"
+    }
   ],
   "recommendedCalls": [],
   "tokens": [

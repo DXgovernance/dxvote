@@ -4,14 +4,12 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { ContractType } from './Provider';
 import { bnum } from '../utils';
-import { getUpdatedCache } from '../cache';
 import { CacheLoadError } from '../utils/errors';
 
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;
   initialLoadComplete: boolean;
   contractStorage: ContractStorage = {};
-  eventsStorage: EventStorage = {};
   context: RootContext;
 
   constructor(context) {
@@ -29,7 +27,6 @@ export default class BlockchainStore {
     this.activeFetchLoop = false;
     this.initialLoadComplete = false;
     this.contractStorage = {};
-    this.eventsStorage = {};
   }
 
   reduceMulticall(
@@ -84,12 +81,6 @@ export default class BlockchainStore {
     } else {
       return undefined;
     }
-  }
-
-  getCachedEvents(address: string, eventName: string) {
-    if (this.eventsStorage[address] && this.eventsStorage[address][eventName])
-      return this.eventsStorage[address][eventName].emitions;
-    else return [];
   }
 
   get(entry: Call): CallValue | undefined {
@@ -168,6 +159,7 @@ export default class BlockchainStore {
         ipfsService,
         daoStore,
         notificationStore,
+        cacheService,
       } = this.context;
 
       this.initialLoadComplete = reset ? false : this.initialLoadComplete;
@@ -237,7 +229,7 @@ export default class BlockchainStore {
               '';
           });
 
-          networkCache = await getUpdatedCache(
+          networkCache = await cacheService.getUpdatedCache(
             this.context,
             networkCache,
             networkContracts,

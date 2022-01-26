@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 7219912,
-    "ipfsHash": "QmWeHNWLtMhYJFwX63PDAGNVuTp3qzdnJ6kBgYTRKNfJqb",
-    "toBlock": 13977606
+    "ipfsHash": "QmPfiLQQf35NyJ7KioKpMCuKyfzy9zinhiqZcScBxDHDUQ",
+    "toBlock": "14058837"
   },
   "contracts": {
     "avatar": "0x519b70055af55a007110b4ff99b0ea33071c720a",
@@ -13,11 +13,26 @@
         "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
         "creationLogEncoding": [
           [
-            { "name": "_descriptionHash", "type": "string" },
-            { "name": "_reputationChange", "type": "int256" },
-            { "name": "_rewards", "type": "uint256[5]" },
-            { "name": "_externalToken", "type": "address" },
-            { "name": "_beneficiary", "type": "address" }
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_reputationChange",
+              "type": "int256"
+            },
+            {
+              "name": "_rewards",
+              "type": "uint256[5]"
+            },
+            {
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "name": "_beneficiary",
+              "type": "address"
+            }
           ]
         ],
         "newProposalTopics": [
@@ -82,9 +97,18 @@
         },
         "creationLogEncoding": [
           [
-            { "name": "_data", "type": "bytes" },
-            { "name": "_value", "type": "uint256" },
-            { "name": "_descriptionHash", "type": "string" }
+            {
+              "name": "_data",
+              "type": "bytes"
+            },
+            {
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            }
           ]
         ],
         "newProposalTopics": [
@@ -111,10 +135,22 @@
         },
         "creationLogEncoding": [
           [
-            { "name": "_callsData", "type": "bytes[]" },
-            { "name": "_values", "type": "uint256[]" },
-            { "name": "_descriptionHash", "type": "string" },
-            { "name": "_contractsToCall", "type": "address[]" }
+            {
+              "name": "_callsData",
+              "type": "bytes[]"
+            },
+            {
+              "name": "_values",
+              "type": "uint256[]"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_contractsToCall",
+              "type": "address[]"
+            }
           ]
         ],
         "newProposalTopics": [
@@ -129,14 +165,32 @@
         "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
         "creationLogEncoding": [
           [
-            { "name": "_scheme ", "type": "address" },
-            { "name": "_parametersHash", "type": "bytes32" },
-            { "name": "_permissions", "type": "bytes4" },
-            { "name": "_descriptionHash", "type": "string" }
+            {
+              "name": "_scheme ",
+              "type": "address"
+            },
+            {
+              "name": "_parametersHash",
+              "type": "bytes32"
+            },
+            {
+              "name": "_permissions",
+              "type": "bytes4"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            }
           ],
           [
-            { "name": "_scheme ", "type": "address" },
-            { "name": "_descriptionHash", "type": "string" }
+            {
+              "name": "_scheme ",
+              "type": "address"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            }
           ]
         ],
         "newProposalTopics": [
@@ -155,7 +209,9 @@
     "permissionRegistry": "0x0000000000000000000000000000000000000000",
     "reputation": "0x7a927a93f221976aae26d5d077477307170f0b7c",
     "token": "0x643b14f6ea235668278da5974930105852f2b7c4",
-    "utils": { "multicall": "0x742121cD0BB9784c1f17f25B8da1bF3445b93ED4" },
+    "utils": {
+      "multicall": "0x742121cD0BB9784c1f17f25B8da1bF3445b93ED4"
+    },
     "votingMachines": {
       "gen": {
         "address": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
@@ -187,7 +243,10 @@
       "calls": [
         {
           "functionName": "approve(address,uint256)",
-          "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C", ""],
+          "params": [
+            "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            ""
+          ],
           "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30"
         },
         {
@@ -209,7 +268,12 @@
       "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]"
     }
   ],
-  "proposalTypes": [{ "id": "custom", "title": "Custom" }],
+  "proposalTypes": [
+    {
+      "id": "custom",
+      "title": "Custom"
+    }
+  ],
   "recommendedCalls": [],
   "tokens": [
     {
