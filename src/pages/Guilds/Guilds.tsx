@@ -5,11 +5,9 @@ import { useParams } from 'react-router-dom';
 import { Box } from '../../components/Guilds/common/Layout';
 import { Sidebar } from '../../components/Guilds/Sidebar';
 import { Filter } from '../../components/Guilds/Filter';
-import ProposalCard, {
-  SkeletonProposalCard,
-} from '../../components/Guilds/ProposalCard';
-
-import useEtherSWR from 'ether-swr';
+import ProposalCard from '../../components/Guilds/ProposalCard';
+import { useProposals } from '../../hooks/Guilds/ether-swr/useProposals';
+import InView from 'react-intersection-observer';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -45,10 +43,7 @@ const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
 
-  const { data: proposalsIds, error } = useEtherSWR([
-    guildId,
-    'getProposalsIds',
-  ]);
+  const { data: proposalsIds, error } = useProposals(guildId);
 
   return (
     <PageContainer>
@@ -59,18 +54,27 @@ const GuildsPage: React.FC = () => {
         <Filter />
         {!error ? (
           <ProposalsList data-testid="proposals-list">
-            {!proposalsIds ? (
-              <>
-                <SkeletonProposalCard />
-                <SkeletonProposalCard />
-              </>
-            ) : (
+            {proposalsIds ? (
               proposalsIds.map(proposalId => (
-                <ProposalCard
-                  id={proposalId}
-                  href={`/${chainName}/${guildId}/proposal/${proposalId}`}
-                />
+                <InView>
+                  {({ inView, ref }) => (
+                    <div ref={ref}>
+                      <ProposalCard
+                        id={inView ? proposalId : null}
+                        href={`/${chainName}/${guildId}/proposal/${proposalId}`}
+                      />
+                    </div>
+                  )}
+                </InView>
               ))
+            ) : (
+              <>
+                <ProposalCard />
+                <ProposalCard />
+                <ProposalCard />
+                <ProposalCard />
+                <ProposalCard />
+              </>
             )}
           </ProposalsList>
         ) : (
