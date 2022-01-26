@@ -20,6 +20,7 @@ import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBo
 import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
+import loggerMiddleware from './hooks/Guilds/ether-swr/middleware/logger';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -65,6 +66,7 @@ const GuildsApp = () => {
                             ],
                           ]),
                           refreshInterval: 30000,
+                          use: [loggerMiddleware],
                         }}
                       >
                         <GuildsPage />
@@ -82,6 +84,7 @@ const GuildsApp = () => {
                           ],
                         ]),
                         refreshInterval: 0,
+                        use: [loggerMiddleware],
                       }}
                     >
                       {' '}

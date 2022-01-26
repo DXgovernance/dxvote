@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useConfig } from 'hooks/Guilds';
 import { Box } from '../common/Layout';
 import { Menu, MenuItem } from '../common/Menu';
 import { MemberActions } from './MemberActions';
@@ -8,6 +7,7 @@ import { GuestActions } from './GuestActions';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
 import { Loading } from '../../../components/Guilds/common/Loading';
+import { useConfig } from '../../../hooks/Guilds/useConfig';
 
 const SidebarWrapper = styled(Box)`
   @media only screen and (min-width: 768px) {
