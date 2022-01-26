@@ -31,7 +31,6 @@ jest.mock('hooks/Guilds/ens/useENSAvatar', () => ({
     avatarUri: 'test',
     imageUrl: 'test',
     ensName: 'test.eth',
-
   }),
 }));
 
