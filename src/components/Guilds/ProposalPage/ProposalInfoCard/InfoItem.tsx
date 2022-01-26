@@ -43,7 +43,7 @@ const InfoItemDescription = styled(Box)`
   font-size: 0.75rem;
 `;
 
-const InfoItemLink = styled(Box)`
+const InfoItemLink = styled.a`
   height: 2rem;
   width: 2rem;
   color: ${({ theme }) => theme.colors.text};
@@ -74,7 +74,7 @@ const InfoItem: React.FC<InfoItemProps> = ({
           <InfoItemDescription>{description}</InfoItemDescription>
         </InfoItemText>
         {link && (
-          <InfoItemLink>
+          <InfoItemLink href={link}>
             <FiExternalLink />
           </InfoItemLink>
         )}
