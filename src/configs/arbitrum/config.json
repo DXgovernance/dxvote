@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 338923,
-    "ipfsHash": "QmNbSWL9AQQARrFQqnSQg9GtUZmkAkZ1XQ9AZqkiyqT81V",
-    "toBlock": 4528354
+    "ipfsHash": "QmeLAcG9ZqoD6yeAeMKPpZtMR6hn2iS7qupZqm1aVDrjoN",
+    "toBlock": "4975188"
   },
   "contracts": {
     "avatar": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
@@ -17,7 +17,9 @@
       "TestWalletScheme": "0xcab5367De13B5409Ee85689465B4553C375FB20d"
     },
     "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
-    "utils": { "multicall": "0x9645D0CEC58F0D28Be9660b9a4D464AB193817B3" },
+    "utils": {
+      "multicall": "0x9645D0CEC58F0D28Be9660b9a4D464AB193817B3"
+    },
     "votingMachines": {
       "dxd": {
         "address": "0x02F93D46C2B56777e9C82CF40917979375C2c711",
@@ -45,7 +47,10 @@
       "calls": [
         {
           "functionName": "approve(address,uint256)",
-          "params": ["0xecA7F78d59D16812948849663b26FE10E320f80C", ""],
+          "params": [
+            "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            ""
+          ],
           "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30"
         },
         {
@@ -67,7 +72,12 @@
       "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]"
     }
   ],
-  "proposalTypes": [{ "id": "custom", "title": "Custom" }],
+  "proposalTypes": [
+    {
+      "id": "custom",
+      "title": "Custom"
+    }
+  ],
   "recommendedCalls": [
     {
       "asset": "0x0000000000000000000000000000000000000000",
@@ -75,8 +85,16 @@
       "from": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
       "functionName": "setOrganizationRefund(uint256,uint256)",
       "params": [
-        { "defaultValue": "", "name": "_voteGas", "type": "uint256" },
-        { "defaultValue": "", "name": "_maxGasPrice", "type": "uint256" }
+        {
+          "defaultValue": "",
+          "name": "_voteGas",
+          "type": "uint256"
+        },
+        {
+          "defaultValue": "",
+          "name": "_maxGasPrice",
+          "type": "uint256"
+        }
       ],
       "to": "0x02F93D46C2B56777e9C82CF40917979375C2c711",
       "toName": "DXD Voting Machine"
@@ -87,8 +105,16 @@
       "from": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
       "functionName": "setBoostedVoteRequiredPercentage(address,bytes32,uint256)",
       "params": [
-        { "defaultValue": "", "name": "_scheme", "type": "address" },
-        { "defaultValue": "", "name": "_paramsHash", "type": "bytes32" },
+        {
+          "defaultValue": "",
+          "name": "_scheme",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "_paramsHash",
+          "type": "bytes32"
+        },
         {
           "defaultValue": "",
           "name": "_boostedVotePeriodLimit",
@@ -179,8 +205,16 @@
       "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
       "functionName": "transferPairOwnership(address,address)",
       "params": [
-        { "defaultValue": "", "name": "pair", "type": "address" },
-        { "defaultValue": "", "name": "newOwner", "type": "address" }
+        {
+          "defaultValue": "",
+          "name": "pair",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "newOwner",
+          "type": "address"
+        }
       ],
       "to": "0x56F53CB6c0a80947C9Be239A62bc65fA20d4b41d",
       "toName": "Swpr Fee Setter"
@@ -206,8 +240,16 @@
       "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
       "functionName": "setSwapFee(address,uint32)",
       "params": [
-        { "defaultValue": "", "name": "pair", "type": "address" },
-        { "defaultValue": "", "name": "swapFee", "type": "uint32" }
+        {
+          "defaultValue": "",
+          "name": "pair",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "swapFee",
+          "type": "uint32"
+        }
       ],
       "to": "0x56F53CB6c0a80947C9Be239A62bc65fA20d4b41d",
       "toName": "Swpr Fee Setter"
@@ -217,7 +259,13 @@
       "decodeText": "Take protocol fee from swpr pairs [PARAM_0]",
       "from": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
       "functionName": "takeProtocolFee(address[])",
-      "params": [{ "defaultValue": "", "name": "pairs", "type": "address[]" }],
+      "params": [
+        {
+          "defaultValue": "",
+          "name": "pairs",
+          "type": "address[]"
+        }
+      ],
       "to": "0x1D7C7cb66fB2d75123351FD0d6779E8d7724a1ae",
       "toName": "Swpr Fee Receiver"
     },
@@ -227,14 +275,46 @@
       "from": "0x3172eDDa6ff8B2b2Fa7FeD40EE1fD92F1F4dd424",
       "functionName": "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)",
       "params": [
-        { "defaultValue": "", "name": "tokenA", "type": "address" },
-        { "defaultValue": "", "name": "tokenB", "type": "address" },
-        { "defaultValue": "", "name": "amountADesired", "type": "uint256" },
-        { "defaultValue": "", "name": "amountBDesired", "type": "uint256" },
-        { "defaultValue": "", "name": "amountAMin", "type": "uint256" },
-        { "defaultValue": "", "name": "amountBMin", "type": "uint256" },
-        { "defaultValue": "", "name": "to", "type": "address" },
-        { "defaultValue": "", "name": "deadline", "type": "uint256" }
+        {
+          "defaultValue": "",
+          "name": "tokenA",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "tokenB",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "amountADesired",
+          "type": "uint256"
+        },
+        {
+          "defaultValue": "",
+          "name": "amountBDesired",
+          "type": "uint256"
+        },
+        {
+          "defaultValue": "",
+          "name": "amountAMin",
+          "type": "uint256"
+        },
+        {
+          "defaultValue": "",
+          "name": "amountBMin",
+          "type": "uint256"
+        },
+        {
+          "defaultValue": "",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "deadline",
+          "type": "uint256"
+        }
       ],
       "to": "0x530476d5583724A89c8841eB6Da76E7Af4C0F17E",
       "toName": "Swpr Router"
@@ -245,13 +325,41 @@
       "from": "0x3172eDDa6ff8B2b2Fa7FeD40EE1fD92F1F4dd424",
       "functionName": "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
       "params": [
-        { "defaultValue": "", "name": "tokenA", "type": "address" },
-        { "defaultValue": "", "name": "tokenB", "type": "address" },
-        { "defaultValue": "", "name": "liquidity", "type": "uint256" },
-        { "defaultValue": "", "name": "amountAMin", "type": "uint256" },
-        { "defaultValue": "", "name": "amountBMin", "type": "uint256" },
-        { "defaultValue": "", "name": "to", "type": "address" },
-        { "defaultValue": "", "name": "deadline", "type": "uint256" }
+        {
+          "defaultValue": "",
+          "name": "tokenA",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "tokenB",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "liquidity",
+          "type": "uint256"
+        },
+        {
+          "defaultValue": "",
+          "name": "amountAMin",
+          "type": "uint256"
+        },
+        {
+          "defaultValue": "",
+          "name": "amountBMin",
+          "type": "uint256"
+        },
+        {
+          "defaultValue": "",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "defaultValue": "",
+          "name": "deadline",
+          "type": "uint256"
+        }
       ],
       "to": "0x530476d5583724A89c8841eB6Da76E7Af4C0F17E",
       "toName": "Swpr Router"
@@ -272,11 +380,31 @@
           "name": "stakableTokenAddress",
           "type": "address"
         },
-        { "defaultValue": "", "name": "rewardAmounts", "type": "uint256[]" },
-        { "defaultValue": "", "name": "startingTimestamp", "type": "uint64" },
-        { "defaultValue": "", "name": "endingTimestamp", "type": "uint64" },
-        { "defaultValue": "", "name": "locked", "type": "bool" },
-        { "defaultValue": "", "name": "stakingCap", "type": "uint256" }
+        {
+          "defaultValue": "",
+          "name": "rewardAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "defaultValue": "",
+          "name": "startingTimestamp",
+          "type": "uint64"
+        },
+        {
+          "defaultValue": "",
+          "name": "endingTimestamp",
+          "type": "uint64"
+        },
+        {
+          "defaultValue": "",
+          "name": "locked",
+          "type": "bool"
+        },
+        {
+          "defaultValue": "",
+          "name": "stakingCap",
+          "type": "uint256"
+        }
       ],
       "to": "0xecA7F78d59D16812948849663b26FE10E320f80C",
       "toName": "Swapr liquidity mining campaigns factory"
