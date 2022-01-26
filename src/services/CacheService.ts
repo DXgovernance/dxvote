@@ -1,5 +1,5 @@
 import RootContext from '../contexts';
-import { NETWORK_NAMES } from '../utils';
+import { getProposalMutableData, NETWORK_NAMES } from '../utils';
 import Web3 from 'web3';
 import axios from 'axios';
 import _ from 'lodash';
@@ -335,10 +335,17 @@ export default class UtilsService {
 
     networkCache.blockNumber = Number(toBlock);
 
-    console.debug(
+    console.log(
       'Total Proposals',
       Object.keys(networkCache.proposals).length
     );
+
+    // Compare proposals data
+    Object.keys(networkCache.proposals).map((proposalId) => {
+      const mutableData = getProposalMutableData(networkCache, proposalId);
+      const cacheData = networkCache.proposals[proposalId];
+      console.log(proposalId, mutableData, cacheData);
+    })
 
     return networkCache;
   }

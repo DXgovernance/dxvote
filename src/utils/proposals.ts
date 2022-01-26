@@ -5,7 +5,7 @@ import {
 } from './index';
 import moment from 'moment';
 
-import { PendingAction } from '../utils';
+import { PendingAction,BigNumber } from '../utils';
 
 // constant used to the initial order of the proposals (Any Status).
 export const QUEUED_PRIORITY_THRESHOLD = 10;
@@ -71,6 +71,81 @@ export const calculateStakes = function (
       .minus(downstakes),
   };
 };
+
+export const getProposalMutableData = function (
+  networkCache: DaoNetworkCache,
+  proposalId: string
+): {
+  votes: {
+    [decision: number]: BigNumber
+  },
+  stakes: {
+    [decision: number]: BigNumber
+  },
+  stateInVotingMachine: VotingMachineProposalState,
+  preBoostTimestamp: BigNumber,
+  boostTimestamp: BigNumber,
+  finishTimestamp: BigNumber
+} {
+  const proposal = networkCache.proposals[proposalId];
+  const scheme = networkCache.schemes[proposal.scheme];
+  const votingMachineOfProposal = scheme.votingMachine;
+  const votingMachineEvents = networkCache.votingMachines[votingMachineOfProposal].events;
+  let proposalMutableData = {
+    votes : {},
+    stakes: {},
+    stateInVotingMachine: 0,
+    preBoostTimestamp: bnum(0),
+    boostTimestamp: bnum(0),
+    finishTimestamp: bnum(0)
+  };
+
+  votingMachineEvents.votes.map(voteEvent => {
+    if (!proposalMutableData.votes[voteEvent.vote])
+      proposalMutableData.votes[voteEvent.vote] = bnum(voteEvent.amount);
+    else 
+      proposalMutableData.votes[voteEvent.vote] = proposalMutableData.votes[voteEvent.vote]
+        .plus(voteEvent.amount);
+  });
+  votingMachineEvents.stakes.map(stake => {
+    if (!proposalMutableData.stakes[stake.vote])
+      proposalMutableData.stakes[stake.vote] = bnum(stake.amount);
+    else 
+      proposalMutableData.stakes[stake.vote] = proposalMutableData.stakes[stake.vote]
+        .plus(stake.amount);
+  });
+
+  const proposalStatus = decodeProposalStatus(
+    proposal,
+    votingMachineEvents.proposalStateChanges,
+    proposal.paramsHash ===
+      '0x0000000000000000000000000000000000000000000000000000000000000000'
+        ? networkCache.votingMachines[votingMachineOfProposal]
+            .votingParameters[scheme.paramsHash]
+        : networkCache.votingMachines[votingMachineOfProposal]
+            .votingParameters[proposal.paramsHash],
+    scheme.maxSecondsForExecution,
+    false,
+    scheme.type
+  );
+
+  proposalMutableData.preBoostTimestamp = bnum(
+    votingMachineEvents.proposalStateChanges
+      .find((votingMachineEvent) => votingMachineEvent.proposalId == proposalId 
+        && Number(votingMachineEvent.state) == VotingMachineProposalState.PreBoosted
+      ).timestamp
+      || "0"
+  );
+  proposalMutableData.boostTimestamp = proposalStatus.boostTime;
+  proposalMutableData.finishTimestamp = proposalStatus.finishTime;
+  proposalMutableData.stateInVotingMachine = VotingMachineProposalState[
+    votingMachineEvents.proposalStateChanges
+      .filter((votingMachineEvent) => votingMachineEvent.proposalId == proposalId).at(-1).state
+  ];
+
+  return proposalMutableData;
+};
+
 // @ts-ignore
 export const decodeProposalStatus = function (
   proposal,
@@ -79,7 +154,12 @@ export const decodeProposalStatus = function (
   maxSecondsForExecution,
   autoBoost,
   schemeType
-) {
+): {
+  status: string,
+  boostTime: BigNumber,
+  finishTime: BigNumber,
+  pendingAction: PendingAction
+} {
   const timeNow = bnum(moment().unix());
   const queuedVotePeriodLimit = votingMachineParams.queuedVotePeriodLimit;
   const boostedVotePeriodLimit = votingMachineParams.boostedVotePeriodLimit;
@@ -352,7 +432,8 @@ export const decodeProposalStatus = function (
           pendingAction: PendingAction.None,
         };
       }
-    case VotingMachineProposalState.QuietEndingPeriod:
+    // VotingMachineProposalState.QuietEndingPeriod
+    default:
       const finishTime =
         bnum(
           proposalStateChangeEvents.find(
