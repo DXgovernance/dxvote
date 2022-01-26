@@ -6,12 +6,14 @@ import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
 
 import { Box } from '../common/Layout';
-import dxIcon from '../../../assets/images/ether.svg';
 import ProposalStatus from '../ProposalStatus';
 import { Heading } from '../common/Typography';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UnstyledLink from '../common/UnstyledLink';
 import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
+import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
+import { useMemo } from 'react';
+import Avatar from '../Avatar';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -55,6 +57,7 @@ const IconDetailWrapper = styled(Box)`
 const Detail = styled(Box)`
   font-size: 0.95rem;
   font-weight: 600;
+  margin-left: 0.5rem;
 `;
 
 const Icon = styled.img<{
@@ -94,25 +97,45 @@ const ProposalStatusWrapper = styled.div`
 `;
 
 interface ProposalCardProps {
-  id: any;
-  href: string;
+  id?: string;
+  href?: string;
 }
 
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
-  const { data } = useProposal(guildId, id);
-  const { title, contentHash } = data || {
+  const { data: proposal } = useProposal(guildId, id);
+  const { avatarUri, imageUrl, ensName } = useENSAvatar(proposal?.creator);
+  const { title, contentHash } = proposal || {
     title: '',
     description: '',
   };
+
+  const imageUrlToUse = useMemo(() => {
+    if (avatarUri) {
+      // TODO: Consider chainId when generating ENS metadata service fallback URL
+      return (
+        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
+      );
+    } else {
+      return null;
+    }
+  }, [imageUrl, ensName, avatarUri]);
 
   return (
     <UnstyledLink to={href}>
       <CardWrapper>
         <CardHeader>
           <IconDetailWrapper>
-            <Icon src={dxIcon} spaceRight />
-            <Detail>Swapr von 0x01Cf...2712</Detail>
+            {proposal?.creator ? (
+              <Avatar
+                src={imageUrlToUse}
+                defaultSeed={proposal.creator}
+                size={24}
+              />
+            ) : (
+              <Skeleton circle width={24} height={24} />
+            )}
+            <Detail>{ensName || proposal?.creator || <Skeleton width={400} />}</Detail>
           </IconDetailWrapper>
           <ProposalStatusWrapper>
             <ProposalStatus
