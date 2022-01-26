@@ -91,7 +91,7 @@ const GuildsApp = () => {
                       <ProposalPage />
                     </EtherSWRConfig>
                   </Route>
-                  <Route path="/:chain_name/:guild_id/createProposal/:proposal_type">
+                  <Route path="/:chain_name/:guild_id/create/:proposal_type">
                     <CreateProposalPage />
                   </Route>
                 </Switch>

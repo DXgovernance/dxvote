@@ -6,8 +6,9 @@ import Focus from '@tiptap/extension-focus';
 import Highlight from '@tiptap/extension-highlight';
 import MenuBar from './MenuBar';
 import TurndownService from 'turndown';
+import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
 
-var turndownService = new TurndownService();
+const turndownService = new TurndownService();
 
 const EditorWrap = styled.div`
   background-color: #fff;
@@ -119,14 +120,28 @@ const Content = styled(EditorContent)`
 `;
 
 const Editor = () => {
-  const initialJson = localStorage.getItem(
-    'guild-newProposal-description-json'
+  const ttlMs = 345600000;
+  const [storedJson, setStoredJson] = useLocalStorageWithExpiry<string>(
+    `guild/newProposal/description/json`,
+    null,
+    ttlMs
   );
+  const [storedHtml, setStoredHtml] = useLocalStorageWithExpiry<string>(
+    `guild/newProposal/description/html`,
+    null,
+    ttlMs
+  );
+  const [storedMarkdown, setStoredMarkdown] = useLocalStorageWithExpiry<string>(
+    `guild/newProposal/description/html`,
+    null,
+    ttlMs
+  );
+  console.log({ storedHtml, storedMarkdown });
 
   const editor = useEditor({
-    content: initialJson
+    content: storedJson
       ? {
-          ...JSON.parse(initialJson),
+          ...JSON.parse(storedJson),
         }
       : {},
     extensions: [
@@ -142,15 +157,9 @@ const Editor = () => {
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       if (html) {
-        localStorage.setItem(
-          'guild-newProposal-description-json',
-          JSON.stringify(editor.getJSON())
-        );
-        localStorage.setItem('guild-newProposal-description-html', html);
-        localStorage.setItem(
-          'guild-newProposal-description-md',
-          turndownService.turndown(html)
-        );
+        setStoredJson(JSON.stringify(editor.getJSON()));
+        setStoredHtml(html);
+        setStoredMarkdown(turndownService.turndown(html));
       }
     },
   });

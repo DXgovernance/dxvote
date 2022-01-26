@@ -32,7 +32,6 @@ const SVG = styled.svg`
 `;
 
 const MenuItem = ({ icon, title, action, isActive = null }: Props) => {
-  console.log({ isActive });
   return (
     <Item active={isActive && isActive()} onClick={action} title={title}>
       <SVG>
