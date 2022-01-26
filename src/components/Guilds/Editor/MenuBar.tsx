@@ -1,6 +1,22 @@
 import { Fragment } from 'react';
 import styled from 'styled-components';
 import { transparentize } from 'polished';
+import {
+  RiH1,
+  RiH2,
+  RiBold,
+  RiItalic,
+  RiStrikethrough,
+  RiCodeFill,
+  RiDoubleQuotesL,
+  RiMarkPenLine,
+  RiParagraph,
+  RiListUnordered,
+  RiListOrdered,
+  RiSeparator,
+  RiArrowGoBackLine,
+  RiArrowGoForwardLine,
+} from 'react-icons/ri';
 
 import MenuItem from './MenuItem';
 
@@ -12,6 +28,7 @@ const Header = styled.div`
   flex-wrap: wrap;
   padding: 0.25rem;
 `;
+
 const Divider = styled.div`
   background-color: ${({ theme }) => transparentize(0.9, theme.colors.primary)};
   height: 1.25rem;
@@ -21,15 +38,16 @@ const Divider = styled.div`
 `;
 
 const MenuBar = ({ editor }) => {
+  const iconSize = 20;
   const items = [
     {
-      icon: 'h-1',
+      icon: <RiH1 size={iconSize} />,
       title: 'Heading 1',
       action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
       isActive: () => editor.isActive('heading', { level: 1 }),
     },
     {
-      icon: 'h-2',
+      icon: <RiH2 size={iconSize} />,
       title: 'Heading 2',
       action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
       isActive: () => editor.isActive('heading', { level: 2 }),
@@ -38,19 +56,19 @@ const MenuBar = ({ editor }) => {
       title: 'divider',
     },
     {
-      icon: 'bold',
+      icon: <RiBold size={iconSize} />,
       title: 'Bold',
       action: () => editor.chain().focus().toggleBold().run(),
       isActive: () => editor.isActive('bold'),
     },
     {
-      icon: 'italic',
+      icon: <RiItalic size={iconSize} />,
       title: 'Italic',
       action: () => editor.chain().focus().toggleItalic().run(),
       isActive: () => editor.isActive('italic'),
     },
     {
-      icon: 'strikethrough',
+      icon: <RiStrikethrough size={iconSize} />,
       title: 'Strike',
       action: () => editor.chain().focus().toggleStrike().run(),
       isActive: () => editor.isActive('strike'),
@@ -60,19 +78,19 @@ const MenuBar = ({ editor }) => {
       title: 'divider',
     },
     {
-      icon: 'code-view',
+      icon: <RiCodeFill size={iconSize} />,
       title: 'Code',
       action: () => editor.chain().focus().toggleCode().run(),
       isActive: () => editor.isActive('code'),
     },
     {
-      icon: 'double-quotes-l',
+      icon: <RiDoubleQuotesL size={iconSize} />,
       title: 'Blockquote',
       action: () => editor.chain().focus().toggleBlockquote().run(),
       isActive: () => editor.isActive('blockquote'),
     },
     {
-      icon: 'mark-pen-line',
+      icon: <RiMarkPenLine size={iconSize} />,
       title: 'Highlight',
       action: () => editor.chain().focus().toggleHighlight().run(),
       isActive: () => editor.isActive('highlight'),
@@ -81,19 +99,19 @@ const MenuBar = ({ editor }) => {
       title: 'divider',
     },
     {
-      icon: 'paragraph',
+      icon: <RiParagraph size={iconSize} />,
       title: 'Paragraph',
       action: () => editor.chain().focus().setParagraph().run(),
       isActive: () => editor.isActive('paragraph'),
     },
     {
-      icon: 'list-unordered',
+      icon: <RiListUnordered size={iconSize} />,
       title: 'Bullet List',
       action: () => editor.chain().focus().toggleBulletList().run(),
       isActive: () => editor.isActive('bulletList'),
     },
     {
-      icon: 'list-ordered',
+      icon: <RiListOrdered size={iconSize} />,
       title: 'Ordered List',
       action: () => editor.chain().focus().toggleOrderedList().run(),
       isActive: () => editor.isActive('orderedList'),
@@ -102,7 +120,7 @@ const MenuBar = ({ editor }) => {
       title: 'divider',
     },
     {
-      icon: 'separator',
+      icon: <RiSeparator size={iconSize} />,
       title: 'Horizontal Rule',
       action: () => editor.chain().focus().setHorizontalRule().run(),
     },
@@ -110,12 +128,12 @@ const MenuBar = ({ editor }) => {
       title: 'divider',
     },
     {
-      icon: 'arrow-go-back-line',
+      icon: <RiArrowGoBackLine size={iconSize} />,
       title: 'Undo',
       action: () => editor.chain().focus().undo().run(),
     },
     {
-      icon: 'arrow-go-forward-line',
+      icon: <RiArrowGoForwardLine size={iconSize} />,
       title: 'Redo',
       action: () => editor.chain().focus().redo().run(),
     },

@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg';
-
 interface Props {
   icon?: any;
   title: any;
@@ -18,6 +16,7 @@ const Item = styled.button`
   margin-right: 0.25rem;
   padding: 0.25rem;
   width: 1.75rem;
+  cursor: pointer;
 
   &:hover: {
     background-color: #0d0d0d;
@@ -25,18 +24,16 @@ const Item = styled.button`
   }
 `;
 
-const SVG = styled.svg`
-  fill: currentColor;
-  height: 100%;
-  width: 100%;
-`;
+// const SVG = styled.svg`
+//   fill: currentColor;
+//   height: 100%;
+//   width: 100%;
+// `;
 
 const MenuItem = ({ icon, title, action, isActive = null }: Props) => {
   return (
     <Item active={isActive && isActive()} onClick={action} title={title}>
-      <SVG>
-        <use xlinkHref={`${remixiconUrl}#ri-${icon}`} />
-      </SVG>
+      {icon}
     </Item>
   );
 };
