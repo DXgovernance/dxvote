@@ -78,6 +78,9 @@ const CopyButton = styled(Button)`
 `;
 
 const CachePage = observer(() => {
+  // Set html title to cache to differentiate from dxvote dapp
+  document.title = 'Cache';
+
   const {
     context: { cacheService, configStore, notificationStore },
   } = useContext();
