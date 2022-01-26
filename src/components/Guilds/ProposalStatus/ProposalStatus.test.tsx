@@ -5,7 +5,7 @@ import { render } from '../../../utils/tests';
 import { default as ProposalStatus } from './';
 
 jest.mock('hooks/Guilds/useProposal', () => ({
-  useProposal: () => ({
+  useProposal: (guild_id, proposal_id) => ({
     data: {
       title: 'Proposal Title',
       description: 'Proposal Description',
