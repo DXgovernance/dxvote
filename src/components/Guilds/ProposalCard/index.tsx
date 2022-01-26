@@ -122,7 +122,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   }, [imageUrl, ensName, avatarUri]);
 
   return (
-    <UnstyledLink to={href}>
+    <UnstyledLink to={href || '#'}>
       <CardWrapper>
         <CardHeader>
           <IconDetailWrapper>
@@ -133,14 +133,15 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
                 size={24}
               />
             ) : (
-              <Skeleton circle width={24} height={24} />
+              <Skeleton test-id="skeleton" circle width={24} height={24} />
             )}
             <Detail>
-              {ensName || proposal?.creator ? (
-                shortenAddress(proposal.creator)
-              ) : (
-                <Skeleton width={100} />
-              )}
+              {ensName ||
+                (proposal?.creator ? (
+                  shortenAddress(proposal.creator)
+                ) : (
+                  <Skeleton width={100} />
+                ))}
             </Detail>
           </IconDetailWrapper>
           <ProposalStatusWrapper>
