@@ -21,6 +21,9 @@ import {
 } from '../utils';
 import { TokenVesting } from '../types/types';
 import { ProposalsExtended } from '../types/types';
+
+const proposalTitles = require('../configs/proposalTitles.json');
+
 export default class DaoStore {
   daoCache: DaoNetworkCache;
   context: RootContext;
@@ -128,6 +131,12 @@ export default class DaoStore {
       unparsedCache.proposals[proposalId].negativeStakes = bnum(
         unparsedCache.proposals[proposalId].negativeStakes
       );
+
+      // Update proposal title from proposalTitles.json file
+      if (!unparsedCache.proposals[proposalId].title) {
+        unparsedCache.proposals[proposalId].title =
+          proposalTitles[proposalId] || '';
+      }
     });
 
     Object.keys(unparsedCache.votingMachines).map(votingMachineAddress => {

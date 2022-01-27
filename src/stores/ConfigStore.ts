@@ -3,6 +3,7 @@ import RootContext from '../contexts';
 
 import {
   CACHE_METADATA_ENS,
+  getNetworkByName,
   NETWORK_ASSET_SYMBOL,
   NETWORK_NAMES,
   NETWORK_DISPLAY_NAMES,
@@ -113,21 +114,57 @@ export default class ConfigStore {
   }
 
   getLocalConfig() {
-    if (localStorage.getItem('dxvote-config'))
-      return JSON.parse(localStorage.getItem('dxvote-config'));
-    else
-      return {
+    const defaultConfig = {
+      etherscan: '',
+      pinata: '',
+      rpcType: '',
+      infura: '',
+      alchemy: '',
+      pinOnStart: false,
+      mainnet_toBlock: defaultAppConfigs.mainnet.cache.toBlock,
+      mainnet_rpcURL: getNetworkByName('mainnet').defaultRpc,
+      xdai_toBlock: defaultAppConfigs.xdai.cache.toBlock,
+      xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
+      rinkeby_toBlock: defaultAppConfigs.rinkeby.cache.toBlock,
+      rinkeby_rpcURL: getNetworkByName('rinkeby').defaultRpc,
+      arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
+      arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
+      arbitrumTestnet_toBlock: defaultAppConfigs.arbitrumTestnet.cache.toBlock,
+      arbitrumTestnet_rpcURL: getNetworkByName('arbitrumTestnet').defaultRpc,
+    };
+    const configInLocalStorage = localStorage.getItem('dxvote-config')
+      ? JSON.parse(localStorage.getItem('dxvote-config'))
+      : {};
+    return Object.assign(defaultConfig, configInLocalStorage);
+  }
+
+  setLocalConfig(config) {
+    localStorage.setItem('dxvote-config', JSON.stringify(config));
+  }
+
+  resetLocalConfig() {
+    localStorage.setItem(
+      'dxvote-config',
+      JSON.stringify({
         etherscan: '',
         pinata: '',
         rpcType: '',
         infura: '',
         alchemy: '',
         pinOnStart: false,
-      };
-  }
-
-  setLocalConfig(config) {
-    localStorage.setItem('dxvote-config', JSON.stringify(config));
+        mainnet_toBlock: defaultAppConfigs.mainnet.cache.toBlock,
+        mainnet_rpcURL: getNetworkByName('mainnet').defaultRpc,
+        xdai_toBlock: defaultAppConfigs.xdai.cache.toBlock,
+        xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
+        rinkeby_toBlock: defaultAppConfigs.rinkeby.cache.toBlock,
+        rinkeby_rpcURL: getNetworkByName('rinkeby').defaultRpc,
+        arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
+        arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
+        arbitrumTestnet_toBlock:
+          defaultAppConfigs.arbitrumTestnet.cache.toBlock,
+        arbitrumTestnet_rpcURL: getNetworkByName('arbitrumTestnet').defaultRpc,
+      })
+    );
   }
 
   toggleDarkMode() {

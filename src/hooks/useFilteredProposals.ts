@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { VotingMachineProposalState, WalletSchemeProposalState } from 'utils';
 import { useFilterCriteria } from './useFilterCriteria';
 import useMiniSearch from './useMiniSearch';
@@ -33,15 +33,13 @@ const matchScheme = (proposal: ProposalsExtended, scheme: string) => {
 
 export const useFilteredProposals = () => {
   const {
-    context: { providerStore },
+    context: { ensService },
   } = useContext();
 
   const { proposals, loading } = useFilterCriteria();
 
-  const { chainId } = providerStore.getActiveWeb3React();
-
   const minisearch = useMiniSearch<ProposalsExtended>({
-    fields: ['title'],
+    fields: ['title', 'proposer'],
     storeFields: ['id'],
     searchOptions: {
       fuzzy: 0.3,
@@ -61,30 +59,54 @@ export const useFilteredProposals = () => {
     'All Schemes'
   );
 
+  const [ensAddress, setEnsAddress] = useState<string>(null);
+  const [isEnsResolving, setIsEnsResolving] = useState<boolean>(false);
+  useEffect(() => {
+    if (titleFilter?.endsWith('.eth')) {
+      setIsEnsResolving(true);
+      ensService
+        .resolveENSAddress(titleFilter)
+        .then(setEnsAddress)
+        .finally(() => setIsEnsResolving(false));
+    } else {
+      setEnsAddress(null);
+      setIsEnsResolving(false);
+    }
+  }, [titleFilter, ensService]);
+
   // Rebuild search index when proposals list changes
   useEffect(() => {
     minisearch.buildIndex(proposals);
-  }, [proposals, chainId]);
+  }, [minisearch, proposals]);
 
   // Compute search results when search criteria changes
   const searchResults = useMemo(() => {
     if (!proposals) return [];
 
-    let filteredProposals = titleFilter
-      ? minisearch.query(titleFilter)
-      : proposals;
+    let filteredProposals = proposals;
+    if (titleFilter) {
+      const searchTerms = [titleFilter];
+      if (ensAddress) searchTerms.push(ensAddress);
+      filteredProposals = minisearch.query({ queries: searchTerms });
+    }
 
-    filteredProposals = filteredProposals.filter(
+    return filteredProposals.filter(
       proposal =>
         matchStatus(proposal, stateFilter) &&
         matchScheme(proposal, schemesFilter)
     );
-    return filteredProposals;
-  }, [minisearch, proposals, titleFilter, stateFilter, schemesFilter, chainId]);
+  }, [
+    minisearch,
+    proposals,
+    titleFilter,
+    stateFilter,
+    schemesFilter,
+    ensAddress,
+  ]);
 
   return {
     proposals: searchResults,
-    loading,
+    loading: loading || isEnsResolving,
     titleFilter,
     setTitleFilter,
     stateFilter,

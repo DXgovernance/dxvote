@@ -26,6 +26,7 @@ import DaoStore from '../stores/DaoStore';
 import UserStore from '../stores/UserStore';
 import BlockchainStore from '../stores/BlockchainStore';
 import NotificationStore from '../stores/NotificationStore';
+import CacheService from 'services/CacheService';
 
 /*
 https://reactjs.org/docs/context.html#reactcreatecontext
@@ -67,6 +68,7 @@ export default class RootContext {
   subgraphService: SubgraphService;
   messageLoggerService: MessageLoggerService;
   orbitDBService: OrbitDBService;
+  cacheService: CacheService;
 
   constructor() {
     this.providerStore = new ProviderStore(this);
@@ -95,6 +97,7 @@ export default class RootContext {
     this.subgraphService = new SubgraphService(this);
     this.messageLoggerService = new MessageLoggerService(this);
     this.orbitDBService = new OrbitDBService(this);
+    this.cacheService = new CacheService(this);
   }
 
   reset() {
