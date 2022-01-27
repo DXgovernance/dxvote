@@ -6,7 +6,7 @@ import useEtherSWRHook, {
   EthSWRConfigInterface,
 } from 'ether-swr';
 import { useEffect } from 'react';
-import { SWRResponse } from 'swr';
+import { SWRResponse, Fetcher } from 'swr';
 import { usePrevious } from '../usePrevious';
 
 function useEtherSWR<Data = any, Error = any>(
@@ -18,7 +18,7 @@ function useEtherSWR<Data = any, Error = any>(
 ): SWRResponse<Data, Error>;
 function useEtherSWR<Data = any, Error = any>(
   key: ethKeyInterface | ethKeysInterface | etherKeyFuncInterface,
-  fetcher?: any,
+  fetcher?: Fetcher<Data>,
   config?: EthSWRConfigInterface<Data, Error>
 ): SWRResponse<Data, Error>;
 function useEtherSWR<Data = any, Error = any>(
