@@ -31,7 +31,7 @@ const Wrapper = styled(Flex)`
     height: 100%;
     top: 0;
     left: 0;
-    z-index: 500;
+    z-index: 1000;
   }
 `;
 const Container = styled(Flex)`

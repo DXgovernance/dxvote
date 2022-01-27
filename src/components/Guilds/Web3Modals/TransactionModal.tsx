@@ -1,11 +1,3 @@
-
-import {
-  useState,
-  useEffect,
-  useContext,
-  createContext,
-  ReactNode,
-} from 'react';
 import styled from 'styled-components';
 import { useMemo } from 'react';
 
@@ -22,7 +14,6 @@ import { getBlockchainLink } from '../../../utils';
 import { getChains } from '../../../provider/connectors';
 import { useWeb3React } from '@web3-react/core';
 
-
 export const ModalButton = styled(Button)`
   margin: 0 0 16px 0;
   width: 90%;
@@ -33,7 +24,6 @@ export const ModalButton = styled(Button)`
     color: ${({ theme }) => theme.colors.primary};
   }
 `;
-
 
 export const Container = styled.div`
   margin: 0.5rem 0 1rem 0;

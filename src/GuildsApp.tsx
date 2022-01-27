@@ -27,7 +27,6 @@ import { ProposalTypesConfig } from 'configs/proposalTypes';
 import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
 import loggerMiddleware from './hooks/Guilds/ether-swr/middleware/logger';
 
-
 const GuildsApp = () => {
   const history = useHistory();
 
