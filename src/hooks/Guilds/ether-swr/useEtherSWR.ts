@@ -31,7 +31,6 @@ function useEtherSWR<Data = any, Error = any>(
   const prevChainId = usePrevious(chainId);
   useEffect(() => {
     if (prevChainId && chainId !== prevChainId) {
-      console.log('Different chain ID. Mutating...');
       swrResponse.mutate(null);
     }
   }, [chainId, prevChainId, swrResponse]);
