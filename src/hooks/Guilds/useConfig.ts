@@ -17,7 +17,6 @@ export const useConfig = () => {
     ],
     {
       refreshInterval: 0,
-      initialData: emptyData,
     }
   );
 
