@@ -181,7 +181,10 @@ export const CreateMetadataPage = observer(() => {
             />
             <PreviewWrapper>
               <PreviewHeader>Preview</PreviewHeader>
-              <Preview source={descriptionText} />
+              <Preview
+                source={descriptionText}
+                linkTarget="_blank"
+              />
             </PreviewWrapper>
           </MarkdownWrapper>
         </ProposalsWrapper>
