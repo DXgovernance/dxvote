@@ -180,7 +180,7 @@ export const CreateMetadataPage = observer(() => {
               ]}
               previewOptions={{
                 skipHtml: true,
-                escapeHtml: true
+                escapeHtml: true,
               }}
             />
             <PreviewWrapper>
