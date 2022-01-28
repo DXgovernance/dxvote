@@ -178,12 +178,18 @@ export const CreateMetadataPage = observer(() => {
                 commands.orderedListCommand,
                 commands.checkedListCommand,
               ]}
+              previewOptions={{
+                skipHtml: true,
+                escapeHtml: true
+              }}
             />
             <PreviewWrapper>
               <PreviewHeader>Preview</PreviewHeader>
               <Preview
                 source={descriptionText}
                 linkTarget="_blank"
+                skipHtml
+                escapeHtml
               />
             </PreviewWrapper>
           </MarkdownWrapper>

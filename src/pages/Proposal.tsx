@@ -110,6 +110,8 @@ const ProposalPage = observer(() => {
               whiteSpace: 'pre-line',
             }}
             linkTarget="_blank"
+            skipHtml
+            escapeHtml
           />
           {proposal.descriptionHash.length > 0 && (
             <h3 style={{ margin: '0px' }}>
