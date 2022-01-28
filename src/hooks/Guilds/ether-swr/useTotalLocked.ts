@@ -1,6 +1,6 @@
-import useEtherSWR from 'ether-swr';
 import { SWRResponse } from 'swr';
 import { BigNumber } from 'utils';
+import useEtherSWR from './useEtherSWR';
 
 interface UseTotalLockedProps {
   contractAddress: string;

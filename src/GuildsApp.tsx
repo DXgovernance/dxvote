@@ -12,6 +12,7 @@ import { Container } from './components/Guilds/common/Layout';
 import Header from './components/Guilds/Header';
 import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
+import CreateProposalPage from 'pages/Guilds/CreateProposal';
 import GlobalStyle from './theme/GlobalTheme';
 import theme from './theme/light.json';
 import { GuildsContextProvider, TransactionsProvider } from 'contexts/Guilds';
@@ -90,6 +91,9 @@ const GuildsApp = () => {
                       {' '}
                       <ProposalPage />
                     </EtherSWRConfig>
+                  </Route>
+                  <Route path="/:chain_name/:guild_id/create/:proposal_type">
+                    <CreateProposalPage />
                   </Route>
                 </Switch>
               </Container>

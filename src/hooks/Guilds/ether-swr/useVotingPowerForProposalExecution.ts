@@ -1,6 +1,6 @@
-import useEtherSWR from 'ether-swr';
 import { BigNumber } from 'utils';
 import { SWRResponse } from 'swr';
+import useEtherSWR from './useEtherSWR';
 
 interface UseVotingPowerProps {
   contractAddress: string;
