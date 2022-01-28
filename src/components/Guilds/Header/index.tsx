@@ -5,7 +5,6 @@ import { Heading } from '../common/Typography';
 import NetworkButton from './NetworkButton';
 import WalletButton from './WalletButton';
 
-//@NOTE: any reason why this is set to this value?? z-index: 999999;
 const HeaderWrapper = styled.nav`
   padding: 0.75rem 0;
 
