@@ -154,7 +154,6 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
     '/create/proposal_type'
   );
 
-
   const [proposalDescription, setProposalDescription] =
     useState<ProposalTypeDescriptionProps>(data[0]);
 
