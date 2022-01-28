@@ -5,7 +5,7 @@ import { FiArrowLeft, FiX } from 'react-icons/fi';
 import { Button } from '../common/Button';
 import { Flex } from '../common/Layout';
 import { ContainerText } from '../common/Layout/Text';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { Heading } from '../common/Typography';
 import StyledIcon from '../common/SVG';
@@ -147,6 +147,14 @@ interface ProposalTypesProps {
 }
 const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
   const history = useHistory();
+  const location = useLocation();
+
+  const continueUrl = location.pathname.replace(
+    '/ProposalType',
+    '/create/proposal_type'
+  );
+
+  console.log(location);
 
   const [proposalDescription, setProposalDescription] =
     useState<ProposalTypeDescriptionProps>(data[0]);
@@ -203,7 +211,10 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
           />
         </ContentWrapper>
         <Footer>
-          <ButtonFooter variant="secondary" onClick={() => history.push('/')}>
+          <ButtonFooter
+            variant="secondary"
+            onClick={() => history.push(continueUrl)}
+          >
             Continue
           </ButtonFooter>
         </Footer>
