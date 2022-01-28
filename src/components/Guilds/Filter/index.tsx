@@ -49,7 +49,7 @@ export const Filter = () => {
             </Button>
             <Button
               variant="secondary"
-              onClick={() => history.push(location.pathname + '/ProposalType')}
+              onClick={() => history.push(location.pathname + '/proposalType')}
             >
               Create Proposal
             </Button>

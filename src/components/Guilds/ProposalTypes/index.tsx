@@ -150,7 +150,7 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
   const location = useLocation();
 
   const continueUrl = location.pathname.replace(
-    '/ProposalType',
+    '/proposalType',
     '/create/proposal_type'
   );
 
