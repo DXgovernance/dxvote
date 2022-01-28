@@ -1,5 +1,5 @@
-import useEtherSWR from 'ether-swr';
 import { SWRResponse } from 'swr';
+import useEtherSWR from './useEtherSWR';
 
 interface UseVotingPowerProps {
   contractAddress: string;

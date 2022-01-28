@@ -8,8 +8,7 @@ import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard, {
   SkeletonProposalCard,
 } from '../../components/Guilds/ProposalCard';
-
-import useEtherSWR from 'ether-swr';
+import { useGuildProposals } from '../../hooks/Guilds/ether-swr/useGuildProposals';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -45,10 +44,7 @@ const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
 
-  const { data: proposalsIds, error } = useEtherSWR([
-    guildId,
-    'getProposalsIds',
-  ]);
+  const { data: proposalsIds, error } = useGuildProposals(guildId);
 
   return (
     <PageContainer>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
-import useEtherSWR from 'ether-swr';
 import { useParams } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
@@ -14,6 +13,7 @@ import ProposalActionsCard from '../../components/Guilds/ProposalPage/ProposalAc
 import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
 import AddressButton from '../../components/Guilds/AddressButton';
 import ProposalDescription from '../../components/Guilds/ProposalPage/ProposalDescription';
+import { useProposal } from '../../hooks/Guilds/ether-swr/useProposal';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -84,11 +84,7 @@ const ProposalPage: React.FC = () => {
     proposal_id?: string;
   }>();
 
-  const { data: proposal, error } = useEtherSWR([
-    guildId,
-    'getProposal',
-    proposalId,
-  ]);
+  const { data: proposal, error } = useProposal(guildId, proposalId);
 
   if (error) {
     return (
