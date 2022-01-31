@@ -33,7 +33,7 @@ import {
 
 const Stakes = () => {
   const {
-    context: { daoStore, configStore, providerStore, daoService, userStore },
+    context: { daoStore, configStore, providerStore, daoService },
   } = useContext();
 
   const [stakeAmount, setStakeAmount] = useState(0);
@@ -58,18 +58,15 @@ const Stakes = () => {
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
   const votingMachineTokenName =
-    (votingMachines.gen &&
-      scheme.votingMachine === votingMachines.gen.address) ||
-    (votingMachines.gen2 &&
-      scheme.votingMachine === votingMachines.gen2.address)
-      ? 'GEN'
-      : 'DXD';
+    votingMachines[daoStore.getVotingMachineOfProposal(proposalId)].type == "DXDVotingMachine"
+      ? 'DXD'
+      : 'GEN';
 
-  const { dxdApproved, genApproved } = userStore.getUserInfo();
-  const votingMachineTokenApproved =
-    votingMachines.gen && scheme.votingMachine === votingMachines.gen.address
-      ? genApproved
-      : dxdApproved;
+      
+  // TO DO: fix this later
+  // const { dxdApproved, genApproved } = userStore.getUserInfo();
+  const votingMachineTokenApproved = true;
+  
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
   proposalEvents.stakes.map(stake => {
@@ -116,10 +113,10 @@ const Stakes = () => {
   const redeem = function () {
     if (
       scheme.type === 'ContributionReward' &&
-      networkContracts.daostack.contributionRewardRedeemer
+      networkContracts.daostack.contributionReward.redeemer
     ) {
       daoService.redeemContributionReward(
-        networkContracts.daostack.contributionRewardRedeemer,
+        networkContracts.daostack.contributionReward.redeemer,
         scheme.address,
         scheme.votingMachine,
         proposalId,

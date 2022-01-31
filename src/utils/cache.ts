@@ -1,6 +1,5 @@
 import contentHash from 'content-hash';
 import _ from 'lodash';
-import { ZERO_ADDRESS, sleep } from './index';
 
 const Web3 = require('web3');
 const web3 = new Web3();
@@ -206,124 +205,31 @@ export const ipfsHashToDescriptionHash = function (ipfsHash) {
   }
 };
 
-export const getSchemeTypeData = function (networkConfig, schemeAddress) {
-  if (networkConfig.daostack) {
-    if (
-      networkConfig.daostack.schemeRegistrar &&
-      networkConfig.daostack.schemeRegistrar.address === schemeAddress
-    ) {
-      return {
-        type: 'SchemeRegistrar',
-        name: 'SchemeRegistrar',
-        contractToCall: networkConfig.daostack.schemeRegistrar.contractToCall,
-        votingMachine: networkConfig.votingMachines.gen.address,
-        newProposalTopics:
-          networkConfig.daostack.schemeRegistrar.newProposalTopics,
-        voteParams: networkConfig.daostack.schemeRegistrar.voteParams,
-        creationLogEncoding:
-          networkConfig.daostack.schemeRegistrar.creationLogEncoding,
-      };
-    } else if (
-      networkConfig.daostack.contributionReward &&
-      networkConfig.daostack.contributionReward.address === schemeAddress
-    ) {
-      return {
-        type: 'ContributionReward',
-        name: 'ContributionReward',
-        contractToCall:
-          networkConfig.daostack.contributionReward.contractToCall,
-        votingMachine: networkConfig.votingMachines.gen.address,
-        newProposalTopics:
-          networkConfig.daostack.contributionReward.newProposalTopics,
-        voteParams: networkConfig.daostack.contributionReward.voteParams,
-        creationLogEncoding:
-          networkConfig.daostack.contributionReward.creationLogEncoding,
-      };
-    } else if (
-      networkConfig.daostack.competitionScheme &&
-      networkConfig.daostack.competitionScheme.address === schemeAddress
-    ) {
-      return {
-        type: 'CompetitionScheme',
-        name: 'CompetitionScheme',
-        contractToCall: networkConfig.daostack.competitionScheme.contractToCall,
-        votingMachine: networkConfig.votingMachines.gen.address,
-        newProposalTopics:
-          networkConfig.daostack.competitionScheme.newProposalTopics,
-        creationLogEncoding:
-          networkConfig.daostack.competitionScheme.creationLogEncoding,
-      };
-    } else if (
-      networkConfig.daostack.multicallSchemes &&
-      Object.keys(networkConfig.daostack.multicallSchemes.addresses).indexOf(
-        schemeAddress
-      ) > -1
-    ) {
-      return {
-        type: 'GenericMulticall',
-        votingMachine: networkConfig.votingMachines.gen.address,
-        contractToCall: ZERO_ADDRESS,
-        name: networkConfig.daostack.multicallSchemes.addresses[schemeAddress]
-          .name,
-        newProposalTopics:
-          networkConfig.daostack.multicallSchemes.newProposalTopics,
-        voteParams:
-          networkConfig.daostack.multicallSchemes.addresses[schemeAddress]
-            .voteParams,
-        creationLogEncoding:
-          networkConfig.daostack.multicallSchemes.creationLogEncoding,
-      };
-    } else if (
-      networkConfig.daostack.genericSchemes &&
-      Object.keys(networkConfig.daostack.genericSchemes.addresses).indexOf(
-        schemeAddress
-      ) > -1
-    ) {
-      return {
-        type: 'GenericScheme',
-        votingMachine:
-          networkConfig.daostack.genericSchemes.addresses[schemeAddress]
-            .votingMachine,
-        contractToCall:
-          networkConfig.daostack.genericSchemes.addresses[schemeAddress]
-            .contractToCall,
-        name: networkConfig.daostack.genericSchemes.addresses[schemeAddress]
-          .name,
-        newProposalTopics:
-          networkConfig.daostack.genericSchemes.newProposalTopics,
-        voteParams:
-          networkConfig.daostack.genericSchemes.addresses[schemeAddress]
-            .voteParams,
-        creationLogEncoding:
-          networkConfig.daostack.genericSchemes.creationLogEncoding,
-      };
-    } else if (
-      networkConfig.daostack.dxSchemes &&
-      Object.keys(networkConfig.daostack.dxSchemes).indexOf(schemeAddress) > -1
-    ) {
-      return {
-        type: 'OldDxScheme',
-        votingMachine: networkConfig.votingMachines.gen.address,
-        contractToCall: ZERO_ADDRESS,
-        name: networkConfig.daostack.dxSchemes[schemeAddress],
-        newProposalTopics: [],
-        creationLogEncoding: [],
-      };
+export const getSchemeConfig = function (networkContracts, schemeAddress) {  
+  if (networkContracts?.daostack[schemeAddress])
+    return {
+      type: networkContracts.daostack[schemeAddress].type,
+      name: networkContracts.daostack[schemeAddress].name,
+      contractToCall: networkContracts.daostack[schemeAddress].contractToCall,
+      newProposalTopics: networkContracts.daostack[schemeAddress].newProposalTopics,
+      creationLogEncoding: networkContracts.daostack[schemeAddress].creationLogEncoding,
+      votingMachine: networkContracts.daostack[schemeAddress].votingMachine,
+      voteParams: networkContracts.daostack[schemeAddress].voteParams,
     }
-  }
-  return {
-    type: 'WalletScheme',
-    votingMachine: networkConfig.votingMachines.dxd.address,
-    name: 'WalletScheme',
-    newProposalTopics: [
-      [
-        web3.utils.soliditySha3('ProposalStateChange(bytes32,uint256)'),
-        null,
-        '0x0000000000000000000000000000000000000000000000000000000000000001',
+  else 
+    return {
+      type: 'WalletScheme',
+      name: 'WalletScheme',
+      contractToCall: schemeAddress,
+      newProposalTopics: [
+        [
+          web3.utils.soliditySha3('ProposalStateChange(bytes32,uint256)'),
+          null,
+          '0x0000000000000000000000000000000000000000000000000000000000000001',
+        ],
       ],
-    ],
-    creationLogEncoding: [],
-  };
+      creationLogEncoding: [],
+    };
 };
 
 export async function tryCacheUpdates(promises, networkCache) {
@@ -340,18 +246,4 @@ export async function tryCacheUpdates(promises, networkCache) {
     }
   }
   return networkCache;
-}
-
-export async function tryWhile(promises) {
-  let retry = true;
-  while (retry) {
-    try {
-      await Promise.all(promises);
-      retry = false;
-    } catch (e) {
-      console.error('[ERROR IN TRY WHILE] (trying again)', e.message);
-      await sleep(1000);
-    }
-  }
-  return;
 }

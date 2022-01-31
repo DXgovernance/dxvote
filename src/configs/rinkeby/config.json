@@ -1,7 +1,7 @@
 {
   "cache": {
     "fromBlock": 9234792,
-    "ipfsHash": "QmahTZJBTvAA6Wi9RCp12uVqDms1JpsAPR13LkxAkRn9Pd",
+    "ipfsHash": "QmQzQQt4KYFn73SxhSfeiV2mm9ZF4WNfRT5JoPRJnmQH6k",
     "toBlock": "10047861"
   },
   "contracts": {
@@ -9,12 +9,6 @@
     "controller": "0xb05d148c6A9d9C0eb3fE0A091a68d6DeDac63f3b",
     "permissionRegistry": "0xB569239B6aCb8810a294d46F5E293Be08d8eB59E",
     "reputation": "0xE20e1419910fa9cE9B71C48fF913e90D34dF7FDB",
-    "schemes": {
-      "MasterWalletScheme": "0x2a1242E3ed3D369A731D6aee7Bb7d09b5199b000",
-      "QuickWalletScheme": "0x0D4Dca333E79DC32b02A0f3764A26C66657e6471",
-      "RegistrarWalletScheme": "0x236FB867B2114D0b0feE2cd48dadD354b361119A",
-      "SWPRWalletScheme": "0xA84088AF10c5AD76Cca8f6728B877e156b454006"
-    },
     "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
     "utils": {
       "dxDaoNFT": "0xF7A2f72E8f6aeb884905a1fE515c1BB5752D342f",
@@ -22,9 +16,9 @@
       "multicall": "0x1FDD273e0B7E0d921Bda044Ebf64811428A79f15"
     },
     "votingMachines": {
-      "dxd": {
-        "address": "0xBa51391385A6bD5ECA0217d7e843B29227E72508",
-        "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d"
+      "0xBa51391385A6bD5ECA0217d7e843B29227E72508": {
+        "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
+        "type": "DXDVotingMachine"
       }
     }
   },
@@ -484,5 +478,6 @@
       "name": "Swpr",
       "symbol": "SWPR"
     }
-  ]
+  ],
+  "version": 1
 }

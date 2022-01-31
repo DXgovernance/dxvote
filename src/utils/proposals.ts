@@ -133,14 +133,14 @@ export const getProposalMutableData = function (
     votingMachineEvents.proposalStateChanges
       .find((votingMachineEvent) => votingMachineEvent.proposalId == proposalId 
         && Number(votingMachineEvent.state) == VotingMachineProposalState.PreBoosted
-      ).timestamp
+      )?.timestamp
       || "0"
   );
   proposalMutableData.boostTimestamp = proposalStatus.boostTime;
   proposalMutableData.finishTimestamp = proposalStatus.finishTime;
   proposalMutableData.stateInVotingMachine = VotingMachineProposalState[
     votingMachineEvents.proposalStateChanges
-      .filter((votingMachineEvent) => votingMachineEvent.proposalId == proposalId).at(-1).state
+      .filter((votingMachineEvent) => votingMachineEvent.proposalId == proposalId).at(-1)?.state
   ];
 
   return proposalMutableData;
@@ -166,8 +166,8 @@ export const decodeProposalStatus = function (
   const preBoostedVotePeriodLimit =
     votingMachineParams.preBoostedVotePeriodLimit;
   const quietEndingPeriod = votingMachineParams.quietEndingPeriod;
-  const boostedPhaseTime = proposal.boostedPhaseTime;
-  const submittedTime = proposal.submittedTime;
+  const boostedPhaseTime = bnum(proposal.boostedPhaseTime);
+  const submittedTime = bnum(proposal.submittedTime);
   const preBoostedPhaseTime = proposal.preBoostedPhaseTime;
 
   switch (proposal.stateInVotingMachine) {
@@ -303,7 +303,7 @@ export const decodeProposalStatus = function (
           pendingAction: PendingAction.None,
         };
     case VotingMachineProposalState.Queued:
-      if (timeNow > submittedTime.plus(queuedVotePeriodLimit).toNumber()) {
+      if (timeNow.gt(submittedTime.plus(queuedVotePeriodLimit))) {
         return {
           status: 'Expired in Queue',
           boostTime: bnum(0),
@@ -320,12 +320,11 @@ export const decodeProposalStatus = function (
       }
     case VotingMachineProposalState.PreBoosted:
       if (
-        timeNow >
-          preBoostedPhaseTime
+        timeNow.gt(preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
             .plus(boostedVotePeriodLimit)
             .plus(maxSecondsForExecution)
-            .toNumber() &&
+         ) &&
         proposal.shouldBoost
       ) {
         return {
@@ -353,8 +352,7 @@ export const decodeProposalStatus = function (
           pendingAction: PendingAction.Execute,
         };
       } else if (
-        timeNow >
-          preBoostedPhaseTime.plus(preBoostedVotePeriodLimit).toNumber() &&
+        timeNow.gt(preBoostedPhaseTime.plus(preBoostedVotePeriodLimit))&&
         proposal.shouldBoost
       ) {
         return {
@@ -369,11 +367,10 @@ export const decodeProposalStatus = function (
         };
       } else if (
         autoBoost &&
-        timeNow >
-          preBoostedPhaseTime
+        timeNow.gt(preBoostedPhaseTime
             .plus(preBoostedVotePeriodLimit)
             .plus(boostedVotePeriodLimit)
-            .toNumber() &&
+        ) &&
         proposal.shouldBoost
       ) {
         return {
@@ -385,7 +382,7 @@ export const decodeProposalStatus = function (
           pendingAction: PendingAction.Execute,
         };
       } else if (
-        timeNow > submittedTime.plus(queuedVotePeriodLimit) &&
+        timeNow.gt(submittedTime.plus(queuedVotePeriodLimit)) &&
         !proposal.shouldBoost
       ) {
         return {
@@ -417,7 +414,7 @@ export const decodeProposalStatus = function (
         };
       }
     case VotingMachineProposalState.Boosted:
-      if (timeNow > boostedPhaseTime.plus(boostedVotePeriodLimit).toNumber()) {
+      if (timeNow.gt(boostedPhaseTime.plus(boostedVotePeriodLimit))) {
         return {
           status: 'Pending Execution',
           boostTime: boostedPhaseTime,

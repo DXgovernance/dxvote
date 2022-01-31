@@ -31,7 +31,7 @@ const Status = () => {
     switch (pendingAction) {
       case 4:
         daoService.redeemContributionReward(
-          networkContracts.daostack.contributionRewardRedeemer,
+          networkContracts.daostack.contributionReward.redeemer,
           scheme.address,
           scheme.votingMachine,
           proposalId,
@@ -53,8 +53,7 @@ const Status = () => {
     daoStore.getProposalStatus(proposalId);
 
   const autoBoost =
-    networkContracts.votingMachines.dxd &&
-    networkContracts.votingMachines.dxd.address === votingMachineUsed;
+    networkContracts.votingMachines[votingMachineUsed].type == "DXDVotingMachine";
 
   return (
     <>

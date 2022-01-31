@@ -164,13 +164,6 @@ declare global {
     newProposalEvents: ProposalEvent[];
   }
 
-  // move this to dao network cache
-  interface DaoInfo {
-    address: string;
-    totalRep: BigNumber;
-    repEvents: RepEvent[];
-  }
-
   interface VotingMachine {
     name: string;
     events: {
@@ -193,9 +186,14 @@ declare global {
   }
 
   interface DaoNetworkCache {
+    version?: number;
     networkId: number;
     blockNumber: number;
-    daoInfo: DaoInfo;
+    address: string;
+    reputation: {
+      events: RepEvent[],
+      total: BigNumber
+    },
     schemes: { [address: string]: Scheme };
     proposals: { [id: string]: Proposal };
     callPermissions: CallPermissions;
@@ -213,17 +211,32 @@ declare global {
     controller: string;
     permissionRegistry: string;
     utils: { [name: string]: string };
-    schemes?: any;
-    daostack?: any;
     votingMachines: {
-      [name: string]: {
-        address: string;
+      [address: string]: {
+        type: string;
         token: string;
       };
     };
+    daostack?: {
+      [address: string] : {
+        supported: boolean,
+        name: string,
+        type: string,
+        contractToCall: string,
+        creationLogEncoding: Array<Array<{
+          name: string,
+          type: string
+        }>>,
+        newProposalTopics: string[],
+        voteParams: string,
+        votingMachine: string,
+        redeemer?: string
+      }
+    },
   }
 
   interface NetworkConfig {
+    version?: number;
     cache: {
       fromBlock: number;
       toBlock: number;
@@ -274,24 +287,6 @@ declare global {
   interface AppConfig {
     [networkName: string]: NetworkConfig;
   }
-}
-
-export interface DaoInfo {
-  address: string;
-  totalRep: BigNumber;
-  repEvents: RepEvent[];
-}
-
-export interface DaoNetworkCache {
-  networkId: number;
-  blockNumber: number;
-  daoInfo: DaoInfo;
-  schemes: { [address: string]: Scheme };
-  proposals: { [id: string]: Proposal };
-  callPermissions: CallPermissions;
-  votingMachines: { [address: string]: VotingMachine };
-  ipfsHashes: IPFSHash[];
-  vestingContracts: TokenVesting[];
 }
 
 export interface TokenVesting {
@@ -349,12 +344,14 @@ export interface RecommendedCallUsed {
   params: CallParameterDefinition[];
   decodeText: string;
 }
+
 export interface ProposalStatus {
   boostTime: BigNumber;
   finishTime: BigNumber;
   status: string;
   pendingAction: number;
 }
+
 export type ProposalsExtended = Proposal &
   ProposalStateChange &
   VotingMachineParameters &

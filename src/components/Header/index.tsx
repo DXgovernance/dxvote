@@ -108,9 +108,6 @@ const Header = observer(() => {
   } else {
     const networkName = configStore.getActiveChainName();
     const userInfo = userStore.getUserInfo();
-    const votingMachines = blockchainStore.initialLoadComplete
-      ? configStore.getNetworkContracts().votingMachines
-      : {};
 
     const dxdBalance =
       active && userInfo.dxdBalance
@@ -150,16 +147,8 @@ const Header = observer(() => {
           <NavSection>
             {account && (
               <>
-                {votingMachines.dxd ? (
-                  <ItemBox> {dxdBalance} DXD </ItemBox>
-                ) : (
-                  <div />
-                )}
-                {votingMachines.gen ? (
-                  <ItemBox> {genBalance} GEN </ItemBox>
-                ) : (
-                  <div />
-                )}
+                <ItemBox> {dxdBalance} DXD </ItemBox>
+                <ItemBox> {genBalance} GEN </ItemBox>
                 <ItemBox> {repPercentage.toString()} % REP </ItemBox>
               </>
             )}

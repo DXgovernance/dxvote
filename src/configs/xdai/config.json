@@ -1,50 +1,14 @@
 {
   "cache": {
     "fromBlock": 13060713,
-    "ipfsHash": "QmWjsy4mxt9its79N2gxfFbx6YoajW5E3MdaHaHNuyKHZN",
-    "toBlock": "20276969"
+    "ipfsHash": "QmXFzmMCgXFuMdXTGrahdahgjkZih9XcYSEgXuk6ANTq3o",
+    "toBlock": "18276969"
   },
   "contracts": {
     "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
     "controller": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
     "daostack": {
-      "competitionScheme": {
-        "address": "0x73753baC5B0fBECfd741436b64163f670E0aCB30",
-        "contractToCall": "0x0000000000000000000000000000000000000000",
-        "creationLogEncoding": [
-          [
-            {
-              "name": "_descriptionHash",
-              "type": "string"
-            },
-            {
-              "name": "_reputationChange",
-              "type": "int256"
-            },
-            {
-              "name": "_rewards",
-              "type": "uint256[5]"
-            },
-            {
-              "name": "_externalToken",
-              "type": "address"
-            },
-            {
-              "name": "_beneficiary",
-              "type": "address"
-            }
-          ]
-        ],
-        "newProposalTopics": [
-          [
-            "0xfc38e03bef8d47e8c970c106660459b8a9db8eb045bd1281ef4cc50c16e03227",
-            "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
-          ]
-        ],
-        "voteParams": "0xa8139cb6b8d1e5f7a84c3f981d0c747b1d227ce46140246a4a2bfa46151d84cd"
-      },
-      "contributionReward": {
-        "address": "0x016Bf002D361bf5563c76230D19B4DaB4d66Bda4",
+      "0x016Bf002D361bf5563c76230D19B4DaB4d66Bda4": {
         "contractToCall": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
         "creationLogEncoding": [
           [
@@ -70,57 +34,20 @@
             }
           ]
         ],
+        "name": "ContributionReward",
         "newProposalTopics": [
           [
             "0xcbdcbf9aaeb1e9eff0f75d74e1c1e044bc87110164baec7d18d825b0450d97df",
             "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
           ]
         ],
-        "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df"
+        "redeemer": "0xd2cc17817c0d4cfc6819510b2e5288512122d71c",
+        "supported": false,
+        "type": "contributionReward",
+        "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df",
+        "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
       },
-      "contributionRewardRedeemer": "0xd2cc17817c0d4cfc6819510b2e5288512122d71c",
-      "dxSchemes": {
-        "0x2b644360a24366B1ebdBf4f69563eAfA4772bCA0": "InvalidScheme",
-        "0x50d895Df2ea26b4C3aBbFa22906197458F56bAe9": "DaoDeployer",
-        "0x63F411E7cA67CB296FE2c7B875E072E82A609436": "DaoDeployer2"
-      },
-      "multicallSchemes": {
-        "addresses": {
-          "0xaFE59DF878E23623A7a91d16001a66A4DD87e0c0": {
-            "name": "Multicall_1",
-            "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df",
-            "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
-          }
-        },
-        "creationLogEncoding": [
-          [
-            {
-              "name": "_callsData",
-              "type": "bytes[]"
-            },
-            {
-              "name": "_values",
-              "type": "uint256[]"
-            },
-            {
-              "name": "_descriptionHash",
-              "type": "string"
-            },
-            {
-              "name": "_contractsToCall",
-              "type": "address[]"
-            }
-          ]
-        ],
-        "newProposalTopics": [
-          [
-            "0xf5a0655bd7247f3a6fa97e71b57c61314566afb5aa8be8eea2c48f4d1b9bf190",
-            "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
-          ]
-        ]
-      },
-      "schemeRegistrar": {
-        "address": "0x22Ac81BE75cF76281D88A0F3A8Ae59b9abbE9da1",
+      "0x22Ac81BE75cF76281D88A0F3A8Ae59b9abbE9da1": {
         "contractToCall": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
         "creationLogEncoding": [
           [
@@ -152,6 +79,7 @@
             }
           ]
         ],
+        "name": "SchemeRegistrar",
         "newProposalTopics": [
           [
             "0xcc9180a05805acc3615b472c3ba00cdc9cd2c6e0e0b3648d60eb58f2c1001b84",
@@ -162,27 +90,129 @@
             "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
           ]
         ],
-        "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df"
+        "supported": true,
+        "type": "schemeRegistrar",
+        "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df",
+        "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
+      },
+      "0x2b644360a24366B1ebdBf4f69563eAfA4772bCA0": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [],
+        "name": "InvalidScheme",
+        "newProposalTopics": [],
+        "supported": false,
+        "type": "dxScheme",
+        "voteParams": "",
+        "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
+      },
+      "0x50d895Df2ea26b4C3aBbFa22906197458F56bAe9": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [],
+        "name": "DaoDeployer",
+        "newProposalTopics": [],
+        "supported": false,
+        "type": "dxScheme",
+        "voteParams": "",
+        "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
+      },
+      "0x63F411E7cA67CB296FE2c7B875E072E82A609436": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [],
+        "name": "DaoDeployer2",
+        "newProposalTopics": [],
+        "supported": false,
+        "type": "dxScheme",
+        "voteParams": "",
+        "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
+      },
+      "0x73753baC5B0fBECfd741436b64163f670E0aCB30": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [
+          [
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_reputationChange",
+              "type": "int256"
+            },
+            {
+              "name": "_rewards",
+              "type": "uint256[5]"
+            },
+            {
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "name": "_beneficiary",
+              "type": "address"
+            }
+          ]
+        ],
+        "name": "CompetitionScheme",
+        "newProposalTopics": [
+          [
+            "0xfc38e03bef8d47e8c970c106660459b8a9db8eb045bd1281ef4cc50c16e03227",
+            "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
+          ]
+        ],
+        "supported": false,
+        "type": "CompetitionScheme",
+        "voteParams": "0xa8139cb6b8d1e5f7a84c3f981d0c747b1d227ce46140246a4a2bfa46151d84cd",
+        "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
+      },
+      "0xaFE59DF878E23623A7a91d16001a66A4DD87e0c0": {
+        "Wted": true,
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [
+          [
+            {
+              "name": "_callsData",
+              "type": "bytes[]"
+            },
+            {
+              "name": "_values",
+              "type": "uint256[]"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_contractsToCall",
+              "type": "address[]"
+            }
+          ]
+        ],
+        "name": "Multicall_1",
+        "newProposalTopics": [
+          [
+            "0xf5a0655bd7247f3a6fa97e71b57c61314566afb5aa8be8eea2c48f4d1b9bf190",
+            "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
+          ]
+        ],
+        "type": "GenericMulticall",
+        "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df",
+        "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
       }
     },
     "permissionRegistry": "0x757bbdC3dF870202f28e5cF92a0005158D5e0786",
     "reputation": "0xED77eaA9590cfCE0a126Bab3D8A6ada9A393d4f6",
-    "schemes": {
-      "QuickWalletScheme": "0x983e0c64088E48b6AB7C76a8ABa3eE93d1C10aD5"
-    },
     "token": "0xf255B9d83db924820ee23A7dCC30b7542e201Bb1",
     "utils": {
       "dxdVestingFactory": "0x45734dB5C3342c66932db308Dbb23a5e2B159561",
       "multicall": "0xDD032cd0dfCB54050E1FA30Be59056403e292700"
     },
     "votingMachines": {
-      "dxd": {
-        "address": "0x053f406aD40c9Eb8eB43aFf28DA0D0EC17dF8e44",
-        "token": "0xb90D6bec20993Be5d72A5ab353343f7a0281f158"
+      "0x053f406aD40c9Eb8eB43aFf28DA0D0EC17dF8e44": {
+        "token": "0xb90D6bec20993Be5d72A5ab353343f7a0281f158",
+        "type": "DXDVotingMachine"
       },
-      "gen": {
-        "address": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF",
-        "token": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf"
+      "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF": {
+        "token": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf",
+        "type": "GenesisProtocol"
       }
     }
   },
@@ -629,5 +659,6 @@
       "name": "yearn.finance on xDai",
       "symbol": "YFI"
     }
-  ]
+  ],
+  "version": 1
 }

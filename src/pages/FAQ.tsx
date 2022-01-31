@@ -46,15 +46,15 @@ const FAQPage = observer(() => {
     '- Permission Registry: ' + networkContracts.permissionRegistry + '\n';
   daoAddresses += '- Reputation: ' + networkContracts.reputation + '\n';
 
-  for (const votingMachineName in networkContracts.votingMachines) {
-    if (votingMachineName === 'dxd') {
+  for (const votingMachineAddress in networkContracts.votingMachines) {
+    if (networkContracts.votingMachines[votingMachineAddress].type === '"DXDVotingMachine"') {
       daoAddresses +=
         '- DXDVotingMachine: ' +
-        networkContracts.votingMachines[votingMachineName].address +
+        votingMachineAddress +
         '\n';
       daoAddresses +=
         '- DXD: ' +
-        networkContracts.votingMachines[votingMachineName].token +
+        networkContracts.votingMachines[votingMachineAddress].token +
         '\n';
     }
   }

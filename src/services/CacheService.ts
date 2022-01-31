@@ -20,7 +20,7 @@ import {
   executeMulticall,
   descriptionHashToIPFSHash,
   ipfsHashToDescriptionHash,
-  getSchemeTypeData,
+  getSchemeConfig,
 } from '../utils/cache';
 import WalletScheme1_0JSON from '../contracts/WalletScheme1_0.json';
 import WalletScheme1_1JSON from '../contracts/WalletScheme1_1.json';
@@ -69,11 +69,20 @@ export default class UtilsService {
     cache: DaoNetworkCache;
   }> {
     const networkName = NETWORK_NAMES[chainId];
-
+    
+    // Get the network configuration
+    let networkConfig = appConfig[networkName];
+    let networkCache: DaoNetworkCache;
+    
     const emptyCache: DaoNetworkCache = {
       networkId: chainId,
+      version: 1,
       blockNumber: 1,
-      daoInfo: {} as DaoInfo,
+      address: networkConfig.contracts.avatar,
+      reputation: {
+        events: [],
+        total: bnum(0)
+      },
       schemes: {},
       proposals: {},
       callPermissions: {},
@@ -81,10 +90,6 @@ export default class UtilsService {
       ipfsHashes: [],
       vestingContracts: [],
     };
-
-    // Get the network configuration
-    let networkConfig = appConfig[networkName];
-    let networkCache: DaoNetworkCache;
 
     // Set network cache and config objects
     if (networkName === 'localhost') {
@@ -231,12 +236,11 @@ export default class UtilsService {
 
     notificationStore.setGlobalLoading(
       true,
-      `Collecting reputation events for blocks ${fromBlock} - ${toBlock}`
+      `Collecting reputation and governance events in blocks ${fromBlock} - ${toBlock}`
     );
 
     networkCache = await tryCacheUpdates(
       [
-        this.updateDaoInfo(networkCache, networkWeb3Contracts, web3),
         this.updateReputationEvents(
           networkCache,
           networkWeb3Contracts.reputation,
@@ -244,17 +248,6 @@ export default class UtilsService {
           toBlock,
           web3
         ),
-      ],
-      networkCache
-    );
-
-    notificationStore.setGlobalLoading(
-      true,
-      `Collecting voting machine data in blocks ${fromBlock} - ${toBlock}`
-    );
-
-    networkCache = await tryCacheUpdates(
-      [
         this.updateVotingMachines(
           networkCache,
           networkContractsConfig,
@@ -306,24 +299,13 @@ export default class UtilsService {
           toBlock,
           web3
         ),
-      ],
-      networkCache
-    );
-
-    notificationStore.setGlobalLoading(
-      true,
-      `Collecting VestingFactory VestingCreated events in blocks ${fromBlock} - ${toBlock}`
-    );
-
-    networkCache = await tryCacheUpdates(
-      [
         this.updateVestingFactoryCreatedContractsInfo(
           networkCache,
           networkWeb3Contracts.vestingFactory,
           fromBlock,
           toBlock,
           web3
-        ),
+        )
       ],
       networkCache
     );
@@ -345,29 +327,6 @@ export default class UtilsService {
     return networkCache;
   }
 
-  // Update the DAOinfo field in cache
-  async updateDaoInfo(
-    networkCache: DaoNetworkCache,
-    networkWeb3Contracts: any,
-    web3: any
-  ): Promise<DaoNetworkCache> {
-    let callsToExecute = [
-      [networkWeb3Contracts.reputation, 'totalSupply', []],
-    ];
-    const callsResponse = await executeMulticall(
-      web3,
-      networkWeb3Contracts.multicall,
-      callsToExecute
-    );
-
-    networkCache.daoInfo.address = networkWeb3Contracts.avatar._address;
-    networkCache.daoInfo.repEvents = !networkCache.daoInfo.repEvents
-      ? []
-      : networkCache.daoInfo.repEvents;
-    networkCache.daoInfo.totalRep = bnum(callsResponse.decodedReturnData[0]);
-    return networkCache;
-  }
-
   // Get all Mint and Burn reputation events to calculate rep by time off chain
   async updateReputationEvents(
     networkCache: DaoNetworkCache,
@@ -376,7 +335,7 @@ export default class UtilsService {
     toBlock: number,
     web3: any
   ): Promise<DaoNetworkCache> {
-    if (!networkCache.daoInfo.repEvents) networkCache.daoInfo.repEvents = [];
+    if (!networkCache.reputation.events) networkCache.reputation.events = [];
 
     let reputationEvents = sortEvents(
       await getEvents(web3, reputation, fromBlock, toBlock, 'allEvents')
@@ -385,7 +344,7 @@ export default class UtilsService {
     reputationEvents.map(reputationEvent => {
       switch (reputationEvent.event) {
         case 'Mint':
-          networkCache.daoInfo.repEvents.push({
+          networkCache.reputation.events.push({
             event: reputationEvent.event,
             signature: reputationEvent.signature,
             address: reputationEvent.address,
@@ -399,7 +358,7 @@ export default class UtilsService {
           });
           break;
         case 'Burn':
-          networkCache.daoInfo.repEvents.push({
+          networkCache.reputation.events.push({
             event: reputationEvent.event,
             signature: reputationEvent.signature,
             address: reputationEvent.address,
@@ -806,32 +765,29 @@ export default class UtilsService {
         'allEvents'
       )
     );
-
     // Go over all controller events and add update or remove schemes depending on the event
     for (
       let controllerEventsIndex = 0;
       controllerEventsIndex < controllerEvents.length;
       controllerEventsIndex++
-    ) {
-      const controllerEvent = controllerEvents[controllerEventsIndex];
-
-      const schemeAddress = controllerEvent.returnValues._scheme;
-
-      // Add or update the scheme information,
-      // register scheme is used to add a scheme or update the parametersHash of an existent one
-      if (controllerEvent.event === 'RegisterScheme') {
-        const schemeTypeData = getSchemeTypeData(
+      ) {
+        const controllerEvent = controllerEvents[controllerEventsIndex];
+        
+        const schemeAddress = controllerEvent.returnValues._scheme;
+        
+        // Add or update the scheme information,
+        // register scheme is used to add a scheme or update the parametersHash of an existent one
+        if (controllerEvent.event === 'RegisterScheme') {
+        console.log(controllerEvent)
+        const schemeTypeData = getSchemeConfig(
           networkContractsConfig,
           schemeAddress
         );
-        const votingMachine =
-          networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
-            .contract;
 
         console.debug(
           'Register Scheme event for ',
           schemeAddress,
-          schemeTypeData.name
+          schemeTypeData
         );
 
         let controllerAddress = networkWeb3Contracts.controller._address;
@@ -853,7 +809,7 @@ export default class UtilsService {
           ],
         ];
 
-        if (schemeTypeData.type === 'WalletScheme') {
+        if (schemeType === 'WalletScheme') {
           const walletSchemeContract = await new web3.eth.Contract(
             WalletScheme1_0JSON.abi,
             schemeAddress
@@ -874,6 +830,11 @@ export default class UtilsService {
               );
               callsToExecute.push([
                 walletSchemeContract1_1,
+                'votingMachine',
+                [],
+              ]);
+              callsToExecute.push([
+                walletSchemeContract1_1,
                 'doAvatarGenericCalls',
                 [],
               ]);
@@ -890,6 +851,11 @@ export default class UtilsService {
               ]);
               break;
             default:
+              callsToExecute.push([
+                walletSchemeContract,
+                'votingMachine',
+                [],
+              ]);
               callsToExecute.push([
                 walletSchemeContract,
                 'controllerAddress',
@@ -920,24 +886,28 @@ export default class UtilsService {
         const permissions = decodePermission(
           callsResponse1.decodedReturnData[0]
         );
-        const paramsHash = schemeTypeData.voteParams
-          ? schemeTypeData.voteParams
-          : callsResponse1.decodedReturnData[1];
+        const paramsHash = schemeTypeData.voteParams || callsResponse1.decodedReturnData[1];
+
+        const votingMachineAddress = schemeTypeData.votingMachine || callsResponse1.decodedReturnData[2];
+
+        const votingMachine =
+        networkWeb3Contracts.votingMachines[votingMachineAddress]
+          .contract;
 
         if (schemeTypeData.type === 'WalletScheme') {
           switch (schemeType) {
             case 'Wallet Scheme v1.1':
-              controllerAddress = callsResponse1.decodedReturnData[2]
+              controllerAddress = callsResponse1.decodedReturnData[3]
                 ? networkWeb3Contracts.controller._address
                 : ZERO_ADDRESS;
               break;
             default:
-              controllerAddress = callsResponse1.decodedReturnData[2];
+              controllerAddress = callsResponse1.decodedReturnData[3];
               break;
           }
-          schemeName = callsResponse1.decodedReturnData[3];
-          maxSecondsForExecution = callsResponse1.decodedReturnData[4];
-          maxRepPercentageChange = callsResponse1.decodedReturnData[5];
+          schemeName = callsResponse1.decodedReturnData[4];
+          maxSecondsForExecution = callsResponse1.decodedReturnData[5];
+          maxRepPercentageChange = callsResponse1.decodedReturnData[6];
         }
 
         // Register the new voting parameters in the voting machine params
@@ -947,8 +917,7 @@ export default class UtilsService {
         networkCache.votingMachines[votingMachine._address].votingParameters[
           paramsHash
         ] = {
-          queuedVoteRequiredPercentage:
-            votingParameters.queuedVoteRequiredPercentage,
+          queuedVoteRequiredPercentage: votingParameters.queuedVoteRequiredPercentage,
           queuedVotePeriodLimit: votingParameters.queuedVotePeriodLimit,
           boostedVotePeriodLimit: votingParameters.boostedVotePeriodLimit,
           preBoostedVotePeriodLimit: votingParameters.preBoostedVotePeriodLimit,
@@ -970,7 +939,7 @@ export default class UtilsService {
             controllerAddress,
             name: schemeName,
             type: schemeType,
-            votingMachine: schemeTypeData.votingMachine,
+            votingMachine: votingMachineAddress,
             paramsHash: paramsHash,
             permissions,
             boostedVoteRequiredPercentage: 0,
@@ -991,12 +960,12 @@ export default class UtilsService {
         // This condition is added to skip the first scheme added (that is the dao creator account)
         controllerEvent.returnValues._sender !== schemeAddress
       ) {
-        const schemeTypeData = getSchemeTypeData(
+        const schemeTypeData = getSchemeConfig(
           networkContractsConfig,
           schemeAddress
         );
         const votingMachine =
-          networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
+          networkWeb3Contracts.votingMachines[networkCache.schemes[schemeAddress].votingMachine]
             .contract;
 
         console.debug(
@@ -1048,12 +1017,8 @@ export default class UtilsService {
     await Promise.all(
       Object.keys(networkCache.schemes).map(async schemeAddress => {
         if (networkCache.schemes[schemeAddress].registered) {
-          const schemeTypeData = getSchemeTypeData(
-            networkContractsConfig,
-            schemeAddress
-          );
           const votingMachine =
-            networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
+            networkWeb3Contracts.votingMachines[networkCache.schemes[schemeAddress].votingMachine]
               .contract;
 
           let callsToExecute = [
@@ -1145,12 +1110,12 @@ export default class UtilsService {
     // Get new proposals
     await Promise.all(
       Object.keys(networkCache.schemes).map(async schemeAddress => {
-        const schemeTypeData = getSchemeTypeData(
+        const schemeTypeData = getSchemeConfig(
           networkContractsConfig,
           schemeAddress
         );
         const votingMachine =
-          networkWeb3Contracts.votingMachines[schemeTypeData.votingMachine]
+          networkWeb3Contracts.votingMachines[networkCache.schemes[schemeAddress].votingMachine]
             .contract;
 
         let schemeEvents = [];
@@ -1768,13 +1733,13 @@ export default class UtilsService {
           while (retry) {
             try {
               const schemeAddress = networkCache.proposals[proposalId].scheme;
-              const schemeTypeData = getSchemeTypeData(
+              const schemeTypeData = getSchemeConfig(
                 networkContractsConfig,
                 schemeAddress
               );
               const votingMachine =
                 networkWeb3Contracts.votingMachines[
-                  schemeTypeData.votingMachine
+                  networkCache.schemes[schemeAddress].votingMachine
                 ].contract;
 
               // Get all the proposal information from the scheme and voting machine

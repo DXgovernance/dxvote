@@ -64,7 +64,7 @@ const useMainnetRep = (
       atTime: number = 0
     ) {
       const cache = await fetchLatestCache();
-      const repEvents = cache.daoInfo.repEvents;
+      const repEvents = cache.reputation.events;
       let userRep = bnum(0),
         totalSupply = bnum(0);
 

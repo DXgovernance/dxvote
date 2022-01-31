@@ -4,6 +4,8 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { CacheLoadError } from '../utils/errors';
 
+const targetCacheVersion = 1;
+
 export default class BlockchainStore {
   activeFetchLoop: boolean = false;
   initialLoadComplete: boolean;
@@ -65,6 +67,11 @@ export default class BlockchainStore {
           null;
         if (match) {
           networkCache = JSON.parse(await match.text());
+        }
+
+        if (networkCache?.version !== targetCacheVersion) {
+          console.log("[Upgrade Cache]");
+          networkCache = null;
         }
 
         const blockNumber = (await library.eth.getBlockNumber()) - 1;
