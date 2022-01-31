@@ -1,7 +1,6 @@
 import RootContext from '../contexts';
-import { getProposalMutableData, NETWORK_NAMES } from '../utils';
+import { getIPFSFile, getProposalMutableData, NETWORK_NAMES } from '../utils';
 import Web3 from 'web3';
-import axios from 'axios';
 import _ from 'lodash';
 import {
   bnum,
@@ -94,22 +93,18 @@ export default class UtilsService {
       if (resetCache) {
         networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
         networkConfig.cache.ipfsHash = '';
+        networkConfig.version = 1;
         emptyCache.blockNumber = networkConfig.cache.fromBlock;
-        emptyCache.daoInfo.address = networkConfig.contracts.avatar;
         networkCache = emptyCache;
       } else {
         console.log(
           `Getting config file from https://ipfs.io/ipfs/${defaultConfigHashes[networkName]}`
         );
-        const networkConfigFileFetch = await axios.get(
-          `https://ipfs.io/ipfs/${defaultConfigHashes[networkName]}`
-        );
+        const networkConfigFileFetch = await getIPFSFile(defaultConfigHashes[networkName], 5000);
         console.log(
           `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
         );
-        const networkCacheFetch = await axios.get(
-          `https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
-        );
+        const networkCacheFetch = await getIPFSFile(networkConfigFileFetch.data.cache.ipfsHash, 60000);
         networkCache = networkCacheFetch.data;
       }
     }
@@ -2062,33 +2057,7 @@ export default class UtilsService {
           console.debug(
             `Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
           );
-          const response = await Promise.any([
-            axios.request({
-              url: 'https://ipfs.io/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-            axios.request({
-              url: 'https://gateway.ipfs.io/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-            axios.request({
-              url: 'https://gateway.pinata.cloud/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-            axios.request({
-              url: 'https://dweb.link/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-            axios.request({
-              url: 'https://infura-ipfs.io/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-          ]);
+          const response = await getIPFSFile(ipfsHash);
           if (response && response.data && response.data.title) {
             proposalTitles[proposal.id] = response.data.title;
           } else {

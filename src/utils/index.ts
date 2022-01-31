@@ -15,3 +15,4 @@ export * from './encodingCalls';
 export * from './signature';
 export * from './array';
 export * from './votes';
+export * from './ipfs';
