@@ -5,9 +5,8 @@ import { useParams } from 'react-router-dom';
 import { Box } from '../../components/Guilds/common/Layout';
 import { Sidebar } from '../../components/Guilds/Sidebar';
 import { Filter } from '../../components/Guilds/Filter';
-import ProposalCard, {
-  SkeletonProposalCard,
-} from '../../components/Guilds/ProposalCard';
+import ProposalCard from '../../components/Guilds/ProposalCard';
+import InView from 'react-intersection-observer';
 import { useGuildProposals } from '../../hooks/Guilds/ether-swr/useGuildProposals';
 
 const PageContainer = styled(Box)`
@@ -43,7 +42,6 @@ const ErrorList = styled(Box)`
 const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
-
   const { data: proposalsIds, error } = useGuildProposals(guildId);
 
   return (
@@ -55,18 +53,27 @@ const GuildsPage: React.FC = () => {
         <Filter />
         {!error ? (
           <ProposalsList data-testid="proposals-list">
-            {!proposalsIds ? (
-              <>
-                <SkeletonProposalCard />
-                <SkeletonProposalCard />
-              </>
-            ) : (
+            {proposalsIds ? (
               proposalsIds.map(proposalId => (
-                <ProposalCard
-                  id={proposalId}
-                  href={`/${chainName}/${guildId}/proposal/${proposalId}`}
-                />
+                <InView>
+                  {({ inView, ref }) => (
+                    <div ref={ref}>
+                      <ProposalCard
+                        id={inView ? proposalId : null}
+                        href={`/${chainName}/${guildId}/proposal/${proposalId}`}
+                      />
+                    </div>
+                  )}
+                </InView>
               ))
+            ) : (
+              <>
+                <ProposalCard />
+                <ProposalCard />
+                <ProposalCard />
+                <ProposalCard />
+                <ProposalCard />
+              </>
             )}
           </ProposalsList>
         ) : (
