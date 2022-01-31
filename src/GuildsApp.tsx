@@ -20,6 +20,10 @@ import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
 import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
+
+import ProposalTypes from 'components/Guilds/ProposalTypes';
+import { ProposalTypesConfig } from 'configs/proposalTypes';
+
 import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
 import loggerMiddleware from './hooks/Guilds/ether-swr/middleware/logger';
 
@@ -71,6 +75,25 @@ const GuildsApp = () => {
                         }}
                       >
                         <GuildsPage />
+                      </EtherSWRConfig>
+                    </GuildsContextProvider>
+                  </Route>
+                  <Route exact path="/:chain_name/:guild_id/proposalType">
+                    <GuildsContextProvider>
+                      <EtherSWRConfig
+                        value={{
+                          web3Provider: provider,
+                          ABIs: new Map([
+                            [
+                              // we can move this probably to a hook to reduce repeat ourselves in each route.
+                              '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+                              ERC20GuildContract.abi,
+                            ],
+                          ]),
+                          refreshInterval: 30000,
+                        }}
+                      >
+                        <ProposalTypes data={ProposalTypesConfig} />
                       </EtherSWRConfig>
                     </GuildsContextProvider>
                   </Route>
