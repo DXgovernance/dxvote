@@ -653,6 +653,10 @@ const NewProposalPage = observer(() => {
             commands.orderedListCommand,
             commands.checkedListCommand,
           ]}
+          previewOptions={{
+            skipHtml: true,
+            escapeHtml: true,
+          }}
         />
       ) : (
         <div />
