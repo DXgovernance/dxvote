@@ -246,14 +246,27 @@ export default class UtilsService {
           toBlock,
           web3
         ),
-        this.updateVotingMachines(
+        this.updateVotingMachineEvents(
           networkCache,
           networkContractsConfig,
-          networkWeb3Contracts.multicall,
           fromBlock,
           toBlock,
           web3
         ),
+        this.updatePermissionRegistry(
+          networkCache,
+          networkContractsConfig,
+          fromBlock,
+          toBlock,
+          web3
+        ),
+        this.updateVestingContracts(
+          networkCache,
+          networkContractsConfig,
+          fromBlock,
+          toBlock,
+          web3
+        )
       ],
       networkCache
     );
@@ -283,23 +296,9 @@ export default class UtilsService {
 
     networkCache = await tryCacheUpdates(
       [
-        this.updatePermissionRegistry(
-          networkCache,
-          networkContractsConfig,
-          fromBlock,
-          toBlock,
-          web3
-        ),
         this.updateProposals(
           networkCache,
           networkContractsConfig,
-          fromBlock,
-          toBlock,
-          web3
-        ),
-        this.updateVestingFactoryCreatedContractsInfo(
-          networkCache,
-          networkWeb3Contracts.vestingFactory,
           fromBlock,
           toBlock,
           web3
@@ -376,7 +375,7 @@ export default class UtilsService {
   }
 
   // Update all voting machines
-  async updateVotingMachines(
+  async updateVotingMachineEvents(
     networkCache: DaoNetworkCache,
     networkContractsConfig: NetworkContracts,
     fromBlock: number,
@@ -673,11 +672,11 @@ export default class UtilsService {
   }
 
   /**
-   * @function updateVestingFactoryCreatedContractsInfo
+   * @function updateVestingContracts
    * @description Get all "VestingCreated" events from VestingFactory contract and store created TokenVesting contract info into cache.
    */
 
-  async updateVestingFactoryCreatedContractsInfo(
+  async updateVestingContracts(
     networkCache: DaoNetworkCache,
     networkContractsConfig: NetworkContracts,
     fromBlock: number,
@@ -744,7 +743,7 @@ export default class UtilsService {
         }
       } catch (error) {
         console.error(
-          'Error in updateVestingFactoryCreatedContractsInfo',
+          'Error in updateVestingContracts',
           error
         );
       }
@@ -982,7 +981,7 @@ export default class UtilsService {
         console.debug(
           'Unregister scheme event',
           schemeAddress,
-          schemeTypeData.name
+          schemeTypeData
         );
         let callsToExecute = [
           [
