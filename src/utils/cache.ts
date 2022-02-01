@@ -1,11 +1,8 @@
-import contentHash from 'content-hash';
 import _ from 'lodash';
 
 const Web3 = require('web3');
-const web3 = new Web3();
 
-const MAX_BLOCKS_PER_EVENTS_FETCH: number =
-  Number(process.env.MAX_BLOCKS_PER_EVENTS_FETCH) || 100000;
+const MAX_BLOCKS_PER_EVENTS_FETCH: number = 1000000;
 
 export const getEvents = async function (
   web3,
@@ -82,8 +79,8 @@ export const getRawEvents = async function (
 };
 
 export const getTimestampOfEvents = async function (web3, events) {
-  //// TODO:  See how can we bacth requests can be implemented
 
+  //// TODO:  See how can we batch requests can be implemented
   // async function batchRequest(blocks) {
   //   const batch = new web3.BatchRequest();
   //   let requests = [];
@@ -179,34 +176,8 @@ export const isNode = function () {
   return typeof module !== 'undefined' && module.exports;
 };
 
-export const descriptionHashToIPFSHash = function (descriptionHash) {
-  try {
-    if (contentHash.getCodec(descriptionHash) === 'ipfs-ns')
-      return contentHash.decode(descriptionHash);
-    else if (
-      descriptionHash.length > 1 &&
-      descriptionHash.substring(0, 2) !== 'Qm'
-    )
-      return descriptionHash;
-    else return '';
-  } catch (error) {
-    return '';
-  }
-};
-
-export const ipfsHashToDescriptionHash = function (ipfsHash) {
-  try {
-    if (ipfsHash.length > 1 && ipfsHash.substring(0, 2) === 'Qm')
-      return contentHash.fromIpfs(ipfsHash);
-    else if (contentHash.getCodec(ipfsHash) === 'ipfs-ns') return ipfsHash;
-    else return '';
-  } catch (error) {
-    return '';
-  }
-};
-
 export const getSchemeConfig = function (networkContracts, schemeAddress) {  
-  if (networkContracts?.daostack[schemeAddress])
+  if (networkContracts.daostack && networkContracts.daostack[schemeAddress])
     return {
       type: networkContracts.daostack[schemeAddress].type,
       name: networkContracts.daostack[schemeAddress].name,
@@ -223,7 +194,7 @@ export const getSchemeConfig = function (networkContracts, schemeAddress) {
       contractToCall: schemeAddress,
       newProposalTopics: [
         [
-          web3.utils.soliditySha3('ProposalStateChange(bytes32,uint256)'),
+          Web3.utils.soliditySha3('ProposalStateChange(bytes32,uint256)'),
           null,
           '0x0000000000000000000000000000000000000000000000000000000000000001',
         ],
@@ -237,7 +208,7 @@ export async function tryCacheUpdates(promises, networkCache) {
   while (retry) {
     try {
       (await Promise.all(promises)).map(networkCacheUpdated => {
-        networkCache = networkCacheUpdated;
+        networkCache = Object.assign(networkCache, networkCacheUpdated);
       });
     } catch (e) {
       console.error('[CACHE UPDATE] (trying again)', e.message);
