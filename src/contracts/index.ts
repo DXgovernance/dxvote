@@ -32,6 +32,10 @@ export const getContracts = async function (
     Multicall.abi,
     networkConfig.utils.multicall
   );
+  const vestingFactory = networkConfig.utils.dxdVestingFactory && await new web3.eth.Contract(
+    VestingFactory.abi,
+    networkConfig.utils.dxdVestingFactory
+  );
 
   let votingMachines = {};
 
@@ -64,10 +68,6 @@ export const getContracts = async function (
       };
   }
 
-  const vestingFactory = await new web3.eth.Contract(
-    VestingFactory.abi,
-    networkConfig.utils.dxdVestingFactory
-  );
 
   return {
     votingMachines,

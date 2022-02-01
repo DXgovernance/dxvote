@@ -12,8 +12,6 @@ import {
   VotingMachineProposalState,
   tryCacheUpdates,
   isWalletScheme,
-} from '../utils';
-import {
   getEvents,
   getRawEvents,
   sortEvents,
@@ -21,7 +19,7 @@ import {
   descriptionHashToIPFSHash,
   ipfsHashToDescriptionHash,
   getSchemeConfig,
-} from '../utils/cache';
+} from '../utils';
 import WalletScheme1_0JSON from '../contracts/WalletScheme1_0.json';
 import WalletScheme1_1JSON from '../contracts/WalletScheme1_1.json';
 import ContributionRewardJSON from '../contracts/ContributionReward.json';
@@ -381,7 +379,6 @@ export default class UtilsService {
   async updateVotingMachines(
     networkCache: DaoNetworkCache,
     networkContractsConfig: NetworkContracts,
-    multicall: any,
     fromBlock: number,
     toBlock: number,
     web3: any
@@ -393,12 +390,12 @@ export default class UtilsService {
 
     await Promise.all(
       Object.keys(networkWeb3Contracts.votingMachines).map(
-        async votingMachineName => {
+        async votingMachineAddress => {
           const votingMachine =
-            networkWeb3Contracts.votingMachines[votingMachineName].contract;
+            networkWeb3Contracts.votingMachines[votingMachineAddress].contract;
           if (!networkCache.votingMachines[votingMachine._address])
             networkCache.votingMachines[votingMachine._address] = {
-              name: votingMachineName,
+              name: networkWeb3Contracts.votingMachines[votingMachineAddress].name,
               events: {
                 votes: [],
                 stakes: [],
@@ -418,7 +415,6 @@ export default class UtilsService {
             networkCache,
             networkContractsConfig,
             votingMachine,
-            multicall,
             fromBlock,
             toBlock,
             web3
@@ -434,7 +430,6 @@ export default class UtilsService {
     networkCache: DaoNetworkCache,
     networkContractsConfig: NetworkContracts,
     votingMachine: any,
-    multicall: any,
     fromBlock: number,
     toBlock: number,
     web3: any
@@ -684,21 +679,24 @@ export default class UtilsService {
 
   async updateVestingFactoryCreatedContractsInfo(
     networkCache: DaoNetworkCache,
-    vestingFactoryContract: any,
+    networkContractsConfig: NetworkContracts,
     fromBlock: number,
     toBlock: number,
     web3: any
   ): Promise<DaoNetworkCache> {
-    const contractAddress = vestingFactoryContract?._address;
-    if (contractAddress && contractAddress !== ZERO_ADDRESS) {
+    const networkWeb3Contracts = await getContracts(
+      networkContractsConfig,
+      web3
+    );
+    if (networkWeb3Contracts.vestingFactory) {
       try {
         const vestingFactoryEvents = sortEvents(
           await getEvents(
             web3,
-            vestingFactoryContract,
+            networkWeb3Contracts.vestingFactory,
             fromBlock,
             toBlock,
-            'VestingCreated'
+            'allEvents'
           )
         );
 
@@ -712,18 +710,31 @@ export default class UtilsService {
             TokenVestingJSON.abi,
             event.returnValues.vestingContractAddress
           );
+          const callsToExecute = [
+            [tokenVestingContract, 'beneficiary', []],
+            [tokenVestingContract, 'cliff', []],
+            [tokenVestingContract, 'duration', []],
+            [tokenVestingContract, 'owner', []],
+            [tokenVestingContract, 'start', []],
+            [tokenVestingContract, 'isOwner', []],
+            [tokenVestingContract, 'revocable', []]
+          ];
+
+          const callsResponse = await executeMulticall(
+            web3,
+            networkWeb3Contracts.multicall,
+            callsToExecute
+          );
 
           const tokenContractInfo = {
             address: event.returnValues.vestingContractAddress,
-            beneficiary: await tokenVestingContract.methods
-              .beneficiary()
-              .call(),
-            cliff: await tokenVestingContract.methods.cliff().call(),
-            duration: await tokenVestingContract.methods.duration().call(),
-            owner: await tokenVestingContract.methods.owner().call(),
-            start: await tokenVestingContract.methods.start().call(),
-            isOwner: await tokenVestingContract.methods.isOwner().call(),
-            revocable: await tokenVestingContract.methods.revocable().call(),
+            beneficiary: callsResponse.decodedReturnData[0],
+            cliff: callsResponse.decodedReturnData[1],
+            duration: callsResponse.decodedReturnData[2],
+            owner: callsResponse.decodedReturnData[3],
+            start: callsResponse.decodedReturnData[4],
+            isOwner: callsResponse.decodedReturnData[5],
+            revocable: callsResponse.decodedReturnData[6],
           };
 
           networkCache.vestingContracts = [
