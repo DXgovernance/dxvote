@@ -182,16 +182,19 @@ const ProposalsPage = observer(() => {
                       {created && (
                         <FiFeather
                           style={{ minWidth: '15px', margin: '0px 2px' }}
+                          title="You created"
                         />
                       )}
                       {voted && (
                         <FiCheckCircle
                           style={{ minWidth: '15px', margin: '0px 2px' }}
+                          title="You voted"
                         />
                       )}
                       {staked && (
                         <FiCheckSquare
                           style={{ minWidth: '15px', margin: '0px 2px' }}
+                          title="You staked"
                         />
                       )}
 
