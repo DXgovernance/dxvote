@@ -3,7 +3,7 @@ import { useContext } from 'contexts';
 import { observer } from 'mobx-react';
 import { Row, Box, Button } from '../components/common';
 import React from 'react';
-import { FiCheckCircle, FiDownload, FiX } from 'react-icons/fi';
+import { FiCheckCircle, FiDownload, FiUpload, FiX } from 'react-icons/fi';
 import { NETWORKS, toCamelCaseString } from 'utils';
 import PulsingIcon from 'components/common/LoadingIcon';
 import Copy from '../components/common/Copy';
@@ -82,7 +82,7 @@ const CachePage = observer(() => {
   document.title = 'Cache';
 
   const {
-    context: { cacheService, configStore, notificationStore },
+    context: { cacheService, configStore, notificationStore,ipfsService },
   } = useContext();
 
   const [updateProposalTitles, setUpdateProposalTitles] = React.useState(true);
@@ -108,6 +108,10 @@ const CachePage = observer(() => {
   async function resetCacheOptions() {
     configStore.resetLocalConfig();
     forceUpdate();
+  }
+
+  async function uploadToIPFS(content) {
+    ipfsService.upload(content);
   }
 
   async function runCacheScript() {
@@ -285,11 +289,20 @@ const CachePage = observer(() => {
                         onClick={() =>
                           download(
                             updatedCacheHash.configs[networkName],
-                            networkName + '.json'
+                            networkName + '_config.json'
                           )
                         }
                       >
                         <FiDownload></FiDownload> Config
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          uploadToIPFS(
+                            JSON.stringify(updatedCacheHash.configs[networkName], null, 2)
+                          )
+                        }
+                      >
+                        <FiUpload></FiUpload> Config
                       </Button>
                       <Button
                         onClick={() =>
@@ -300,6 +313,15 @@ const CachePage = observer(() => {
                         }
                       >
                         <FiDownload></FiDownload> Cache
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          uploadToIPFS(
+                            JSON.stringify(updatedCacheHash.caches[networkName], null, 2)
+                          )
+                        }
+                      >
+                        <FiUpload></FiUpload> Cache
                       </Button>
                     </div>
                   )}
