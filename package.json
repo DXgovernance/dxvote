@@ -5,9 +5,7 @@
   "scripts": {
     "start": "./scripts/start.sh",
     "build": "./scripts/build.sh",
-    "build-cache": "dotenv -e .env.development ./scripts/buildCache.sh",
     "build-analyze": "yarn cra-bundle-analyzer",
-    "upload-config": "yarn dotenv -e .env.development node scripts/uploadConfigFile.ts",
     "dev": "dotenv -e .env.development ./scripts/dev.sh",
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
