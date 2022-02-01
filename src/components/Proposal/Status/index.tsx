@@ -53,7 +53,8 @@ const Status = () => {
     daoStore.getProposalStatus(proposalId);
 
   const autoBoost =
-    networkContracts.votingMachines[votingMachineUsed].type == "DXDVotingMachine";
+    networkContracts.votingMachines[votingMachineUsed].type ==
+    'DXDVotingMachine';
 
   return (
     <>

@@ -58,15 +58,15 @@ const Stakes = () => {
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
   const votingMachineTokenName =
-    votingMachines[daoStore.getVotingMachineOfProposal(proposalId)].type == "DXDVotingMachine"
+    votingMachines[daoStore.getVotingMachineOfProposal(proposalId)].type ==
+    'DXDVotingMachine'
       ? 'DXD'
       : 'GEN';
 
-      
   // TO DO: fix this later
   // const { dxdApproved, genApproved } = userStore.getUserInfo();
   const votingMachineTokenApproved = true;
-  
+
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
   proposalEvents.stakes.map(stake => {

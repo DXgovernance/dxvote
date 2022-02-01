@@ -47,11 +47,11 @@ const FAQPage = observer(() => {
   daoAddresses += '- Reputation: ' + networkContracts.reputation + '\n';
 
   for (const votingMachineAddress in networkContracts.votingMachines) {
-    if (networkContracts.votingMachines[votingMachineAddress].type === '"DXDVotingMachine"') {
-      daoAddresses +=
-        '- DXDVotingMachine: ' +
-        votingMachineAddress +
-        '\n';
+    if (
+      networkContracts.votingMachines[votingMachineAddress].type ===
+      '"DXDVotingMachine"'
+    ) {
+      daoAddresses += '- DXDVotingMachine: ' + votingMachineAddress + '\n';
       daoAddresses +=
         '- DXD: ' +
         networkContracts.votingMachines[votingMachineAddress].token +

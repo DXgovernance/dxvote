@@ -1,8 +1,10 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from 'axios';
 import contentHash from 'content-hash';
 
-export const getIPFSFile = async function (ipfsHash, timeout = 1000): Promise<AxiosResponse<any>> {
-
+export const getIPFSFile = async function (
+  ipfsHash,
+  timeout = 1000
+): Promise<AxiosResponse<any>> {
   return await Promise.any([
     axios.request({
       url: 'https://ipfs.io/ipfs/' + ipfsHash,

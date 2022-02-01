@@ -111,9 +111,7 @@ export default class IPFSService {
     return hash;
   }
 
-  async upload(
-    content: string,
-  ) {
+  async upload(content: string) {
     const hash = await this.add(content);
 
     if (this.context.pinataService.auth) {

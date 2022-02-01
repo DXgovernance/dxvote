@@ -88,7 +88,7 @@ export default class ConfigStore {
       // Override defaultConfig to ipfsConfig
       if (ipfsConfig?.version == this.networkConfig.version)
         this.networkConfig = Object.assign(ipfsConfig, this.networkConfig);
-      
+
       console.log(ipfsConfig, this.networkConfig);
     } catch (e) {
       console.error(

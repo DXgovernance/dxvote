@@ -82,7 +82,7 @@ const CachePage = observer(() => {
   document.title = 'Cache';
 
   const {
-    context: { cacheService, configStore, notificationStore,ipfsService },
+    context: { cacheService, configStore, notificationStore, ipfsService },
   } = useContext();
 
   const [updateProposalTitles, setUpdateProposalTitles] = React.useState(true);
@@ -298,7 +298,11 @@ const CachePage = observer(() => {
                       <Button
                         onClick={() =>
                           uploadToIPFS(
-                            JSON.stringify(updatedCacheHash.configs[networkName], null, 2)
+                            JSON.stringify(
+                              updatedCacheHash.configs[networkName],
+                              null,
+                              2
+                            )
                           )
                         }
                       >
@@ -317,7 +321,11 @@ const CachePage = observer(() => {
                       <Button
                         onClick={() =>
                           uploadToIPFS(
-                            JSON.stringify(updatedCacheHash.caches[networkName], null, 2)
+                            JSON.stringify(
+                              updatedCacheHash.caches[networkName],
+                              null,
+                              2
+                            )
                           )
                         }
                       >

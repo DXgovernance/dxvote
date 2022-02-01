@@ -47,9 +47,8 @@ const PermissionsInformation = observer(() => {
   addressesNames[networkContracts.controller] = 'Controller';
   for (const votingMachineAddress in networkContracts.votingMachines) {
     addressesNames[votingMachineAddress] =
-    networkContracts.votingMachines[votingMachineAddress].type;
+      networkContracts.votingMachines[votingMachineAddress].type;
   }
-
 
   functionNames[
     web3.eth.abi.encodeFunctionSignature('mintTokens(uint256,address,address)')

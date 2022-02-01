@@ -945,7 +945,9 @@ export default class DaoStore {
         : this.getCache().votingMachines[votingMachineOfProposal]
             .votingParameters[proposal.paramsHash];
 
-    const autoBoost = networkContracts.votingMachines[votingMachineOfProposal].type === "DXDVotingMachine";
+    const autoBoost =
+      networkContracts.votingMachines[votingMachineOfProposal].type ===
+      'DXDVotingMachine';
     return decodeProposalStatus(
       proposal,
       proposalStateChangeEvents,

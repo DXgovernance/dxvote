@@ -129,7 +129,8 @@ const ProposalsPage = observer(() => {
               const timeToFinish = timeToTimestamp(proposal.finishTime);
 
               const votingMachineTokenName =
-                votingMachines[daoStore.getVotingMachineOfProposal(proposal.id)].type == "DXDVotingMachine"
+                votingMachines[daoStore.getVotingMachineOfProposal(proposal.id)]
+                  .type == 'DXDVotingMachine'
                   ? 'DXD'
                   : 'GEN';
 

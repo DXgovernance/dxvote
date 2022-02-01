@@ -32,16 +32,20 @@ export const getContracts = async function (
     Multicall.abi,
     networkConfig.utils.multicall
   );
-  const vestingFactory = networkConfig.utils.dxdVestingFactory && await new web3.eth.Contract(
-    VestingFactory.abi,
-    networkConfig.utils.dxdVestingFactory
-  );
+  const vestingFactory =
+    networkConfig.utils.dxdVestingFactory &&
+    (await new web3.eth.Contract(
+      VestingFactory.abi,
+      networkConfig.utils.dxdVestingFactory
+    ));
 
   let votingMachines = {};
 
   for (const votingMachineAddress in networkConfig.votingMachines) {
-
-    if (networkConfig.votingMachines[votingMachineAddress].type == "GenesisProtocol")
+    if (
+      networkConfig.votingMachines[votingMachineAddress].type ==
+      'GenesisProtocol'
+    )
       votingMachines[votingMachineAddress] = {
         name: 'GenesisProtocol',
         contract: await new web3.eth.Contract(
@@ -53,8 +57,10 @@ export const getContracts = async function (
           networkConfig.votingMachines[votingMachineAddress].token
         ),
       };
-
-    else if (networkConfig.votingMachines[votingMachineAddress].type == "DXDVotingMachine")
+    else if (
+      networkConfig.votingMachines[votingMachineAddress].type ==
+      'DXDVotingMachine'
+    )
       votingMachines[votingMachineAddress] = {
         name: 'DXDVotingMachine',
         contract: await new web3.eth.Contract(
@@ -67,7 +73,6 @@ export const getContracts = async function (
         ),
       };
   }
-
 
   return {
     votingMachines,

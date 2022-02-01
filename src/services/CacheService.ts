@@ -67,11 +67,11 @@ export default class UtilsService {
     cache: DaoNetworkCache;
   }> {
     const networkName = NETWORK_NAMES[chainId];
-    
+
     // Get the network configuration
     let networkConfig = appConfig[networkName];
     let networkCache: DaoNetworkCache;
-    
+
     const emptyCache: DaoNetworkCache = {
       networkId: chainId,
       version: 1,
@@ -79,7 +79,7 @@ export default class UtilsService {
       address: networkConfig.contracts.avatar,
       reputation: {
         events: [],
-        total: bnum(0)
+        total: bnum(0),
       },
       schemes: {},
       proposals: {},
@@ -103,11 +103,17 @@ export default class UtilsService {
         console.log(
           `Getting config file from https://ipfs.io/ipfs/${defaultConfigHashes[networkName]}`
         );
-        const networkConfigFileFetch = await getIPFSFile(defaultConfigHashes[networkName], 5000);
+        const networkConfigFileFetch = await getIPFSFile(
+          defaultConfigHashes[networkName],
+          5000
+        );
         console.log(
           `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
         );
-        const networkCacheFetch = await getIPFSFile(networkConfigFileFetch.data.cache.ipfsHash, 60000);
+        const networkCacheFetch = await getIPFSFile(
+          networkConfigFileFetch.data.cache.ipfsHash,
+          60000
+        );
         networkCache = networkCacheFetch.data;
       }
     }
@@ -266,7 +272,7 @@ export default class UtilsService {
           fromBlock,
           toBlock,
           web3
-        )
+        ),
       ],
       networkCache
     );
@@ -302,17 +308,14 @@ export default class UtilsService {
           fromBlock,
           toBlock,
           web3
-        )
+        ),
       ],
       networkCache
     );
 
     networkCache.blockNumber = Number(toBlock);
 
-    console.log(
-      'Total Proposals',
-      Object.keys(networkCache.proposals).length
-    );
+    console.log('Total Proposals', Object.keys(networkCache.proposals).length);
 
     // Compare proposals data
     // Object.keys(networkCache.proposals).map((proposalId) => {
@@ -394,7 +397,8 @@ export default class UtilsService {
             networkWeb3Contracts.votingMachines[votingMachineAddress].contract;
           if (!networkCache.votingMachines[votingMachine._address])
             networkCache.votingMachines[votingMachine._address] = {
-              name: networkWeb3Contracts.votingMachines[votingMachineAddress].name,
+              name: networkWeb3Contracts.votingMachines[votingMachineAddress]
+                .name,
               events: {
                 votes: [],
                 stakes: [],
@@ -716,7 +720,7 @@ export default class UtilsService {
             [tokenVestingContract, 'owner', []],
             [tokenVestingContract, 'start', []],
             [tokenVestingContract, 'isOwner', []],
-            [tokenVestingContract, 'revocable', []]
+            [tokenVestingContract, 'revocable', []],
           ];
 
           const callsResponse = await executeMulticall(
@@ -742,10 +746,7 @@ export default class UtilsService {
           ];
         }
       } catch (error) {
-        console.error(
-          'Error in updateVestingContracts',
-          error
-        );
+        console.error('Error in updateVestingContracts', error);
       }
     }
 
@@ -780,15 +781,15 @@ export default class UtilsService {
       let controllerEventsIndex = 0;
       controllerEventsIndex < controllerEvents.length;
       controllerEventsIndex++
-      ) {
-        const controllerEvent = controllerEvents[controllerEventsIndex];
-        
-        const schemeAddress = controllerEvent.returnValues._scheme;
-        
-        // Add or update the scheme information,
-        // register scheme is used to add a scheme or update the parametersHash of an existent one
-        if (controllerEvent.event === 'RegisterScheme') {
-        console.log(controllerEvent)
+    ) {
+      const controllerEvent = controllerEvents[controllerEventsIndex];
+
+      const schemeAddress = controllerEvent.returnValues._scheme;
+
+      // Add or update the scheme information,
+      // register scheme is used to add a scheme or update the parametersHash of an existent one
+      if (controllerEvent.event === 'RegisterScheme') {
+        console.log(controllerEvent);
         const schemeTypeData = getSchemeConfig(
           networkContractsConfig,
           schemeAddress
@@ -861,11 +862,7 @@ export default class UtilsService {
               ]);
               break;
             default:
-              callsToExecute.push([
-                walletSchemeContract,
-                'votingMachine',
-                [],
-              ]);
+              callsToExecute.push([walletSchemeContract, 'votingMachine', []]);
               callsToExecute.push([
                 walletSchemeContract,
                 'controllerAddress',
@@ -896,13 +893,14 @@ export default class UtilsService {
         const permissions = decodePermission(
           callsResponse1.decodedReturnData[0]
         );
-        const paramsHash = schemeTypeData.voteParams || callsResponse1.decodedReturnData[1];
+        const paramsHash =
+          schemeTypeData.voteParams || callsResponse1.decodedReturnData[1];
 
-        const votingMachineAddress = schemeTypeData.votingMachine || callsResponse1.decodedReturnData[2];
+        const votingMachineAddress =
+          schemeTypeData.votingMachine || callsResponse1.decodedReturnData[2];
 
         const votingMachine =
-        networkWeb3Contracts.votingMachines[votingMachineAddress]
-          .contract;
+          networkWeb3Contracts.votingMachines[votingMachineAddress].contract;
 
         if (schemeTypeData.type === 'WalletScheme') {
           switch (schemeType) {
@@ -927,7 +925,8 @@ export default class UtilsService {
         networkCache.votingMachines[votingMachine._address].votingParameters[
           paramsHash
         ] = {
-          queuedVoteRequiredPercentage: votingParameters.queuedVoteRequiredPercentage,
+          queuedVoteRequiredPercentage:
+            votingParameters.queuedVoteRequiredPercentage,
           queuedVotePeriodLimit: votingParameters.queuedVotePeriodLimit,
           boostedVotePeriodLimit: votingParameters.boostedVotePeriodLimit,
           preBoostedVotePeriodLimit: votingParameters.preBoostedVotePeriodLimit,
@@ -975,14 +974,11 @@ export default class UtilsService {
           schemeAddress
         );
         const votingMachine =
-          networkWeb3Contracts.votingMachines[networkCache.schemes[schemeAddress].votingMachine]
-            .contract;
+          networkWeb3Contracts.votingMachines[
+            networkCache.schemes[schemeAddress].votingMachine
+          ].contract;
 
-        console.debug(
-          'Unregister scheme event',
-          schemeAddress,
-          schemeTypeData
-        );
+        console.debug('Unregister scheme event', schemeAddress, schemeTypeData);
         let callsToExecute = [
           [
             votingMachine,
@@ -1028,8 +1024,9 @@ export default class UtilsService {
       Object.keys(networkCache.schemes).map(async schemeAddress => {
         if (networkCache.schemes[schemeAddress].registered) {
           const votingMachine =
-            networkWeb3Contracts.votingMachines[networkCache.schemes[schemeAddress].votingMachine]
-              .contract;
+            networkWeb3Contracts.votingMachines[
+              networkCache.schemes[schemeAddress].votingMachine
+            ].contract;
 
           let callsToExecute = [
             [
@@ -1125,8 +1122,9 @@ export default class UtilsService {
           schemeAddress
         );
         const votingMachine =
-          networkWeb3Contracts.votingMachines[networkCache.schemes[schemeAddress].votingMachine]
-            .contract;
+          networkWeb3Contracts.votingMachines[
+            networkCache.schemes[schemeAddress].votingMachine
+          ].contract;
 
         let schemeEvents = [];
         for (let i = 0; i < schemeTypeData.newProposalTopics.length; i++) {

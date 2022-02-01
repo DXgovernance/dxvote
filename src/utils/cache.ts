@@ -30,7 +30,15 @@ export const getEvents = async function (
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
       console.error('Error fetching blocks:', (error as Error).message);
-      if (Math.trunc((to - from) / 2) > 10000) {
+      if (
+        (error as Error).message.indexOf(
+          'You cannot query logs for more than 100000 blocks at once.'
+        ) > -1
+      ) {
+        maxBlocksPerFetch = 100000;
+        to = from + 100000;
+        console.debug('Lowering toBlock to', to);
+      } else if (Math.trunc((to - from) / 2) > 10000) {
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
@@ -68,7 +76,15 @@ export const getRawEvents = async function (
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
       console.error('Error fetching blocks:', (error as Error).message);
-      if (Math.trunc((to - from) / 2) > 10000) {
+      if (
+        (error as Error).message.indexOf(
+          'You cannot query logs for more than 100000 blocks at once.'
+        ) > -1
+      ) {
+        maxBlocksPerFetch = 100000;
+        to = from + 100000;
+        console.debug('Lowering toBlock to', to);
+      } else if (Math.trunc((to - from) / 2) > 10000) {
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
@@ -79,7 +95,6 @@ export const getRawEvents = async function (
 };
 
 export const getTimestampOfEvents = async function (web3, events) {
-
   //// TODO:  See how can we batch requests can be implemented
   // async function batchRequest(blocks) {
   //   const batch = new web3.BatchRequest();
@@ -176,18 +191,20 @@ export const isNode = function () {
   return typeof module !== 'undefined' && module.exports;
 };
 
-export const getSchemeConfig = function (networkContracts, schemeAddress) {  
+export const getSchemeConfig = function (networkContracts, schemeAddress) {
   if (networkContracts.daostack && networkContracts.daostack[schemeAddress])
     return {
       type: networkContracts.daostack[schemeAddress].type,
       name: networkContracts.daostack[schemeAddress].name,
       contractToCall: networkContracts.daostack[schemeAddress].contractToCall,
-      newProposalTopics: networkContracts.daostack[schemeAddress].newProposalTopics,
-      creationLogEncoding: networkContracts.daostack[schemeAddress].creationLogEncoding,
+      newProposalTopics:
+        networkContracts.daostack[schemeAddress].newProposalTopics,
+      creationLogEncoding:
+        networkContracts.daostack[schemeAddress].creationLogEncoding,
       votingMachine: networkContracts.daostack[schemeAddress].votingMachine,
       voteParams: networkContracts.daostack[schemeAddress].voteParams,
-    }
-  else 
+    };
+  else
     return {
       type: 'WalletScheme',
       name: 'WalletScheme',

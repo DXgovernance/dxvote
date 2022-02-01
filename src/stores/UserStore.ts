@@ -56,9 +56,7 @@ export default class UserStore {
     //   this.context;
     // const networkContracts = configStore.getNetworkContracts();
     // const account = web3React.account;
-
     // if (!account) return;
-
     // transactionStore.checkPendingTransactions(web3React, account);
     // let callsToExecute = [
     //   [
@@ -71,7 +69,6 @@ export default class UserStore {
     //     [account],
     //   ],
     // ];
-
     // if (networkContracts.votingMachines.gen) {
     //   callsToExecute.push([
     //     providerStore.getContract(
@@ -112,7 +109,6 @@ export default class UserStore {
     //     [account, networkContracts.votingMachines.dxd.address],
     //   ]);
     // }
-
     // const callsResponse = await executeMulticall(
     //   web3React.library,
     //   providerStore.getContract(
@@ -122,14 +118,12 @@ export default class UserStore {
     //   ),
     //   callsToExecute
     // );
-
     // let userInfo = this.userInfo;
     // userInfo.repBalance =
     //   account && daoStore.daoCache
     //     ? daoStore.getRepAt(account, providerStore.getCurrentBlockNumber())
     //         .userRep
     //     : bnum(0);
-
     // // TO DO: Improve this mess of ifs
     // userInfo.ethBalance = account
     //   ? bnum(callsResponse.decodedReturnData[0])
@@ -162,7 +156,6 @@ export default class UserStore {
     //       !networkContracts.votingMachines.gen
     //     ? bnum(callsResponse.decodedReturnData[2])
     //     : bnum(0);
-
     // runInAction(() => {
     //   this.userInfo = userInfo;
     // });
