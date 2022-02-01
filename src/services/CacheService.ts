@@ -1,5 +1,5 @@
 import RootContext from '../contexts';
-import { getIPFSFile, getProposalMutableData, NETWORK_NAMES } from '../utils';
+import { getIPFSFile, NETWORK_NAMES } from '../utils';
 import Web3 from 'web3';
 import _ from 'lodash';
 import {
@@ -315,11 +315,11 @@ export default class UtilsService {
     );
 
     // Compare proposals data
-    Object.keys(networkCache.proposals).map((proposalId) => {
-      const mutableData = getProposalMutableData(networkCache, proposalId);
-      const cacheData = networkCache.proposals[proposalId];
-      console.log(proposalId, mutableData, cacheData);
-    })
+    // Object.keys(networkCache.proposals).map((proposalId) => {
+    //   const mutableData = getProposalMutableData(networkCache, proposalId);
+    //   const cacheData = networkCache.proposals[proposalId];
+    //   console.debug(proposalId, mutableData, cacheData);
+    // })
 
     return networkCache;
   }
