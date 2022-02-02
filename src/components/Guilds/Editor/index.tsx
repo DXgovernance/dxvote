@@ -1,3 +1,4 @@
+import React from 'react';
 import styled, { css } from 'styled-components';
 import { transparentize } from 'polished';
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -119,7 +120,10 @@ const Content = styled(EditorContent)`
   `}
 `;
 
-const Editor = () => {
+interface EditorProps {
+  onChange?: (string) => void;
+}
+const Editor: React.FC<EditorProps> = ({ onChange }) => {
   const ttlMs = 345600000;
   const [storedJson, setStoredJson] = useLocalStorageWithExpiry<string>(
     `guild/newProposal/description/json`,
@@ -157,6 +161,7 @@ const Editor = () => {
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       if (html) {
+        onChange(html);
         setStoredJson(JSON.stringify(editor.getJSON()));
         setStoredHtml(html);
         setStoredMarkdown(turndownService.turndown(html));
