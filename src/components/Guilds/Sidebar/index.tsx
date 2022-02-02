@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import Skeleton from 'react-loading-skeleton';
 import { Box } from '../common/Layout';
 import { Menu, MenuItem } from '../common/Menu';
 import { MemberActions } from './MemberActions';
 import { GuestActions } from './GuestActions';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
-import { Loading } from '../../../components/Guilds/common/Loading';
-import { useConfig } from '../../../hooks/Guilds/useConfig';
+import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
+import { useParams } from 'react-router-dom';
 
 const SidebarWrapper = styled(Box)`
   @media only screen and (min-width: 768px) {
@@ -95,10 +96,8 @@ const SidebarMenuItem = styled(MenuItem)`
 
 export const Sidebar = () => {
   const [isMember, setIsMember] = useState(false);
-  const {
-    data: { name },
-    error,
-  } = useConfig();
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { data } = useGuildConfig(guildAddress);
 
   return (
     <SidebarWrapper data-testid="sidebar">
@@ -106,11 +105,10 @@ export const Sidebar = () => {
         <DaoInfo>
           <DaoBrand>
             <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-            <Loading text loading={!name && !error}>
-              <DaoTitle size={2} as="h1">
-                {error ? 'DXdao' : name}
-              </DaoTitle>
-            </Loading>
+
+            <DaoTitle size={2} as="h1">
+              {data?.name || <Skeleton width={100} />}
+            </DaoTitle>
           </DaoBrand>
           <DaoMemberCount>464 Members</DaoMemberCount>
         </DaoInfo>

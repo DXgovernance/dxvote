@@ -8,11 +8,13 @@ interface ERC20InfoInterface {
 }
 
 export const useERC20Info = (contractAddress: string) => {
-  const { data, ...rest } = useEtherSWR<[string, string]>(
-    [
-      [contractAddress, 'name'],
-      [contractAddress, 'symbol'],
-    ],
+  const { data, ...rest } = useEtherSWR(
+    contractAddress
+      ? [
+          [contractAddress, 'name'],
+          [contractAddress, 'symbol'],
+        ]
+      : [],
     {
       ABIs: new Map([[contractAddress, ERC20ABI]]),
     }

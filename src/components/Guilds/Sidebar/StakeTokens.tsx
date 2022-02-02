@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
+import Skeleton from 'react-loading-skeleton';
 import { FiArrowRight, FiInfo } from 'react-icons/fi';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
@@ -12,14 +13,8 @@ import { Loading } from '../common/Loading';
 import { shortenAddress, isAddress } from 'utils';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
-import { useVotingPowerForProposalCreation } from '../../../hooks/Guilds/ether-swr/useVotingPowerForProposalCreation';
-import { useVotingPowerForProposalExecution } from '../../../hooks/Guilds/ether-swr/useVotingPowerForProposalExecution';
-import { useTokenVault } from '../../../hooks/Guilds/ether-swr/useTokenVault';
-import { useLockTime } from '../../../hooks/Guilds/ether-swr/useLockTime';
-import { useTotalLocked } from '../../../hooks/Guilds/ether-swr/useTotalLocked';
 import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/useVoterLockTimestamp';
-import { useConfig } from '../../../hooks/Guilds/useConfig';
-import { useTokenAddress } from '../../../hooks/Guilds/ether-swr/useTokenAddress';
+import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
 
 const GuestContainer = styled.div`
@@ -103,94 +98,66 @@ const ButtonLock = styled(Button)`
 `;
 
 export const StakeTokens = ({ onJoin }) => {
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
-  const { data: tokenAddress } = useTokenAddress(guildAddress);
-  const { data: tokenInfo, error: tokenInfoError } = useERC20Info(tokenAddress);
-
   const [dxdValue, setDXDValue] = useState(0);
-  const {
-    data: { timeForExecution, proposalTime, name, token },
-    error,
-  } = useConfig();
+
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { data: guildConfig } = useGuildConfig(guildAddress);
+  const { data: tokenInfo } = useERC20Info(guildConfig?.token);
 
   const { account: userAddress } = useWeb3React();
-
   const { data: userVotingPower } = useVotingPowerOf({
     contractAddress: guildAddress,
     userAddress,
   });
-
-  const { data: votingPowerForProposalCreation } =
-    useVotingPowerForProposalCreation({
-      contractAddress: guildAddress,
-    });
-
-  const { data: votingPowerForProposalExecution } =
-    useVotingPowerForProposalExecution({
-      contractAddress: guildAddress,
-    });
-
-  const { data: tokenVault } = useTokenVault({
-    contractAddress: guildAddress,
-  });
-
-  const { data: lockTime } = useLockTime({
-    contractAddress: guildAddress,
-  });
-
-  const { data: totalLocked } = useTotalLocked({
-    contractAddress: guildAddress,
-  });
-
   const { data: voterLockTimestamp } = useVoterLockTimestamp({
     contractAddress: guildAddress,
     userAddress,
   });
 
-  if (tokenInfoError) {
-    return <div>Something went wrong.</div>;
-  }
-
   return (
     <GuestContainer>
       <DaoBrand>
         <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-        <Loading text loading={!name && !error}>
-          <DaoTitle>{name}</DaoTitle>
-        </Loading>
+        <DaoTitle>{guildConfig?.name || <Skeleton width={100} />}</DaoTitle>
       </DaoBrand>
       <InfoItem>40% Quorum</InfoItem>
-      {userVotingPower && (
-        <InfoItem>User Voting Power: {userVotingPower?.toString()}</InfoItem>
-      )}
-      {votingPowerForProposalCreation && (
+
+      <InfoItem>
+        User Voting Power:{' '}
+        {userVotingPower?.toString() || <Skeleton width={40} />}
+      </InfoItem>
+      <InfoItem>
+        Voting Power for proposal creation:{' '}
+        {guildConfig?.votingPowerForProposalCreation?.toString() || (
+          <Skeleton width={40} />
+        )}
+      </InfoItem>
+      <InfoItem>
+        Voting Power for proposal execution:{' '}
+        {guildConfig?.votingPowerForProposalExecution?.toString() || (
+          <Skeleton width={40} />
+        )}
+      </InfoItem>
+      {guildConfig?.tokenVault && isAddress(guildConfig.tokenVault) && (
         <InfoItem>
-          Voting Power for proposal creation:{' '}
-          {votingPowerForProposalCreation?.toString()}
+          Token Vault: {shortenAddress(guildConfig.tokenVault)}{' '}
+          <CopyHelper toCopy={guildConfig.tokenVault} />
         </InfoItem>
       )}
-      {votingPowerForProposalExecution && (
-        <InfoItem>
-          Voting Power for proposal execution:{' '}
-          {votingPowerForProposalExecution?.toString()}
-        </InfoItem>
-      )}
-      {tokenVault && isAddress(tokenVault) && (
-        <InfoItem>
-          Token Vault: {shortenAddress(tokenVault)}{' '}
-          <CopyHelper toCopy={tokenVault} />
-        </InfoItem>
-      )}
-      {lockTime && lockTime?.toNumber() > 0 && (
+      {guildConfig?.lockTime && guildConfig?.lockTime?.toNumber() > 0 && (
         <InfoItem>
           Lock Time:{' '}
-          {moment.duration(lockTime?.toNumber(), 'seconds').humanize()}
+          {moment
+            .duration(guildConfig?.lockTime?.toNumber(), 'seconds')
+            .humanize()}
         </InfoItem>
       )}
-      {totalLocked && totalLocked?.toNumber() > 0 && (
+      {guildConfig?.totalLocked && guildConfig?.totalLocked?.toNumber() > 0 && (
         <InfoItem>
           Total Locked:{' '}
-          {moment.duration(totalLocked?.toString(), 'seconds').humanize()}
+          {moment
+            .duration(guildConfig?.totalLocked?.toString(), 'seconds')
+            .humanize()}
         </InfoItem>
       )}
       {voterLockTimestamp && voterLockTimestamp?.toNumber() > 0 && (
@@ -199,37 +166,42 @@ export const StakeTokens = ({ onJoin }) => {
           {moment.unix(voterLockTimestamp?.toNumber()).format('LL')}
         </InfoItem>
       )}
-      <Loading text loading={!token && !error}>
+      <Loading text loading={!guildConfig?.token}>
         <InfoItem>
-          {!error && isAddress(token) && (
+          {isAddress(guildConfig.token) && (
             <>
-              Token: {shortenAddress(token)}
-              <CopyHelper toCopy={token} />
+              Token: {shortenAddress(guildConfig.token)}
+              <CopyHelper toCopy={guildConfig.token} />
             </>
           )}
         </InfoItem>
       </Loading>
-      <Loading text loading={proposalTime.isNegative() && !error}>
+      <Loading text loading={!guildConfig?.proposalTime}>
         <InfoItem>
-          {!error &&
-            `${moment
-              .duration(proposalTime, 'seconds')
-              .humanize()} proposal duration`}
+          {moment
+            .duration(guildConfig.proposalTime.toNumber(), 'seconds')
+            .humanize()}{' '}
+          proposal duration
         </InfoItem>
       </Loading>
-      <Loading text loading={timeForExecution.isNegative() && !error}>
+      <Loading text loading={!guildConfig?.timeForExecution}>
         <InfoItem>
-          {!error &&
-            `(${moment
-              .duration(timeForExecution, 'seconds')
-              .humanize()} for execution)`}
+          (
+          {moment
+            .duration(guildConfig.timeForExecution.toNumber(), 'seconds')
+            .humanize()}{' '}
+          for execution)
         </InfoItem>
       </Loading>
-      <InfoItem>2.5 ${tokenInfo.symbol} min. deposit</InfoItem>
+      <InfoItem>
+        2.5 {tokenInfo?.symbol || <Skeleton width={10} />} min. deposit
+      </InfoItem>
       <BalanceWidget>
         <InfoRow>
           <InfoLabel>Balance:</InfoLabel>
-          <InfoValue>10.00 ${tokenInfo.symbol}</InfoValue>
+          <InfoValue>
+            10.00 {tokenInfo?.symbol || <Skeleton width={10} />}
+          </InfoValue>
         </InfoRow>
         <InfoRow>
           <DXDValue>{dxdValue}</DXDValue>
@@ -249,7 +221,7 @@ export const StakeTokens = ({ onJoin }) => {
         </InfoValue>
       </InfoRow>
       <ButtonLock disabled={dxdValue <= 0} onClick={onJoin}>
-        Lock ${tokenInfo.symbol}
+        Lock {tokenInfo?.symbol || <Skeleton width={10} />}
       </ButtonLock>
     </GuestContainer>
   );
