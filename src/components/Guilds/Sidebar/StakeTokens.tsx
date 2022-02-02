@@ -19,6 +19,8 @@ import { useLockTime } from '../../../hooks/Guilds/ether-swr/useLockTime';
 import { useTotalLocked } from '../../../hooks/Guilds/ether-swr/useTotalLocked';
 import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/useVoterLockTimestamp';
 import { useConfig } from '../../../hooks/Guilds/useConfig';
+import { useTokenAddress } from '../../../hooks/Guilds/ether-swr/useTokenAddress';
+import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -101,13 +103,15 @@ const ButtonLock = styled(Button)`
 `;
 
 export const StakeTokens = ({ onJoin }) => {
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { data: tokenAddress } = useTokenAddress(guildAddress);
+  const { data: tokenInfo, error: tokenInfoError } = useERC20Info(tokenAddress);
+
   const [dxdValue, setDXDValue] = useState(0);
   const {
     data: { timeForExecution, proposalTime, name, token },
     error,
   } = useConfig();
-
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
 
   const { account: userAddress } = useWeb3React();
 
@@ -142,6 +146,10 @@ export const StakeTokens = ({ onJoin }) => {
     contractAddress: guildAddress,
     userAddress,
   });
+
+  if (tokenInfoError) {
+    return <div>Something went wrong.</div>;
+  }
 
   return (
     <GuestContainer>
@@ -217,11 +225,11 @@ export const StakeTokens = ({ onJoin }) => {
               .humanize()} for execution)`}
         </InfoItem>
       </Loading>
-      <InfoItem>2.5 DXD min. deposit</InfoItem>
+      <InfoItem>2.5 ${tokenInfo.symbol} min. deposit</InfoItem>
       <BalanceWidget>
         <InfoRow>
           <InfoLabel>Balance:</InfoLabel>
-          <InfoValue>10.00 DXD</InfoValue>
+          <InfoValue>10.00 ${tokenInfo.symbol}</InfoValue>
         </InfoRow>
         <InfoRow>
           <DXDValue>{dxdValue}</DXDValue>
@@ -241,7 +249,7 @@ export const StakeTokens = ({ onJoin }) => {
         </InfoValue>
       </InfoRow>
       <ButtonLock disabled={dxdValue <= 0} onClick={onJoin}>
-        Lock DXD
+        Lock ${tokenInfo.symbol}
       </ButtonLock>
     </GuestContainer>
   );
