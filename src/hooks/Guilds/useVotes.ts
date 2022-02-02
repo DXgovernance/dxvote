@@ -9,29 +9,29 @@ import { useERC20Guild } from './contracts/useContract';
 // @TODO votingPower calculations
 
 interface useVotesReturns {
-    setVote: (
-        action: BigNumber,
-        votingPower: BigNumber
-    ) => Promise<ContractTransaction>;
-    //  setVotes: (action: BigNumber, votingPower: BigNumber) => Promise<ContractTransaction>;
-    //    setSignedVote: () => void;
-    //   setSignedVotes: () => void;
+  setVote: (
+    action: BigNumber,
+    votingPower: BigNumber
+  ) => Promise<ContractTransaction>;
+  //  setVotes: (action: BigNumber, votingPower: BigNumber) => Promise<ContractTransaction>;
+  //    setSignedVote: () => void;
+  //   setSignedVotes: () => void;
 }
 
 export const useVotes = (): useVotesReturns => {
-    const { guild_id: guildId, proposal_id: proposalId } =
-        useParams<{ guild_id?: string; proposal_id?: string }>();
+  const { guild_id: guildId, proposal_id: proposalId } =
+    useParams<{ guild_id?: string; proposal_id?: string }>();
 
-    const contract = useERC20Guild(guildId, true);
+  const contract = useERC20Guild(guildId, true);
 
-    const setVote = useCallback(
-        (action: BigNumber, votingPower: BigNumber) => {
-            return contract.setVote(proposalId, action, votingPower);
-        },
-        [contract, guildId, proposalId]
-    );
+  const setVote = useCallback(
+    (action: BigNumber, votingPower: BigNumber) => {
+      return contract.setVote(proposalId, action, votingPower);
+    },
+    [contract, guildId, proposalId]
+  );
 
-    return {
-        setVote,
-    };
+  return {
+    setVote,
+  };
 };

@@ -36,11 +36,14 @@ const voteData = {
   quorum: 40,
   totalLocked: 670,
 };
+
 const TOKEN = 'DXD';
-//
+// pull data about proposal votes
+// iterate over array to create different action buttons
 const ProposalVoteCard = () => {
   const [showToken, setShowToken] = useState(false);
   const [voted, setVoted] = useState('');
+
   return (
     <SidebarCard
       header={
