@@ -46,8 +46,8 @@ export default function useContract<T extends Contract>(
 
 export function useERC20Guild(
   contractId: string,
-  chainId?: number,
-  withSignerIfPossible?: boolean
+  withSignerIfPossible?: boolean,
+  chainId?: number
 ) {
   return useContract<ERC20Guild>(
     contractId,
