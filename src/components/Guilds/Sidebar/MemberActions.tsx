@@ -207,10 +207,10 @@ export const MemberActions = () => {
               {isUnlockable ? 'Unlocked' : 'Unlocked in'}{' '}
               <span>
                 {unlockedTimestamp ? (
-                  !isUnlockable ? (
-                    unlockedTimestamp?.fromNow(true)
+                  isUnlockable ? (
+                    unlockedTimestamp?.fromNow()
                   ) : (
-                    unlockedTimestamp?.toNow()
+                    unlockedTimestamp?.toNow(true)
                   )
                 ) : (
                   <Skeleton width={40} />
