@@ -15,6 +15,10 @@ import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info
 import { useERC20Balance } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Balance';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { BigNumber } from 'ethers';
+import { useERC20, useERC20Guild } from 'hooks/Guilds/contracts/useContract';
+import { useTransactions } from '../../../contexts/Guilds';
+import { useERC20Allowance } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Allowance';
+import NumericalInput from '../NumericalInput';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -94,7 +98,7 @@ const InfoOldValue = styled(InfoValue)`
   align-items: center;
 `;
 
-const StakeAmountInput = styled.input`
+const StakeAmountInput = styled(NumericalInput)`
   font-size: 20px;
   font-weight: 600;
   border: none;
@@ -110,9 +114,8 @@ const ButtonLock = styled(Button)`
 `;
 
 export const StakeTokens = ({ onJoin }) => {
-  const [stakeAmount, setStakeAmount] = useState(0);
+  const [stakeAmount, setStakeAmount] = useState<BigNumber>(BigNumber.from(0));
   const { account: userAddress } = useWeb3React();
-
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { data: guildConfig } = useGuildConfig(guildAddress);
   const { data: tokenInfo } = useERC20Info(guildConfig?.token);
@@ -120,7 +123,11 @@ export const StakeTokens = ({ onJoin }) => {
     guildConfig?.token,
     userAddress
   );
-
+  const { data: tokenAllowance } = useERC20Allowance(
+    guildConfig?.token,
+    userAddress,
+    guildConfig?.tokenVault
+  );
   const { data: userVotingPower } = useVotingPowerOf({
     contractAddress: guildAddress,
     userAddress,
@@ -138,23 +145,53 @@ export const StakeTokens = ({ onJoin }) => {
     );
   };
 
+  const { createTransaction } = useTransactions();
+  const guildContract = useERC20Guild(guildAddress);
+  const lockTokens = async () => {
+    createTransaction(
+      `Lock ${formatUnits(stakeAmount, tokenInfo?.decimals)} ${
+        tokenInfo?.symbol
+      } tokens`,
+      async () => guildContract.lockTokens(stakeAmount)
+    );
+    onJoin();
+  };
+
+  const tokenContract = useERC20(guildConfig?.token);
+  const approveTokenSpending = async () => {
+    createTransaction(`Approve ${tokenInfo?.symbol} token spending`, async () =>
+      tokenContract.approve(guildConfig?.tokenVault, stakeAmount)
+    );
+  };
+
   const isStakeAmountValid = useMemo(
     () =>
-      stakeAmount > 0 &&
-      tokenInfo?.decimals &&
-      parseUnits(`${stakeAmount}`, tokenInfo.decimals).lte(tokenBalance),
+      stakeAmount?.gt(0) && tokenInfo?.decimals && stakeAmount.lte(tokenBalance),
     [stakeAmount, tokenBalance, tokenInfo]
   );
 
-  const newVotingPower = useMemo(() => {
+  const votingPowerPercent = useMemo(() => {
+    if (!userVotingPower || !guildConfig || !tokenInfo) return null;
+
+    const percent = userVotingPower.div(guildConfig.totalLocked).mul(100);
+    return Math.round(percent.toNumber() * Math.pow(10, 3)) / Math.pow(10, 3);
+  }, [tokenInfo, guildConfig, userVotingPower]);
+
+  const nextVotingPowerPercent = useMemo(() => {
     if (!isStakeAmountValid || !guildConfig || !tokenInfo) return null;
 
-    const stakedAmountUnits = parseUnits(`${stakeAmount}`, tokenInfo.decimals);
-    const percent = stakedAmountUnits
-      .div(stakedAmountUnits.add(guildConfig.totalLocked))
+    const newStakeAmount = stakeAmount.add(userVotingPower);
+    const percent = newStakeAmount
+      .div(stakeAmount.add(guildConfig.totalLocked))
       .mul(100);
-    return Math.round(percent.toNumber() * Math.pow(10, 5)) / Math.pow(10, 5);
-  }, [isStakeAmountValid, stakeAmount, tokenInfo, guildConfig]);
+    return Math.round(percent.toNumber() * Math.pow(10, 3)) / Math.pow(10, 3);
+  }, [
+    isStakeAmountValid,
+    stakeAmount,
+    userVotingPower,
+    tokenInfo,
+    guildConfig,
+  ]);
 
   return (
     <GuestContainer>
@@ -172,13 +209,13 @@ export const StakeTokens = ({ onJoin }) => {
         )}{' '}
       </InfoItem>
 
-      <InfoItem>
+      {/* <InfoItem>
         {tokenInfo?.symbol ? (
           `2.5 ${tokenInfo.symbol} min. deposit`
         ) : (
           <Skeleton width={200} />
         )}
-      </InfoItem>
+      </InfoItem> */}
 
       {/* <InfoItem>
         Voting Power for proposal creation:{' '}
@@ -255,18 +292,12 @@ export const StakeTokens = ({ onJoin }) => {
         </InfoRow>
         <InfoRow>
           <StakeAmountInput
-            value={stakeAmount}
-            onChange={e => setStakeAmount(e.target.value)}
-          />
-          <Button
-            onClick={() =>
-              setStakeAmount(
-                Number.parseFloat(formatUnits(tokenBalance, tokenInfo.decimals))
-              )
+            value={formatUnits(stakeAmount, tokenInfo?.decimals)}
+            onUserInput={(value: string) =>
+              setStakeAmount(parseUnits(value, tokenInfo.decimals))
             }
-          >
-            Max
-          </Button>
+          />
+          <Button onClick={() => setStakeAmount(tokenBalance)}>Max</Button>
         </InfoRow>
       </BalanceWidget>
       <InfoRow>
@@ -275,16 +306,16 @@ export const StakeTokens = ({ onJoin }) => {
           {isStakeAmountValid ? (
             <>
               <InfoOldValue>
-                {userVotingPower ? (
-                  `${userVotingPower.toString()}%`
+                {votingPowerPercent != null ? (
+                  `${votingPowerPercent}%`
                 ) : (
                   <Skeleton width={40} />
                 )}{' '}
                 <FiArrowRight />
               </InfoOldValue>{' '}
               <strong>
-                {newVotingPower != null ? (
-                  `${newVotingPower}%`
+                {nextVotingPowerPercent != null ? (
+                  `${nextVotingPowerPercent}%`
                 ) : (
                   <Skeleton width={40} />
                 )}
@@ -312,9 +343,18 @@ export const StakeTokens = ({ onJoin }) => {
           )}
         </InfoValue>
       </InfoRow>
-      <ButtonLock disabled={!isStakeAmountValid} onClick={onJoin}>
-        Lock {tokenInfo?.symbol || <Skeleton width={10} />}
-      </ButtonLock>
+      {tokenAllowance?.gte(stakeAmount) ? (
+        <ButtonLock disabled={!isStakeAmountValid} onClick={lockTokens}>
+          Lock {tokenInfo?.symbol || <Skeleton width={10} />}
+        </ButtonLock>
+      ) : (
+        <ButtonLock
+          disabled={!isStakeAmountValid}
+          onClick={approveTokenSpending}
+        >
+          Approve {tokenInfo?.symbol || <Skeleton width={10} />} Spending
+        </ButtonLock>
+      )}
     </GuestContainer>
   );
 };

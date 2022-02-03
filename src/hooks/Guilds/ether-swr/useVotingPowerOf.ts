@@ -1,4 +1,4 @@
-import { BigNumber } from 'utils';
+import { BigNumber } from 'ethers';
 import { SWRResponse } from 'swr';
 import useEtherSWR from './useEtherSWR';
 
