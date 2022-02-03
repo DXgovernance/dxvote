@@ -6,7 +6,7 @@ type ERC20Info = {
   name: string;
   symbol: string;
   decimals: number;
-}
+};
 
 export const useERC20Info = (contractAddress: string) => {
   const { data, ...rest } = useEtherSWR(

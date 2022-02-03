@@ -153,7 +153,7 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth,
   showSecondaryHeader,
   cross,
-  zIndex = 500
+  zIndex = 500,
 }) => {
   const modal = (
     <div>

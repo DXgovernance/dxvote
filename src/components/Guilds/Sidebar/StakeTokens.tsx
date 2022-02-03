@@ -166,7 +166,9 @@ export const StakeTokens = ({ onJoin }) => {
 
   const isStakeAmountValid = useMemo(
     () =>
-      stakeAmount?.gt(0) && tokenInfo?.decimals && stakeAmount.lte(tokenBalance),
+      stakeAmount?.gt(0) &&
+      tokenInfo?.decimals &&
+      stakeAmount.lte(tokenBalance),
     [stakeAmount, tokenBalance, tokenInfo]
   );
 
