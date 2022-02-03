@@ -7,17 +7,13 @@ import { useParams } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 
 import { Heading } from '../common/Typography';
-import CopyHelper from '../../common/Copy';
 import { Button } from '../common/Button';
-import { Loading } from '../common/Loading';
-import { shortenAddress, isAddress } from 'utils';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
-import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/useVoterLockTimestamp';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useERC20Balance } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Balance';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { BigNumber } from 'ethers';
 
 const GuestContainer = styled.div`
@@ -27,7 +23,7 @@ const GuestContainer = styled.div`
   padding: 20px;
   color: black;
   @media only screen and (min-width: 769px) {
-    padding: 40px;
+    padding: 20px 40px;
   }
 `;
 
@@ -42,14 +38,14 @@ const DaoIcon = styled.img`
 `;
 
 const DaoTitle = styled(Heading)`
-  margin-left: 4px;
-  line-height: 1;
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
 `;
 
-const InfoItem = styled.p`
+const InfoItem = styled.div`
   display: flex;
-  margin: 0px 0px 4px 0px;
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.fontSizes.body};
+  color: ${({ theme }) => theme.colors.muted};
+  margin-bottom: 0.4rem;
 `;
 
 const BalanceWidget = styled.div`
@@ -57,7 +53,7 @@ const BalanceWidget = styled.div`
   padding: 10px;
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
+  margin: 1rem 0;
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
 `;
@@ -81,14 +77,23 @@ const BaseFont = css`
 
 const InfoLabel = styled.span`
   ${BaseFont}
+  color: ${({ theme }) => theme.colors.muted};
 `;
 
 const InfoValue = styled.span`
   ${BaseFont}
-
   font-weight: bold;
   flex-wrap: wrap;
+  display: inline-flex;
+  align-items: center;
 `;
+
+const InfoOldValue = styled(InfoValue)`
+  color: ${({ theme }) => theme.colors.muted};
+  display: inline-flex;
+  align-items: center;
+`;
+
 const StakeAmountInput = styled.input`
   font-size: 20px;
   font-weight: 600;
@@ -120,10 +125,6 @@ export const StakeTokens = ({ onJoin }) => {
     contractAddress: guildAddress,
     userAddress,
   });
-  const { data: voterLockTimestamp } = useVoterLockTimestamp({
-    contractAddress: guildAddress,
-    userAddress,
-  });
 
   const getRoundedBalance = (
     balance: BigNumber,
@@ -138,9 +139,22 @@ export const StakeTokens = ({ onJoin }) => {
   };
 
   const isStakeAmountValid = useMemo(
-    () => stakeAmount > 0 && BigNumber.from(stakeAmount).lte(tokenBalance),
-    [stakeAmount, tokenBalance]
+    () =>
+      stakeAmount > 0 &&
+      tokenInfo?.decimals &&
+      parseUnits(`${stakeAmount}`, tokenInfo.decimals).lte(tokenBalance),
+    [stakeAmount, tokenBalance, tokenInfo]
   );
+
+  const newVotingPower = useMemo(() => {
+    if (!isStakeAmountValid || !guildConfig || !tokenInfo) return null;
+
+    const stakedAmountUnits = parseUnits(`${stakeAmount}`, tokenInfo.decimals);
+    const percent = stakedAmountUnits
+      .div(stakedAmountUnits.add(guildConfig.totalLocked))
+      .mul(100);
+    return Math.round(percent.toNumber() * Math.pow(10, 5)) / Math.pow(10, 5);
+  }, [isStakeAmountValid, stakeAmount, tokenInfo, guildConfig]);
 
   return (
     <GuestContainer>
@@ -148,13 +162,25 @@ export const StakeTokens = ({ onJoin }) => {
         <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
         <DaoTitle>{guildConfig?.name || <Skeleton width={100} />}</DaoTitle>
       </DaoBrand>
-      <InfoItem>40% Quorum</InfoItem>
+      <InfoItem>
+        {guildConfig?.lockTime ? (
+          `${moment
+            .duration(guildConfig.lockTime.toNumber(), 'seconds')
+            .humanize()} staking period`
+        ) : (
+          <Skeleton width={200} />
+        )}{' '}
+      </InfoItem>
 
       <InfoItem>
-        User Voting Power:{' '}
-        {userVotingPower?.toString() || <Skeleton width={40} />}
+        {tokenInfo?.symbol ? (
+          `2.5 ${tokenInfo.symbol} min. deposit`
+        ) : (
+          <Skeleton width={200} />
+        )}
       </InfoItem>
-      <InfoItem>
+
+      {/* <InfoItem>
         Voting Power for proposal creation:{' '}
         {guildConfig?.votingPowerForProposalCreation?.toString() || (
           <Skeleton width={40} />
@@ -172,14 +198,7 @@ export const StakeTokens = ({ onJoin }) => {
           <CopyHelper toCopy={guildConfig.tokenVault} />
         </InfoItem>
       )}
-      {guildConfig?.lockTime && guildConfig?.lockTime?.toNumber() > 0 && (
-        <InfoItem>
-          Lock Time:{' '}
-          {moment
-            .duration(guildConfig?.lockTime?.toNumber(), 'seconds')
-            .humanize()}
-        </InfoItem>
-      )}
+
       {guildConfig?.totalLocked && guildConfig?.totalLocked?.toNumber() > 0 && (
         <InfoItem>
           Total Locked:{' '}
@@ -220,15 +239,13 @@ export const StakeTokens = ({ onJoin }) => {
             .humanize()}{' '}
           for execution)
         </InfoItem>
-      </Loading>
-      <InfoItem>
-        2.5 {tokenInfo?.symbol || <Skeleton width={10} />} min. deposit
-      </InfoItem>
+      </Loading> */}
+
       <BalanceWidget>
         <InfoRow>
           <InfoLabel>Balance:</InfoLabel>
           <InfoValue>
-            {tokenBalance ? (
+            {tokenBalance && tokenInfo ? (
               getRoundedBalance(tokenBalance, tokenInfo.decimals, 4)
             ) : (
               <Skeleton width={10} />
@@ -255,13 +272,44 @@ export const StakeTokens = ({ onJoin }) => {
       <InfoRow>
         <InfoLabel>Your voting power</InfoLabel>
         <InfoValue>
-          0% <FiArrowRight /> <strong>0.12%</strong>
+          {isStakeAmountValid ? (
+            <>
+              <InfoOldValue>
+                {userVotingPower ? (
+                  `${userVotingPower.toString()}%`
+                ) : (
+                  <Skeleton width={40} />
+                )}{' '}
+                <FiArrowRight />
+              </InfoOldValue>{' '}
+              <strong>
+                {newVotingPower != null ? (
+                  `${newVotingPower}%`
+                ) : (
+                  <Skeleton width={40} />
+                )}
+              </strong>
+            </>
+          ) : (
+            '-'
+          )}
         </InfoValue>
       </InfoRow>
       <InfoRow>
         <InfoLabel>Unlock Date</InfoLabel>
         <InfoValue>
-          <strong> March 31rd, 2021 - 2:32 UTC</strong> <FiInfo />
+          {isStakeAmountValid ? (
+            <>
+              <strong>
+                {moment()
+                  .add(guildConfig.lockTime.toNumber(), 'seconds')
+                  .format('MMM Do, YYYY - h:mm a')}
+              </strong>{' '}
+              <FiInfo />
+            </>
+          ) : (
+            '-'
+          )}
         </InfoValue>
       </InfoRow>
       <ButtonLock disabled={!isStakeAmountValid} onClick={onJoin}>
