@@ -174,6 +174,8 @@ export const StakeTokens = () => {
   const votingPowerPercent = useMemo(() => {
     if (!userVotingPower || !guildConfig || !tokenInfo) return null;
 
+    if (guildConfig.totalLocked.isZero()) return 0;
+
     const percent = userVotingPower.div(guildConfig.totalLocked).mul(100);
     return Math.round(percent.toNumber() * Math.pow(10, 3)) / Math.pow(10, 3);
   }, [tokenInfo, guildConfig, userVotingPower]);

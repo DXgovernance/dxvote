@@ -40,7 +40,8 @@ export const DropdownContent = styled<DropdownContentProps>(Box)`
   position: absolute;
   background-color: ${({ theme }) => theme.colors.background};
   z-index: 9999;
-  width: 200px;
+  width: 100%;
+  min-width: 200px;
 
   ${({ fullScreenMobile }) =>
     fullScreenMobile &&

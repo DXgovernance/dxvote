@@ -24,7 +24,6 @@ const DaoInfoPanel = styled(Box)`
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  cursor: pointer;
 `;
 
 const DaoInfo = styled.div`
