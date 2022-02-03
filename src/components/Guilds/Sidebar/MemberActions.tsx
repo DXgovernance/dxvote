@@ -118,8 +118,11 @@ export const MemberActions = () => {
 
     if (guildConfig.totalLocked.isZero()) return 0;
 
-    const percent = userVotingPower.div(guildConfig.totalLocked).mul(100);
-    return Math.round(percent.toNumber() * Math.pow(10, 3)) / Math.pow(10, 3);
+    const percent = userVotingPower
+      .mul(100)
+      .mul(Math.pow(10, 2))
+      .div(guildConfig.totalLocked);
+    return Math.round(percent.toNumber()) / Math.pow(10, 2);
   }, [tokenInfo, guildConfig, userVotingPower]);
 
   const getRoundedBalance = (

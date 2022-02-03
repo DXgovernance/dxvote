@@ -176,18 +176,22 @@ export const StakeTokens = () => {
 
     if (guildConfig.totalLocked.isZero()) return 0;
 
-    const percent = userVotingPower.div(guildConfig.totalLocked).mul(100);
-    return Math.round(percent.toNumber() * Math.pow(10, 3)) / Math.pow(10, 3);
+    const percent = userVotingPower
+      .mul(Math.pow(10, 3))
+      .mul(100)
+      .div(guildConfig.totalLocked);
+    return Math.round(percent.toNumber()) / Math.pow(10, 3);
   }, [tokenInfo, guildConfig, userVotingPower]);
 
   const nextVotingPowerPercent = useMemo(() => {
     if (!isStakeAmountValid || !guildConfig || !tokenInfo) return null;
 
     const newStakeAmount = stakeAmount.add(userVotingPower);
-    const percent = newStakeAmount
-      .div(stakeAmount.add(guildConfig.totalLocked))
-      .mul(100);
-    return Math.round(percent.toNumber() * Math.pow(10, 3)) / Math.pow(10, 3);
+    const result = newStakeAmount
+      .mul(100)
+      .mul(Math.pow(10, 3))
+      .div(stakeAmount.add(guildConfig.totalLocked));
+    return Math.round(result.toNumber()) / Math.pow(10, 3);
   }, [
     isStakeAmountValid,
     stakeAmount,
