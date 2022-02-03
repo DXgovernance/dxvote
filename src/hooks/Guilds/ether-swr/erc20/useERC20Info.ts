@@ -2,9 +2,10 @@ import useEtherSWR from '../useEtherSWR';
 import ERC20ABI from '../../../../abis/ERC20.json';
 import { useMemo } from 'react';
 
-interface ERC20InfoInterface {
+type ERC20Info = {
   name: string;
   symbol: string;
+  decimals: number;
 }
 
 export const useERC20Info = (contractAddress: string) => {
@@ -13,6 +14,7 @@ export const useERC20Info = (contractAddress: string) => {
       ? [
           [contractAddress, 'name'],
           [contractAddress, 'symbol'],
+          [contractAddress, 'decimals'],
         ]
       : [],
     {
@@ -20,12 +22,13 @@ export const useERC20Info = (contractAddress: string) => {
     }
   );
 
-  const transformedData: ERC20InfoInterface = useMemo(() => {
+  const transformedData: ERC20Info = useMemo(() => {
     if (!data) return undefined;
 
     return {
       name: data[0],
       symbol: data[1],
+      decimals: data[2],
     };
   }, [data]);
 

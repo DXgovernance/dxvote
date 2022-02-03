@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
 import { FiArrowRight, FiInfo } from 'react-icons/fi';
@@ -16,6 +16,9 @@ import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPower
 import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/useVoterLockTimestamp';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
+import { useERC20Balance } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Balance';
+import { formatUnits } from 'ethers/lib/utils';
+import { BigNumber } from 'ethers';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -86,9 +89,13 @@ const InfoValue = styled.span`
   font-weight: bold;
   flex-wrap: wrap;
 `;
-const DXDValue = styled.span`
+const StakeAmountInput = styled.input`
   font-size: 20px;
   font-weight: 600;
+  border: none;
+  outline: none;
+  width: inherit;
+  font-family: inherit;
 `;
 
 const ButtonLock = styled(Button)`
@@ -98,13 +105,17 @@ const ButtonLock = styled(Button)`
 `;
 
 export const StakeTokens = ({ onJoin }) => {
-  const [dxdValue, setDXDValue] = useState(0);
+  const [stakeAmount, setStakeAmount] = useState(0);
+  const { account: userAddress } = useWeb3React();
 
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { data: guildConfig } = useGuildConfig(guildAddress);
   const { data: tokenInfo } = useERC20Info(guildConfig?.token);
+  const { data: tokenBalance } = useERC20Balance(
+    guildConfig?.token,
+    userAddress
+  );
 
-  const { account: userAddress } = useWeb3React();
   const { data: userVotingPower } = useVotingPowerOf({
     contractAddress: guildAddress,
     userAddress,
@@ -113,6 +124,23 @@ export const StakeTokens = ({ onJoin }) => {
     contractAddress: guildAddress,
     userAddress,
   });
+
+  const getRoundedBalance = (
+    balance: BigNumber,
+    tokenDecimals: number,
+    desiredDecimals: number = 2
+  ) => {
+    let formatted = Number.parseFloat(formatUnits(balance, tokenDecimals));
+    return (
+      Math.round(formatted * Math.pow(10, desiredDecimals)) /
+      Math.pow(10, desiredDecimals)
+    );
+  };
+
+  const isStakeAmountValid = useMemo(
+    () => stakeAmount > 0 && BigNumber.from(stakeAmount).lte(tokenBalance),
+    [stakeAmount, tokenBalance]
+  );
 
   return (
     <GuestContainer>
@@ -200,12 +228,28 @@ export const StakeTokens = ({ onJoin }) => {
         <InfoRow>
           <InfoLabel>Balance:</InfoLabel>
           <InfoValue>
-            10.00 {tokenInfo?.symbol || <Skeleton width={10} />}
+            {tokenBalance ? (
+              getRoundedBalance(tokenBalance, tokenInfo.decimals, 4)
+            ) : (
+              <Skeleton width={10} />
+            )}{' '}
+            {tokenInfo?.symbol || <Skeleton width={10} />}
           </InfoValue>
         </InfoRow>
         <InfoRow>
-          <DXDValue>{dxdValue}</DXDValue>
-          <Button onClick={() => setDXDValue(10)}>Max</Button>
+          <StakeAmountInput
+            value={stakeAmount}
+            onChange={e => setStakeAmount(e.target.value)}
+          />
+          <Button
+            onClick={() =>
+              setStakeAmount(
+                Number.parseFloat(formatUnits(tokenBalance, tokenInfo.decimals))
+              )
+            }
+          >
+            Max
+          </Button>
         </InfoRow>
       </BalanceWidget>
       <InfoRow>
@@ -220,7 +264,7 @@ export const StakeTokens = ({ onJoin }) => {
           <strong> March 31rd, 2021 - 2:32 UTC</strong> <FiInfo />
         </InfoValue>
       </InfoRow>
-      <ButtonLock disabled={dxdValue <= 0} onClick={onJoin}>
+      <ButtonLock disabled={!isStakeAmountValid} onClick={onJoin}>
         Lock {tokenInfo?.symbol || <Skeleton width={10} />}
       </ButtonLock>
     </GuestContainer>
