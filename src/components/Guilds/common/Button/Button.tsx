@@ -46,6 +46,9 @@ const variantStyles = (variant = 'primary') =>
       :active:enabled {
         border: 1px solid ${({ theme }) => theme.colors.muted};
       }
+      :disabled {
+        color: ${({ theme }) => theme.colors.muted};
+      }
 
       ${({ active, selected }) =>
         (active || selected) &&

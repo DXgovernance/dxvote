@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FiChevronLeft } from 'react-icons/fi';
-import { MdOutlinePreview } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
+import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
 import { IconButton } from '../../components/Guilds/common/Button';
-import { InputText } from '../../components/Guilds/common/Form';
+import { Input } from '../../components/Guilds/common/Form';
 import SidebarCard from '../../components/Guilds/SidebarCard';
 import Editor from 'components/Guilds/Editor';
 
@@ -21,6 +22,9 @@ const SidebarContent = styled(Box)`
   @media only screen and (min-width: 768px) {
     margin-left: 1rem;
   }
+  @media only screen and (max-width: 768px) {
+    margin-top: 1rem;
+  }
 `;
 
 const PageContent = styled(Box)`
@@ -31,12 +35,6 @@ const PageContent = styled(Box)`
 
 const Button = styled(IconButton)`
   margin: 0;
-`;
-
-const Input = styled(InputText)`
-  display: block;
-  margin: 0;
-  width: -webkit-fill-available;
 `;
 
 const SidebarHeader = styled.h3`
@@ -54,7 +52,7 @@ const Label = styled.span`
   font-family: Inter;
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: ${({ size }) => (size ? size : `14px`)};
   line-height: 20px;
   display: flex;
   color: ${({ color }) => (color ? color : `#000000`)};
@@ -62,6 +60,26 @@ const Label = styled.span`
 `;
 
 const CreateProposalPage: React.FC = () => {
+  const history = useHistory();
+  const [editMode, setEditMode] = React.useState(true);
+  const [title, setTitle] = React.useState('');
+  const [referenceLink, setReferenceLink] = React.useState('');
+  const [proposalBodyHTML, setProposalBodyHTML] = React.useState('');
+  const [proposalBodyMd, setProposalBodyMd] = React.useState('');
+
+  const handleToggleEditMode = () => {
+    // TODO: add proper validation if toggle from edit to preview without required fields
+    if (editMode && !title && !proposalBodyMd) return;
+    setEditMode(v => !v);
+  };
+
+  const handleBack = () => history.push('/');
+
+  const handleCreateProposal = () => {
+    // TODO: build this functionality
+    console.log('Create proposal click');
+  };
+
   return (
     <PageContainer>
       <PageContent>
@@ -70,24 +88,72 @@ const CreateProposalPage: React.FC = () => {
           justifyContent="space-between"
           margin="0px 0px 24px"
         >
-          <Button iconLeft>
+          <Button iconLeft onClick={handleBack}>
             <FiChevronLeft />
             Back to Overview
           </Button>
 
-          <Button padding="8px">
-            <MdOutlinePreview size={18} />
+          <Button
+            padding="8px"
+            onClick={handleToggleEditMode}
+            disabled={!title || !proposalBodyMd}
+          >
+            {editMode ? (
+              <MdOutlinePreview size={18} />
+            ) : (
+              <MdOutlineModeEdit size={18} />
+            )}
           </Button>
         </Flex>
         <Box margin="0px 0px 24px">
-          <Label> Title</Label>
-          <Input placeholder="Proposal Title" />
+          {editMode ? (
+            <>
+              <Label>Title</Label>
+              <Input
+                placeholder="Proposal Title"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+              />
+            </>
+          ) : (
+            <Label size="24px"> {title}</Label>
+          )}
         </Box>
         <Box margin="0px 0px 24px">
-          <Label color="#A1A6B0"> Reference link (optional)</Label>
-          <Input placeholder="https://daotalk.org/..." />
+          {editMode ? (
+            <>
+              <Label color="#A1A6B0"> Reference link (optional)</Label>
+
+              <Input
+                placeholder="https://daotalk.org/..."
+                value={referenceLink}
+                onChange={e => setReferenceLink(e.target.value)}
+                icon={<MdLink size={18} color="#BDC0C7" />}
+              />
+            </>
+          ) : referenceLink ? (
+            <Label color="#A1A6B0" size="16px">
+              {referenceLink}
+            </Label>
+          ) : null}
         </Box>
-        <Editor onChange={console.log} />
+        {editMode ? (
+          <Editor
+            onMdChange={setProposalBodyMd}
+            onHTMLChange={setProposalBodyHTML}
+          />
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: proposalBodyHTML }} />
+        )}
+        <Box margin="16px 0px">
+          <Button
+            onClick={handleCreateProposal}
+            variant="secondary"
+            disabled={editMode}
+          >
+            Create Proposal
+          </Button>
+        </Box>
       </PageContent>
       <SidebarContent>
         <SidebarCard header={<SidebarHeader>Information</SidebarHeader>}>

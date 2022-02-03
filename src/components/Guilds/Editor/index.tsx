@@ -121,9 +121,10 @@ const Content = styled(EditorContent)`
 `;
 
 interface EditorProps {
-  onChange?: (string) => void;
+  onHTMLChange?: (string) => void;
+  onMdChange?: (string) => void;
 }
-const Editor: React.FC<EditorProps> = ({ onChange }) => {
+const Editor: React.FC<EditorProps> = ({ onHTMLChange, onMdChange }) => {
   const ttlMs = 345600000;
   const [storedJson, setStoredJson] = useLocalStorageWithExpiry<string>(
     `guild/newProposal/description/json`,
@@ -161,7 +162,8 @@ const Editor: React.FC<EditorProps> = ({ onChange }) => {
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       if (html) {
-        onChange(html);
+        onHTMLChange && onHTMLChange(html);
+        onMdChange && onMdChange(turndownService.turndown(html));
         setStoredJson(JSON.stringify(editor.getJSON()));
         setStoredHtml(html);
         setStoredMarkdown(turndownService.turndown(html));
