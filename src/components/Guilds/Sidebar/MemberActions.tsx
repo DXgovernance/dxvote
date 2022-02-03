@@ -25,6 +25,8 @@ import { formatUnits } from 'ethers/lib/utils';
 import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/useVoterLockTimestamp';
 import moment from 'moment';
 import StakeTokensModal from '../StakeTokensModal';
+import { useTransactions } from '../../../contexts/Guilds';
+import { useERC20Guild } from '../../../hooks/Guilds/contracts/useContract';
 
 const UserActionButton = styled(IconButton)`
   border-radius: 50px;
@@ -114,6 +116,8 @@ export const MemberActions = () => {
   const votingPowerPercent = useMemo(() => {
     if (!userVotingPower || !guildConfig || !tokenInfo) return null;
 
+    if (guildConfig.totalLocked.isZero()) return 0;
+
     const percent = userVotingPower.div(guildConfig.totalLocked).mul(100);
     return Math.round(percent.toNumber() * Math.pow(10, 3)) / Math.pow(10, 3);
   }, [tokenInfo, guildConfig, userVotingPower]);
@@ -133,6 +137,19 @@ export const MemberActions = () => {
   const isUnlockable = unlockedTimestamp
     ? unlockedTimestamp.isBefore(moment.now())
     : false;
+
+  const { createTransaction } = useTransactions();
+  const guildContract = useERC20Guild(guildAddress);
+  const withdrawTokens = async () => {
+    setShowMenu(false);
+    createTransaction(
+      `Unlock and withdraw ${formatUnits(
+        userVotingPower,
+        tokenInfo?.decimals
+      )} ${tokenInfo?.symbol} tokens`,
+      async () => guildContract.withdrawTokens(userVotingPower)
+    );
+  };
 
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
@@ -172,7 +189,7 @@ export const MemberActions = () => {
               </span>
             </ContentItem>
             <ContentItem>
-              Locked{' '}
+              {!isUnlockable ? 'Locked' : 'Staked'}{' '}
               <span>
                 {userVotingPower && tokenInfo ? (
                   `${getRoundedBalance(
@@ -185,26 +202,29 @@ export const MemberActions = () => {
                 )}
               </span>
             </ContentItem>
-            {!isUnlockable ? (
-              <ContentItem>
-                Unlocked in{' '}
-                <span>
-                  {unlockedTimestamp?.toNow(true) || <Skeleton width={40} />}
-                </span>
-              </ContentItem>
-            ) : (
-              <ContentItem>
-                Unlockable <span>Now</span>
-              </ContentItem>
-            )}
-            {isUnlockable && (
-              <LockButton onClick={() => setShowStakeModal(true)}>
-                Unlock and Withdraw
-              </LockButton>
-            )}
+
+            <ContentItem>
+              {isUnlockable ? 'Unlocked' : 'Unlocked in'}{' '}
+              <span>
+                {unlockedTimestamp ? (
+                  !isUnlockable ? (
+                    unlockedTimestamp?.fromNow(true)
+                  ) : (
+                    unlockedTimestamp?.toNow()
+                  )
+                ) : (
+                  <Skeleton width={40} />
+                )}
+              </span>
+            </ContentItem>
+
             <LockButton onClick={() => setShowStakeModal(true)}>
               Increase Voting Power
             </LockButton>
+
+            {isUnlockable && (
+              <LockButton onClick={withdrawTokens}>Withdraw</LockButton>
+            )}
           </MemberContainer>
         </DropdownContent>
       </DropdownMenu>
