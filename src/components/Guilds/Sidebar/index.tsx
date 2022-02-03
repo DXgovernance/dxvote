@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import Skeleton from 'react-loading-skeleton';
 import { Box } from '../common/Layout';
@@ -9,6 +8,8 @@ import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
 import { useParams } from 'react-router-dom';
+import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
+import { useWeb3React } from '@web3-react/core';
 
 const SidebarWrapper = styled(Box)`
   @media only screen and (min-width: 768px) {
@@ -95,9 +96,14 @@ const SidebarMenuItem = styled(MenuItem)`
 `;
 
 export const Sidebar = () => {
-  const [isMember, setIsMember] = useState(false);
+  const { account: userAddress } = useWeb3React();
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { data } = useGuildConfig(guildAddress);
+
+  const { data: votingPower } = useVotingPowerOf({
+    contractAddress: guildAddress,
+    userAddress,
+  });
 
   return (
     <SidebarWrapper data-testid="sidebar">
@@ -112,9 +118,10 @@ export const Sidebar = () => {
           </DaoBrand>
           <DaoMemberCount>464 Members</DaoMemberCount>
         </DaoInfo>
-        {isMember && <MemberActions />}
-        {!isMember && (
-          <GuestActions /* for now */ onJoin={() => setIsMember(true)} />
+        {votingPower && !votingPower?.isZero() ? (
+          <MemberActions />
+        ) : (
+          <GuestActions />
         )}
       </DaoInfoPanel>
       <SidebarMenu>

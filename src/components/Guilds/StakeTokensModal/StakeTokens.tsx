@@ -113,7 +113,7 @@ const ButtonLock = styled(Button)`
   self-align: flex-end;
 `;
 
-export const StakeTokens = ({ onJoin }) => {
+export const StakeTokens = () => {
   const [stakeAmount, setStakeAmount] = useState<BigNumber>(BigNumber.from(0));
   const { account: userAddress } = useWeb3React();
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
@@ -154,7 +154,6 @@ export const StakeTokens = ({ onJoin }) => {
       } tokens`,
       async () => guildContract.lockTokens(stakeAmount)
     );
-    onJoin();
   };
 
   const tokenContract = useERC20(guildConfig?.token);
@@ -287,7 +286,7 @@ export const StakeTokens = ({ onJoin }) => {
             {tokenBalance && tokenInfo ? (
               getRoundedBalance(tokenBalance, tokenInfo.decimals, 4)
             ) : (
-              <Skeleton width={10} />
+              <Skeleton width={30} />
             )}{' '}
             {tokenInfo?.symbol || <Skeleton width={10} />}
           </InfoValue>

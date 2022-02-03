@@ -38,6 +38,7 @@ export const useGuildConfig = (guildAddress: string) => {
     }
   );
 
+  // TODO: Move this into a SWR middleware
   const transformedData: GuildConfig = useMemo(() => {
     if (!data) return undefined;
 

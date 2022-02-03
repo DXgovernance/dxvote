@@ -17,4 +17,9 @@ type UseVotingPowerOfHook = (
 export const useVotingPowerOf: UseVotingPowerOfHook = ({
   contractAddress,
   userAddress,
-}) => useEtherSWR([contractAddress, 'votingPowerOf', userAddress]);
+}) =>
+  useEtherSWR(
+    contractAddress && userAddress
+      ? [contractAddress, 'votingPowerOf', userAddress]
+      : []
+  );

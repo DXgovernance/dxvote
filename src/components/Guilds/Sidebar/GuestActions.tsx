@@ -1,30 +1,31 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
 import { Button } from 'components/Guilds/common/Button';
-import { Modal } from '../common/Modal';
-import { StakeTokens } from './StakeTokens';
-import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
-import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
+import StakeTokensModal from '../StakeTokensModal';
+import { useWeb3React } from '@web3-react/core';
+import WalletModal from '../Web3Modals/WalletModal';
 
-export const GuestActions = ({ onJoin }) => {
+export const GuestActions = () => {
+  const { account } = useWeb3React();
   const [showJoin, setShowJoin] = useState(false);
-
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
-  const { data } = useGuildConfig(guildAddress);
-  const { data: token } = useERC20Info(data?.token);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   return (
     <>
-      <Button onClick={() => setShowJoin(true)}>Join</Button>
-      <Modal
-        header={token ? `Stake ${token.name} tokens` : <Skeleton width={100} />}
+      <Button
+        onClick={() =>
+          account ? setShowJoin(true) : setIsWalletModalOpen(true)
+        }
+      >
+        {account ? 'Join' : 'Connect Wallet'}
+      </Button>
+      <StakeTokensModal
         isOpen={showJoin}
         onDismiss={() => setShowJoin(false)}
-        maxWidth={300}
-      >
-        <StakeTokens onJoin={onJoin} />
-      </Modal>
+      />
+      <WalletModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+      />
     </>
   );
 };
