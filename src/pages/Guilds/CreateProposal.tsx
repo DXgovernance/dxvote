@@ -77,7 +77,6 @@ const CreateProposalPage: React.FC = () => {
 
   const handleCreateProposal = () => {
     // TODO: build this functionality
-    console.log('Create proposal click');
   };
 
   return (
