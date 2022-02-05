@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { useActions } from 'hooks/Guilds/useActions';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -32,6 +33,7 @@ const SmallButton = styled(Button)`
 `;
 
 // TODO: remove this when subscribing to real data:
+// TODO: replace yes/no with args for actions
 const voteData = {
   yes: 124.5,
   no: 234.76,
@@ -40,17 +42,13 @@ const voteData = {
 };
 
 const TOKEN = 'DXD';
-// pull data about proposal votes
-// iterate over array to create different action buttons
+
 const ProposalVoteCard = () => {
   const [showToken, setShowToken] = useState(false);
-  const [voted, setVoted] = useState('');
-
-  const ZERO: BigNumber = BigNumber.from(0);
-
-  const [action, setAction] = useState<BigNumber>(ZERO);
+  const [action, setAction] = useState<BigNumber>();
 
   const { setVote } = useVotes();
+  const { possibleActions } = useActions();
 
   return (
     <SidebarCard
@@ -70,27 +68,21 @@ const ProposalVoteCard = () => {
           token={TOKEN}
         />
         <ButtonsContainer>
-          <Button
-            minimal
-            active={voted === 'yes'}
-            onClick={() => {
-              setVoted('yes');
-              setAction(BigNumber.from(1));
-            }}
-          >
-            Yes
-          </Button>
-          <Button
-            minimal
-            active={voted === 'no'}
-            onClick={() => {
-              setVoted('no');
-              setAction(ZERO);
-            }}
-          >
-            No
-          </Button>
-          <Button primary disabled={!voted} onClick={() => setVote(action)}>
+          {possibleActions.map(item => {
+            console.log(possibleActions);
+            return (
+              <Button
+                minimal
+                active={action === BigNumber.from(item)}
+                onClick={() => {
+                  setAction(BigNumber.from(item));
+                }}
+              >
+                {item}
+              </Button>
+            );
+          })}
+          <Button primary disabled={!action} onClick={() => setVote(action)}>
             Vote
           </Button>
         </ButtonsContainer>
