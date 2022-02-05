@@ -1,21 +1,13 @@
 import { useCallback } from 'react';
-import { BigNumber, ContractTransaction } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useParams } from 'react-router-dom';
 import { useERC20Guild } from './contracts/useContract';
-
-//@TODO convert actions into set votes parameter
-// transaction Modal
-// @TODO actions?
-// @TODO votingPower calculations
+import { useVotingPowerOf } from './ether-swr/useVotingPowerOf';
+import { useWeb3React } from '@web3-react/core';
+import { useTransactions } from 'contexts/Guilds';
 
 interface useVotesReturns {
-  setVote: (
-    action: BigNumber,
-    votingPower: BigNumber
-  ) => Promise<ContractTransaction>;
-  //  setVotes: (action: BigNumber, votingPower: BigNumber) => Promise<ContractTransaction>;
-  //    setSignedVote: () => void;
-  //   setSignedVotes: () => void;
+  setVote: (action: BigNumber) => Promise<void>;
 }
 
 export const useVotes = (): useVotesReturns => {
@@ -24,11 +16,25 @@ export const useVotes = (): useVotesReturns => {
 
   const contract = useERC20Guild(guildId, true);
 
+  const { account } = useWeb3React();
+
+  const { createTransaction } = useTransactions();
+
+  const votingPowerProps = {
+    contractAddress: guildId,
+    userAddress: account,
+  };
+
+  const { data } = useVotingPowerOf(votingPowerProps);
+
   const setVote = useCallback(
-    (action: BigNumber, votingPower: BigNumber) => {
-      return contract.setVote(proposalId, action, votingPower);
+    async (action: BigNumber) => {
+      const votingPower = BigNumber.from(data);
+      createTransaction('set Vote', async () =>
+        contract.setVote(proposalId, action, votingPower)
+      );
     },
-    [contract, guildId, proposalId]
+    [contract, guildId, proposalId, data]
   );
 
   return {

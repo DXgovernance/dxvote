@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+import { useVotes } from 'hooks/Guilds/useVotes';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '../../common/Button';
@@ -44,6 +46,12 @@ const ProposalVoteCard = () => {
   const [showToken, setShowToken] = useState(false);
   const [voted, setVoted] = useState('');
 
+  const ZERO: BigNumber = BigNumber.from(0);
+
+  const [action, setAction] = useState<BigNumber>(ZERO);
+
+  const { setVote } = useVotes();
+
   return (
     <SidebarCard
       header={
@@ -65,18 +73,24 @@ const ProposalVoteCard = () => {
           <Button
             minimal
             active={voted === 'yes'}
-            onClick={() => setVoted('yes')}
+            onClick={() => {
+              setVoted('yes');
+              setAction(BigNumber.from(1));
+            }}
           >
             Yes
           </Button>
           <Button
             minimal
             active={voted === 'no'}
-            onClick={() => setVoted('no')}
+            onClick={() => {
+              setVoted('no');
+              setAction(ZERO);
+            }}
           >
             No
           </Button>
-          <Button primary disabled={!voted}>
+          <Button primary disabled={!voted} onClick={() => setVote(action)}>
             Vote
           </Button>
         </ButtonsContainer>
