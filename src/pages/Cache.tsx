@@ -263,7 +263,7 @@ const CachePage = observer(() => {
                   <InputBox
                     type="checkbox"
                     checked={resetCache[networkName]}
-                    onClick={() => {
+                    onChange={() => {
                       resetCache[networkName] = !resetCache[networkName];
                       setResetCache(resetCache);
                       forceUpdate();

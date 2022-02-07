@@ -789,7 +789,6 @@ export default class UtilsService {
       // Add or update the scheme information,
       // register scheme is used to add a scheme or update the parametersHash of an existent one
       if (controllerEvent.event === 'RegisterScheme') {
-        console.log(controllerEvent);
         const schemeTypeData = getSchemeConfig(
           networkContractsConfig,
           schemeAddress
@@ -1156,7 +1155,7 @@ export default class UtilsService {
               'Getting proposals in event batch index',
               schemeEventsBatchsIndex,
               'in',
-              schemeTypeData.name
+              schemeTypeData
             );
             await Promise.all(
               schemeEventsBatchs[schemeEventsBatchsIndex].map(
@@ -1372,10 +1371,7 @@ export default class UtilsService {
                         }
                       );
                     } catch (error) {
-                      console.error(
-                        'Error on adding content hash from tx',
-                        schemeEvent.transactionHash
-                      );
+                      console.error('Error in getting proposal data from creation event', error);
                     }
 
                     if (schemeTypeData.type === 'SchemeRegistrar') {
@@ -1718,10 +1714,10 @@ export default class UtilsService {
 
             schemeEventsBatchsIndex++;
           } catch (error) {
-            console.error('Error:', (error as Error).message);
-            console.debug(
-              'Trying again getting proposal info of schemeEventsBatchs index',
-              schemeEventsBatchsIndex
+            console.error(
+              'Error in getting proposal info of schemeEventsBatchs index',
+              schemeEventsBatchsIndex,
+              error
             );
           }
         }
