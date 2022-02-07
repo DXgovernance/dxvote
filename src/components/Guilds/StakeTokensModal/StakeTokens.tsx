@@ -13,12 +13,14 @@ import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPower
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useERC20Balance } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Balance';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import { useERC20, useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import { useTransactions } from '../../../contexts/Guilds';
 import { useERC20Allowance } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Allowance';
 import NumericalInput from '../common/Form/NumericalInput';
+import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
+import useStringToBigNumber from '../../../hooks/Guilds/conversions/useStringToBigNumber';
+import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -119,10 +121,17 @@ export const StakeTokens = () => {
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { data: guildConfig } = useGuildConfig(guildAddress);
   const { data: tokenInfo } = useERC20Info(guildConfig?.token);
+
   const { data: tokenBalance } = useERC20Balance(
     guildConfig?.token,
     userAddress
   );
+  const roundedBalance = useBigNumberToNumber(
+    tokenBalance,
+    tokenInfo?.decimals,
+    4
+  );
+
   const { data: tokenAllowance } = useERC20Allowance(
     guildConfig?.token,
     userAddress,
@@ -133,26 +142,10 @@ export const StakeTokens = () => {
     userAddress,
   });
 
-  const getRoundedBalance = (
-    balance: BigNumber,
-    tokenDecimals: number,
-    desiredDecimals: number = 2
-  ) => {
-    let formatted = Number.parseFloat(formatUnits(balance, tokenDecimals));
-    return (
-      Math.round(formatted * Math.pow(10, desiredDecimals)) /
-      Math.pow(10, desiredDecimals)
-    );
-  };
-
-  const stakeAmountParsed = useMemo(() => {
-    if (stakeAmount) {
-      return parseUnits(stakeAmount, tokenInfo.decimals);
-    } else {
-      return null;
-    }
-  }, [stakeAmount, tokenInfo]);
-
+  const stakeAmountParsed = useStringToBigNumber(
+    stakeAmount,
+    tokenInfo.decimals
+  );
   const isStakeAmountValid = useMemo(
     () =>
       stakeAmountParsed?.gt(0) &&
@@ -183,34 +176,16 @@ export const StakeTokens = () => {
     );
   };
 
-  const votingPowerPercent = useMemo(() => {
-    if (!userVotingPower || !guildConfig || !tokenInfo) return null;
-
-    if (guildConfig.totalLocked.isZero()) return 0;
-
-    const percent = userVotingPower
-      .mul(Math.pow(10, 3))
-      .mul(100)
-      .div(guildConfig.totalLocked);
-    return Math.round(percent.toNumber()) / Math.pow(10, 3);
-  }, [tokenInfo, guildConfig, userVotingPower]);
-
-  const nextVotingPowerPercent = useMemo(() => {
-    if (!isStakeAmountValid || !guildConfig || !tokenInfo) return null;
-
-    const newStakeAmount = stakeAmountParsed.add(userVotingPower);
-    const result = newStakeAmount
-      .mul(100)
-      .mul(Math.pow(10, 3))
-      .div(stakeAmountParsed.add(guildConfig.totalLocked));
-    return Math.round(result.toNumber()) / Math.pow(10, 3);
-  }, [
-    isStakeAmountValid,
-    stakeAmountParsed,
+  const votingPowerPercent = useVotingPowerPercent(
     userVotingPower,
-    tokenInfo,
-    guildConfig,
-  ]);
+    guildConfig?.totalLocked,
+    3
+  );
+  const nextVotingPowerPercent = useVotingPowerPercent(
+    stakeAmountParsed?.add(userVotingPower),
+    stakeAmountParsed?.add(guildConfig?.totalLocked),
+    3
+  );
 
   return (
     <GuestContainer>
@@ -233,7 +208,7 @@ export const StakeTokens = () => {
           <InfoLabel>Balance:</InfoLabel>
           <InfoValue>
             {tokenBalance && tokenInfo ? (
-              getRoundedBalance(tokenBalance, tokenInfo.decimals, 4)
+              roundedBalance
             ) : (
               <Skeleton width={30} />
             )}{' '}

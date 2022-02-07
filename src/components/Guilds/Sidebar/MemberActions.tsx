@@ -5,7 +5,6 @@ import Skeleton from 'react-loading-skeleton';
 import { useWeb3React } from '@web3-react/core';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
-
 import {
   DropdownMenu,
   DropdownContent,
@@ -14,7 +13,6 @@ import {
 import { IconButton, Button } from '../common/Button';
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
 import { shortenAddress } from '../../../utils';
-import { BigNumber } from 'ethers';
 import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
@@ -27,6 +25,8 @@ import moment from 'moment';
 import StakeTokensModal from '../StakeTokensModal';
 import { useTransactions } from '../../../contexts/Guilds';
 import { useERC20Guild } from '../../../hooks/Guilds/contracts/useContract';
+import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
+import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
 
 const UserActionButton = styled(IconButton)`
   border-radius: 50px;
@@ -113,29 +113,16 @@ export const MemberActions = () => {
     if (showStakeModal) setShowMenu(false);
   }, [showStakeModal]);
 
-  const votingPowerPercent = useMemo(() => {
-    if (!userVotingPower || !guildConfig || !tokenInfo) return null;
+  const votingPowerPercent = useVotingPowerPercent(
+    userVotingPower,
+    guildConfig?.totalLocked
+  );
 
-    if (guildConfig.totalLocked.isZero()) return 0;
-
-    const percent = userVotingPower
-      .mul(100)
-      .mul(Math.pow(10, 2))
-      .div(guildConfig.totalLocked);
-    return Math.round(percent.toNumber()) / Math.pow(10, 2);
-  }, [tokenInfo, guildConfig, userVotingPower]);
-
-  const getRoundedBalance = (
-    balance: BigNumber,
-    tokenDecimals: number,
-    desiredDecimals: number = 2
-  ) => {
-    let formatted = Number.parseFloat(formatUnits(balance, tokenDecimals));
-    return (
-      Math.round(formatted * Math.pow(10, desiredDecimals)) /
-      Math.pow(10, desiredDecimals)
-    );
-  };
+  const roundedBalance = useBigNumberToNumber(
+    userVotingPower,
+    tokenInfo?.decimals,
+    3
+  );
 
   const isUnlockable = unlockedTimestamp
     ? unlockedTimestamp.isBefore(moment.now())
@@ -195,11 +182,7 @@ export const MemberActions = () => {
               {!isUnlockable ? 'Locked' : 'Staked'}{' '}
               <span>
                 {userVotingPower && tokenInfo ? (
-                  `${getRoundedBalance(
-                    userVotingPower,
-                    tokenInfo.decimals,
-                    3
-                  )} ${tokenInfo.symbol}`
+                  `${roundedBalance} ${tokenInfo.symbol}`
                 ) : (
                   <Skeleton width={40} />
                 )}
