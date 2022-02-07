@@ -3,11 +3,14 @@ import styled from 'styled-components';
 import { FiChevronLeft } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
+import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Input } from '../../components/Guilds/common/Form';
 import SidebarCard from '../../components/Guilds/SidebarCard';
 import Editor from 'components/Guilds/Editor';
+
+import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -60,16 +63,26 @@ const Label = styled.span`
 `;
 
 const CreateProposalPage: React.FC = () => {
+  const ttlMs = 345600000;
   const history = useHistory();
   const [editMode, setEditMode] = React.useState(true);
   const [title, setTitle] = React.useState('');
   const [referenceLink, setReferenceLink] = React.useState('');
-  const [proposalBodyHTML, setProposalBodyHTML] = React.useState('');
-  const [proposalBodyMd, setProposalBodyMd] = React.useState('');
+  const [proposalBodyHTML, setProposalBodyHTML] =
+    useLocalStorageWithExpiry<string>(
+      `guild/newProposal/description/html`,
+      null,
+      ttlMs
+    );
+  const [proposalBodyMd, setProposalBodyMd] = useLocalStorageWithExpiry<string>(
+    `guild/newProposal/description/md`,
+    null,
+    ttlMs
+  );
 
   const handleToggleEditMode = () => {
     // TODO: add proper validation if toggle from edit to preview without required fields
-    if (editMode && !title && !proposalBodyMd) return;
+    if (editMode && !title.trim() && !proposalBodyMd.trim()) return;
     setEditMode(v => !v);
   };
 
@@ -140,9 +153,12 @@ const CreateProposalPage: React.FC = () => {
           <Editor
             onMdChange={setProposalBodyMd}
             onHTMLChange={setProposalBodyHTML}
+            content={proposalBodyHTML}
           />
         ) : (
-          <div dangerouslySetInnerHTML={{ __html: proposalBodyHTML }} />
+          <div
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(proposalBodyHTML) }}
+          />
         )}
         <Box margin="16px 0px">
           <Button
