@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 3995726,
-    "ipfsHash": "QmYTDaae36KYpgMNQU3VP3rFfFrVYzqztE9PoCKUntsB7t",
-    "toBlock": "8948914"
+    "ipfsHash": "QmNLkFtfKedXLntgkYZfcqxV7AaQMkFb2j5ifZw5Mrcwe9",
+    "toBlock": "9321495"
   },
   "contracts": {
     "avatar": "0x6370B3Ba7D9bAd94b35dC9073540E562bDe5Fdc3",
@@ -17,8 +17,8 @@
     },
     "votingMachines": {
       "0x5786e7a0A1aB6a4040a77fcbcD144E649A6d4939": {
-        "type": "DXDVotingMachine",
-        "token": "0x5d47100B0854525685907D5D773b92c22c0c745e"
+        "token": "0x5d47100B0854525685907D5D773b92c22c0c745e",
+        "type": "DXDVotingMachine"
       }
     }
   },
@@ -436,5 +436,6 @@
       "name": "Yeenus",
       "symbol": "YEENUS"
     }
-  ]
+  ],
+  "version": 1
 }

@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 338923,
-    "ipfsHash": "QmeLAcG9ZqoD6yeAeMKPpZtMR6hn2iS7qupZqm1aVDrjoN",
-    "toBlock": "4975188"
+    "ipfsHash": "QmdeNHCgYPF9vBWg9Hwnqyoqt6RWRXYyjeG1dtaSAnp5tN",
+    "toBlock": "5572529"
   },
   "contracts": {
     "avatar": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
@@ -15,8 +15,8 @@
     },
     "votingMachines": {
       "0x02F93D46C2B56777e9C82CF40917979375C2c711": {
-        "type": "DXDVotingMachine",
-        "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37"
+        "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
+        "type": "DXDVotingMachine"
       }
     }
   },
@@ -436,5 +436,6 @@
       "name": "ARBIS",
       "symbol": "ARBIS"
     }
-  ]
+  ],
+  "version": 1
 }

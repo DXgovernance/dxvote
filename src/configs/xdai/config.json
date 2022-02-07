@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 13060713,
-    "ipfsHash": "QmXFzmMCgXFuMdXTGrahdahgjkZih9XcYSEgXuk6ANTq3o",
-    "toBlock": "18276969"
+    "ipfsHash": "QmdbbcByyy8AzD76W6xBU6f79umofCsYKsf1hkMemQV9RM",
+    "toBlock": "20508474"
   },
   "contracts": {
     "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
@@ -43,7 +43,7 @@
         ],
         "redeemer": "0xd2cc17817c0d4cfc6819510b2e5288512122d71c",
         "supported": false,
-        "type": "contributionReward",
+        "type": "ContributionReward",
         "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df",
         "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
       },
@@ -91,7 +91,7 @@
           ]
         ],
         "supported": true,
-        "type": "schemeRegistrar",
+        "type": "SchemeRegistrar",
         "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df",
         "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
       },
@@ -101,7 +101,7 @@
         "name": "InvalidScheme",
         "newProposalTopics": [],
         "supported": false,
-        "type": "dxScheme",
+        "type": "DxScheme",
         "voteParams": "",
         "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
       },
@@ -111,7 +111,7 @@
         "name": "DaoDeployer",
         "newProposalTopics": [],
         "supported": false,
-        "type": "dxScheme",
+        "type": "DxScheme",
         "voteParams": "",
         "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
       },
@@ -121,7 +121,7 @@
         "name": "DaoDeployer2",
         "newProposalTopics": [],
         "supported": false,
-        "type": "dxScheme",
+        "type": "DxScheme",
         "voteParams": "",
         "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
       },
@@ -164,7 +164,6 @@
         "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
       },
       "0xaFE59DF878E23623A7a91d16001a66A4DD87e0c0": {
-        "Wted": true,
         "contractToCall": "0x0000000000000000000000000000000000000000",
         "creationLogEncoding": [
           [
@@ -193,6 +192,7 @@
             "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
           ]
         ],
+        "supported": true,
         "type": "GenericMulticall",
         "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df",
         "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"

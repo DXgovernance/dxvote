@@ -1,34 +1,14 @@
 {
-  "version": 1,
   "cache": {
     "fromBlock": 7219912,
-    "ipfsHash": "QmPfiLQQf35NyJ7KioKpMCuKyfzy9zinhiqZcScBxDHDUQ",
-    "toBlock": "14058837"
+    "ipfsHash": "QmcNfarQWmxWMjaEeDGZ7GwKGJXzKd6TQReNorLGBvm1pS",
+    "toBlock": "14156596"
   },
   "contracts": {
     "avatar": "0x519b70055af55a007110b4ff99b0ea33071c720a",
     "controller": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
-    "permissionRegistry": "0x0000000000000000000000000000000000000000",
-    "reputation": "0x7a927a93f221976aae26d5d077477307170f0b7c",
-    "token": "0x643b14f6ea235668278da5974930105852f2b7c4",
-    "utils": {
-      "multicall": "0x742121cD0BB9784c1f17f25B8da1bF3445b93ED4"
-    },
-    "votingMachines": {
-      "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84": {
-        "type": "GenesisProtocol",
-        "token": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf"
-      },
-      "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055": {
-        "type": "GenesisProtocol",
-        "token": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf"
-      }
-    },
     "daostack": {
-      "0x08cC7BBa91b849156e9c44DEd51896B38400f55B" : {
-        "supported": true,
-        "name": "ContributionReward",
-        "type": "contributionReward",
+      "0x08cC7BBa91b849156e9c44DEd51896B38400f55B": {
         "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
         "creationLogEncoding": [
           [
@@ -54,72 +34,54 @@
             }
           ]
         ],
+        "name": "ContributionReward",
         "newProposalTopics": [
           [
             "0xcbdcbf9aaeb1e9eff0f75d74e1c1e044bc87110164baec7d18d825b0450d97df",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
-        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84",
-        "voteParams": "0x399141801e9e265d79f1f1759dd67932980664ea28c2ba7e0e4dba8719e47118",
-        "redeemer": "0x406bfD9cDb247432fEEA52edD218F2a4Bd238C9b"
-      },
-
-      "0x1cb5B2BB4030220ad5417229A7A1E3c373cDD2F6" : {
-        "supported": false,
-        "name": "DxLockWhitelisted4Rep",
-        "type": "dxScheme",
-        "contractToCall": "0x0000000000000000000000000000000000000000",
-        "creationLogEncoding": [],
-        "newProposalTopics": [],
-        "voteParams": "",
-        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
-      },
-      "0x2E6FaE82c77e1D6433CCaAaF90281523b99D0D0a" : {
-        "supported": false,
-        "name": "DxLockMgnForRep",
-        "type": "dxScheme",
-        "contractToCall": "0x0000000000000000000000000000000000000000",
-        "creationLogEncoding": [],
-        "newProposalTopics": [],
-        "voteParams": "",
-        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
-      },
-      "0x4564BFe303900178578769b2D76B1a13533E5fd5" : {
-        "supported": false,
-        "name": "DxLockEth4Rep",
-        "type": "dxScheme",
-        "contractToCall": "0x0000000000000000000000000000000000000000",
-        "creationLogEncoding": [],
-        "newProposalTopics": [],
-        "voteParams": "",
-        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
-      },
-      "0x4D8DB062dEFa0254d00a44aA1602C30594e47B12" : {
-        "supported": false,
-        "name": "DxGenAuction4Rep",
-        "type": "dxScheme",
-        "contractToCall": "0x0000000000000000000000000000000000000000",
-        "creationLogEncoding": [],
-        "newProposalTopics": [],
-        "voteParams": "",
-        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
-      },
-      "" : {
+        "redeemer": "0x406bfD9cDb247432fEEA52edD218F2a4Bd238C9b",
         "supported": true,
-        "name": "",
-        "type": "",
-        "contractToCall": "",
-        "creationLogEncoding": [],
-        "newProposalTopics": [],
-        "voteParams": "",
+        "type": "ContributionReward",
+        "voteParams": "0x399141801e9e265d79f1f1759dd67932980664ea28c2ba7e0e4dba8719e47118",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
       },
-
+      "0x0f4775722a72FA85230c63598e661eC52563Fb4E": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [
+          [
+            {
+              "name": "_callsData",
+              "type": "bytes[]"
+            },
+            {
+              "name": "_values",
+              "type": "uint256[]"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_contractsToCall",
+              "type": "address[]"
+            }
+          ]
+        ],
+        "name": "Multicall_3",
+        "newProposalTopics": [
+          [
+            "0xf5a0655bd7247f3a6fa97e71b57c61314566afb5aa8be8eea2c48f4d1b9bf190",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ]
+        ],
+        "supported": true,
+        "type": "GenericMulticall",
+        "voteParams": "0xe5e87e294b422b2aa711bd25a7e8ac59a06bbf723786560c53c50edce980f2fd",
+        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+      },
       "0x199719EE4d5DCF174B80b80afa1FE4a8e5b0E3A0": {
-        "supported": false,
-        "name": "DutchXScheme",
-        "type": "GenericScheme",
         "contractToCall": "0xb9812E2fA995EC53B5b6DF34d21f9304762C5497",
         "creationLogEncoding": [
           [
@@ -137,19 +99,83 @@
             }
           ]
         ],
+        "name": "DutchXScheme",
         "newProposalTopics": [
           [
             "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": false,
+        "type": "GenericScheme",
         "voteParams": "0xff6155010292b35fb8daae8b4450cdc41a586bc591e9a76484e88ffba36f94a8",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
       },
-      "0x46DF3EA38a680FBc84E744D92b0A8Ec717B2eA7E": {
+      "0x1cb5B2BB4030220ad5417229A7A1E3c373cDD2F6": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [],
+        "name": "DxLockWhitelisted4Rep",
+        "newProposalTopics": [],
         "supported": false,
-        "name": "GenericSchemeToENS",
-        "type": "GenericScheme",
+        "type": "DxScheme",
+        "voteParams": "",
+        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+      },
+      "0x2E6FaE82c77e1D6433CCaAaF90281523b99D0D0a": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [],
+        "name": "DxLockMgnForRep",
+        "newProposalTopics": [],
+        "supported": false,
+        "type": "DxScheme",
+        "voteParams": "",
+        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+      },
+      "0x34C42c3ee81A03FD9ea773987b4a6eF62f3fc151": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [
+          [
+            {
+              "name": "_callsData",
+              "type": "bytes[]"
+            },
+            {
+              "name": "_values",
+              "type": "uint256[]"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_contractsToCall",
+              "type": "address[]"
+            }
+          ]
+        ],
+        "name": "Multicall_2",
+        "newProposalTopics": [
+          [
+            "0xf5a0655bd7247f3a6fa97e71b57c61314566afb5aa8be8eea2c48f4d1b9bf190",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ]
+        ],
+        "supported": true,
+        "type": "GenericMulticall",
+        "voteParams": "0x8a8f5413c9b49a4ed4df33213f474a0ae29328a81b3c40c881e8a3fab0d12b44",
+        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+      },
+      "0x4564BFe303900178578769b2D76B1a13533E5fd5": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [],
+        "name": "DxLockEth4Rep",
+        "newProposalTopics": [],
+        "supported": false,
+        "type": "DxScheme",
+        "voteParams": "",
+        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+      },
+      "0x46DF3EA38a680FBc84E744D92b0A8Ec717B2eA7E": {
         "contractToCall": "0x314159265dd8dbb310642f98f50c066173c1259b",
         "creationLogEncoding": [
           [
@@ -167,19 +193,29 @@
             }
           ]
         ],
+        "name": "GenericSchemeToENS",
         "newProposalTopics": [
           [
             "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": false,
+        "type": "GenericScheme",
         "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
       },
-      "0x973ce4e81BdC3bD39f46038f3AaA928B04558b08": {
+      "0x4D8DB062dEFa0254d00a44aA1602C30594e47B12": {
+        "contractToCall": "0x0000000000000000000000000000000000000000",
+        "creationLogEncoding": [],
+        "name": "DxGenAuction4Rep",
+        "newProposalTopics": [],
         "supported": false,
-        "name": "EnsRegistrarScheme",
-        "type": "GenericScheme",
+        "type": "DxScheme",
+        "voteParams": "",
+        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+      },
+      "0x973ce4e81BdC3bD39f46038f3AaA928B04558b08": {
         "contractToCall": "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85",
         "creationLogEncoding": [
           [
@@ -197,19 +233,19 @@
             }
           ]
         ],
+        "name": "EnsRegistrarScheme",
         "newProposalTopics": [
           [
             "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": false,
+        "type": "GenericScheme",
         "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
       },
       "0x9A543aeF934c21Da5814785E38f9A7892D3CDE6E": {
-        "supported": false,
-        "name": "EnsPublicProviderScheme",
-        "type": "GenericScheme",
         "contractToCall": "0x226159d592e2b063810a10ebf6dcbada94ed68b8",
         "creationLogEncoding": [
           [
@@ -227,19 +263,19 @@
             }
           ]
         ],
+        "name": "EnsPublicProviderScheme",
         "newProposalTopics": [
           [
             "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": false,
+        "type": "GenericScheme",
         "voteParams": "0x29ddbf85a0d14e08084cd9764c66ff2799d05355edf7f546c5af1c847a2d9734",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
       },
       "0x9CEA0DD05C4344A769B2F4C2f8890EDa8a700d64": {
-        "supported": false,
-        "name": "EnsRegistryScheme",
-        "type": "GenericScheme",
         "contractToCall": "0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e",
         "creationLogEncoding": [
           [
@@ -257,19 +293,19 @@
             }
           ]
         ],
+        "name": "EnsRegistryScheme",
         "newProposalTopics": [
           [
             "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": false,
+        "type": "GenericScheme",
         "voteParams": "0x0dc1fb4d230debe146613511601e0df83dd5ac323a7add833de82ead5a19db3a",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
       },
       "0xB3ec6089556CcA49549Be01fF446cF40fA81c84D": {
-        "supported": false,
-        "name": "EnsPublicResolverScheme",
-        "type": "GenericScheme",
         "contractToCall": "0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
         "creationLogEncoding": [
           [
@@ -287,19 +323,19 @@
             }
           ]
         ],
+        "name": "EnsPublicResolverScheme",
         "newProposalTopics": [
           [
             "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": false,
+        "type": "GenericScheme",
         "voteParams": "0xa81f982cb1c27eb142e5f602e7eb50d125dd6a7e52dac1af5f9decb88278f2fa",
         "votingMachine": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055"
       },
       "0xc072171dA83CCe311e37BC1d168f54E6A6536DF4": {
-        "supported": false,
-        "name": "TokenRegistry",
-        "type": "GenericScheme",
         "contractToCall": "0x93db90445b76329e9ed96ecd74e76d8fbf2590d8",
         "creationLogEncoding": [
           [
@@ -317,88 +353,19 @@
             }
           ]
         ],
+        "name": "TokenRegistry",
         "newProposalTopics": [
           [
             "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": false,
+        "type": "GenericScheme",
         "voteParams": "0x8452e57c89dc78ec1b1ffc28786655279f9af4ac589dd5988c962e8cf6b4529b",
         "votingMachine": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055"
       },
-      
-      "0x0f4775722a72FA85230c63598e661eC52563Fb4E": {
-        "supported": true,
-        "name": "Multicall_3",
-        "type": "GenericMulticall",
-        "contractToCall": "0x0000000000000000000000000000000000000000",
-        "creationLogEncoding": [
-          [
-            {
-              "name": "_callsData",
-              "type": "bytes[]"
-            },
-            {
-              "name": "_values",
-              "type": "uint256[]"
-            },
-            {
-              "name": "_descriptionHash",
-              "type": "string"
-            },
-            {
-              "name": "_contractsToCall",
-              "type": "address[]"
-            }
-          ]
-        ],
-        "newProposalTopics": [
-          [
-            "0xf5a0655bd7247f3a6fa97e71b57c61314566afb5aa8be8eea2c48f4d1b9bf190",
-            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
-          ]
-        ],
-        "voteParams": "0xe5e87e294b422b2aa711bd25a7e8ac59a06bbf723786560c53c50edce980f2fd",
-        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
-      },
-      "0x34C42c3ee81A03FD9ea773987b4a6eF62f3fc151": {
-        "supported": true,
-        "name": "Multicall_2",
-        "type": "GenericMulticall",
-        "contractToCall": "0x0000000000000000000000000000000000000000",
-        "creationLogEncoding": [
-          [
-            {
-              "name": "_callsData",
-              "type": "bytes[]"
-            },
-            {
-              "name": "_values",
-              "type": "uint256[]"
-            },
-            {
-              "name": "_descriptionHash",
-              "type": "string"
-            },
-            {
-              "name": "_contractsToCall",
-              "type": "address[]"
-            }
-          ]
-        ],
-        "newProposalTopics": [
-          [
-            "0xf5a0655bd7247f3a6fa97e71b57c61314566afb5aa8be8eea2c48f4d1b9bf190",
-            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
-          ]
-        ],
-        "voteParams": "0x8a8f5413c9b49a4ed4df33213f474a0ae29328a81b3c40c881e8a3fab0d12b44",
-        "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
-      },
       "0xef9dC3c39CA40A2a3000ACc5ca0467CE1C250808": {
-        "supported": true,
-        "name": "Multicall_1",
-        "type": "GenericMulticall",
         "contractToCall": "0x0000000000000000000000000000000000000000",
         "creationLogEncoding": [
           [
@@ -420,20 +387,19 @@
             }
           ]
         ],
+        "name": "Multicall_1",
         "newProposalTopics": [
           [
             "0xf5a0655bd7247f3a6fa97e71b57c61314566afb5aa8be8eea2c48f4d1b9bf190",
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": true,
+        "type": "GenericMulticall",
         "voteParams": "0xe5e87e294b422b2aa711bd25a7e8ac59a06bbf723786560c53c50edce980f2fd",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
       },
-
       "0xf050F3C6772Ff35eB174A6900833243fcCD0261F": {
-        "supported": true,
-        "name": "SchemeRegistrar",
-        "type": "schemeRegistrar",
         "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
         "creationLogEncoding": [
           [
@@ -465,6 +431,7 @@
             }
           ]
         ],
+        "name": "SchemeRegistrar",
         "newProposalTopics": [
           [
             "0xcc9180a05805acc3615b472c3ba00cdc9cd2c6e0e0b3648d60eb58f2c1001b84",
@@ -475,8 +442,26 @@
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
+        "supported": true,
+        "type": "SchemeRegistrar",
         "voteParams": "0x9799ec39e42562c5ac7fbb104f1edcaa495e00b45e0db80cce1c0cdc863d0d0f",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
+      }
+    },
+    "permissionRegistry": "0x0000000000000000000000000000000000000000",
+    "reputation": "0x7a927a93f221976aae26d5d077477307170f0b7c",
+    "token": "0x643b14f6ea235668278da5974930105852f2b7c4",
+    "utils": {
+      "multicall": "0x742121cD0BB9784c1f17f25B8da1bF3445b93ED4"
+    },
+    "votingMachines": {
+      "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055": {
+        "token": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
+        "type": "GenesisProtocol"
+      },
+      "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84": {
+        "token": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
+        "type": "GenesisProtocol"
       }
     }
   },
@@ -972,5 +957,6 @@
       "name": "yearn.finance",
       "symbol": "YFI"
     }
-  ]
+  ],
+  "version": 1
 }
