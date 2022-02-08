@@ -71,12 +71,7 @@ const Header = observer(() => {
   );
 
   const {
-    context: {
-      providerStore,
-      blockchainStore,
-      configStore,
-      daoStore,
-    },
+    context: { providerStore, blockchainStore, configStore, daoStore },
   } = useContext();
 
   const { active, account } = providerStore.getActiveWeb3React();
@@ -107,11 +102,19 @@ const Header = observer(() => {
   } else {
     const networkName = configStore.getActiveChainName();
 
-    const dxdToken = configStore.getTokensOfNetwork().find(token => token.name === "DXdao");
-    const genToken = configStore.getTokensOfNetwork().find(token => token.name === "DAOstack");
+    const dxdToken = configStore
+      .getTokensOfNetwork()
+      .find(token => token.name === 'DXdao');
+    const genToken = configStore
+      .getTokensOfNetwork()
+      .find(token => token.name === 'DAOstack');
 
-    const dxdBalance = dxdToken ? useBalance(account, dxdToken.address) : bnum(0);
-    const genBalance = genToken ? useBalance(account, genToken.address) : bnum(0);
+    const dxdBalance = dxdToken
+      ? useBalance(account, dxdToken.address)
+      : bnum(0);
+    const genBalance = genToken
+      ? useBalance(account, genToken.address)
+      : bnum(0);
 
     const { userRep, totalSupply } =
       active && blockchainStore.initialLoadComplete
@@ -135,8 +138,14 @@ const Header = observer(() => {
           <NavSection>
             {account && (
               <>
-                <ItemBox> {formatCurrency(normalizeBalance(dxdBalance))} DXD </ItemBox>
-                <ItemBox> {formatCurrency(normalizeBalance(genBalance))} GEN </ItemBox>
+                <ItemBox>
+                  {' '}
+                  {formatCurrency(normalizeBalance(dxdBalance))} DXD{' '}
+                </ItemBox>
+                <ItemBox>
+                  {' '}
+                  {formatCurrency(normalizeBalance(genBalance))} GEN{' '}
+                </ItemBox>
                 <ItemBox> {repPercentage.toString()} % REP </ItemBox>
               </>
             )}

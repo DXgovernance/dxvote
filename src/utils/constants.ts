@@ -160,7 +160,8 @@ export const ALCHEMY_NETWORK_URLS = {
 export const POKT_NETWORK_URLS = {
   '1': 'https://eth-archival.gateway.pokt.network/v1/lb/61f86d630d66d80038fb8c38',
   '4': 'https://eth-rinkeby.gateway.pokt.network/v1/lb/61116c81a585a20035149067',
-  '100': 'https://poa-xdai-archival.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a',
+  '100':
+    'https://poa-xdai-archival.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a',
 };
 
 export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(

@@ -59,21 +59,23 @@ const Stakes = () => {
 
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
-  const votingMachineOfProposal = daoStore.getVotingMachineOfProposal(proposalId);
+  const votingMachineOfProposal =
+    daoStore.getVotingMachineOfProposal(proposalId);
 
   const votingMachineTokenName =
-    votingMachines[ votingMachineOfProposal ].type ==
-    'DXDVotingMachine'
+    votingMachines[votingMachineOfProposal].type == 'DXDVotingMachine'
       ? 'DXD'
       : 'GEN';
-  
+
   const votingMachineTokenAllowed = useAllowance(
-    votingMachines[ votingMachineOfProposal ].token,
+    votingMachines[votingMachineOfProposal].token,
     account,
     votingMachineOfProposal
-  )
+  );
 
-  const votingMachineTokenApproved = votingMachineTokenAllowed.gt(bnum(parseUnits("10000")));
+  const votingMachineTokenApproved = votingMachineTokenAllowed.gt(
+    bnum(parseUnits('10000'))
+  );
 
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 

@@ -1371,7 +1371,10 @@ export default class UtilsService {
                         }
                       );
                     } catch (error) {
-                      console.error('Error in getting proposal data from creation event', error);
+                      console.error(
+                        'Error in getting proposal data from creation event',
+                        error
+                      );
                     }
 
                     if (schemeTypeData.type === 'SchemeRegistrar') {
