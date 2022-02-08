@@ -5,9 +5,9 @@ import Web3ConnectStatus from '../Web3ConnectStatus';
 import { useContext } from '../../contexts';
 import { FiSettings, FiUser, FiBarChart2 } from 'react-icons/fi';
 import dxdaoIcon from 'assets/images/DXdao.svg';
-import Web3 from 'web3';
-import { bnum } from '../../utils';
+import { bnum, formatCurrency, normalizeBalance } from '../../utils';
 import { Box } from '../../components/common';
+import { useBalance } from 'hooks/useBalance';
 
 const NavWrapper = styled.div`
   display: flex;
@@ -72,7 +72,6 @@ const Header = observer(() => {
 
   const {
     context: {
-      userStore,
       providerStore,
       blockchainStore,
       configStore,
@@ -107,24 +106,13 @@ const Header = observer(() => {
     );
   } else {
     const networkName = configStore.getActiveChainName();
-    const userInfo = userStore.getUserInfo();
 
-    const dxdBalance =
-      active && userInfo.dxdBalance
-        ? parseFloat(
-            Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(
-              2
-            )
-          )
-        : 0;
-    const genBalance =
-      active && userInfo.genBalance
-        ? parseFloat(
-            Number(Web3.utils.fromWei(userInfo.genBalance.toString())).toFixed(
-              2
-            )
-          )
-        : 0;
+    const dxdToken = configStore.getTokensOfNetwork().find(token => token.name === "DXdao");
+    const genToken = configStore.getTokensOfNetwork().find(token => token.name === "DAOstack");
+
+    const dxdBalance = dxdToken ? useBalance(account, dxdToken.address) : bnum(0);
+    const genBalance = genToken ? useBalance(account, genToken.address) : bnum(0);
+
     const { userRep, totalSupply } =
       active && blockchainStore.initialLoadComplete
         ? daoStore.getRepAt(account, providerStore.getCurrentBlockNumber())
@@ -147,8 +135,8 @@ const Header = observer(() => {
           <NavSection>
             {account && (
               <>
-                <ItemBox> {dxdBalance} DXD </ItemBox>
-                <ItemBox> {genBalance} GEN </ItemBox>
+                <ItemBox> {formatCurrency(normalizeBalance(dxdBalance))} DXD </ItemBox>
+                <ItemBox> {formatCurrency(normalizeBalance(genBalance))} GEN </ItemBox>
                 <ItemBox> {repPercentage.toString()} % REP </ItemBox>
               </>
             )}

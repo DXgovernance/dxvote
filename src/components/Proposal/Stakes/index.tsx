@@ -30,6 +30,8 @@ import {
   SummaryTotal,
   ActionButton,
 } from '../styles';
+import { useAllowance } from 'hooks/useBalance';
+import { parseUnits } from 'ethers/lib/utils';
 
 const Stakes = () => {
   const {
@@ -57,15 +59,21 @@ const Stakes = () => {
 
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
+  const votingMachineOfProposal = daoStore.getVotingMachineOfProposal(proposalId);
+
   const votingMachineTokenName =
-    votingMachines[daoStore.getVotingMachineOfProposal(proposalId)].type ==
+    votingMachines[ votingMachineOfProposal ].type ==
     'DXDVotingMachine'
       ? 'DXD'
       : 'GEN';
+  
+  const votingMachineTokenAllowed = useAllowance(
+    votingMachines[ votingMachineOfProposal ].token,
+    account,
+    votingMachineOfProposal
+  )
 
-  // TO DO: fix this later
-  // const { dxdApproved, genApproved } = userStore.getUserInfo();
-  const votingMachineTokenApproved = true;
+  const votingMachineTokenApproved = votingMachineTokenAllowed.gt(bnum(parseUnits("10000")));
 
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 

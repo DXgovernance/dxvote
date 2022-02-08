@@ -16,7 +16,7 @@ const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
 const Web3ReactManager = ({ children }) => {
   const { context } = useContext();
-  const { providerStore, blockchainStore, userStore } = context;
+  const { providerStore, blockchainStore } = context;
 
   const location = useLocation();
   const history = useHistory();
@@ -125,7 +125,6 @@ const Web3ReactManager = ({ children }) => {
   useInterval(
     async () => {
       if (networkActive) {
-        userStore.update(providerStore.getActiveWeb3React());
         if (location.pathname !== '/cache') {
           blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
         }

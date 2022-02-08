@@ -22,7 +22,6 @@ import TransactionStore from '../stores/Transaction';
 import ModalStore from '../stores/Modal';
 import ConfigStore from '../stores/ConfigStore';
 import DaoStore from '../stores/DaoStore';
-import UserStore from '../stores/UserStore';
 import BlockchainStore from '../stores/BlockchainStore';
 import NotificationStore from '../stores/NotificationStore';
 import CacheService from 'services/CacheService';
@@ -46,7 +45,6 @@ export default class RootContext {
   modalStore: ModalStore;
   configStore: ConfigStore;
   daoStore: DaoStore;
-  userStore: UserStore;
   notificationStore: NotificationStore;
   blockchainStore: BlockchainStore;
 
@@ -74,7 +72,6 @@ export default class RootContext {
     this.modalStore = new ModalStore(this);
     this.configStore = new ConfigStore(this);
     this.daoStore = new DaoStore(this);
-    this.userStore = new UserStore(this);
     this.notificationStore = new NotificationStore(this);
     this.blockchainStore = new BlockchainStore(this);
 
@@ -102,7 +99,6 @@ export default class RootContext {
     this.notificationStore.reset();
     this.transactionStore.reset();
     this.modalStore.reset();
-    this.userStore.reset();
     this.blockchainStore.reset();
     this.daoStore.reset();
   }
