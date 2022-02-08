@@ -102,7 +102,7 @@ const UserPage = observer(() => {
           </span>
         );
       })}
-      {redeemsLeft.bounty.map((proposalId, i) => {
+      {Object.keys(redeemsLeft.bounty).map((proposalId, i) => {
         return (
           <span
             key={'proposalLink' + i}
@@ -114,7 +114,8 @@ const UserPage = observer(() => {
               cursor: 'pointer',
             }}
           >
-            Staking token bounty redeem in Proposal {proposalId}
+            Staking token bounty redeem of{' '}
+            {redeemsLeft.bounty[proposalId].toString()} in Proposal {proposalId}
           </span>
         );
       })}

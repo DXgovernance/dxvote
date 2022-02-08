@@ -1,12 +1,8 @@
 import React from 'react';
-import { FilterProvider, ProposalsProvider } from '.';
+import { FilterProvider } from '.';
 
 export const GuildsContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  return (
-    <FilterProvider>
-      <ProposalsProvider>{children}</ProposalsProvider>
-    </FilterProvider>
-  );
+  return <FilterProvider>{children}</FilterProvider>;
 };

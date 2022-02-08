@@ -32,16 +32,6 @@ declare global {
 
   // BlockchainStore Types
 
-  interface EventStorage {
-    [address: string]: {
-      [eventName: string]: {
-        emitions: any[];
-        fromBlock: number;
-        toBlock: number;
-      };
-    };
-  }
-
   interface ContractStorage {
     [contractType: string]: {
       [address: string]: {
@@ -96,6 +86,8 @@ declare global {
     staker: string;
     amount: BigNumber;
     vote: number;
+
+    // this can be removed
     amount4Bounty: BigNumber;
   }
 

@@ -101,6 +101,14 @@ export const NETWORK_NAMES: Record<ChainConfig['id'], ChainConfig['name']> =
     return acc;
   }, {});
 
+export const getNetworkByName = function (networkName: string): ChainConfig {
+  return NETWORKS.find(network => network.name == networkName);
+};
+
+export const getNetworkById = function (networkId: number): ChainConfig {
+  return NETWORKS.find(network => network.id == networkId);
+};
+
 export const NETWORK_DISPLAY_NAMES: Record<
   ChainConfig['id'],
   ChainConfig['displayName']

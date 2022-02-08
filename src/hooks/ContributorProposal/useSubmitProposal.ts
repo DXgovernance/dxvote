@@ -53,7 +53,7 @@ export const useSubmitProposal = (
 
   const scheme = daoStore
     .getAllSchemes()
-    .find(scheme => scheme.name === proposalType.scheme);
+    .find(scheme => scheme.address === proposalType.scheme);
 
   const submitProposal = async () => {
     try {

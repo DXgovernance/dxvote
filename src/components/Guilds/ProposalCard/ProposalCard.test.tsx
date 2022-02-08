@@ -4,31 +4,53 @@ import { default as ProposalCard } from './';
 
 import { render } from '../../../utils/tests';
 
-jest.mock('hooks/Guilds/useProposal', () => ({
+const proposalTitle = 'Proposal Title';
+const creatorAddress = '0x0000000000000000000000000000000000000000';
+
+jest.mock('hooks/Guilds/ether-swr/useProposal', () => ({
   useProposal: () => ({
     data: {
-      title: 'Proposal Title',
-      description: 'Proposal Description',
+      title: proposalTitle,
       contentHash: '0x0',
-      endTime: { toNumber: () => 3 },
+      creator: creatorAddress,
+      endTime: {
+        toNumber: () => 3,
+        isBefore: () => false,
+        fromNow: () => 'now',
+        toNow: () => 'later',
+        format: () => 'A Date Formate',
+      },
     },
     isValidating: false,
   }),
 }));
 
+jest.mock('hooks/Guilds/ens/useENSAvatar', () => ({
+  __esModule: true,
+  default: () => ({
+    avatarUri: 'test',
+    imageUrl: 'test',
+    ensName: 'test.eth',
+  }),
+}));
+
 test('ProposalCard with mocked data', async () => {
-  render(<ProposalCard id="" href="" />);
+  render(<ProposalCard id="test" href="test" />);
 
   //Title is rendered
-  expect(screen.queryByText('Proposal Title')).toBeTruthy();
-
-  //description is not rendered in ProposalCard
-  expect(screen.queryByText('Proposal Description')).toBeNull();
+  expect(screen.queryByText(proposalTitle)).toBeTruthy();
 
   //fix
   //expect(screen.queryByTestId('proposal-status')).toBeTruthy();
 
   //Hardcoded data, not yet passed in component from SWR
-  expect(screen.queryByText('Swapr von 0x01Cf...2712')).toBeTruthy();
+  expect(screen.queryByText('test.eth')).toBeTruthy();
   expect(screen.queryByText('150 ETH')).toBeTruthy();
+});
+
+test('ProposalCard without data', async () => {
+  render(<ProposalCard id={null} href={null} />);
+
+  //Skeleton is rendered
+  expect(screen.queryAllByTestId('skeleton')).toBeTruthy();
 });

@@ -1,7 +1,7 @@
 {
-  "mainnet": "QmTmSpeksBhWu7RmsP2dNPWGYf3q1baWEJ8qBKcD2aoZe3",
-  "xdai": "QmcsG2z4b2tsaUXrdPdSzXajjwTYm6uc7dg2nNLQp73CuP",
-  "arbitrum": "QmUAtgZ7yEwKQJvbC7HsKTQprp2ApCSAQ1CeamCguRcKVa",
-  "rinkeby": "QmW53ovzdWVkn3JyJRFqFJnwrkhrExNjKhY8VpGZ4hnuzA",
-  "arbitrumTestnet": "QmeWgcc8dWWnaySg92aaZ7QJq2L5GMVT1HFtarxibGkjF9"
+    "mainnet": "Qmeb41RGT8vcWSZtTV7WVSy7iz5beXCoTGhGK11XrrdJCG",
+    "xdai": "QmPu4MSq1UXUdoLXNjg2nHJ8fB19tWdwaT9NsRSRcBGaRS",
+    "arbitrum": "QmXRx3ZHrf7tf7eJY4XEWMM2Zq8kxDhdRYwehBA3wS7aZq",
+    "rinkeby": "QmNfjoQjJJiAqT6ndViNqvUn1aB1XFxNkUe3jyg2ZhCjkz",
+    "arbitrumTestnet": "QmVaq8wvmRAk1Wik8vEMvHXBbyE6Pq9zPLcTnjoGEs6U8a"
 }

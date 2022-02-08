@@ -129,7 +129,10 @@ export const decodeProposalStatus = function (
             : bnum(0),
           pendingAction: PendingAction.Redeem,
         };
-      else if (proposal.stateInScheme === WalletSchemeProposalState.Rejected)
+      else if (
+        proposal.winningVote == '2' ||
+        proposal.stateInScheme === WalletSchemeProposalState.Rejected
+      )
         return {
           status: 'Proposal Rejected',
           boostTime: boostedPhaseTime,

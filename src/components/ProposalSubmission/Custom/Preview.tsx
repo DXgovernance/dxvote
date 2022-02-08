@@ -25,6 +25,9 @@ export const Preview = ({ descriptionText, schemeToUse }) => {
           border: '1px solid gray',
           padding: '20px 10px',
         }}
+        linkTarget="_blank"
+        skipHtml
+        escapeHtml
       />
       {schemeToUse.type === 'ContributionReward' ||
       schemeToUse.type === 'GenericMulticall' ||

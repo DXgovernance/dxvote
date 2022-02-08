@@ -18,9 +18,13 @@ import {
   isNotActive,
   isWinningVote,
   votedBeforeBoosted,
+  isVoteYes,
 } from '../utils';
 import { TokenVesting } from '../types/types';
 import { ProposalsExtended } from '../types/types';
+
+const proposalTitles = require('../configs/proposalTitles.json');
+
 export default class DaoStore {
   daoCache: DaoNetworkCache;
   context: RootContext;
@@ -128,6 +132,12 @@ export default class DaoStore {
       unparsedCache.proposals[proposalId].negativeStakes = bnum(
         unparsedCache.proposals[proposalId].negativeStakes
       );
+
+      // Update proposal title from proposalTitles.json file
+      if (!unparsedCache.proposals[proposalId].title) {
+        unparsedCache.proposals[proposalId].title =
+          proposalTitles[proposalId] || '';
+      }
     });
 
     Object.keys(unparsedCache.votingMachines).map(votingMachineAddress => {
@@ -565,7 +575,7 @@ export default class DaoStore {
       .concat(
         proposalEvents.redeems.map(event => {
           return {
-            text: [`Staking token Redeem from `, ` of ${event.amount}`],
+            text: [`Staking token redeem from `, ` of ${event.amount}`],
             textParams: [event.beneficiary],
             event: {
               proposalId: event.proposalId,
@@ -597,7 +607,10 @@ export default class DaoStore {
       .concat(
         proposalEvents.redeemsDaoBounty.map(event => {
           return {
-            text: [`Staking token Redeem from `, ` of ${event.amount}`],
+            text: [
+              `Staking token bounty redeemed from `,
+              ` of ${event.amount}`,
+            ],
             textParams: [event.beneficiary],
             event: {
               proposalId: event.proposalId,
@@ -824,8 +837,9 @@ export default class DaoStore {
       )
       .concat(
         proposalEvents.redeemsDaoBounty.map(event => {
+          this.getVotingMachineOfProposal(event.proposalId);
           return {
-            text: `Staking token amount of ${event.amount} redeemed from proposal ${event.proposalId} `,
+            text: `Staking token bounty of ${event.amount} redeemed from proposal ${event.proposalId} `,
             event: {
               proposalId: event.proposalId,
               tx: event.tx,
@@ -857,14 +871,14 @@ export default class DaoStore {
   getUserRedeemsLeft(userAddress: string): {
     rep: string[];
     stake: string[];
-    bounty: string[];
+    bounty: { [proposalId: string]: BigNumber };
   } {
     const userEvents = this.getUserEvents(userAddress);
 
     let redeemsLeft = {
       rep: [],
       stake: [],
-      bounty: [],
+      bounty: {},
     };
 
     // Adds user created proposals that have ended
@@ -876,7 +890,8 @@ export default class DaoStore {
 
       if (
         votingParameters.proposingRepReward.toNumber() > 0 &&
-        isNotActive(proposal)
+        isNotActive(proposal) &&
+        isVoteYes(proposal.winningVote)
       ) {
         redeemsLeft.rep.push(newProposal.proposalId);
       }
@@ -904,17 +919,34 @@ export default class DaoStore {
       if (
         proposal.stateInVotingMachine ===
           VotingMachineProposalState.ExpiredInQueue ||
-        (isNotActive(proposal) &&
-          redeemsLeft.stake.indexOf(stake.proposalId) < 0 &&
-          isWinningVote(proposal, stake))
+        (isNotActive(proposal) && isWinningVote(proposal, stake))
       ) {
-        redeemsLeft.stake.push(stake.proposalId);
+        // Add proposal redeem if it was not added yet
+        if (redeemsLeft.stake.indexOf(stake.proposalId) < 0)
+          redeemsLeft.stake.push(stake.proposalId);
+
+        // If proposal executed and stake was for YES, then add the bounty
         if (
           proposal.stateInVotingMachine ===
             VotingMachineProposalState.Executed &&
-          proposal.winningVote === 1
+          isVoteYes(stake.vote)
         ) {
-          redeemsLeft.bounty.push(stake.proposalId);
+          const proposalDaoBounty = this.getProposal(
+            stake.proposalId
+          ).daoBounty;
+          const proposalWinningStakes = this.getProposal(
+            stake.proposalId
+          ).positiveStakes;
+          const bountyToRedeem = bnum(stake.amount)
+            .times(proposalDaoBounty)
+            .div(proposalWinningStakes)
+            .integerValue();
+
+          redeemsLeft.bounty[stake.proposalId] = redeemsLeft.bounty[
+            stake.proposalId
+          ]
+            ? bnum(redeemsLeft.bounty[stake.proposalId]).plus(bountyToRedeem)
+            : bountyToRedeem;
         }
       }
     });
@@ -934,11 +966,14 @@ export default class DaoStore {
         );
     });
     userEvents.redeemsDaoBounty.map(redeemDaoBounty => {
-      if (redeemsLeft.bounty.indexOf(redeemDaoBounty.proposalId) > -1)
-        redeemsLeft.bounty.splice(
-          redeemsLeft.bounty.indexOf(redeemDaoBounty.proposalId),
-          1
-        );
+      redeemsLeft.bounty[redeemDaoBounty.proposalId] = bnum(
+        redeemsLeft.bounty[redeemDaoBounty.proposalId]
+      )
+        .minus(bnum(redeemDaoBounty.amount))
+        .integerValue();
+
+      if (redeemsLeft.bounty[redeemDaoBounty.proposalId].lte(0))
+        delete redeemsLeft.bounty[redeemDaoBounty.proposalId];
     });
 
     return redeemsLeft;

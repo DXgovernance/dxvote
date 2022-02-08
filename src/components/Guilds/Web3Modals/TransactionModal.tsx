@@ -1,11 +1,15 @@
+import styled from 'styled-components';
 import { useMemo } from 'react';
-import styled, { css } from 'styled-components';
+
 import PendingCircle from 'components/common/PendingCircle';
 import { Modal, ModalProps } from '../common/Modal';
 import { AiOutlineArrowUp } from 'react-icons/ai';
 import { Button } from '../common/Button';
 import { FiX } from 'react-icons/fi';
 import { Circle, Flex } from '../common/Layout';
+
+import { ContainerText } from '../common/Layout/Text';
+
 import { getBlockchainLink } from '../../../utils';
 import { getChains } from '../../../provider/connectors';
 import { useWeb3React } from '@web3-react/core';
@@ -20,43 +24,6 @@ export const ModalButton = styled(Button)`
     color: ${({ theme }) => theme.colors.primary};
   }
 `;
-
-type ContainerTextProps = {
-  variant?: 'regular' | 'medium' | 'bold';
-};
-
-const variantStyles = (variant = 'regular') =>
-  ({
-    regular: css`
-      font-weight: 500;
-      font-size: 12px;
-      line-height: 16px;
-    `,
-    medium: css`
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 20px;
-    `,
-
-    bold: css`
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 24px;
-    `,
-  }[variant]);
-
-export const ContainerText = styled(Flex)<ContainerTextProps>`
-  font-family: Inter;
-  margin: 4px;
-  font-style: normal;
-  color: ${props => props.color || '#000000'};
-  text-decoration: none;
-  ${({ variant }) => variantStyles(variant)}
-`;
-
-ContainerText.defaultProps = {
-  variant: 'primary',
-};
 
 export const Container = styled.div`
   margin: 0.5rem 0 1rem 0;

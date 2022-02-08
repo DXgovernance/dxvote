@@ -4,9 +4,11 @@ import { isDesktop, isMobile } from 'react-device-detect';
 import { useFilter } from 'contexts/Guilds/filters';
 
 import { InputText } from '../common/Form';
-import { Box } from '../common/Layout/Box';
+import { Box, Flex } from '../common/Layout/Box';
 
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
+import { Button } from '../common/Button';
+import { useHistory, useLocation } from 'react-router';
 
 const FilterContainer = styled(Box)`
   display: flex;
@@ -24,15 +26,37 @@ const FilterRow = styled.div`
   }
 `;
 
+const ButtonContainer = styled(Flex)`
+  flex-direction: Row;
+`;
+
 export const Filter = () => {
   const [viewFilter, setViewFilter] = useState(false);
+  const [createProposal, setCreateProposal] = useState(true);
   const { totalFilters } = useFilter();
+
+  const history = useHistory();
+  const location = useLocation();
+
   return (
     <FilterContainer>
       <FilterRow>
         <InputText placeholder="Proposal title" />
-        {isDesktop && <FilterMenu />}
-        {isMobile && (
+        {createProposal && (
+          <ButtonContainer>
+            <Button onClick={() => setCreateProposal(false)}>
+              Proposal state
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => history.push(location.pathname + '/proposalType')}
+            >
+              Create Proposal
+            </Button>
+          </ButtonContainer>
+        )}
+        {isDesktop && !createProposal && <FilterMenu />}
+        {isMobile && !createProposal && (
           <FilterButton
             onClick={() => setViewFilter(!viewFilter)}
             active={viewFilter || totalFilters > 0}
