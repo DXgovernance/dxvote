@@ -12,8 +12,7 @@ const HeaderWrapper = styled.nav`
   position: sticky;
   top: 0;
   background: white;
-
-  z-index: 999999;
+  z-index: 200;
 
   @media only screen and(min-width: 768px) {
     padding: 1.5rem 0;

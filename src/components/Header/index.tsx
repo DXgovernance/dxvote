@@ -109,12 +109,10 @@ const Header = observer(() => {
       .getTokensOfNetwork()
       .find(token => token.name === 'DAOstack');
 
-    const dxdBalance = dxdToken
-      ? useBalance(account, dxdToken.address)
-      : bnum(0);
-    const genBalance = genToken
-      ? useBalance(account, genToken.address)
-      : bnum(0);
+    const dxdBalance =
+      dxdToken && account ? useBalance(account, dxdToken.address) : bnum(0);
+    const genBalance =
+      genToken && account ? useBalance(account, genToken.address) : bnum(0);
 
     const { userRep, totalSupply } =
       active && blockchainStore.initialLoadComplete

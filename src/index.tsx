@@ -37,6 +37,7 @@ import { DEFAULT_ETH_CHAIN_ID } from './provider/connectors';
 import { EtherSWRConfig } from 'ether-swr';
 
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
+import loggerMiddleware from 'hooks/Guilds/ether-swr/middleware/logger';
 
 const Content = styled.div`
   margin: auto;
@@ -146,6 +147,7 @@ const SplitApp = () => {
           ],
         ]),
         refreshInterval: 5000,
+        use: [loggerMiddleware],
       }}
     >
       {!isGuilds ? (

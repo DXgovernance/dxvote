@@ -71,7 +71,7 @@ export default class ConfigStore {
 
       const configRefs = isTestingEnv
         ? defaultCacheConfig
-        : JSON.parse(await ipfsService.getContentFromIPFS(metadataHash));
+        : await ipfsService.getContentFromIPFS(metadataHash);
 
       const configContentHash = configRefs[this.getActiveChainName()];
       if (!configContentHash)
@@ -93,7 +93,8 @@ export default class ConfigStore {
     } catch (e) {
       console.error(
         '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
-        this.networkConfig
+        this.networkConfig,
+        e
       );
     }
 

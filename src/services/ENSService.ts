@@ -31,6 +31,18 @@ export default class ENSService {
     return name;
   }
 
+  async resolveENSAddress(ensName: string) {
+    let address = null;
+    try {
+      address = await this.web3Provider.resolveName(ensName);
+    } catch (e) {
+      console.warn(
+        '[ENSService] Error while trying to reverse resolve ENS address.'
+      );
+    }
+    return address;
+  }
+
   async resolveContentHash(ensName: string): Promise<string | null> {
     const resolver = await this.web3Provider.getResolver(ensName);
     const contentHash = await resolver.getContentHash();

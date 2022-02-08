@@ -11,8 +11,8 @@ const variantStyles = (variant = 'primary') =>
       background-color: ${({ theme }) => theme.colors.background};
       color: ${({ theme }) => theme.colors.text};
       border-radius: ${({ theme }) => theme.radii.pill};
-      padding: 0.5rem 0.8rem;
-      margin: 0.2rem;
+      padding: ${({ padding }) => (padding ? padding : ' 0.5rem 0.8rem')};
+      margin: ${({ margin }) => (margin ? margin : '0.2rem')};
 
       :hover:enabled {
         background-color: ${({ theme }) => theme.colors.primary};
@@ -35,8 +35,8 @@ const variantStyles = (variant = 'primary') =>
       background-color: ${({ theme }) => theme.colors.primary};
       color: ${({ theme }) => theme.colors.background};
       border-radius: ${({ theme }) => theme.radii.pill};
-      padding: 0.5rem 0.8rem;
-      margin: 0.2rem;
+      padding: ${({ padding }) => (padding ? padding : ' 0.5rem 0.8rem')};
+      margin: ${({ margin }) => (margin ? margin : '0.2rem')};
 
       :hover:enabled {
         background-color: ${({ theme }) => theme.colors.background};
@@ -45,6 +45,9 @@ const variantStyles = (variant = 'primary') =>
 
       :active:enabled {
         border: 1px solid ${({ theme }) => theme.colors.muted};
+      }
+      :disabled {
+        color: ${({ theme }) => theme.colors.muted};
       }
 
       ${({ active, selected }) =>

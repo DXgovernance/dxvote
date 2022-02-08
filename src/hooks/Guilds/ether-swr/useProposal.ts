@@ -1,7 +1,7 @@
-import useEtherSWR from 'ether-swr';
 import { unix } from 'moment';
 import { Middleware, SWRHook } from 'swr';
 import { Proposal } from '../../../types/types.guilds';
+import useEtherSWR from './useEtherSWR';
 
 const formatterMiddleware: Middleware =
   (useSWRNext: SWRHook) => (key, fetcher, config) => {

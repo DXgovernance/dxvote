@@ -20,8 +20,14 @@ import {
   timeToTimestamp,
   formatNumberValue,
   PendingAction,
+  isVoteNo,
 } from '../../utils';
-import { FiFeather, FiCheckCircle, FiCheckSquare } from 'react-icons/fi';
+import {
+  FiFeather,
+  FiCheckCircle,
+  FiCheckSquare,
+  FiAlertTriangle,
+} from 'react-icons/fi';
 import {
   StatusSearch,
   SchemeSearch,
@@ -146,6 +152,15 @@ const ProposalsPage = observer(() => {
                 userEvents.newProposal.findIndex(
                   event => event.proposalId === proposal.id
                 ) > -1;
+
+              const proposerVotedDown =
+                daoStore
+                  .getVotesOfProposal(proposal.id)
+                  .findIndex(
+                    vote =>
+                      vote.voter === proposal.proposer && isVoteNo(vote.vote)
+                  ) > -1;
+
               return (
                 <StyledTableRow
                   onClick={() =>
@@ -166,18 +181,29 @@ const ProposalsPage = observer(() => {
                       {created && (
                         <FiFeather
                           style={{ minWidth: '15px', margin: '0px 2px' }}
+                          title="You created"
                         />
                       )}
                       {voted && (
                         <FiCheckCircle
                           style={{ minWidth: '15px', margin: '0px 2px' }}
+                          title="You voted"
                         />
                       )}
                       {staked && (
                         <FiCheckSquare
                           style={{ minWidth: '15px', margin: '0px 2px' }}
+                          title="You staked"
                         />
                       )}
+
+                      {proposerVotedDown && (
+                        <FiAlertTriangle
+                          style={{ minWidth: '15px', margin: '0px 2px' }}
+                          title="The proposer downvoted this proposal. It may be incorrect."
+                        />
+                      )}
+
                       {proposal.title.length > 0 ? proposal.title : proposal.id}
                     </Link>
                   </DataCell>

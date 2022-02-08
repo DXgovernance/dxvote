@@ -1,10 +1,10 @@
 import contentHash from 'content-hash';
-import useEtherSWR from 'ether-swr';
 import Markdown from 'markdown-to-jsx';
 import { useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { useProposal } from '../../../../hooks/Guilds/ether-swr/useProposal';
 import useIPFSFile from '../../../../hooks/Guilds/ipfs/useIPFSFile';
 import { ProposalMetadata } from '../../../../types/types.guilds';
 
@@ -21,11 +21,7 @@ const ProposalDescription = () => {
     guild_id?: string;
     proposal_id?: string;
   }>();
-  const { data: proposal, error } = useEtherSWR([
-    guildId,
-    'getProposal',
-    proposalId,
-  ]);
+  const { data: proposal, error } = useProposal(guildId, proposalId);
 
   const { decodedContentHash, decodeError } = useMemo(() => {
     if (!proposal?.contentHash) return {};

@@ -236,6 +236,8 @@ The downstake for proposal is calculated when the proposal is created, by using 
         style={{
           padding: '20px 10px',
         }}
+        skipHtml
+        escapeHtml
       />
     </FAQBox>
   );
