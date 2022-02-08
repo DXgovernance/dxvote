@@ -1,4 +1,4 @@
-import useEtherSWR from 'ether-swr';
+import useEtherSWR from './useEtherSWR';
 
 export const useProposals = (guildId: string) => {
   return useEtherSWR<string[]>([guildId, 'getProposalsIds']);

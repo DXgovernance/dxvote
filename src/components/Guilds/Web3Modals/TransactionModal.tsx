@@ -148,6 +148,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       onCancel={onCancel}
       maxWidth={300}
       cancelText={footerText}
+      zIndex={1000}
     />
   );
 };
