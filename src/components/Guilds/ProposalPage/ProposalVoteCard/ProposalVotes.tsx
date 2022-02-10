@@ -1,10 +1,15 @@
 import styled from 'styled-components';
-
 import { VotesChart } from 'components/Guilds/common/VoteChart';
 import { Bullet } from 'components/Guilds/common/Bullet';
+import { useVotes } from 'hooks/Guilds/useVotes';
 
 export interface Voter {
   avatar: string;
+}
+
+interface ProposalVotesProps {
+  showToken: boolean;
+  token: string;
 }
 
 const VotesContainer = styled.div`
@@ -25,44 +30,32 @@ const StyledBullet = styled(Bullet)`
   font-size: 30px;
 `;
 
-export const ProposalVotes = ({ voteData, showToken, token }) => {
-  const { yes, no, totalLocked } = voteData;
-
-  const valueToDisplay = value =>
-    showToken ? value : Math.round((value / totalLocked) * 100);
-  const yesDisplay = valueToDisplay(yes);
-  const noDisplay = valueToDisplay(no);
-
+//TODO: create loading skeleton for vote component
+export const ProposalVotes = ({ showToken, token }: ProposalVotesProps) => {
+  const {
+    voteData: { args },
+  } = useVotes();
   const unitDisplay = showToken ? token : '%';
+
+  const valueToDisplay = (showToken: boolean): number => (showToken ? 1 : 2);
 
   return (
     <VotesContainer>
-      {yes && (
-        <VotesRow type="yes">
-          <span>
-            <StyledBullet />
-            Yes
-          </span>
-          <span>
-            {yesDisplay}
-            {unitDisplay}
-          </span>
-        </VotesRow>
-      )}
-      {no && (
-        <VotesRow type="no">
-          <span>
-            <StyledBullet />
-            No
-          </span>
-          <span>
-            {noDisplay}
-            {unitDisplay}
-          </span>
-        </VotesRow>
-      )}
-
-      <VotesChart voteData={voteData} showToken={showToken} token={token} />
+      {Object.values(args).map((_, i) => {
+        return (
+          <VotesRow type="yes">
+            <span>
+              <StyledBullet />
+              {'Action' + i}
+            </span>
+            <span>
+              {valueToDisplay(showToken)}
+              {unitDisplay}
+            </span>
+          </VotesRow>
+        );
+      })}
+      <VotesChart showToken={showToken} token={token} />
     </VotesContainer>
   );
 };

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FaFlagCheckered } from 'react-icons/fa';
+import { useVotes } from 'hooks/Guilds/useVotes';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -76,25 +77,29 @@ const VoteQuorumContainer = styled.div`
 `;
 
 //TODO: define types when structure of voteData is well defined
-export const VotesChart = ({ voteData, showToken, token }) => {
-  const { yes, no, quorum, totalLocked } = voteData;
-  const pYes = Math.round((yes / totalLocked) * 100);
-  const pNo = Math.round((no / totalLocked) * 100);
+export const VotesChart = ({ showToken, token }) => {
+  const {
+    voteData: { quorum, args },
+    flagCheckered,
+  } = useVotes();
 
   return (
     <VotesChartContainer>
       <VotesChartRow>
-        {yes && <VoteFill fill={pYes} type={'yes'} />}
-        {no && <VoteFill fill={pNo} type={'no'} />}
+        {Object.values(args).map((item, i) => {
+          return <VoteFill fill={item[i][1]} />;
+        })}
       </VotesChartRow>
-      <VoteQuorumContainer quorum={quorum}>
-        <VoteQuorumMarker quorum={quorum} />
-        <VoteQuorumLabel quorum={quorum}>
-          <FaFlagCheckered />
-          <span>{showToken ? (quorum / 100) * totalLocked : quorum}</span>
-          <span>{showToken ? token : '%'}</span>
-        </VoteQuorumLabel>
-      </VoteQuorumContainer>
+      {quorum && (
+        <VoteQuorumContainer quorum={quorum.toNumber}>
+          <VoteQuorumMarker quorum={quorum.toNumber} />
+          <VoteQuorumLabel quorum={quorum.toNumber}>
+            <FaFlagCheckered />
+            <span>{showToken ? flagCheckered : quorum.toNumber}</span>
+            <span>{showToken ? token : '%'}</span>
+          </VoteQuorumLabel>
+        </VoteQuorumContainer>
+      )}
     </VotesChartContainer>
   );
 };

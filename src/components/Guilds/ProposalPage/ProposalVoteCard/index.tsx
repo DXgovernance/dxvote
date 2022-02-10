@@ -32,15 +32,6 @@ const SmallButton = styled(Button)`
   padding: 2px 6px;
 `;
 
-// TODO: remove this when subscribing to real data:
-// TODO: replace yes/no with args for actions
-const voteData = {
-  yes: 124.5,
-  no: 234.76,
-  quorum: 40,
-  totalLocked: 670,
-};
-
 const TOKEN = 'DXD';
 
 const ProposalVoteCard = () => {
@@ -62,14 +53,9 @@ const ProposalVoteCard = () => {
       }
     >
       <SidebarCardContent>
-        <ProposalVotes
-          voteData={voteData}
-          showToken={showToken}
-          token={TOKEN}
-        />
+        <ProposalVotes showToken={showToken} token={TOKEN} />
         <ButtonsContainer>
           {possibleActions.map(item => {
-            console.log(possibleActions);
             return (
               <Button
                 minimal
