@@ -86,9 +86,10 @@ export const VotesChart = ({ showToken, token }) => {
   return (
     <VotesChartContainer>
       <VotesChartRow>
-        {Object.values(args).map((item, i) => {
-          return <VoteFill fill={item[i][1]} />;
-        })}
+        {args &&
+          Object.values(args).map((item, i) => {
+            return <VoteFill fill={item[i][1]} type="yes" />;
+          })}
       </VotesChartRow>
       {quorum && (
         <VoteQuorumContainer quorum={quorum.toNumber}>

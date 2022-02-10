@@ -55,19 +55,20 @@ const ProposalVoteCard = () => {
       <SidebarCardContent>
         <ProposalVotes showToken={showToken} token={TOKEN} />
         <ButtonsContainer>
-          {possibleActions.map(item => {
-            return (
-              <Button
-                minimal
-                active={action === BigNumber.from(item)}
-                onClick={() => {
-                  setAction(BigNumber.from(item));
-                }}
-              >
-                {item}
-              </Button>
-            );
-          })}
+          {possibleActions &&
+            possibleActions.map(item => {
+              return (
+                <Button
+                  minimal
+                  active={action === BigNumber.from(item)}
+                  onClick={() => {
+                    setAction(BigNumber.from(item));
+                  }}
+                >
+                  {item}
+                </Button>
+              );
+            })}
           <Button primary disabled={!action} onClick={() => setVote(action)}>
             Vote
           </Button>
