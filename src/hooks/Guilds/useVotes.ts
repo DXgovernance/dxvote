@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
 import { BigNumber, bnum } from 'utils';
 import { useParams } from 'react-router-dom';
@@ -17,7 +17,7 @@ export interface VoteData {
 }
 
 interface useVotesReturns {
-  setVote: (action: BigNumberish) => Promise<void>;
+  setVote: (action: BigNumberish) => void;
   voteData: VoteData;
   flagCheckered: number;
 }
@@ -52,30 +52,36 @@ export const useVotes = (): useVotesReturns => {
   const pValue = (value: BigNumber) =>
     Math.round(bnum(value).div(voteData.totalLocked).toNumber() * 100);
 
-  const setVote = async (action: BigNumberish) => {
+  // sets voting transaction
+  const setVote = useCallback((action: BigNumberish) => {
     createTransaction('Set Vote', async () =>
       contract.setVote(proposalId, action, votingPower.toString())
     );
-  };
+  }, [proposalId, votingPower])
 
   useEffect(() => {
-    if (!proposal) return null;
+    const getVoteData = async () =>
+      await setVoteData({
+        //args:{ 1: { BigNumber, % value }}
+        args: proposal.totalVotes.map((item, i) => {
+          return { [i]: [item, pValue(item)] };
+        }),
+        quorum: quorum,
+        totalLocked: totalLocked,
+      });
 
-    setVoteData({
-      //args:{ 1: { BigNumber, % value }}
-      args: proposal.totalVotes.map((item, i) => {
-        return { [i]: [item, pValue(item)] };
-      }),
-      quorum: quorum,
-      totalLocked: totalLocked,
-    });
-    setFlagCheckered(
-      voteData.quorum
-        .div(bnum(100))
-        .multipliedBy(voteData.totalLocked)
-        .toNumber()
-    );
-  }, [contract, guildId, proposalId, votingPower, quorum, proposal]);
+    getVoteData();
+
+    const getFlag = async () =>
+      await setFlagCheckered(
+        quorum
+          .div(bnum(100))
+          .multipliedBy(totalLocked)
+          .toNumber()
+      );
+
+    getFlag();
+  }, [guildId, proposalId]);
 
   return {
     setVote,
