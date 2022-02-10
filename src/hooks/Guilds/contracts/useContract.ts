@@ -18,7 +18,7 @@ export default function useContract<T extends Contract>(
   const { chainId: walletChainId, account } = useWeb3React();
 
   return useMemo(() => {
-    if (!provider) return null;
+    if (!provider || !contractId || !abi) return null;
     try {
       const signingAccount =
         !chainId || walletChainId === chainId ? account : null;
