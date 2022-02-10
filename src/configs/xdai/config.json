@@ -284,7 +284,7 @@
   "proposalTypes": [
     {
       "id": "contributor",
-      "scheme": "QuickWalletScheme",
+      "scheme": "0x08EEc580AD41e9994599BaD7d2a74A9874A2852c",
       "title": "Contributor"
     },
     {

@@ -1,3 +1,4 @@
+import React from 'react';
 import styled, { css } from 'styled-components';
 import { transparentize } from 'polished';
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -6,7 +7,6 @@ import Focus from '@tiptap/extension-focus';
 import Highlight from '@tiptap/extension-highlight';
 import MenuBar from './MenuBar';
 import TurndownService from 'turndown';
-import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
 
 const turndownService = new TurndownService();
 
@@ -119,31 +119,20 @@ const Content = styled(EditorContent)`
   `}
 `;
 
-const Editor = () => {
-  const ttlMs = 345600000;
-  const [storedJson, setStoredJson] = useLocalStorageWithExpiry<string>(
-    `guild/newProposal/description/json`,
-    null,
-    ttlMs
-  );
-  const [storedHtml, setStoredHtml] = useLocalStorageWithExpiry<string>(
-    `guild/newProposal/description/html`,
-    null,
-    ttlMs
-  );
-  const [storedMarkdown, setStoredMarkdown] = useLocalStorageWithExpiry<string>(
-    `guild/newProposal/description/markdown`,
-    null,
-    ttlMs
-  );
-  console.log({ storedHtml, storedMarkdown });
-
+interface EditorProps {
+  onHTMLChange?: (string) => void;
+  onMdChange?: (string) => void;
+  onJSONChange?: (string) => void;
+  content?: string;
+}
+const Editor: React.FC<EditorProps> = ({
+  onHTMLChange,
+  onMdChange,
+  onJSONChange,
+  content,
+}) => {
   const editor = useEditor({
-    content: storedJson
-      ? {
-          ...JSON.parse(storedJson),
-        }
-      : {},
+    content: content ? content : {},
     extensions: [
       StarterKit.configure({
         history: { depth: 10 },
@@ -157,9 +146,9 @@ const Editor = () => {
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       if (html) {
-        setStoredJson(JSON.stringify(editor.getJSON()));
-        setStoredHtml(html);
-        setStoredMarkdown(turndownService.turndown(html));
+        onHTMLChange && onHTMLChange(html);
+        onMdChange && onMdChange(turndownService.turndown(html));
+        onJSONChange && onJSONChange(JSON.stringify(editor.getJSON()));
       }
     },
   });

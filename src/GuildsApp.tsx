@@ -44,22 +44,22 @@ const GuildsApp = () => {
         <GlobalErrorBoundary>
           <WalletWeb3Manager>
             <TransactionsProvider>
-              <GlobalStyle />
-              <Header />
-              <Container>
-                <Switch>
-                  <Redirect
-                    exact
-                    from="/"
-                    to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                  />
-                  <Redirect
-                    exact
-                    from="/:chain_name"
-                    to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                  />
-                  <Route exact path="/:chain_name/:guild_id">
-                    <GuildsContextProvider>
+              <GuildsContextProvider>
+                <GlobalStyle />
+                <Header />
+                <Container>
+                  <Switch>
+                    <Redirect
+                      exact
+                      from="/"
+                      to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                    />
+                    <Redirect
+                      exact
+                      from="/:chain_name"
+                      to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                    />
+                    <Route exact path="/:chain_name/:guild_id">
                       <EtherSWRConfig
                         value={{
                           web3Provider: provider,
@@ -76,10 +76,8 @@ const GuildsApp = () => {
                       >
                         <GuildsPage />
                       </EtherSWRConfig>
-                    </GuildsContextProvider>
-                  </Route>
-                  <Route exact path="/:chain_name/:guild_id/proposalType">
-                    <GuildsContextProvider>
+                    </Route>
+                    <Route exact path="/:chain_name/:guild_id/proposalType">
                       <EtherSWRConfig
                         value={{
                           web3Provider: provider,
@@ -95,31 +93,31 @@ const GuildsApp = () => {
                       >
                         <ProposalTypes data={ProposalTypesConfig} />
                       </EtherSWRConfig>
-                    </GuildsContextProvider>
-                  </Route>
-                  <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
-                    <EtherSWRConfig
-                      value={{
-                        web3Provider: provider,
-                        ABIs: new Map([
-                          [
-                            '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
-                            ERC20GuildContract.abi,
-                          ],
-                        ]),
-                        refreshInterval: 0,
-                        use: [loggerMiddleware],
-                      }}
-                    >
-                      {' '}
-                      <ProposalPage />
-                    </EtherSWRConfig>
-                  </Route>
-                  <Route path="/:chain_name/:guild_id/create/:proposal_type">
-                    <CreateProposalPage />
-                  </Route>
-                </Switch>
-              </Container>
+                    </Route>
+                    <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                      <EtherSWRConfig
+                        value={{
+                          web3Provider: provider,
+                          ABIs: new Map([
+                            [
+                              '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+                              ERC20GuildContract.abi,
+                            ],
+                          ]),
+                          refreshInterval: 0,
+                          use: [loggerMiddleware],
+                        }}
+                      >
+                        {' '}
+                        <ProposalPage />
+                      </EtherSWRConfig>
+                    </Route>
+                    <Route path="/:chain_name/:guild_id/create/:proposal_type">
+                      <CreateProposalPage />
+                    </Route>
+                  </Switch>
+                </Container>
+              </GuildsContextProvider>
             </TransactionsProvider>
           </WalletWeb3Manager>
         </GlobalErrorBoundary>
