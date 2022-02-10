@@ -456,11 +456,11 @@
     },
     "votingMachines": {
       "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055": {
-        "token": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
+        "token": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf",
         "type": "GenesisProtocol"
       },
       "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84": {
-        "token": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
+        "token": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf",
         "type": "GenesisProtocol"
       }
     }

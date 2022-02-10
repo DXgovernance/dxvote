@@ -658,6 +658,14 @@
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e/logo.png",
       "name": "yearn.finance on xDai",
       "symbol": "YFI"
+    },
+    {
+      "address": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf",
+      "decimals": 18,
+      "fetchPrice": false,
+      "logoURI": "https://assets.coingecko.com/coins/images/3479/thumb/gen.png?1547038215",
+      "name": "DAOstack",
+      "symbol": "GEN"
     }
   ],
   "version": 1
