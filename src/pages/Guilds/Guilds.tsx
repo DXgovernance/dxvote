@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
@@ -42,7 +42,18 @@ const ErrorList = styled(Box)`
 const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
-  const { data: proposalsIds, error } = useGuildProposals(guildId);
+  const { data: proposalIds, error } = useGuildProposals(guildId);
+  const filteredProposals = useMemo(() => {
+    if (!proposalIds) return null;
+
+    // clone array as the original proposalIds array from Ethers is immutable
+    const clone = [...proposalIds];
+
+    // TODO: Implement filtering
+
+    // Show latest proposals first
+    return clone.reverse();
+  }, [proposalIds]);
 
   return (
     <PageContainer>
@@ -53,9 +64,9 @@ const GuildsPage: React.FC = () => {
         <Filter />
         {!error ? (
           <ProposalsList data-testid="proposals-list">
-            {proposalsIds ? (
-              proposalsIds.map(proposalId => (
-                <InView>
+            {filteredProposals ? (
+              filteredProposals.map(proposalId => (
+                <InView key={proposalId}>
                   {({ inView, ref }) => (
                     <div ref={ref}>
                       <ProposalCard
