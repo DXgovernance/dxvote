@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import contentHash from 'content-hash';
 import { FiChevronLeft } from 'react-icons/fi';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
 import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
@@ -11,6 +12,10 @@ import SidebarCard from '../../components/Guilds/SidebarCard';
 import Editor from 'components/Guilds/Editor';
 
 import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
+import { useTransactions } from 'contexts/Guilds';
+import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
+import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
+import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -88,8 +93,29 @@ const CreateProposalPage: React.FC = () => {
 
   const handleBack = () => history.push('/');
 
-  const handleCreateProposal = () => {
-    // TODO: build this functionality
+  const ipfs = useIPFSNode();
+  const uploadToIPFS = async () => {
+    const content = { description: proposalBodyHTML, url: referenceLink };
+    const cid = await ipfs.add(JSON.stringify(content));
+    await ipfs.pin(cid);
+    return contentHash.fromIpfs(cid);
+  };
+
+  const { createTransaction } = useTransactions();
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const guildContract = useERC20Guild(guildAddress);
+  const handleCreateProposal = async () => {
+    const contentHash = await uploadToIPFS();
+    createTransaction(`Create proposal ${title}`, async () => {
+      return guildContract.createProposal(
+        [ZERO_ADDRESS],
+        [ZERO_HASH],
+        [1],
+        0,
+        title,
+        `0x${contentHash}`
+      );
+    });
   };
 
   return (
@@ -164,7 +190,7 @@ const CreateProposalPage: React.FC = () => {
           <Button
             onClick={handleCreateProposal}
             variant="secondary"
-            disabled={editMode}
+            // disabled={editMode}
           >
             Create Proposal
           </Button>
