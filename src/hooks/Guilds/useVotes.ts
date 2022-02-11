@@ -6,7 +6,6 @@ import { useERC20Guild } from './contracts/useContract';
 import { useVotingPowerOf } from './ether-swr/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
-import { BigNumberish } from '@ethersproject/contracts/node_modules/@ethersproject/bignumber';
 import { useGuildConfig } from './ether-swr/useGuildConfig';
 
 export interface VoteData {
@@ -16,13 +15,13 @@ export interface VoteData {
 }
 
 interface useVotesReturns {
-  setVote: (action: BigNumberish) => void;
+  setVote: (action: BigNumber) => void;
   voteData: VoteData;
-  flagCheckered: number;
+  flagCheckered: string;
 }
 
 export const useVotes = (): useVotesReturns => {
-  const [flagCheckered, setFlagCheckered] = useState(0);
+  const [flagCheckered, setFlagCheckered] = useState<string>();
   const [voteData, setVoteData] = useState<VoteData>({
     args: {},
     quorum: bnum(0),
@@ -50,10 +49,11 @@ export const useVotes = (): useVotesReturns => {
     Math.round(bnum(value).div(voteData.totalLocked).toNumber() * 100);
 
   // sets voting transaction
+  //
   const setVote = useCallback(
-    (action: BigNumberish) => {
+    (action: BigNumber) => {
       createTransaction('Set Vote', async () =>
-        contract.setVote(proposalId, action, votingPower.toString())
+        contract.setVote(proposalId, action.toString(), votingPower.toString())
       );
     },
     [proposalId, votingPower]
@@ -72,9 +72,9 @@ export const useVotes = (): useVotesReturns => {
 
     getVoteData();
 
-    const getFlag = async () =>
-      await setFlagCheckered(
-        voteData.quorum.div(bnum(100)).multipliedBy(voteData.quorum).toNumber()
+    const getFlag = () =>
+      setFlagCheckered(
+        voteData.quorum.div(bnum(100)).multipliedBy(voteData.quorum).toString()
       );
 
     getFlag();

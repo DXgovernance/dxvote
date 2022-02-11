@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, bnum } from 'utils';
 import { useActions } from 'hooks/Guilds/useActions';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { useState } from 'react';
@@ -41,6 +41,7 @@ const ProposalVoteCard = () => {
   const { setVote } = useVotes();
   const { possibleActions } = useActions();
 
+
   return (
     <SidebarCard
       header={
@@ -57,18 +58,20 @@ const ProposalVoteCard = () => {
         <ButtonsContainer>
           {possibleActions &&
             possibleActions.map(item => {
+              const bItem = bnum(item);
               return (
                 <Button
                   minimal
-                  active={action === BigNumber.from(item)}
+                  active={action && (action.toNumber() == item ? true : false)}
                   onClick={() => {
-                    setAction(BigNumber.from(item));
+                    setAction(bItem);
                   }}
                 >
-                  {item}
+                  {"Action " + item}
                 </Button>
               );
             })}
+
           <Button primary disabled={!action} onClick={() => setVote(action)}>
             Vote
           </Button>
