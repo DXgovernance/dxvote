@@ -5,9 +5,9 @@ type ButtonProps = {
 };
 
 const variantStyles = (variant = 'primary') =>
-  ({
-    primary: css`
-      border: 1px solid ${({ theme }) => theme.colors.primary};
+({
+  primary: css`
+      border: 1px solid ${({ theme }) => theme.colors.border.initial};
       background-color: ${({ theme }) => theme.colors.background};
       color: ${({ theme }) => theme.colors.text};
       border-radius: ${({ theme }) => theme.radii.pill};
@@ -15,8 +15,7 @@ const variantStyles = (variant = 'primary') =>
       margin: ${({ margin }) => (margin ? margin : '0.2rem')};
 
       :hover:enabled {
-        background-color: ${({ theme }) => theme.colors.primary};
-        color: ${({ theme }) => theme.colors.background};
+        border-color: ${({ theme }) => theme.colors.border.hover}
       }
 
       :active:enabled {
@@ -24,23 +23,22 @@ const variantStyles = (variant = 'primary') =>
       }
 
       ${({ active, selected }) =>
-        (active || selected) &&
-        css`
+      (active || selected) &&
+      css`
           background-color: ${({ theme }) => theme.colors.primary};
           color: ${({ theme }) => theme.colors.background};
         `}
     `,
-    secondary: css`
-      border: 1px solid ${({ theme }) => theme.colors.primary};
-      background-color: ${({ theme }) => theme.colors.primary};
-      color: ${({ theme }) => theme.colors.background};
+  secondary: css`
+      border: 1px solid ${({ theme }) => theme.colors.border.initial};
+      background-color: ${({ theme }) => theme.colors.background};
+      color: ${({ theme }) => theme.colors.text};
       border-radius: ${({ theme }) => theme.radii.pill};
       padding: ${({ padding }) => (padding ? padding : ' 0.5rem 0.8rem')};
       margin: ${({ margin }) => (margin ? margin : '0.2rem')};
 
       :hover:enabled {
-        background-color: ${({ theme }) => theme.colors.background};
-        color: ${({ theme }) => theme.colors.text};
+        border-color: ${({ theme }) => theme.colors.border.hover};
       }
 
       :active:enabled {
@@ -51,13 +49,13 @@ const variantStyles = (variant = 'primary') =>
       }
 
       ${({ active, selected }) =>
-        (active || selected) &&
-        css`
+      (active || selected) &&
+      css`
           background-color: ${({ theme }) => theme.colors.primary};
           color: ${({ theme }) => theme.colors.background};
         `}
     `,
-    minimal: css`
+  minimal: css`
       border: none;
       background-color: transparent;
       color: ${({ theme }) => theme.colors.text};
@@ -66,7 +64,7 @@ const variantStyles = (variant = 'primary') =>
         color: ${({ theme }) => theme.colors.muted};
       }
     `,
-  }[variant]);
+}[variant]);
 
 export const Button = styled.button<ButtonProps>`
   display: inline-flex;

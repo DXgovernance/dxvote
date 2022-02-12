@@ -21,6 +21,11 @@ const CardWrapper = styled(Box)`
   border-radius: ${({ theme }) => theme.radii.curved};
   margin-bottom: 1rem;
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.muted};
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.border.hover};
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
 
 const CardHeader = styled(Box)`
@@ -42,7 +47,7 @@ const CardFooter = styled(Box)`
 const CardTitle = styled(Heading)`
   font-size: 1rem;
   font-weight: 700;
-
+  color: ${({ theme }) => theme.colors.text};
   @media only screen and (min-width: 768px) {
     font-size: 1.25rem;
   }
@@ -84,7 +89,7 @@ const Icon = styled.img<{
 `;
 
 const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
-  border: 1px solid #000;
+  border: 1px solid #555;
   border-radius: 1rem;
   padding: 0.25rem 0.8rem;
   flex: none;

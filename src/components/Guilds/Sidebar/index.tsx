@@ -16,6 +16,7 @@ const SidebarWrapper = styled(Box)`
     margin-right: 1rem;
     border: 1px solid ${({ theme }) => theme.colors.muted};
     border-radius: ${({ theme }) => theme.radii.curved};
+    color: ${({ theme }) => theme.colors.text}
   }
 `;
 

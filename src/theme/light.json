@@ -1,11 +1,15 @@
 {
   "colors": {
-    "text": "#000",
-    "background": "#fff",
+    "text": "#fff",
+    "background": "#1B1D1F",
     "primary": "#000",
     "secondary": "#000",
     "muted": "#555",
     "hoverMenu": "#f5f5f5",
+    "border": {
+      "initial": "#555",
+      "hover": "#fff"
+    },
     "votes": {
       "yes": {
         "bg": "#000",
