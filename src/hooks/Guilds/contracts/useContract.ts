@@ -64,7 +64,7 @@ export function useERC20(
 ) {
   return useContract<ERC20>(
     tokenAddress,
-    ERC20_ABI.abi,
+    ERC20_ABI,
     chainId,
     withSignerIfPossible
   );
