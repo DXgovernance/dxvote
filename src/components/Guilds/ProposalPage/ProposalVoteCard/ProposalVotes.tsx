@@ -46,7 +46,7 @@ export const ProposalVotes = ({ showToken, token }: ProposalVotesProps) => {
           <VotesRow type="yes">
             <span>
               <StyledBullet />
-              {'Action' + i}
+              {'Action ' + i}
             </span>
             <span>
               {valueToDisplay(showToken)}

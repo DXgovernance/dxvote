@@ -45,8 +45,8 @@ const VoteQuorumLabel = styled.div`
     quorum < 10
       ? `0px ${theme.radii.curved} ${theme.radii.curved}`
       : quorum > 90
-      ? `${theme.radii.curved} 0px ${theme.radii.curved} ${theme.radii.curved}`
-      : `${theme.radii.curved}`};
+        ? `${theme.radii.curved} 0px ${theme.radii.curved} ${theme.radii.curved}`
+        : `${theme.radii.curved}`};
   font-size: 14px;
   font-weight: 600;
   align-items: center;

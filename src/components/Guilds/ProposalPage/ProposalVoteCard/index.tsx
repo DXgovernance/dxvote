@@ -32,15 +32,15 @@ const SmallButton = styled(Button)`
   padding: 2px 6px;
 `;
 
-const TOKEN = 'DXD';
 
 const ProposalVoteCard = () => {
   const [showToken, setShowToken] = useState(false);
   const [action, setAction] = useState<BigNumber>();
 
-  const { setVote } = useVotes();
+  const { setVote, voteData: { token } } = useVotes();
   const { possibleActions } = useActions();
 
+  const TOKEN = token
 
   return (
     <SidebarCard
