@@ -32,15 +32,16 @@ const SmallButton = styled(Button)`
   padding: 2px 6px;
 `;
 
-
 const ProposalVoteCard = () => {
   const [showToken, setShowToken] = useState(false);
   const [action, setAction] = useState<BigNumber>();
 
-  const { setVote, voteData: { token } } = useVotes();
+  const {
+    setVote,
+    voteData: { token },
+  } = useVotes();
   const { possibleActions } = useActions();
 
-  const TOKEN = token
 
   return (
     <SidebarCard
@@ -48,13 +49,13 @@ const ProposalVoteCard = () => {
         <SidebarCardHeader>
           Cast your vote{' '}
           <SmallButton primary onClick={() => setShowToken(!showToken)}>
-            {showToken ? TOKEN : '%'}
+            {showToken ? token : '%'}
           </SmallButton>
         </SidebarCardHeader>
       }
     >
       <SidebarCardContent>
-        <ProposalVotes showToken={showToken} token={TOKEN} />
+        <ProposalVotes showToken={showToken} token={token} />
         <ButtonsContainer>
           {possibleActions &&
             possibleActions.map(item => {
@@ -67,7 +68,7 @@ const ProposalVoteCard = () => {
                     setAction(bItem);
                   }}
                 >
-                  {"Action " + item}
+                  {'Action ' + item}
                 </Button>
               );
             })}

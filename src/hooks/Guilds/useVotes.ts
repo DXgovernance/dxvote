@@ -2,17 +2,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
 import { BigNumber, bnum } from 'utils';
 import { useParams } from 'react-router-dom';
-import { useERC20, useERC20Guild } from './contracts/useContract';
+import { useERC20Guild } from './contracts/useContract';
 import { useVotingPowerOf } from './ether-swr/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
 import { useGuildConfig } from './ether-swr/useGuildConfig';
+import { useERC20Info } from './ether-swr/erc20/useERC20Info';
 
 export interface VoteData {
   args: unknown;
   quorum: BigNumber;
   totalLocked: BigNumber;
-  token: string,
+  token: string;
 }
 
 interface useVotesReturns {
@@ -27,25 +28,27 @@ export const useVotes = (): useVotesReturns => {
     args: {},
     quorum: bnum(0),
     totalLocked: bnum(0),
-    token: ''
+    token: '',
   });
 
   const { guild_id: guildId, proposal_id: proposalId } =
     useParams<{ guild_id?: string; proposal_id?: string }>();
+
   const contract = useERC20Guild(guildId, true);
-  const erc20 = useERC20(contract.getToken());
   const { account } = useWeb3React();
   const { createTransaction } = useTransactions();
 
   // swr hooks
   const { data: proposal } = useProposal(guildId, proposalId);
   const {
-    data: { votingPowerForProposalExecution: quorum, totalLocked },
+    data: { token, votingPowerForProposalExecution: quorum, totalLocked },
   } = useGuildConfig(guildId);
   const { data: votingPower } = useVotingPowerOf({
     contractAddress: guildId,
     userAddress: account,
   });
+
+  const { data: tokenInfo } = useERC20Info(token);
 
   // helper functions
   const pValue = (value: BigNumber) =>
@@ -70,14 +73,17 @@ export const useVotes = (): useVotesReturns => {
         }),
         quorum: bnum(quorum),
         totalLocked: bnum(totalLocked),
-        token: erc20.address
+        token: tokenInfo.symbol,
       });
 
     getVoteData();
 
     const getFlag = () =>
       setFlagCheckered(
-        voteData.quorum.div(voteData.totalLocked).multipliedBy(bnum(100)).toNumber()
+        voteData.quorum
+          .div(voteData.totalLocked)
+          .multipliedBy(bnum(100))
+          .toNumber()
       );
 
     getFlag();

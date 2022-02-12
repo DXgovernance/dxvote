@@ -49,8 +49,7 @@ export const ProposalVotes = ({ showToken, token }: ProposalVotesProps) => {
               {'Action ' + i}
             </span>
             <span>
-              {valueToDisplay(showToken)}
-              {unitDisplay}
+              {valueToDisplay(showToken)} {unitDisplay}
             </span>
           </VotesRow>
         );
