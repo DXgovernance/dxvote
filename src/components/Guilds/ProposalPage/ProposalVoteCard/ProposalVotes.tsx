@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import { VotesChart } from 'components/Guilds/common/VoteChart';
 import { Bullet } from 'components/Guilds/common/Bullet';
 import { useVotes } from 'hooks/Guilds/useVotes';
+import { formatUnits } from '@ethersproject/units';
+//import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 
 export interface Voter {
   avatar: string;
@@ -30,14 +32,18 @@ const StyledBullet = styled(Bullet)`
   font-size: 30px;
 `;
 
-//TODO: create loading skeleton for vote component
 export const ProposalVotes = ({ showToken, token }: ProposalVotesProps) => {
   const {
     voteData: { args },
   } = useVotes();
   const unitDisplay = showToken ? token : '%';
 
-  const valueToDisplay = (showToken: boolean): number => (showToken ? 1 : 2);
+  const valueToDisplay = (
+    action: number,
+    showToken: boolean,
+    args: any
+  ): number =>
+    showToken ? formatUnits(args[action][action][0]) : args[action][action][1];
 
   return (
     <VotesContainer>
@@ -49,7 +55,7 @@ export const ProposalVotes = ({ showToken, token }: ProposalVotesProps) => {
               {'Action ' + i}
             </span>
             <span>
-              {valueToDisplay(showToken)} {unitDisplay}
+              {valueToDisplay(i, showToken, args)} {unitDisplay}
             </span>
           </VotesRow>
         );

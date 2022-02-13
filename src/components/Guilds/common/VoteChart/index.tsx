@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { FaFlagCheckered } from 'react-icons/fa';
 import { useVotes } from 'hooks/Guilds/useVotes';
+import { formatUnits } from 'ethers/lib/utils';
+import { BigNumber } from 'ethers';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -83,24 +85,23 @@ export const VotesChart = ({ showToken, token }) => {
     flagCheckered,
   } = useVotes();
 
+  const nQuorum = formatUnits(BigNumber.from(quorum.toString()));
+
   return (
     <VotesChartContainer>
       <VotesChartRow>
-        {args &&
-          Object.values(args).map((item, i) => {
-            return <VoteFill fill={item[i][1]} type="yes" />;
-          })}
+        {Object.values(args).map((item, i) => {
+          return <VoteFill fill={item[i][1]} type="yes" />;
+        })}
       </VotesChartRow>
-      {quorum && (
-        <VoteQuorumContainer quorum={quorum.toNumber}>
-          <VoteQuorumMarker quorum={quorum.toNumber} />
-          <VoteQuorumLabel quorum={quorum.toNumber}>
-            <FaFlagCheckered />
-            <span>{showToken ? flagCheckered : quorum.toNumber}</span>
-            <span>{showToken ? token : '%'}</span>
-          </VoteQuorumLabel>
-        </VoteQuorumContainer>
-      )}
+      <VoteQuorumContainer quorum={nQuorum}>
+        <VoteQuorumMarker quorum={nQuorum} />
+        <VoteQuorumLabel quorum={nQuorum}>
+          <FaFlagCheckered />
+          <span>{showToken ? nQuorum : flagCheckered}</span>
+          <span>{showToken ? token : '%'}</span>
+        </VoteQuorumLabel>
+      </VoteQuorumContainer>
     </VotesChartContainer>
   );
 };

@@ -23,7 +23,6 @@ interface useVotesReturns {
 }
 
 export const useVotes = (): useVotesReturns => {
-  const [flagCheckered, setFlagCheckered] = useState<number>();
   const [voteData, setVoteData] = useState<VoteData>({
     args: {},
     quorum: bnum(0),
@@ -52,7 +51,7 @@ export const useVotes = (): useVotesReturns => {
 
   // helper functions
   const pValue = (value: BigNumber) =>
-    Math.round(bnum(value).div(voteData.totalLocked).toNumber() * 100);
+    Math.round(bnum(value).div(bnum(totalLocked)).toNumber() * 100);
 
   // sets voting transaction
   const setVote = useCallback(
@@ -63,6 +62,8 @@ export const useVotes = (): useVotesReturns => {
     },
     [proposalId, votingPower]
   );
+
+  const flagCheckered = quorum.div(totalLocked).toNumber() * 100;
 
   useEffect(() => {
     const getVoteData = async () =>
@@ -77,16 +78,6 @@ export const useVotes = (): useVotesReturns => {
       });
 
     getVoteData();
-
-    const getFlag = () =>
-      setFlagCheckered(
-        voteData.quorum
-          .div(voteData.totalLocked)
-          .multipliedBy(bnum(100))
-          .toNumber()
-      );
-
-    getFlag();
   }, [guildId, proposalId]);
 
   return {

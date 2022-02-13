@@ -42,7 +42,6 @@ const ProposalVoteCard = () => {
   } = useVotes();
   const { possibleActions } = useActions();
 
-
   return (
     <SidebarCard
       header={
