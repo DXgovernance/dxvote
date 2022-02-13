@@ -78,7 +78,7 @@ const VoteQuorumContainer = styled.div`
       : `calc(${quorum}% - 22px)`};
 `;
 
-//TODO: define types when structure of voteData is well defined
+//TODO: rewrite css dynamics types
 export const VotesChart = ({ showToken, token }) => {
   const {
     voteData: { quorum, args },
@@ -91,12 +91,12 @@ export const VotesChart = ({ showToken, token }) => {
     <VotesChartContainer>
       <VotesChartRow>
         {Object.values(args).map((item, i) => {
-          return <VoteFill fill={item[i][1]} type="yes" />;
+          return <VoteFill fill={item[i][1]} type={i} />;
         })}
       </VotesChartRow>
-      <VoteQuorumContainer quorum={nQuorum}>
-        <VoteQuorumMarker quorum={nQuorum} />
-        <VoteQuorumLabel quorum={nQuorum}>
+      <VoteQuorumContainer quorum={flagCheckered}>
+        <VoteQuorumMarker quorum={flagCheckered} />
+        <VoteQuorumLabel quorum={flagCheckered}>
           <FaFlagCheckered />
           <span>{showToken ? nQuorum : flagCheckered}</span>
           <span>{showToken ? token : '%'}</span>

@@ -25,7 +25,7 @@ const VotesRow = styled.div`
   font-size: 14px;
   font-weight: 600;
   margin: 5px 0px 5px 0px;
-  color: ${({ theme, type = 'yes' }) => theme.colors.votes[type].fg};
+  color: ${({ theme, type = '0' }) => theme.colors.votes[type].fg};
 `;
 
 const StyledBullet = styled(Bullet)`
@@ -49,7 +49,7 @@ export const ProposalVotes = ({ showToken, token }: ProposalVotesProps) => {
     <VotesContainer>
       {Object.values(args).map((_, i) => {
         return (
-          <VotesRow type="yes">
+          <VotesRow type={i}>
             <span>
               <StyledBullet />
               {'Action ' + i}
