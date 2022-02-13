@@ -11,7 +11,7 @@ export const GuestActions = () => {
 
   return (
     <>
-      <Button
+      <Button variant="secondary"
         onClick={() =>
           account ? setShowJoin(true) : setIsWalletModalOpen(true)
         }

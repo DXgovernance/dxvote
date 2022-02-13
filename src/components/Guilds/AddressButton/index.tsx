@@ -74,7 +74,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({
   }, [imageUrl, ensName, avatarUri]);
 
   return (
-    <StyledAddressButton onClick={onClick} iconLeft>
+    <StyledAddressButton variant="secondary" onClick={onClick} iconLeft>
       <IconHolder>
         {address ? (
           <Avatar src={imageUrlToUse} defaultSeed={address} size={24} />

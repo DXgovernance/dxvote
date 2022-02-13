@@ -6,8 +6,10 @@
       "lightGrey": "#BDC0C7"
     },
     "background": "#1B1D1F",
-    "primary": "#000",
-    "secondary": "#000",
+    "button": {
+      "primary": "#295FF4",
+      "secondary": "#000"
+    },
     "muted": "#555",
     "hoverMenu": "#f5f5f5",
     "border": {

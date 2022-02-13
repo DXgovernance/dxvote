@@ -44,7 +44,7 @@ export const Filter = () => {
         <InputText placeholder="Search Proposal" />
         {createProposal && (
           <ButtonContainer>
-            <Button onClick={() => setCreateProposal(false)}>
+            <Button variant="secondary" onClick={() => setCreateProposal(false)}>
               Proposal state
             </Button>
             <Button
@@ -67,6 +67,6 @@ export const Filter = () => {
         )}
       </FilterRow>
       {isMobile && viewFilter && <FilterMenu />}
-    </FilterContainer>
+    </FilterContainer >
   );
 };
