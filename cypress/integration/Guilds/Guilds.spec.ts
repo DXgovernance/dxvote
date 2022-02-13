@@ -21,4 +21,13 @@ describe(`${rinkeby.name} network`, () => {
       Guilds.shouldRenderSidebar();
     });
   });
+
+  describe('Guilds/Create Proposal', () => {
+    it('Should navigate to proposal type page selection and trigger continue with choosen proposal type', () => {
+      Guilds.goToGuildsPage(rinkeby.name);
+      Guilds.handleProposalsPageCreateProposalBtnClick();
+      Guilds.handleCreateProposalTypeBtnClick();
+    });
+    // it('asd', () => {});
+  });
 });

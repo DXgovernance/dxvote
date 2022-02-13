@@ -41,6 +41,8 @@ class Guilds {
 
     cy.url({ timeout: 8000 }).should('contain', '/create/proposal_type');
   }
+
+  checkForCreateProposalPageComponents() {}
 }
 
 const guilds: Guilds = new Guilds();
