@@ -41,7 +41,7 @@ export const Filter = () => {
   return (
     <FilterContainer>
       <FilterRow>
-        <InputText placeholder="Proposal title" />
+        <InputText placeholder="Search Proposal" />
         {createProposal && (
           <ButtonContainer>
             <Button onClick={() => setCreateProposal(false)}>

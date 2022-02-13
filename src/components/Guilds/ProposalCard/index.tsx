@@ -21,7 +21,7 @@ const CardWrapper = styled(Box)`
   border-radius: ${({ theme }) => theme.radii.curved};
   margin-bottom: 1rem;
   padding: 1rem;
-  color: ${({ theme }) => theme.colors.muted};
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
   &:hover {
     border-color: ${({ theme }) => theme.colors.border.hover};
     color: ${({ theme }) => theme.colors.text};

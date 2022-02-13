@@ -35,7 +35,7 @@ const Wrapper = styled(Flex)`
   }
 `;
 const Container = styled(Flex)`
-  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.text};
   margin: 10px 0;
   width: 100%;
 
@@ -67,6 +67,7 @@ const ContainerHeader = styled(Flex)`
   justify-content: initial;
   flex-direction: row;
   margin: 6px 0;
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
 `;
 
 const Footer = styled(Flex)`
@@ -111,6 +112,7 @@ const TitleWrapper = styled(Flex)`
   width: 100%;
   align-items: flex-start;
   margin-top: 10px;
+  color: ${({ theme }) => theme.colors.text};
 
   @media only screen and (max-width: 768px) {
     width: 90%;
@@ -185,7 +187,7 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
           </TitleWrapper>
           <Container>
             <PaddingWrapper>
-              <ContainerHeader>Choose Proposal</ContainerHeader>
+              <ContainerHeader>Proposal type</ContainerHeader>
               {data.map(({ title, description, onChainAction, icon }) => (
                 <ProposalTypeButton
                   onClick={() =>

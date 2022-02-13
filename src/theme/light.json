@@ -1,6 +1,10 @@
 {
   "colors": {
     "text": "#fff",
+    "proposalText": {
+      "grey": "#A1A6B0",
+      "lightGrey": "#BDC0C7"
+    },
     "background": "#1B1D1F",
     "primary": "#000",
     "secondary": "#000",

@@ -8,15 +8,24 @@ const baseInputStyles = css`
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
 
+  ::placeholder {
+    color: ${({ theme }) => theme.colors.proposalText.lightGrey}
+  }
   :hover:enabled {
-    background-color: ${({ theme }) => theme.colors.text};
     color: ${({ theme }) => theme.colors.background};
+    border-color: ${({ theme }) => theme.colors.border.hover}
   }
 
   :active:enabled {
     border: 0.1rem solid ${({ theme }) => theme.colors.muted};
   }
   width: -webkit-fill-available;
+
+  :focus:enabled {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.text}
+  }
 `;
 
 const InputWrapper = styled.div`

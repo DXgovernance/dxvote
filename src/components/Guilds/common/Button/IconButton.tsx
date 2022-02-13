@@ -13,7 +13,7 @@ export const IconButton = styled(Button) <IconButtonProps>`
     ${props => props.iconRight && `margin-left: .2rem;`}
   },
   button {
-    ${props => props.iconLeft && `padding: .25rem 0.6rem; border-color: #555;`}
+    ${props => props.iconLeft && `padding: .25rem 0.6rem; border-color: #555;`};
 `;
 
 export const ButtonIcon = styled.img`
