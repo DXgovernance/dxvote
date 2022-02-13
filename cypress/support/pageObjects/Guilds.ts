@@ -13,7 +13,7 @@ class Guilds {
       createProposalTitle: 'Member payment proposal [12/10/2022 - 12/12/2022]',
       createProposalLink: 'https://daotalk.org/12309123091231293012930',
       createProposalEditorText:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     };
   }
 
@@ -36,14 +36,12 @@ class Guilds {
   }
 
   handleCreateProposalTypeBtnClick() {
-    const proposalsTypeList = cy.findByTestId('proposal-types-list'); // eslint-disable-line
-
-    proposalsTypeList
+    cy.findByTestId('proposal-types-list')
       .should('be.visible')
       .children('button')
-      .should('have.length', 5);
-
-    proposalsTypeList.first().click();
+      .should('have.length', 5)
+      .first()
+      .click();
 
     cy.findByTestId('proposal-type-continue-button').click();
 
