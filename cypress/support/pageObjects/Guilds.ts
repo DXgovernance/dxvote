@@ -1,12 +1,20 @@
-import { data } from 'cypress/types/jquery';
-
 class Guilds {
   public proposalsListId: string;
   public sidebarId: string;
-
+  public text: {
+    createProposalTitle: string;
+    createProposalLink: string;
+    createProposalEditorText: string;
+  };
   constructor() {
     this.proposalsListId = 'proposals-list';
     this.sidebarId = 'sidebar';
+    this.text = {
+      createProposalTitle: 'Member payment proposal [12/10/2022 - 12/12/2022]',
+      createProposalLink: 'https://daotalk.org/12309123091231293012930',
+      createProposalEditorText:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    };
   }
 
   goToGuildsPage(network: string = 'rinkeby') {
@@ -42,7 +50,33 @@ class Guilds {
     cy.url({ timeout: 8000 }).should('contain', '/create/proposal_type');
   }
 
-  checkForCreateProposalPageComponents() {}
+  checkForCreateProposalPageComponents() {
+    cy.url({ timeout: 8000 }).should('contain', '/create/proposal_type');
+    cy.findByTestId('create-proposal-editor').should('be.visible');
+    cy.findByTestId('create-proposal-title').should('be.visible');
+  }
+
+  fillCreateProposalForm() {
+    cy.findByTestId('create-proposal-editor-toggle-button').should(
+      'be.disabled'
+    );
+
+    cy.findByTestId('create-proposal-title').type(
+      this.text.createProposalTitle
+    );
+    cy.findByTestId('create-proposal-link').type(this.text.createProposalLink);
+    cy.get('[data-testId="editor-content"] div[contenteditable]')
+      .click()
+      .type(this.text.createProposalEditorText);
+
+    cy.findByTestId('create-proposal-editor-toggle-button').should(
+      'not.be.disabled'
+    );
+  }
+
+  toggleEditorMode() {
+    cy.findByTestId('create-proposal-editor-toggle-button').click();
+  }
 }
 
 const guilds: Guilds = new Guilds();
