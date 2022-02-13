@@ -12,10 +12,12 @@ import InfoItem from './InfoItem';
 
 const SidebarCardHeader = styled(Heading)`
   padding-left: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const SidebarCardContent = styled(Box)`
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const InfoItemLinkerLine = styled(Box)`

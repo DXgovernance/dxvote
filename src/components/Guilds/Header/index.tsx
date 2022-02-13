@@ -25,7 +25,7 @@ const HeaderContainer = styled(Container)`
   align-items: center;
   justify-content: space-between;
   padding: 0;
-  color: #fff
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const MenuItems = styled(Box)`

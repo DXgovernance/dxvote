@@ -29,6 +29,7 @@ const ProposalActionTitle = styled(Box)`
   span {
     font-size: 14px;
   }
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const FiArrowRightSpaced = styled(FiArrowRight)`

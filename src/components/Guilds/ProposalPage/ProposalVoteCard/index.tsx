@@ -12,10 +12,12 @@ const SidebarCardHeader = styled(Box)`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const SidebarCardContent = styled(Box)`
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const ButtonsContainer = styled.div`
@@ -58,7 +60,7 @@ const ProposalVoteCard = () => {
           showToken={showToken}
           token={TOKEN}
         />
-        <ButtonsContainer>
+        <ButtonsContainer variant="secondary">
           <Button
             minimal
             active={voted === 'yes'}

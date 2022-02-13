@@ -38,6 +38,7 @@ const PageContent = styled(Box)`
 
 const PageHeader = styled(Box)`
   margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const PageTitle = styled.h3`
