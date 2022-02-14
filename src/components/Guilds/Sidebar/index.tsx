@@ -12,11 +12,11 @@ import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPower
 import { useWeb3React } from '@web3-react/core';
 
 const SidebarWrapper = styled(Box)`
+  color: ${({ theme }) => theme.colors.text};
   @media only screen and (min-width: 768px) {
     margin-right: 1rem;
     border: 1px solid ${({ theme }) => theme.colors.muted};
     border-radius: ${({ theme }) => theme.radii.curved};
-    color: ${({ theme }) => theme.colors.text}
   }
 `;
 
