@@ -31,19 +31,11 @@ const baseInputStyles = css`
 const InputWrapper = styled.div`
   ${baseInputStyles}
   display: flex;
-  :hover {
-    background-color: ${({ theme }) => theme.colors.text};
-    color: ${({ theme }) => theme.colors.background};
-    & > input {
-      background-color: ${({ theme }) => theme.colors.text};
-      color: ${({ theme }) => theme.colors.background};
-    }
+  width:100%;
+  &:hover, 
+  &:focus {
+    border: 0.1rem solid ${({ theme }) => theme.colors.text};
   }
-  :active:enabled {
-    border: 0.1rem solid ${({ theme }) => theme.colors.muted};
-    & > input {
-      border: 0.1rem solid ${({ theme }) => theme.colors.muted};
-    }
   }
 `;
 
@@ -55,9 +47,11 @@ const InputBase = styled.input`
   &:hover {
     outline: none;
     border: none;
+    color: ${({ theme }) => theme.colors.text};
   }
   margin-left: 12px;
   padding: 0;
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const BaseInput = styled.input`

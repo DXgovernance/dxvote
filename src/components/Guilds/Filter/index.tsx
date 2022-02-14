@@ -2,8 +2,8 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { isDesktop, isMobile } from 'react-device-detect';
 import { useFilter } from 'contexts/Guilds/filters';
-
-import { InputText } from '../common/Form';
+import { AiOutlineSearch } from 'react-icons/ai';
+import { Input } from '../common/Form';
 import { Box, Flex } from '../common/Layout/Box';
 
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
@@ -30,6 +30,11 @@ const ButtonContainer = styled(Flex)`
   flex-direction: Row;
 `;
 
+const SpanContainer = styled.span`
+  
+
+`
+
 export const Filter = () => {
   const [viewFilter, setViewFilter] = useState(false);
   const [createProposal, setCreateProposal] = useState(true);
@@ -38,10 +43,13 @@ export const Filter = () => {
   const history = useHistory();
   const location = useLocation();
 
+
   return (
     <FilterContainer>
       <FilterRow>
-        <InputText placeholder="Search Proposal" />
+        <SpanContainer>
+          <Input icon={<AiOutlineSearch size={24} />} placeholder="Search Proposal" />
+        </SpanContainer>
         {createProposal && (
           <ButtonContainer>
             <Button variant="secondary" onClick={() => setCreateProposal(false)}>
