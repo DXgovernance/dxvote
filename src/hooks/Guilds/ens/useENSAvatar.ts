@@ -93,6 +93,8 @@ const useENSAvatarNFT = (
   );
 
   let imageUrl: string = useMemo(() => {
+    if (!decodedUrl || !ownerAddress || !ERC721Owner) return null;
+
     if (decodedUrl.type === 'http') {
       return decodedUrl.imageUri;
     } else if (
