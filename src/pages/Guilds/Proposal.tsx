@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiArrowLeft } from 'react-icons/fi';
+import { FaChevronLeft } from 'react-icons/fa';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
@@ -55,7 +55,7 @@ const PageTitle = styled.h3`
 `;
 
 const StyledIconButton = styled(IconButton)`
-  padding: 0;
+  padding: 0.6rem 0.8rem;
   margin-top: 5px;
 `;
 
@@ -102,13 +102,13 @@ const ProposalPage: React.FC = () => {
         <PageHeader>
           <HeaderTopRow>
             <UnstyledLink to={`/${chainName}/${guildId}`}>
-              <StyledIconButton variant="minimal" iconLeft>
-                <FiArrowLeft /> DXdao
+              <StyledIconButton variant="secondary" iconLeft>
+                <FaChevronLeft style={{ marginRight: '15px' }} /> DXdao
               </StyledIconButton>
             </UnstyledLink>
 
             <ProposalStatusWrapper>
-              <ProposalStatus proposalId={proposalId} bordered hideTime />
+              <ProposalStatus proposalId={proposalId} showRemainingTime />
             </ProposalStatusWrapper>
           </HeaderTopRow>
           <PageTitle>{proposal?.title || <Skeleton />}</PageTitle>

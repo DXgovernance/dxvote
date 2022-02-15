@@ -23,26 +23,27 @@ const Status = styled.div`
     `}
 `;
 
-const Pill = styled(Box)`
+const ProposalStatusDetail = styled(Box)`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-
-  border-radius: 1.5rem;
-  padding: ${props => (props.padded ? '0.5rem 0.8rem' : '0')};
+  margin: 0.5rem;
+  border-radius: 15px;
+  border: 1px solid
+    ${props =>
+      props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
+  background-color: ${({ theme }) => theme.colors.background};
   color: ${props =>
-    props.filled ? props.theme.colors.background : props.theme.colors.text};
-  background-color: ${props =>
-    props.filled ? props.theme.colors.text : 'transparent'};
-  border: 1px solid ${({ theme }) => theme.colors.text};
+    props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
+  padding: 0.25rem 0.4rem;
 `;
 
 const DetailText = styled(Box)`
-  padding: 0 0.2rem;
+padding: 0 0.2rem;
 
-  @media only screen and (min-width: 768px) {
-    padding-right: 0.5rem;
-  }
+@media only screen and(min - width: 768px) {
+  padding - right: 0.5rem;
+}
 `;
 
 interface ProposalStatusProps {
@@ -84,21 +85,27 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
 
   const statusDetail = useMemo(() => {
     if (!proposal?.endTime) return null;
-
-    if (proposal.state === ProposalState.Submitted) {
-      const currentTime = moment();
-      if (currentTime.isSameOrAfter(proposal.endTime)) {
-        return 'Ended';
-      } else {
+    switch (proposal.state) {
+      case ProposalState.Active:
+        const currentTime = moment();
+        if (currentTime.isSameOrAfter(proposal.endTime)) {
+          return ProposalState.Ended;
+        }
+        return ProposalState.Active;
+      case ProposalState.Executed:
+        return ProposalState.Executed;
+      case ProposalState.Passed:
+        return ProposalState.Passed;
+      case ProposalState.Failed:
+        return ProposalState.Failed;
+      default:
         return 'Active';
-      }
     }
-
-    return proposal.state;
   }, [proposal]);
 
   return (
     <Status test-id="proposal-status" bordered={hideTime ? false : bordered}>
+      {console.log(hideTime, 'hidetime')}
       {!hideTime && (
         <DetailText>
           {proposal?.endTime && timeDetail ? (
@@ -110,7 +117,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
           )}
         </DetailText>
       )}
-      <Pill filled padded>
+      <ProposalStatusDetail statusDetail={statusDetail}>
         {statusDetail || (
           <Skeleton
             test-id="skeleton"
@@ -119,7 +126,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
             highlightColor="#555"
           />
         )}
-      </Pill>
+      </ProposalStatusDetail>
     </Status>
   );
 };
