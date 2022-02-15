@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
 import Skeleton from 'react-loading-skeleton';
@@ -84,10 +84,7 @@ export const MemberActions = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { account: userAddress } = useWeb3React();
-  const { ensName, imageUrl, avatarUri } = useENSAvatar(
-    userAddress,
-    DEFAULT_ETH_CHAIN_ID
-  );
+  const { ensName, imageUrl } = useENSAvatar(userAddress, DEFAULT_ETH_CHAIN_ID);
   const { data: guildConfig } = useGuildConfig(guildAddress);
   const { data: tokenInfo } = useERC20Info(guildConfig?.token);
   const { data: userVotingPower } = useVotingPowerOf({
@@ -98,16 +95,6 @@ export const MemberActions = () => {
     guildAddress,
     userAddress
   );
-
-  const imageUrlToUse = useMemo(() => {
-    if (avatarUri) {
-      return (
-        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
-      );
-    } else {
-      return null;
-    }
-  }, [imageUrl, ensName, avatarUri]);
 
   useEffect(() => {
     if (showStakeModal) setShowMenu(false);
@@ -149,7 +136,7 @@ export const MemberActions = () => {
         <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
           <div>
             <IconHolder>
-              <Avatar src={imageUrlToUse} defaultSeed={userAddress} size={18} />
+              <Avatar src={imageUrl} defaultSeed={userAddress} size={18} />
             </IconHolder>
             <span>{ensName || shortenAddress(userAddress)}</span>
           </div>

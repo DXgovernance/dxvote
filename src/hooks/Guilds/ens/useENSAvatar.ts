@@ -16,10 +16,9 @@ const useENSAvatar = (ethAddress: string, chainId?: number) => {
     `ens/avatar/${chainId || walletChainId}/${ethAddress}`,
     null
   );
-  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, chainId);
 
   useEffect(() => {
-    if (!resolver || avatarUri) return;
+    if (!resolver) return;
 
     async function getAvatarUri() {
       try {
@@ -32,9 +31,21 @@ const useENSAvatar = (ethAddress: string, chainId?: number) => {
     }
 
     getAvatarUri().then(setAvatarUri);
-  }, [resolver, ensName, avatarUri, setAvatarUri]);
+  }, [resolver, ensName, setAvatarUri]);
 
-  return { ensName, avatarUri, imageUrl };
+  const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, chainId);
+  const imageUrlToUse = useMemo(() => {
+    if (avatarUri) {
+      // TODO: Consider chainId when generating ENS metadata service fallback URL
+      return (
+        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
+      );
+    } else {
+      return null;
+    }
+  }, [imageUrl, ensName, avatarUri]);
+
+  return { ensName, avatarUri, imageUrl: imageUrlToUse };
 };
 
 const useENSAvatarNFT = (

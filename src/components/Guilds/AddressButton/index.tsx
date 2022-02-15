@@ -1,6 +1,6 @@
 import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
-import React, { useMemo } from 'react';
+import React from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { IconButton } from '../common/Button';
 import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
@@ -49,46 +49,30 @@ const AddressText = styled.span`
 
 interface AddressButtonProps {
   address?: string;
-  chainId?: number;
   transactionsCounter?: number;
   onClick?: () => void;
 }
 
 const AddressButton: React.FC<AddressButtonProps> = ({
   address,
-  chainId = DEFAULT_ETH_CHAIN_ID,
   transactionsCounter,
   onClick,
 }) => {
-  const { ensName, imageUrl, avatarUri } = useENSAvatar(address, chainId);
-
-  const imageUrlToUse = useMemo(() => {
-    if (avatarUri) {
-      // TODO: Consider chainId when generating ENS metadata service fallback URL
-      return (
-        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
-      );
-    } else {
-      return null;
-    }
-  }, [imageUrl, ensName, avatarUri]);
+  const { ensName, imageUrl } = useENSAvatar(address, DEFAULT_ETH_CHAIN_ID);
 
   return (
     <StyledAddressButton onClick={onClick} iconLeft>
       <IconHolder>
         {address ? (
-          <Avatar src={imageUrlToUse} defaultSeed={address} size={24} />
+          <Avatar src={imageUrl} defaultSeed={address} size={24} />
         ) : (
           <Skeleton circle width={24} height={24} />
         )}
       </IconHolder>
       {isDesktop && (
         <AddressText>
-          {ensName || address ? (
-            shortenAddress(address)
-          ) : (
-            <Skeleton width={100} />
-          )}
+          {ensName ||
+            (address ? shortenAddress(address) : <Skeleton width={100} />)}
         </AddressText>
       )}
       {transactionsCounter ? (
