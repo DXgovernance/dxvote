@@ -134,8 +134,12 @@ const ProposalTypeDescription: React.FC<ProposalTypeDescriptionProps> = ({
   return (
     <Container>
       <PaddingWrapper>
-        <ContainerText variant="bold" color="#fff">{title}</ContainerText>
-        <ContainerText variant="medium" color="#BDC0C7">{description}</ContainerText>
+        <ContainerText variant="bold" color="#fff">
+          {title}
+        </ContainerText>
+        <ContainerText variant="medium" color="#BDC0C7">
+          {description}
+        </ContainerText>
         <ContainerText variant="medium" color="#BDC0C7">
           {onChainAction ? 'On-chain Action' : 'No on-chain action'}
         </ContainerText>
@@ -189,7 +193,8 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
             <PaddingWrapper>
               <ContainerHeader>Proposal type</ContainerHeader>
               {data.map(({ title, description, onChainAction, icon }) => (
-                <ProposalTypeButton variant="secondary"
+                <ProposalTypeButton
+                  variant="secondary"
                   onClick={() =>
                     setProposalDescription({
                       title: title,

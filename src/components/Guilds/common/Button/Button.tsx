@@ -5,8 +5,8 @@ type ButtonProps = {
 };
 
 const variantStyles = (variant = 'primary') =>
-({
-  primary: css`
+  ({
+    primary: css`
       border: 1px solid ${({ theme }) => theme.colors.border.initial};
       background-color: ${({ theme }) => theme.colors.button.primary};
       color: ${({ theme }) => theme.colors.text};
@@ -15,7 +15,7 @@ const variantStyles = (variant = 'primary') =>
       margin: ${({ margin }) => (margin ? margin : '0.2rem')};
 
       :hover:enabled {
-        border-color: ${({ theme }) => theme.colors.border.hover}
+        border-color: ${({ theme }) => theme.colors.border.hover};
       }
 
       :active:enabled {
@@ -23,13 +23,13 @@ const variantStyles = (variant = 'primary') =>
       }
 
       ${({ active, selected }) =>
-      (active || selected) &&
-      css`
+        (active || selected) &&
+        css`
           background-color: ${({ theme }) => theme.colors.primary};
           color: ${({ theme }) => theme.colors.background};
         `}
     `,
-  secondary: css`
+    secondary: css`
       border: 1px solid ${({ theme }) => theme.colors.border.initial};
       background-color: ${({ theme }) => theme.colors.background};
       color: ${({ theme }) => theme.colors.text};
@@ -49,13 +49,13 @@ const variantStyles = (variant = 'primary') =>
       }
 
       ${({ active, selected }) =>
-      (active || selected) &&
-      css`
+        (active || selected) &&
+        css`
           background-color: ${({ theme }) => theme.colors.primary};
           color: ${({ theme }) => theme.colors.background};
         `}
     `,
-  minimal: css`
+    minimal: css`
       border: none;
       background-color: transparent;
       color: ${({ theme }) => theme.colors.text};
@@ -64,7 +64,7 @@ const variantStyles = (variant = 'primary') =>
         color: ${({ theme }) => theme.colors.muted};
       }
     `,
-}[variant]);
+  }[variant]);
 
 export const Button = styled.button<ButtonProps>`
   display: inline-flex;

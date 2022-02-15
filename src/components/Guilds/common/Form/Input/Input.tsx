@@ -9,11 +9,11 @@ const baseInputStyles = css`
   color: ${({ theme }) => theme.colors.text};
 
   ::placeholder {
-    color: ${({ theme }) => theme.colors.proposalText.lightGrey}
+    color: ${({ theme }) => theme.colors.proposalText.lightGrey};
   }
   :hover:enabled {
     color: ${({ theme }) => theme.colors.background};
-    border-color: ${({ theme }) => theme.colors.border.hover}
+    border-color: ${({ theme }) => theme.colors.border.hover};
   }
 
   :active:enabled {
@@ -24,7 +24,7 @@ const baseInputStyles = css`
   :focus:enabled {
     outline: none;
     border-color: ${({ theme }) => theme.colors.text};
-    color: ${({ theme }) => theme.colors.text}
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
 

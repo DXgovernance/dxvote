@@ -11,7 +11,7 @@ const HeaderWrapper = styled.nav`
   position: -webkit-sticky;
   position: sticky;
   top: 0;
-  background: #1B1D1F;
+  background: #1b1d1f;
   z-index: 200;
   @media only screen and(min-width: 768px) {
     padding: 1.5rem 0;

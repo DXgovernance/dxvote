@@ -6,14 +6,15 @@ type IconButtonProps = {
   iconRight?: boolean;
 };
 
-export const IconButton = styled(Button) <IconButtonProps>`
+export const IconButton = styled(Button)<IconButtonProps>`
   svg,
   img {
     ${props => props.iconLeft && `margin-right: .4rem; `}
     ${props => props.iconRight && `margin-left: .2rem;`}
   },
   button {
-    ${props => props.iconLeft && `padding: .25rem 0.6rem; background-color: #1B1D1F`};
+    ${props =>
+      props.iconLeft && `padding: .25rem 0.6rem; background-color: #1B1D1F`};
 `;
 
 export const ButtonIcon = styled.img`

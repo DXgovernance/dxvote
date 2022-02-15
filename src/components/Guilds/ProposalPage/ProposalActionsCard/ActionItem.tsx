@@ -53,7 +53,11 @@ const ActionItem = () => {
             geronimo.eth
           </IconButton>
         </ProposalActionTitle>
-        {isOpen ? <FaChevronCircleUp color="white" /> : <FaChevronCircleDown color="white" />}
+        {isOpen ? (
+          <FaChevronCircleUp color="white" />
+        ) : (
+          <FaChevronCircleDown color="white" />
+        )}
       </ProposalActionRow>
       {isOpen && (
         <ActionDetailsRow>

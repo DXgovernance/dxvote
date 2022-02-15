@@ -2,7 +2,11 @@ import styled from 'styled-components';
 import { Button } from '../../common/Button';
 import LiveIndicator from './LiveIndicator';
 
-const OptionButton = styled(Button)`
+interface OptionButtonProps {
+  active: boolean;
+}
+
+const OptionButton = styled(Button)<OptionButtonProps>`
   width: 100%;
 
   padding: 0.6rem 1.5rem;

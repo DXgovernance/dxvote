@@ -30,10 +30,7 @@ const ButtonContainer = styled(Flex)`
   flex-direction: Row;
 `;
 
-const SpanContainer = styled.span`
-  
-
-`
+const SpanContainer = styled.span``;
 
 export const Filter = () => {
   const [viewFilter, setViewFilter] = useState(false);
@@ -43,16 +40,21 @@ export const Filter = () => {
   const history = useHistory();
   const location = useLocation();
 
-
   return (
     <FilterContainer>
       <FilterRow>
         <SpanContainer>
-          <Input icon={<AiOutlineSearch size={24} />} placeholder="Search Proposal" />
+          <Input
+            icon={<AiOutlineSearch size={24} />}
+            placeholder="Search Proposal"
+          />
         </SpanContainer>
         {createProposal && (
           <ButtonContainer>
-            <Button variant="secondary" onClick={() => setCreateProposal(false)}>
+            <Button
+              variant="secondary"
+              onClick={() => setCreateProposal(false)}
+            >
               Proposal state
             </Button>
             <Button
@@ -75,6 +77,6 @@ export const Filter = () => {
         )}
       </FilterRow>
       {isMobile && viewFilter && <FilterMenu />}
-    </FilterContainer >
+    </FilterContainer>
   );
 };
