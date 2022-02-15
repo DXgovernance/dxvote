@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import contentHash from 'content-hash';
 import { FiChevronLeft } from 'react-icons/fi';
@@ -107,6 +107,13 @@ const CreateProposalPage: React.FC = () => {
     });
   };
 
+  const isValid = useMemo(() => {
+    if (!title) return false;
+    if (!proposalBodyHTML) return false;
+
+    return true;
+  }, [title, proposalBodyHTML]);
+
   return (
     <PageContainer>
       <PageContent>
@@ -180,7 +187,7 @@ const CreateProposalPage: React.FC = () => {
           <Button
             onClick={handleCreateProposal}
             variant="secondary"
-            // disabled={editMode}
+            disabled={!isValid}
           >
             Create Proposal
           </Button>
