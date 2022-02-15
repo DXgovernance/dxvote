@@ -171,7 +171,7 @@ const Editor: React.FC<EditorProps> = ({
     <div>
       <EditorWrap>
         {editor && <MenuBar editor={editor} />}
-        <Content editor={editor} />
+        <Content editor={editor} data-testId="editor-content" />
       </EditorWrap>
     </div>
   );
