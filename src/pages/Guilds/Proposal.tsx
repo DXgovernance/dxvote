@@ -122,8 +122,8 @@ const ProposalPage: React.FC = () => {
         </ProposalActionsWrapper>
       </PageContent>
       <SidebarContent>
-        <ProposalInfoCard />
         <ProposalVoteCard />
+        <ProposalInfoCard />
       </SidebarContent>
     </PageContainer>
   );

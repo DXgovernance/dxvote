@@ -1,4 +1,6 @@
-import moment from 'moment';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/useGuildConfig';
+import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
+import moment, { duration } from 'moment';
 import React, { useMemo } from 'react';
 import { FiCheck, FiInbox } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
@@ -41,6 +43,12 @@ const ProposalInfoCard: React.FC = () => {
   }>();
   const { data: proposal, error } = useProposal(guildId, proposalId);
 
+  const { data: guildConfig } = useGuildConfig(guildId);
+  const quorum = useVotingPowerPercent(
+    guildConfig?.votingPowerForProposalExecution,
+    guildConfig?.totalLocked
+  );
+
   const endDetail = useMemo(() => {
     if (!proposal || !proposal.endTime) return null;
 
@@ -58,7 +66,7 @@ const ProposalInfoCard: React.FC = () => {
     <SidebarCard header={<SidebarCardHeader>Information</SidebarCardHeader>}>
       <SidebarCardContent>
         {!proposal ? (
-          <Skeleton />
+          <Skeleton height={100} />
         ) : (
           <>
             <InfoItem
@@ -79,12 +87,25 @@ const ProposalInfoCard: React.FC = () => {
         <Separator />
 
         <UserInfoDetail>
-          <span>Voting System</span>
-          <span>Holographic</span>
+          <span>Consensus System</span>
+          <span>Guild</span>
+        </UserInfoDetail>
+        <UserInfoDetail>
+          <span>Proposal Duration</span>
+          <span>
+            {guildConfig?.proposalTime ? (
+              duration(
+                guildConfig?.proposalTime?.toNumber(),
+                'seconds'
+              ).humanize()
+            ) : (
+              <Skeleton width={50} />
+            )}
+          </span>
         </UserInfoDetail>
         <UserInfoDetail>
           <span>Quorum</span>
-          <span>40%</span>
+          <span>{quorum != null ? `${quorum}%` : <Skeleton width={50} />}</span>
         </UserInfoDetail>
       </SidebarCardContent>
     </SidebarCard>
