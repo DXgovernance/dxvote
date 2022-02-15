@@ -166,9 +166,7 @@ const CreateProposalPage: React.FC = () => {
               />
             </>
           ) : referenceLink ? (
-            <Label size="16px">
-              {referenceLink}
-            </Label>
+            <Label size="16px">{referenceLink}</Label>
           ) : null}
         </Box>
         {editMode ? (

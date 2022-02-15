@@ -44,7 +44,10 @@ export const Filter = () => {
   const location = useLocation();
 
   const { account } = useWeb3React();
-  const { data: votingPower } = useVotingPowerOf({ contractAddress: guildId, userAddress: account });
+  const { data: votingPower } = useVotingPowerOf({
+    contractAddress: guildId,
+    userAddress: account,
+  });
   const { data: guildConfig } = useGuildConfig(guildId);
   const isProposalCreationAllowed = useMemo(() => {
     if (!guildConfig || !votingPower) {
@@ -62,9 +65,7 @@ export const Filter = () => {
         <InputText placeholder="Proposal title" />
         {isProposalCreationAllowed && (
           <ButtonContainer>
-            <Button>
-              Proposal state
-            </Button>
+            <Button>Proposal state</Button>
             <Button
               variant="secondary"
               onClick={() => history.push(location.pathname + '/proposalType')}
