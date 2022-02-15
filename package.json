@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@0xsequence/multicall": "^0.35.5",
+    "@theconvospace/sdk": "^0.3.28",
     "@tiptap/extension-focus": "^2.0.0-beta.39",
     "@tiptap/extension-highlight": "^2.0.0-beta.32",
     "@tiptap/react": "^2.0.0-beta.105",

@@ -12,6 +12,7 @@ import { Box, Title } from '../components/common';
 import {
   History,
   Calls,
+  Comments,
   Votes,
   Status,
   Stakes,
@@ -133,6 +134,7 @@ const ProposalPage = observer(() => {
         </ProposalInfoBox>
 
         <History proposalEvents={proposalEvents}></History>
+        <Comments threadId={proposalId} />
       </ProposalInfoSection>
       <InfoSidebarBox>
         <Status />
