@@ -17,6 +17,8 @@ const defaultAlchemyKey = '7i7fiiOx1b7bGmgWY_oI9twyQBCsuXKC';
 
 export const DISCOURSE_URL_ROOT = 'https://daotalk.org';
 
+export const DEFUALT_CHAIN_ID = 1;
+
 export const NETWORKS: ChainConfig[] = [
   {
     id: 1,
