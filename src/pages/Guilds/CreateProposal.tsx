@@ -149,7 +149,7 @@ const CreateProposalPage: React.FC = () => {
         <Box margin="0px 0px 24px">
           {editMode ? (
             <>
-              <Label color="#A1A6B0"> Reference link (optional)</Label>
+              <Label>Reference link (optional)</Label>
 
               <Input
                 placeholder="https://daotalk.org/..."
@@ -159,7 +159,7 @@ const CreateProposalPage: React.FC = () => {
               />
             </>
           ) : referenceLink ? (
-            <Label color="#A1A6B0" size="16px">
+            <Label size="16px">
               {referenceLink}
             </Label>
           ) : null}
@@ -169,6 +169,7 @@ const CreateProposalPage: React.FC = () => {
             onMdChange={setProposalBodyMd}
             onHTMLChange={setProposalBodyHTML}
             content={proposalBodyHTML}
+            placeholder="What do you want to propose?"
           />
         ) : (
           <div
