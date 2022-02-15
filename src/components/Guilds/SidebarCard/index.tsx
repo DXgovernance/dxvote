@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import styled from 'styled-components';
 import { Box } from '../common/Layout';
+import { Heading } from '../common/Typography';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -27,3 +28,12 @@ const SidebarCard: React.FC<SidebarCardProps> = ({ header, children }) => {
 };
 
 export default SidebarCard;
+
+export const SidebarCardHeader = styled(Heading)`
+  padding-left: 1rem;
+  font-weight: 700;
+`;
+
+export const SidebarCardContent = styled(Box)`
+  padding: 1rem;
+`;

@@ -6,17 +6,11 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useProposal } from '../../../../hooks/Guilds/ether-swr/useProposal';
 import { Box } from '../../common/Layout';
-import { Heading } from '../../common/Typography';
-import SidebarCard from '../../SidebarCard';
+import SidebarCard, {
+  SidebarCardContent,
+  SidebarCardHeader,
+} from '../../SidebarCard';
 import InfoItem from './InfoItem';
-
-const SidebarCardHeader = styled(Heading)`
-  padding-left: 1rem;
-`;
-
-const SidebarCardContent = styled(Box)`
-  padding: 1rem;
-`;
 
 const InfoItemLinkerLine = styled(Box)`
   border-left: 1px dashed ${({ theme }) => theme.colors.muted};
@@ -61,13 +55,7 @@ const ProposalInfoCard: React.FC = () => {
   if (error) return <div>Error</div>;
 
   return (
-    <SidebarCard
-      header={
-        <SidebarCardHeader>
-          <strong>Information</strong>
-        </SidebarCardHeader>
-      }
-    >
+    <SidebarCard header={<SidebarCardHeader>Information</SidebarCardHeader>}>
       <SidebarCardContent>
         {!proposal ? (
           <Skeleton />

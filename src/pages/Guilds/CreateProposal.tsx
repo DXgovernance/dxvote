@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import contentHash from 'content-hash';
 import { FiChevronLeft } from 'react-icons/fi';
@@ -8,7 +8,6 @@ import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Input } from '../../components/Guilds/common/Form';
-import SidebarCard from '../../components/Guilds/SidebarCard';
 import Editor from 'components/Guilds/Editor';
 
 import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
@@ -16,6 +15,7 @@ import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
 import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
+import SidebarInfoCard from 'components/ProposalCreationPage/SidebarInfoCard';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -45,17 +45,6 @@ const Button = styled(IconButton)`
   margin: 0;
 `;
 
-const SidebarHeader = styled.h3`
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
-  color: #000000;
-  padding: 16px;
-  margin: 0;
-`;
-
 const Label = styled.span`
   font-family: Inter;
   font-style: normal;
@@ -70,9 +59,9 @@ const Label = styled.span`
 const CreateProposalPage: React.FC = () => {
   const ttlMs = 345600000;
   const history = useHistory();
-  const [editMode, setEditMode] = React.useState(true);
-  const [title, setTitle] = React.useState('');
-  const [referenceLink, setReferenceLink] = React.useState('');
+  const [editMode, setEditMode] = useState(true);
+  const [title, setTitle] = useState('');
+  const [referenceLink, setReferenceLink] = useState('');
   const [proposalBodyHTML, setProposalBodyHTML] =
     useLocalStorageWithExpiry<string>(
       `guild/newProposal/description/html`,
@@ -197,34 +186,7 @@ const CreateProposalPage: React.FC = () => {
         </Box>
       </PageContent>
       <SidebarContent>
-        <SidebarCard header={<SidebarHeader>Information</SidebarHeader>}>
-          <Box padding="12px 0">
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Consensus System</Label>
-              <Label> Guild</Label>
-            </Flex>
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Proposal Duration</Label>
-              <Label> 8 days</Label>
-            </Flex>
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Quorum</Label>
-              <Label> 40%</Label>
-            </Flex>
-          </Box>
-        </SidebarCard>
+        <SidebarInfoCard />
       </SidebarContent>
     </PageContainer>
   );
