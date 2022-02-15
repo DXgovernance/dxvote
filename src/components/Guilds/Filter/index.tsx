@@ -50,6 +50,7 @@ export const Filter = () => {
             <Button
               variant="secondary"
               onClick={() => history.push(location.pathname + '/proposalType')}
+              data-testid="create-proposal-button"
             >
               Create Proposal
             </Button>

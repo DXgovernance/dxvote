@@ -54,7 +54,7 @@ const GuildsPage: React.FC = () => {
         {!error ? (
           <ProposalsList data-testid="proposals-list">
             {proposalsIds ? (
-              proposalsIds.map(proposalId => (
+              [...proposalsIds].reverse().map(proposalId => (
                 <InView>
                   {({ inView, ref }) => (
                     <div ref={ref}>
