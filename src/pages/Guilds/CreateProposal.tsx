@@ -56,7 +56,7 @@ const Label = styled.span`
   line-height: 20px;
   display: flex;
   color: ${({ color }) => (color ? color : `#000000`)};
-  margin-bottom: 0.5rem;
+  margin: 0;
 `;
 
 const CreateProposalPage: React.FC = () => {

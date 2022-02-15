@@ -1,6 +1,7 @@
 import { ReactElement, ReactNode } from 'react';
 import styled from 'styled-components';
 import { Box } from '../Layout';
+
 interface CardWrapperProps {
   customStyles?: string;
 }
