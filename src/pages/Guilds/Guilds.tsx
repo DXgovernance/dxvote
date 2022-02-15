@@ -7,7 +7,7 @@ import { Sidebar } from '../../components/Guilds/Sidebar';
 import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard from '../../components/Guilds/ProposalCard';
 import InView from 'react-intersection-observer';
-import { useGuildProposals } from '../../hooks/Guilds/ether-swr/useGuildProposals';
+import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/useGuildProposals';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -42,8 +42,8 @@ const ErrorList = styled(Box)`
 const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
-  const { data: proposalIds, error } = useGuildProposals(guildId);
-  const filteredProposals = useMemo(() => {
+  const { data: proposalIds, error } = useGuildProposalIds(guildId);
+  const filteredProposalIds = useMemo(() => {
     if (!proposalIds) return null;
 
     // clone array as the original proposalIds array from Ethers is immutable
@@ -64,8 +64,8 @@ const GuildsPage: React.FC = () => {
         <Filter />
         {!error ? (
           <ProposalsList data-testid="proposals-list">
-            {filteredProposals ? (
-              filteredProposals.map(proposalId => (
+            {filteredProposalIds ? (
+              filteredProposalIds.map(proposalId => (
                 <InView key={proposalId}>
                   {({ inView, ref }) => (
                     <div ref={ref}>
