@@ -1,9 +1,15 @@
 import styled from 'styled-components';
+import Skeleton from 'react-loading-skeleton';
+import { duration } from 'moment';
+
 import SidebarCard, {
   SidebarCardContent,
   SidebarCardHeader,
 } from 'components/Guilds/SidebarCard';
 import { Flex } from 'components/Guilds/common/Layout';
+import { useParams } from 'react-router-dom';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/useGuildConfig';
+import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 
 const Row = styled(Flex)`
   margin-bottom: 0.8rem;
@@ -23,11 +29,14 @@ const Label = styled.span`
 `;
 
 const SidebarInfoCard = () => {
-  // const { guild_id: guildId } =
-  //   useParams<{ chain_name?: string; guild_id?: string }>();
-  // const { data } = useGuildConfig(guildId);
+  const { guild_id: guildId } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { data } = useGuildConfig(guildId);
 
-  // console.log({ data });
+  const quorum = useVotingPowerPercent(
+    data?.votingPowerForProposalExecution,
+    data?.totalLocked
+  );
 
   return (
     <SidebarCard header={<SidebarCardHeader>Information</SidebarCardHeader>}>
@@ -38,11 +47,19 @@ const SidebarInfoCard = () => {
         </Row>
         <Row>
           <Label>Proposal Duration</Label>
-          <Label>8 days</Label>
+          <Label>
+            {data?.proposalTime ? (
+              duration(data?.proposalTime?.toNumber(), 'seconds').humanize()
+            ) : (
+              <Skeleton width={50} />
+            )}
+          </Label>
         </Row>
         <Row>
           <Label>Quorum</Label>
-          <Label>40%</Label>
+          <Label>
+            {quorum != null ? `${quorum}%` : <Skeleton width={50} />}
+          </Label>
         </Row>
       </SidebarCardContent>
     </SidebarCard>
