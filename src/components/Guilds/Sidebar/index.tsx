@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
 import { Box } from '../common/Layout';
 import { Menu, MenuItem } from '../common/Menu';
 import { MemberActions } from './MemberActions';
@@ -113,7 +112,7 @@ export const Sidebar = () => {
             <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
 
             <DaoTitle size={2} as="h1">
-              {data?.name || <Skeleton width={100} />}
+              {data?.name}
             </DaoTitle>
           </DaoBrand>
           <DaoMemberCount>464 Members</DaoMemberCount>

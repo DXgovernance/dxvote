@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton, { SkeletonProps, SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
@@ -115,6 +115,15 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
     DEFAULT_ETH_CHAIN_ID
   );
 
+
+  const SkeletonStyling = ({ width, circle, height }: SkeletonProps) => {
+    return (
+      <SkeletonTheme baseColor="#3E3F41" highlightColor="#3E3F41">
+        <Skeleton test-id="skeleton" width={width} circle={circle} height={height} />
+      </SkeletonTheme >
+    )
+  }
+
   const imageUrlToUse = useMemo(() => {
     if (avatarUri) {
       // TODO: Consider chainId when generating ENS metadata service fallback URL
@@ -138,14 +147,14 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
                 size={24}
               />
             ) : (
-              <Skeleton test-id="skeleton" circle width={24} height={24} />
+              <SkeletonStyling test-id="skeleton" circle width={24} height={24} />
             )}
             <Detail>
               {ensName ||
                 (proposal?.creator ? (
                   shortenAddress(proposal.creator)
                 ) : (
-                  <Skeleton width={100} />
+                  <SkeletonStyling width={100} />
                 ))}
             </Detail>
           </IconDetailWrapper>
@@ -159,11 +168,11 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         </CardHeader>
         <CardContent>
           <CardTitle size={2}>
-            <strong>{proposal?.title || <Skeleton />}</strong>
+            <strong>{proposal?.title || <SkeletonStyling />}</strong>
           </CardTitle>
         </CardContent>
         <CardFooter>
-          <BorderedIconDetailWrapper>
+          {proposal?.value ? <BorderedIconDetailWrapper>
             <Detail>150 ETH</Detail>
             {isDesktop && (
               <>
@@ -173,14 +182,16 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
                 <Detail>geronimo.eth</Detail>
               </>
             )}
-          </BorderedIconDetailWrapper>
-          <BorderedIconDetailWrapper>
+          </BorderedIconDetailWrapper> : <SkeletonStyling width={100} />}
+
+          {proposal?.totalVotes ? <BorderedIconDetailWrapper>
             <Detail>15.60%</Detail>
             <Icon as="div" spaceLeft spaceRight>
               <FiCircle />
             </Icon>
             <Detail>5.25%</Detail>
-          </BorderedIconDetailWrapper>
+          </BorderedIconDetailWrapper> : <SkeletonStyling width={100} />}
+
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>

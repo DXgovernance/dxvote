@@ -60,6 +60,9 @@ const ProposalTypeButton = styled(Button)`
   margin: 6px 0;
   flex-direction: row;
   justify-content: left;
+  &:active, &:focus {
+    border: 2px solid ${({ theme }) => theme.colors.text};
+  }
 `;
 
 const ContainerHeader = styled(Flex)`
