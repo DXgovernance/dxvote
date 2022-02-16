@@ -14,7 +14,7 @@ describe('Guilds', () => {
     Guilds.shouldRenderSidebar();
   });
 
-  it('Should Create a proposal', () => {
+  it.skip('Should Create a proposal', () => {
     Guilds.handleProposalsPageCreateProposalBtnClick();
     Guilds.handleCreateProposalTypeBtnClick();
     Guilds.fillCreateProposalForm();
