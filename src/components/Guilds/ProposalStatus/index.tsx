@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
 import moment from 'moment';
 
 import { Box } from '../common/Layout';
 import { ProposalState } from '../../../types/types.guilds.d';
 import { useParams } from 'react-router';
 import { useProposal } from '../../../hooks/Guilds/ether-swr/useProposal';
+import { Loading } from '../common/Loading';
 
 const Status = styled.div`
   font-size: 0.8rem;
@@ -31,7 +31,7 @@ const ProposalStatusDetail = styled(Box)`
   border-radius: 15px;
   border: 1px solid
     ${props =>
-      props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
+    props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
   background-color: ${({ theme }) => theme.colors.background};
   color: ${props =>
     props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
@@ -89,9 +89,10 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
       case ProposalState.Active:
         const currentTime = moment();
         if (currentTime.isSameOrAfter(proposal.endTime)) {
-          return ProposalState.Ended;
+          return ProposalState.Failed;
+        } else {
+          return ProposalState.Active
         }
-        return ProposalState.Active;
       case ProposalState.Executed:
         return ProposalState.Executed;
       case ProposalState.Passed:
@@ -99,13 +100,12 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
       case ProposalState.Failed:
         return ProposalState.Failed;
       default:
-        return 'Active';
+        return proposal.state;
     }
   }, [proposal]);
 
   return (
     <Status test-id="proposal-status" bordered={hideTime ? false : bordered}>
-      {console.log(hideTime, 'hidetime')}
       {!hideTime && (
         <DetailText>
           {proposal?.endTime && timeDetail ? (
@@ -113,20 +113,19 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
               {timeDetail}
             </span>
           ) : (
-            <Skeleton test-id="skeleton" width={50} />
+            <Loading test-id="skeleton" loading text skeletonProps={{ width: '50px' }} />
           )}
         </DetailText>
       )}
-      <ProposalStatusDetail statusDetail={statusDetail}>
-        {statusDetail || (
-          <Skeleton
+      {statusDetail ? <ProposalStatusDetail statusDetail={statusDetail}> {statusDetail}</ProposalStatusDetail> :
+        (
+          <Loading
             test-id="skeleton"
-            width={50}
-            baseColor="#333"
-            highlightColor="#555"
+            loading
+            text
+            skeletonProps={{ width: '50px' }}
           />
         )}
-      </ProposalStatusDetail>
     </Status>
   );
 };

@@ -2,8 +2,7 @@ import React from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
-
+import { Loading } from 'components/Guilds/common/Loading';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
 import ProposalInfoCard from '../../components/Guilds/ProposalPage/ProposalInfoCard';
@@ -111,7 +110,7 @@ const ProposalPage: React.FC = () => {
               <ProposalStatus proposalId={proposalId} showRemainingTime />
             </ProposalStatusWrapper>
           </HeaderTopRow>
-          <PageTitle>{proposal?.title || <Skeleton />}</PageTitle>
+          <PageTitle>{proposal?.title || <Loading loading text skeletonProps={{ width: "800px" }} />}</PageTitle>
         </PageHeader>
 
         <AddressButton address={proposal?.creator} />

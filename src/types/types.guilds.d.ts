@@ -22,7 +22,6 @@ export enum ProposalState {
   Passed = "Passed",
   Executed = "Executed",
   Failed = "Failed",
-  Ended = "Ended"
 }
 export interface ProposalMetadata {
   description: string;

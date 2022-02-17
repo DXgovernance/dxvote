@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Skeleton, { SkeletonProps, SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
@@ -15,6 +14,7 @@ import { useMemo } from 'react';
 import Avatar from '../Avatar';
 import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';
 import { shortenAddress } from '../../../utils';
+import { Loading } from '../common/Loading';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -115,15 +115,6 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
     DEFAULT_ETH_CHAIN_ID
   );
 
-
-  const SkeletonStyling = ({ width, circle, height }: SkeletonProps) => {
-    return (
-      <SkeletonTheme baseColor="#3E3F41" highlightColor="#3E3F41">
-        <Skeleton test-id="skeleton" width={width} circle={circle} height={height} />
-      </SkeletonTheme >
-    )
-  }
-
   const imageUrlToUse = useMemo(() => {
     if (avatarUri) {
       // TODO: Consider chainId when generating ENS metadata service fallback URL
@@ -147,14 +138,14 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
                 size={24}
               />
             ) : (
-              <SkeletonStyling test-id="skeleton" circle width={24} height={24} />
+              <Loading style={{ margin: 0 }} loading text skeletonProps={{ circle: true, width: "24px", height: "24px" }} />
             )}
             <Detail>
               {ensName ||
                 (proposal?.creator ? (
                   shortenAddress(proposal.creator)
                 ) : (
-                  <SkeletonStyling width={100} />
+                  <Loading style={{ margin: 0 }} loading text />
                 ))}
             </Detail>
           </IconDetailWrapper>
@@ -168,7 +159,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         </CardHeader>
         <CardContent>
           <CardTitle size={2}>
-            <strong>{proposal?.title || <SkeletonStyling />}</strong>
+            <strong>{proposal?.title || <Loading style={{ margin: 0 }} loading text />}</strong>
           </CardTitle>
         </CardContent>
         <CardFooter>
@@ -182,7 +173,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
                 <Detail>geronimo.eth</Detail>
               </>
             )}
-          </BorderedIconDetailWrapper> : <SkeletonStyling width={100} />}
+          </BorderedIconDetailWrapper> : <Loading style={{ margin: 0 }} skeletonProps={{ width: "200px" }} loading text />}
 
           {proposal?.totalVotes ? <BorderedIconDetailWrapper>
             <Detail>15.60%</Detail>
@@ -190,7 +181,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
               <FiCircle />
             </Icon>
             <Detail>5.25%</Detail>
-          </BorderedIconDetailWrapper> : <SkeletonStyling width={100} />}
+          </BorderedIconDetailWrapper> : <Loading style={{ margin: 0 }} loading text skeletonProps={{ width: "200px" }} />}
 
         </CardFooter>
       </CardWrapper>
