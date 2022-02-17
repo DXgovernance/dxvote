@@ -20,7 +20,13 @@ const StakeTokensModal: React.FC<StakeTokensModalInterface> = ({
 
   return (
     <Modal
-      header={token ? `Stake ${token.name} tokens` : <Loading loading text skeletonProps={{ width: "100px" }} />}
+      header={
+        token ? (
+          `Stake ${token.name} tokens`
+        ) : (
+          <Loading loading text skeletonProps={{ width: '100px' }} />
+        )
+      }
       isOpen={isOpen}
       onDismiss={onDismiss}
       maxWidth={300}

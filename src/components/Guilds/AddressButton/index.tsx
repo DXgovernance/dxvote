@@ -79,7 +79,11 @@ const AddressButton: React.FC<AddressButtonProps> = ({
         {address ? (
           <Avatar src={imageUrlToUse} defaultSeed={address} size={24} />
         ) : (
-          <Loading loading text skeletonProps={{ circle: true, width: "24px", height: "24px" }} />
+          <Loading
+            loading
+            text
+            skeletonProps={{ circle: true, width: '24px', height: '24px' }}
+          />
         )}
       </IconHolder>
       {isDesktop && (

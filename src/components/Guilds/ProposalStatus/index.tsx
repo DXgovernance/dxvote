@@ -31,7 +31,7 @@ const ProposalStatusDetail = styled(Box)`
   border-radius: 15px;
   border: 1px solid
     ${props =>
-    props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
+      props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
   background-color: ${({ theme }) => theme.colors.background};
   color: ${props =>
     props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
@@ -91,7 +91,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
         if (currentTime.isSameOrAfter(proposal.endTime)) {
           return ProposalState.Failed;
         } else {
-          return ProposalState.Active
+          return ProposalState.Active;
         }
       case ProposalState.Executed:
         return ProposalState.Executed;
@@ -113,19 +113,28 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
               {timeDetail}
             </span>
           ) : (
-            <Loading test-id="skeleton" loading text skeletonProps={{ width: '50px' }} />
+            <Loading
+              test-id="skeleton"
+              loading
+              text
+              skeletonProps={{ width: '50px' }}
+            />
           )}
         </DetailText>
       )}
-      {statusDetail ? <ProposalStatusDetail statusDetail={statusDetail}> {statusDetail}</ProposalStatusDetail> :
-        (
-          <Loading
-            test-id="skeleton"
-            loading
-            text
-            skeletonProps={{ width: '50px' }}
-          />
-        )}
+      {statusDetail ? (
+        <ProposalStatusDetail statusDetail={statusDetail}>
+          {' '}
+          {statusDetail}
+        </ProposalStatusDetail>
+      ) : (
+        <Loading
+          test-id="skeleton"
+          loading
+          text
+          skeletonProps={{ width: '50px' }}
+        />
+      )}
     </Status>
   );
 };

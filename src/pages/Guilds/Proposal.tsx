@@ -110,7 +110,11 @@ const ProposalPage: React.FC = () => {
               <ProposalStatus proposalId={proposalId} showRemainingTime />
             </ProposalStatusWrapper>
           </HeaderTopRow>
-          <PageTitle>{proposal?.title || <Loading loading text skeletonProps={{ width: "800px" }} />}</PageTitle>
+          <PageTitle>
+            {proposal?.title || (
+              <Loading loading text skeletonProps={{ width: '800px' }} />
+            )}
+          </PageTitle>
         </PageHeader>
 
         <AddressButton address={proposal?.creator} />

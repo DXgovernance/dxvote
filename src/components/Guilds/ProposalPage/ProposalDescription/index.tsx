@@ -52,7 +52,7 @@ const ProposalDescription = () => {
       {metadata?.description ? (
         <Markdown>{metadata.description}</Markdown>
       ) : (
-        <Loading loading text skeletonProps={{ width: "800px" }} />
+        <Loading loading text skeletonProps={{ width: '800px' }} />
       )}
     </ProposalDescriptionWrapper>
   );

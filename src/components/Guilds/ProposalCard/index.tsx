@@ -138,7 +138,12 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
                 size={24}
               />
             ) : (
-              <Loading style={{ margin: 0 }} loading text skeletonProps={{ circle: true, width: "24px", height: "24px" }} />
+              <Loading
+                style={{ margin: 0 }}
+                loading
+                text
+                skeletonProps={{ circle: true, width: '24px', height: '24px' }}
+              />
             )}
             <Detail>
               {ensName ||
@@ -159,30 +164,51 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         </CardHeader>
         <CardContent>
           <CardTitle size={2}>
-            <strong>{proposal?.title || <Loading style={{ margin: 0 }} loading text />}</strong>
+            <strong>
+              {proposal?.title || (
+                <Loading style={{ margin: 0 }} loading text />
+              )}
+            </strong>
           </CardTitle>
         </CardContent>
         <CardFooter>
-          {proposal?.value ? <BorderedIconDetailWrapper>
-            <Detail>150 ETH</Detail>
-            {isDesktop && (
-              <>
-                <Icon as="div" spaceLeft spaceRight>
-                  <FiArrowRight />
-                </Icon>{' '}
-                <Detail>geronimo.eth</Detail>
-              </>
-            )}
-          </BorderedIconDetailWrapper> : <Loading style={{ margin: 0 }} skeletonProps={{ width: "200px" }} loading text />}
+          {proposal?.value ? (
+            <BorderedIconDetailWrapper>
+              <Detail>150 ETH</Detail>
+              {isDesktop && (
+                <>
+                  <Icon as="div" spaceLeft spaceRight>
+                    <FiArrowRight />
+                  </Icon>{' '}
+                  <Detail>geronimo.eth</Detail>
+                </>
+              )}
+            </BorderedIconDetailWrapper>
+          ) : (
+            <Loading
+              style={{ margin: 0 }}
+              skeletonProps={{ width: '200px' }}
+              loading
+              text
+            />
+          )}
 
-          {proposal?.totalVotes ? <BorderedIconDetailWrapper>
-            <Detail>15.60%</Detail>
-            <Icon as="div" spaceLeft spaceRight>
-              <FiCircle />
-            </Icon>
-            <Detail>5.25%</Detail>
-          </BorderedIconDetailWrapper> : <Loading style={{ margin: 0 }} loading text skeletonProps={{ width: "200px" }} />}
-
+          {proposal?.totalVotes ? (
+            <BorderedIconDetailWrapper>
+              <Detail>15.60%</Detail>
+              <Icon as="div" spaceLeft spaceRight>
+                <FiCircle />
+              </Icon>
+              <Detail>5.25%</Detail>
+            </BorderedIconDetailWrapper>
+          ) : (
+            <Loading
+              style={{ margin: 0 }}
+              loading
+              text
+              skeletonProps={{ width: '200px' }}
+            />
+          )}
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>

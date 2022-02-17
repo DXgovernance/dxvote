@@ -157,7 +157,7 @@ export const MemberActions = () => {
             {votingPowerPercent != null ? (
               `${votingPowerPercent}%`
             ) : (
-              <Loading loading text skeletonProps={{ width: "40px" }} />
+              <Loading loading text skeletonProps={{ width: '40px' }} />
             )}
           </VotingPower>
         </UserActionButton>
@@ -174,7 +174,8 @@ export const MemberActions = () => {
                 {votingPowerPercent != null ? (
                   `${votingPowerPercent}%`
                 ) : (
-                  <Loading loading text skeletonProps={{ width: "40px" }} />)}
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
+                )}
               </span>
             </ContentItem>
             <ContentItem>
@@ -183,7 +184,7 @@ export const MemberActions = () => {
                 {userVotingPower && tokenInfo ? (
                   `${roundedBalance} ${tokenInfo.symbol}`
                 ) : (
-                  <Loading loading text skeletonProps={{ width: "40px" }} />
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
                 )}
               </span>
             </ContentItem>
@@ -198,7 +199,7 @@ export const MemberActions = () => {
                     unlockedTimestamp?.toNow(true)
                   )
                 ) : (
-                  <Loading loading text skeletonProps={{ width: "40px" }} />
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
                 )}
               </span>
             </ContentItem>

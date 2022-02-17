@@ -1,7 +1,11 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { AiOutlineLoading } from 'react-icons/ai';
-import Skeleton, { SkeletonProps, SkeletonStyleProps, SkeletonTheme } from 'react-loading-skeleton';
+import Skeleton, {
+  SkeletonProps,
+  SkeletonStyleProps,
+  SkeletonTheme,
+} from 'react-loading-skeleton';
 
 const Wrapper = styled.div`
   margin: 0.2rem auto;
@@ -34,7 +38,7 @@ interface LoadingProps {
   loading: boolean;
   text?: boolean;
   skeletonProps?: SkeletonProps;
-  skeletonStyleProps?: SkeletonStyleProps
+  skeletonStyleProps?: SkeletonStyleProps;
   iconProps?: IconBaseProps;
   style?: object;
 }
@@ -45,7 +49,7 @@ export const Loading: React.FunctionComponent<LoadingProps> = ({
   iconProps = { size: 40 },
   text = false,
   skeletonProps = { width: '100px', height: '16px', borderRadius: '50px' },
-  skeletonStyleProps = { baseColor: "#333", highlightColor: "#555" },
+  skeletonStyleProps = { baseColor: '#333', highlightColor: '#555' },
   style = {},
 }) => {
   return loading ? (
