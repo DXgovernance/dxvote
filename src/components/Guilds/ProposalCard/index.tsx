@@ -89,7 +89,7 @@ const Icon = styled.img<{
 `;
 
 const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
-  border: 1px solid #555;
+  border: 1px solid ${({ theme }) => theme.border.initial};
   border-radius: 1rem;
   padding: 0.25rem 0.8rem;
   flex: none;
