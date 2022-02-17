@@ -1,4 +1,4 @@
-import { BigNumber, bnum } from 'utils';
+import { BigNumber } from 'ethers';
 import { useActions } from 'hooks/Guilds/useActions';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { useState } from 'react';
@@ -58,7 +58,7 @@ const ProposalVoteCard = () => {
         <ButtonsContainer>
           {possibleActions &&
             possibleActions.map(item => {
-              const bItem = bnum(item);
+              const bItem = BigNumber.from(item);
               return (
                 <Button
                   minimal

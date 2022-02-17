@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
-import { BigNumber, bnum } from 'utils';
 import { useParams } from 'react-router-dom';
 import { useERC20Guild } from './contracts/useContract';
 import { useVotingPowerOf } from './ether-swr/useVotingPowerOf';
@@ -8,6 +7,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
 import { useGuildConfig } from './ether-swr/useGuildConfig';
 import { useERC20Info } from './ether-swr/erc20/useERC20Info';
+import { BigNumber } from 'ethers';
 
 export interface VoteData {
   args: unknown;
@@ -19,14 +19,14 @@ export interface VoteData {
 interface useVotesReturns {
   setVote: (action: BigNumber) => void;
   voteData: VoteData;
-  flagCheckered: number;
 }
 
 export const useVotes = (): useVotesReturns => {
+  const ZERO: BigNumber = BigNumber.from(0);
   const [voteData, setVoteData] = useState<VoteData>({
     args: {},
-    quorum: bnum(0),
-    totalLocked: bnum(0),
+    quorum: ZERO,
+    totalLocked: ZERO,
     token: '',
   });
 
@@ -39,41 +39,36 @@ export const useVotes = (): useVotesReturns => {
 
   // swr hooks
   const { data: proposal } = useProposal(guildId, proposalId);
-  const {
-    data: { token, votingPowerForProposalExecution: quorum, totalLocked },
-  } = useGuildConfig(guildId);
+  const { data } = useGuildConfig(guildId);
   const { data: votingPower } = useVotingPowerOf({
     contractAddress: guildId,
     userAddress: account,
   });
 
-  const { data: tokenInfo } = useERC20Info(token);
+  const { data: tokenInfo } = useERC20Info(data.token);
 
   // helper functions
   const pValue = (value: BigNumber) =>
-    Math.round(bnum(value).div(bnum(totalLocked)).toNumber() * 100);
+    Math.round(value.div(data.totalLocked).toNumber() * 100);
 
   // sets voting transaction
   const setVote = useCallback(
     (action: BigNumber) => {
       createTransaction('Set Vote', async () =>
-        contract.setVote(proposalId, action.toString(), votingPower.toString())
+        contract.setVote(proposalId, action, votingPower)
       );
     },
     [proposalId, votingPower]
   );
 
-  const flagCheckered = quorum.div(totalLocked).toNumber() * 100;
-
   useEffect(() => {
     const getVoteData = async () =>
       await setVoteData({
-        //args:{ 1: { BigNumber, % value }}
         args: proposal.totalVotes.map((item, i) => {
           return { [i]: [item, pValue(item)] };
         }),
-        quorum: bnum(quorum),
-        totalLocked: bnum(totalLocked),
+        quorum: data.votingPowerForProposalExecution,
+        totalLocked: data.totalLocked,
         token: tokenInfo.symbol,
       });
 
@@ -83,6 +78,5 @@ export const useVotes = (): useVotesReturns => {
   return {
     setVote,
     voteData,
-    flagCheckered,
   };
 };

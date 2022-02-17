@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { FaFlagCheckered } from 'react-icons/fa';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { formatUnits } from 'ethers/lib/utils';
-import { BigNumber } from 'ethers';
+import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -81,11 +81,12 @@ const VoteQuorumContainer = styled.div`
 //TODO: rewrite css dynamics types
 export const VotesChart = ({ showToken, token }) => {
   const {
-    voteData: { quorum, args },
-    flagCheckered,
+    voteData: { quorum, args, totalLocked },
   } = useVotes();
 
-  const nQuorum = formatUnits(BigNumber.from(quorum.toString()));
+  const nQuorum = formatUnits(quorum);
+
+  const flagCheckered = useVotingPowerPercent(quorum, totalLocked);
 
   return (
     <VotesChartContainer>

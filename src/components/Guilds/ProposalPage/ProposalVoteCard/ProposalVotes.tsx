@@ -3,7 +3,6 @@ import { VotesChart } from 'components/Guilds/common/VoteChart';
 import { Bullet } from 'components/Guilds/common/Bullet';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { formatUnits } from '@ethersproject/units';
-//import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 
 export interface Voter {
   avatar: string;
@@ -32,7 +31,10 @@ const StyledBullet = styled(Bullet)`
   font-size: 30px;
 `;
 
-export const ProposalVotes = ({ showToken, token }: ProposalVotesProps) => {
+export const ProposalVotes: React.FC<ProposalVotesProps> = ({
+  showToken,
+  token,
+}) => {
   const {
     voteData: { args },
   } = useVotes();
