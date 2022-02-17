@@ -45,7 +45,7 @@ export const useVotes = (): useVotesReturns => {
     userAddress: account,
   });
 
-  const { data: tokenInfo } = useERC20Info(data.token);
+  const { data: tokenInfo } = useERC20Info(data?.token);
 
   // helper functions
   const pValue = (value: BigNumber) =>
@@ -62,6 +62,7 @@ export const useVotes = (): useVotesReturns => {
   );
 
   useEffect(() => {
+    if (!guildId || !proposalId || !tokenInfo) return null;
     const getVoteData = async () =>
       await setVoteData({
         args: proposal.totalVotes.map((item, i) => {
@@ -73,7 +74,7 @@ export const useVotes = (): useVotesReturns => {
       });
 
     getVoteData();
-  }, [guildId, proposalId]);
+  }, [guildId, proposalId, tokenInfo]);
 
   return {
     setVote,

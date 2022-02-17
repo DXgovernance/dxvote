@@ -1,5 +1,4 @@
 import { BigNumber } from 'ethers';
-import { useActions } from 'hooks/Guilds/useActions';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -38,9 +37,8 @@ const ProposalVoteCard = () => {
 
   const {
     setVote,
-    voteData: { token },
+    voteData: { token, args },
   } = useVotes();
-  const { possibleActions } = useActions();
 
   return (
     <SidebarCard
@@ -56,13 +54,13 @@ const ProposalVoteCard = () => {
       <SidebarCardContent>
         <ProposalVotes showToken={showToken} token={token} />
         <ButtonsContainer>
-          {possibleActions &&
-            possibleActions.map(item => {
+          {args &&
+            Object.keys(args).map(item => {
               const bItem = BigNumber.from(item);
               return (
                 <Button
                   minimal
-                  active={action && (action.toNumber() == item ? true : false)}
+                  active={action.eq(bItem) ? true : false}
                   onClick={() => {
                     setAction(bItem);
                   }}
