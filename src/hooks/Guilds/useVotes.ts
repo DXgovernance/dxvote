@@ -52,8 +52,13 @@ export const useVotes = (): useVotesReturns => {
   const { data: tokenInfo } = useERC20Info(data?.token);
 
   // helper functions
-  const pValue = (value: BigNumber) =>
-    Math.round(value.div(data.totalLocked).toNumber() * 100);
+  const pValue = (value: BigNumber, precision: number = 2) => {
+    const percent = value
+      .mul(100)
+      .mul(Math.pow(10, precision))
+      .div(data?.totalLocked);
+    return Math.round(percent.toNumber()) / Math.pow(10, precision);
+  };
 
   // sets voting transaction
   const setVote = useCallback(
