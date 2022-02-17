@@ -22,7 +22,7 @@ const DropdownMenuItem = styled(MenuItem)`
   flex: 1;
   justify-content: space-between;
   cursor: pointer;
-
+  color: ${({ theme }) => theme.colors.text};
   &:hover {
     background-color: ${({ theme }) => theme.colors.hoverMenu};
   }
@@ -31,6 +31,7 @@ const DropdownMenuItem = styled(MenuItem)`
 const FilterButtons = styled.div`
   display: flex;
   flex-direction: row;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const FilterResetMobile = styled.div`
@@ -95,7 +96,7 @@ export const FilterMenu = () => {
         <DropdownContent fullScreenMobile={true} show={showScheme}>
           {isMobile && (
             <DropdownHeader onClick={() => setShowScheme(false)}>
-              <FiArrowLeft /> <span>Schemes</span>{' '}
+              <FiArrowLeft /> <span>Scheme</span>{' '}
               <FilterResetMobile onClick={onResetSchemes}>
                 Reset
               </FilterResetMobile>

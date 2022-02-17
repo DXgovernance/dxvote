@@ -11,19 +11,8 @@ import SidebarCard, {
   SidebarCardContent,
   SidebarCardHeader,
 } from '../../SidebarCard';
-import { Heading } from 'components/Guilds/common/Typography';
 import InfoItem from './InfoItem';
 import { Loading } from 'components/Guilds/common/Loading';
-
-const SidebarCardHeader = styled(Heading)`
-  padding-left: 1rem;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const SidebarCardContent = styled(Box)`
-  padding: 1rem;
-  color: ${({ theme }) => theme.colors.text};
-`;
 
 const InfoItemLinkerLine = styled(Box)`
   border-left: 1px dashed ${({ theme }) => theme.colors.muted};
