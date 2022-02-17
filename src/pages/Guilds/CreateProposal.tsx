@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
+import contentHash from 'content-hash';
 import { FiChevronLeft } from 'react-icons/fi';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
 import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Input } from '../../components/Guilds/common/Form';
-import SidebarCard from '../../components/Guilds/SidebarCard';
 import Editor from 'components/Guilds/Editor';
 
 import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
+import { useTransactions } from 'contexts/Guilds';
+import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
+import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
+import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
+import SidebarInfoCard from 'components/ProposalCreationPage/SidebarInfoCard';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -40,17 +45,6 @@ const Button = styled(IconButton)`
   margin: 0;
 `;
 
-const SidebarHeader = styled.h3`
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
-  color: #000000;
-  padding: 16px;
-  margin: 0;
-`;
-
 const Label = styled.span`
   font-family: Inter;
   font-style: normal;
@@ -65,9 +59,9 @@ const Label = styled.span`
 const CreateProposalPage: React.FC = () => {
   const ttlMs = 345600000;
   const history = useHistory();
-  const [editMode, setEditMode] = React.useState(true);
-  const [title, setTitle] = React.useState('');
-  const [referenceLink, setReferenceLink] = React.useState('');
+  const [editMode, setEditMode] = useState(true);
+  const [title, setTitle] = useState('');
+  const [referenceLink, setReferenceLink] = useState('');
   const [proposalBodyHTML, setProposalBodyHTML] =
     useLocalStorageWithExpiry<string>(
       `guild/newProposal/description/html`,
@@ -88,9 +82,37 @@ const CreateProposalPage: React.FC = () => {
 
   const handleBack = () => history.push('/');
 
-  const handleCreateProposal = () => {
-    // TODO: build this functionality
+  const ipfs = useIPFSNode();
+  const uploadToIPFS = async () => {
+    const content = { description: proposalBodyHTML, url: referenceLink };
+    const cid = await ipfs.add(JSON.stringify(content));
+    await ipfs.pin(cid);
+    return contentHash.fromIpfs(cid);
   };
+
+  const { createTransaction } = useTransactions();
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const guildContract = useERC20Guild(guildAddress);
+  const handleCreateProposal = async () => {
+    const contentHash = await uploadToIPFS();
+    createTransaction(`Create proposal ${title}`, async () => {
+      return guildContract.createProposal(
+        [ZERO_ADDRESS],
+        [ZERO_HASH],
+        [1],
+        0,
+        title,
+        `0x${contentHash}`
+      );
+    });
+  };
+
+  const isValid = useMemo(() => {
+    if (!title) return false;
+    if (!proposalBodyHTML) return false;
+
+    return true;
+  }, [title, proposalBodyHTML]);
 
   return (
     <PageContainer>
@@ -136,7 +158,7 @@ const CreateProposalPage: React.FC = () => {
         <Box margin="0px 0px 24px">
           {editMode ? (
             <>
-              <Label color="#A1A6B0"> Reference link (optional)</Label>
+              <Label>Reference link (optional)</Label>
 
               <Input
                 placeholder="https://daotalk.org/..."
@@ -147,9 +169,7 @@ const CreateProposalPage: React.FC = () => {
               />
             </>
           ) : referenceLink ? (
-            <Label color="#A1A6B0" size="16px">
-              {referenceLink}
-            </Label>
+            <Label size="16px">{referenceLink}</Label>
           ) : null}
         </Box>
         {editMode ? (
@@ -157,6 +177,7 @@ const CreateProposalPage: React.FC = () => {
             onMdChange={setProposalBodyMd}
             onHTMLChange={setProposalBodyHTML}
             content={proposalBodyHTML}
+            placeholder="What do you want to propose?"
           />
         ) : (
           <div
@@ -167,7 +188,7 @@ const CreateProposalPage: React.FC = () => {
           <Button
             onClick={handleCreateProposal}
             variant="secondary"
-            disabled={editMode}
+            disabled={!isValid}
             data-testId="create-proposal-action-button"
           >
             Create Proposal
@@ -175,34 +196,7 @@ const CreateProposalPage: React.FC = () => {
         </Box>
       </PageContent>
       <SidebarContent>
-        <SidebarCard header={<SidebarHeader>Information</SidebarHeader>}>
-          <Box padding="12px 0">
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Consensus System</Label>
-              <Label> Guild</Label>
-            </Flex>
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Proposal Duration</Label>
-              <Label> 8 days</Label>
-            </Flex>
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Quorum</Label>
-              <Label> 40%</Label>
-            </Flex>
-          </Box>
-        </SidebarCard>
+        <SidebarInfoCard />
       </SidebarContent>
     </PageContainer>
   );

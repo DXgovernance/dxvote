@@ -113,7 +113,22 @@ const GuildsApp = () => {
                       </EtherSWRConfig>
                     </Route>
                     <Route path="/:chain_name/:guild_id/create/:proposal_type">
-                      <CreateProposalPage />
+                      <EtherSWRConfig
+                        value={{
+                          web3Provider: provider,
+                          ABIs: new Map([
+                            [
+                              // we can move this probably to a hook to reduce repeat ourselves in each route.
+                              '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+                              ERC20GuildContract.abi,
+                            ],
+                          ]),
+                          refreshInterval: 30000,
+                          use: [loggerMiddleware],
+                        }}
+                      >
+                        <CreateProposalPage />
+                      </EtherSWRConfig>
                     </Route>
                   </Switch>
                 </Container>
