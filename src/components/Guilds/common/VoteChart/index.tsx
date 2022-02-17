@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { FaFlagCheckered } from 'react-icons/fa';
 import { useVotes } from 'hooks/Guilds/useVotes';
-import { formatUnits } from 'ethers/lib/utils';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
+import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -80,20 +80,22 @@ const VoteQuorumContainer = styled.div`
 
 //TODO: rewrite css dynamics types
 export const VotesChart = ({ showToken, token }) => {
-  const {
-    voteData: { quorum, args, totalLocked },
-  } = useVotes();
+  const { voteData } = useVotes();
 
-  const nQuorum = formatUnits(quorum);
+  const nQuorum = useBigNumberToNumber(voteData?.quorum, 18);
 
-  const flagCheckered = useVotingPowerPercent(quorum, totalLocked);
+  const flagCheckered = useVotingPowerPercent(
+    voteData?.quorum,
+    voteData?.totalLocked
+  );
 
   return (
     <VotesChartContainer>
       <VotesChartRow>
-        {Object.values(args).map((item, i) => {
-          return <VoteFill fill={item[i][1]} type={i} />;
-        })}
+        {voteData.args &&
+          Object.values(voteData.args).map((item, i) => {
+            return <VoteFill fill={item[i][1]} type={i} />;
+          })}
       </VotesChartRow>
       <VoteQuorumContainer quorum={flagCheckered}>
         <VoteQuorumMarker quorum={flagCheckered} />

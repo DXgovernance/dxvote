@@ -35,9 +35,7 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
   showToken,
   token,
 }) => {
-  const {
-    voteData: { args },
-  } = useVotes();
+  const { voteData } = useVotes();
   const unitDisplay = showToken ? token : '%';
 
   const valueToDisplay = (
@@ -49,19 +47,20 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
 
   return (
     <VotesContainer>
-      {Object.values(args).map((_, i) => {
-        return (
-          <VotesRow type={i}>
-            <span>
-              <StyledBullet />
-              {'Action ' + i}
-            </span>
-            <span>
-              {valueToDisplay(i, showToken, args)} {unitDisplay}
-            </span>
-          </VotesRow>
-        );
-      })}
+      {voteData.args &&
+        Object.values(voteData?.args).map((_, i) => {
+          return (
+            <VotesRow type="0">
+              <span>
+                <StyledBullet />
+                {'Action ' + i}
+              </span>
+              <span>
+                {valueToDisplay(i, showToken, voteData?.args)} {unitDisplay}
+              </span>
+            </VotesRow>
+          );
+        })}
       <VotesChart showToken={showToken} token={token} />
     </VotesContainer>
   );

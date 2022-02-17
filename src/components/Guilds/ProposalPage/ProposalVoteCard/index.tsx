@@ -1,9 +1,12 @@
 import { BigNumber } from 'ethers';
+import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { useState } from 'react';
+import { useParams } from 'react-router';
 import styled from 'styled-components';
 import { Button } from '../../common/Button';
 import { Box } from '../../common/Layout';
+import moment from 'moment';
 
 import SidebarCard from '../../SidebarCard';
 import { ProposalVotes } from './ProposalVotes';
@@ -35,10 +38,13 @@ const ProposalVoteCard = () => {
   const [showToken, setShowToken] = useState(false);
   const [action, setAction] = useState<BigNumber>();
 
-  const {
-    setVote,
-    voteData: { token, args },
-  } = useVotes();
+  const { setVote, voteData } = useVotes();
+
+  const { guild_id: guildId, proposal_id: proposalId } =
+    useParams<{ guild_id?: string; proposal_id?: string }>();
+  const { data: proposal } = useProposal(guildId, proposalId);
+
+  const TOKEN = voteData?.token?.symbol;
 
   return (
     <SidebarCard
@@ -46,21 +52,21 @@ const ProposalVoteCard = () => {
         <SidebarCardHeader>
           Cast your vote{' '}
           <SmallButton primary onClick={() => setShowToken(!showToken)}>
-            {showToken ? token : '%'}
+            {showToken ? TOKEN : '%'}
           </SmallButton>
         </SidebarCardHeader>
       }
     >
       <SidebarCardContent>
-        <ProposalVotes showToken={showToken} token={token} />
-        <ButtonsContainer>
-          {args &&
-            Object.keys(args).map(item => {
+        <ProposalVotes showToken={showToken} token={TOKEN} />
+        {!proposal?.endTime.isBefore(moment()) && voteData?.args && (
+          <ButtonsContainer>
+            {Object.keys(voteData?.args).map(item => {
               const bItem = BigNumber.from(item);
               return (
                 <Button
                   minimal
-                  active={action.eq(bItem) ? true : false}
+                  active={action && (action.eq(bItem) ? true : false)}
                   onClick={() => {
                     setAction(bItem);
                   }}
@@ -70,10 +76,11 @@ const ProposalVoteCard = () => {
               );
             })}
 
-          <Button primary disabled={!action} onClick={() => setVote(action)}>
-            Vote
-          </Button>
-        </ButtonsContainer>
+            <Button primary disabled={!action} onClick={() => setVote(action)}>
+              Vote
+            </Button>
+          </ButtonsContainer>
+        )}
       </SidebarCardContent>
     </SidebarCard>
   );

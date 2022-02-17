@@ -6,14 +6,14 @@ import { useVotingPowerOf } from './ether-swr/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
 import { useGuildConfig } from './ether-swr/useGuildConfig';
-import { useERC20Info } from './ether-swr/erc20/useERC20Info';
+import { ERC20Info, useERC20Info } from './ether-swr/erc20/useERC20Info';
 import { BigNumber } from 'ethers';
 
 export interface VoteData {
   args: unknown;
   quorum: BigNumber;
   totalLocked: BigNumber;
-  token: string;
+  token: ERC20Info;
 }
 
 interface useVotesReturns {
@@ -27,7 +27,11 @@ export const useVotes = (): useVotesReturns => {
     args: {},
     quorum: ZERO,
     totalLocked: ZERO,
-    token: '',
+    token: {
+      name: '',
+      symbol: '',
+      decimals: 0,
+    },
   });
 
   const { guild_id: guildId, proposal_id: proposalId } =
@@ -62,15 +66,14 @@ export const useVotes = (): useVotesReturns => {
   );
 
   useEffect(() => {
-    if (!guildId || !proposalId || !tokenInfo) return null;
     const getVoteData = async () =>
       await setVoteData({
-        args: proposal.totalVotes.map((item, i) => {
+        args: proposal?.totalVotes.map((item, i) => {
           return { [i]: [item, pValue(item)] };
         }),
-        quorum: data.votingPowerForProposalExecution,
-        totalLocked: data.totalLocked,
-        token: tokenInfo.symbol,
+        quorum: data?.votingPowerForProposalExecution,
+        totalLocked: data?.totalLocked,
+        token: tokenInfo,
       });
 
     getVoteData();
