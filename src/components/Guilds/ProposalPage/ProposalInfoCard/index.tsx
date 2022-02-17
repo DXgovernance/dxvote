@@ -66,7 +66,7 @@ const ProposalInfoCard: React.FC = () => {
     <SidebarCard header={<SidebarCardHeader>Information</SidebarCardHeader>}>
       <SidebarCardContent>
         {!proposal ? (
-          <Loading loading text skeletonProps={{ height: "100px" }} />
+          <Loading loading text skeletonProps={{ height: '100px' }} />
         ) : (
           <>
             <InfoItem
@@ -99,13 +99,19 @@ const ProposalInfoCard: React.FC = () => {
                 'seconds'
               ).humanize()
             ) : (
-              <Loading loading text skeletonProps={{ width: "50px" }} />
+              <Loading loading text skeletonProps={{ width: '50px' }} />
             )}
           </span>
         </UserInfoDetail>
         <UserInfoDetail>
           <span>Quorum</span>
-          <span>{quorum != null ? `${quorum}%` : <Loading loading text skeletonProps={{ width: "50px" }} />}</span>
+          <span>
+            {quorum != null ? (
+              `${quorum}%`
+            ) : (
+              <Loading loading text skeletonProps={{ width: '50px' }} />
+            )}
+          </span>
         </UserInfoDetail>
       </SidebarCardContent>
     </SidebarCard>
