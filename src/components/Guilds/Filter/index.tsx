@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { isDesktop, isMobile } from 'react-device-detect';
+import { useParams } from 'react-router';
 import { useFilter } from 'contexts/Guilds/filters';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { Input } from '../common/Form';
@@ -9,6 +10,9 @@ import { Box, Flex } from '../common/Layout/Box';
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
 import { Button } from '../common/Button';
 import { useHistory, useLocation } from 'react-router';
+import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/useVotingPowerOf';
+import { useWeb3React } from '@web3-react/core';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/useGuildConfig';
 
 const FilterContainer = styled(Box)`
   display: flex;
@@ -33,12 +37,29 @@ const ButtonContainer = styled(Flex)`
 const SpanContainer = styled.span``;
 
 export const Filter = () => {
+  const { guild_id: guildId } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
   const [viewFilter, setViewFilter] = useState(false);
-  const [createProposal, setCreateProposal] = useState(true);
   const { totalFilters } = useFilter();
 
   const history = useHistory();
   const location = useLocation();
+
+  const { account } = useWeb3React();
+  const { data: votingPower } = useVotingPowerOf({
+    contractAddress: guildId,
+    userAddress: account,
+  });
+  const { data: guildConfig } = useGuildConfig(guildId);
+  const isProposalCreationAllowed = useMemo(() => {
+    if (!guildConfig || !votingPower) {
+      return false;
+    }
+    if (votingPower.gte(guildConfig.votingPowerForProposalCreation)) {
+      return true;
+    }
+    return false;
+  }, [votingPower, guildConfig]);
 
   return (
     <FilterContainer>
@@ -49,24 +70,20 @@ export const Filter = () => {
             placeholder="Search Proposal"
           />
         </SpanContainer>
-        {createProposal && (
+        {isProposalCreationAllowed && (
           <ButtonContainer>
-            <Button
-              variant="secondary"
-              onClick={() => setCreateProposal(false)}
-            >
-              Proposal state
-            </Button>
+            <Button>Proposal state</Button>
             <Button
               variant="secondary"
               onClick={() => history.push(location.pathname + '/proposalType')}
+              data-testid="create-proposal-button"
             >
               Create Proposal
             </Button>
           </ButtonContainer>
         )}
-        {isDesktop && !createProposal && <FilterMenu />}
-        {isMobile && !createProposal && (
+        {isDesktop && !isProposalCreationAllowed && <FilterMenu />}
+        {isMobile && !isProposalCreationAllowed && (
           <FilterButton
             onClick={() => setViewFilter(!viewFilter)}
             active={viewFilter || totalFilters > 0}

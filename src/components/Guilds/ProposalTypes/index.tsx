@@ -194,8 +194,8 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
             <Heading size={2}>Create Proposal</Heading>
           </TitleWrapper>
           <Container>
-            <PaddingWrapper>
-              <ContainerHeader>Proposal type</ContainerHeader>
+            <PaddingWrapper data-testid="proposal-types-list">
+              <ContainerHeader>Choose Proposal</ContainerHeader>
               {data.map(({ title, description, onChainAction, icon }) => (
                 <ProposalTypeButton
                   variant="secondary"
@@ -217,12 +217,14 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
             title={proposalDescription.title}
             description={proposalDescription.description}
             onChainAction={proposalDescription.onChainAction}
+            data-testId="proposal-type-description"
           />
         </ContentWrapper>
         <Footer>
           <ButtonFooter
             variant="primary"
             onClick={() => history.push(continueUrl)}
+            data-testid="proposal-type-continue-button"
           >
             Continue
           </ButtonFooter>
