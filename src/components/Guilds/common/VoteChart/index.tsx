@@ -3,6 +3,8 @@ import { FaFlagCheckered } from 'react-icons/fa';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
+import Skeleton from 'react-loading-skeleton';
+import { Flex } from '../Layout';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -78,11 +80,24 @@ const VoteQuorumContainer = styled.div`
       : `calc(${quorum}% - 22px)`};
 `;
 
+const SkeletonAction = styled(Flex)`
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 2px 0;
+`;
+
+const ActionsContainer = styled.div`
+  margin: 8px 0;
+`;
+
 //TODO: rewrite css dynamics types
 export const VotesChart = ({ showToken, token }) => {
   const { voteData } = useVotes();
 
-  const nQuorum = useBigNumberToNumber(voteData?.quorum, 18);
+  const nQuorum = useBigNumberToNumber(
+    voteData?.quorum,
+    voteData?.token?.decimals
+  );
 
   const flagCheckered = useVotingPowerPercent(
     voteData?.quorum,
@@ -91,20 +106,37 @@ export const VotesChart = ({ showToken, token }) => {
 
   return (
     <VotesChartContainer>
-      <VotesChartRow>
-        {voteData.args &&
-          Object.values(voteData.args).map((item, i) => {
-            return <VoteFill fill={item[i][1]} type={i} />;
-          })}
-      </VotesChartRow>
-      <VoteQuorumContainer quorum={flagCheckered}>
-        <VoteQuorumMarker quorum={flagCheckered} />
-        <VoteQuorumLabel quorum={flagCheckered}>
-          <FaFlagCheckered />
-          <span>{showToken ? nQuorum : flagCheckered}</span>
-          <span>{showToken ? token : '%'}</span>
-        </VoteQuorumLabel>
-      </VoteQuorumContainer>
+      {voteData.args ? (
+        <>
+          <VotesChartRow>
+            {Object.values(voteData.args).map((item, i) => {
+              return <VoteFill fill={item[i][1]} type={i} />;
+            })}
+          </VotesChartRow>
+          <VoteQuorumContainer quorum={flagCheckered}>
+            <VoteQuorumMarker quorum={flagCheckered} />
+            <VoteQuorumLabel quorum={flagCheckered}>
+              <FaFlagCheckered />
+              <span>{showToken ? nQuorum : flagCheckered}</span>
+              <span>{showToken ? token : '%'}</span>
+            </VoteQuorumLabel>
+          </VoteQuorumContainer>
+        </>
+      ) : (
+        <>
+          <ActionsContainer>
+            <SkeletonAction>
+              <Skeleton width={50} />
+              <Skeleton width={50} />
+            </SkeletonAction>
+            <SkeletonAction>
+              <Skeleton width={50} />
+              <Skeleton width={50} />
+            </SkeletonAction>
+          </ActionsContainer>
+          <Skeleton height={20} />
+        </>
+      )}
     </VotesChartContainer>
   );
 };
