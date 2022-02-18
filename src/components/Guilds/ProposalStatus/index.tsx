@@ -41,7 +41,7 @@ const ProposalStatusDetail = styled(Box)`
 const DetailText = styled(Box)`
 padding: 0 0.2rem;
 
-@media only screen and(min - width: 768px) {
+@media only screen and (min-width: 768px) {
   padding - right: 0.5rem;
 }
 `;

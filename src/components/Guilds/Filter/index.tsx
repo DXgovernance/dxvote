@@ -34,8 +34,6 @@ const ButtonContainer = styled(Flex)`
   flex-direction: Row;
 `;
 
-const SpanContainer = styled.span``;
-
 export const Filter = () => {
   const { guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
@@ -64,12 +62,10 @@ export const Filter = () => {
   return (
     <FilterContainer>
       <FilterRow>
-        <SpanContainer>
-          <Input
-            icon={<AiOutlineSearch size={24} />}
-            placeholder="Search Proposal"
-          />
-        </SpanContainer>
+        <Input
+          icon={<AiOutlineSearch size={24} />}
+          placeholder="Search Proposal"
+        />
         {isProposalCreationAllowed && (
           <ButtonContainer>
             <Button>Proposal state</Button>
