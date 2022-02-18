@@ -1,7 +1,12 @@
+import { BigNumber } from 'ethers';
+import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
+import { useVotes } from 'hooks/Guilds/useVotes';
 import { useState } from 'react';
+import { useParams } from 'react-router';
 import styled from 'styled-components';
 import { Button } from '../../common/Button';
 import { Box } from '../../common/Layout';
+import moment from 'moment';
 
 import SidebarCard from '../../SidebarCard';
 import { ProposalVotes } from './ProposalVotes';
@@ -31,18 +36,18 @@ const SmallButton = styled(Button)`
   padding: 2px 6px;
 `;
 
-// TODO: remove this when subscribing to real data:
-const voteData = {
-  yes: 124.5,
-  no: 234.76,
-  quorum: 40,
-  totalLocked: 670,
-};
-const TOKEN = 'DXD';
-//
 const ProposalVoteCard = () => {
   const [showToken, setShowToken] = useState(false);
-  const [voted, setVoted] = useState('');
+  const [action, setAction] = useState<BigNumber>();
+
+  const { setVote, voteData } = useVotes();
+
+  const { guild_id: guildId, proposal_id: proposalId } =
+    useParams<{ guild_id?: string; proposal_id?: string }>();
+  const { data: proposal } = useProposal(guildId, proposalId);
+
+  const TOKEN = voteData?.token?.symbol;
+
   return (
     <SidebarCard
       header={
@@ -55,30 +60,29 @@ const ProposalVoteCard = () => {
       }
     >
       <SidebarCardContent>
-        <ProposalVotes
-          voteData={voteData}
-          showToken={showToken}
-          token={TOKEN}
-        />
-        <ButtonsContainer variant="secondary">
-          <Button
-            minimal
-            active={voted === 'yes'}
-            onClick={() => setVoted('yes')}
-          >
-            Yes
-          </Button>
-          <Button
-            minimal
-            active={voted === 'no'}
-            onClick={() => setVoted('no')}
-          >
-            No
-          </Button>
-          <Button primary disabled={!voted}>
-            Vote
-          </Button>
-        </ButtonsContainer>
+        <ProposalVotes showToken={showToken} token={TOKEN} />
+        {!proposal?.endTime.isBefore(moment()) && voteData?.args && (
+          <ButtonsContainer>
+            {Object.keys(voteData?.args).map(item => {
+              const bItem = BigNumber.from(item);
+              return (
+                <Button
+                  minimal
+                  active={action && (action.eq(bItem) ? true : false)}
+                  onClick={() => {
+                    setAction(bItem);
+                  }}
+                >
+                  {'Action ' + item}
+                </Button>
+              );
+            })}
+
+            <Button primary disabled={!action} onClick={() => setVote(action)}>
+              Vote
+            </Button>
+          </ButtonsContainer>
+        )}
       </SidebarCardContent>
     </SidebarCard>
   );
