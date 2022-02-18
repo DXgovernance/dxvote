@@ -171,6 +171,7 @@ const CachePage = observer(() => {
 
   if (window.location.hash.length > 7) {
     const searchParams = new URLSearchParams(window.location.hash.substring(7));
+    setUpdateProposalTitles(searchParams.get('proposalTitles') ? true : false);
     NETWORKS.map((network, i) => {
       const networkName = network.name;
       if (searchParams.get(networkName + '_toBlock'))
@@ -181,8 +182,12 @@ const CachePage = observer(() => {
         localConfig[networkName + '_targetHash'] = searchParams.get(
           networkName + '_targetHash'
         );
+      if (searchParams.get(networkName + '_reset')){
+        resetCache[networkName] = true;
+      }
     });
     setLocalConfig(localConfig);
+    setResetCache(resetCache);
     configStore.setLocalConfig(localConfig);
     window.location.assign(window.location.origin + '/#cache');
     forceUpdate();
@@ -191,6 +196,9 @@ const CachePage = observer(() => {
   function getOptionsLink(): string {
     let optionsLinkUrl =
       window.location.origin + '/' + window.location.hash + '?';
+    if (updateProposalTitles)
+      optionsLinkUrl =
+        optionsLinkUrl = 'proposalTitles=1&';
     NETWORKS.map((network, i) => {
       const networkName = network.name;
       if (localConfig[networkName + '_toBlock'])
@@ -207,6 +215,11 @@ const CachePage = observer(() => {
           '_targetHash=' +
           localConfig[networkName + '_targetHash'] +
           '&';
+      if (resetCache[networkName])
+        optionsLinkUrl =
+          optionsLinkUrl +
+          networkName +
+          '_reset=1&';
     });
     optionsLinkUrl = optionsLinkUrl.slice(0, -1);
     return optionsLinkUrl;
