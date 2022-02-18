@@ -2,6 +2,7 @@ import { BigNumber } from 'utils';
 import useEtherSWR from './useEtherSWR';
 import { useMemo } from 'react';
 import { unix } from 'moment';
+import ERC20GuildContract from 'contracts/ERC20Guild.json';
 
 /**
  * Get the locked timestamp of a voter tokens
@@ -16,7 +17,9 @@ export const useVoterLockTimestamp = (
     contractAddress && userAddress
       ? [contractAddress, 'getVoterLockTimestamp', userAddress]
       : []
-  );
+  , {
+    ABIs: new Map([[contractAddress, ERC20GuildContract.abi]]),
+  });
 
   // TODO: Move this into a SWR middleware
   const parsed = useMemo(() => {

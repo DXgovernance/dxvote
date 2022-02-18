@@ -115,11 +115,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         <CardHeader>
           <IconDetailWrapper>
             {proposal?.creator ? (
-              <Avatar
-                src={imageUrl}
-                defaultSeed={proposal.creator}
-                size={24}
-              />
+              <Avatar src={imageUrl} defaultSeed={proposal.creator} size={24} />
             ) : (
               <Skeleton test-id="skeleton" circle width={24} height={24} />
             )}

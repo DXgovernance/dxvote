@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
+import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import useEtherSWR from './useEtherSWR';
 
 type GuildConfig = {
@@ -34,6 +35,7 @@ export const useGuildConfig = (guildAddress: string) => {
         ]
       : [],
     {
+      ABIs: new Map([[guildAddress, ERC20GuildContract.abi]]),
       refreshInterval: 0,
     }
   );
