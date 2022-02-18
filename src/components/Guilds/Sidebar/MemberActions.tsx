@@ -13,14 +13,14 @@ import {
 import { IconButton, Button } from '../common/Button';
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
 import { shortenAddress } from '../../../utils';
-import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
-import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
+import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
+import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
 import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';
 import Avatar from '../Avatar';
 import { formatUnits } from 'ethers/lib/utils';
-import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/useVoterLockTimestamp';
+import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/guild/useVoterLockTimestamp';
 import moment from 'moment';
 import StakeTokensModal from '../StakeTokensModal';
 import { useTransactions } from '../../../contexts/Guilds';

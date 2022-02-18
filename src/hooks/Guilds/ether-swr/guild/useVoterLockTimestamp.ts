@@ -1,5 +1,5 @@
 import { BigNumber } from 'utils';
-import useEtherSWR from './useEtherSWR';
+import useEtherSWR from '../useEtherSWR';
 import { useMemo } from 'react';
 import { unix } from 'moment';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';

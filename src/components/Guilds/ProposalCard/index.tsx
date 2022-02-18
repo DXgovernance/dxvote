@@ -9,7 +9,7 @@ import ProposalStatus from '../ProposalStatus';
 import { Heading } from '../common/Typography';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UnstyledLink from '../common/UnstyledLink';
-import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
 import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';

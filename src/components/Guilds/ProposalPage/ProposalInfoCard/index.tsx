@@ -1,4 +1,4 @@
-import { useGuildConfig } from 'hooks/Guilds/ether-swr/useGuildConfig';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import moment, { duration } from 'moment';
 import React, { useMemo } from 'react';
@@ -6,7 +6,7 @@ import { FiCheck, FiInbox } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useProposal } from '../../../../hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from '../../../../hooks/Guilds/ether-swr/guild/useProposal';
 import { Box } from '../../common/Layout';
 import SidebarCard, {
   SidebarCardContent,

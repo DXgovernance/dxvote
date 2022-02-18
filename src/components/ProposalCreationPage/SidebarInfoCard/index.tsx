@@ -8,7 +8,7 @@ import SidebarCard, {
 } from 'components/Guilds/SidebarCard';
 import { Flex } from 'components/Guilds/common/Layout';
 import { useParams } from 'react-router-dom';
-import { useGuildConfig } from 'hooks/Guilds/ether-swr/useGuildConfig';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 
 const Row = styled(Flex)`

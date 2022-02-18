@@ -3,7 +3,7 @@ import Skeleton from 'react-loading-skeleton';
 import { Modal } from '../common/Modal';
 import { StakeTokens } from './StakeTokens';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
-import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
+import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
 
 interface StakeTokensModalInterface {
   isOpen: boolean;

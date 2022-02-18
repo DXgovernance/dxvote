@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
-import useEtherSWR from './useEtherSWR';
+import useEtherSWR from '../useEtherSWR';
 
 type GuildConfig = {
   name: string;

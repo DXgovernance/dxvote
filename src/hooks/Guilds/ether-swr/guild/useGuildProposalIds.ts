@@ -1,4 +1,4 @@
-import useEtherSWR from './useEtherSWR';
+import useEtherSWR from '../useEtherSWR';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 
 export const useGuildProposalIds = (guildId: string) =>

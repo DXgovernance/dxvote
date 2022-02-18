@@ -13,7 +13,7 @@ import ProposalActionsCard from '../../components/Guilds/ProposalPage/ProposalAc
 import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
 import AddressButton from '../../components/Guilds/AddressButton';
 import ProposalDescription from '../../components/Guilds/ProposalPage/ProposalDescription';
-import { useProposal } from '../../hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from '../../hooks/Guilds/ether-swr/guild/useProposal';
 
 const PageContainer = styled(Box)`
   display: grid;

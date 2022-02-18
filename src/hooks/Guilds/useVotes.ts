@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
 import { useParams } from 'react-router-dom';
 import { useERC20Guild } from './contracts/useContract';
-import { useVotingPowerOf } from './ether-swr/useVotingPowerOf';
+import { useVotingPowerOf } from './ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
-import { useGuildConfig } from './ether-swr/useGuildConfig';
+import { useGuildConfig } from './ether-swr/guild/useGuildConfig';
 import { ERC20Info, useERC20Info } from './ether-swr/erc20/useERC20Info';
 import { BigNumber } from 'ethers';
 

@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 import { SWRResponse } from 'swr';
-import useEtherSWR from './useEtherSWR';
+import useEtherSWR from '../useEtherSWR';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 
 interface UseVotingPowerOfProps {

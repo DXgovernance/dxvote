@@ -1,7 +1,7 @@
 import { unix } from 'moment';
 import { Middleware, SWRHook } from 'swr';
-import { Proposal } from '../../../types/types.guilds';
-import useEtherSWR from './useEtherSWR';
+import { Proposal } from '../../../../types/types.guilds';
+import useEtherSWR from '../useEtherSWR';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 
 const formatterMiddleware: Middleware =
