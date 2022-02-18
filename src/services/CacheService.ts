@@ -1680,11 +1680,18 @@ export default class UtilsService {
                     };
                   }
 
+                  const ipfsHash = descriptionHashToIPFSHash(
+                    schemeProposalInfo.descriptionHash
+                  );
+                  const title = (await fetchFromIpfs(ipfsHash)).title;
+
                   networkCache.proposals[proposalId] = {
                     id: proposalId,
                     scheme: schemeAddress,
                     to: schemeProposalInfo.to,
-                    title: schemeProposalInfo.title,
+                    title: schemeProposalInfo.title
+                      ? schemeProposalInfo.title
+                      : title,
                     callData: schemeProposalInfo.callData,
                     values: schemeProposalInfo.value.map(value => bnum(value)),
                     stateInScheme: Number(schemeProposalInfo.state),
@@ -2083,35 +2090,9 @@ export default class UtilsService {
           console.debug(
             `Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
           );
-          const response = await Promise.any([
-            axios.request({
-              url: 'https://ipfs.io/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-            axios.request({
-              url: 'https://gateway.ipfs.io/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-            axios.request({
-              url: 'https://gateway.pinata.cloud/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-            axios.request({
-              url: 'https://dweb.link/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-            axios.request({
-              url: 'https://infura-ipfs.io/ipfs/' + ipfsHash,
-              method: 'GET',
-              timeout: 1000,
-            }),
-          ]);
-          if (response && response.data && response.data.title) {
-            proposalTitles[proposal.id] = response.data.title;
+          const responseData = await fetchFromIpfs(ipfsHash);
+          if (responseData && responseData.title) {
+            proposalTitles[proposal.id] = responseData.title;
           } else {
             console.error(
               `Couldnt not get title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
@@ -2138,4 +2119,34 @@ export default class UtilsService {
 
     return proposalTitles;
   }
+}
+
+async function fetchFromIpfs(hash) {
+  const response = await Promise.any([
+    axios.request({
+      url: 'https://ipfs.io/ipfs/' + hash,
+      method: 'GET',
+    }),
+    axios.request({
+      url: 'https://gateway.ipfs.io/ipfs/' + hash,
+      method: 'GET',
+    }),
+    axios.request({
+      url: 'https://cloudflare-ipfs.com/ipfs/' + hash,
+      method: 'GET',
+    }),
+    axios.request({
+      url: 'https://gateway.pinata.cloud/ipfs/' + hash,
+      method: 'GET',
+    }),
+    axios.request({
+      url: 'https://dweb.link/ipfs/' + hash,
+      method: 'GET',
+    }),
+    axios.request({
+      url: 'https://infura-ipfs.io/ipfs/' + hash,
+      method: 'GET',
+    }),
+  ]);
+  return response.data;
 }
