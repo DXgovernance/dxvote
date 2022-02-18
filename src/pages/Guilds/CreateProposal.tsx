@@ -8,6 +8,10 @@ import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Input } from '../../components/Guilds/common/Form';
+import {
+  ActionsBuilder,
+  SidebarInfoCard,
+} from '../../components/Guilds/CreateProposalPage';
 import Editor from 'components/Guilds/Editor';
 
 import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
@@ -15,7 +19,6 @@ import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
 import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
-import SidebarInfoCard from 'components/ProposalCreationPage/SidebarInfoCard';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -53,7 +56,7 @@ const Label = styled.span`
   line-height: 20px;
   display: flex;
   color: ${({ color }) => (color ? color : `#000000`)};
-  margin-bottom: 0.5rem;
+  margin: 0;
 `;
 
 const CreateProposalPage: React.FC = () => {
@@ -184,6 +187,9 @@ const CreateProposalPage: React.FC = () => {
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(proposalBodyHTML) }}
           />
         )}
+        <Box margin="16px 0px 24px">
+          <ActionsBuilder proposalViewMode={!editMode} />
+        </Box>
         <Box margin="16px 0px">
           <Button
             onClick={handleCreateProposal}

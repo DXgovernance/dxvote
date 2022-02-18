@@ -28,7 +28,7 @@ const Label = styled.span`
   color: ${({ theme, color }) => (color ? color : theme.colors.text)};
 `;
 
-const SidebarInfoCard = () => {
+export const SidebarInfoCard = () => {
   const { guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
   const { data } = useGuildConfig(guildId);
@@ -65,5 +65,3 @@ const SidebarInfoCard = () => {
     </SidebarCard>
   );
 };
-
-export default SidebarInfoCard;
