@@ -3,8 +3,8 @@ import { useEffect, useMemo } from 'react';
 import { resolveUri } from '../../../utils/url';
 import useENS from './useENS';
 import useENSResolver from './useENSResolver';
-import useERC721NFT from '../nft/useERC721NFT';
-import useERC1155NFT from '../nft/useERC1155NFT';
+import useERC721NFT from '../ether-swr/nft/useERC721NFT';
+import useERC1155NFT from '../ether-swr/nft/useERC1155NFT';
 import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
 import { useWeb3React } from '@web3-react/core';
 
@@ -112,9 +112,9 @@ const useENSAvatarNFT = (
       decodedUrl.type === 'erc721' &&
       ERC721Owner?.toLowerCase() === ownerAddress.toLowerCase()
     ) {
-      return ERC721Metadata.imageUri;
-    } else if (decodedUrl.type === 'erc1155' && ERC1155Balance > 0) {
-      return ERC1155Metadata.imageUri;
+      return ERC721Metadata?.imageUri;
+    } else if (decodedUrl.type === 'erc1155' && ERC1155Balance?.gt(0)) {
+      return ERC1155Metadata?.image;
     }
 
     return null;

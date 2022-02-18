@@ -16,10 +16,11 @@ export const useVoterLockTimestamp = (
   const { data, ...rest } = useEtherSWR<BigNumber>(
     contractAddress && userAddress
       ? [contractAddress, 'getVoterLockTimestamp', userAddress]
-      : []
-  , {
-    ABIs: new Map([[contractAddress, ERC20GuildContract.abi]]),
-  });
+      : [],
+    {
+      ABIs: new Map([[contractAddress, ERC20GuildContract.abi]]),
+    }
+  );
 
   // TODO: Move this into a SWR middleware
   const parsed = useMemo(() => {
