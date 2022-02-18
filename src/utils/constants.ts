@@ -19,12 +19,19 @@ export const DISCOURSE_URL_ROOT = 'https://daotalk.org';
 
 export const DEFUALT_CHAIN_ID = 1;
 
+export const POKT_NETWORK_URLS = {
+  '1': 'https://eth-archival.gateway.pokt.network/v1/lb/61f86d630d66d80038fb8c38',
+  '4': 'https://eth-rinkeby.gateway.pokt.network/v1/lb/61116c81a585a20035149067',
+  '100':
+    'https://poa-xdai-archival.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a',
+};
+
 export const NETWORKS: ChainConfig[] = [
   {
     id: 1,
     name: 'mainnet',
     displayName: 'Ethereum Mainnet',
-    defaultRpc: `https://eth-mainnet.gateway.pokt.network/v1/lb/61d8970ca065f5003a112e86`,
+    defaultRpc: POKT_NETWORK_URLS['1'],
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -37,7 +44,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 4,
     name: 'rinkeby',
     displayName: 'Rinkeby Testnet',
-    defaultRpc: `https://eth-rinkeby.gateway.pokt.network/v1/lb/61116c81a585a20035149067`,
+    defaultRpc: POKT_NETWORK_URLS['4'],
     nativeAsset: {
       name: 'Ethereum',
       symbol: 'ETH',
@@ -50,7 +57,7 @@ export const NETWORKS: ChainConfig[] = [
     id: 100,
     name: 'xdai',
     displayName: 'Gnosis Chain',
-    defaultRpc: `https://poa-xdai.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a`,
+    defaultRpc: POKT_NETWORK_URLS['100'],
     nativeAsset: {
       name: 'xDai',
       symbol: 'xDAI',
@@ -157,13 +164,6 @@ export const ALCHEMY_NETWORK_URLS = {
   '4': 'eth-rinkeby.alchemyapi.io',
   '42161': 'arb-mainnet.g.alchemy.com',
   '421611': 'arb-rinkeby.g.alchemy.com',
-};
-
-export const POKT_NETWORK_URLS = {
-  '1': 'https://eth-archival.gateway.pokt.network/v1/lb/61f86d630d66d80038fb8c38',
-  '4': 'https://eth-rinkeby.gateway.pokt.network/v1/lb/61116c81a585a20035149067',
-  '100':
-    'https://poa-xdai-archival.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a',
 };
 
 export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(

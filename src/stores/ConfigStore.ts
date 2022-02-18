@@ -107,11 +107,17 @@ export default class ConfigStore {
   }
 
   getActiveChainName() {
-    return NETWORK_NAMES[this.context?.providerStore.getActiveWeb3React().chainId || DEFUALT_CHAIN_ID];
+    return NETWORK_NAMES[
+      this.context?.providerStore.getActiveWeb3React().chainId ||
+        DEFUALT_CHAIN_ID
+    ];
   }
 
   getActiveChainDisplayName() {
-    return NETWORK_DISPLAY_NAMES[this.context?.providerStore.getActiveWeb3React().chainId || DEFUALT_CHAIN_ID];
+    return NETWORK_DISPLAY_NAMES[
+      this.context?.providerStore.getActiveWeb3React().chainId ||
+        DEFUALT_CHAIN_ID
+    ];
   }
 
   getLocalConfig() {
