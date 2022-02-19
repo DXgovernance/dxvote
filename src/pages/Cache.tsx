@@ -7,6 +7,8 @@ import { FiCheckCircle, FiDownload, FiUpload, FiX } from 'react-icons/fi';
 import { NETWORKS, toCamelCaseString } from 'utils';
 import PulsingIcon from 'components/common/LoadingIcon';
 import Copy from '../components/common/Copy';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const FormLabel = styled.label`
   padding: 10px 0px;
@@ -167,6 +169,33 @@ const CachePage = observer(() => {
     a.href = URL.createObjectURL(file);
     a.download = name;
     a.click();
+  }
+
+  function downloadAll() {
+    var zip = new JSZip();
+
+    var cache = zip.folder("cache");
+    
+    var configs = zip.folder("configs");
+    zip.file("default.json", JSON.stringify({
+      mainnet: updatedCacheHash.configHashes['mainnet'],
+      xdai: updatedCacheHash.configHashes['xdai'],
+      arbitrum: updatedCacheHash.configHashes['arbitrum'],
+      rinkeby: updatedCacheHash.configHashes['rinkeby'],
+      arbitrumTestnet:
+        updatedCacheHash.configHashes['arbitrumTestnet'],
+    }, null, 2));
+    zip.file("proposalTitles.json", JSON.stringify(updatedCacheHash.proposalTitles, null, 2));
+
+    NETWORKS.map((network, i) => {
+      cache.file(network.name+".json", JSON.stringify(updatedCacheHash.caches[network.name], null, 2));
+      const configFolder = configs.folder(network.name);
+      configFolder.file("config.json", JSON.stringify(updatedCacheHash.configs[network.name], null, 2));
+    });
+
+    zip.generateAsync({type:"blob"}).then(function(content) {
+      saveAs(content, "dxvote-cache.zip");
+    });
   }
 
   if (window.location.hash.length > 7) {
@@ -375,8 +404,8 @@ const CachePage = observer(() => {
           onChange={() => setUpdateProposalTitles(!updateProposalTitles)}
         ></InputBox>
       </Row>
-      <Row>
-        {buildingCacheState == 2 && (
+      {buildingCacheState == 2 && (
+        <Row>
           <Button
             onClick={() =>
               download(
@@ -394,8 +423,6 @@ const CachePage = observer(() => {
           >
             <FiDownload></FiDownload> Cache Hashes
           </Button>
-        )}
-        {buildingCacheState == 2 && (
           <Button
             onClick={() =>
               download(updatedCacheHash.proposalTitles, 'proposalTitles.json')
@@ -403,7 +430,10 @@ const CachePage = observer(() => {
           >
             <FiDownload></FiDownload> Proposal Titles
           </Button>
-        )}
+          <Button onClick={downloadAll}>Download All</Button>
+        </Row>
+      )}
+      <Row>
         <Button onClick={runCacheScript}>Build Cache</Button>
         <Button onClick={resetCacheOptions}>Reset Options</Button>
         <CopyButton>
