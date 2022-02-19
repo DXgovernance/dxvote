@@ -1,4 +1,4 @@
-import { BigNumber } from 'utils';
+import { BigNumber } from 'ethers';
 import { SWRResponse } from 'swr';
 import useEtherSWR from './useEtherSWR';
 
@@ -17,4 +17,9 @@ type UseVotingPowerOfHook = (
 export const useVotingPowerOf: UseVotingPowerOfHook = ({
   contractAddress,
   userAddress,
-}) => useEtherSWR([contractAddress, 'votingPowerOf', userAddress]);
+}) =>
+  useEtherSWR(
+    contractAddress && userAddress
+      ? [contractAddress, 'votingPowerOf', userAddress]
+      : []
+  );

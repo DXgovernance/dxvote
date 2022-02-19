@@ -27,7 +27,7 @@ const VestingContractsSection: React.FC<VestingContractsSectionProps> = ({
   const DXD = useContract(
     configStore.getTokensOfNetwork().find(token => token.symbol === 'DXD')
       .address,
-    ERC20Json.abi
+    ERC20Json
   );
 
   const handleListItemClick = contract => {

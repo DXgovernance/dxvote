@@ -5,6 +5,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Focus from '@tiptap/extension-focus';
 import Highlight from '@tiptap/extension-highlight';
+import Placeholder from '@tiptap/extension-placeholder';
 import MenuBar from './MenuBar';
 import TurndownService from 'turndown';
 
@@ -31,6 +32,14 @@ const Content = styled(EditorContent)`
     .ProseMirror {
       > * + * {
         margin-top: 0.75em;
+      }
+
+      p.is-editor-empty:first-child::before {
+        color: ${({ theme }) => transparentize(0.5, theme.colors.text)};
+        content: attr(data-placeholder);
+        float: left;
+        height: 0;
+        pointer-events: none;
       }
 
       outline: none;
@@ -124,12 +133,14 @@ interface EditorProps {
   onMdChange?: (string) => void;
   onJSONChange?: (string) => void;
   content?: string;
+  placeholder?: string;
 }
 const Editor: React.FC<EditorProps> = ({
   onHTMLChange,
   onMdChange,
   onJSONChange,
   content,
+  placeholder = '',
 }) => {
   const editor = useEditor({
     content: content ? content : {},
@@ -140,6 +151,9 @@ const Editor: React.FC<EditorProps> = ({
       Focus.configure({
         className: 'has-focus',
         mode: 'all',
+      }),
+      Placeholder.configure({
+        placeholder,
       }),
       Highlight,
     ],
@@ -157,7 +171,7 @@ const Editor: React.FC<EditorProps> = ({
     <div>
       <EditorWrap>
         {editor && <MenuBar editor={editor} />}
-        <Content editor={editor} />
+        <Content editor={editor} data-testId="editor-content" />
       </EditorWrap>
     </div>
   );
