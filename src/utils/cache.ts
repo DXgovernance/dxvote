@@ -30,11 +30,7 @@ export const getEvents = async function (
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      if (
-        (error as Error).message.indexOf(
-          'Relay attempts exhausted'
-        ) > -1
-      ) {
+      if ((error as Error).message.indexOf('Relay attempts exhausted') > -1) {
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;

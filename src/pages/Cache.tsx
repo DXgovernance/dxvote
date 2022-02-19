@@ -174,27 +174,42 @@ const CachePage = observer(() => {
   function downloadAll() {
     var zip = new JSZip();
 
-    var cache = zip.folder("cache");
-    
-    var configs = zip.folder("configs");
-    zip.file("default.json", JSON.stringify({
-      mainnet: updatedCacheHash.configHashes['mainnet'],
-      xdai: updatedCacheHash.configHashes['xdai'],
-      arbitrum: updatedCacheHash.configHashes['arbitrum'],
-      rinkeby: updatedCacheHash.configHashes['rinkeby'],
-      arbitrumTestnet:
-        updatedCacheHash.configHashes['arbitrumTestnet'],
-    }, null, 2));
-    zip.file("proposalTitles.json", JSON.stringify(updatedCacheHash.proposalTitles, null, 2));
+    var cache = zip.folder('cache');
+
+    var configs = zip.folder('configs');
+    zip.file(
+      'default.json',
+      JSON.stringify(
+        {
+          mainnet: updatedCacheHash.configHashes['mainnet'],
+          xdai: updatedCacheHash.configHashes['xdai'],
+          arbitrum: updatedCacheHash.configHashes['arbitrum'],
+          rinkeby: updatedCacheHash.configHashes['rinkeby'],
+          arbitrumTestnet: updatedCacheHash.configHashes['arbitrumTestnet'],
+        },
+        null,
+        2
+      )
+    );
+    zip.file(
+      'proposalTitles.json',
+      JSON.stringify(updatedCacheHash.proposalTitles, null, 2)
+    );
 
     NETWORKS.map((network, i) => {
-      cache.file(network.name+".json", JSON.stringify(updatedCacheHash.caches[network.name], null, 2));
+      cache.file(
+        network.name + '.json',
+        JSON.stringify(updatedCacheHash.caches[network.name], null, 2)
+      );
       const configFolder = configs.folder(network.name);
-      configFolder.file("config.json", JSON.stringify(updatedCacheHash.configs[network.name], null, 2));
+      configFolder.file(
+        'config.json',
+        JSON.stringify(updatedCacheHash.configs[network.name], null, 2)
+      );
     });
 
-    zip.generateAsync({type:"blob"}).then(function(content) {
-      saveAs(content, "dxvote-cache.zip");
+    zip.generateAsync({ type: 'blob' }).then(function (content) {
+      saveAs(content, 'dxvote-cache.zip');
     });
   }
 
@@ -211,7 +226,7 @@ const CachePage = observer(() => {
         localConfig[networkName + '_targetHash'] = searchParams.get(
           networkName + '_targetHash'
         );
-      if (searchParams.get(networkName + '_reset')){
+      if (searchParams.get(networkName + '_reset')) {
         resetCache[networkName] = true;
       }
     });
@@ -226,8 +241,7 @@ const CachePage = observer(() => {
     let optionsLinkUrl =
       window.location.origin + '/' + window.location.hash + '?';
     if (updateProposalTitles)
-      optionsLinkUrl =
-        optionsLinkUrl = 'proposalTitles=1&';
+      optionsLinkUrl = optionsLinkUrl = 'proposalTitles=1&';
     NETWORKS.map((network, i) => {
       const networkName = network.name;
       if (localConfig[networkName + '_toBlock'])
@@ -245,10 +259,7 @@ const CachePage = observer(() => {
           localConfig[networkName + '_targetHash'] +
           '&';
       if (resetCache[networkName])
-        optionsLinkUrl =
-          optionsLinkUrl +
-          networkName +
-          '_reset=1&';
+        optionsLinkUrl = optionsLinkUrl + networkName + '_reset=1&';
     });
     optionsLinkUrl = optionsLinkUrl.slice(0, -1);
     return optionsLinkUrl;
