@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { sleep } from './helpers';
 
 const Web3 = require('web3');
 
@@ -29,8 +30,16 @@ export const getEvents = async function (
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      console.error('Error fetching blocks:', (error as Error).message);
       if (
+        (error as Error).message.indexOf(
+          'Relay attempts exhausted'
+        ) > -1
+      ) {
+        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
+        console.debug('Lowering toBlock', blocksToLower, 'blocks');
+        to = to - blocksToLower;
+        await sleep(5000);
+      } else if (
         (error as Error).message.indexOf(
           'You cannot query logs for more than 100000 blocks at once.'
         ) > -1
@@ -38,7 +47,11 @@ export const getEvents = async function (
         maxBlocksPerFetch = 100000;
         to = from + 100000;
         console.debug('Lowering toBlock to', to);
-      } else if (Math.trunc((to - from) / 2) > 10000) {
+      } else if (
+        (error as Error).message.indexOf('Relay attempts exhausted') === -1 &&
+        Math.trunc((to - from) / 2) > 10000
+      ) {
+        console.error('Error fetching blocks:', (error as Error).message);
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
@@ -75,16 +88,20 @@ export const getRawEvents = async function (
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      console.error('Error fetching blocks:', (error as Error).message);
       if (
         (error as Error).message.indexOf(
           'You cannot query logs for more than 100000 blocks at once.'
         ) > -1
       ) {
-        maxBlocksPerFetch = 100000;
-        to = from + 100000;
-        console.debug('Lowering toBlock to', to);
-      } else if (Math.trunc((to - from) / 2) > 10000) {
+        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
+        console.debug('Lowering toBlock', blocksToLower, 'blocks');
+        to = to - blocksToLower;
+        await sleep(5000);
+      } else if (
+        (error as Error).message.indexOf('Relay attempts exhausted') === -1 &&
+        Math.trunc((to - from) / 2) > 10000
+      ) {
+        console.error('Error fetching blocks:', (error as Error).message);
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
