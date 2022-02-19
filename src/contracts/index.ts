@@ -43,7 +43,7 @@ export const getContracts = async function (
         networkConfig.votingMachines.gen.address
       ),
       token: await new web3.eth.Contract(
-        ERC20.abi,
+        ERC20,
         networkConfig.votingMachines.gen.token
       ),
     };
@@ -56,7 +56,7 @@ export const getContracts = async function (
         networkConfig.votingMachines.gen2.address
       ),
       token: await new web3.eth.Contract(
-        ERC20.abi,
+        ERC20,
         networkConfig.votingMachines.gen2.token
       ),
     };
@@ -69,7 +69,7 @@ export const getContracts = async function (
         networkConfig.votingMachines.dxd.address
       ),
       token: await new web3.eth.Contract(
-        ERC20.abi,
+        ERC20,
         networkConfig.votingMachines.dxd.token
       ),
     };
