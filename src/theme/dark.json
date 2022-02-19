@@ -1,6 +1,8 @@
 {
   "colors": {
     "text": "#fff",
+    "primary": "#000",
+    "secondary": "#000",
     "proposalText": {
       "grey": "#A1A6B0",
       "lightGrey": "#BDC0C7"
