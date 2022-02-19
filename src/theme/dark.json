@@ -1,8 +1,8 @@
 {
   "colors": {
     "text": "#fff",
-    "primary": "#000",
-    "secondary": "#000",
+    "primary": "#1B1D1F",
+    "secondary": "#1B1D1F",
     "proposalText": {
       "grey": "#A1A6B0",
       "lightGrey": "#BDC0C7"
@@ -19,13 +19,17 @@
       "hover": "#fff"
     },
     "votes": {
-      "yes": {
+      "0": {
         "bg": "#000",
         "fg": "#000"
       },
-      "no": {
+      "1": {
         "bg": "#888",
         "fg": "#888"
+      },
+      "2": {
+        "bg": "#ccc",
+        "fg": "#ccc"
       }
     }
   },
