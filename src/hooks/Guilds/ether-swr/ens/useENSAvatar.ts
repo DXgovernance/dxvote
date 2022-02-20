@@ -1,51 +1,27 @@
-import { utils } from 'ethers';
-import { useEffect, useMemo } from 'react';
-import { resolveUri } from '../../../utils/url';
+import { useMemo } from 'react';
+import { resolveUri } from '../../../../utils/url';
 import useENS from './useENS';
-import useENSResolver from './useENSResolver';
-import useERC721NFT from '../ether-swr/nft/useERC721NFT';
-import useERC1155NFT from '../ether-swr/nft/useERC1155NFT';
-import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
-import { useWeb3React } from '@web3-react/core';
+import useENSPublicResolver from './useENSPublicResolver';
+import useERC721NFT from '../nft/useERC721NFT';
+import useERC1155NFT from '../nft/useERC1155NFT';
 
-const useENSAvatar = (ethAddress: string, chainId?: number) => {
-  const { chainId: walletChainId } = useWeb3React();
-  const { name: ensName } = useENS(ethAddress, chainId);
-  const resolver = useENSResolver(ensName, chainId);
-  const [avatarUri, setAvatarUri] = useLocalStorageWithExpiry<string>(
-    `ens/avatar/${chainId || walletChainId}/${ethAddress}`,
-    null
-  );
-
-  useEffect(() => {
-    if (!resolver) return;
-
-    async function getAvatarUri() {
-      try {
-        let avatar = await resolver.text(utils.namehash(ensName), 'avatar');
-        return avatar;
-      } catch (e) {
-        console.error('[useENSAvatar] Error resolving ENS avatar', e);
-        return null;
-      }
-    }
-
-    getAvatarUri().then(setAvatarUri);
-  }, [resolver, ensName, setAvatarUri]);
-
+const useENSAvatar = (nameOrAddress: string, chainId?: number) => {
+  const { name: ENSName, address: ethAddress } = useENS(nameOrAddress, chainId);
+  const { avatarUri } = useENSPublicResolver(ENSName, chainId);
   const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, chainId);
+
   const imageUrlToUse = useMemo(() => {
     if (avatarUri) {
       // TODO: Consider chainId when generating ENS metadata service fallback URL
       return (
-        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
+        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ENSName}`
       );
     } else {
       return null;
     }
-  }, [imageUrl, ensName, avatarUri]);
+  }, [imageUrl, ENSName, avatarUri]);
 
-  return { ensName, avatarUri, imageUrl: imageUrlToUse };
+  return { ensName: ENSName, avatarUri, imageUrl: imageUrlToUse };
 };
 
 const useENSAvatarNFT = (

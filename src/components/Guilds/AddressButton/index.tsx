@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import React from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { IconButton } from '../common/Button';
-import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
+import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { Badge } from '../common/Badge';

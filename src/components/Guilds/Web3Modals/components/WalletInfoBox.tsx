@@ -8,7 +8,7 @@ import {
   NETWORK_NAMES,
   shortenAddress,
 } from '../../../../utils';
-import useENSAvatar from '../../../../hooks/Guilds/ens/useENSAvatar';
+import useENSAvatar from '../../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import useClipboard from '../../../../hooks/Guilds/useClipboard';
 import {
   DEFAULT_ETH_CHAIN_ID,
