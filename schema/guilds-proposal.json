@@ -1,0 +1,74 @@
+{
+  "$id": "http://example.com/example.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "default": {},
+  "description": "The root schema comprises the entire JSON document for Guilds proposals IPFS schema.",
+  "examples": [
+      {
+          "description": "<h1>Test Proposal Description</h1>",
+          "url": "https://dxdao.eth.link",
+          "voteOptions": [
+              "For",
+              "Against"
+          ]
+      }
+  ],
+  "required": [
+      "description",
+      "url",
+      "voteOptions"
+  ],
+  "title": "The Guilds proposal IPFS metadata schema",
+  "type": "object",
+  "properties": {
+      "description": {
+          "$id": "#/properties/description",
+          "default": "",
+          "description": "The proposal content in HTML",
+          "examples": [
+              "<h1>Test Proposal Description</h1>"
+          ],
+          "title": "The proposal content in HTML",
+          "type": "string"
+      },
+      "url": {
+          "$id": "#/properties/url",
+          "default": "",
+          "description": "Optional additional reference link relevant to the proposal",
+          "examples": [
+              "https://dxdao.eth.link"
+          ],
+          "title": "Reference URL",
+          "type": "string"
+      },
+      "voteOptions": {
+          "$id": "#/properties/voteOptions",
+          "default": [],
+          "description": "An array of string labels that map to each voting option of the proposal",
+          "examples": [
+              [
+                  "For",
+                  "Against"
+              ]
+          ],
+          "title": "Voting option labels",
+          "type": "array",
+          "additionalItems": true,
+          "items": {
+              "$id": "#/properties/voteOptions/items",
+              "anyOf": [
+                  {
+                      "$id": "#/properties/voteOptions/items/anyOf/0",
+                      "default": "",
+                      "examples": [
+                          "For",
+                          "Against"
+                      ],
+                      "type": "string"
+                  }
+              ]
+          }
+      }
+  },
+  "additionalProperties": true
+}

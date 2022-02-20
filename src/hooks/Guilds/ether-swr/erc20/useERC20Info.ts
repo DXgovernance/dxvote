@@ -2,7 +2,7 @@ import useEtherSWR from '../useEtherSWR';
 import ERC20ABI from '../../../../abis/ERC20.json';
 import { useMemo } from 'react';
 
-type ERC20Info = {
+export type ERC20Info = {
   name: string;
   symbol: string;
   decimals: number;

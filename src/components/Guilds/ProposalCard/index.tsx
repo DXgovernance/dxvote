@@ -9,9 +9,8 @@ import ProposalStatus from '../ProposalStatus';
 import { Heading } from '../common/Typography';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UnstyledLink from '../common/UnstyledLink';
-import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
-import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
-import { useMemo } from 'react';
+import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
+import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';
 import { shortenAddress } from '../../../utils';
@@ -105,21 +104,10 @@ interface ProposalCardProps {
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
   const { data: proposal } = useProposal(guildId, id);
-  const { avatarUri, imageUrl, ensName } = useENSAvatar(
+  const { imageUrl, ensName } = useENSAvatar(
     proposal?.creator,
     DEFAULT_ETH_CHAIN_ID
   );
-
-  const imageUrlToUse = useMemo(() => {
-    if (avatarUri) {
-      // TODO: Consider chainId when generating ENS metadata service fallback URL
-      return (
-        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
-      );
-    } else {
-      return null;
-    }
-  }, [imageUrl, ensName, avatarUri]);
 
   return (
     <UnstyledLink to={href || '#'}>
@@ -127,11 +115,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         <CardHeader>
           <IconDetailWrapper>
             {proposal?.creator ? (
-              <Avatar
-                src={imageUrlToUse}
-                defaultSeed={proposal.creator}
-                size={24}
-              />
+              <Avatar src={imageUrl} defaultSeed={proposal.creator} size={24} />
             ) : (
               <Skeleton test-id="skeleton" circle width={24} height={24} />
             )}

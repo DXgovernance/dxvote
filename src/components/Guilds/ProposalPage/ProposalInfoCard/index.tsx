@@ -1,22 +1,18 @@
-import moment from 'moment';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
+import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
+import moment, { duration } from 'moment';
 import React, { useMemo } from 'react';
 import { FiCheck, FiInbox } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useProposal } from '../../../../hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from '../../../../hooks/Guilds/ether-swr/guild/useProposal';
 import { Box } from '../../common/Layout';
-import { Heading } from '../../common/Typography';
-import SidebarCard from '../../SidebarCard';
+import SidebarCard, {
+  SidebarCardContent,
+  SidebarCardHeader,
+} from '../../SidebarCard';
 import InfoItem from './InfoItem';
-
-const SidebarCardHeader = styled(Heading)`
-  padding-left: 1rem;
-`;
-
-const SidebarCardContent = styled(Box)`
-  padding: 1rem;
-`;
 
 const InfoItemLinkerLine = styled(Box)`
   border-left: 1px dashed ${({ theme }) => theme.colors.muted};
@@ -47,6 +43,12 @@ const ProposalInfoCard: React.FC = () => {
   }>();
   const { data: proposal, error } = useProposal(guildId, proposalId);
 
+  const { data: guildConfig } = useGuildConfig(guildId);
+  const quorum = useVotingPowerPercent(
+    guildConfig?.votingPowerForProposalExecution,
+    guildConfig?.totalLocked
+  );
+
   const endDetail = useMemo(() => {
     if (!proposal || !proposal.endTime) return null;
 
@@ -61,16 +63,10 @@ const ProposalInfoCard: React.FC = () => {
   if (error) return <div>Error</div>;
 
   return (
-    <SidebarCard
-      header={
-        <SidebarCardHeader>
-          <strong>Information</strong>
-        </SidebarCardHeader>
-      }
-    >
+    <SidebarCard header={<SidebarCardHeader>Information</SidebarCardHeader>}>
       <SidebarCardContent>
         {!proposal ? (
-          <Skeleton />
+          <Skeleton height={100} />
         ) : (
           <>
             <InfoItem
@@ -91,12 +87,25 @@ const ProposalInfoCard: React.FC = () => {
         <Separator />
 
         <UserInfoDetail>
-          <span>Voting System</span>
-          <span>Holographic</span>
+          <span>Consensus System</span>
+          <span>Guild</span>
+        </UserInfoDetail>
+        <UserInfoDetail>
+          <span>Proposal Duration</span>
+          <span>
+            {guildConfig?.proposalTime ? (
+              duration(
+                guildConfig?.proposalTime?.toNumber(),
+                'seconds'
+              ).humanize()
+            ) : (
+              <Skeleton width={50} />
+            )}
+          </span>
         </UserInfoDetail>
         <UserInfoDetail>
           <span>Quorum</span>
-          <span>40%</span>
+          <span>{quorum != null ? `${quorum}%` : <Skeleton width={50} />}</span>
         </UserInfoDetail>
       </SidebarCardContent>
     </SidebarCard>

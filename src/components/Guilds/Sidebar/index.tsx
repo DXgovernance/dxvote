@@ -6,9 +6,9 @@ import { MemberActions } from './MemberActions';
 import { GuestActions } from './GuestActions';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
-import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
+import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
 import { useParams } from 'react-router-dom';
-import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
+import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
 
 const SidebarWrapper = styled(Box)`

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useProposal } from '../../../../hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from '../../../../hooks/Guilds/ether-swr/guild/useProposal';
 import useIPFSFile from '../../../../hooks/Guilds/ipfs/useIPFSFile';
 import { ProposalMetadata } from '../../../../types/types.guilds';
 

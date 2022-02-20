@@ -1,7 +1,8 @@
 import { unix } from 'moment';
 import { Middleware, SWRHook } from 'swr';
-import { Proposal } from '../../../types/types.guilds';
-import useEtherSWR from './useEtherSWR';
+import { Proposal } from '../../../../types/types.guilds';
+import useEtherSWR from '../useEtherSWR';
+import ERC20GuildContract from 'contracts/ERC20Guild.json';
 
 const formatterMiddleware: Middleware =
   (useSWRNext: SWRHook) => (key, fetcher, config) => {
@@ -25,5 +26,6 @@ const formatterMiddleware: Middleware =
 export const useProposal = (guildId: string, proposalId: string) => {
   return useEtherSWR<Proposal>([guildId, 'getProposal', proposalId], {
     use: [formatterMiddleware],
+    ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
   });
 };

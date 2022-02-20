@@ -46,8 +46,8 @@ export default function useContract<T extends Contract>(
 
 export function useERC20Guild(
   contractId: string,
-  chainId?: number,
-  withSignerIfPossible?: boolean
+  withSignerIfPossible?: boolean,
+  chainId?: number
 ) {
   return useContract<ERC20Guild>(
     contractId,
@@ -64,7 +64,7 @@ export function useERC20(
 ) {
   return useContract<ERC20>(
     tokenAddress,
-    ERC20_ABI.abi,
+    ERC20_ABI,
     chainId,
     withSignerIfPossible
   );

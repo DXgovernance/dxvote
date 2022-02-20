@@ -7,7 +7,7 @@ import { render } from '../../../utils/tests';
 const proposalTitle = 'Proposal Title';
 const creatorAddress = '0x0000000000000000000000000000000000000000';
 
-jest.mock('hooks/Guilds/ether-swr/useProposal', () => ({
+jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
   useProposal: () => ({
     data: {
       title: proposalTitle,

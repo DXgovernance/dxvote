@@ -1,10 +1,16 @@
 import styled from 'styled-components';
-
 import { VotesChart } from 'components/Guilds/common/VoteChart';
 import { Bullet } from 'components/Guilds/common/Bullet';
+import { useVotes } from 'hooks/Guilds/useVotes';
+import { formatUnits } from '@ethersproject/units';
 
 export interface Voter {
   avatar: string;
+}
+
+interface ProposalVotesProps {
+  showToken: boolean;
+  token: string;
 }
 
 const VotesContainer = styled.div`
@@ -18,51 +24,44 @@ const VotesRow = styled.div`
   font-size: 14px;
   font-weight: 600;
   margin: 5px 0px 5px 0px;
-  color: ${({ theme, type = 'yes' }) => theme.colors.votes[type].fg};
+  color: ${({ theme, type = '0' }) => theme.colors.votes[type].fg};
 `;
 
 const StyledBullet = styled(Bullet)`
   font-size: 30px;
 `;
 
-export const ProposalVotes = ({ voteData, showToken, token }) => {
-  const { yes, no, totalLocked } = voteData;
-
-  const valueToDisplay = value =>
-    showToken ? value : Math.round((value / totalLocked) * 100);
-  const yesDisplay = valueToDisplay(yes);
-  const noDisplay = valueToDisplay(no);
-
+export const ProposalVotes: React.FC<ProposalVotesProps> = ({
+  showToken,
+  token,
+}) => {
+  const { voteData } = useVotes();
   const unitDisplay = showToken ? token : '%';
+
+  const valueToDisplay = (
+    action: number,
+    showToken: boolean,
+    args: any
+  ): number =>
+    showToken ? formatUnits(args[action][action][0]) : args[action][action][1];
 
   return (
     <VotesContainer>
-      {yes && (
-        <VotesRow type="yes">
-          <span>
-            <StyledBullet />
-            Yes
-          </span>
-          <span>
-            {yesDisplay}
-            {unitDisplay}
-          </span>
-        </VotesRow>
-      )}
-      {no && (
-        <VotesRow type="no">
-          <span>
-            <StyledBullet />
-            No
-          </span>
-          <span>
-            {noDisplay}
-            {unitDisplay}
-          </span>
-        </VotesRow>
-      )}
-
-      <VotesChart voteData={voteData} showToken={showToken} token={token} />
+      {voteData.args &&
+        Object.values(voteData?.args).map((_, i) => {
+          return (
+            <VotesRow type="0">
+              <span>
+                <StyledBullet />
+                {'Action ' + i}
+              </span>
+              <span>
+                {valueToDisplay(i, showToken, voteData?.args)} {unitDisplay}
+              </span>
+            </VotesRow>
+          );
+        })}
+      <VotesChart showToken={showToken} token={token} />
     </VotesContainer>
   );
 };
