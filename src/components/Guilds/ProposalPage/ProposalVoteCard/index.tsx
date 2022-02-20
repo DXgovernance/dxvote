@@ -17,10 +17,12 @@ const SidebarCardHeader = styled(Box)`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const SidebarCardContent = styled(Box)`
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const ButtonsContainer = styled.div`

@@ -29,7 +29,7 @@ const Wrapper = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  background-color: var(--panel-background);
+  background-color: ${({ theme }) => theme.colors.background};
   color: var(--body-text);
   padding: 2rem;
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};

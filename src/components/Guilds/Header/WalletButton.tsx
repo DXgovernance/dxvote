@@ -55,7 +55,7 @@ const Web3Status = () => {
       const isMetamask = window.ethereum && window.ethereum.isMetaMask;
 
       return (
-        <Button onClick={() => switchNetwork(activeChain)}>
+        <Button variant="secondary" onClick={() => switchNetwork(activeChain)}>
           Switch {isMetamask ? 'MetaMask' : 'Wallet'} to{' '}
           {activeChain.displayName}
         </Button>

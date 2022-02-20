@@ -50,6 +50,7 @@ export const Header = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   position: relative;
   align-items: center;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const SecondaryHeader = styled(Header)`

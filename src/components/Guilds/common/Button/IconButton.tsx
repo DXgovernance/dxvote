@@ -9,12 +9,15 @@ type IconButtonProps = {
 export const IconButton = styled(Button)<IconButtonProps>`
   svg,
   img {
-    ${props => props.iconLeft && `margin-right: 0.2rem;`}
-    ${props => props.iconRight && `margin-left: 0.2rem;`}
-  }
+    ${props => props.iconLeft && `margin-right: .4rem; `}
+    ${props => props.iconRight && `margin-left: .2rem;`}
+  },
+  button {
+    ${props =>
+      props.iconLeft && `padding: .25rem 0.6rem; background-color: #1B1D1F`};
 `;
 
 export const ButtonIcon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
+  height: 1.6rem;
+  width: 1.6rem;
 `;

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
@@ -15,12 +14,18 @@ import { useMemo } from 'react';
 import Avatar from '../Avatar';
 import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';
 import { shortenAddress } from '../../../utils';
+import { Loading } from '../common/Loading';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
   margin-bottom: 1rem;
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.border.hover};
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
 
 const CardHeader = styled(Box)`
@@ -42,7 +47,7 @@ const CardFooter = styled(Box)`
 const CardTitle = styled(Heading)`
   font-size: 1rem;
   font-weight: 700;
-
+  color: ${({ theme }) => theme.colors.text};
   @media only screen and (min-width: 768px) {
     font-size: 1.25rem;
   }
@@ -84,7 +89,7 @@ const Icon = styled.img<{
 `;
 
 const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
-  border: 1px solid #000;
+  border: 1px solid ${({ theme }) => theme.colors.border.initial};
   border-radius: 1rem;
   padding: 0.25rem 0.8rem;
   flex: none;
@@ -133,14 +138,19 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
                 size={24}
               />
             ) : (
-              <Skeleton test-id="skeleton" circle width={24} height={24} />
+              <Loading
+                style={{ margin: 0 }}
+                loading
+                text
+                skeletonProps={{ circle: true, width: '24px', height: '24px' }}
+              />
             )}
             <Detail>
               {ensName ||
                 (proposal?.creator ? (
                   shortenAddress(proposal.creator)
                 ) : (
-                  <Skeleton width={100} />
+                  <Loading style={{ margin: 0 }} loading text />
                 ))}
             </Detail>
           </IconDetailWrapper>
@@ -154,28 +164,51 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         </CardHeader>
         <CardContent>
           <CardTitle size={2}>
-            <strong>{proposal?.title || <Skeleton />}</strong>
+            <strong>
+              {proposal?.title || (
+                <Loading style={{ margin: 0 }} loading text />
+              )}
+            </strong>
           </CardTitle>
         </CardContent>
         <CardFooter>
-          <BorderedIconDetailWrapper>
-            <Detail>150 ETH</Detail>
-            {isDesktop && (
-              <>
-                <Icon as="div" spaceLeft spaceRight>
-                  <FiArrowRight />
-                </Icon>{' '}
-                <Detail>geronimo.eth</Detail>
-              </>
-            )}
-          </BorderedIconDetailWrapper>
-          <BorderedIconDetailWrapper>
-            <Detail>15.60%</Detail>
-            <Icon as="div" spaceLeft spaceRight>
-              <FiCircle />
-            </Icon>
-            <Detail>5.25%</Detail>
-          </BorderedIconDetailWrapper>
+          {proposal?.value ? (
+            <BorderedIconDetailWrapper>
+              <Detail>150 ETH</Detail>
+              {isDesktop && (
+                <>
+                  <Icon as="div" spaceLeft spaceRight>
+                    <FiArrowRight />
+                  </Icon>{' '}
+                  <Detail>geronimo.eth</Detail>
+                </>
+              )}
+            </BorderedIconDetailWrapper>
+          ) : (
+            <Loading
+              style={{ margin: 0 }}
+              skeletonProps={{ width: '200px' }}
+              loading
+              text
+            />
+          )}
+
+          {proposal?.totalVotes ? (
+            <BorderedIconDetailWrapper>
+              <Detail>15.60%</Detail>
+              <Icon as="div" spaceLeft spaceRight>
+                <FiCircle />
+              </Icon>
+              <Detail>5.25%</Detail>
+            </BorderedIconDetailWrapper>
+          ) : (
+            <Loading
+              style={{ margin: 0 }}
+              loading
+              text
+              skeletonProps={{ width: '200px' }}
+            />
+          )}
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>
