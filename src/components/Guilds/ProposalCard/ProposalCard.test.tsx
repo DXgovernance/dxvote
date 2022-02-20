@@ -25,7 +25,7 @@ jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
   }),
 }));
 
-jest.mock('hooks/Guilds/ens/useENSAvatar', () => ({
+jest.mock('hooks/Guilds/ether-swr/ens/useENSAvatar', () => ({
   __esModule: true,
   default: () => ({
     avatarUri: 'test',
