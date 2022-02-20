@@ -75,7 +75,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
         children = (
           <Flex>
             <Container>
-              <ContainerText variant="bold">
+              <ContainerText variant="bold" >
                 Waiting For Confirmation
               </ContainerText>
               <ContainerText variant="medium">{message}</ContainerText>
@@ -83,7 +83,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
             <ContainerText variant="medium" color="grey">
               Confirm this Transaction in your Wallet
             </ContainerText>
-          </Flex>
+          </Flex >
         );
         break;
       case TransactionModalView.Submit:

@@ -24,7 +24,7 @@ const VotesRow = styled.div`
   font-size: 14px;
   font-weight: 600;
   margin: 5px 0px 5px 0px;
-  color: ${({ theme, type = '0' }) => theme.colors.votes[type].fg};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const StyledBullet = styled(Bullet)`

@@ -31,17 +31,15 @@ const baseInputStyles = css`
 const InputWrapper = styled.div`
   ${baseInputStyles}
   display: flex;
-  width:100%;
+  width: 100%;
   &:hover, 
   &:focus {
     border: 0.1rem solid ${({ theme }) => theme.colors.text};
-  }
   }
 `;
 
 const InputBase = styled.input`
   border: none;
-  width: 100%;
   &:focus,
   &:active,
   &:hover {

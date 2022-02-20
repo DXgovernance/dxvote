@@ -7,6 +7,7 @@ import SidebarCard from '../../SidebarCard';
 const ActionTitle = styled(Box)`
   display: flex;
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const ActionParamTag = styled(Box)`
@@ -38,6 +39,7 @@ const ActionDetailsValue = styled.td`
   word-break: break-all;
   font-size: 0.9rem;
   font-weight: 600;
+  color: ${({ theme }) => theme.colors.text};
 
   button {
     font-family: inherit;
@@ -81,7 +83,7 @@ const ActionDetails = () => {
                 <ActionParamTag
                   color={
                     ActionParamColor[
-                      repeatLoopThroughColorArray(i, ActionParamColor)
+                    repeatLoopThroughColorArray(i, ActionParamColor)
                     ]
                   }
                 >
@@ -102,7 +104,7 @@ const ActionDetails = () => {
                 <ActionParamTag
                   color={
                     ActionParamColor[
-                      repeatLoopThroughColorArray(i, ActionParamColor)
+                    repeatLoopThroughColorArray(i, ActionParamColor)
                     ]
                   }
                   detailed

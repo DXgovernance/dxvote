@@ -25,6 +25,7 @@ const DropdownMenuItem = styled(MenuItem)`
   color: ${({ theme }) => theme.colors.text};
   &:hover {
     background-color: ${({ theme }) => theme.colors.hoverMenu};
+    color: ${({ theme }) => theme.colors.primary};
   }
 `;
 

@@ -5,7 +5,7 @@ import { useParams } from 'react-router';
 import { useFilter } from 'contexts/Guilds/filters';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { Input } from '../common/Form';
-import { Box, Flex } from '../common/Layout/Box';
+import { Flex, Box } from '../common/Layout/Box';
 
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
 import { Button } from '../common/Button';
@@ -21,9 +21,10 @@ const FilterContainer = styled(Box)`
   margin-bottom: 1rem;
 `;
 
-const FilterRow = styled.div`
+const FilterRow = styled(Flex)`
   display: flex;
   flex-direction: row;
+
 
   @media only screen and (min-width: 768px) {
     justify-content: space-between;
@@ -31,7 +32,9 @@ const FilterRow = styled.div`
 `;
 
 const ButtonContainer = styled(Flex)`
-  flex-direction: Row;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
 `;
 
 export const Filter = () => {
