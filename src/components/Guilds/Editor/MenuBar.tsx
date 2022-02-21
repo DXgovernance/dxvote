@@ -22,11 +22,11 @@ import MenuItem from './MenuItem';
 
 const Header = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.primary};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border.initial};
   display: flex;
   flex: 0 0 auto;
   flex-wrap: wrap;
-  padding: 0.25rem;
+  padding: 1rem;
 `;
 
 const Divider = styled.div`

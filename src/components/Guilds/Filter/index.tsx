@@ -34,7 +34,7 @@ const FilterRow = styled(Flex)`
 const ButtonContainer = styled(Flex)`
   flex-direction: row;
   justify-content: flex-end;
-  width: 100%;
+  width: 50%;
 `;
 
 export const Filter = () => {

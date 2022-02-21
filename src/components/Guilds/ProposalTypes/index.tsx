@@ -49,6 +49,12 @@ const PaddingWrapper = styled(Flex)`
   width: 100%;
 `;
 
+const StyledProposalDescription = styled(Flex)`
+  display: flex;
+  align-items: flex-start;
+  margin: 0px 24px;
+`
+
 const ContentWrapper = styled(Flex)`
   height: 100%;
   justify-content: flex-start;
@@ -138,15 +144,17 @@ const ProposalTypeDescription: React.FC<ProposalTypeDescriptionProps> = ({
   return (
     <Container>
       <PaddingWrapper>
-        <ContainerText variant="bold" color="#fff">
-          {title}
-        </ContainerText>
-        <ContainerText variant="medium" color="#BDC0C7">
-          {description}
-        </ContainerText>
-        <ContainerText variant="medium" color="#BDC0C7">
-          {onChainAction ? 'On-chain Action' : 'No on-chain action'}
-        </ContainerText>
+        <StyledProposalDescription>
+          <ContainerText variant="bold" color="#fff">
+            {title}
+          </ContainerText>
+          <ContainerText variant="medium" color="#BDC0C7">
+            {description}
+          </ContainerText>
+          <ContainerText variant="medium" color="#BDC0C7">
+            {onChainAction ? 'On-chain Action' : 'No on-chain action'}
+          </ContainerText>
+        </StyledProposalDescription>
       </PaddingWrapper>
     </Container>
   );
@@ -230,7 +238,7 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
           </ButtonFooter>
         </Footer>
       </Wrapper>
-    </Backdrop>
+    </Backdrop >
   );
 };
 

@@ -12,10 +12,10 @@ import TurndownService from 'turndown';
 const turndownService = new TurndownService();
 
 const EditorWrap = styled.div`
-  background-color: #fff;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.background};
+  border: 1px solid ${({ theme }) => theme.colors.border.initial};
   border-radius: 10px;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
   display: flex;
   flex-direction: column;
   max-height: 26rem;
@@ -61,7 +61,7 @@ const Content = styled(EditorContent)`
 
       code {
         background-color: ${({ theme }) =>
-          transparentize(0.8, theme.colors.muted)};
+      transparentize(0.8, theme.colors.muted)};
         color: ${({ theme }) => theme.colors.muted};
       }
 

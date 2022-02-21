@@ -44,8 +44,10 @@ const PageContent = styled(Box)`
   }
 `;
 
-const Button = styled(IconButton)`
+const StyledButton = styled(IconButton)`
   margin: 0;
+  padding: 0.5rem 0.8rem;
+  margin-left: ${(props) => props.marginLeft}; || 0
 `;
 
 const Label = styled.span`
@@ -55,9 +57,15 @@ const Label = styled.span`
   font-size: ${({ size }) => (size ? size : `14px`)};
   line-height: 20px;
   display: flex;
-  color: ${({ color }) => (color ? color : `#000000`)};
-  margin: 0;
+  color: ${({ color }) => (color ? color : "#BDC0C7")};
+  margin: 12px 0px;
 `;
+
+const InputWrapper = styled(Flex)`
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+`
 
 const CreateProposalPage: React.FC = () => {
   const ttlMs = 345600000;
@@ -125,12 +133,12 @@ const CreateProposalPage: React.FC = () => {
           justifyContent="space-between"
           margin="0px 0px 24px"
         >
-          <Button iconLeft onClick={handleBack}>
+          <StyledButton iconLeft onClick={handleBack}>
             <FiChevronLeft />
-            Back to Overview
-          </Button>
+            Change proposal type
+          </StyledButton>
 
-          <Button
+          <StyledButton
             padding="8px"
             onClick={handleToggleEditMode}
             disabled={!title || !proposalBodyMd}
@@ -141,7 +149,7 @@ const CreateProposalPage: React.FC = () => {
             ) : (
               <MdOutlineModeEdit size={18} />
             )}
-          </Button>
+          </StyledButton>
         </Flex>
         <Box margin="0px 0px 24px">
           {editMode ? (
@@ -162,17 +170,23 @@ const CreateProposalPage: React.FC = () => {
           {editMode ? (
             <>
               <Label>Reference link (optional)</Label>
+              <InputWrapper>
 
-              <Input
-                placeholder="https://daotalk.org/..."
-                value={referenceLink}
-                onChange={e => setReferenceLink(e.target.value)}
-                icon={<MdLink size={18} color="#BDC0C7" />}
-                data-testId="create-proposal-link"
-              />
+                <Input
+                  placeholder="https://daotalk.org/..."
+                  value={referenceLink}
+                  onChange={e => setReferenceLink(e.target.value)}
+                  icon={<MdLink size={18} />}
+                  data-testId="create-proposal-link"
+                />
+                <StyledButton variant="secondary" marginLeft={"1rem"}> Import </StyledButton>
+              </InputWrapper>
             </>
           ) : referenceLink ? (
-            <Label size="16px">{referenceLink}</Label>
+            <>
+              <Label size="16px">{referenceLink}</Label>
+              <StyledButton> Import </StyledButton>
+            </>
           ) : null}
         </Box>
         {editMode ? (
@@ -191,14 +205,14 @@ const CreateProposalPage: React.FC = () => {
           <ActionsBuilder proposalViewMode={!editMode} />
         </Box>
         <Box margin="16px 0px">
-          <Button
+          <StyledButton
             onClick={handleCreateProposal}
             variant="secondary"
             disabled={!isValid}
             data-testId="create-proposal-action-button"
           >
             Create Proposal
-          </Button>
+          </StyledButton>
         </Box>
       </PageContent>
       <SidebarContent>
