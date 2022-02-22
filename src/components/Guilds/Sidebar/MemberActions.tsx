@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
-import Skeleton from 'react-loading-skeleton';
 import { useWeb3React } from '@web3-react/core';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
@@ -27,6 +26,7 @@ import { useTransactions } from '../../../contexts/Guilds';
 import { useERC20Guild } from '../../../hooks/Guilds/contracts/useContract';
 import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
 import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
+import { Loading } from '../common/Loading';
 
 const UserActionButton = styled(IconButton)`
   border-radius: 50px;
@@ -144,7 +144,7 @@ export const MemberActions = () => {
             {votingPowerPercent != null ? (
               `${votingPowerPercent}%`
             ) : (
-              <Skeleton width={40} baseColor="#444" />
+              <Loading loading text skeletonProps={{ width: '40px' }} />
             )}
           </VotingPower>
         </UserActionButton>
@@ -161,7 +161,7 @@ export const MemberActions = () => {
                 {votingPowerPercent != null ? (
                   `${votingPowerPercent}%`
                 ) : (
-                  <Skeleton width={40} />
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
                 )}
               </span>
             </ContentItem>
@@ -171,7 +171,7 @@ export const MemberActions = () => {
                 {userVotingPower && tokenInfo ? (
                   `${roundedBalance} ${tokenInfo.symbol}`
                 ) : (
-                  <Skeleton width={40} />
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
                 )}
               </span>
             </ContentItem>
@@ -186,7 +186,7 @@ export const MemberActions = () => {
                     unlockedTimestamp?.toNow(true)
                   )
                 ) : (
-                  <Skeleton width={40} />
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
                 )}
               </span>
             </ContentItem>

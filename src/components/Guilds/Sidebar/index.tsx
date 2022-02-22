@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
 import { Box } from '../common/Layout';
 import { Menu, MenuItem } from '../common/Menu';
 import { MemberActions } from './MemberActions';
@@ -12,6 +11,7 @@ import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotin
 import { useWeb3React } from '@web3-react/core';
 
 const SidebarWrapper = styled(Box)`
+  color: ${({ theme }) => theme.colors.text};
   @media only screen and (min-width: 768px) {
     margin-right: 1rem;
     border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -112,7 +112,7 @@ export const Sidebar = () => {
             <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
 
             <DaoTitle size={2} as="h1">
-              {data?.name || <Skeleton width={100} />}
+              {data?.name}
             </DaoTitle>
           </DaoBrand>
           <DaoMemberCount>464 Members</DaoMemberCount>

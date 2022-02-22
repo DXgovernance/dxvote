@@ -1,9 +1,8 @@
 import React from 'react';
-import { FiArrowLeft } from 'react-icons/fi';
+import { FaChevronLeft } from 'react-icons/fa';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
-
+import { Loading } from 'components/Guilds/common/Loading';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
 import ProposalInfoCard from '../../components/Guilds/ProposalPage/ProposalInfoCard';
@@ -38,6 +37,7 @@ const PageContent = styled(Box)`
 
 const PageHeader = styled(Box)`
   margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const PageTitle = styled.h3`
@@ -54,7 +54,7 @@ const PageTitle = styled.h3`
 `;
 
 const StyledIconButton = styled(IconButton)`
-  padding: 0;
+  padding: 0.6rem 0.8rem;
   margin-top: 5px;
 `;
 
@@ -101,16 +101,20 @@ const ProposalPage: React.FC = () => {
         <PageHeader>
           <HeaderTopRow>
             <UnstyledLink to={`/${chainName}/${guildId}`}>
-              <StyledIconButton variant="minimal" iconLeft>
-                <FiArrowLeft /> DXdao
+              <StyledIconButton variant="secondary" iconLeft>
+                <FaChevronLeft style={{ marginRight: '15px' }} /> DXdao
               </StyledIconButton>
             </UnstyledLink>
 
             <ProposalStatusWrapper>
-              <ProposalStatus proposalId={proposalId} bordered hideTime />
+              <ProposalStatus proposalId={proposalId} showRemainingTime />
             </ProposalStatusWrapper>
           </HeaderTopRow>
-          <PageTitle>{proposal?.title || <Skeleton />}</PageTitle>
+          <PageTitle>
+            {proposal?.title || (
+              <Loading loading text skeletonProps={{ width: '800px' }} />
+            )}
+          </PageTitle>
         </PageHeader>
 
         <AddressButton address={proposal?.creator} />

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
+import { Loading } from '../common/Loading';
 import { Modal } from '../common/Modal';
 import { StakeTokens } from './StakeTokens';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
@@ -20,7 +20,13 @@ const StakeTokensModal: React.FC<StakeTokensModalInterface> = ({
 
   return (
     <Modal
-      header={token ? `Stake ${token.name} tokens` : <Skeleton width={100} />}
+      header={
+        token ? (
+          `Stake ${token.name} tokens`
+        ) : (
+          <Loading loading text skeletonProps={{ width: '100px' }} />
+        )
+      }
       isOpen={isOpen}
       onDismiss={onDismiss}
       maxWidth={300}

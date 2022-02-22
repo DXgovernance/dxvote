@@ -5,7 +5,7 @@ import { getChains, isChainIdSupported } from 'provider/connectors';
 import { Button, ButtonIcon, IconButton } from '../common/Button';
 import NetworkModal from '../Web3Modals/NetworkModal';
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
-import ethereumIcon from '../../../assets/images/ethereum.svg';
+import ethereumIcon from '../../../assets/images/ether.svg';
 import gnosisIcon from '../../../assets/images/gnosis-icon-green.svg';
 
 const iconsByChain = {

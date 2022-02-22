@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { isDesktop, isMobile } from 'react-device-detect';
 import { useParams } from 'react-router';
 import { useFilter } from 'contexts/Guilds/filters';
-
-import { InputText } from '../common/Form';
+import { AiOutlineSearch } from 'react-icons/ai';
+import { Input } from '../common/Form';
 import { Box, Flex } from '../common/Layout/Box';
 
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
@@ -62,7 +62,10 @@ export const Filter = () => {
   return (
     <FilterContainer>
       <FilterRow>
-        <InputText placeholder="Proposal title" />
+        <Input
+          icon={<AiOutlineSearch size={24} />}
+          placeholder="Search Proposal"
+        />
         {isProposalCreationAllowed && (
           <ButtonContainer>
             <Button>Proposal state</Button>

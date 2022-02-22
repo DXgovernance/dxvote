@@ -5,6 +5,7 @@ import ActionItem from './ActionItem';
 
 const ProposalCardHeader = styled(Heading)`
   padding-left: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const ProposalActionsCard = () => {
@@ -12,7 +13,7 @@ const ProposalActionsCard = () => {
     <SidebarCard
       header={
         <ProposalCardHeader>
-          <strong>Details</strong>
+          <strong>Actions</strong>
         </ProposalCardHeader>
       }
     >

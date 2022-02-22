@@ -1,13 +1,13 @@
 import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
 import React from 'react';
-import Skeleton from 'react-loading-skeleton';
 import { IconButton } from '../common/Button';
 import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { Badge } from '../common/Badge';
 import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
+import { Loading } from '../common/Loading';
 
 const IconHolder = styled.span`
   display: flex;
@@ -61,18 +61,25 @@ const AddressButton: React.FC<AddressButtonProps> = ({
   const { ensName, imageUrl } = useENSAvatar(address, DEFAULT_ETH_CHAIN_ID);
 
   return (
-    <StyledAddressButton onClick={onClick} iconLeft>
+    <StyledAddressButton variant="secondary" onClick={onClick} iconLeft>
       <IconHolder>
         {address ? (
           <Avatar src={imageUrl} defaultSeed={address} size={24} />
         ) : (
-          <Skeleton circle width={24} height={24} />
+          <Loading
+            loading
+            text
+            skeletonProps={{ circle: true, width: '24px', height: '24px' }}
+          />
         )}
       </IconHolder>
       {isDesktop && (
         <AddressText>
-          {ensName ||
-            (address ? shortenAddress(address) : <Skeleton width={100} />)}
+          {ensName || address ? (
+            shortenAddress(address)
+          ) : (
+            <Loading loading text />
+          )}
         </AddressText>
       )}
       {transactionsCounter ? (

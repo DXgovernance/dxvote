@@ -3,7 +3,6 @@ import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import moment, { duration } from 'moment';
 import React, { useMemo } from 'react';
 import { FiCheck, FiInbox } from 'react-icons/fi';
-import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useProposal } from '../../../../hooks/Guilds/ether-swr/guild/useProposal';
@@ -13,6 +12,7 @@ import SidebarCard, {
   SidebarCardHeader,
 } from '../../SidebarCard';
 import InfoItem from './InfoItem';
+import { Loading } from 'components/Guilds/common/Loading';
 
 const InfoItemLinkerLine = styled(Box)`
   border-left: 1px dashed ${({ theme }) => theme.colors.muted};
@@ -66,7 +66,7 @@ const ProposalInfoCard: React.FC = () => {
     <SidebarCard header={<SidebarCardHeader>Information</SidebarCardHeader>}>
       <SidebarCardContent>
         {!proposal ? (
-          <Skeleton height={100} />
+          <Loading loading text skeletonProps={{ height: '100px' }} />
         ) : (
           <>
             <InfoItem
@@ -99,13 +99,19 @@ const ProposalInfoCard: React.FC = () => {
                 'seconds'
               ).humanize()
             ) : (
-              <Skeleton width={50} />
+              <Loading loading text skeletonProps={{ width: '50px' }} />
             )}
           </span>
         </UserInfoDetail>
         <UserInfoDetail>
           <span>Quorum</span>
-          <span>{quorum != null ? `${quorum}%` : <Skeleton width={50} />}</span>
+          <span>
+            {quorum != null ? (
+              `${quorum}%`
+            ) : (
+              <Loading loading text skeletonProps={{ width: '50px' }} />
+            )}
+          </span>
         </UserInfoDetail>
       </SidebarCardContent>
     </SidebarCard>

@@ -13,7 +13,7 @@ import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
 import CreateProposalPage from 'pages/Guilds/CreateProposal';
 import GlobalStyle from './theme/GlobalTheme';
-import theme from './theme/light.json';
+import theme from './theme/dark.json';
 import { GuildsContextProvider, TransactionsProvider } from 'contexts/Guilds';
 import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
 import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';

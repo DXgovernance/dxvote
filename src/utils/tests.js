@@ -1,5 +1,5 @@
 import { ThemeProvider } from 'styled-components';
-import theme from '../theme/light.json';
+import theme from '../theme/dark.json';
 
 import { render as rtlRender } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';

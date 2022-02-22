@@ -11,9 +11,8 @@ const HeaderWrapper = styled.nav`
   position: -webkit-sticky;
   position: sticky;
   top: 0;
-  background: white;
+  background: ${({ theme }) => theme.colors.background};
   z-index: 200;
-
   @media only screen and(min-width: 768px) {
     padding: 1.5rem 0;
   }
@@ -26,6 +25,7 @@ const HeaderContainer = styled(Container)`
   align-items: center;
   justify-content: space-between;
   padding: 0;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const MenuItems = styled(Box)`

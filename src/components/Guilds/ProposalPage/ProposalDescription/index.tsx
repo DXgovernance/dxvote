@@ -1,7 +1,7 @@
+import { Loading } from 'components/Guilds/common/Loading';
 import contentHash from 'content-hash';
 import Markdown from 'markdown-to-jsx';
 import { useMemo } from 'react';
-import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useProposal } from '../../../../hooks/Guilds/ether-swr/guild/useProposal';
@@ -13,6 +13,7 @@ const ProposalDescriptionWrapper = styled.div`
   line-height: 1.5;
   font-size: 16px;
   text-align: justify;
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
 `;
 
 const ProposalDescription = () => {
@@ -51,7 +52,7 @@ const ProposalDescription = () => {
       {metadata?.description ? (
         <Markdown>{metadata.description}</Markdown>
       ) : (
-        <Skeleton height={24} count={10} />
+        <Loading loading text skeletonProps={{ width: '800px' }} />
       )}
     </ProposalDescriptionWrapper>
   );
