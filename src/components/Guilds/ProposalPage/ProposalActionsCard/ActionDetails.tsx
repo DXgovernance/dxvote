@@ -83,7 +83,7 @@ const ActionDetails = () => {
                 <ActionParamTag
                   color={
                     ActionParamColor[
-                    repeatLoopThroughColorArray(i, ActionParamColor)
+                      repeatLoopThroughColorArray(i, ActionParamColor)
                     ]
                   }
                 >
@@ -104,7 +104,7 @@ const ActionDetails = () => {
                 <ActionParamTag
                   color={
                     ActionParamColor[
-                    repeatLoopThroughColorArray(i, ActionParamColor)
+                      repeatLoopThroughColorArray(i, ActionParamColor)
                     ]
                   }
                   detailed

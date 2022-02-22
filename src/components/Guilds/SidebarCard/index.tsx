@@ -26,5 +26,4 @@ export const SidebarCardHeader = styled(Heading)`
 export const SidebarCardContent = styled(Box)`
   padding: 1rem;
   color: ${({ theme }) => theme.colors.text};
-
 `;

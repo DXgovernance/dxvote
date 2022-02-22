@@ -162,7 +162,9 @@ export const StakeTokens = () => {
     if (!isStakeAmountValid) return;
 
     createTransaction(
-      `Lock ${formatUnits(stakeAmountParsed, tokenInfo?.decimals)} ${tokenInfo?.symbol} tokens`,
+      `Lock ${formatUnits(stakeAmountParsed, tokenInfo?.decimals)} ${
+        tokenInfo?.symbol
+      } tokens`,
       async () => guildContract.lockTokens(stakeAmountParsed)
     );
   };
@@ -191,7 +193,11 @@ export const StakeTokens = () => {
     <GuestContainer>
       <DaoBrand>
         <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-        <DaoTitle>{guildConfig?.name || <Loading text loading skeletonProps={{ width: 100 }} />}</DaoTitle>
+        <DaoTitle>
+          {guildConfig?.name || (
+            <Loading text loading skeletonProps={{ width: 100 }} />
+          )}
+        </DaoTitle>
       </DaoBrand>
       <InfoItem>
         {guildConfig?.lockTime ? (
@@ -212,7 +218,9 @@ export const StakeTokens = () => {
             ) : (
               <Loading loading text skeletonProps={{ width: 30 }} />
             )}{' '}
-            {tokenInfo?.symbol || <Loading loading text skeletonProps={{ width: 10 }} />}
+            {tokenInfo?.symbol || (
+              <Loading loading text skeletonProps={{ width: 10 }} />
+            )}
           </InfoValue>
         </InfoRow>
         <InfoRow>
@@ -271,14 +279,21 @@ export const StakeTokens = () => {
       </InfoRow>
       {stakeAmountParsed && tokenAllowance?.gte(stakeAmountParsed) ? (
         <ButtonLock disabled={!isStakeAmountValid} onClick={lockTokens}>
-          Lock {tokenInfo?.symbol || <Loading loading text skeletonProps={{ width: 10 }} />}
+          Lock{' '}
+          {tokenInfo?.symbol || (
+            <Loading loading text skeletonProps={{ width: 10 }} />
+          )}
         </ButtonLock>
       ) : (
         <ButtonLock
           disabled={!isStakeAmountValid}
           onClick={approveTokenSpending}
         >
-          Approve {tokenInfo?.symbol || <Loading loading text skeletonProps={{ width: 10 }} />} Spending
+          Approve{' '}
+          {tokenInfo?.symbol || (
+            <Loading loading text skeletonProps={{ width: 10 }} />
+          )}{' '}
+          Spending
         </ButtonLock>
       )}
     </GuestContainer>

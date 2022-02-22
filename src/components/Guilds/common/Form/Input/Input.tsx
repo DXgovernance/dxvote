@@ -31,7 +31,7 @@ const InputWrapper = styled.div`
   ${baseInputStyles}
   display: flex;
   width: 100%;
-  &:hover, 
+  &:hover,
   &:focus {
     border: 0.1rem solid ${({ theme }) => theme.colors.text};
   }

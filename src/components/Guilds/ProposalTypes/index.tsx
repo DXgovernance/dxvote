@@ -53,7 +53,7 @@ const StyledProposalDescription = styled(Flex)`
   display: flex;
   align-items: flex-start;
   margin: 0px 24px;
-`
+`;
 
 const ContentWrapper = styled(Flex)`
   height: 100%;
@@ -238,7 +238,7 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
           </ButtonFooter>
         </Footer>
       </Wrapper>
-    </Backdrop >
+    </Backdrop>
   );
 };
 

@@ -47,7 +47,7 @@ const PageContent = styled(Box)`
 const StyledButton = styled(IconButton)`
   margin: 0;
   padding: 0.5rem 0.8rem;
-  margin-left: ${(props) => props.marginLeft}; || 0
+  margin-left: ${props => props.marginLeft}; || 0
 `;
 
 const Label = styled.span`
@@ -57,15 +57,15 @@ const Label = styled.span`
   font-size: ${({ size }) => (size ? size : `14px`)};
   line-height: 20px;
   display: flex;
-  color: ${({ color }) => (color ? color : "#BDC0C7")};
+  color: ${({ color }) => (color ? color : '#BDC0C7')};
   margin: 12px 0px;
 `;
 
 const InputWrapper = styled(Flex)`
-  display:flex;
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
-`
+`;
 
 const CreateProposalPage: React.FC = () => {
   const ttlMs = 345600000;
@@ -171,7 +171,6 @@ const CreateProposalPage: React.FC = () => {
             <>
               <Label>Reference link (optional)</Label>
               <InputWrapper>
-
                 <Input
                   placeholder="https://daotalk.org/..."
                   value={referenceLink}
@@ -179,7 +178,10 @@ const CreateProposalPage: React.FC = () => {
                   icon={<MdLink size={18} />}
                   data-testId="create-proposal-link"
                 />
-                <StyledButton variant="secondary" marginLeft={"1rem"}> Import </StyledButton>
+                <StyledButton variant="secondary" marginLeft={'1rem'}>
+                  {' '}
+                  Import{' '}
+                </StyledButton>
               </InputWrapper>
             </>
           ) : referenceLink ? (

@@ -61,7 +61,7 @@ const Content = styled(EditorContent)`
 
       code {
         background-color: ${({ theme }) =>
-      transparentize(0.8, theme.colors.muted)};
+          transparentize(0.8, theme.colors.muted)};
         color: ${({ theme }) => theme.colors.muted};
       }
 

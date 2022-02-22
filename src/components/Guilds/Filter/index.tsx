@@ -25,7 +25,6 @@ const FilterRow = styled(Flex)`
   display: flex;
   flex-direction: row;
 
-
   @media only screen and (min-width: 768px) {
     justify-content: space-between;
   }
