@@ -2,7 +2,11 @@ import styled from 'styled-components';
 import { Button } from '../../common/Button';
 import LiveIndicator from './LiveIndicator';
 
-const OptionButton = styled(Button)`
+interface OptionButtonProps {
+  active: boolean;
+}
+
+const OptionButton = styled(Button)<OptionButtonProps>`
   width: 100%;
 
   padding: 0.6rem 1.5rem;
@@ -22,11 +26,14 @@ const OptionButton = styled(Button)`
   &:focus {
     border: 2px solid ${({ theme }) => theme.colors.text};
   }
+
+  ${props => props.active && `border: 2px solid #fff;`};
 `;
 
 const OptionButtonText = styled.div`
   display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const IconWrapper = styled.div`
@@ -54,6 +61,7 @@ export default function Option({
 }) {
   const content = (
     <OptionButton
+      variant="secondary"
       onClick={onClick}
       clickable={clickable && !active}
       active={active}

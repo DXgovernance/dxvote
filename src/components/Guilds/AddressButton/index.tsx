@@ -1,13 +1,13 @@
 import { isDesktop } from 'react-device-detect';
 import styled from 'styled-components';
 import React, { useMemo } from 'react';
-import Skeleton from 'react-loading-skeleton';
 import { IconButton } from '../common/Button';
 import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { Badge } from '../common/Badge';
 import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
+import { Loading } from '../common/Loading';
 
 const IconHolder = styled.span`
   display: flex;
@@ -74,12 +74,16 @@ const AddressButton: React.FC<AddressButtonProps> = ({
   }, [imageUrl, ensName, avatarUri]);
 
   return (
-    <StyledAddressButton onClick={onClick} iconLeft>
+    <StyledAddressButton variant="secondary" onClick={onClick} iconLeft>
       <IconHolder>
         {address ? (
           <Avatar src={imageUrlToUse} defaultSeed={address} size={24} />
         ) : (
-          <Skeleton circle width={24} height={24} />
+          <Loading
+            loading
+            text
+            skeletonProps={{ circle: true, width: '24px', height: '24px' }}
+          />
         )}
       </IconHolder>
       {isDesktop && (
@@ -87,7 +91,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({
           {ensName || address ? (
             shortenAddress(address)
           ) : (
-            <Skeleton width={100} />
+            <Loading loading text />
           )}
         </AddressText>
       )}

@@ -29,6 +29,7 @@ const ProposalActionTitle = styled(Box)`
   span {
     font-size: 14px;
   }
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const FiArrowRightSpaced = styled(FiArrowRight)`
@@ -52,7 +53,11 @@ const ActionItem = () => {
             geronimo.eth
           </IconButton>
         </ProposalActionTitle>
-        {isOpen ? <FaChevronCircleUp /> : <FaChevronCircleDown />}
+        {isOpen ? (
+          <FaChevronCircleUp color="white" />
+        ) : (
+          <FaChevronCircleDown color="white" />
+        )}
       </ProposalActionRow>
       {isOpen && (
         <ActionDetailsRow>
