@@ -26,7 +26,6 @@ const GuildsApp = () => {
   const history = useHistory();
 
   const isTestingEnv = !window.location?.hostname?.startsWith('dxvote.eth');
-
   if (!isTestingEnv) {
     history.push('/');
     return null;

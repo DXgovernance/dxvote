@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { useState } from 'react';
 import { useParams } from 'react-router';

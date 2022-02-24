@@ -7,7 +7,7 @@ import { Sidebar } from '../../components/Guilds/Sidebar';
 import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard from '../../components/Guilds/ProposalCard';
 import InView from 'react-intersection-observer';
-import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/useGuildProposals';
+import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/guild/useGuildProposalIds';
 
 const PageContainer = styled(Box)`
   display: grid;

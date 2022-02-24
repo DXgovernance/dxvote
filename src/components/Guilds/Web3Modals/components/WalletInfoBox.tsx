@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
 import { FiCheckCircle, FiCopy, FiExternalLink } from 'react-icons/fi';
@@ -9,7 +8,7 @@ import {
   NETWORK_NAMES,
   shortenAddress,
 } from '../../../../utils';
-import useENSAvatar from '../../../../hooks/Guilds/ens/useENSAvatar';
+import useENSAvatar from '../../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import useClipboard from '../../../../hooks/Guilds/useClipboard';
 import {
   DEFAULT_ETH_CHAIN_ID,
@@ -89,21 +88,8 @@ interface Props {
 
 export default function WalletInfoBox({ openOptions }: Props) {
   const { account, connector, chainId } = useWeb3React();
-  const { ensName, imageUrl, avatarUri } = useENSAvatar(
-    account,
-    DEFAULT_ETH_CHAIN_ID
-  );
+  const { ensName, imageUrl } = useENSAvatar(account, DEFAULT_ETH_CHAIN_ID);
   const [isCopied, copyAddress] = useClipboard(account, 3000);
-
-  const imageUrlToUse = useMemo(() => {
-    if (avatarUri) {
-      return (
-        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
-      );
-    } else {
-      return null;
-    }
-  }, [imageUrl, ensName, avatarUri]);
 
   const networkName = NETWORK_NAMES[chainId];
 
@@ -123,7 +109,7 @@ export default function WalletInfoBox({ openOptions }: Props) {
 
       <WalletAddressRow>
         <IconHolder>
-          <Avatar src={imageUrlToUse} defaultSeed={account} size={24} />
+          <Avatar src={imageUrl} defaultSeed={account} size={24} />
         </IconHolder>
         <AddressText>{ensName || shortenAddress(account)}</AddressText>
       </WalletAddressRow>
