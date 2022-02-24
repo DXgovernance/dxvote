@@ -67,7 +67,6 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
     <VotesContainer>
       {voteData.args &&
         Object.values(voteData?.args).map((_, i) => {
-          console.log('voteData', voteData.args[i]);
           return (
             <>
               <VotesRow key={i} type="0">
