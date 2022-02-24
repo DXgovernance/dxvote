@@ -43,11 +43,11 @@ export const SidebarInfoCard = () => {
       <SidebarCardContent>
         <Row>
           <Label>Consensus System</Label>
-          <Label>Guild</Label>
+          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>Guild</Label>
         </Row>
         <Row>
           <Label>Proposal Duration</Label>
-          <Label>
+          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>
             {data?.proposalTime ? (
               duration(data?.proposalTime?.toNumber(), 'seconds').humanize()
             ) : (
@@ -57,7 +57,7 @@ export const SidebarInfoCard = () => {
         </Row>
         <Row>
           <Label>Quorum</Label>
-          <Label>
+          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>
             {quorum != null ? `${quorum}%` : <Skeleton width={50} />}
           </Label>
         </Row>

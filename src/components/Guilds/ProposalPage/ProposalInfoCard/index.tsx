@@ -35,6 +35,13 @@ const UserInfoDetail = styled(Box)`
   font-weight: 600;
 `;
 
+const Label = styled.span`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: ${({ theme }) => theme.fontSizes.body};
+  line-height: ${({ theme }) => theme.lineHeights.body};
+  color: ${({ theme, color }) => (color ? color : theme.colors.text)};
+`;
+
 const ProposalInfoCard: React.FC = () => {
   const { guild_id: guildId, proposal_id: proposalId } = useParams<{
     chain_name: string;
@@ -87,12 +94,12 @@ const ProposalInfoCard: React.FC = () => {
         <Separator />
 
         <UserInfoDetail>
-          <span>Consensus System</span>
-          <span>Guild</span>
+          <Label>Consensus System</Label>
+          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>Guild</Label>
         </UserInfoDetail>
         <UserInfoDetail>
-          <span>Proposal Duration</span>
-          <span>
+          <Label>Proposal Duration</Label>
+          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>
             {guildConfig?.proposalTime ? (
               duration(
                 guildConfig?.proposalTime?.toNumber(),
@@ -101,17 +108,17 @@ const ProposalInfoCard: React.FC = () => {
             ) : (
               <Loading loading text skeletonProps={{ width: '50px' }} />
             )}
-          </span>
+          </Label>
         </UserInfoDetail>
         <UserInfoDetail>
-          <span>Quorum</span>
-          <span>
+          <Label>Quorum</Label>
+          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>
             {quorum != null ? (
               `${quorum}%`
             ) : (
               <Loading loading text skeletonProps={{ width: '50px' }} />
             )}
-          </span>
+          </Label>
         </UserInfoDetail>
       </SidebarCardContent>
     </SidebarCard>

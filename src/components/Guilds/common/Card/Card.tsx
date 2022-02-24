@@ -21,8 +21,8 @@ export const Header = styled.h3`
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;
-  color: #000000;
-  margin: 0;
+  color: ${props => props.color}; || ${({ theme }) => theme.colors.text};
+margin: 0;
   ${({ headerStyles }) => headerStyles}
 `;
 

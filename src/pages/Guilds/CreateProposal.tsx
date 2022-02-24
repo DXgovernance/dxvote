@@ -179,8 +179,7 @@ const CreateProposalPage: React.FC = () => {
                   data-testId="create-proposal-link"
                 />
                 <StyledButton variant="secondary" marginLeft={'1rem'}>
-                  {' '}
-                  Import{' '}
+                  Import
                 </StyledButton>
               </InputWrapper>
             </>

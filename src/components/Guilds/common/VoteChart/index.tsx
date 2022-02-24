@@ -3,8 +3,8 @@ import { FaFlagCheckered } from 'react-icons/fa';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
-import Skeleton from 'react-loading-skeleton';
 import { Flex } from '../Layout';
+import { Loading } from '../Loading';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -49,8 +49,8 @@ const VoteQuorumLabel = styled.div`
     quorum < 10
       ? `0px ${theme.radii.curved} ${theme.radii.curved}`
       : quorum > 90
-      ? `${theme.radii.curved} 0px ${theme.radii.curved} ${theme.radii.curved}`
-      : `${theme.radii.curved}`};
+        ? `${theme.radii.curved} 0px ${theme.radii.curved} ${theme.radii.curved}`
+        : `${theme.radii.curved}`};
   font-size: 14px;
   font-weight: 600;
   align-items: center;
@@ -76,8 +76,8 @@ const VoteQuorumContainer = styled.div`
     quorum < 10
       ? `${quorum}%`
       : quorum > 90
-      ? `calc(${quorum}% - 65px)`
-      : `calc(${quorum}% - 22px)`};
+        ? `calc(${quorum}% - 65px)`
+        : `calc(${quorum}% - 22px)`};
 `;
 
 const SkeletonAction = styled(Flex)`
@@ -103,7 +103,6 @@ export const VotesChart = ({ showToken, token }) => {
     voteData?.quorum,
     voteData?.totalLocked
   );
-
   return (
     <VotesChartContainer>
       {voteData.args ? (
@@ -126,15 +125,15 @@ export const VotesChart = ({ showToken, token }) => {
         <>
           <ActionsContainer>
             <SkeletonAction>
-              <Skeleton width={50} />
-              <Skeleton width={50} />
+              <Loading loading text skeletonProps={{ width: 50 }} />
+              <Loading loading text skeletonProps={{ width: 50 }} />
             </SkeletonAction>
             <SkeletonAction>
-              <Skeleton width={50} />
-              <Skeleton width={50} />
+              <Loading loading text skeletonProps={{ width: 50 }} />
+              <Loading loading text skeletonProps={{ width: 50 }} />
             </SkeletonAction>
           </ActionsContainer>
-          <Skeleton height={20} />
+          <Loading loading text skeletonProps={{ height: 20 }} />
         </>
       )}
     </VotesChartContainer>
