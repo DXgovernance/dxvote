@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { VotesChart } from 'components/Guilds/common/VoteChart';
-import { Bullet } from 'components/Guilds/common/Bullet';
+import Bullet from 'components/Guilds/common/Bullet';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { formatUnits } from '@ethersproject/units';
 
@@ -16,19 +16,25 @@ interface ProposalVotesProps {
 const VotesContainer = styled.div`
   display: flex;
   flex-direction: column;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const VotesRow = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
-  font-weight: 600;
+  font-weight: ${({ theme }) => theme.fontWeights.regular};
+  font-size: ${({ theme }) => theme.fontSizes.body};
   margin: 5px 0px 5px 0px;
-  color: ${({ theme, type = '0' }) => theme.colors.votes[type].fg};
 `;
 
-const StyledBullet = styled(Bullet)`
-  font-size: 30px;
+const SpacedBullet = styled(Bullet)`
+  margin-right: 0.5rem;
+  background-color: ${({ option, theme }) => theme.colors.votes?.[option]};
+`;
+
+const VoteOption = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 export const ProposalVotes: React.FC<ProposalVotesProps> = ({
@@ -50,11 +56,11 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
       {voteData.args &&
         Object.values(voteData?.args).map((_, i) => {
           return (
-            <VotesRow type="0">
-              <span>
-                <StyledBullet />
-                {'Action ' + i}
-              </span>
+            <VotesRow>
+              <VoteOption>
+                <SpacedBullet option={i} size={12} />
+                <span>{'Action ' + i}</span>
+              </VoteOption>
               <span>
                 {valueToDisplay(i, showToken, voteData?.args)} {unitDisplay}
               </span>

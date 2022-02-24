@@ -1,7 +1,7 @@
 {
   "colors": {
     "text": "#fff",
-    "primary": "#1B1D1F",
+    "primary": "#295FF4",
     "secondary": "#1B1D1F",
     "proposalText": {
       "grey": "#A1A6B0",
@@ -12,25 +12,16 @@
       "primary": "#295FF4",
       "secondary": "#000"
     },
-    "muted": "#555",
+    "muted": "#303338",
     "hoverMenu": "#f5f5f5",
     "border": {
-      "initial": "#555",
+      "initial": "#303338",
       "hover": "#fff"
     },
     "votes": {
-      "0": {
-        "bg": "#000",
-        "fg": "#000"
-      },
-      "1": {
-        "bg": "#888",
-        "fg": "#888"
-      },
-      "2": {
-        "bg": "#ccc",
-        "fg": "#ccc"
-      }
+      "0": "#295FF4",
+      "1": "#E75C5C",
+      "2": "#ccc"
     }
   },
   "fonts": {

@@ -18,41 +18,40 @@ const VotesChartContainer = styled.div`
 const VotesChartRow = styled.div`
   display: flex;
   flex: 1;
-  height: 12px;
-  border-radius: 30px;
-  border: 1px solid black;
+  height: 0.75rem;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  background-color: ${({ theme }) => theme.colors.muted};
   overflow: hidden;
 `;
 
 const VoteFill = styled.div`
   width: ${({ fill }) => (fill ? `${fill}%` : '')};
-  background: ${({ type, theme }) => theme.colors.votes[type].bg};
-  height: 12px;
+  background: ${({ type, theme }) => theme.colors.votes[type]};
+  height: 0.75rem;
   overflow: hidden;
 `;
 
 // The margin top and height are different when quorum 0 or 100,
 // becase the border radious of the container, the marker needs to touch the curved line.
 const VoteQuorumMarker = styled.div`
-  height: ${({ quorum }) =>
-    quorum === 0 || quorum === 100 ? '18px;' : '14px;'};
+  height: ${({ quorum }) => (quorum === 0 || quorum === 100 ? '18px' : '14px')};
   margin-top: ${({ quorum }) =>
-    quorum === 0 || quorum === 100 ? '10px;' : '14px;'};
+    quorum === 0 || quorum === 100 ? '10px' : '14px'};
   width: 1px;
-  background: black;
+  background: ${({ theme }) => theme.colors.muted};
 `;
 
 const VoteQuorumLabel = styled.div`
   padding: 4px 8px;
-  border: 1px solid black;
+  border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ quorum, theme }) =>
     quorum < 10
-      ? `0px ${theme.radii.curved} ${theme.radii.curved}`
+      ? `0px ${theme.radii.pill} ${theme.radii.pill}`
       : quorum > 90
-      ? `${theme.radii.curved} 0px ${theme.radii.curved} ${theme.radii.curved}`
-      : `${theme.radii.curved}`};
-  font-size: 14px;
-  font-weight: 600;
+      ? `${theme.radii.pill} 0px ${theme.radii.pill} ${theme.radii.pill}`
+      : `${theme.radii.pill}`};
+  font-size: ${({ theme }) => theme.fontSizes.body};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
   align-items: center;
   display: flex;
 
@@ -90,6 +89,10 @@ const ActionsContainer = styled.div`
   margin: 8px 0;
 `;
 
+const PaddedFlagCheckered = styled(FaFlagCheckered)`
+  margin-right: 0.4rem;
+`;
+
 //TODO: rewrite css dynamics types
 export const VotesChart = ({ showToken, token }) => {
   const { voteData } = useVotes();
@@ -116,7 +119,7 @@ export const VotesChart = ({ showToken, token }) => {
           <VoteQuorumContainer quorum={flagCheckered}>
             <VoteQuorumMarker quorum={flagCheckered} />
             <VoteQuorumLabel quorum={flagCheckered}>
-              <FaFlagCheckered />
+              <PaddedFlagCheckered />
               <span>{showToken ? nQuorum : flagCheckered}</span>
               <span>{showToken ? token : '%'}</span>
             </VoteQuorumLabel>
