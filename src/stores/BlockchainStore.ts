@@ -105,7 +105,7 @@ export default class BlockchainStore {
           const fromBlock = lastCheckedBlockNumber + 1;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
-          
+
           networkCache = await cacheService.getUpdatedCache(
             this.context,
             networkCache,
@@ -114,21 +114,21 @@ export default class BlockchainStore {
             toBlock,
             library
           );
-            
+
           notificationStore.setGlobalLoading(
             true,
             `Getting proposal titles form ipfs`
           );
           const proposalTitles = await cacheService.getProposalTitlesFromIPFS(
             networkCache,
-            configStore.getProposalTitlesInBuild(),
-          )
-          
+            configStore.getProposalTitlesInBuild()
+          );
+
           Object.keys(networkCache.proposals).map(proposalId => {
             networkCache.proposals[proposalId].title =
-            networkCache.proposals[proposalId].title ||
-            proposalTitles[proposalId] ||
-            '';
+              networkCache.proposals[proposalId].title ||
+              proposalTitles[proposalId] ||
+              '';
           });
 
           networkCache.blockNumber = toBlock;

@@ -1138,12 +1138,6 @@ export default class UtilsService {
           );
         }
 
-        console.debug(
-          'Getting proposals of',
-          schemeTypeData.name,
-          schemeEvents.length
-        );
-
         let schemeEventsBatchs = [];
         let schemeEventsBatchsIndex = 0;
         for (var i = 0; i < schemeEvents.length; i += 50)
@@ -1152,10 +1146,7 @@ export default class UtilsService {
         while (schemeEventsBatchsIndex < schemeEventsBatchs.length) {
           try {
             console.debug(
-              'Getting proposals in event batch index',
-              schemeEventsBatchsIndex,
-              'in',
-              schemeTypeData
+              `Getting proposals of scheme ${schemeTypeData.name}: ${schemeAddress}, batch: ${schemeEventsBatchsIndex}`
             );
             await Promise.all(
               schemeEventsBatchs[schemeEventsBatchsIndex].map(
@@ -1642,7 +1633,7 @@ export default class UtilsService {
                     id: proposalId,
                     scheme: schemeAddress,
                     to: schemeProposalInfo.to,
-                    title: "",
+                    title: '',
                     callData: schemeProposalInfo.callData,
                     values: schemeProposalInfo.value.map(value => bnum(value)),
                     stateInScheme: Number(schemeProposalInfo.state),

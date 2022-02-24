@@ -87,7 +87,7 @@ const CachePage = observer(() => {
     context: { cacheService, configStore, notificationStore, ipfsService },
   } = useContext();
 
-  const [updateProposalTitles, setUpdateProposalTitles] = React.useState(true);
+  const [updateProposalTitles, setUpdateProposalTitles] = React.useState(false);
   const [buildingCacheState, setBuildingCacheState] = React.useState(0);
   const [updatedCacheHash, setUpdatedCacheHash] = React.useState({
     proposalTitles: {},
@@ -109,7 +109,22 @@ const CachePage = observer(() => {
 
   async function resetCacheOptions() {
     configStore.resetLocalConfig();
-    forceUpdate();
+    setLocalConfig(configStore.getLocalConfig());
+    setBuildingCacheState(0);
+    setResetCache({
+      mainnet: false,
+      rinkeby: false,
+      xdai: false,
+      arbitrum: false,
+      arbitrumTestnet: false,
+    });
+    setUpdatedCacheHash({
+      proposalTitles: {},
+      configHashes: {},
+      configs: {},
+      caches: {},
+    });
+    setUpdateProposalTitles(false);
   }
 
   async function uploadToIPFS(content) {
@@ -159,16 +174,6 @@ const CachePage = observer(() => {
     setLocalConfig(localConfig);
     configStore.setLocalConfig(localConfig);
     forceUpdate();
-  }
-
-  function download(jsonData, name) {
-    const a = document.createElement('a');
-    const file = new Blob([JSON.stringify(jsonData, null, 2)], {
-      type: 'text/plain',
-    });
-    a.href = URL.createObjectURL(file);
-    a.download = name;
-    a.click();
   }
 
   function downloadAll() {
@@ -265,7 +270,7 @@ const CachePage = observer(() => {
     return optionsLinkUrl;
   }
 
-  return buildingCacheState == 1 ? (
+  return buildingCacheState === 1 ? (
     <LoadingBox>
       <div className="loader">
         {' '}
@@ -340,16 +345,6 @@ const CachePage = observer(() => {
                     <div>
                       <Button
                         onClick={() =>
-                          download(
-                            updatedCacheHash.configs[networkName],
-                            networkName + '_config.json'
-                          )
-                        }
-                      >
-                        <FiDownload></FiDownload> Config
-                      </Button>
-                      <Button
-                        onClick={() =>
                           uploadToIPFS(
                             JSON.stringify(
                               updatedCacheHash.configs[networkName],
@@ -360,16 +355,6 @@ const CachePage = observer(() => {
                         }
                       >
                         <FiUpload></FiUpload> Config
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          download(
-                            updatedCacheHash.caches[networkName],
-                            networkName + '_cache.json'
-                          )
-                        }
-                      >
-                        <FiDownload></FiDownload> Cache
                       </Button>
                       <Button
                         onClick={() =>
@@ -415,40 +400,19 @@ const CachePage = observer(() => {
           onChange={() => setUpdateProposalTitles(!updateProposalTitles)}
         ></InputBox>
       </Row>
-      {buildingCacheState == 2 && (
+      {buildingCacheState === 2 && (
         <Row>
-          <Button
-            onClick={() =>
-              download(
-                {
-                  mainnet: updatedCacheHash.configHashes['mainnet'],
-                  xdai: updatedCacheHash.configHashes['xdai'],
-                  arbitrum: updatedCacheHash.configHashes['arbitrum'],
-                  rinkeby: updatedCacheHash.configHashes['rinkeby'],
-                  arbitrumTestnet:
-                    updatedCacheHash.configHashes['arbitrumTestnet'],
-                },
-                'default.json'
-              )
-            }
-          >
-            <FiDownload></FiDownload> Cache Hashes
+          <Button onClick={downloadAll}>
+            {' '}
+            <FiDownload></FiDownload> Download All
           </Button>
-          <Button
-            onClick={() =>
-              download(updatedCacheHash.proposalTitles, 'proposalTitles.json')
-            }
-          >
-            <FiDownload></FiDownload> Proposal Titles
-          </Button>
-          <Button onClick={downloadAll}>Download All</Button>
         </Row>
       )}
       <Row>
         <Button onClick={runCacheScript}>Build Cache</Button>
         <Button onClick={resetCacheOptions}>Reset Options</Button>
         <CopyButton>
-          Build Link <Copy toCopy={getOptionsLink()}></Copy>
+          <Copy toCopy={getOptionsLink()}>Build Link</Copy>
         </CopyButton>
       </Row>
     </Box>
