@@ -43,7 +43,9 @@ export const SidebarInfoCard = () => {
       <SidebarCardContent>
         <Row>
           <Label>Consensus System</Label>
-          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>Guild</Label>
+          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>
+            Guild
+          </Label>
         </Row>
         <Row>
           <Label>Proposal Duration</Label>

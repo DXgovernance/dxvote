@@ -33,15 +33,15 @@ const ColoredBullet = styled.span`
   margin, padding: 0;
   position: absolute;
 
-`
+`;
 const StyledContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-`
+`;
 const StyledText = styled.span`
-margin-left: 1.2rem;
-`
+  margin-left: 1.2rem;
+`;
 
 export const ProposalVotes: React.FC<ProposalVotesProps> = ({
   showToken,
@@ -56,16 +56,18 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
     args: any
   ): number => {
     if (args[action] === null || args[action] === undefined) {
-      return 0
+      return 0;
     }
-    return showToken ? formatUnits(args[action][action][0]) : args[action][action][1];
-  }
+    return showToken
+      ? formatUnits(args[action][action][0])
+      : args[action][action][1];
+  };
 
   return (
     <VotesContainer>
       {voteData.args &&
         Object.values(voteData?.args).map((_, i) => {
-          console.log("voteData", voteData.args[i])
+          console.log('voteData', voteData.args[i]);
           return (
             <>
               <VotesRow key={i} type="0">
@@ -76,7 +78,6 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
                 <div>
                   {valueToDisplay(i, showToken, voteData?.args)} {unitDisplay}
                 </div>
-
               </VotesRow>
               <VotesRow type="1">
                 <StyledContainer>
@@ -84,9 +85,9 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
                   <StyledText>{'Against'}</StyledText>
                 </StyledContainer>
                 <div>
-                  {valueToDisplay(i + 1, showToken, voteData?.args)} {unitDisplay}
+                  {valueToDisplay(i + 1, showToken, voteData?.args)}{' '}
+                  {unitDisplay}
                 </div>
-
               </VotesRow>
             </>
           );

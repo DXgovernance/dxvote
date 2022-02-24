@@ -50,9 +50,19 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
         <Flex direction="row" justifyContent="space-between">
           <CardHeader color="#fff">Actions</CardHeader>
           {proposalViewMode ? null : actionsEditMode ? (
-            <Button variant="secondary" onClick={() => setActionsEditMode(false)}>Save</Button>
+            <Button
+              variant="secondary"
+              onClick={() => setActionsEditMode(false)}
+            >
+              Save
+            </Button>
           ) : (
-            <Button variant="secondary" onClick={() => setActionsEditMode(true)}>Edit</Button>
+            <Button
+              variant="secondary"
+              onClick={() => setActionsEditMode(true)}
+            >
+              Edit
+            </Button>
           )}
         </Flex>
       }
@@ -94,7 +104,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
                   {
                     type: ActionTypes[
                       [ActionTypes.for, ActionTypes.against][
-                      Math.ceil(Math.random() * 2) - 1
+                        Math.ceil(Math.random() * 2) - 1
                       ]
                     ],
                   },

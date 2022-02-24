@@ -49,8 +49,8 @@ const VoteQuorumLabel = styled.div`
     quorum < 10
       ? `0px ${theme.radii.curved} ${theme.radii.curved}`
       : quorum > 90
-        ? `${theme.radii.curved} 0px ${theme.radii.curved} ${theme.radii.curved}`
-        : `${theme.radii.curved}`};
+      ? `${theme.radii.curved} 0px ${theme.radii.curved} ${theme.radii.curved}`
+      : `${theme.radii.curved}`};
   font-size: 14px;
   font-weight: 600;
   align-items: center;
@@ -76,8 +76,8 @@ const VoteQuorumContainer = styled.div`
     quorum < 10
       ? `${quorum}%`
       : quorum > 90
-        ? `calc(${quorum}% - 65px)`
-        : `calc(${quorum}% - 22px)`};
+      ? `calc(${quorum}% - 65px)`
+      : `calc(${quorum}% - 22px)`};
 `;
 
 const SkeletonAction = styled(Flex)`

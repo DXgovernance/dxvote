@@ -52,7 +52,10 @@ const ProposalVoteCard = () => {
       header={
         <SidebarCardHeader>
           Cast your vote{' '}
-          <SmallButton variant="secondary" onClick={() => setShowToken(!showToken)}>
+          <SmallButton
+            variant="secondary"
+            onClick={() => setShowToken(!showToken)}
+          >
             {showToken ? TOKEN : '%'}
           </SmallButton>
         </SidebarCardHeader>

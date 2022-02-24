@@ -95,7 +95,9 @@ const ProposalInfoCard: React.FC = () => {
 
         <UserInfoDetail>
           <Label>Consensus System</Label>
-          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>Guild</Label>
+          <Label color={({ theme }) => theme.colors.proposalText.lightGrey}>
+            Guild
+          </Label>
         </UserInfoDetail>
         <UserInfoDetail>
           <Label>Proposal Duration</Label>
