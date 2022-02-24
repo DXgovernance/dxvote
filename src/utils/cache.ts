@@ -156,10 +156,12 @@ export const getTimestampOfEvents = async function (web3, events) {
 };
 
 export const sortEvents = function (events) {
-  return _.orderBy(
-    events,
-    ['blockNumber', 'transactionIndex', 'logIndex'],
-    ['asc', 'asc', 'asc', 'asc']
+  return _.uniq(
+    _.orderBy(
+      events,
+      ['blockNumber', 'transactionIndex', 'logIndex'],
+      ['asc', 'asc', 'asc', 'asc']
+    )
   );
 };
 
