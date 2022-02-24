@@ -1638,21 +1638,11 @@ export default class UtilsService {
                     };
                   }
 
-                  var title;
-                  if (!schemeProposalInfo.title) {
-                    const ipfsHash = descriptionHashToIPFSHash(
-                      schemeProposalInfo.descriptionHash
-                    );
-                    title = (await getIPFSFile(ipfsHash)).data.title;
-                  } else {
-                    title = schemeProposalInfo.title;
-                  }
-
                   networkCache.proposals[proposalId] = {
                     id: proposalId,
                     scheme: schemeAddress,
                     to: schemeProposalInfo.to,
-                    title: title,
+                    title: "",
                     callData: schemeProposalInfo.callData,
                     values: schemeProposalInfo.value.map(value => bnum(value)),
                     stateInScheme: Number(schemeProposalInfo.state),
