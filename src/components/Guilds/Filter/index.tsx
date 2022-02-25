@@ -11,7 +11,7 @@ import { Button, IconButton } from '../common/Button';
 import { useHistory, useLocation } from 'react-router';
 import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
-import { useGuildConfig } from 'hooks/Guilds/ether-swr/useGuildConfig';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import { FaChevronDown } from 'react-icons/fa';
 
 const FilterContainer = styled(Box)`
