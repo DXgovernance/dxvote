@@ -8,7 +8,7 @@ const CopyIcon = styled(Link)`
   color: ${({ theme }) => theme.silverGray};
   flex-shrink: 0;
   margin-right: 1rem;
-  margin-left: 0.5rem;
+  margin-left: 0rem;
   text-decoration: none;
   :hover,
   :active,
@@ -23,13 +23,13 @@ const TransactionStatusText = styled.span`
   align-items: center;
 `;
 
-export default function CopyHelper({ toCopy }) {
+export default function CopyHelper({ toCopy, children = null }) {
   const [isCopied, setCopied] = useCopyClipboard();
 
   return (
     <CopyIcon onClick={() => setCopied(toCopy)}>
       <TransactionStatusText>
-        {isCopied ? <FiCheckCircle /> : <FiCopy />}
+        {children} {isCopied ? <FiCheckCircle /> : <FiCopy />}
       </TransactionStatusText>
     </CopyIcon>
   );

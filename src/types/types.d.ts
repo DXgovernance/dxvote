@@ -12,36 +12,6 @@ declare global {
     ethereum?: EthereumProvider;
   }
 
-  // Multicall Types
-
-  interface Call {
-    contractType: ContractType;
-    address: string;
-    method: string;
-    params?: any[];
-  }
-
-  interface CallValue {
-    value: any;
-    lastFetched: number;
-  }
-
-  interface CallEntry extends Call {
-    response: CallValue;
-  }
-
-  // BlockchainStore Types
-
-  interface ContractStorage {
-    [contractType: string]: {
-      [address: string]: {
-        [method: string]: {
-          [parameters: string]: CallValue;
-        };
-      };
-    };
-  }
-
   // DaoStore types
 
   interface BlockchainEvent {
@@ -117,28 +87,27 @@ declare global {
     to: string[];
     callData: string[];
     values: BigNumber[];
-    stateInScheme: WalletSchemeProposalState;
-    stateInVotingMachine: VotingMachineProposalState;
     descriptionHash: string;
     creationEvent: BlockchainEvent;
     winningVote: number;
     proposer: string;
-    currentBoostedVotePeriodLimit: BigNumber;
     paramsHash: string;
+    submittedTime: BigNumber;
+    
+    // mutable data
+    stateInScheme: WalletSchemeProposalState;
+    stateInVotingMachine: VotingMachineProposalState;
+    currentBoostedVotePeriodLimit: BigNumber;
     daoBountyRemain: BigNumber;
     daoBounty: BigNumber;
-    totalStakes: BigNumber;
     confidenceThreshold: BigNumber;
     secondsFromTimeOutTillExecuteBoosted: BigNumber;
-    submittedTime: BigNumber;
     boostedPhaseTime: BigNumber;
     preBoostedPhaseTime: BigNumber;
     daoRedeemItsWinnings: boolean;
     shouldBoost: boolean;
     positiveVotes: BigNumber;
     negativeVotes: BigNumber;
-    preBoostedPositiveVotes: BigNumber;
-    preBoostedNegativeVotes: BigNumber;
     positiveStakes: BigNumber;
     negativeStakes: BigNumber;
   }
@@ -180,15 +149,13 @@ declare global {
 
   interface Scheme {
     address: string;
-    registered: boolean;
     name: string;
     type: string;
     controllerAddress: string;
-    ethBalance: BigNumber;
-    tokenBalances: {
-      [tokenAddress: string]: BigNumber;
-    };
     votingMachine: string;
+    
+    // mutable data
+    registered: boolean;
     paramsHash: string;
     permissions: SchemePermissions;
     boostedVoteRequiredPercentage: number;
@@ -197,16 +164,6 @@ declare global {
     maxSecondsForExecution: BigNumber;
     maxRepPercentageChange: BigNumber;
     newProposalEvents: ProposalEvent[];
-  }
-
-  interface DaoInfo {
-    address: string;
-    totalRep: BigNumber;
-    repEvents: RepEvent[];
-    ethBalance: BigNumber;
-    tokenBalances: {
-      [tokenAddress: string]: BigNumber;
-    };
   }
 
   interface VotingMachine {
@@ -231,9 +188,14 @@ declare global {
   }
 
   interface DaoNetworkCache {
+    version?: number;
     networkId: number;
     blockNumber: number;
-    daoInfo: DaoInfo;
+    address: string;
+    reputation: {
+      events: RepEvent[],
+      total: BigNumber
+    },
     schemes: { [address: string]: Scheme };
     proposals: { [id: string]: Proposal };
     callPermissions: CallPermissions;
@@ -251,17 +213,32 @@ declare global {
     controller: string;
     permissionRegistry: string;
     utils: { [name: string]: string };
-    schemes?: any;
-    daostack?: any;
     votingMachines: {
-      [name: string]: {
-        address: string;
+      [address: string]: {
+        type: string;
         token: string;
       };
     };
+    daostack?: {
+      [address: string] : {
+        supported: boolean,
+        name: string,
+        type: string,
+        contractToCall: string,
+        creationLogEncoding: Array<Array<{
+          name: string,
+          type: string
+        }>>,
+        newProposalTopics: string[],
+        voteParams: string,
+        votingMachine: string,
+        redeemer?: string
+      }
+    },
   }
 
   interface NetworkConfig {
+    version?: number;
     cache: {
       fromBlock: number;
       toBlock: number;
@@ -312,28 +289,6 @@ declare global {
   interface AppConfig {
     [networkName: string]: NetworkConfig;
   }
-}
-
-export interface DaoInfo {
-  address: string;
-  totalRep: BigNumber;
-  repEvents: RepEvent[];
-  ethBalance: BigNumber;
-  tokenBalances: {
-    [tokenAddress: string]: BigNumber;
-  };
-}
-
-export interface DaoNetworkCache {
-  networkId: number;
-  blockNumber: number;
-  daoInfo: DaoInfo;
-  schemes: { [address: string]: Scheme };
-  proposals: { [id: string]: Proposal };
-  callPermissions: CallPermissions;
-  votingMachines: { [address: string]: VotingMachine };
-  ipfsHashes: IPFSHash[];
-  vestingContracts: TokenVesting[];
 }
 
 export interface TokenVesting {
@@ -391,12 +346,14 @@ export interface RecommendedCallUsed {
   params: CallParameterDefinition[];
   decodeText: string;
 }
+
 export interface ProposalStatus {
   boostTime: BigNumber;
   finishTime: BigNumber;
   status: string;
   pendingAction: number;
 }
+
 export type ProposalsExtended = Proposal &
   ProposalStateChange &
   VotingMachineParameters &

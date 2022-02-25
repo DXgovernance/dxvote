@@ -1,40 +1,27 @@
-import { utils } from 'ethers';
-import { useEffect, useMemo } from 'react';
-import { resolveUri } from '../../../utils/url';
+import { useMemo } from 'react';
+import { resolveUri } from '../../../../utils/url';
 import useENS from './useENS';
-import useENSResolver from './useENSResolver';
+import useENSPublicResolver from './useENSPublicResolver';
 import useERC721NFT from '../nft/useERC721NFT';
 import useERC1155NFT from '../nft/useERC1155NFT';
-import useLocalStorageWithExpiry from '../useLocalStorageWithExpiry';
-import { useWeb3React } from '@web3-react/core';
 
-const useENSAvatar = (ethAddress: string, chainId?: number) => {
-  const { chainId: walletChainId } = useWeb3React();
-  const { name: ensName } = useENS(ethAddress, chainId);
-  const resolver = useENSResolver(ensName, chainId);
-  const [avatarUri, setAvatarUri] = useLocalStorageWithExpiry<string>(
-    `ens/avatar/${chainId || walletChainId}/${ethAddress}`,
-    null
-  );
+const useENSAvatar = (nameOrAddress: string, chainId?: number) => {
+  const { name: ENSName, address: ethAddress } = useENS(nameOrAddress, chainId);
+  const { avatarUri } = useENSPublicResolver(ENSName, chainId);
   const { imageUrl } = useENSAvatarNFT(avatarUri, ethAddress, chainId);
 
-  useEffect(() => {
-    if (!resolver || avatarUri) return;
-
-    async function getAvatarUri() {
-      try {
-        let avatar = await resolver.text(utils.namehash(ensName), 'avatar');
-        return avatar;
-      } catch (e) {
-        console.error('[useENSAvatar] Error resolving ENS avatar', e);
-        return null;
-      }
+  const imageUrlToUse = useMemo(() => {
+    if (avatarUri) {
+      // TODO: Consider chainId when generating ENS metadata service fallback URL
+      return (
+        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ENSName}`
+      );
+    } else {
+      return null;
     }
+  }, [imageUrl, ENSName, avatarUri]);
 
-    getAvatarUri().then(setAvatarUri);
-  }, [resolver, ensName, avatarUri, setAvatarUri]);
-
-  return { ensName, avatarUri, imageUrl };
+  return { ensName: ENSName, avatarUri, imageUrl: imageUrlToUse };
 };
 
 const useENSAvatarNFT = (
@@ -93,15 +80,17 @@ const useENSAvatarNFT = (
   );
 
   let imageUrl: string = useMemo(() => {
+    if (!decodedUrl || !ownerAddress || !ERC721Owner) return null;
+
     if (decodedUrl.type === 'http') {
       return decodedUrl.imageUri;
     } else if (
       decodedUrl.type === 'erc721' &&
       ERC721Owner?.toLowerCase() === ownerAddress.toLowerCase()
     ) {
-      return ERC721Metadata.imageUri;
-    } else if (decodedUrl.type === 'erc1155' && ERC1155Balance > 0) {
-      return ERC1155Metadata.imageUri;
+      return ERC721Metadata?.imageUri;
+    } else if (decodedUrl.type === 'erc1155' && ERC1155Balance?.gt(0)) {
+      return ERC1155Metadata?.image;
     }
 
     return null;

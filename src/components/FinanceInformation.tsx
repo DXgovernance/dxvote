@@ -24,6 +24,7 @@ import useExporters from '../hooks/useExporters';
 import { Button } from './common/Button';
 import { flatten } from '../utils/array';
 import moment from 'moment';
+import { useBalance } from 'hooks/useBalance';
 
 const FinanceInfoWrapper = styled.div`
   background: white;
@@ -54,17 +55,20 @@ const FinanceInformation = observer(() => {
   } = useContext();
   const { exportToCSV, triggerDownload } = useExporters();
 
-  const daoInfo = daoStore.getDaoInfo();
   const schemes = daoStore.getAllSchemes();
   const prices = coingeckoService.getPrices();
   const networkAssetSymbol =
     NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
+
+  const networkContracts = configStore.getNetworkContracts();
+  const tokens = configStore.getTokensToFetchPrice();
+
   let assets = {
     total: [
       {
         address: ZERO_ADDRESS,
         name: networkAssetSymbol,
-        amount: bnum(daoInfo.ethBalance),
+        amount: useBalance(networkContracts.avatar, ZERO_ADDRESS),
         decimals: 18,
       },
     ],
@@ -72,66 +76,59 @@ const FinanceInformation = observer(() => {
       {
         address: ZERO_ADDRESS,
         name: networkAssetSymbol,
-        amount: bnum(daoInfo.ethBalance),
+        amount: useBalance(networkContracts.avatar, ZERO_ADDRESS),
         decimals: 18,
       },
     ],
   };
-  Object.keys(daoInfo.tokenBalances).map(tokenAddress => {
-    const tokenData = configStore.getTokenData(tokenAddress);
-    if (!tokenData) return;
-
+  tokens.map(token => {
     assets.avatar.push({
-      address: tokenAddress,
-      name: tokenData.name,
-      amount: bnum(daoInfo.tokenBalances[tokenAddress]),
-      decimals: tokenData.decimals,
+      address: token.address,
+      name: token.name,
+      amount: useBalance(networkContracts.avatar, token.address),
+      decimals: token.decimals,
     });
     assets.total.push({
-      address: tokenAddress,
-      name: tokenData.name,
-      amount: bnum(daoInfo.tokenBalances[tokenAddress]),
-      decimals: tokenData.decimals,
+      address: token.address,
+      name: token.name,
+      amount: useBalance(networkContracts.avatar, token.address),
+      decimals: token.decimals,
     });
   });
 
   schemes.map(scheme => {
     if (scheme.controllerAddress !== ZERO_ADDRESS) return;
 
-    const tokenBalances = scheme.tokenBalances;
     if (!assets[scheme.name])
       assets[scheme.name] = [
         {
           address: ZERO_ADDRESS,
           name: networkAssetSymbol,
-          amount: bnum(scheme.ethBalance),
+          amount: useBalance(scheme.address, ZERO_ADDRESS),
           decimals: 18,
         },
       ];
 
-    Object.keys(tokenBalances).map(tokenAddress => {
-      const tokenData = configStore.getTokenData(tokenAddress);
-      if (!tokenData) return;
-
+    tokens.map(token => {
       assets[scheme.name].push({
-        address: tokenAddress,
-        name: tokenData.name,
-        amount: bnum(tokenBalances[tokenAddress]),
-        decimals: tokenData.decimals,
+        address: token.address,
+        name: token.name,
+        amount: useBalance(scheme.address, token.address),
+        decimals: token.decimals,
       });
       const indexOfAssetInTotal = assets.total.findIndex(
-        asset => asset.address === tokenAddress
+        asset => asset.address === token.address
       );
       if (indexOfAssetInTotal > -1) {
         assets.total[indexOfAssetInTotal].amount = assets.total[
           indexOfAssetInTotal
-        ].amount.plus(bnum(tokenBalances[tokenAddress]));
+        ].amount.plus(useBalance(scheme.address, token.address));
       } else {
         assets.total.push({
-          address: tokenAddress,
-          name: tokenData.name,
-          amount: bnum(tokenBalances[tokenAddress]),
-          decimals: tokenData.decimals,
+          address: token.address,
+          name: token.name,
+          amount: useBalance(scheme.address, token.address),
+          decimals: token.decimals,
         });
       }
     });

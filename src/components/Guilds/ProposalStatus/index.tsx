@@ -5,7 +5,7 @@ import moment from 'moment';
 import { Box } from '../common/Layout';
 import { ProposalState } from '../../../types/types.guilds.d';
 import { useParams } from 'react-router';
-import { useProposal } from '../../../hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from '../../../hooks/Guilds/ether-swr/guild/useProposal';
 import { Loading } from '../common/Loading';
 
 const Status = styled.div`

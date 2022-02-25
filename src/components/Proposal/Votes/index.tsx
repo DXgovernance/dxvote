@@ -73,9 +73,8 @@ const Votes = () => {
   const votingMachineAddress = daoStore.getVotingMachineOfProposal(proposalId);
   const finishTimeReached = finishTime.toNumber() < moment().unix();
   const isDXDVotingMachine =
-    configStore.getNetworkContracts().votingMachines.dxd &&
-    configStore.getNetworkContracts().votingMachines.dxd.address ==
-      votingMachineAddress;
+    configStore.getNetworkContracts().votingMachines[votingMachineAddress]
+      .type == 'DXDVotingMachine';
 
   const rinkebyProvider = useJsonRpcProvider(4);
 

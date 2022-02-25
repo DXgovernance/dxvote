@@ -44,20 +44,11 @@ export default class DaoStore {
 
   // Parse bignnumbers
   parseCache(unparsedCache: DaoNetworkCache): DaoNetworkCache {
-    unparsedCache.daoInfo.ethBalance = bnum(
-      unparsedCache.daoInfo.ethBalance || '0'
-    );
-
-    if (unparsedCache.daoInfo.repEvents)
-      unparsedCache.daoInfo.repEvents.map((repEvent, i) => {
-        unparsedCache.daoInfo.repEvents[i].amount = bnum(repEvent.amount);
+    if (unparsedCache.reputation.events)
+      unparsedCache.reputation.events.map((repEvent, i) => {
+        unparsedCache.reputation.events[i].amount = bnum(repEvent.amount);
       });
 
-    Object.keys(unparsedCache.schemes).map(schemeAddress => {
-      unparsedCache.schemes[schemeAddress].ethBalance = bnum(
-        unparsedCache.schemes[schemeAddress].ethBalance
-      );
-    });
     Object.keys(unparsedCache.callPermissions).map(asset => {
       Object.keys(unparsedCache.callPermissions[asset]).map(from => {
         Object.keys(unparsedCache.callPermissions[asset][from]).map(to => {
@@ -94,9 +85,6 @@ export default class DaoStore {
       unparsedCache.proposals[proposalId].daoBounty = bnum(
         unparsedCache.proposals[proposalId].daoBounty
       );
-      unparsedCache.proposals[proposalId].totalStakes = bnum(
-        unparsedCache.proposals[proposalId].totalStakes
-      );
       unparsedCache.proposals[proposalId].confidenceThreshold = bnum(
         unparsedCache.proposals[proposalId].confidenceThreshold
       );
@@ -119,12 +107,6 @@ export default class DaoStore {
       );
       unparsedCache.proposals[proposalId].negativeVotes = bnum(
         unparsedCache.proposals[proposalId].negativeVotes
-      );
-      unparsedCache.proposals[proposalId].preBoostedPositiveVotes = bnum(
-        unparsedCache.proposals[proposalId].preBoostedPositiveVotes
-      );
-      unparsedCache.proposals[proposalId].preBoostedNegativeVotes = bnum(
-        unparsedCache.proposals[proposalId].preBoostedNegativeVotes
       );
       unparsedCache.proposals[proposalId].positiveStakes = bnum(
         unparsedCache.proposals[proposalId].positiveStakes
@@ -182,10 +164,6 @@ export default class DaoStore {
   setCache(newNetworkCache: DaoNetworkCache) {
     this.daoCache = this.parseCache(newNetworkCache);
     console.debug('Cache SET]', this.daoCache);
-  }
-
-  getDaoInfo(): DaoInfo {
-    return this.getCache().daoInfo;
   }
 
   getSchemeProposalsByName(_schemeName: string): Proposal[] {
@@ -254,32 +232,32 @@ export default class DaoStore {
     let repEvents = [];
     let repTotalSupply = bnum(0);
     let blockNumber = 0;
-    for (let i = 0; i < cache.daoInfo.repEvents.length; i++) {
-      if (cache.daoInfo.repEvents[i].event === 'Mint') {
-        repTotalSupply = repTotalSupply.plus(cache.daoInfo.repEvents[i].amount);
-        if (repUsers[cache.daoInfo.repEvents[i].account]) {
-          repUsers[cache.daoInfo.repEvents[i].account] = repUsers[
-            cache.daoInfo.repEvents[i].account
-          ].plus(cache.daoInfo.repEvents[i].amount);
+    for (let i = 0; i < cache.reputation.events.length; i++) {
+      if (cache.reputation.events[i].event === 'Mint') {
+        repTotalSupply = repTotalSupply.plus(cache.reputation.events[i].amount);
+        if (repUsers[cache.reputation.events[i].account]) {
+          repUsers[cache.reputation.events[i].account] = repUsers[
+            cache.reputation.events[i].account
+          ].plus(cache.reputation.events[i].amount);
         } else {
-          repUsers[cache.daoInfo.repEvents[i].account] =
-            cache.daoInfo.repEvents[i].amount;
+          repUsers[cache.reputation.events[i].account] =
+            cache.reputation.events[i].amount;
         }
-      } else if (cache.daoInfo.repEvents[i].event === 'Burn') {
+      } else if (cache.reputation.events[i].event === 'Burn') {
         repTotalSupply = repTotalSupply.minus(
-          cache.daoInfo.repEvents[i].amount
+          cache.reputation.events[i].amount
         );
-        if (repUsers[cache.daoInfo.repEvents[i].account]) {
-          repUsers[cache.daoInfo.repEvents[i].account] = repUsers[
-            cache.daoInfo.repEvents[i].account
-          ].minus(cache.daoInfo.repEvents[i].amount);
+        if (repUsers[cache.reputation.events[i].account]) {
+          repUsers[cache.reputation.events[i].account] = repUsers[
+            cache.reputation.events[i].account
+          ].minus(cache.reputation.events[i].amount);
         } else {
           console.error('ERROR on duplicated REP');
         }
       }
 
-      if (cache.daoInfo.repEvents[i].blockNumber > blockNumber) {
-        blockNumber = cache.daoInfo.repEvents[i].blockNumber;
+      if (cache.reputation.events[i].blockNumber > blockNumber) {
+        blockNumber = cache.reputation.events[i].blockNumber;
         repEvents.push([
           blockNumber,
           bnum(repTotalSupply)
@@ -994,8 +972,8 @@ export default class DaoStore {
             .votingParameters[proposal.paramsHash];
 
     const autoBoost =
-      networkContracts.votingMachines.dxd &&
-      networkContracts.votingMachines.dxd.address === votingMachineOfProposal;
+      networkContracts.votingMachines[votingMachineOfProposal].type ===
+      'DXDVotingMachine';
     return decodeProposalStatus(
       proposal,
       proposalStateChangeEvents,
@@ -1185,7 +1163,7 @@ export default class DaoStore {
     totalSupply: BigNumber;
   } {
     const { daoStore, providerStore } = this.context;
-    const repEvents = daoStore.getCache().daoInfo.repEvents;
+    const repEvents = daoStore.getCache().reputation.events;
     let userRep = bnum(0),
       totalSupply = bnum(0);
     if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
@@ -1218,7 +1196,7 @@ export default class DaoStore {
     userRep: RepEvent[];
   } {
     const { daoStore, providerStore } = this.context;
-    const repEvents = daoStore.getCache().daoInfo.repEvents;
+    const repEvents = daoStore.getCache().reputation.events;
     let userRep = [],
       totalSupply = bnum(0);
     if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
@@ -1238,7 +1216,7 @@ export default class DaoStore {
     [userAddress: string]: BigNumber;
   } {
     const { daoStore, providerStore } = this.context;
-    const repEvents = daoStore.getCache().daoInfo.repEvents;
+    const repEvents = daoStore.getCache().reputation.events;
     let users = {};
     const atBlock = providerStore.getCurrentBlockNumber();
 

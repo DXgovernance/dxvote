@@ -7,7 +7,7 @@ import { render } from '../../../utils/tests';
 const proposalTitle = 'Proposal Title';
 const creatorAddress = '0x0000000000000000000000000000000000000000';
 
-jest.mock('hooks/Guilds/ether-swr/useProposal', () => ({
+jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
   useProposal: () => ({
     data: {
       title: proposalTitle,
@@ -25,7 +25,7 @@ jest.mock('hooks/Guilds/ether-swr/useProposal', () => ({
   }),
 }));
 
-jest.mock('hooks/Guilds/ens/useENSAvatar', () => ({
+jest.mock('hooks/Guilds/ether-swr/ens/useENSAvatar', () => ({
   __esModule: true,
   default: () => ({
     avatarUri: 'test',

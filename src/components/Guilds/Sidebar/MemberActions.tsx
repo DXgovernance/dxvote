@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
 import { useWeb3React } from '@web3-react/core';
@@ -12,14 +12,14 @@ import {
 import { IconButton, Button } from '../common/Button';
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
 import { shortenAddress } from '../../../utils';
-import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
-import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/useGuildConfig';
+import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
+import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
-import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
+import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';
 import Avatar from '../Avatar';
 import { formatUnits } from 'ethers/lib/utils';
-import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/useVoterLockTimestamp';
+import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/guild/useVoterLockTimestamp';
 import moment from 'moment';
 import StakeTokensModal from '../StakeTokensModal';
 import { useTransactions } from '../../../contexts/Guilds';
@@ -84,10 +84,7 @@ export const MemberActions = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { account: userAddress } = useWeb3React();
-  const { ensName, imageUrl, avatarUri } = useENSAvatar(
-    userAddress,
-    DEFAULT_ETH_CHAIN_ID
-  );
+  const { ensName, imageUrl } = useENSAvatar(userAddress, DEFAULT_ETH_CHAIN_ID);
   const { data: guildConfig } = useGuildConfig(guildAddress);
   const { data: tokenInfo } = useERC20Info(guildConfig?.token);
   const { data: userVotingPower } = useVotingPowerOf({
@@ -98,16 +95,6 @@ export const MemberActions = () => {
     guildAddress,
     userAddress
   );
-
-  const imageUrlToUse = useMemo(() => {
-    if (avatarUri) {
-      return (
-        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
-      );
-    } else {
-      return null;
-    }
-  }, [imageUrl, ensName, avatarUri]);
 
   useEffect(() => {
     if (showStakeModal) setShowMenu(false);
@@ -149,7 +136,7 @@ export const MemberActions = () => {
         <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
           <div>
             <IconHolder>
-              <Avatar src={imageUrlToUse} defaultSeed={userAddress} size={18} />
+              <Avatar src={imageUrl} defaultSeed={userAddress} size={18} />
             </IconHolder>
             <span>{ensName || shortenAddress(userAddress)}</span>
           </div>

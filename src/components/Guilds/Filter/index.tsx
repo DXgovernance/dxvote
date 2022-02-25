@@ -9,7 +9,7 @@ import { Flex, Box } from '../common/Layout/Box';
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
 import { Button, IconButton } from '../common/Button';
 import { useHistory, useLocation } from 'react-router';
-import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/useVotingPowerOf';
+import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/useGuildConfig';
 import { FaChevronDown } from 'react-icons/fa';
