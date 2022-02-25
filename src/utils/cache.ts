@@ -1,9 +1,8 @@
 import _ from 'lodash';
+import { MAX_BLOCKS_PER_EVENTS_FETCH } from './constants';
 import { sleep } from './helpers';
 
 const Web3 = require('web3');
-
-const MAX_BLOCKS_PER_EVENTS_FETCH: number = 1000000;
 
 export const getEvents = async function (
   web3,
@@ -13,6 +12,8 @@ export const getEvents = async function (
   eventsToGet,
   maxBlocksPerFetch = MAX_BLOCKS_PER_EVENTS_FETCH
 ) {
+  if (web3._provider.host.indexOf('arbitrum.io/rpc') > 0)
+    maxBlocksPerFetch = 99000;
   let events = [],
     to = Math.min(fromBlock + maxBlocksPerFetch, toBlock),
     from = fromBlock;
@@ -65,6 +66,8 @@ export const getRawEvents = async function (
   topicsToGet,
   maxBlocksPerFetch = MAX_BLOCKS_PER_EVENTS_FETCH
 ) {
+  if (web3._provider.host.indexOf('arbitrum.io/rpc') > 0)
+    maxBlocksPerFetch = 99000;
   let events = [],
     to = Math.min(fromBlock + maxBlocksPerFetch, toBlock),
     from = fromBlock;

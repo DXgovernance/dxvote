@@ -11,6 +11,8 @@ export const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 export const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
+export const MAX_BLOCKS_PER_EVENTS_FETCH: number = 1000000;
+
 export const CACHE_METADATA_ENS = 'cache.dxvote.eth';
 
 const defaultAlchemyKey = '7i7fiiOx1b7bGmgWY_oI9twyQBCsuXKC';

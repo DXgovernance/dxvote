@@ -1633,7 +1633,7 @@ export default class UtilsService {
                     id: proposalId,
                     scheme: schemeAddress,
                     to: schemeProposalInfo.to,
-                    title: '',
+                    title: schemeProposalInfo.title || '',
                     callData: schemeProposalInfo.callData,
                     values: schemeProposalInfo.value.map(value => bnum(value)),
                     stateInScheme: Number(schemeProposalInfo.state),
