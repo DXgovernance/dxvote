@@ -40,6 +40,7 @@ const InputWrapper = styled.div`
 const InputBase = styled.input`
   display: flex;
   border: none;
+  width: 100%;
   &:focus,
   &:active,
   &:hover {

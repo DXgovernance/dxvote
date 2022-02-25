@@ -83,11 +83,11 @@ const VoteQuorumContainer = styled.div`
 const SkeletonAction = styled(Flex)`
   flex-direction: row;
   justify-content: space-between;
-  margin: 2px 0;
+  margin: 0;
 `;
 
 const ActionsContainer = styled.div`
-  margin: 8px 0;
+  margin: 0;
 `;
 
 //TODO: rewrite css dynamics types
@@ -125,14 +125,13 @@ export const VotesChart = ({ showToken, token }) => {
         <>
           <ActionsContainer>
             <SkeletonAction>
-              <Loading loading text skeletonProps={{ width: 50 }} />
-              <Loading loading text skeletonProps={{ width: 50 }} />
+              <Loading loading text skeletonProps={{ width: 250 }} />
             </SkeletonAction>
             <SkeletonAction>
-              <Loading loading text skeletonProps={{ width: 50 }} />
-              <Loading loading text skeletonProps={{ width: 50 }} />
+              <Loading loading text skeletonProps={{ width: 250 }} />
             </SkeletonAction>
           </ActionsContainer>
+
           <Loading loading text skeletonProps={{ height: 20 }} />
         </>
       )}
