@@ -7,11 +7,10 @@ import {
   NETWORK_ASSET_SYMBOL,
   NETWORK_NAMES,
   NETWORK_DISPLAY_NAMES,
+  DEFUALT_CHAIN_ID,
 } from '../utils';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
-const Web3 = require('web3');
-const web3 = new Web3();
 const arbitrum = require('../configs/arbitrum/config.json');
 const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
 const mainnet = require('../configs/mainnet/config.json');
@@ -35,7 +34,7 @@ const defaultCacheConfig = require('../configs/default.json');
 export default class ConfigStore {
   darkMode: boolean;
   context: RootContext;
-  networkConfig: NetworkConfig;
+  networkConfig: NetworkConfig = defaultAppConfigs[this.getActiveChainName()];
 
   constructor(context) {
     this.context = context;
@@ -88,7 +87,10 @@ export default class ConfigStore {
       console.debug('[ConfigStore] Default config:', this.networkConfig);
 
       // Override defaultConfig to ipfsConfig
-      this.networkConfig = Object.assign(ipfsConfig, this.networkConfig);
+      if (ipfsConfig?.version == this.networkConfig.version)
+        this.networkConfig = Object.assign(ipfsConfig, this.networkConfig);
+
+      console.log(ipfsConfig, this.networkConfig);
     } catch (e) {
       console.error(
         '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
@@ -105,13 +107,17 @@ export default class ConfigStore {
   }
 
   getActiveChainName() {
-    const { chainId } = this.context.providerStore.getActiveWeb3React();
-    return NETWORK_NAMES[chainId];
+    return NETWORK_NAMES[
+      this.context?.providerStore.getActiveWeb3React().chainId ||
+        DEFUALT_CHAIN_ID
+    ];
   }
 
   getActiveChainDisplayName() {
-    const { chainId } = this.context.providerStore.getActiveWeb3React();
-    return NETWORK_DISPLAY_NAMES[chainId];
+    return NETWORK_DISPLAY_NAMES[
+      this.context?.providerStore.getActiveWeb3React().chainId ||
+        DEFUALT_CHAIN_ID
+    ];
   }
 
   getLocalConfig() {
@@ -180,141 +186,13 @@ export default class ConfigStore {
     return this.networkConfig.cache.ipfsHash;
   }
 
-  getSchemeTypeData(schemeAddress) {
-    const networkContracts = this.getNetworkContracts();
-
-    if (networkContracts.daostack) {
-      if (
-        networkContracts.daostack.schemeRegistrar &&
-        networkContracts.daostack.schemeRegistrar.address === schemeAddress
-      ) {
-        return {
-          type: 'SchemeRegistrar',
-          name: 'SchemeRegistrar',
-          contractToCall:
-            networkContracts.daostack.schemeRegistrar.contractToCall,
-          votingMachine: networkContracts.votingMachines.gen.address,
-          newProposalTopics:
-            networkContracts.daostack.schemeRegistrar.newProposalTopics,
-          voteParams: networkContracts.daostack.schemeRegistrar.voteParams,
-          creationLogEncoding:
-            networkContracts.daostack.schemeRegistrar.creationLogEncoding,
-        };
-      } else if (
-        networkContracts.daostack.contributionReward &&
-        networkContracts.daostack.contributionReward.address === schemeAddress
-      ) {
-        return {
-          type: 'ContributionReward',
-          name: 'ContributionReward',
-          contractToCall:
-            networkContracts.daostack.contributionReward.contractToCall,
-          votingMachine: networkContracts.votingMachines.gen.address,
-          newProposalTopics:
-            networkContracts.daostack.contributionReward.newProposalTopics,
-          voteParams: networkContracts.daostack.contributionReward.voteParams,
-          creationLogEncoding:
-            networkContracts.daostack.contributionReward.creationLogEncoding,
-        };
-      } else if (
-        networkContracts.daostack.competitionScheme &&
-        networkContracts.daostack.competitionScheme.address === schemeAddress
-      ) {
-        return {
-          type: 'CompetitionScheme',
-          name: 'CompetitionScheme',
-          contractToCall:
-            networkContracts.daostack.competitionScheme.contractToCall,
-          votingMachine: networkContracts.votingMachines.gen.address,
-          newProposalTopics:
-            networkContracts.daostack.competitionScheme.newProposalTopics,
-          creationLogEncoding:
-            networkContracts.daostack.competitionScheme.creationLogEncoding,
-        };
-      } else if (
-        networkContracts.daostack.multicallSchemes &&
-        Object.keys(
-          networkContracts.daostack.multicallSchemes.addresses
-        ).indexOf(schemeAddress) > -1
-      ) {
-        return {
-          type: 'GenericMulticall',
-          votingMachine: networkContracts.votingMachines.gen.address,
-          contractToCall: ZERO_ADDRESS,
-          name: networkContracts.daostack.multicallSchemes.addresses[
-            schemeAddress
-          ].name,
-          newProposalTopics:
-            networkContracts.daostack.multicallSchemes.newProposalTopics,
-          voteParams:
-            networkContracts.daostack.multicallSchemes.addresses[schemeAddress]
-              .voteParams,
-          creationLogEncoding:
-            networkContracts.daostack.multicallSchemes.creationLogEncoding,
-        };
-      } else if (
-        networkContracts.daostack.genericSchemes &&
-        Object.keys(networkContracts.daostack.genericSchemes.addresses).indexOf(
-          schemeAddress
-        ) > -1
-      ) {
-        return {
-          type: 'GenericScheme',
-          votingMachine:
-            networkContracts.daostack.genericSchemes.addresses[schemeAddress]
-              .votingMachine,
-          contractToCall:
-            networkContracts.daostack.genericSchemes.addresses[schemeAddress]
-              .contractToCall,
-          name: networkContracts.daostack.genericSchemes.addresses[
-            schemeAddress
-          ].name,
-          newProposalTopics:
-            networkContracts.daostack.genericSchemes.newProposalTopics,
-          voteParams:
-            networkContracts.daostack.genericSchemes.addresses[schemeAddress]
-              .voteParams,
-          creationLogEncoding:
-            networkContracts.daostack.genericSchemes.creationLogEncoding,
-        };
-      } else if (
-        networkContracts.daostack.dxSchemes &&
-        Object.keys(networkContracts.daostack.dxSchemes).indexOf(
-          schemeAddress
-        ) > -1
-      ) {
-        return {
-          type: 'OldDxScheme',
-          votingMachine: networkContracts.votingMachines.gen.address,
-          contractToCall: ZERO_ADDRESS,
-          name: networkContracts.daostack.dxSchemes[schemeAddress],
-          newProposalTopics: [],
-          creationLogEncoding: [],
-        };
-      }
-    }
-    return {
-      type: 'WalletScheme',
-      votingMachine: networkContracts.votingMachines.dxd.address,
-      name: 'WalletScheme',
-      newProposalTopics: [
-        [
-          web3.utils.soliditySha3('ProposalStateChange(bytes32,uint256)'),
-          null,
-          '0x0000000000000000000000000000000000000000000000000000000000000001',
-        ],
-      ],
-      creationLogEncoding: [],
-    };
-  }
-
   getTokenData(tokenAddress) {
     return this.networkConfig.tokens.find(
       tokenInFile => tokenInFile.address === tokenAddress
     );
   }
 
-  getNetworkContracts() {
+  getNetworkContracts(): NetworkContracts {
     return this.networkConfig.contracts;
   }
 
@@ -385,7 +263,7 @@ export default class ConfigStore {
       },
       {
         asset: ZERO_ADDRESS,
-        from: networkContracts.schemes?.QuickWalletScheme,
+        from: ANY_ADDRESS,
         to: networkContracts.controller,
         toName: 'DXdao Controller',
         functionName: 'mintReputation(uint256,address,address)',
@@ -408,7 +286,7 @@ export default class ConfigStore {
       },
       {
         asset: ZERO_ADDRESS,
-        from: networkContracts.avatar,
+        from: ANY_ADDRESS,
         to: networkContracts.controller,
         toName: 'DXdao Controller',
         functionName: 'burnReputation(uint256,address,address)',

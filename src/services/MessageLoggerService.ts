@@ -94,12 +94,16 @@ export default class MessageLoggerService {
     );
 
     const filter = messageLogger.filters.Message(topic);
-
-    const events = await messageLogger.queryFilter(
-      filter,
-      this.fromBlock,
-      await rinkebyWeb3.getBlockNumber()
-    );
-    return events;
+    try {
+      const events = await messageLogger.queryFilter(
+        filter,
+        this.fromBlock,
+        await rinkebyWeb3.getBlockNumber()
+      );
+      return events;
+    } catch (error) {
+      console.error('Error fetching message logger events', error);
+      return [];
+    }
   }
 }

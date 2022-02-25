@@ -1,29 +1,22 @@
 {
   "cache": {
     "fromBlock": 338923,
-    "ipfsHash": "QmeLAcG9ZqoD6yeAeMKPpZtMR6hn2iS7qupZqm1aVDrjoN",
-    "toBlock": "4975188"
+    "ipfsHash": "QmbRTtmYg9GWD6stfcL618bxTbuZoFa3tyySUfaTzRjA1v",
+    "toBlock": "6831600"
   },
   "contracts": {
     "avatar": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
     "controller": "0xdB0015Fd30309D0AcB7184DD7F9Db9C46ae85674",
     "permissionRegistry": "0x4f42BA46fD4d194CA63C40496E78f939EdC99e8C",
     "reputation": "0x7552Bdc956947E8caa340B4E76E6eFE40764Beeb",
-    "schemes": {
-      "MasterWalletScheme": "0xc0071bd6CD9ce77A7F5270A90664A88A1A664A8c",
-      "QuickWalletScheme": "0x6Bb0c340d6Fb4Fb5731Bf6EeE0D12bb60cFEDb47",
-      "RegistrarWalletScheme": "0x628eC805A9FB5B79D21867f5fda9DEFA3967aA71",
-      "SWPRWalletScheme": "0x3172eDDa6ff8B2b2Fa7FeD40EE1fD92F1F4dd424",
-      "TestWalletScheme": "0xcab5367De13B5409Ee85689465B4553C375FB20d"
-    },
     "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
     "utils": {
       "multicall": "0x9645D0CEC58F0D28Be9660b9a4D464AB193817B3"
     },
     "votingMachines": {
-      "dxd": {
-        "address": "0x02F93D46C2B56777e9C82CF40917979375C2c711",
-        "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37"
+      "0x02F93D46C2B56777e9C82CF40917979375C2c711": {
+        "token": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
+        "type": "DXDVotingMachine"
       }
     }
   },
@@ -443,5 +436,6 @@
       "name": "ARBIS",
       "symbol": "ARBIS"
     }
-  ]
+  ],
+  "version": 1
 }

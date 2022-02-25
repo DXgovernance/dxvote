@@ -35,11 +35,9 @@ Example: If the dapp is used in mainnet and the last block number is 11 million 
 
 **Pros and Cons**: The big Pro of this is that there wont be loading times between actions while the user is using the dapp, all actions would seem to be instant, and they are because the information is already there. The Con in this approach is that if the cache is not updated often (days or weeks depending on the network) it can cause low loading times when you open the application for the first time.
 
-The cache script will gather all immutable information from the ethereum networks supported and save all of it in cache files, one file per network inside the `cache` folder.
+The cache script will gather all immutable information from the ethereum networks supported and save all of it in cache files uploaded in IPFS. This script is ran
 
-`yarn build-cache`
-
-To understand a bit better what the script will do you can see `scripts/buildCache.sh` and `scripts/buildCache.ts`.
+To understand a bit better what the script will do you can see `src/services/cacheService.ts`.
 
 ### Configuration
 

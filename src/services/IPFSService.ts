@@ -111,6 +111,26 @@ export default class IPFSService {
     return hash;
   }
 
+  async upload(content: string) {
+    const hash = await this.add(content);
+
+    if (this.context.pinataService.auth) {
+      const pinataPin = await this.pin(hash);
+      console.debug('[PINATA PIN]', pinataPin.toString());
+    }
+    const ipfsPin = await this.pin(hash);
+    console.debug('[IPFS PIN]', ipfsPin);
+
+    let uploaded = false;
+    while (!uploaded) {
+      await sleep(1000);
+      const ipfsContent = await this.getContentFromIPFS(hash);
+      console.debug('[IPFS CONTENT]', ipfsContent);
+      if (content === content) uploaded = true;
+    }
+    return hash;
+  }
+
   private async start() {
     if (this.starting) return;
 
