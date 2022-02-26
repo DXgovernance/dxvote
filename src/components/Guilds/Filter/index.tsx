@@ -12,7 +12,6 @@ import { useHistory, useLocation } from 'react-router';
 import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
-import { FaChevronDown } from 'react-icons/fa';
 
 const FilterContainer = styled(Box)`
   display: flex;
@@ -76,7 +75,6 @@ export const Filter = () => {
   return (
     <FilterContainer>
       <FilterRow>
-        {isDesktop && !isProposalCreationAllowed && <FilterMenu />}
         {isMobile && !isProposalCreationAllowed && (
           <FilterButton
             onClick={() => setViewFilter(!viewFilter)}
@@ -86,22 +84,7 @@ export const Filter = () => {
             {totalFilters > 0 && <FilterBadge>{totalFilters}</FilterBadge>}
           </FilterButton>
         )}
-        {isDesktop && (
-          <>
-            <StyledIconButton iconRight variant="secondary">
-              State
-              <FaChevronDown style={{ marginLeft: 15 }} />
-            </StyledIconButton>
-            <StyledIconButton iconRight variant="secondary">
-              Type
-              <FaChevronDown style={{ marginLeft: 15 }} />
-            </StyledIconButton>
-            <StyledIconButton iconRight variant="secondary">
-              Currency
-              <FaChevronDown style={{ marginLeft: 15 }} />
-            </StyledIconButton>
-          </>
-        )}
+        {isDesktop && <FilterMenu />}
 
         <ButtonContainer>
           <StyledIconButton

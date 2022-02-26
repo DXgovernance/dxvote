@@ -23,6 +23,7 @@ const DropdownMenuItem = styled(MenuItem)`
   justify-content: space-between;
   cursor: pointer;
   color: ${({ theme }) => theme.colors.text};
+
   &:hover {
     background-color: ${({ theme }) => theme.colors.hoverMenu};
     color: ${({ theme }) => theme.colors.primary};
@@ -33,6 +34,10 @@ const FilterButtons = styled.div`
   display: flex;
   flex-direction: row;
   color: ${({ theme }) => theme.colors.text};
+  & img,
+  svg {
+    margin-left: 15px;
+  }
 `;
 
 const FilterResetMobile = styled.div`
@@ -41,18 +46,17 @@ const FilterResetMobile = styled.div`
 `;
 
 const FilterResetDesktop = styled.div`
-  background: ${({ theme }) => theme.colors.text};
-  color: white;
+  background: ${({ theme }) => theme.colors.background};
   padding: 10px;
   text-align: center;
   cursor: pointer;
+  border-top: 0.5px solid ${({ theme }) => theme.colors.text};
 `;
 
 export const FilterButton = styled(DropdownButton)`
-  background-color: ${({ active, theme }) =>
-    active ? theme.colors.primary : theme.colors.background};
-  color: ${({ active, theme }) =>
-    active ? theme.colors.background : 'inherit'};
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
+  margin-right: 1rem;
 `;
 
 export const FilterBadge = styled(Badge)`
@@ -60,103 +64,140 @@ export const FilterBadge = styled(Badge)`
 `;
 
 export const FilterMenu = () => {
-  const [showScheme, setShowScheme] = useState(false);
-  const [showStatus, setShowStatus] = useState(false);
+  const [showState, setShowState] = useState(false);
+  const [showType, setShowType] = useState(false);
+  const [showCurrency, setShowCurrency] = useState(false);
+
   const {
-    countSchemeSelected,
-    isSchemeSelected,
-    onToggleScheme,
-    onResetSchemes,
-    countStatusSelected,
-    isStatusSelected,
-    onToggleStatus,
-    onResetStatus,
+    onToggleState,
+    onResetState,
+    isStateSelected,
+    countStateSelected,
+    onToggleType,
+    onResetType,
+    isTypeSelected,
+    countTypeSelected,
+    onToggleCurrency,
+    onResetCurrency,
+    isCurrencySelected,
+    countCurrencySelected,
   } = useFilter();
-  const schemeRef = useRef(null);
-  const statusRef = useRef(null);
+  const stateRef = useRef(null);
+  const typeRef = useRef(null);
+  const currencyRef = useRef(null);
 
   // hook that handles the click outside the ref element, when clicked calls callback to close.
-  useDetectBlur(schemeRef, () => setShowScheme(false));
-  useDetectBlur(statusRef, () => setShowStatus(false));
+  useDetectBlur(stateRef, () => setShowState(false));
+  useDetectBlur(typeRef, () => setShowType(false));
+  useDetectBlur(currencyRef, () => setShowCurrency(false));
 
   return (
     <FilterButtons>
-      <DropdownMenu ref={schemeRef} position={DropdownPosition.BottomRight}>
+      <DropdownMenu ref={stateRef} position={DropdownPosition.BottomRight}>
         <FilterButton
           iconRight
           onClick={() => {
-            setShowScheme(!showScheme);
+            setShowState(!showState);
           }}
-          active={countSchemeSelected > 0}
+          active={countStateSelected > 0}
         >
-          Scheme <FiChevronDown />
-          {countSchemeSelected > 0 && (
-            <FilterBadge reverse={true}>{countSchemeSelected}</FilterBadge>
-          )}
+          State <FiChevronDown />
         </FilterButton>
-        <DropdownContent fullScreenMobile={true} show={showScheme}>
+        <DropdownContent fullScreenMobile={true} show={showState}>
           {isMobile && (
-            <DropdownHeader onClick={() => setShowScheme(false)}>
-              <FiArrowLeft /> <span>Scheme</span>{' '}
-              <FilterResetMobile onClick={onResetSchemes}>
+            <DropdownHeader onClick={() => setShowState(false)}>
+              <FiArrowLeft /> <span>State</span>{' '}
+              <FilterResetMobile onClick={onResetState}>
                 Reset
               </FilterResetMobile>
             </DropdownHeader>
           )}
           <Menu>
-            <DropdownMenuItem onClick={() => onToggleScheme('a')}>
-              Schema 1 {isSchemeSelected('a') && <FiCheck />}
+            <DropdownMenuItem onClick={() => onToggleState('a')}>
+              State 1 {isStateSelected('a') && <FiCheck />}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onToggleScheme('b')}>
-              Schema 2 {isSchemeSelected('b') && <FiCheck />}
+            <DropdownMenuItem onClick={() => onToggleState('b')}>
+              State 2 {isStateSelected('b') && <FiCheck />}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onToggleScheme('c')}>
-              Schema 3 {isSchemeSelected('c') && <FiCheck />}
+            <DropdownMenuItem onClick={() => onToggleState('c')}>
+              State 3 {isStateSelected('c') && <FiCheck />}
             </DropdownMenuItem>
           </Menu>
-          {isDesktop && countSchemeSelected > 0 && (
-            <FilterResetDesktop onClick={onResetSchemes}>
+          {isDesktop && countStateSelected > 0 && (
+            <FilterResetDesktop onClick={onResetState}>
               Reset
             </FilterResetDesktop>
           )}
         </DropdownContent>
       </DropdownMenu>
-      <DropdownMenu ref={statusRef} position={DropdownPosition.BottomRight}>
+      <DropdownMenu ref={typeRef} position={DropdownPosition.BottomRight}>
         <FilterButton
           iconRight
-          onClick={() => setShowStatus(!showStatus)}
-          active={countStatusSelected > 0}
+          onClick={() => setShowType(!showType)}
+          active={countTypeSelected > 0}
         >
-          Status <FiChevronDown />
-          {countStatusSelected > 0 && (
-            <FilterBadge reverse={true}>{countStatusSelected}</FilterBadge>
-          )}
+          Type <FiChevronDown />
         </FilterButton>
-        <DropdownContent fullScreenMobile={true} show={showStatus}>
+        <DropdownContent fullScreenMobile={true} show={showType}>
           {isMobile && (
-            <DropdownHeader onClick={() => setShowStatus(false)}>
-              <FiArrowLeft /> <span>Status</span>{' '}
-              <FilterResetMobile onClick={onResetStatus}>
+            <DropdownHeader onClick={() => setShowType(false)}>
+              <FiArrowLeft /> <span>Type</span>{' '}
+              <FilterResetMobile onClick={onResetType}>Reset</FilterResetMobile>
+            </DropdownHeader>
+          )}
+          <Menu>
+            <DropdownMenuItem onClick={() => onToggleType('a')}>
+              Type a {isTypeSelected('a') && <FiCheck />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onToggleType('b')}>
+              Type b {isTypeSelected('b') && <FiCheck />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onToggleType('c')}>
+              Type c {isTypeSelected('c') && <FiCheck />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onToggleType('d')}>
+              Type d {isTypeSelected('d') && <FiCheck />}
+            </DropdownMenuItem>
+          </Menu>
+          {isDesktop && countTypeSelected > 0 && (
+            <FilterResetDesktop onClick={onResetType}>Reset</FilterResetDesktop>
+          )}
+        </DropdownContent>
+      </DropdownMenu>
+
+      <DropdownMenu ref={currencyRef} position={DropdownPosition.BottomRight}>
+        <FilterButton
+          iconRight
+          onClick={() => setShowCurrency(!showCurrency)}
+          active={countCurrencySelected > 0}
+        >
+          Currency <FiChevronDown />
+        </FilterButton>
+        <DropdownContent fullScreenMobile={true} show={showCurrency}>
+          {isMobile && (
+            <DropdownHeader onClick={() => setShowCurrency(false)}>
+              <FiArrowLeft /> <span>Currency</span>{' '}
+              <FilterResetMobile onClick={onResetCurrency}>
                 Reset
               </FilterResetMobile>
             </DropdownHeader>
           )}
           <Menu>
-            <DropdownMenuItem onClick={() => onToggleStatus('a')}>
-              Status a {isStatusSelected('a') && <FiCheck />}
+            <DropdownMenuItem onClick={() => onToggleCurrency('a')}>
+              Currency a {isCurrencySelected('a') && <FiCheck />}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onToggleStatus('b')}>
-              Status b {isStatusSelected('b') && <FiCheck />}
+            <DropdownMenuItem onClick={() => onToggleCurrency('b')}>
+              Currency b {isCurrencySelected('b') && <FiCheck />}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onToggleStatus('c')}>
-              Status c {isStatusSelected('c') && <FiCheck />}
+            <DropdownMenuItem onClick={() => onToggleCurrency('c')}>
+              Currency c {isCurrencySelected('c') && <FiCheck />}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onToggleStatus('d')}>
-              Status d {isStatusSelected('d') && <FiCheck />}
+            <DropdownMenuItem onClick={() => onToggleCurrency('d')}>
+              Currency d {isCurrencySelected('d') && <FiCheck />}
             </DropdownMenuItem>
           </Menu>
-          {isDesktop && countStatusSelected > 0 && (
-            <FilterResetDesktop onClick={onResetStatus}>
+          {isDesktop && countCurrencySelected > 0 && (
+            <FilterResetDesktop onClick={onResetCurrency}>
               Reset
             </FilterResetDesktop>
           )}
