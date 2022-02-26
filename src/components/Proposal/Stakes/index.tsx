@@ -30,10 +30,12 @@ import {
   SummaryTotal,
   ActionButton,
 } from '../styles';
+import { useAllowance } from 'hooks/useBalance';
+import { parseUnits } from 'ethers/lib/utils';
 
 const Stakes = () => {
   const {
-    context: { daoStore, configStore, providerStore, daoService, userStore },
+    context: { daoStore, configStore, providerStore, daoService },
   } = useContext();
 
   const [stakeAmount, setStakeAmount] = useState(0);
@@ -57,19 +59,24 @@ const Stakes = () => {
 
   const redeemsLeft = daoStore.getUserRedeemsLeft(account);
 
-  const votingMachineTokenName =
-    (votingMachines.gen &&
-      scheme.votingMachine === votingMachines.gen.address) ||
-    (votingMachines.gen2 &&
-      scheme.votingMachine === votingMachines.gen2.address)
-      ? 'GEN'
-      : 'DXD';
+  const votingMachineOfProposal =
+    daoStore.getVotingMachineOfProposal(proposalId);
 
-  const { dxdApproved, genApproved } = userStore.getUserInfo();
-  const votingMachineTokenApproved =
-    votingMachines.gen && scheme.votingMachine === votingMachines.gen.address
-      ? genApproved
-      : dxdApproved;
+  const votingMachineTokenName =
+    votingMachines[votingMachineOfProposal].type == 'DXDVotingMachine'
+      ? 'DXD'
+      : 'GEN';
+
+  const votingMachineTokenAllowed = useAllowance(
+    votingMachines[votingMachineOfProposal].token,
+    account,
+    votingMachineOfProposal
+  );
+
+  const votingMachineTokenApproved = votingMachineTokenAllowed.gt(
+    bnum(parseUnits('10000'))
+  );
+
   const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
 
   proposalEvents.stakes.map(stake => {
@@ -116,10 +123,10 @@ const Stakes = () => {
   const redeem = function () {
     if (
       scheme.type === 'ContributionReward' &&
-      networkContracts.daostack.contributionRewardRedeemer
+      networkContracts.daostack.contributionReward.redeemer
     ) {
       daoService.redeemContributionReward(
-        networkContracts.daostack.contributionRewardRedeemer,
+        networkContracts.daostack.contributionReward.redeemer,
         scheme.address,
         scheme.votingMachine,
         proposalId,

@@ -16,7 +16,7 @@ class GlobalErrorBoundary extends React.Component<
   }
 
   static getDerivedStateFromError(error: Error) {
-    const errorMessage = this.getErrorMessage(error.name);
+    const errorMessage = this ? this.getErrorMessage(error.name) : false;
     return {
       hasError: !!errorMessage,
       errorMessage,
