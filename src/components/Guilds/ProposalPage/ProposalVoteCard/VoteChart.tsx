@@ -1,10 +1,9 @@
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { FaFlagCheckered } from 'react-icons/fa';
-import { useVotes } from 'hooks/Guilds/useVotes';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
-import Skeleton from 'react-loading-skeleton';
-import { Flex } from '../Layout';
+import { Loading } from '../../common/Loading';
+import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -24,9 +23,9 @@ const VotesChartRow = styled.div`
   overflow: hidden;
 `;
 
-const VoteFill = styled.div`
-  width: ${({ fill }) => (fill ? `${fill}%` : '')};
-  background: ${({ type, theme }) => theme.colors.votes[type]};
+const ChartBar = styled.div`
+  width: ${({ percent }) => (percent ? `${percent}%` : '')};
+  background: ${({ color }) => color};
   height: 0.75rem;
   overflow: hidden;
 `;
@@ -79,23 +78,14 @@ const VoteQuorumContainer = styled.div`
       : `calc(${quorum}% - 22px)`};
 `;
 
-const SkeletonAction = styled(Flex)`
-  flex-direction: row;
-  justify-content: space-between;
-  margin: 2px 0;
-`;
-
-const ActionsContainer = styled.div`
-  margin: 8px 0;
-`;
-
 const PaddedFlagCheckered = styled(FaFlagCheckered)`
   margin-right: 0.4rem;
 `;
 
 //TODO: rewrite css dynamics types
-export const VotesChart = ({ showToken, token }) => {
-  const { voteData } = useVotes();
+export const VotesChart = ({ isPercent }) => {
+  const voteData = useVotingResults();
+  const theme = useTheme();
 
   const nQuorum = useBigNumberToNumber(
     voteData?.quorum,
@@ -109,36 +99,32 @@ export const VotesChart = ({ showToken, token }) => {
 
   return (
     <VotesChartContainer>
-      {voteData.args ? (
-        <>
-          <VotesChartRow>
-            {Object.values(voteData.args).map((item, i) => {
-              return <VoteFill fill={item[i][1]} type={i} />;
-            })}
-          </VotesChartRow>
-          <VoteQuorumContainer quorum={flagCheckered}>
-            <VoteQuorumMarker quorum={flagCheckered} />
-            <VoteQuorumLabel quorum={flagCheckered}>
-              <PaddedFlagCheckered />
-              <span>{showToken ? nQuorum : flagCheckered}</span>
-              <span>{showToken ? token : '%'}</span>
-            </VoteQuorumLabel>
-          </VoteQuorumContainer>
-        </>
+      {voteData?.options ? (
+        <VotesChartRow>
+          {Object.values(voteData.options).map((item, i) => {
+            const percentBN = item
+              .mul(100)
+              .mul(Math.pow(10, 2))
+              .div(voteData?.totalLocked);
+            const percent = Math.round(percentBN.toNumber()) / Math.pow(10, 2);
+
+            return (
+              <ChartBar percent={percent} color={theme?.colors?.votes?.[i]} />
+            );
+          })}
+        </VotesChartRow>
       ) : (
-        <>
-          <ActionsContainer>
-            <SkeletonAction>
-              <Skeleton width={50} />
-              <Skeleton width={50} />
-            </SkeletonAction>
-            <SkeletonAction>
-              <Skeleton width={50} />
-              <Skeleton width={50} />
-            </SkeletonAction>
-          </ActionsContainer>
-          <Skeleton height={20} />
-        </>
+        <Loading loading text skeletonProps={{ height: 24, count: 2 }} />
+      )}
+      {voteData && (
+        <VoteQuorumContainer quorum={flagCheckered}>
+          <VoteQuorumMarker quorum={flagCheckered} />
+          <VoteQuorumLabel quorum={flagCheckered}>
+            <PaddedFlagCheckered />
+            <span>{isPercent ? nQuorum : flagCheckered}</span>
+            <span>{isPercent ? voteData?.token?.symbol : '%'}</span>
+          </VoteQuorumLabel>
+        </VoteQuorumContainer>
       )}
     </VotesChartContainer>
   );
