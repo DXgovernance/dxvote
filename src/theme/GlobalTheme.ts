@@ -4,6 +4,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
+    color: ${({ theme }) => theme.colors.text};
     background-color: ${({ theme }) => theme.colors.background};
     font-family: ${({ theme }) => theme.fonts.body};
     font-weight: ${({ theme }) => theme.fontWeights.regular};

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const Badge = styled.div`
-  border-radius: ${({ theme }) => theme.radii.badge};
+  border-radius: ${({ theme }) => theme.radii.rounded};
   background-color: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.background};
   width: ${({ size }) => (size ? `${size}px` : '20px')};

@@ -49,9 +49,8 @@
     "bold": 700
   },
   "radii": {
-    "curved": "6px",
-    "curved2": "10px",
+    "curved": "10px",
     "pill": "32px",
-    "badge": "50%"
+    "rounded": "50%"
   }
 }
