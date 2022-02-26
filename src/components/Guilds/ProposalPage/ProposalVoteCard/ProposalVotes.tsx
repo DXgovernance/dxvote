@@ -28,7 +28,7 @@ const VotesRow = styled.div`
 `;
 
 const ColoredBullet = styled.span`
-  color: ${({ color }) => color}; || #fff;
+  color: ${({ type, theme }) => theme.colors.votes[type].bg};
   font-size: 1.5rem;
   margin, padding: 0;
   position: absolute;
@@ -69,18 +69,18 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
         Object.values(voteData?.args).map((_, i) => {
           return (
             <>
-              <VotesRow key={i} type="0">
+              <VotesRow key={i}>
                 <StyledContainer>
-                  <ColoredBullet color="#295FF4">{'\u2022'}</ColoredBullet>
+                  <ColoredBullet type="for">{'\u2022'}</ColoredBullet>
                   <StyledText>{'For'}</StyledText>
                 </StyledContainer>
                 <div>
                   {valueToDisplay(i, showToken, voteData?.args)} {unitDisplay}
                 </div>
               </VotesRow>
-              <VotesRow type="1">
+              <VotesRow>
                 <StyledContainer>
-                  <ColoredBullet color="#E75C5C">{'\u2022'}</ColoredBullet>
+                  <ColoredBullet type="against">{'\u2022'}</ColoredBullet>
                   <StyledText>{'Against'}</StyledText>
                 </StyledContainer>
                 <div>

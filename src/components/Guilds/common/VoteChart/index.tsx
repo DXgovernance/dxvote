@@ -5,6 +5,7 @@ import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import { Flex } from '../Layout';
 import { Loading } from '../Loading';
+import { vote } from './voteMapping';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -103,13 +104,14 @@ export const VotesChart = ({ showToken, token }) => {
     voteData?.quorum,
     voteData?.totalLocked
   );
+
   return (
     <VotesChartContainer>
       {voteData.args ? (
         <>
           <VotesChartRow>
             {Object.values(voteData.args).map((item, i) => {
-              return <VoteFill fill={item[i][1]} type={i} />;
+              return <VoteFill fill={item[i][1]} type={vote[i]} />;
             })}
           </VotesChartRow>
           <VoteQuorumContainer quorum={flagCheckered}>

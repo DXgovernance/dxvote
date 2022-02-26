@@ -48,7 +48,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
     <Card
       header={
         <Flex direction="row" justifyContent="space-between">
-          <CardHeader color="#fff">Actions</CardHeader>
+          <CardHeader>Actions</CardHeader>
           {proposalViewMode ? null : actionsEditMode ? (
             <Button
               variant="secondary"
