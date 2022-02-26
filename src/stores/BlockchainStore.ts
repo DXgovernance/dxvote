@@ -69,7 +69,10 @@ export default class BlockchainStore {
           networkCache = JSON.parse(await match.text());
         }
 
-        if (networkCache?.version !== targetCacheVersion) {
+        if (
+          !networkCache.version ||
+          networkCache.version !== targetCacheVersion
+        ) {
           console.log('[Upgrade Cache]');
           networkCache = null;
         }
