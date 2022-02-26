@@ -1,12 +1,8 @@
 import { Loading } from 'components/Guilds/common/Loading';
-import contentHash from 'content-hash';
+import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import Markdown from 'markdown-to-jsx';
-import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { useProposal } from '../../../../hooks/Guilds/ether-swr/guild/useProposal';
-import useIPFSFile from '../../../../hooks/Guilds/ipfs/useIPFSFile';
-import { ProposalMetadata } from '../../../../types/types.guilds';
 
 const ProposalDescriptionWrapper = styled.div`
   margin: 1.5rem 0;
@@ -18,27 +14,12 @@ const ProposalDescriptionWrapper = styled.div`
 
 const ProposalDescription = () => {
   const { guild_id: guildId, proposal_id: proposalId } = useParams<{
-    chain_name: string;
     guild_id?: string;
     proposal_id?: string;
   }>();
-  const { data: proposal, error } = useProposal(guildId, proposalId);
+  const { data: metadata, error } = useProposalMetadata(guildId, proposalId);
 
-  const { decodedContentHash, decodeError } = useMemo(() => {
-    if (!proposal?.contentHash) return {};
-
-    try {
-      return { decodedContentHash: contentHash.decode(proposal.contentHash) };
-    } catch (e) {
-      console.error(e);
-      return { decodeError: e };
-    }
-  }, [proposal]);
-
-  const { data: metadata, error: metadataError } =
-    useIPFSFile<ProposalMetadata>(decodedContentHash);
-
-  if (error || decodeError || metadataError) {
+  if (error) {
     return (
       <ProposalDescriptionWrapper>
         We ran into an error while trying to load the proposal content. Please

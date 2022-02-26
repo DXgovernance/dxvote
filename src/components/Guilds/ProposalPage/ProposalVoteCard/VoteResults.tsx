@@ -4,6 +4,8 @@ import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults'
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import { Loading } from 'components/Guilds/common/Loading';
 import { formatUnits } from 'ethers/lib/utils';
+import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
+import { useParams } from 'react-router-dom';
 
 const VotesRowWrapper = styled.div`
   display: flex;
@@ -31,6 +33,12 @@ export const VoteResultRow: React.FC<ResultRowProps> = ({
   isPercent,
   optionKey,
 }) => {
+  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
+    chain_name: string;
+    guild_id?: string;
+    proposal_id?: string;
+  }>();
+
   const isReady = optionKey !== undefined;
 
   const votingResults = useVotingResults();
@@ -40,6 +48,7 @@ export const VoteResultRow: React.FC<ResultRowProps> = ({
     2
   );
   const theme = useTheme();
+  const { data: proposalMetadata } = useProposalMetadata(guildId, proposalId);
 
   return (
     <VotesRowWrapper>
@@ -56,7 +65,11 @@ export const VoteResultRow: React.FC<ResultRowProps> = ({
           )}
         </OptionBullet>
 
-        {isReady ? 'Action ' + optionKey : <Loading loading text />}
+        {isReady ? (
+          proposalMetadata?.voteOptions?.[optionKey] || 'Action ' + optionKey
+        ) : (
+          <Loading loading text />
+        )}
       </VoteOption>
       {isReady && votingResults ? (
         <span>
