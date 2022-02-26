@@ -12,7 +12,7 @@ export const getEvents = async function (
   eventsToGet,
   maxBlocksPerFetch = MAX_BLOCKS_PER_EVENTS_FETCH
 ) {
-  if (web3._provider.host.indexOf('arbitrum.io/rpc') > 0)
+  if (web3._provider.host && web3._provider.host.indexOf('arbitrum.io/rpc') > 0)
     maxBlocksPerFetch = 99000;
   let events = [],
     to = Math.min(fromBlock + maxBlocksPerFetch, toBlock),
@@ -66,7 +66,7 @@ export const getRawEvents = async function (
   topicsToGet,
   maxBlocksPerFetch = MAX_BLOCKS_PER_EVENTS_FETCH
 ) {
-  if (web3._provider.host.indexOf('arbitrum.io/rpc') > 0)
+  if (web3._provider.host && web3._provider.host.indexOf('arbitrum.io/rpc') > 0)
     maxBlocksPerFetch = 99000;
   let events = [],
     to = Math.min(fromBlock + maxBlocksPerFetch, toBlock),
