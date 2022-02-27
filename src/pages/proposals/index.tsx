@@ -225,7 +225,8 @@ const ProposalsPage = observer(() => {
                       ) : (
                         <span></span>
                       )}
-                      {proposal.pendingAction === PendingAction.Execute ? (
+                      {proposal.pendingAction === PendingAction.Execute ||
+                      proposal.pendingAction === PendingAction.Finish ? (
                         <small> Pending Finish Execution </small>
                       ) : (
                         <span></span>
