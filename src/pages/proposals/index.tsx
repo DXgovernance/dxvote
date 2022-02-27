@@ -208,7 +208,7 @@ const ProposalsPage = observer(() => {
                     </Link>
                   </DataCell>
                   <DataCell>
-                    {daoStore.getCache().schemes[proposal.scheme].name}
+                    {daoStore.daoCache.schemes[proposal.scheme].name}
                   </DataCell>
                   <DataCell>
                     <span>

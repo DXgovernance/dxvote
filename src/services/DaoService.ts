@@ -257,7 +257,7 @@ export default class DaoService {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.ERC20,
-      daoStore.getCache().votingMachines[votingMachineAddress].token,
+      daoStore.daoCache.votingMachines[votingMachineAddress].token,
       'approve',
       [votingMachineAddress, MAX_UINT],
       {}

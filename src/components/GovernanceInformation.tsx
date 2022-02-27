@@ -43,7 +43,7 @@ const GovernanceInformation = observer(() => {
     context: { daoStore },
   } = useContext();
 
-  const totalRep = daoStore.getCache().reputation.total;
+  const totalRep = daoStore.daoCache.reputation.total;
   const governanceInfo = daoStore.getGovernanceInfo();
 
   function toNumber(weiNumber) {

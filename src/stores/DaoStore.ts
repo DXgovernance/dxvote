@@ -157,10 +157,6 @@ export default class DaoStore {
     return unparsedCache;
   }
 
-  getCache(): DaoNetworkCache {
-    return this.daoCache;
-  }
-
   setCache(newNetworkCache: DaoNetworkCache) {
     this.daoCache = this.parseCache(newNetworkCache);
     console.debug('Cache SET]', this.daoCache);
@@ -168,14 +164,14 @@ export default class DaoStore {
 
   getSchemeProposalsByName(_schemeName: string): Proposal[] {
     let schemeAddress;
-    for (const _schemeAddress in this.getCache().schemes) {
-      if (this.getCache().schemes[_schemeAddress].name === _schemeName) {
+    for (const _schemeAddress in this.daoCache.schemes) {
+      if (this.daoCache.schemes[_schemeAddress].name === _schemeName) {
         schemeAddress = _schemeAddress;
       }
     }
     let proposals = [];
-    for (const proposalId in this.getCache().proposals) {
-      if (this.getCache().proposals[proposalId].scheme === schemeAddress) {
+    for (const proposalId in this.daoCache.proposals) {
+      if (this.daoCache.proposals[proposalId].scheme === schemeAddress) {
         proposals.push(this.getProposal(proposalId));
       }
     }
@@ -184,15 +180,15 @@ export default class DaoStore {
 
   getSchemeByName(_schemeName: string): Scheme {
     let schemeAddress;
-    for (const _schemeAddress in this.getCache().schemes) {
-      if (this.getCache().schemes[_schemeAddress].name === _schemeName) {
+    for (const _schemeAddress in this.daoCache.schemes) {
+      if (this.daoCache.schemes[_schemeAddress].name === _schemeName) {
         schemeAddress = _schemeAddress;
       }
     }
     let schemeInfo;
-    for (const _schemeAddress in this.getCache().schemes) {
-      if (this.getCache().schemes[_schemeAddress].name === _schemeName) {
-        schemeInfo = this.getCache().schemes[schemeAddress];
+    for (const _schemeAddress in this.daoCache.schemes) {
+      if (this.daoCache.schemes[_schemeAddress].name === _schemeName) {
+        schemeInfo = this.daoCache.schemes[schemeAddress];
         break;
       }
     }
@@ -201,8 +197,8 @@ export default class DaoStore {
 
   getSchemeProposals(schemeAddress: string): Proposal[] {
     let proposals = [];
-    for (const proposalId in this.getCache().proposals) {
-      if (this.getCache().proposals[proposalId].scheme === schemeAddress) {
+    for (const proposalId in this.daoCache.proposals) {
+      if (this.daoCache.proposals[proposalId].scheme === schemeAddress) {
         proposals.push(this.getProposal(proposalId));
       }
     }
@@ -226,7 +222,7 @@ export default class DaoStore {
       totalNegativeStakes = 0,
       totalNegativeStakesAmount = bnum(0),
       totalProposalsCreated = 0;
-    const cache = this.getCache();
+    const cache = this.daoCache;
 
     let repUsers = {};
     let repEvents = [];
@@ -431,9 +427,9 @@ export default class DaoStore {
   }
 
   getAllProposals(): ProposalsExtended[] {
-    const allProposals = Object.keys(this.getCache().proposals).map(
+    const allProposals = Object.keys(this.daoCache.proposals).map(
       proposalId => {
-        return this.getCache().proposals[proposalId];
+        return this.daoCache.proposals[proposalId];
       }
     );
     return _.orderBy(
@@ -453,32 +449,33 @@ export default class DaoStore {
   }
 
   getAllSchemes(): Scheme[] {
-    return _.flatMap(_.filter(this.getCache().schemes, { registered: true }));
+    return _.flatMap(_.filter(this.daoCache.schemes, { registered: true }));
   }
 
   getProposal(proposalId): Proposal {
-    return this.getCache().proposals[proposalId];
+    return this.daoCache.proposals[proposalId];
   }
 
   getScheme(schemeAddress): Scheme {
-    return this.getCache().schemes[schemeAddress];
+    return this.daoCache.schemes[schemeAddress];
   }
 
   getVotingMachineOfProposal(proposalId): string {
-    return this.getCache().schemes[this.getCache().proposals[proposalId].scheme]
+    return this.daoCache.schemes[this.daoCache.proposals[proposalId].scheme]
       .votingMachine;
   }
 
   getVotingParametersOfProposal(proposalId): VotingMachineParameters {
-    return this.getCache().votingMachines[
+    return this.daoCache.votingMachines[
       this.getVotingMachineOfProposal(proposalId)
-    ].votingParameters[this.getCache().proposals[proposalId].paramsHash];
+    ].votingParameters[this.daoCache.proposals[proposalId].paramsHash];
   }
 
   getVotingParametersOfScheme(schemeAddress): VotingMachineParameters {
-    const scheme = this.getCache().schemes[schemeAddress];
-    return this.getCache().votingMachines[scheme.votingMachine]
-      .votingParameters[scheme.paramsHash];
+    const scheme = this.daoCache.schemes[schemeAddress];
+    return this.daoCache.votingMachines[scheme.votingMachine].votingParameters[
+      scheme.paramsHash
+    ];
   }
 
   getProposalEvents(proposalId): {
@@ -685,7 +682,7 @@ export default class DaoStore {
       event: any;
     }[] = [];
 
-    const cache = this.getCache();
+    const cache = this.daoCache;
 
     let proposalEvents = {
       votes: [],
@@ -958,17 +955,17 @@ export default class DaoStore {
   }
 
   getProposalStatus(proposalId: string): any {
-    const proposal = this.getCache().proposals[proposalId];
+    const proposal = this.daoCache.proposals[proposalId];
     const proposalStateChangeEvents = this.getProposalStateChanges(proposalId);
-    const scheme = this.getCache().schemes[proposal.scheme];
+    const scheme = this.daoCache.schemes[proposal.scheme];
     const votingMachineOfProposal = this.getVotingMachineOfProposal(proposalId);
     const networkContracts = this.context.configStore.getNetworkContracts();
     const votingMachineParams =
       proposal.paramsHash ===
       '0x0000000000000000000000000000000000000000000000000000000000000000'
-        ? this.getCache().votingMachines[votingMachineOfProposal]
+        ? this.daoCache.votingMachines[votingMachineOfProposal]
             .votingParameters[scheme.paramsHash]
-        : this.getCache().votingMachines[votingMachineOfProposal]
+        : this.daoCache.votingMachines[votingMachineOfProposal]
             .votingParameters[proposal.paramsHash];
 
     const autoBoost =
@@ -985,7 +982,7 @@ export default class DaoStore {
   }
 
   getVotesOfProposal(proposalId: string): Vote[] {
-    return this.getCache().votingMachines[
+    return this.daoCache.votingMachines[
       this.getVotingMachineOfProposal(proposalId)
     ].events.votes.filter(vote => {
       return proposalId === vote.proposalId;
@@ -993,7 +990,7 @@ export default class DaoStore {
   }
 
   getStakesOfProposal(proposalId: string): Stake[] {
-    return this.getCache().votingMachines[
+    return this.daoCache.votingMachines[
       this.getVotingMachineOfProposal(proposalId)
     ].events.stakes.filter(stake => {
       return proposalId === stake.proposalId;
@@ -1001,7 +998,7 @@ export default class DaoStore {
   }
 
   getRedeemsOfProposal(proposalId: string): Redeem[] {
-    return this.getCache().votingMachines[
+    return this.daoCache.votingMachines[
       this.getVotingMachineOfProposal(proposalId)
     ].events.redeems.filter(redeem => {
       return proposalId === redeem.proposalId;
@@ -1009,7 +1006,7 @@ export default class DaoStore {
   }
 
   getRedeemsRepOfProposal(proposalId: string): RedeemRep[] {
-    return this.getCache().votingMachines[
+    return this.daoCache.votingMachines[
       this.getVotingMachineOfProposal(proposalId)
     ].events.redeemsRep.filter(redeemRep => {
       return proposalId === redeemRep.proposalId;
@@ -1017,7 +1014,7 @@ export default class DaoStore {
   }
 
   getRedeemsDaoBountyOfProposal(proposalId: string): RedeemDaoBounty[] {
-    return this.getCache().votingMachines[
+    return this.daoCache.votingMachines[
       this.getVotingMachineOfProposal(proposalId)
     ].events.redeemsDaoBounty.filter(redeemDaoBounty => {
       return proposalId === redeemDaoBounty.proposalId;
@@ -1025,7 +1022,7 @@ export default class DaoStore {
   }
 
   getProposalStateChanges(proposalId: string): ProposalStateChange[] {
-    return this.getCache().votingMachines[
+    return this.daoCache.votingMachines[
       this.getVotingMachineOfProposal(proposalId)
     ].events.proposalStateChanges.filter(proposalStateChange => {
       return proposalId === proposalStateChange.proposalId;
@@ -1036,7 +1033,7 @@ export default class DaoStore {
     const networkContracts = this.context.configStore.getNetworkContracts();
     const { library } = this.context.providerStore.getActiveWeb3React();
     const scheme = this.getScheme(schemeAddress);
-    const callPermissions = this.getCache().callPermissions;
+    const callPermissions = this.daoCache.callPermissions;
     console.debug('Call Permissions', callPermissions);
     let assetLimits = {};
     const from =
@@ -1085,7 +1082,7 @@ export default class DaoStore {
 
   getCallAllowance(asset, from, to, functionSignature): any {
     const networkContracts = this.context.configStore.getNetworkContracts();
-    const callPermissions = this.getCache().callPermissions;
+    const callPermissions = this.daoCache.callPermissions;
 
     if (
       to === networkContracts.controller &&
@@ -1163,7 +1160,7 @@ export default class DaoStore {
     totalSupply: BigNumber;
   } {
     const { daoStore, providerStore } = this.context;
-    const repEvents = daoStore.getCache().reputation.events;
+    const repEvents = daoStore.daoCache.reputation.events;
     let userRep = bnum(0),
       totalSupply = bnum(0);
     if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
@@ -1196,7 +1193,7 @@ export default class DaoStore {
     userRep: RepEvent[];
   } {
     const { daoStore, providerStore } = this.context;
-    const repEvents = daoStore.getCache().reputation.events;
+    const repEvents = daoStore.daoCache.reputation.events;
     let userRep = [],
       totalSupply = bnum(0);
     if (atBlock === 0) atBlock = providerStore.getCurrentBlockNumber();
@@ -1216,7 +1213,7 @@ export default class DaoStore {
     [userAddress: string]: BigNumber;
   } {
     const { daoStore, providerStore } = this.context;
-    const repEvents = daoStore.getCache().reputation.events;
+    const repEvents = daoStore.daoCache.reputation.events;
     let users = {};
     const atBlock = providerStore.getCurrentBlockNumber();
 
