@@ -159,54 +159,11 @@ export default class DaoStore {
 
   setCache(newNetworkCache: DaoNetworkCache) {
     this.daoCache = this.parseCache(newNetworkCache);
-    console.debug('Cache SET]', this.daoCache);
-  }
-
-  getSchemeProposalsByName(_schemeName: string): Proposal[] {
-    let schemeAddress;
-    for (const _schemeAddress in this.daoCache.schemes) {
-      if (this.daoCache.schemes[_schemeAddress].name === _schemeName) {
-        schemeAddress = _schemeAddress;
-      }
-    }
-    let proposals = [];
-    for (const proposalId in this.daoCache.proposals) {
-      if (this.daoCache.proposals[proposalId].scheme === schemeAddress) {
-        proposals.push(this.getProposal(proposalId));
-      }
-    }
-    return proposals;
-  }
-
-  getSchemeByName(_schemeName: string): Scheme {
-    let schemeAddress;
-    for (const _schemeAddress in this.daoCache.schemes) {
-      if (this.daoCache.schemes[_schemeAddress].name === _schemeName) {
-        schemeAddress = _schemeAddress;
-      }
-    }
-    let schemeInfo;
-    for (const _schemeAddress in this.daoCache.schemes) {
-      if (this.daoCache.schemes[_schemeAddress].name === _schemeName) {
-        schemeInfo = this.daoCache.schemes[schemeAddress];
-        break;
-      }
-    }
-    return schemeInfo;
-  }
-
-  getSchemeProposals(schemeAddress: string): Proposal[] {
-    let proposals = [];
-    for (const proposalId in this.daoCache.proposals) {
-      if (this.daoCache.proposals[proposalId].scheme === schemeAddress) {
-        proposals.push(this.getProposal(proposalId));
-      }
-    }
-    return proposals;
+    console.debug('[Cache SET]', this.daoCache);
   }
 
   getAmountOfProposalsPreBoostedInScheme(schemeAddress: string): number {
-    return this.getSchemeProposals(schemeAddress).filter(proposal => {
+    return this.getAllProposals({ scheme: schemeAddress }).filter(proposal => {
       return proposal.stateInVotingMachine === 4;
     }).length;
   }
@@ -426,13 +383,13 @@ export default class DaoStore {
     };
   }
 
-  getAllProposals(): ProposalsExtended[] {
+  getAllProposals(filter: any = {}): ProposalsExtended[] {
     const allProposals = Object.keys(this.daoCache.proposals).map(
       proposalId => {
         return this.daoCache.proposals[proposalId];
       }
     );
-    return _.orderBy(
+    const proposals = _.orderBy(
       allProposals,
       [
         'creationEvent.blockNumber',
@@ -446,36 +403,71 @@ export default class DaoStore {
         this.getProposalStatus(cacheProposal.id)
       );
     });
+    return _.filter(proposals, filter);
   }
 
-  getAllSchemes(): Scheme[] {
-    return _.flatMap(_.filter(this.daoCache.schemes, { registered: true }));
+  getAllSchemes(onlyRegistered: boolean = true): Scheme[] {
+    return _.flatMap(
+      _.filter(
+        this.daoCache.schemes,
+        onlyRegistered ? { registered: true } : {}
+      )
+    );
   }
 
-  getProposal(proposalId): Proposal {
+  getProposal(proposalId: string): Proposal {
     return this.daoCache.proposals[proposalId];
   }
 
-  getScheme(schemeAddress): Scheme {
+  getScheme(schemeAddress: string): Scheme {
     return this.daoCache.schemes[schemeAddress];
   }
 
-  getVotingMachineOfProposal(proposalId): string {
-    return this.daoCache.schemes[this.daoCache.proposals[proposalId].scheme]
-      .votingMachine;
+  getSchemeOfProposal(proposalId: string): Scheme {
+    return this.daoCache.schemes[this.daoCache.proposals[proposalId].scheme];
   }
 
-  getVotingParametersOfProposal(proposalId): VotingMachineParameters {
-    return this.daoCache.votingMachines[
-      this.getVotingMachineOfProposal(proposalId)
-    ].votingParameters[this.daoCache.proposals[proposalId].paramsHash];
+  getVotingMachineOfScheme(schemeAddress: string): {
+    address: string;
+    paramsHash: string;
+    params: VotingMachineParameters;
+  } {
+    const votingMachineAddress =
+      this.daoCache.schemes[schemeAddress].votingMachine;
+    return {
+      address: votingMachineAddress,
+      paramsHash: this.daoCache.schemes[schemeAddress].paramsHash,
+      params:
+        this.daoCache.votingMachines[votingMachineAddress].votingParameters[
+          this.daoCache.schemes[schemeAddress].paramsHash
+        ],
+    };
   }
 
-  getVotingParametersOfScheme(schemeAddress): VotingMachineParameters {
-    const scheme = this.daoCache.schemes[schemeAddress];
-    return this.daoCache.votingMachines[scheme.votingMachine].votingParameters[
-      scheme.paramsHash
-    ];
+  getVotingMachineOfProposal(proposalId): {
+    address: string;
+    paramsHash: string;
+    params: VotingMachineParameters;
+  } {
+    const votingMachineAddress =
+      this.daoCache.schemes[this.daoCache.proposals[proposalId].scheme]
+        .votingMachine;
+
+    const paramsHash =
+      this.daoCache.proposals[proposalId].paramsHash ===
+      '0x0000000000000000000000000000000000000000000000000000000000000000'
+        ? this.daoCache.schemes[this.daoCache.proposals[proposalId].scheme]
+            .paramsHash
+        : this.daoCache.proposals[proposalId].paramsHash;
+
+    return {
+      address: votingMachineAddress,
+      paramsHash,
+      params:
+        this.daoCache.votingMachines[votingMachineAddress].votingParameters[
+          paramsHash
+        ],
+    };
   }
 
   getProposalEvents(proposalId): {
@@ -859,9 +851,9 @@ export default class DaoStore {
     // Adds user created proposals that have ended
     userEvents.newProposal.map(newProposal => {
       const proposal = this.getProposal(newProposal.proposalId);
-      const votingParameters = this.getVotingParametersOfProposal(
+      const votingParameters = this.getVotingMachineOfProposal(
         newProposal.proposalId
-      );
+      ).params;
 
       if (
         votingParameters.proposingRepReward.toNumber() > 0 &&
@@ -875,9 +867,9 @@ export default class DaoStore {
     // Add possible redeems
     userEvents.votes.map(vote => {
       const proposal = this.getProposal(vote.proposalId);
-      const voteParameters = this.getVotingParametersOfProposal(
+      const voteParameters = this.getVotingMachineOfProposal(
         vote.proposalId
-      );
+      ).params;
       if (
         (isExpired(proposal) && votedBeforeBoosted(proposal, vote)) ||
         (hasLostReputation(voteParameters) &&
@@ -960,21 +952,13 @@ export default class DaoStore {
     const scheme = this.daoCache.schemes[proposal.scheme];
     const votingMachineOfProposal = this.getVotingMachineOfProposal(proposalId);
     const networkContracts = this.context.configStore.getNetworkContracts();
-    const votingMachineParams =
-      proposal.paramsHash ===
-      '0x0000000000000000000000000000000000000000000000000000000000000000'
-        ? this.daoCache.votingMachines[votingMachineOfProposal]
-            .votingParameters[scheme.paramsHash]
-        : this.daoCache.votingMachines[votingMachineOfProposal]
-            .votingParameters[proposal.paramsHash];
-
     const autoBoost =
-      networkContracts.votingMachines[votingMachineOfProposal].type ===
+      networkContracts.votingMachines[votingMachineOfProposal.address].type ===
       'DXDVotingMachine';
     return decodeProposalStatus(
       proposal,
       proposalStateChangeEvents,
-      votingMachineParams,
+      votingMachineOfProposal.params,
       scheme.maxSecondsForExecution,
       autoBoost,
       scheme.type
@@ -983,7 +967,7 @@ export default class DaoStore {
 
   getVotesOfProposal(proposalId: string): Vote[] {
     return this.daoCache.votingMachines[
-      this.getVotingMachineOfProposal(proposalId)
+      this.getVotingMachineOfProposal(proposalId).address
     ].events.votes.filter(vote => {
       return proposalId === vote.proposalId;
     });
@@ -991,7 +975,7 @@ export default class DaoStore {
 
   getStakesOfProposal(proposalId: string): Stake[] {
     return this.daoCache.votingMachines[
-      this.getVotingMachineOfProposal(proposalId)
+      this.getVotingMachineOfProposal(proposalId).address
     ].events.stakes.filter(stake => {
       return proposalId === stake.proposalId;
     });
@@ -999,7 +983,7 @@ export default class DaoStore {
 
   getRedeemsOfProposal(proposalId: string): Redeem[] {
     return this.daoCache.votingMachines[
-      this.getVotingMachineOfProposal(proposalId)
+      this.getVotingMachineOfProposal(proposalId).address
     ].events.redeems.filter(redeem => {
       return proposalId === redeem.proposalId;
     });
@@ -1007,7 +991,7 @@ export default class DaoStore {
 
   getRedeemsRepOfProposal(proposalId: string): RedeemRep[] {
     return this.daoCache.votingMachines[
-      this.getVotingMachineOfProposal(proposalId)
+      this.getVotingMachineOfProposal(proposalId).address
     ].events.redeemsRep.filter(redeemRep => {
       return proposalId === redeemRep.proposalId;
     });
@@ -1015,7 +999,7 @@ export default class DaoStore {
 
   getRedeemsDaoBountyOfProposal(proposalId: string): RedeemDaoBounty[] {
     return this.daoCache.votingMachines[
-      this.getVotingMachineOfProposal(proposalId)
+      this.getVotingMachineOfProposal(proposalId).address
     ].events.redeemsDaoBounty.filter(redeemDaoBounty => {
       return proposalId === redeemDaoBounty.proposalId;
     });
@@ -1023,7 +1007,7 @@ export default class DaoStore {
 
   getProposalStateChanges(proposalId: string): ProposalStateChange[] {
     return this.daoCache.votingMachines[
-      this.getVotingMachineOfProposal(proposalId)
+      this.getVotingMachineOfProposal(proposalId).address
     ].events.proposalStateChanges.filter(proposalStateChange => {
       return proposalId === proposalStateChange.proposalId;
     });

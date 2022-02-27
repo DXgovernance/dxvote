@@ -198,7 +198,7 @@ export default class DaoService {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      daoStore.getVotingMachineOfProposal(proposalId),
+      daoStore.getVotingMachineOfProposal(proposalId).address,
       'vote',
       [proposalId, decision, amount, account],
       {}
@@ -269,7 +269,7 @@ export default class DaoService {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      daoStore.getVotingMachineOfProposal(proposalId),
+      daoStore.getVotingMachineOfProposal(proposalId).address,
       'stake',
       [proposalId, decision, amount],
       {}
@@ -281,7 +281,7 @@ export default class DaoService {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      daoStore.getVotingMachineOfProposal(proposalId),
+      daoStore.getVotingMachineOfProposal(proposalId).address,
       'execute',
       [proposalId],
       {}
@@ -293,7 +293,7 @@ export default class DaoService {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      daoStore.getVotingMachineOfProposal(proposalId),
+      daoStore.getVotingMachineOfProposal(proposalId).address,
       'redeem',
       [proposalId, account],
       {}
@@ -305,7 +305,7 @@ export default class DaoService {
     return providerStore.sendTransaction(
       providerStore.getActiveWeb3React(),
       ContractType.VotingMachine,
-      daoStore.getVotingMachineOfProposal(proposalId),
+      daoStore.getVotingMachineOfProposal(proposalId).address,
       'redeemDaoBounty',
       [proposalId, account],
       {}
