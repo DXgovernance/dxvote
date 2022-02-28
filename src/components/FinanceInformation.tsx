@@ -24,7 +24,7 @@ import useExporters from '../hooks/useExporters';
 import { Button } from './common/Button';
 import { flatten } from '../utils/array';
 import moment from 'moment';
-import { useBalance } from 'hooks/useBalance';
+import { useBalance } from 'hooks/useERC20';
 
 const FinanceInfoWrapper = styled.div`
   background: white;

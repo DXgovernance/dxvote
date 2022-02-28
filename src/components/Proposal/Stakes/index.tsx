@@ -30,7 +30,7 @@ import {
   SummaryTotal,
   ActionButton,
 } from '../styles';
-import { useAllowance } from 'hooks/useBalance';
+import { useAllowance } from 'hooks/useERC20';
 import { parseUnits } from 'ethers/lib/utils';
 
 const Stakes = () => {
