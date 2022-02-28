@@ -50,9 +50,19 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
         <Flex direction="row" justifyContent="space-between">
           <CardHeader>Actions</CardHeader>
           {proposalViewMode ? null : actionsEditMode ? (
-            <Button onClick={() => setActionsEditMode(false)}>Save</Button>
+            <Button
+              variant="secondary"
+              onClick={() => setActionsEditMode(false)}
+            >
+              Save
+            </Button>
           ) : (
-            <Button onClick={() => setActionsEditMode(true)}>Edit</Button>
+            <Button
+              variant="secondary"
+              onClick={() => setActionsEditMode(true)}
+            >
+              Edit
+            </Button>
           )}
         </Flex>
       }

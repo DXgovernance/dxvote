@@ -12,7 +12,6 @@ import SidebarCard from '../../SidebarCard';
 import { ProposalVotes } from './ProposalVotes';
 
 const SidebarCardHeader = styled(Box)`
-  padding: 1rem;
   font-weight: 600;
   display: flex;
   justify-content: space-between;
@@ -53,7 +52,10 @@ const ProposalVoteCard = () => {
       header={
         <SidebarCardHeader>
           Cast your vote{' '}
-          <SmallButton primary onClick={() => setShowToken(!showToken)}>
+          <SmallButton
+            variant="secondary"
+            onClick={() => setShowToken(!showToken)}
+          >
             {showToken ? TOKEN : '%'}
           </SmallButton>
         </SidebarCardHeader>

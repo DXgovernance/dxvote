@@ -18,10 +18,11 @@ const SidebarCard: React.FC<CardProps> = ({ header, children }) => {
 export default SidebarCard;
 
 export const SidebarCardHeader = styled(Heading)`
-  padding-left: 1rem;
   font-weight: 700;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const SidebarCardContent = styled(Box)`
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;

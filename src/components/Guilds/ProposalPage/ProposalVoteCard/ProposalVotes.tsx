@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { VotesChart } from 'components/Guilds/common/VoteChart';
-import { Bullet } from 'components/Guilds/common/Bullet';
 import { useVotes } from 'hooks/Guilds/useVotes';
 import { formatUnits } from '@ethersproject/units';
+import { Flex } from 'components/Guilds/common/Layout';
 
 export interface Voter {
   avatar: string;
@@ -24,11 +24,23 @@ const VotesRow = styled.div`
   font-size: 14px;
   font-weight: 600;
   margin: 5px 0px 5px 0px;
-  color: ${({ theme, type = '0' }) => theme.colors.votes[type].fg};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
-const StyledBullet = styled(Bullet)`
-  font-size: 30px;
+const ColoredBullet = styled.span`
+  color: ${({ type, theme }) => theme.colors.votes[type].bg};
+  font-size: 1.5rem;
+  margin, padding: 0;
+  position: absolute;
+
+`;
+const StyledContainer = styled(Flex)`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+`;
+const StyledText = styled.span`
+  margin-left: 1.2rem;
 `;
 
 export const ProposalVotes: React.FC<ProposalVotesProps> = ({
@@ -42,23 +54,41 @@ export const ProposalVotes: React.FC<ProposalVotesProps> = ({
     action: number,
     showToken: boolean,
     args: any
-  ): number =>
-    showToken ? formatUnits(args[action][action][0]) : args[action][action][1];
+  ): number => {
+    if (args[action] === null || args[action] === undefined) {
+      return 0;
+    }
+    return showToken
+      ? formatUnits(args[action][action][0])
+      : args[action][action][1];
+  };
 
   return (
     <VotesContainer>
       {voteData.args &&
         Object.values(voteData?.args).map((_, i) => {
           return (
-            <VotesRow type="0">
-              <span>
-                <StyledBullet />
-                {'Action ' + i}
-              </span>
-              <span>
-                {valueToDisplay(i, showToken, voteData?.args)} {unitDisplay}
-              </span>
-            </VotesRow>
+            <>
+              <VotesRow key={i}>
+                <StyledContainer>
+                  <ColoredBullet type="for">{'\u2022'}</ColoredBullet>
+                  <StyledText>{'For'}</StyledText>
+                </StyledContainer>
+                <div>
+                  {valueToDisplay(i, showToken, voteData?.args)} {unitDisplay}
+                </div>
+              </VotesRow>
+              <VotesRow>
+                <StyledContainer>
+                  <ColoredBullet type="against">{'\u2022'}</ColoredBullet>
+                  <StyledText>{'Against'}</StyledText>
+                </StyledContainer>
+                <div>
+                  {valueToDisplay(i + 1, showToken, voteData?.args)}{' '}
+                  {unitDisplay}
+                </div>
+              </VotesRow>
+            </>
           );
         })}
       <VotesChart showToken={showToken} token={token} />
