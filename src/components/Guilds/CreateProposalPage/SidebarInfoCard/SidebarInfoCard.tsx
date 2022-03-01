@@ -25,7 +25,11 @@ const Label = styled.span`
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: ${({ theme }) => theme.fontSizes.body};
   line-height: ${({ theme }) => theme.lineHeights.body};
-  color: ${({ theme, color }) => (color ? color : theme.colors.text)};
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+const ColoredLabel = styled(Label)`
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
 `;
 
 export const SidebarInfoCard = () => {
@@ -43,23 +47,23 @@ export const SidebarInfoCard = () => {
       <SidebarCardContent>
         <Row>
           <Label>Consensus System</Label>
-          <Label>Guild</Label>
+          <ColoredLabel>Guild</ColoredLabel>
         </Row>
         <Row>
           <Label>Proposal Duration</Label>
-          <Label>
+          <ColoredLabel>
             {data?.proposalTime ? (
               duration(data?.proposalTime?.toNumber(), 'seconds').humanize()
             ) : (
               <Skeleton width={50} />
             )}
-          </Label>
+          </ColoredLabel>
         </Row>
         <Row>
           <Label>Quorum</Label>
-          <Label>
+          <ColoredLabel>
             {quorum != null ? `${quorum}%` : <Skeleton width={50} />}
-          </Label>
+          </ColoredLabel>
         </Row>
       </SidebarCardContent>
     </SidebarCard>

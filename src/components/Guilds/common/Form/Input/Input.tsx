@@ -7,7 +7,6 @@ const baseInputStyles = css`
   padding: 0.5rem 0.8rem;
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
-  margin-right: 1rem;
   ::placeholder {
     color: ${({ theme }) => theme.colors.proposalText.lightGrey};
   }
@@ -31,15 +30,15 @@ const baseInputStyles = css`
 const InputWrapper = styled.div`
   ${baseInputStyles}
   display: flex;
-  width:100%;
-  &:hover, 
+  width: 100%;
+  &:hover,
   &:focus {
     border: 0.1rem solid ${({ theme }) => theme.colors.text};
-  }
   }
 `;
 
 const InputBase = styled.input`
+  display: flex;
   border: none;
   width: 100%;
   &:focus,

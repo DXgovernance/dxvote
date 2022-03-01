@@ -1,12 +1,14 @@
 import { useContext } from 'contexts';
 import { useState, useEffect } from 'react';
 import {
+  bnum,
   QUEUED_PRIORITY_THRESHOLD,
   VotingMachineProposalState,
   ZERO_ADDRESS,
 } from 'utils';
 import { useRep } from './useRep';
 import { ProposalsExtended } from '../types/types';
+import moment from 'moment';
 
 interface useFilterCriteriaReturns {
   proposals: ProposalsExtended[];
@@ -35,6 +37,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
   >([]);
 
   const [loading, setLoading] = useState(true);
+  const timeNow = bnum(moment().unix());
 
   useEffect(() => {
     const allProposals = daoStore.getAllProposals();
@@ -42,12 +45,18 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     // Queded && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestAbove10 = allProposals
       .filter(proposal => {
+        const queuedVotePeriodLimit =
+          daoStore.getCache().votingMachines[
+            daoStore.getCache().schemes[proposal.scheme].votingMachine
+          ].votingParameters[proposal.paramsHash].queuedVotePeriodLimit;
+
         const repAtCreation = getRep(
           proposal.creationEvent.blockNumber
         ).totalSupply;
 
         return (
           proposal.stateInVotingMachine === VotingMachineProposalState.Queued &&
+          timeNow.lt(proposal.submittedTime.plus(queuedVotePeriodLimit)) &&
           proposal.positiveVotes
             .div(repAtCreation)
             .times(100)
@@ -85,12 +94,18 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     //   Queded && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestUnder10 = allProposals
       .filter((proposal): Boolean => {
+        const queuedVotePeriodLimit =
+          daoStore.getCache().votingMachines[
+            daoStore.getCache().schemes[proposal.scheme].votingMachine
+          ].votingParameters[proposal.paramsHash].queuedVotePeriodLimit;
+
         const repAtCreation = getRep(
           proposal.creationEvent.blockNumber
         ).totalSupply;
 
         return (
           proposal.stateInVotingMachine === VotingMachineProposalState.Queued &&
+          timeNow.lt(proposal.submittedTime.plus(queuedVotePeriodLimit)) &&
           proposal.positiveVotes
             .div(repAtCreation)
             .times(100)

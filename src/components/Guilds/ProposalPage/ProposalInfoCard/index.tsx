@@ -59,6 +59,13 @@ const SidebarInfoContent = styled.div`
   margin: 1.5rem;
 `;
 
+const Label = styled.span`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: ${({ theme }) => theme.fontSizes.body};
+  line-height: ${({ theme }) => theme.lineHeights.body};
+  color: ${({ theme, color }) => (color ? color : theme.colors.text)};
+`;
+
 const ProposalInfoCard: React.FC = () => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
   const { guild_id: guildId, proposal_id: proposalId } = useParams<{

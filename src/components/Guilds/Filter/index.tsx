@@ -5,10 +5,9 @@ import { useParams } from 'react-router';
 import { useFilter } from 'contexts/Guilds/filters';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { Input } from '../common/Form';
-import { Box, Flex } from '../common/Layout/Box';
-
+import { Flex, Box } from '../common/Layout/Box';
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
-import { Button } from '../common/Button';
+import { Button, IconButton } from '../common/Button';
 import { useHistory, useLocation } from 'react-router';
 import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
@@ -21,17 +20,31 @@ const FilterContainer = styled(Box)`
   margin-bottom: 1rem;
 `;
 
-const FilterRow = styled.div`
+const FilterRow = styled(Flex)`
   display: flex;
   flex-direction: row;
 
   @media only screen and (min-width: 768px) {
     justify-content: space-between;
+    width: 100%;
   }
 `;
 
 const ButtonContainer = styled(Flex)`
-  flex-direction: Row;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 57%;
+`;
+
+const StyledIconButton = styled(IconButton)`
+  border-radius: 20px;
+  padding: ${props => props.padding || '0.7rem 1.2rem'};
+  margin: ${props => props.marginLeft};
+`;
+
+const StyledInputWrapper = styled(Box)`
+  margin-top: 1rem;
+  width: 97%;
 `;
 
 export const Filter = () => {
@@ -58,27 +71,10 @@ export const Filter = () => {
     }
     return false;
   }, [votingPower, guildConfig]);
-
+  const [openSearchBar, setOpenSearchBar] = useState(false);
   return (
     <FilterContainer>
       <FilterRow>
-        <Input
-          icon={<AiOutlineSearch size={24} />}
-          placeholder="Search Proposal"
-        />
-        {isProposalCreationAllowed && (
-          <ButtonContainer>
-            <Button>Proposal state</Button>
-            <Button
-              variant="secondary"
-              onClick={() => history.push(location.pathname + '/proposalType')}
-              data-testid="create-proposal-button"
-            >
-              Create Proposal
-            </Button>
-          </ButtonContainer>
-        )}
-        {isDesktop && !isProposalCreationAllowed && <FilterMenu />}
         {isMobile && !isProposalCreationAllowed && (
           <FilterButton
             onClick={() => setViewFilter(!viewFilter)}
@@ -88,8 +84,36 @@ export const Filter = () => {
             {totalFilters > 0 && <FilterBadge>{totalFilters}</FilterBadge>}
           </FilterButton>
         )}
+        {isDesktop && <FilterMenu />}
+
+        <ButtonContainer>
+          <StyledIconButton
+            variant="secondary"
+            padding="0.4rem"
+            onClick={() => setOpenSearchBar(!openSearchBar)}
+          >
+            <AiOutlineSearch size={20} />
+          </StyledIconButton>
+          {isProposalCreationAllowed && (
+            <Button
+              variant="secondary"
+              onClick={() => history.push(location.pathname + '/proposalType')}
+              data-testid="create-proposal-button"
+            >
+              Create Proposal
+            </Button>
+          )}
+        </ButtonContainer>
       </FilterRow>
       {isMobile && viewFilter && <FilterMenu />}
+      {openSearchBar ? (
+        <StyledInputWrapper>
+          <Input
+            icon={<AiOutlineSearch size={24} />}
+            placeholder="Search title, ENS, address"
+          />
+        </StyledInputWrapper>
+      ) : null}
     </FilterContainer>
   );
 };
