@@ -5,6 +5,7 @@ import { Box } from '../common/Layout';
 
 const cardWrapperStyles = css`
   margin-bottom: 1rem;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
 `;
 
 const SidebarCard: React.FC<CardProps> = ({ header, children }) => {
@@ -18,7 +19,8 @@ const SidebarCard: React.FC<CardProps> = ({ header, children }) => {
 export default SidebarCard;
 
 export const SidebarCardHeader = styled(Heading)`
-  font-weight: 700;
+  font-weight: 600;
+  margin: 0.5rem;
   color: ${({ theme }) => theme.colors.text};
 `;
 

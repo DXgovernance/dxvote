@@ -7,9 +7,7 @@ import Skeleton, {
   SkeletonTheme,
 } from 'react-loading-skeleton';
 
-const Wrapper = styled.div`
-  margin: 0.2rem auto;
-`;
+const Wrapper = styled.div``;
 
 const SpinAnimation = keyframes`
   from {
