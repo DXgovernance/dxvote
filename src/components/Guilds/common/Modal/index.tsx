@@ -34,7 +34,7 @@ export const StyledModal = styled.div`
   position: relative;
   margin: auto;
   border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: ${({ theme }) => theme.radii.curved2};
+  border-radius: ${({ theme }) => theme.radii.curved};
   box-sizing: border-box;
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
 

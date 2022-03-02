@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
 import { FiArrowRight, FiInfo } from 'react-icons/fi';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
@@ -21,6 +20,7 @@ import NumericalInput from '../common/Form/NumericalInput';
 import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
 import useStringToBigNumber from '../../../hooks/Guilds/conversions/useStringToBigNumber';
 import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
+import { Loading } from '../common/Loading';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -45,6 +45,7 @@ const DaoIcon = styled.img`
 
 const DaoTitle = styled(Heading)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const InfoItem = styled.div`
@@ -92,6 +93,7 @@ const InfoValue = styled.span`
   flex-wrap: wrap;
   display: inline-flex;
   align-items: center;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const InfoOldValue = styled(InfoValue)`
@@ -191,7 +193,11 @@ export const StakeTokens = () => {
     <GuestContainer>
       <DaoBrand>
         <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-        <DaoTitle>{guildConfig?.name || <Skeleton width={100} />}</DaoTitle>
+        <DaoTitle>
+          {guildConfig?.name || (
+            <Loading text loading skeletonProps={{ width: 100 }} />
+          )}
+        </DaoTitle>
       </DaoBrand>
       <InfoItem>
         {guildConfig?.lockTime ? (
@@ -199,7 +205,7 @@ export const StakeTokens = () => {
             .duration(guildConfig.lockTime.toNumber(), 'seconds')
             .humanize()} staking period`
         ) : (
-          <Skeleton width={200} />
+          <Loading loading text skeletonProps={{ width: 200 }} />
         )}{' '}
       </InfoItem>
 
@@ -210,9 +216,11 @@ export const StakeTokens = () => {
             {tokenBalance && tokenInfo ? (
               roundedBalance
             ) : (
-              <Skeleton width={30} />
+              <Loading loading text skeletonProps={{ width: 30 }} />
             )}{' '}
-            {tokenInfo?.symbol || <Skeleton width={10} />}
+            {tokenInfo?.symbol || (
+              <Loading loading text skeletonProps={{ width: 10 }} />
+            )}
           </InfoValue>
         </InfoRow>
         <InfoRow>
@@ -235,7 +243,7 @@ export const StakeTokens = () => {
                 {votingPowerPercent != null ? (
                   `${votingPowerPercent}%`
                 ) : (
-                  <Skeleton width={40} />
+                  <Loading loading text skeletonProps={{ width: 40 }} />
                 )}{' '}
                 <FiArrowRight />
               </InfoOldValue>{' '}
@@ -243,7 +251,7 @@ export const StakeTokens = () => {
                 {nextVotingPowerPercent != null ? (
                   `${nextVotingPowerPercent}%`
                 ) : (
-                  <Skeleton width={40} />
+                  <Loading loading text skeletonProps={{ width: 40 }} />
                 )}
               </strong>
             </>
@@ -271,14 +279,21 @@ export const StakeTokens = () => {
       </InfoRow>
       {stakeAmountParsed && tokenAllowance?.gte(stakeAmountParsed) ? (
         <ButtonLock disabled={!isStakeAmountValid} onClick={lockTokens}>
-          Lock {tokenInfo?.symbol || <Skeleton width={10} />}
+          Lock{' '}
+          {tokenInfo?.symbol || (
+            <Loading loading text skeletonProps={{ width: 10 }} />
+          )}
         </ButtonLock>
       ) : (
         <ButtonLock
           disabled={!isStakeAmountValid}
           onClick={approveTokenSpending}
         >
-          Approve {tokenInfo?.symbol || <Skeleton width={10} />} Spending
+          Approve{' '}
+          {tokenInfo?.symbol || (
+            <Loading loading text skeletonProps={{ width: 10 }} />
+          )}{' '}
+          Spending
         </ButtonLock>
       )}
     </GuestContainer>

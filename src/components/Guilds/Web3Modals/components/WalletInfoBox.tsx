@@ -22,7 +22,7 @@ import Avatar from '../../Avatar';
 const Wrapper = styled.div`
   padding: 1rem;
   border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: ${({ theme }) => theme.radii.curved2};
+  border-radius: ${({ theme }) => theme.radii.curved};
   margin: 1.5rem;
 `;
 
