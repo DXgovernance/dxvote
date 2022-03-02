@@ -24,6 +24,11 @@ export const SidebarCardHeader = styled(Heading)`
   color: ${({ theme }) => theme.colors.text};
 `;
 
+export const SidebarCardHeaderSpaced = styled(SidebarCardHeader)`
+  display: flex;
+  justify-content: space-between;
+`;
+
 export const SidebarCardContent = styled(Box)`
   padding: 1rem;
   color: ${({ theme }) => theme.colors.text};

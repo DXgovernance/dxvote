@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
-import { Card, Header as CardHeader } from '../../common/Card';
+import { Header as CardHeader } from '../../common/Card';
 import { Divider } from '../../common/Divider';
 import { Button as CommonButton, IconButton } from '../../common/Button';
 import { Flex, Box } from '../../common/Layout';
 import { ProposalActionTag, ActionTypes } from '../../common/ProposalActionTag';
+import SidebarCard, { SidebarCardHeaderSpaced } from 'components/Guilds/SidebarCard';
 
 const Button = styled(CommonButton)`
   font-style: normal;
@@ -45,9 +46,9 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
     },
   ]);
   return (
-    <Card
+    <SidebarCard
       header={
-        <Flex direction="row" justifyContent="space-between">
+        <SidebarCardHeaderSpaced>
           <CardHeader>Actions</CardHeader>
           {proposalViewMode ? null : actionsEditMode ? (
             <Button
@@ -64,7 +65,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
               Edit
             </Button>
           )}
-        </Flex>
+        </SidebarCardHeaderSpaced>
       }
     >
       {actions.map((action, idx) => (
@@ -116,6 +117,6 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
           </Box>
         </>
       )}
-    </Card>
+    </SidebarCard>
   );
 };

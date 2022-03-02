@@ -8,11 +8,11 @@ import { Box } from '../../components/Guilds/common/Layout';
 import ProposalInfoCard from '../../components/Guilds/ProposalPage/ProposalInfoCard';
 import ProposalVoteCard from '../../components/Guilds/ProposalPage/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
-import ProposalActionsCard from '../../components/Guilds/ProposalPage/ProposalActionsCard';
 import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
 import AddressButton from '../../components/Guilds/AddressButton';
 import ProposalDescription from '../../components/Guilds/ProposalPage/ProposalDescription';
 import { useProposal } from '../../hooks/Guilds/ether-swr/guild/useProposal';
+import { ActionsBuilder } from 'components/Guilds/CreateProposalPage';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -122,7 +122,7 @@ const ProposalPage: React.FC = () => {
         <ProposalDescription />
 
         <ProposalActionsWrapper>
-          <ProposalActionsCard />
+          <ActionsBuilder proposalViewMode={true} />
         </ProposalActionsWrapper>
       </PageContent>
       <SidebarContent>
