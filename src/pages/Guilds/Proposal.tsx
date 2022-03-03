@@ -122,7 +122,7 @@ const ProposalPage: React.FC = () => {
         <ProposalDescription />
 
         <ProposalActionsWrapper>
-          <ActionsBuilder proposalViewMode={true} />
+          <ActionsBuilder editable={false} />
         </ProposalActionsWrapper>
       </PageContent>
       <SidebarContent>

@@ -203,7 +203,7 @@ const CreateProposalPage: React.FC = () => {
           />
         )}
         <Box margin="16px 0px 24px">
-          <ActionsBuilder proposalViewMode={!editMode} />
+          <ActionsBuilder editable={editMode} />
         </Box>
         <Box margin="16px 0px">
           <StyledButton
