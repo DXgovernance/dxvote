@@ -6,6 +6,7 @@ import { Divider } from '../../common/Divider';
 import { Button as CommonButton, IconButton } from '../../common/Button';
 import { Flex, Box } from '../../common/Layout';
 import { ProposalActionTag, ActionTypes } from '../../common/ProposalActionTag';
+import ActionModal from 'components/Guilds/ActionsModal';
 
 const Button = styled(CommonButton)`
   font-style: normal;
@@ -32,6 +33,9 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
   proposalViewMode,
 }) => {
   const [actionsEditMode, setActionsEditMode] = useState(false);
+  const [addActionsMode, setAddActionsMode] = useState(false);
+
+  const closeActionsModal = () => setAddActionsMode(false)
 
   // TODO: remove when actions are implemented
   const [actions, setActions] = useState<any[]>([
