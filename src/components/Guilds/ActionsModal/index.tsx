@@ -8,11 +8,9 @@ import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
 import StyledIcon from '../common/SVG';
 import MintReputationModal from './MintRepModal';
 
-
-
 interface ActionModalProps {
-    isOpen: boolean;
-    onCancel: () => void;
+  isOpen: boolean;
+  onCancel: () => void;
 }
 
 const CoreWrapper = styled(Flex)`
@@ -56,85 +54,81 @@ const ExternalButton = styled(ActionsButton)`
   justify-content: space-between;
 `;
 
-
-
 const ActionModal: React.FC<ActionModalProps> = ({ isOpen, onCancel }) => {
-    //TODO: remove hardcoded external contracts with actual data
+  //TODO: remove hardcoded external contracts with actual data
 
+  const [mintRep, setMintRep] = useState(false);
 
-    const [mintRep, setMintRep] = useState(false)
+  const handleClose = () => setMintRep(false);
 
-    const handleClose = () => setMintRep(false)
-
-
-    return (
-        <Modal
-            isOpen={isOpen}
-            onDismiss={onCancel}
-            header={<div> Add Action </div>}
-            maxWidth={300}
-        >
-            <Wrapper>
-                <MintReputationModal isOpen={mintRep} onCancel={handleClose} />
-                <CoreWrapper>
-                    <WrapperText variant="bold" color="grey">
-                        Core
-                    </WrapperText>
-                    <ActionsButton variant="secondary" onClick={() => setMintRep(true)}>
-                        <StyledIcon src={Vector} />
-                        Transfer & Mint
-                    </ActionsButton>
-                </CoreWrapper>
-                <ExternalWrapper>
-                    <WrapperText variant="bold" color="grey">
-                        External Contracts
-                    </WrapperText>
-                    <ExternalButton variant="secondary">
-                        DXdao Controller
-                        <ButtonText variant="medium" color="grey">
-                            2 Actions
-                        </ButtonText>
-                    </ExternalButton>
-                    <ExternalButton variant="secondary">
-                        Permissions Registry
-                        <ButtonText variant="medium" color="grey">
-                            4 Actions
-                        </ButtonText>
-                    </ExternalButton>
-                    <ExternalButton variant="secondary">
-                        DXD Voting Machine
-                        <ButtonText variant="medium" color="grey">
-                            1 Actions
-                        </ButtonText>
-                    </ExternalButton>
-                    <ExternalButton variant="secondary">
-                        RegistrarWalletScheme
-                        <ButtonText variant="medium" color="grey">
-                            2 Actions
-                        </ButtonText>
-                    </ExternalButton>
-                    <ExternalButton variant="secondary">
-                        MasterWalletScheme
-                        <ButtonText variant="medium" color="grey">
-                            1 Actions
-                        </ButtonText>
-                    </ExternalButton>
-                    <ExternalButton variant="secondary">
-                        QuickWalletScheme
-                        <ButtonText variant="medium" color="grey">
-                            1 Actions
-                        </ButtonText>
-                    </ExternalButton>
-                    <ExternalButton variant="secondary">
-                        SWPRWalletScheme
-                        <ButtonText variant="medium" color="grey">
-                            1 Actions
-                        </ButtonText>
-                    </ExternalButton>
-                </ExternalWrapper>
-            </Wrapper>
-        </Modal>
-    );
+  return (
+    <Modal
+      isOpen={isOpen}
+      onDismiss={onCancel}
+      header={<div> Add Action </div>}
+      maxWidth={300}
+    >
+      <Wrapper>
+        <MintReputationModal isOpen={mintRep} onCancel={handleClose} />
+        <CoreWrapper>
+          <WrapperText variant="bold" color="grey">
+            Core
+          </WrapperText>
+          <ActionsButton variant="secondary" onClick={() => setMintRep(true)}>
+            <StyledIcon src={Vector} />
+            Transfer & Mint
+          </ActionsButton>
+        </CoreWrapper>
+        <ExternalWrapper>
+          <WrapperText variant="bold" color="grey">
+            External Contracts
+          </WrapperText>
+          <ExternalButton variant="secondary">
+            DXdao Controller
+            <ButtonText variant="medium" color="grey">
+              2 Actions
+            </ButtonText>
+          </ExternalButton>
+          <ExternalButton variant="secondary">
+            Permissions Registry
+            <ButtonText variant="medium" color="grey">
+              4 Actions
+            </ButtonText>
+          </ExternalButton>
+          <ExternalButton variant="secondary">
+            DXD Voting Machine
+            <ButtonText variant="medium" color="grey">
+              1 Actions
+            </ButtonText>
+          </ExternalButton>
+          <ExternalButton variant="secondary">
+            RegistrarWalletScheme
+            <ButtonText variant="medium" color="grey">
+              2 Actions
+            </ButtonText>
+          </ExternalButton>
+          <ExternalButton variant="secondary">
+            MasterWalletScheme
+            <ButtonText variant="medium" color="grey">
+              1 Actions
+            </ButtonText>
+          </ExternalButton>
+          <ExternalButton variant="secondary">
+            QuickWalletScheme
+            <ButtonText variant="medium" color="grey">
+              1 Actions
+            </ButtonText>
+          </ExternalButton>
+          <ExternalButton variant="secondary">
+            SWPRWalletScheme
+            <ButtonText variant="medium" color="grey">
+              1 Actions
+            </ButtonText>
+          </ExternalButton>
+        </ExternalWrapper>
+      </Wrapper>
+    </Modal>
+  );
 };
 
 export default ActionModal;

@@ -35,7 +35,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
   const [actionsEditMode, setActionsEditMode] = useState(false);
   const [addActionsMode, setAddActionsMode] = useState(false);
 
-  const closeActionsModal = () => setAddActionsMode(false)
+  const closeActionsModal = () => setAddActionsMode(false);
 
   // TODO: remove when actions are implemented
   const [actions, setActions] = useState<any[]>([
@@ -49,77 +49,84 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
     },
   ]);
   return (
-    <Card
-      header={
-        <Flex direction="row" justifyContent="space-between">
-          <CardHeader>Actions</CardHeader>
-          {proposalViewMode ? null : actionsEditMode ? (
-            <Button
-              variant="secondary"
-              onClick={() => setActionsEditMode(false)}
-            >
-              Save
-            </Button>
-          ) : (
-            <Button
-              variant="secondary"
-              onClick={() => setActionsEditMode(true)}
-            >
-              Edit
-            </Button>
-          )}
-        </Flex>
-      }
-    >
-      {actions.map((action, idx) => (
-        <Box key={`${action.type}${idx}`}>
-          <Box padding="16px">
-            <Flex
-              padding="8px 0"
-              direction="row"
-              justifyContent="space-between"
-            >
-              <ProposalActionTag type={action.type} />
-              <Label>No on-chain action</Label>
-            </Flex>
-
-            {actionsEditMode && (
-              <Box padding="8px 0">
-                <IconButton margin="0" iconLeft>
-                  <AiOutlinePlus /> Add Action
-                </IconButton>
-              </Box>
+    <>
+      <ActionModal isOpen={addActionsMode} onCancel={closeActionsModal} />
+      <Card
+        header={
+          <Flex direction="row" justifyContent="space-between">
+            <CardHeader>Actions</CardHeader>
+            {proposalViewMode ? null : actionsEditMode ? (
+              <Button
+                variant="secondary"
+                onClick={() => setActionsEditMode(false)}
+              >
+                Save
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => setActionsEditMode(true)}
+              >
+                Edit
+              </Button>
             )}
+          </Flex>
+        }
+      >
+        {actions.map((action, idx) => (
+          <Box key={`${action.type}${idx}`}>
+            <Box padding="16px">
+              <Flex
+                padding="8px 0"
+                direction="row"
+                justifyContent="space-between"
+              >
+                <ProposalActionTag type={action.type} />
+                <Label>No on-chain action</Label>
+              </Flex>
+
+              {actionsEditMode && (
+                <Box padding="8px 0">
+                  <IconButton
+                    margin="0"
+                    iconLeft
+                    onClick={() => setAddActionsMode(true)}
+                  >
+                    <AiOutlinePlus /> Add Action
+                  </IconButton>
+                </Box>
+              )}
+            </Box>
+            {idx !== actions.length - 1 && <Divider />}
           </Box>
-          {idx !== actions.length - 1 && <Divider />}
-        </Box>
-      ))}
-      {actionsEditMode && (
-        <>
-          <Divider />
-          <Box padding="16px">
-            <IconButton
-              margin="0"
-              iconLeft
-              onClick={() => {
-                // TODO: remove this random functionality when building "add option" funcionality
-                setActions(prev => [
-                  ...prev,
-                  {
-                    type: ActionTypes[
-                      [ActionTypes.for, ActionTypes.against][
-                        Math.ceil(Math.random() * 2) - 1
-                      ]
-                    ],
-                  },
-                ]);
-              }}
-            >
-              <AiOutlinePlus /> Add Option
-            </IconButton>
-          </Box>
-        </>
-      )}
-    </Card>
+        ))}
+        {actionsEditMode && (
+          <>
+            <Divider />
+            <Box padding="16px">
+              <IconButton
+                margin="0"
+                iconLeft
+                onClick={() => {
+                  // TODO: remove this random functionality when building "add option" funcionality
+                  setActions(prev => [
+                    ...prev,
+                    {
+                      type: ActionTypes[
+                        [ActionTypes.for, ActionTypes.against][
+                          Math.ceil(Math.random() * 2) - 1
+                        ]
+                      ],
+                    },
+                  ]);
+                }}
+              >
+                <AiOutlinePlus /> Add Option
+              </IconButton>
+            </Box>
+          </>
+        )}
+      </Card>
+    </>
   );
 };

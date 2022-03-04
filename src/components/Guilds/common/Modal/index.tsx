@@ -194,7 +194,9 @@ export const Modal: React.FC<ModalProps> = ({
                 </ModalButton>
               )}
               {onConfirm && (
-                <ModalButton onClick={onConfirm}>{confirmText}</ModalButton>
+                <ModalButton variant="secondary" onClick={onConfirm}>
+                  {confirmText}
+                </ModalButton>
               )}
             </Footer>
           )}
