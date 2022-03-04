@@ -8,7 +8,9 @@ export const useBalance = (
   fromAddress: string,
   assetAddress: string
 ): BigNumber => {
-  const balance = useContractCall(assetAddress, ERC20JSON.abi, 'balanceOf', [fromAddress]);
+  const balance = useContractCall(assetAddress, ERC20JSON.abi, 'balanceOf', [
+    fromAddress,
+  ]);
 
   return balance ? bnum(balance) : bnum('0');
 };
@@ -18,8 +20,10 @@ export const useAllowance = (
   fromAddress: string,
   toAddress: string
 ): BigNumber => {
-  const allowance = useContractCall(tokenAddress, ERC20JSON.abi, 'allowance', [fromAddress, toAddress]);
+  const allowance = useContractCall(tokenAddress, ERC20JSON.abi, 'allowance', [
+    fromAddress,
+    toAddress,
+  ]);
 
   return allowance ? bnum(allowance) : bnum('0');
-
 };
