@@ -33,33 +33,31 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
       label: 'For',
       actions: [
         {
-          asset: '',
           decodeText: 'Mint 0.16% REP',
           from: '0x0000000000000000000000000000000000000000',
           to: '0x95a223299319022a842d0dfe4851c145a2f615b9',
-          toName: 'geronimo.eth',
           functionName: 'genericCalls',
           params: [
             {
               name: 'Contract',
               type: 'address',
-              defaultValue: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
+              value: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
             },
             {
               name: 'data',
               type: 'bytes',
-              defaultValue:
+              value:
                 '0x8efcc7500000000000000000000000006a023ccd1ff6f2045c3309768ead9e68f978f6e1000000000000000000000000b90d6bec20993be5d72a5ab353343f7a0281f1580000000000000000000000000000000000000000000000006d37db4d8e530000000000000000000000000000000000000000000000000001e5b8fa8fe2ac00000000000000000000000000000000000000000000000000000000000000009c400000000000000000000000000000000000000000000000008ac7230489e80000000000000000000000000000000000000000000000000000000000006194e23c0000000000000000000000000000000000000000000000000000000061bc6f3c0000000000000000000000005d48c95adffd4b40c1aaadc4e08fc44117e02179',
             },
             {
               name: 'Avatar',
               type: 'address',
-              defaultValue: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
+              value: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
             },
             {
               name: 'value',
               type: 'uint256',
-              defaultValue: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
+              value: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
             },
           ],
         },

@@ -29,7 +29,7 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
       <Flex padding="8px 0" direction="row" justifyContent="space-between">
         <ProposalOptionTag option={data} />
         <ActionCountLabel>
-          {data?.actions?.length || "No"} on-chain{' '}
+          {data?.actions?.length || 'No'} on-chain{' '}
           {data?.actions?.length > 2 ? 'actions' : 'action'}
         </ActionCountLabel>
       </Flex>
