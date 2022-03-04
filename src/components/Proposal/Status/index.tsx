@@ -29,7 +29,7 @@ const Status = () => {
 
   const executePendingAction = function (pendingAction) {
     switch (pendingAction) {
-      case 4:
+      case PendingAction.Redeem:
         daoService.redeemContributionReward(
           networkContracts.daostack.contributionReward.redeemer,
           scheme.address,
@@ -38,7 +38,7 @@ const Status = () => {
           account
         );
         break;
-      case 5:
+      case PendingAction.RedeemForBeneficiary:
         daoService.executeMulticall(scheme.address, proposalId);
         break;
       default:

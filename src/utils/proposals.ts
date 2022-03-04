@@ -264,7 +264,7 @@ export const decodeProposalStatus = function (
         proposal.stateInScheme === WalletSchemeProposalState.ExecutionTimeout
       )
         return {
-          status: 'Execution Timeout',
+          status: 'Execution Failed',
           boostTime: boostedPhaseTime,
           finishTime: proposalStateChangeEvents.find(
             event => Number(event.state) === VotingMachineProposalState.Executed
