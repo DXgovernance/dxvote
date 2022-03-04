@@ -2,10 +2,12 @@ import styled from 'styled-components';
 import { Box, Flex } from 'components/Guilds/common/Layout';
 import { ProposalOptionTag } from '../ProposalOptionTag';
 import AddButton from '../AddButton';
+import ActionView, { Action } from '../Action';
 
 export interface Option {
   index: number;
   label: string;
+  actions?: Action[];
 }
 
 interface OptionRowProps {
@@ -26,8 +28,16 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
     <Box padding="16px">
       <Flex padding="8px 0" direction="row" justifyContent="space-between">
         <ProposalOptionTag option={data} />
-        <ActionCountLabel>No on-chain action</ActionCountLabel>
+        <ActionCountLabel>
+          {data?.actions?.length || "No"} on-chain{' '}
+          {data?.actions?.length > 2 ? 'actions' : 'action'}
+        </ActionCountLabel>
       </Flex>
+
+      {!editable &&
+        data?.actions?.map((action, index) => (
+          <ActionView key={index} action={action} />
+        ))}
 
       {editable && <AddButton label="Add Action" />}
     </Box>
