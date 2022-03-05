@@ -10,29 +10,22 @@ const cardWrapperStyles = css`
   height: 216px;
   padding: 24px 24px 40px 24px;
   @media (max-width: 768px) {
-      flex: 1 0 auto;
-      margin: 2rem;
+    flex: 1 0 auto;
+    margin: 2rem;
   }
 `;
 
-
-
 const GuildCard: React.FC<CardProps> = ({ children }) => {
-    return (
-        <Card customStyles={cardWrapperStyles}>
-            {children}
-        </Card>
-    );
+  return <Card customStyles={cardWrapperStyles}>{children}</Card>;
 };
 
 export default GuildCard;
 
-
 export const GuildCardHeader = styled(Flex)`
-display: flex;
-flex-direction: row;
-justify-content: space-between;
-color: ${({ theme }) => theme.colors.text};
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const GuildCardContent = styled(Box)`

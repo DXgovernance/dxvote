@@ -7,7 +7,7 @@ const baseInputStyles = css`
   padding: 0.5rem 0.8rem;
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
-  
+
   ::placeholder {
     color: ${({ theme }) => theme.colors.proposalText.grey};
     font-size: 14;

@@ -1,14 +1,17 @@
-import React from "react";
-import styled from "styled-components";
-import { Button } from "components/Guilds/common/Button";
-import { Input } from "components/Guilds/common/Form";
-import { AiOutlineSearch } from "react-icons/ai";
+import React from 'react';
+import styled from 'styled-components';
+import { Button } from 'components/Guilds/common/Button';
+import { Input } from 'components/Guilds/common/Form';
+import { AiOutlineSearch } from 'react-icons/ai';
 import { useHistory, useLocation } from 'react-router';
-import { Flex, Box } from "components/Guilds/common/Layout";
-import { MdOutlinePeopleAlt } from "react-icons/md";
-import GuildCard, { GuildCardContent, GuildCardHeader } from "components/Guilds/GuildCard";
-import dxDaoIcon from "../../assets/images/dxdao-icon.svg"
-import { Heading } from "components/Guilds/common/Typography";
+import { Flex, Box } from 'components/Guilds/common/Layout';
+import { MdOutlinePeopleAlt } from 'react-icons/md';
+import GuildCard, {
+  GuildCardContent,
+  GuildCardHeader,
+} from 'components/Guilds/GuildCard';
+import dxDaoIcon from '../../assets/images/dxdao-icon.svg';
+import { Heading } from 'components/Guilds/common/Typography';
 
 const InputContainer = styled(Flex)`
   display: flex;
@@ -20,23 +23,23 @@ const InputContainer = styled(Flex)`
 `;
 
 const StyledButton = styled(Button)`
-    margin-left: 1rem;
-    width: 9rem;
-    padding: 0.7rem;
-    color: ${({ theme }) => theme.colors.text};
-`
+  margin-left: 1rem;
+  width: 9rem;
+  padding: 0.7rem;
+  color: ${({ theme }) => theme.colors.text};
+`;
 const CardContainer = styled(Flex)`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+`;
 const MemberWrapper = styled(Flex)`
-    display:flex;
-    flex-direction: row;
-    color: ${({ theme }) => theme.colors.card.grey};
-`
+  display: flex;
+  flex-direction: row;
+  color: ${({ theme }) => theme.colors.card.grey};
+`;
 
 const ProposalsInformation = styled(Box)`
   display: inline-flex;
@@ -46,10 +49,12 @@ const ProposalsInformation = styled(Box)`
   border-radius: 15px;
   border: 1px solid
     ${({ proposals, theme }) =>
-        proposals === "active" ? theme.colors.card.green : theme.colors.card.grey};
+      proposals === 'active'
+        ? theme.colors.card.green
+        : theme.colors.card.grey};
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ proposals, theme }) =>
-        proposals === "active" ? theme.colors.card.green : theme.colors.card.grey};
+    proposals === 'active' ? theme.colors.card.green : theme.colors.card.grey};
   padding: 0.25rem 0.4rem;
 `;
 
@@ -64,96 +69,88 @@ const DaoTitle = styled(Heading)`
 `;
 
 const LandingPage: React.FC = () => {
+  const history = useHistory();
+  const location = useLocation();
 
-    const history = useHistory();
-    const location = useLocation();
-
-    return (
-        <>
-            <InputContainer>
-                <Input
-                    icon={<AiOutlineSearch size={24} />}
-                    placeholder="Search Guild"
-                />
-                <StyledButton
-                    variant="secondary"
-                    onClick={() => history.push(location.pathname + '/createGuild')}
-                    data-testid="create-guild-button"
-                >
-                    Create Guild
-                </StyledButton>
-            </InputContainer>
-            <CardContainer>
-                <GuildCard>
-                    <GuildCardHeader>
-                        <MemberWrapper>
-                            <MdOutlinePeopleAlt size={24} />
-                            500
-                        </MemberWrapper>
-                        <ProposalsInformation proposals={"active"}>
-                            4 Proposals
-                        </ProposalsInformation>
-                    </GuildCardHeader>
-                    <GuildCardContent>
-                        <DaoIcon src={dxDaoIcon} />
-                        <DaoTitle size={2}>
-                            DXdao
-                        </DaoTitle>
-                    </GuildCardContent>
-                </GuildCard>
-                <GuildCard>
-                    <GuildCardHeader>
-                        <MemberWrapper>
-                            <MdOutlinePeopleAlt size={24} />
-                            500
-                        </MemberWrapper>
-                        <ProposalsInformation proposals={"not-active"}>
-                            0 Proposals
-                        </ProposalsInformation>
-                    </GuildCardHeader>
-                    <GuildCardContent>
-                        <DaoIcon src={dxDaoIcon} />
-                        <DaoTitle size={2}>
-                            DXdao
-                        </DaoTitle>
-                    </GuildCardContent>
-                </GuildCard>
-                <GuildCard>
-                    <GuildCardHeader>
-                        <MemberWrapper>
-                            <MdOutlinePeopleAlt size={24} />
-                            500
-                        </MemberWrapper>
-                        <ProposalsInformation proposals={"active"}>
-                            4 Proposals
-                        </ProposalsInformation>
-                    </GuildCardHeader>
-                    <GuildCardContent>
-                        <DaoIcon src={dxDaoIcon} />
-                        <DaoTitle size={2}>
-                            DXdao
-                        </DaoTitle>
-                    </GuildCardContent>
-                </GuildCard>
-                <GuildCard>
-                    <GuildCardHeader>
-                        <MemberWrapper>
-                            <MdOutlinePeopleAlt size={24} />
-                            500
-                        </MemberWrapper>
-                        <ProposalsInformation proposals={"active"}>
-                            4 Proposals
-                        </ProposalsInformation>
-                    </GuildCardHeader>
-                    <GuildCardContent>
-                        <DaoIcon src={dxDaoIcon} />
-                        <DaoTitle size={2}>
-                            DXdao
-                        </DaoTitle>
-                    </GuildCardContent>
-                </GuildCard>
-            </CardContainer>
-        </>)
-}
+  return (
+    <>
+      <InputContainer>
+        <Input
+          icon={<AiOutlineSearch size={24} />}
+          placeholder="Search Guild"
+        />
+        <StyledButton
+          variant="secondary"
+          onClick={() => history.push(location.pathname + '/createGuild')}
+          data-testid="create-guild-button"
+        >
+          Create Guild
+        </StyledButton>
+      </InputContainer>
+      <CardContainer>
+        <GuildCard>
+          <GuildCardHeader>
+            <MemberWrapper>
+              <MdOutlinePeopleAlt size={24} />
+              500
+            </MemberWrapper>
+            <ProposalsInformation proposals={'active'}>
+              4 Proposals
+            </ProposalsInformation>
+          </GuildCardHeader>
+          <GuildCardContent>
+            <DaoIcon src={dxDaoIcon} />
+            <DaoTitle size={2}>DXdao</DaoTitle>
+          </GuildCardContent>
+        </GuildCard>
+        <GuildCard>
+          <GuildCardHeader>
+            <MemberWrapper>
+              <MdOutlinePeopleAlt size={24} />
+              500
+            </MemberWrapper>
+            <ProposalsInformation proposals={'not-active'}>
+              0 Proposals
+            </ProposalsInformation>
+          </GuildCardHeader>
+          <GuildCardContent>
+            <DaoIcon src={dxDaoIcon} />
+            <DaoTitle size={2}>DXdao</DaoTitle>
+          </GuildCardContent>
+        </GuildCard>
+        <GuildCard>
+          <GuildCardHeader>
+            <MemberWrapper>
+              <MdOutlinePeopleAlt size={24} />
+              500
+            </MemberWrapper>
+            <ProposalsInformation proposals={'active'}>
+              4 Proposals
+            </ProposalsInformation>
+          </GuildCardHeader>
+          <GuildCardContent>
+            <DaoIcon src={dxDaoIcon} />
+            <DaoTitle size={2}>DXdao</DaoTitle>
+          </GuildCardContent>
+        </GuildCard>
+        <GuildCard>
+          <GuildCardHeader>
+            <MemberWrapper>
+              <MdOutlinePeopleAlt size={24} />
+              500
+            </MemberWrapper>
+            <ProposalsInformation proposals={'active'}>
+              4 Proposals
+            </ProposalsInformation>
+          </GuildCardHeader>
+          <GuildCardContent>
+            <DaoIcon src={dxDaoIcon} />
+            <DaoTitle size={2}>DXdao</DaoTitle>
+          </GuildCardContent>
+        </GuildCard>
+      </CardContainer>
+    </>
+  );
+};
 
 export default LandingPage;
