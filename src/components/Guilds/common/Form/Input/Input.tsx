@@ -7,8 +7,11 @@ const baseInputStyles = css`
   padding: 0.5rem 0.8rem;
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
+  
   ::placeholder {
-    color: ${({ theme }) => theme.colors.proposalText.lightGrey};
+    color: ${({ theme }) => theme.colors.proposalText.grey};
+    font-size: 14;
+    font-weight: 500;
   }
   :hover:enabled {
     color: ${({ theme }) => theme.colors.background};
@@ -41,12 +44,12 @@ const InputBase = styled.input`
   display: flex;
   border: none;
   width: 100%;
+  color: ${({ theme }) => theme.colors.text};
   &:focus,
   &:active,
   &:hover {
     outline: none;
     border: none;
-    color: ${({ theme }) => theme.colors.text};
   }
   margin-left: 12px;
   padding: 0;

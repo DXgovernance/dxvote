@@ -7,6 +7,10 @@
       "grey": "#A1A6B0",
       "lightGrey": "#BDC0C7"
     },
+    "card": {
+      "grey": "#A1A6B0",
+      "green": "#1DE9B6"
+    },
     "background": "#1B1D1F",
     "button": {
       "primary": "#295FF4",
