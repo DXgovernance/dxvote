@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
@@ -116,30 +115,6 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
     proposal?.creator,
     DEFAULT_ETH_CHAIN_ID
   );
-  const [votesSummary, setVoteSummary] = useState([]);
-
-  // Build vote summary array
-  useEffect(() => {
-    const voteSummaryArray = [];
-
-    votes
-      .sort((a, b) => b - a)
-      .map((vote, i) => {
-        if (i < 3 && !(i === votes.length - 1)) {
-          voteSummaryArray.push(
-            <>
-              <Detail>{vote}%</Detail>
-              <Icon as="div" spaceLeft spaceRight>
-                <FiCircle />
-              </Icon>
-            </>
-          );
-        } else {
-          voteSummaryArray.push(<Detail>{vote}%</Detail>);
-        }
-      });
-    setVoteSummary(voteSummaryArray);
-  }, [votes]);
 
   return (
     <UnstyledLink to={href || '#'}>
@@ -206,7 +181,22 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
 
           {proposal?.totalVotes ? (
             <BorderedIconDetailWrapper>
-              {votesSummary.slice(0, 3)}
+              {votes
+                .sort((a, b) => b - a)
+                .map((vote, i) => {
+                  if (i < 3 && !(i === votes.length - 1)) {
+                    return (
+                      <>
+                        <Detail>{vote}%</Detail>
+                        <Icon as="div" spaceLeft spaceRight>
+                          <FiCircle />
+                        </Icon>
+                      </>
+                    );
+                  } else {
+                    return <Detail>{vote}%</Detail>;
+                  }
+                })}
             </BorderedIconDetailWrapper>
           ) : (
             <Loading
