@@ -6,7 +6,7 @@ import { Divider } from '../../common/Divider';
 import { Button as CommonButton, IconButton } from '../../common/Button';
 import { Flex, Box } from '../../common/Layout';
 import { ProposalActionTag, ActionTypes } from '../../common/ProposalActionTag';
-import ActionModal from 'components/Guilds/ActionsModal';
+import { useActionsBuilder } from 'contexts/Guilds/ActionsBuilder';
 
 const Button = styled(CommonButton)`
   font-style: normal;
@@ -33,9 +33,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
   proposalViewMode,
 }) => {
   const [actionsEditMode, setActionsEditMode] = useState(false);
-  const [addActionsMode, setAddActionsMode] = useState(false);
-
-  const closeActionsModal = () => setAddActionsMode(false);
+  const { setIsOpen } = useActionsBuilder();
 
   // TODO: remove when actions are implemented
   const [actions, setActions] = useState<any[]>([
@@ -50,7 +48,6 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
   ]);
   return (
     <>
-      <ActionModal isOpen={addActionsMode} onCancel={closeActionsModal} />
       <Card
         header={
           <Flex direction="row" justifyContent="space-between">
@@ -90,7 +87,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
                   <IconButton
                     margin="0"
                     iconLeft
-                    onClick={() => setAddActionsMode(true)}
+                    onClick={() => setIsOpen(true)}
                   >
                     <AiOutlinePlus /> Add Action
                   </IconButton>

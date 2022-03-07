@@ -8,7 +8,6 @@ import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ethereum.svg';
 import gnosisIcon from '../../../assets/images/gnosis-icon-green.svg';
 import { Flex } from '../common/Layout';
-import { Modal } from '../common/Modal';
 import { ContainerText } from '../common/Layout/Text';
 
 const RepWrapper = styled(Flex)`
@@ -26,15 +25,7 @@ const ExternalWrapper = styled(Flex)`
   margin: 8px auto;
 `;
 
-interface MintReputationModalProps {
-  isOpen: boolean;
-  onCancel: () => void;
-}
-
-const MintReputationModal: React.FC<MintReputationModalProps> = ({
-  isOpen,
-  onCancel,
-}) => {
+const MintReputationModal: React.FC = () => {
   const [address, setAddress] = useState('');
   const [repAmount, setRepAmount] = useState('');
   const [repPercent, setRepPercent] = useState('');
@@ -50,56 +41,47 @@ const MintReputationModal: React.FC<MintReputationModalProps> = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onDismiss={onCancel}
-      header={<div>Mint Reputation</div>}
-      maxWidth={400}
-      confirmText="Add Action"
-      onConfirm={() => console.log('test action button')}
-    >
-      <RepWrapper>
-        <ExternalWrapper>
-          <WrapperText variant="bold" color="grey">
-            Recipient
-          </WrapperText>
-          <Input
-            placeholder="Ethereum Address"
-            value={address}
-            onChange={e => setAddress(e.target.value)}
-            icon={iconsByChain[chainId] || null}
-            size={24}
-            width="85%"
-            cross
-          />
-        </ExternalWrapper>
-        <ExternalWrapper>
-          <WrapperText variant="bold" color="grey">
-            Reputation Amount
-          </WrapperText>
-          <Input
-            placeholder="0.00"
-            value={repAmount}
-            onChange={e => setRepAmount(e.target.value)}
-            size={24}
-            width="85%"
-            cross
-          />
-        </ExternalWrapper>
-        <ExternalWrapper>
-          <WrapperText variant="bold" color="grey">
-            Reputation in %
-          </WrapperText>
-          <Input
-            placeholder="0.00"
-            value={repPercent}
-            onChange={e => setRepPercent(e.target.value)}
-            width="85%"
-            cross
-          />
-        </ExternalWrapper>
-      </RepWrapper>
-    </Modal>
+    <RepWrapper>
+      <ExternalWrapper>
+        <WrapperText variant="bold" color="grey">
+          Recipient
+        </WrapperText>
+        <Input
+          placeholder="Ethereum Address"
+          value={address}
+          onChange={e => setAddress(e.target.value)}
+          icon={iconsByChain[chainId] || null}
+          size={24}
+          width="85%"
+          cross
+        />
+      </ExternalWrapper>
+      <ExternalWrapper>
+        <WrapperText variant="bold" color="grey">
+          Reputation Amount
+        </WrapperText>
+        <Input
+          placeholder="0.00"
+          value={repAmount}
+          onChange={e => setRepAmount(e.target.value)}
+          size={24}
+          width="85%"
+          cross
+        />
+      </ExternalWrapper>
+      <ExternalWrapper>
+        <WrapperText variant="bold" color="grey">
+          Reputation in %
+        </WrapperText>
+        <Input
+          placeholder="0.00"
+          value={repPercent}
+          onChange={e => setRepPercent(e.target.value)}
+          width="85%"
+          cross
+        />
+      </ExternalWrapper>
+    </RepWrapper>
   );
 };
 
