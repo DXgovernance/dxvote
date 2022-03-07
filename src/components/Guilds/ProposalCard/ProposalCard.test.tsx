@@ -3,9 +3,11 @@ import { screen } from '@testing-library/react';
 import { default as ProposalCard } from './';
 
 import { render } from '../../../utils/tests';
+import { BigNumber } from 'ethers';
 
 const proposalTitle = 'Proposal Title';
 const creatorAddress = '0x0000000000000000000000000000000000000000';
+const mockBN = [BigNumber.from(20), BigNumber.from(40)];
 
 jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
   useProposal: () => ({
@@ -13,6 +15,7 @@ jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
       title: proposalTitle,
       contentHash: '0x0',
       creator: creatorAddress,
+      totalVotes: mockBN,
       endTime: {
         toNumber: () => 3,
         isBefore: () => false,
@@ -20,6 +23,15 @@ jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
         toNow: () => 'later',
         format: () => 'A Date Formate',
       },
+    },
+    isValidating: false,
+  }),
+}));
+
+jest.mock('hooks/Guilds/ether-swr/guild/useGuildConfig', () => ({
+  useGuildConfig: () => ({
+    data: {
+      totalLocked: mockBN[0],
     },
     isValidating: false,
   }),
