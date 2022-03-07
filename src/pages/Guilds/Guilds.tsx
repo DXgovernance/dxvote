@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-
 import { Box } from '../../components/Guilds/common/Layout';
 import { Sidebar } from '../../components/Guilds/Sidebar';
 import { Filter } from '../../components/Guilds/Filter';
 import ProposalCard from '../../components/Guilds/ProposalCard';
 import InView from 'react-intersection-observer';
 import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/guild/useGuildProposalIds';
+import Result, { ResultState } from 'components/Guilds/common/Result';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -35,10 +35,6 @@ const ProposalsList = styled(Box)`
   margin-top: 1rem;
 `;
 
-const ErrorList = styled(Box)`
-  overflow: hidden;
-`;
-
 const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
@@ -55,6 +51,16 @@ const GuildsPage: React.FC = () => {
     return clone.reverse();
   }, [proposalIds]);
 
+  if (!proposalIds && error) {
+    return (
+      <Result
+        state={ResultState.ERROR}
+        title="We ran into an error."
+        subtitle={error.message}
+      />
+    );
+  }
+
   return (
     <PageContainer>
       <SidebarContent>
@@ -62,34 +68,30 @@ const GuildsPage: React.FC = () => {
       </SidebarContent>
       <PageContent>
         <Filter />
-        {!error ? (
-          <ProposalsList data-testid="proposals-list">
-            {filteredProposalIds ? (
-              filteredProposalIds.map(proposalId => (
-                <InView key={proposalId}>
-                  {({ inView, ref }) => (
-                    <div ref={ref}>
-                      <ProposalCard
-                        id={inView ? proposalId : null}
-                        href={`/${chainName}/${guildId}/proposal/${proposalId}`}
-                      />
-                    </div>
-                  )}
-                </InView>
-              ))
-            ) : (
-              <>
-                <ProposalCard />
-                <ProposalCard />
-                <ProposalCard />
-                <ProposalCard />
-                <ProposalCard />
-              </>
-            )}
-          </ProposalsList>
-        ) : (
-          <ErrorList>{error.message}</ErrorList>
-        )}
+        <ProposalsList data-testid="proposals-list">
+          {filteredProposalIds ? (
+            filteredProposalIds.map(proposalId => (
+              <InView key={proposalId}>
+                {({ inView, ref }) => (
+                  <div ref={ref}>
+                    <ProposalCard
+                      id={inView ? proposalId : null}
+                      href={`/${chainName}/${guildId}/proposal/${proposalId}`}
+                    />
+                  </div>
+                )}
+              </InView>
+            ))
+          ) : (
+            <>
+              <ProposalCard />
+              <ProposalCard />
+              <ProposalCard />
+              <ProposalCard />
+              <ProposalCard />
+            </>
+          )}
+        </ProposalsList>
       </PageContent>
     </PageContainer>
   );
