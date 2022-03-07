@@ -11,12 +11,14 @@ import OptionRow, { Option } from './Option';
 import AddButton from './AddButton';
 
 const Button = styled(CommonButton)`
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  font-size: ${({ theme }) => theme.fontSizes.label};
   margin: 0;
-  padding: 4px 8px;
+  padding: 0.25rem 0.75rem;
+`;
+
+const AddOptionWrapper = styled(Box)`
+  padding: 1rem;
 `;
 
 interface ActionsBuilderProps {
@@ -107,7 +109,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
       {editable && actionsEditMode && (
         <>
           <Divider />
-          <Box padding="16px">
+          <AddOptionWrapper>
             <AddButton
               label="Add Option"
               onClick={() => {
@@ -121,7 +123,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
                 ]);
               }}
             />
-          </Box>
+          </AddOptionWrapper>
         </>
       )}
     </SidebarCard>

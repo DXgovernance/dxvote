@@ -8,13 +8,10 @@ interface ProposalActionTagProps {
 
 const Tag = styled.span<ProposalActionTagProps>`
   margin: 0;
-  border-radius: 6px;
-  padding: 4px 8px;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
   border: 1px solid ${({ theme }) => theme.colors.muted};
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
   color: ${({ color }) => color};
   border-color: ${({ color }) => color};
 `;

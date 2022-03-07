@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Box, Flex } from 'components/Guilds/common/Layout';
+import { Box } from 'components/Guilds/common/Layout';
 import { ProposalOptionTag } from '../ProposalOptionTag';
 import AddButton from '../AddButton';
 import ActionView, { Action } from '../Action';
@@ -23,16 +23,27 @@ const ActionCountLabel = styled.span`
   color: ${({ theme }) => theme.gray};
 `;
 
+const OptionWrapper = styled(Box)`
+  padding: 1rem;
+`;
+
+const DetailWrapper = styled(Box)`
+  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
 const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
   return (
-    <Box padding="16px">
-      <Flex padding="8px 0" direction="row" justifyContent="space-between">
+    <OptionWrapper>
+      <DetailWrapper>
         <ProposalOptionTag option={data} />
         <ActionCountLabel>
           {data?.actions?.length || 'No'} on-chain{' '}
           {data?.actions?.length > 2 ? 'actions' : 'action'}
         </ActionCountLabel>
-      </Flex>
+      </DetailWrapper>
 
       {!editable &&
         data?.actions?.map((action, index) => (
@@ -40,7 +51,7 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
         ))}
 
       {editable && <AddButton label="Add Action" />}
-    </Box>
+    </OptionWrapper>
   );
 };
 
