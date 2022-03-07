@@ -29,6 +29,7 @@ const ResultWrapper = styled(Box)`
   flex-direction: column;
   align-items: center;
   text-align: center;
+  margin: 2rem 0;
 `;
 
 const Title = styled(Heading)`

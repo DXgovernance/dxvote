@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaChevronLeft } from 'react-icons/fa';
+import React, { useContext } from 'react';
+import { FaArrowLeft, FaChevronLeft } from 'react-icons/fa';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { Loading } from 'components/Guilds/common/Loading';
@@ -13,6 +13,9 @@ import AddressButton from '../../components/Guilds/AddressButton';
 import ProposalDescription from '../../components/Guilds/ProposalPage/ProposalDescription';
 import { useProposal } from '../../hooks/Guilds/ether-swr/guild/useProposal';
 import { ActionsBuilder } from 'components/Guilds/CreateProposalPage';
+import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
+import Result, { ResultState } from 'components/Guilds/common/Result';
+import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -84,15 +87,37 @@ const ProposalPage: React.FC = () => {
     proposal_id?: string;
   }>();
 
+  const { isLoading: isGuildAvailabilityLoading } = useContext(
+    GuildAvailabilityContext
+  );
+  const { data: proposalIds } = useGuildProposalIds(guildId);
   const { data: proposal, error } = useProposal(guildId, proposalId);
 
-  if (error) {
-    return (
-      <div>
-        We ran into some issues trying to load this proposal. Please try again
-        later.
-      </div>
-    );
+  if (!isGuildAvailabilityLoading) {
+    if (!proposalIds?.includes(proposalId)) {
+      return (
+        <Result
+          state={ResultState.ERROR}
+          title="We couldn't find that proposal."
+          subtitle="It probably doesn't exist."
+          extra={
+            <UnstyledLink to={`/${chainName}/${guildId}`}>
+              <IconButton iconLeft>
+                <FaArrowLeft size={12} /> See all proposals
+              </IconButton>
+            </UnstyledLink>
+          }
+        />
+      );
+    } else if (error) {
+      return (
+        <Result
+          state={ResultState.ERROR}
+          title="We ran into an error."
+          subtitle={error.message}
+        />
+      );
+    }
   }
 
   return (

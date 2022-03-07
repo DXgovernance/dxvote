@@ -81,31 +81,37 @@ const GuildAvailabilityProvider = ({ children }) => {
       <Result
         state={ResultState.ERROR}
         title="Guild not available."
-        subtitle="This guild is not available on this network."
+        subtitle={
+          Object.values(availability).includes(true)
+            ? 'This guild is not available on this network.'
+            : 'No guild exists on this address.'
+        }
         extra={
-          <>
-            <GreyText>Access it on</GreyText>
-            <div>
-              {Object.keys(availability).map(chainId => {
-                if (!availability[chainId]) return null;
-                const chainConfig = getNetworkById(Number(chainId));
-                return (
-                  <div key={chainConfig?.id}>
-                    <NetworkIconButton
-                      iconLeft
-                      onClick={() => trySwitching(chainConfig)}
-                    >
-                      <ButtonIcon
-                        src={iconsByChain[chainConfig?.id]}
-                        alt={chainConfig?.name}
-                      />{' '}
-                      {chainConfig?.displayName}
-                    </NetworkIconButton>
-                  </div>
-                );
-              })}
-            </div>
-          </>
+          Object.values(availability).includes(true) && (
+            <>
+              <GreyText>Access it on</GreyText>
+              <div>
+                {Object.keys(availability).map(chainId => {
+                  if (!availability[chainId]) return null;
+                  const chainConfig = getNetworkById(Number(chainId));
+                  return (
+                    <div key={chainConfig?.id}>
+                      <NetworkIconButton
+                        iconLeft
+                        onClick={() => trySwitching(chainConfig)}
+                      >
+                        <ButtonIcon
+                          src={iconsByChain[chainConfig?.id]}
+                          alt={chainConfig?.name}
+                        />{' '}
+                        {chainConfig?.displayName}
+                      </NetworkIconButton>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )
         }
       />
     );
