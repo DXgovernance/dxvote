@@ -11,6 +11,7 @@ import { Heading } from '../common/Typography';
 import StyledIcon from '../common/SVG';
 import { isMobile } from 'react-device-detect';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
+import { Loading } from '../common/Loading';
 
 const Backdrop = styled(Flex)``;
 const CloseIcon = styled(FiX)`
@@ -167,7 +168,9 @@ interface ProposalTypesProps {
 const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
   const history = useHistory();
   const location = useLocation();
-  const { isLoading } = useContext(GuildAvailabilityContext);
+  const { isLoading: isGuildAvailabilityLoading } = useContext(
+    GuildAvailabilityContext
+  );
 
   const continueUrl = location.pathname.replace(
     '/proposalType',
@@ -177,7 +180,7 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
   const [proposalDescription, setProposalDescription] =
     useState<ProposalTypeDescriptionProps>(data[0]);
 
-  if (isLoading) return null;
+  if (isGuildAvailabilityLoading) return <Loading loading />;
 
   return (
     <Backdrop>

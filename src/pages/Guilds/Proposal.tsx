@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { FaArrowLeft, FaChevronLeft } from 'react-icons/fa';
+import { FaChevronLeft } from 'react-icons/fa';
+import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { Loading } from 'components/Guilds/common/Loading';
@@ -103,7 +104,7 @@ const ProposalPage: React.FC = () => {
           extra={
             <UnstyledLink to={`/${chainName}/${guildId}`}>
               <IconButton iconLeft>
-                <FaArrowLeft size={12} /> See all proposals
+                <FiArrowLeft /> See all proposals
               </IconButton>
             </UnstyledLink>
           }

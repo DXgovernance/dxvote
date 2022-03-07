@@ -8,7 +8,9 @@ import { ButtonIcon, IconButton } from 'components/Guilds/common/Button';
 import { iconsByChain } from 'components/Guilds/Header/NetworkButton';
 import { Box } from 'components/Guilds/common/Layout';
 import { MultichainContext } from 'contexts/MultichainProvider';
+import UnstyledLink from 'components/Guilds/common/UnstyledLink';
 import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
+import { FiArrowLeft } from 'react-icons/fi';
 
 interface ContractAvailability {
   [chainId: number]: boolean;
@@ -87,7 +89,7 @@ const GuildAvailabilityProvider = ({ children }) => {
             : 'No guild exists on this address.'
         }
         extra={
-          Object.values(availability).includes(true) && (
+          Object.values(availability).includes(true) ? (
             <>
               <GreyText>Access it on</GreyText>
               <div>
@@ -111,6 +113,12 @@ const GuildAvailabilityProvider = ({ children }) => {
                 })}
               </div>
             </>
+          ) : (
+            <UnstyledLink to={`/`}>
+              <IconButton iconLeft>
+                <FiArrowLeft /> Take me home
+              </IconButton>
+            </UnstyledLink>
           )
         }
       />
