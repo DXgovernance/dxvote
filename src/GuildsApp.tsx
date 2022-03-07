@@ -21,7 +21,7 @@ import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBo
 import ProposalTypes from 'components/Guilds/ProposalTypes';
 import { ProposalTypesConfig } from 'configs/proposalTypes';
 import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
-import AvailabilityGuard from 'components/Guilds/AvailabilityGuard';
+import GuildAvailabilityProvider from 'contexts/Guilds/guildAvailability';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -49,7 +49,7 @@ const GuildsApp = () => {
                       to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
                     />
 
-                    <AvailabilityGuard>
+                    <GuildAvailabilityProvider>
                       <Route exact path="/:chain_name/:guild_id">
                         <GuildsPage />
                       </Route>
@@ -62,7 +62,7 @@ const GuildsApp = () => {
                       <Route path="/:chain_name/:guild_id/create/:proposal_type">
                         <CreateProposalPage />
                       </Route>
-                    </AvailabilityGuard>
+                    </GuildAvailabilityProvider>
                   </Switch>
                 </Container>
               </GuildsContextProvider>
