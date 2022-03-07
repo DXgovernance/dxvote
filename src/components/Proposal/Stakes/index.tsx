@@ -30,7 +30,7 @@ import {
   SummaryTotal,
   ActionButton,
 } from '../styles';
-import { useAllowance } from 'hooks/useBalance';
+import { useAllowance } from 'hooks/useERC20';
 import { parseUnits } from 'ethers/lib/utils';
 
 const Stakes = () => {
@@ -63,21 +63,22 @@ const Stakes = () => {
     daoStore.getVotingMachineOfProposal(proposalId);
 
   const votingMachineTokenName =
-    votingMachines[votingMachineOfProposal].type == 'DXDVotingMachine'
+    votingMachines[votingMachineOfProposal.address].type == 'DXDVotingMachine'
       ? 'DXD'
       : 'GEN';
 
   const votingMachineTokenAllowed = useAllowance(
-    votingMachines[votingMachineOfProposal].token,
+    votingMachines[votingMachineOfProposal.address].token,
     account,
-    votingMachineOfProposal
+    votingMachineOfProposal.address
   );
 
   const votingMachineTokenApproved = votingMachineTokenAllowed.gt(
     bnum(parseUnits('10000'))
   );
 
-  const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
+  const votingParameters =
+    daoStore.getVotingMachineOfProposal(proposalId).params;
 
   proposalEvents.stakes.map(stake => {
     if (stake.staker === account && stake.vote.toString() === '1') {
