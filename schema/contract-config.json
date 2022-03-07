@@ -19,7 +19,7 @@
   "functions": [
       {
           "title": "Create vesting contract",
-          "functionName": "create(address, uint256, uint256, uint256, uint256)",
+          "functionName": "create",
           "params": [
               { "type": "address", "component": "address", "name": "beneficiary", "defaultValue": "", "description": "Receiving address of tokens" },
               { "type": "uint256", "component": "date", "name": "start", "defaultValue": "", "description": "Starting time for contract" },
