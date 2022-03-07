@@ -444,7 +444,7 @@ export default class DaoStore {
     };
   }
 
-  getVotingMachineOfProposal(proposalId): {
+  getVotingMachineOfProposal(proposalId: string): {
     address: string;
     paramsHash: string;
     params: VotingMachineParameters;
