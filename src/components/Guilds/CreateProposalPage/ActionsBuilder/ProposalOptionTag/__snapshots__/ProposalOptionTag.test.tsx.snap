@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProposalOptionTag Should match snapshot 1`] = `
+<div>
+   
+  <span
+    class="sc-bdfBQB hZPDyC"
+    color="#295FF4"
+  >
+    For
+  </span>
+   
+</div>
+`;
