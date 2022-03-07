@@ -1,0 +1,36 @@
+{
+  "$id": "http://example.com/example.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "default": {},
+  "description": "The root schema comprises the entire JSON document for contract configuration schema.",
+  "required": [
+      "title",
+      "networks",
+      "functions"
+  ],
+  "title": "Vesting contract for DXD token",
+  "networks": {
+      "mainnet": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B", 
+      "rinkeby": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B", 
+      "gnosis": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B", 
+      "arbitrum": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B", 
+      "arbitrumRinkeby": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+  },
+  "functions": [
+      {
+          "title": "Create vesting contract",
+          "functionName": "create(address, uint256, uint256, uint256, uint256)",
+          "params": [
+              { "type": "address", "component": "address", "name": "beneficiary", "defaultValue": "", "description": "Receiving address of tokens" },
+              { "type": "uint256", "component": "date", "name": "start", "defaultValue": "", "description": "Starting time for contract" },
+              { "type": "uint256", "component": "time", "name": "cliffDuration", "defaultValue": "", "description": "How long before cliff" },
+              { "type": "uint256", "component": "time", "name": "duration", "defaultValue": "", "description": "How long before contract finishes fully" },
+              { "type": "uint256", "component": "tokenAmount",  "name": "value", "defaultValue": "", "description": "Number of tokens to vest" }
+          ],
+          "shortDescription": "",
+          "longDescription": "",
+          "spendsTokens": true
+      }
+  ],
+  "additionalProperties": true
+}
