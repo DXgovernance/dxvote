@@ -4,11 +4,11 @@ import { useWeb3React } from '@web3-react/core';
 import { useRouteMatch } from 'react-router-dom';
 import { getNetworkById } from 'utils';
 import Result, { ResultState } from 'components/Guilds/common/Result';
-import UnstyledLink from 'components/Guilds/common/UnstyledLink';
 import { ButtonIcon, IconButton } from 'components/Guilds/common/Button';
 import { iconsByChain } from 'components/Guilds/Header/NetworkButton';
 import { Box } from 'components/Guilds/common/Layout';
 import { MultichainContext } from 'contexts/MultichainProvider';
+import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
 
 interface ContractAvailability {
   [chainId: number]: boolean;
@@ -40,6 +40,7 @@ const GuildAvailabilityProvider = ({ children }) => {
   const { providers: multichainProviders } = useContext(MultichainContext);
   const [availability, setAvailability] = useState<ContractAvailability>({});
   const { chainId: currentChainId } = useWeb3React();
+  const { trySwitching } = useNetworkSwitching();
 
   useEffect(() => {
     if (!guildId || !multichainProviders) {
@@ -90,17 +91,16 @@ const GuildAvailabilityProvider = ({ children }) => {
                 const chainConfig = getNetworkById(Number(chainId));
                 return (
                   <div key={chainConfig?.id}>
-                    <UnstyledLink
-                      to={`/#/guilds/${chainConfig?.name}/${guildId}`}
+                    <NetworkIconButton
+                      iconLeft
+                      onClick={() => trySwitching(chainConfig)}
                     >
-                      <NetworkIconButton iconLeft>
-                        <ButtonIcon
-                          src={iconsByChain[chainConfig?.id]}
-                          alt={chainConfig?.name}
-                        />{' '}
-                        {chainConfig?.displayName}
-                      </NetworkIconButton>
-                    </UnstyledLink>
+                      <ButtonIcon
+                        src={iconsByChain[chainConfig?.id]}
+                        alt={chainConfig?.name}
+                      />{' '}
+                      {chainConfig?.displayName}
+                    </NetworkIconButton>
                   </div>
                 );
               })}
