@@ -3,9 +3,12 @@ import { screen } from '@testing-library/react';
 import { default as ProposalCard } from './';
 
 import { render } from '../../../utils/tests';
+import { BigNumber } from 'ethers';
 
 const proposalTitle = 'Proposal Title';
 const creatorAddress = '0x0000000000000000000000000000000000000000';
+const mockVotes = [BigNumber.from(20), BigNumber.from(40)];
+const mockTotalVotes = BigNumber.from(100);
 
 jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
   useProposal: () => ({
@@ -13,6 +16,7 @@ jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
       title: proposalTitle,
       contentHash: '0x0',
       creator: creatorAddress,
+      totalVotes: mockVotes,
       endTime: {
         toNumber: () => 3,
         isBefore: () => false,
@@ -20,6 +24,15 @@ jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
         toNow: () => 'later',
         format: () => 'A Date Formate',
       },
+    },
+    isValidating: false,
+  }),
+}));
+
+jest.mock('hooks/Guilds/ether-swr/guild/useGuildConfig', () => ({
+  useGuildConfig: () => ({
+    data: {
+      totalLocked: mockTotalVotes,
     },
     isValidating: false,
   }),
@@ -39,6 +52,10 @@ test('ProposalCard with mocked data', async () => {
 
   //Title is rendered
   expect(screen.queryByText(proposalTitle)).toBeTruthy();
+
+  // Votes rendered
+  expect(screen.queryByText('20%')).toBeTruthy();
+  expect(screen.queryByText('40%')).toBeTruthy();
 
   //fix
   //expect(screen.queryByTestId('proposal-status')).toBeTruthy();
