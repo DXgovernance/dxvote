@@ -146,6 +146,9 @@ const LeftArrowContainer = styled(Flex)`
   flex-direction: row;
 `;
 
+const BackButton = styled(IoIosArrowBack)`
+  cursor: pointer;
+`;
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onDismiss,
@@ -186,7 +189,7 @@ export const Modal: React.FC<ModalProps> = ({
               {backnCross && (
                 <>
                   <LeftArrowContainer>
-                    <IoIosArrowBack onClick={prevContent} />
+                    <BackButton onClick={prevContent} />
                     <HeaderText>{header}</HeaderText>
                   </LeftArrowContainer>
                   <CloseIcon />
