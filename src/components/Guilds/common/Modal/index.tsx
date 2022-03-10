@@ -193,7 +193,7 @@ export const Modal: React.FC<ModalProps> = ({
                     <BackButton onClick={prevContent} />
                     <HeaderText>{header}</HeaderText>
                   </LeftArrowContainer>
-                  <CloseIcon />
+                  <CloseIcon onClick={onDismiss} />
                 </>
               )}
             </Header>

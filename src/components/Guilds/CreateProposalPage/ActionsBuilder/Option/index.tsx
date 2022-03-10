@@ -3,6 +3,7 @@ import { Box } from 'components/Guilds/common/Layout';
 import { ProposalOptionTag } from '../ProposalOptionTag';
 import AddButton from '../AddButton';
 import ActionView, { Action } from '../Action';
+import { useActionsBuilder } from 'contexts/Guilds/ActionsBuilder';
 
 export interface Option {
   index: number;
@@ -35,6 +36,7 @@ const DetailWrapper = styled(Box)`
 `;
 
 const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
+  const { setIsOpen } = useActionsBuilder();
   return (
     <OptionWrapper>
       <DetailWrapper>
@@ -50,7 +52,9 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
           <ActionView key={index} action={action} />
         ))}
 
-      {editable && <AddButton label="Add Action" />}
+      {editable && (
+        <AddButton onClick={() => setIsOpen(true)} label="Add Action" />
+      )}
     </OptionWrapper>
   );
 };

@@ -62,15 +62,7 @@ const ActionModal: React.FC = () => {
         <WrapperText variant="bold" color="grey">
           Core
         </WrapperText>
-        <ActionsButton
-          variant="secondary"
-          onClick={() =>
-            setModalView(content => [
-              ...content,
-              ActionsModalView.DxdaoController,
-            ])
-          }
-        >
+        <ActionsButton variant="secondary">
           <StyledIcon src={Vector} />
           Transfer & Mint
         </ActionsButton>
@@ -79,7 +71,15 @@ const ActionModal: React.FC = () => {
         <WrapperText variant="bold" color="grey">
           External Contracts
         </WrapperText>
-        <ExternalButton variant="secondary">
+        <ExternalButton
+          variant="secondary"
+          onClick={() =>
+            setModalView(content => [
+              ...content,
+              ActionsModalView.DxdaoController,
+            ])
+          }
+        >
           DXdao Controller
           <ButtonText variant="medium" color="grey">
             2 Actions
