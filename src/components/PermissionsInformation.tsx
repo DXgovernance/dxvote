@@ -34,7 +34,7 @@ const PermissionsInformation = observer(() => {
 
   const web3 = providerStore.getActiveWeb3React().library;
   const schemes = daoStore.getAllSchemes();
-  const rawPermissions = daoStore.getCache().callPermissions;
+  const rawPermissions = daoStore.daoCache.callPermissions;
   const networkContracts = configStore.getNetworkContracts();
   const tokens = configStore.getTokensOfNetwork();
   const recommendedCalls = configStore.getRecommendedCalls();

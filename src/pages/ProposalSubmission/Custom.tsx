@@ -180,7 +180,7 @@ const NewProposalPage = observer(() => {
     }
   });
 
-  const callPermissions = daoStore.getCache().callPermissions;
+  const callPermissions = daoStore.daoCache.callPermissions;
   if (
     isWalletScheme(schemeToUse) &&
     callPermissions[ZERO_ADDRESS] &&
