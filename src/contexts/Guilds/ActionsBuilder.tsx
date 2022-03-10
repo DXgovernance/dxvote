@@ -16,11 +16,6 @@ export const ActionsModalProvider = ({ children }) => {
   const [modalView, setModalView] = useState<ActionsModalView[]>([
     ActionsModalView.Base,
   ]);
-
-  // each time modal view changes, it adds to the array
-  // when back button is clicked the modal view
-  // needs to know if tranfer and mint has already been set not to reset it again
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   // closes modal and resets the view

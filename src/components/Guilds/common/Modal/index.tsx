@@ -149,6 +149,7 @@ const LeftArrowContainer = styled(Flex)`
 const BackButton = styled(IoIosArrowBack)`
   cursor: pointer;
 `;
+
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onDismiss,
