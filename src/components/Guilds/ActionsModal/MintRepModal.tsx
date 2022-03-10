@@ -52,8 +52,8 @@ const MintReputationModal: React.FC = () => {
           onChange={e => setAddress(e.target.value)}
           icon={iconsByChain[chainId] || null}
           size={24}
-          width="85%"
           cross
+          width="85%"
         />
       </ExternalWrapper>
       <ExternalWrapper>
@@ -65,8 +65,8 @@ const MintReputationModal: React.FC = () => {
           value={repAmount}
           onChange={e => setRepAmount(e.target.value)}
           size={24}
-          width="85%"
           cross
+          width="85%"
         />
       </ExternalWrapper>
       <ExternalWrapper>
@@ -77,8 +77,8 @@ const MintReputationModal: React.FC = () => {
           placeholder="0.00"
           value={repPercent}
           onChange={e => setRepPercent(e.target.value)}
-          width="85%"
           cross
+          width="85%"
         />
       </ExternalWrapper>
     </RepWrapper>
