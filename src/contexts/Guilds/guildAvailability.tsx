@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
 import { useRouteMatch } from 'react-router-dom';
@@ -75,10 +75,12 @@ const GuildAvailabilityProvider = ({ children }) => {
     getAvailability();
   }, [guildId, multichainProviders]);
 
-  if (
-    Object.keys(availability).includes(String(currentChainId)) &&
-    !availability?.[currentChainId]
-  ) {
+  const isLoading = useMemo(
+    () => !Object.keys(availability).includes(String(currentChainId)),
+    [availability, currentChainId]
+  );
+
+  if (!isLoading && !availability?.[currentChainId]) {
     return (
       <Result
         state={ResultState.ERROR}
@@ -129,7 +131,7 @@ const GuildAvailabilityProvider = ({ children }) => {
     <GuildAvailabilityContext.Provider
       value={{
         availability,
-        isLoading: !Object.keys(availability).includes(String(currentChainId)),
+        isLoading,
       }}
     >
       {children}

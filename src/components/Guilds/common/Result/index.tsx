@@ -32,11 +32,15 @@ const ResultWrapper = styled(Box)`
   margin: 2rem 0;
 `;
 
-const Title = styled(Heading)`
+const Title = styled(Heading).attrs(() => ({
+  size: '2',
+}))`
   margin-bottom: 0;
 `;
 
-const Subtitle = styled(Heading)`
+const Subtitle = styled(Heading).attrs(() => ({
+  size: '1',
+}))`
   color: ${({ theme }) => theme.colors.proposalText.lightGrey};
 `;
 
@@ -65,8 +69,8 @@ const Result: React.FC<ResultProps> = ({
               ? theme?.colors?.red
               : theme?.colors?.primary,
         })}
-      <Title size="2">{title}</Title>
-      <Subtitle size="1">{subtitle}</Subtitle>
+      <Title>{title}</Title>
+      <Subtitle>{subtitle}</Subtitle>
       {extra}
     </ResultWrapper>
   );
