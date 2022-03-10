@@ -21,37 +21,39 @@ export const ActionsModalProvider = ({ children }) => {
     setModalView(ActionsModalView.Base);
     setIsOpen(false);
   };
-  // switchstate here
 
-  const [modalHeader, modalChildren, confirmText, onConfirm] = useMemo(() => {
-    let modalHeader: JSX.Element,
-      modalChildren: JSX.Element,
-      confirmText: string,
-      onConfirm: () => void;
+  const [modalHeader, modalChildren, confirmText, onConfirm, backnCross] =
+    useMemo(() => {
+      let modalHeader: JSX.Element,
+        modalChildren: JSX.Element,
+        confirmText: string,
+        onConfirm: () => void,
+        backnCross: boolean;
 
-    switch (modalView) {
-      case ActionsModalView.MintRep:
-        modalHeader = <div>Mint Reputation</div>;
-        modalChildren = <MintReputationModal />;
-        break;
+      switch (modalView) {
+        case ActionsModalView.MintRep:
+          modalHeader = <div>Mint Reputation</div>;
+          modalChildren = <MintReputationModal />;
+          backnCross = true;
+          break;
 
-      case ActionsModalView.DxdaoController:
-        modalHeader = <div>Add Actions</div>;
-        modalChildren = <DxdControllerModal />;
-        break;
-      default:
-        modalHeader = <div>Add Actions</div>;
-        modalChildren = <ActionModal />;
-    }
-    return [modalHeader, modalChildren, confirmText, onConfirm];
-  }, [modalView]);
+        case ActionsModalView.DxdaoController:
+          modalHeader = <div>Dxdao Controller</div>;
+          modalChildren = <DxdControllerModal />;
+          backnCross = true;
+          break;
+        default:
+          modalHeader = <div>Mint Reputation</div>;
+          modalChildren = <ActionModal />;
+      }
+      return [modalHeader, modalChildren, confirmText, onConfirm, backnCross];
+    }, [modalView]);
 
   return (
     <ActionsModalContext.Provider
       value={{ modalView, setModalView, isOpen, setIsOpen }}
     >
       {children}
-
       <Modal
         isOpen={isOpen}
         onDismiss={closeModal}
@@ -60,6 +62,7 @@ export const ActionsModalProvider = ({ children }) => {
         children={modalChildren}
         confirmText={confirmText}
         onConfirm={onConfirm}
+        backnCross={backnCross}
       />
     </ActionsModalContext.Provider>
   );

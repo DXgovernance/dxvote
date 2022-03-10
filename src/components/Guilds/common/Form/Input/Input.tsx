@@ -101,8 +101,6 @@ const Input: React.FC<InputProps> = ({
   width,
   ...rest
 }) => {
-  console.log(typeof icon);
-
   return !!icon ? (
     <InputWrapper width={width}>
       <IconWrapper size={size}>
