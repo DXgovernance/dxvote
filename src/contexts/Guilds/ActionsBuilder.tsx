@@ -13,41 +13,65 @@ export enum ActionsModalView {
 const ActionsModalContext = createContext(null);
 
 export const ActionsModalProvider = ({ children }) => {
-  const [modalView, setModalView] = useState<ActionsModalView>(
-    ActionsModalView.Base
-  );
+  const [modalView, setModalView] = useState<ActionsModalView[]>([
+    ActionsModalView.Base,
+  ]);
+
+  // each time modal view changes, it adds to the array
+  // when back button is clicked the modal view
+  // needs to know if tranfer and mint has already been set not to reset it again
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  // closes modal and resets the view
   const closeModal = () => {
-    setModalView(ActionsModalView.Base);
+    setModalView([ActionsModalView.Base]);
     setIsOpen(false);
   };
 
-  const [modalHeader, modalChildren, confirmText, onConfirm, backnCross] =
-    useMemo(() => {
-      let modalHeader: JSX.Element,
-        modalChildren: JSX.Element,
-        confirmText: string,
-        onConfirm: () => void,
-        backnCross: boolean;
+  const [
+    modalHeader,
+    modalChildren,
+    confirmText,
+    onConfirm,
+    backnCross,
+    prevContent,
+  ] = useMemo(() => {
+    let modalHeader: JSX.Element,
+      modalChildren: JSX.Element,
+      confirmText: string,
+      onConfirm: () => void,
+      backnCross: boolean,
+      prevContent: () => void;
 
-      switch (modalView) {
-        case ActionsModalView.MintRep:
-          modalHeader = <div>Mint Reputation</div>;
-          modalChildren = <MintReputationModal />;
-          backnCross = true;
-          break;
+    switch (modalView[modalView.length - 1]) {
+      case ActionsModalView.MintRep:
+        modalHeader = <div>Mint Reputation</div>;
+        modalChildren = <MintReputationModal />;
+        backnCross = true;
+        prevContent = () => setModalView(content => content.slice(0, -1));
+        break;
 
-        case ActionsModalView.DxdaoController:
-          modalHeader = <div>Dxdao Controller</div>;
-          modalChildren = <DxdControllerModal />;
-          backnCross = true;
-          break;
-        default:
-          modalHeader = <div>Mint Reputation</div>;
-          modalChildren = <ActionModal />;
-      }
-      return [modalHeader, modalChildren, confirmText, onConfirm, backnCross];
-    }, [modalView]);
+      case ActionsModalView.DxdaoController:
+        modalHeader = <div>Dxdao Controller</div>;
+        modalChildren = <DxdControllerModal />;
+        backnCross = true;
+        prevContent = () => setModalView(content => content.slice(0, -1));
+        break;
+
+      default:
+        modalHeader = <div>Mint Reputation</div>;
+        modalChildren = <ActionModal />;
+    }
+    return [
+      modalHeader,
+      modalChildren,
+      confirmText,
+      onConfirm,
+      backnCross,
+      prevContent,
+    ];
+  }, [modalView]);
 
   return (
     <ActionsModalContext.Provider
@@ -63,6 +87,7 @@ export const ActionsModalProvider = ({ children }) => {
         confirmText={confirmText}
         onConfirm={onConfirm}
         backnCross={backnCross}
+        prevContent={prevContent}
       />
     </ActionsModalContext.Provider>
   );

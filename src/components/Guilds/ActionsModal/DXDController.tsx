@@ -50,7 +50,9 @@ const DxdControllerModal: React.FC = () => {
         </WrapperText>
         <ActionsButton
           variant="secondary"
-          onClick={() => setModalView(ActionsModalView.MintRep)}
+          onClick={() =>
+            setModalView(content => [...content, ActionsModalView.MintRep])
+          }
         >
           Mint Reputation
           <ButtonText variant="medium" color="grey">

@@ -134,6 +134,7 @@ export interface ModalProps {
   cross?: boolean;
   zIndex?: number;
   backnCross?: boolean;
+  prevContent?: () => void;
 }
 
 export const ModalButton = styled(Button)`
@@ -161,6 +162,7 @@ export const Modal: React.FC<ModalProps> = ({
   cross,
   zIndex = 500,
   backnCross,
+  prevContent,
 }) => {
   const modal = (
     <div>
@@ -184,7 +186,7 @@ export const Modal: React.FC<ModalProps> = ({
               {backnCross && (
                 <>
                   <LeftArrowContainer>
-                    <IoIosArrowBack />
+                    <IoIosArrowBack onClick={prevContent} />
                     <HeaderText>{header}</HeaderText>
                   </LeftArrowContainer>
                   <CloseIcon />

@@ -64,7 +64,12 @@ const ActionModal: React.FC = () => {
         </WrapperText>
         <ActionsButton
           variant="secondary"
-          onClick={() => setModalView(ActionsModalView.DxdaoController)}
+          onClick={() =>
+            setModalView(content => [
+              ...content,
+              ActionsModalView.DxdaoController,
+            ])
+          }
         >
           <StyledIcon src={Vector} />
           Transfer & Mint
