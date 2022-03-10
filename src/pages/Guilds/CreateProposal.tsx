@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import contentHash from 'content-hash';
 import { FiChevronLeft } from 'react-icons/fi';
@@ -19,6 +19,8 @@ import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
 import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
+import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
+import { Loading } from 'components/Guilds/common/Loading';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -68,6 +70,10 @@ const InputWrapper = styled(Flex)`
 `;
 
 const CreateProposalPage: React.FC = () => {
+  const { isLoading: isGuildAvailabilityLoading } = useContext(
+    GuildAvailabilityContext
+  );
+
   const ttlMs = 345600000;
   const history = useHistory();
   const [editMode, setEditMode] = useState(true);
@@ -124,6 +130,8 @@ const CreateProposalPage: React.FC = () => {
 
     return true;
   }, [title, proposalBodyHTML]);
+
+  if (isGuildAvailabilityLoading) return <Loading loading />;
 
   return (
     <PageContainer>

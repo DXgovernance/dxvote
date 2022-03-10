@@ -1,9 +1,9 @@
 import {
   HashRouter,
+  Redirect,
   Route,
   Switch,
   useHistory,
-  Redirect,
 } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
@@ -21,6 +21,8 @@ import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBo
 import ProposalTypes from 'components/Guilds/ProposalTypes';
 import { ProposalTypesConfig } from 'configs/proposalTypes';
 import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
+import GuildAvailabilityProvider from 'contexts/Guilds/guildAvailability';
+import NotFound from 'pages/Guilds/NotFound';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -41,30 +43,32 @@ const GuildsApp = () => {
                 <GlobalStyle />
                 <Header />
                 <Container>
-                  <Switch>
-                    <Redirect
-                      exact
-                      from="/"
-                      to="/rinkeby/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                    />
-                    <Redirect
-                      exact
-                      from="/:chain_name"
-                      to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                    />
-                    <Route exact path="/:chain_name/:guild_id">
-                      <GuildsPage />
-                    </Route>
-                    <Route exact path="/:chain_name/:guild_id/proposalType">
-                      <ProposalTypes data={ProposalTypesConfig} />
-                    </Route>
-                    <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
-                      <ProposalPage />
-                    </Route>
-                    <Route path="/:chain_name/:guild_id/create/:proposal_type">
-                      <CreateProposalPage />
-                    </Route>
-                  </Switch>
+                  <GuildAvailabilityProvider>
+                    <Switch>
+                      <Redirect
+                        exact
+                        from="/:chain_name"
+                        to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                      />
+
+                      <Route exact path="/:chain_name/:guild_id">
+                        <GuildsPage />
+                      </Route>
+                      <Route path="/:chain_name/:guild_id/proposalType">
+                        <ProposalTypes data={ProposalTypesConfig} />
+                      </Route>
+                      <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                        <ProposalPage />
+                      </Route>
+                      <Route path="/:chain_name/:guild_id/create/:proposal_type">
+                        <CreateProposalPage />
+                      </Route>
+
+                      <Route>
+                        <NotFound />
+                      </Route>
+                    </Switch>
+                  </GuildAvailabilityProvider>
                 </Container>
               </GuildsContextProvider>
             </TransactionsProvider>

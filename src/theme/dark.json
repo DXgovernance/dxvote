@@ -3,6 +3,7 @@
     "text": "#fff",
     "primary": "#295FF4",
     "secondary": "#1B1D1F",
+    "red": "#E75C5C",
     "proposalText": {
       "grey": "#A1A6B0",
       "lightGrey": "#BDC0C7"

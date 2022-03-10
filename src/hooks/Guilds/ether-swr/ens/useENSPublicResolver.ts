@@ -1,8 +1,8 @@
-import useEtherSWR from 'ether-swr';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 import ensResolverABI from '../../../../abis/ENSPublicResolver.json';
 import useJsonRpcProvider from '../../web3/useJsonRpcProvider';
+import useEtherSWR from '../useEtherSWR';
 import useENSRegistry from './useENSRegistry';
 
 interface ENSPublicResolverData {
