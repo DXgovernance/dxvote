@@ -9,6 +9,7 @@ import SidebarCard, {
 } from 'components/Guilds/SidebarCard';
 import OptionRow, { Option } from './Option';
 import AddButton from './AddButton';
+import TransferAndMint from './TransfersAndMint';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -108,6 +109,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
 
       {editable && actionsEditMode && (
         <>
+          <TransferAndMint />
           <Divider />
           <AddOptionWrapper>
             <AddButton
