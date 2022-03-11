@@ -29,16 +29,16 @@ const Status = () => {
 
   const executePendingAction = function (pendingAction) {
     switch (pendingAction) {
-      case 4:
+      case PendingAction.Redeem:
         daoService.redeemContributionReward(
-          networkContracts.daostack.contributionRewardRedeemer,
+          networkContracts.daostack.contributionReward.redeemer,
           scheme.address,
           scheme.votingMachine,
           proposalId,
           account
         );
         break;
-      case 5:
+      case PendingAction.RedeemForBeneficiary:
         daoService.executeMulticall(scheme.address, proposalId);
         break;
       default:
@@ -53,8 +53,8 @@ const Status = () => {
     daoStore.getProposalStatus(proposalId);
 
   const autoBoost =
-    networkContracts.votingMachines.dxd &&
-    networkContracts.votingMachines.dxd.address === votingMachineUsed;
+    networkContracts.votingMachines[votingMachineUsed.address].type ==
+    'DXDVotingMachine';
 
   return (
     <>

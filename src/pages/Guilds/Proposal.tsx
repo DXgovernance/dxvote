@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { FaChevronLeft } from 'react-icons/fa';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
-
+import { Loading } from 'components/Guilds/common/Loading';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
 import ProposalInfoCard from '../../components/Guilds/ProposalPage/ProposalInfoCard';
 import ProposalVoteCard from '../../components/Guilds/ProposalPage/ProposalVoteCard';
 import ProposalStatus from '../../components/Guilds/ProposalStatus';
-import ProposalActionsCard from '../../components/Guilds/ProposalPage/ProposalActionsCard';
 import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
 import AddressButton from '../../components/Guilds/AddressButton';
 import ProposalDescription from '../../components/Guilds/ProposalPage/ProposalDescription';
-import { useProposal } from '../../hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from '../../hooks/Guilds/ether-swr/guild/useProposal';
+import { ActionsBuilder } from 'components/Guilds/CreateProposalPage';
+import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
+import Result, { ResultState } from 'components/Guilds/common/Result';
+import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -38,6 +41,7 @@ const PageContent = styled(Box)`
 
 const PageHeader = styled(Box)`
   margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const PageTitle = styled.h3`
@@ -54,7 +58,7 @@ const PageTitle = styled.h3`
 `;
 
 const StyledIconButton = styled(IconButton)`
-  padding: 0;
+  padding: 0.6rem 0.8rem;
   margin-top: 5px;
 `;
 
@@ -84,15 +88,37 @@ const ProposalPage: React.FC = () => {
     proposal_id?: string;
   }>();
 
+  const { isLoading: isGuildAvailabilityLoading } = useContext(
+    GuildAvailabilityContext
+  );
+  const { data: proposalIds } = useGuildProposalIds(guildId);
   const { data: proposal, error } = useProposal(guildId, proposalId);
 
-  if (error) {
-    return (
-      <div>
-        We ran into some issues trying to load this proposal. Please try again
-        later.
-      </div>
-    );
+  if (!isGuildAvailabilityLoading) {
+    if (!proposalIds?.includes(proposalId)) {
+      return (
+        <Result
+          state={ResultState.ERROR}
+          title="We couldn't find that proposal."
+          subtitle="It probably doesn't exist."
+          extra={
+            <UnstyledLink to={`/${chainName}/${guildId}`}>
+              <IconButton iconLeft>
+                <FiArrowLeft /> See all proposals
+              </IconButton>
+            </UnstyledLink>
+          }
+        />
+      );
+    } else if (error) {
+      return (
+        <Result
+          state={ResultState.ERROR}
+          title="We ran into an error."
+          subtitle={error.message}
+        />
+      );
+    }
   }
 
   return (
@@ -101,16 +127,20 @@ const ProposalPage: React.FC = () => {
         <PageHeader>
           <HeaderTopRow>
             <UnstyledLink to={`/${chainName}/${guildId}`}>
-              <StyledIconButton variant="minimal" iconLeft>
-                <FiArrowLeft /> DXdao
+              <StyledIconButton variant="secondary" iconLeft>
+                <FaChevronLeft style={{ marginRight: '15px' }} /> DXdao
               </StyledIconButton>
             </UnstyledLink>
 
             <ProposalStatusWrapper>
-              <ProposalStatus proposalId={proposalId} bordered hideTime />
+              <ProposalStatus proposalId={proposalId} showRemainingTime />
             </ProposalStatusWrapper>
           </HeaderTopRow>
-          <PageTitle>{proposal?.title || <Skeleton />}</PageTitle>
+          <PageTitle>
+            {proposal?.title || (
+              <Loading loading text skeletonProps={{ width: '800px' }} />
+            )}
+          </PageTitle>
         </PageHeader>
 
         <AddressButton address={proposal?.creator} />
@@ -118,12 +148,12 @@ const ProposalPage: React.FC = () => {
         <ProposalDescription />
 
         <ProposalActionsWrapper>
-          <ProposalActionsCard />
+          <ActionsBuilder editable={false} />
         </ProposalActionsWrapper>
       </PageContent>
       <SidebarContent>
-        <ProposalInfoCard />
         <ProposalVoteCard />
+        <ProposalInfoCard />
       </SidebarContent>
     </PageContainer>
   );

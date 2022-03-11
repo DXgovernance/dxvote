@@ -3,10 +3,12 @@ import { useContext } from 'contexts';
 import { observer } from 'mobx-react';
 import { Row, Box, Button } from '../components/common';
 import React from 'react';
-import { FiCheckCircle, FiDownload, FiX } from 'react-icons/fi';
+import { FiCheckCircle, FiDownload, FiUpload, FiX } from 'react-icons/fi';
 import { NETWORKS, toCamelCaseString } from 'utils';
 import PulsingIcon from 'components/common/LoadingIcon';
 import Copy from '../components/common/Copy';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const FormLabel = styled.label`
   padding: 10px 0px;
@@ -82,10 +84,10 @@ const CachePage = observer(() => {
   document.title = 'Cache';
 
   const {
-    context: { cacheService, configStore, notificationStore },
+    context: { cacheService, configStore, notificationStore, ipfsService },
   } = useContext();
 
-  const [updateProposalTitles, setUpdateProposalTitles] = React.useState(true);
+  const [updateProposalTitles, setUpdateProposalTitles] = React.useState(false);
   const [buildingCacheState, setBuildingCacheState] = React.useState(0);
   const [updatedCacheHash, setUpdatedCacheHash] = React.useState({
     proposalTitles: {},
@@ -107,7 +109,26 @@ const CachePage = observer(() => {
 
   async function resetCacheOptions() {
     configStore.resetLocalConfig();
-    forceUpdate();
+    setLocalConfig(configStore.getLocalConfig());
+    setBuildingCacheState(0);
+    setResetCache({
+      mainnet: false,
+      rinkeby: false,
+      xdai: false,
+      arbitrum: false,
+      arbitrumTestnet: false,
+    });
+    setUpdatedCacheHash({
+      proposalTitles: {},
+      configHashes: {},
+      configs: {},
+      caches: {},
+    });
+    setUpdateProposalTitles(false);
+  }
+
+  async function uploadToIPFS(content) {
+    ipfsService.upload(content);
   }
 
   async function runCacheScript() {
@@ -155,18 +176,51 @@ const CachePage = observer(() => {
     forceUpdate();
   }
 
-  function download(jsonData, name) {
-    const a = document.createElement('a');
-    const file = new Blob([JSON.stringify(jsonData, null, 2)], {
-      type: 'text/plain',
+  function downloadAll() {
+    var zip = new JSZip();
+
+    var cache = zip.folder('cache');
+
+    var configs = zip.folder('configs');
+    zip.file(
+      'default.json',
+      JSON.stringify(
+        {
+          mainnet: updatedCacheHash.configHashes['mainnet'],
+          xdai: updatedCacheHash.configHashes['xdai'],
+          arbitrum: updatedCacheHash.configHashes['arbitrum'],
+          rinkeby: updatedCacheHash.configHashes['rinkeby'],
+          arbitrumTestnet: updatedCacheHash.configHashes['arbitrumTestnet'],
+        },
+        null,
+        2
+      )
+    );
+    zip.file(
+      'proposalTitles.json',
+      JSON.stringify(updatedCacheHash.proposalTitles, null, 2)
+    );
+
+    NETWORKS.map((network, i) => {
+      cache.file(
+        network.name + '.json',
+        JSON.stringify(updatedCacheHash.caches[network.name], null, 2)
+      );
+      const configFolder = configs.folder(network.name);
+      configFolder.file(
+        'config.json',
+        JSON.stringify(updatedCacheHash.configs[network.name], null, 2)
+      );
     });
-    a.href = URL.createObjectURL(file);
-    a.download = name;
-    a.click();
+
+    zip.generateAsync({ type: 'blob' }).then(function (content) {
+      saveAs(content, 'dxvote-cache.zip');
+    });
   }
 
   if (window.location.hash.length > 7) {
     const searchParams = new URLSearchParams(window.location.hash.substring(7));
+    setUpdateProposalTitles(searchParams.get('proposalTitles') ? true : false);
     NETWORKS.map((network, i) => {
       const networkName = network.name;
       if (searchParams.get(networkName + '_toBlock'))
@@ -177,8 +231,12 @@ const CachePage = observer(() => {
         localConfig[networkName + '_targetHash'] = searchParams.get(
           networkName + '_targetHash'
         );
+      if (searchParams.get(networkName + '_reset')) {
+        resetCache[networkName] = true;
+      }
     });
     setLocalConfig(localConfig);
+    setResetCache(resetCache);
     configStore.setLocalConfig(localConfig);
     window.location.assign(window.location.origin + '/#cache');
     forceUpdate();
@@ -187,6 +245,8 @@ const CachePage = observer(() => {
   function getOptionsLink(): string {
     let optionsLinkUrl =
       window.location.origin + '/' + window.location.hash + '?';
+    if (updateProposalTitles)
+      optionsLinkUrl = optionsLinkUrl = 'proposalTitles=1&';
     NETWORKS.map((network, i) => {
       const networkName = network.name;
       if (localConfig[networkName + '_toBlock'])
@@ -203,12 +263,14 @@ const CachePage = observer(() => {
           '_targetHash=' +
           localConfig[networkName + '_targetHash'] +
           '&';
+      if (resetCache[networkName])
+        optionsLinkUrl = optionsLinkUrl + networkName + '_reset=1&';
     });
     optionsLinkUrl = optionsLinkUrl.slice(0, -1);
     return optionsLinkUrl;
   }
 
-  return buildingCacheState == 1 ? (
+  return buildingCacheState === 1 ? (
     <LoadingBox>
       <div className="loader">
         {' '}
@@ -259,7 +321,7 @@ const CachePage = observer(() => {
                   <InputBox
                     type="checkbox"
                     checked={resetCache[networkName]}
-                    onClick={() => {
+                    onChange={() => {
                       resetCache[networkName] = !resetCache[networkName];
                       setResetCache(resetCache);
                       forceUpdate();
@@ -283,23 +345,29 @@ const CachePage = observer(() => {
                     <div>
                       <Button
                         onClick={() =>
-                          download(
-                            updatedCacheHash.configs[networkName],
-                            networkName + '.json'
+                          uploadToIPFS(
+                            JSON.stringify(
+                              updatedCacheHash.configs[networkName],
+                              null,
+                              2
+                            )
                           )
                         }
                       >
-                        <FiDownload></FiDownload> Config
+                        <FiUpload></FiUpload> Config
                       </Button>
                       <Button
                         onClick={() =>
-                          download(
-                            updatedCacheHash.caches[networkName],
-                            networkName + '_cache.json'
+                          uploadToIPFS(
+                            JSON.stringify(
+                              updatedCacheHash.caches[networkName],
+                              null,
+                              2
+                            )
                           )
                         }
                       >
-                        <FiDownload></FiDownload> Cache
+                        <FiUpload></FiUpload> Cache
                       </Button>
                     </div>
                   )}
@@ -332,39 +400,19 @@ const CachePage = observer(() => {
           onChange={() => setUpdateProposalTitles(!updateProposalTitles)}
         ></InputBox>
       </Row>
+      {buildingCacheState === 2 && (
+        <Row>
+          <Button onClick={downloadAll}>
+            {' '}
+            <FiDownload></FiDownload> Download All
+          </Button>
+        </Row>
+      )}
       <Row>
-        {buildingCacheState == 2 && (
-          <Button
-            onClick={() =>
-              download(
-                {
-                  mainnet: updatedCacheHash.configHashes['mainnet'],
-                  xdai: updatedCacheHash.configHashes['xdai'],
-                  arbitrum: updatedCacheHash.configHashes['arbitrum'],
-                  rinkeby: updatedCacheHash.configHashes['rinkeby'],
-                  arbitrumTestnet:
-                    updatedCacheHash.configHashes['arbitrumTestnet'],
-                },
-                'default.json'
-              )
-            }
-          >
-            <FiDownload></FiDownload> Cache Hashes
-          </Button>
-        )}
-        {buildingCacheState == 2 && (
-          <Button
-            onClick={() =>
-              download(updatedCacheHash.proposalTitles, 'proposalTitles.json')
-            }
-          >
-            <FiDownload></FiDownload> Proposal Titles
-          </Button>
-        )}
         <Button onClick={runCacheScript}>Build Cache</Button>
         <Button onClick={resetCacheOptions}>Reset Options</Button>
         <CopyButton>
-          Build Link <Copy toCopy={getOptionsLink()}></Copy>
+          <Copy toCopy={getOptionsLink()}>Build Link</Copy>
         </CopyButton>
       </Row>
     </Box>

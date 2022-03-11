@@ -21,7 +21,7 @@ export const useRep = (userAddress: string = ZERO_ADDRESS): UseRepReturns => {
   } = useContext();
   const [memo, setMemo] = useState<MemoInteface | undefined>(undefined);
   const cache: MemoInteface = {};
-  const repEvents = daoStore.getCache().daoInfo.repEvents;
+  const repEvents = daoStore.daoCache.reputation.events;
 
   let totalSupply: BigNumber = bnum(0);
   let userRep: BigNumber = bnum(0);

@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 700;
+  z-index: ${props => props.zIndex};
   width: 40%;
   min-width: 400px;
   max-width: ${({ maxWidth }) => maxWidth}px;
@@ -25,7 +25,7 @@ export const Backdrop = styled.div`
   top: 0;
   left: 0;
   background: rgba(0, 6, 41, 0.5);
-  z-index: 500;
+  z-index: ${props => props.zIndex};
 `;
 
 export const StyledModal = styled.div`
@@ -34,7 +34,7 @@ export const StyledModal = styled.div`
   position: relative;
   margin: auto;
   border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: ${({ theme }) => theme.radii.curved2};
+  border-radius: ${({ theme }) => theme.radii.curved};
   box-sizing: border-box;
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);
 
@@ -50,6 +50,7 @@ export const Header = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   position: relative;
   align-items: center;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const SecondaryHeader = styled(Header)`
@@ -131,6 +132,7 @@ export interface ModalProps {
   maxWidth?: number;
   showSecondaryHeader?: boolean;
   cross?: boolean;
+  zIndex?: number;
 }
 
 export const ModalButton = styled(Button)`
@@ -152,11 +154,12 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth,
   showSecondaryHeader,
   cross,
+  zIndex = 500,
 }) => {
   const modal = (
     <div>
-      <Backdrop onClick={onDismiss} />
-      <Wrapper maxWidth={maxWidth}>
+      <Backdrop onClick={onDismiss} zIndex={zIndex} />
+      <Wrapper maxWidth={maxWidth} zIndex={zIndex + 1}>
         <StyledModal>
           {isMobile && (
             <Header onClick={onDismiss}>

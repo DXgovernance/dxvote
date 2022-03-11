@@ -4,13 +4,14 @@ import { useMenu } from '../../hooks/Guilds/useMenu';
 const FilterContext = createContext(null);
 
 export const FilterProvider = ({
-  initialStatuses = [],
-  initialSchemas = [],
+  initialStates = [],
+  initialTypes = [],
+  initialCurrencies = [],
   children,
 }) => {
   return (
     <FilterContext.Provider
-      value={useMenu({ initialSchemas, initialStatuses })}
+      value={useMenu({ initialStates, initialTypes, initialCurrencies })}
     >
       {children}
     </FilterContext.Provider>

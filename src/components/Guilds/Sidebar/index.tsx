@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import { Box } from '../common/Layout';
 import { Menu, MenuItem } from '../common/Menu';
@@ -6,10 +5,13 @@ import { MemberActions } from './MemberActions';
 import { GuestActions } from './GuestActions';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
-import { Loading } from '../../../components/Guilds/common/Loading';
-import { useConfig } from '../../../hooks/Guilds/useConfig';
+import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
+import { useParams } from 'react-router-dom';
+import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
+import { useWeb3React } from '@web3-react/core';
 
 const SidebarWrapper = styled(Box)`
+  color: ${({ theme }) => theme.colors.text};
   @media only screen and (min-width: 768px) {
     margin-right: 1rem;
     border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -22,7 +24,6 @@ const DaoInfoPanel = styled(Box)`
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  cursor: pointer;
 `;
 
 const DaoInfo = styled.div`
@@ -94,11 +95,14 @@ const SidebarMenuItem = styled(MenuItem)`
 `;
 
 export const Sidebar = () => {
-  const [isMember, setIsMember] = useState(false);
-  const {
-    data: { name },
-    error,
-  } = useConfig();
+  const { account: userAddress } = useWeb3React();
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { data } = useGuildConfig(guildAddress);
+
+  const { data: votingPower } = useVotingPowerOf({
+    contractAddress: guildAddress,
+    userAddress,
+  });
 
   return (
     <SidebarWrapper data-testid="sidebar">
@@ -106,17 +110,17 @@ export const Sidebar = () => {
         <DaoInfo>
           <DaoBrand>
             <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
-            <Loading text loading={!name && !error}>
-              <DaoTitle size={2} as="h1">
-                {error ? 'DXdao' : name}
-              </DaoTitle>
-            </Loading>
+
+            <DaoTitle size={2} as="h1">
+              {data?.name}
+            </DaoTitle>
           </DaoBrand>
           <DaoMemberCount>464 Members</DaoMemberCount>
         </DaoInfo>
-        {isMember && <MemberActions />}
-        {!isMember && (
-          <GuestActions /* for now */ onJoin={() => setIsMember(true)} />
+        {votingPower && !votingPower?.isZero() ? (
+          <MemberActions />
+        ) : (
+          <GuestActions />
         )}
       </DaoInfoPanel>
       <SidebarMenu>

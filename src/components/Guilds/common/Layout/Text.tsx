@@ -26,10 +26,11 @@ const variantStyles = (variant = 'regular') =>
   }[variant]);
 
 export const ContainerText = styled(Flex)<ContainerTextProps>`
+  text-align: left;
   font-family: Inter;
   margin: 4px;
   font-style: normal;
-  color: ${props => props.color || '#000000'};
+  color: ${({ color }) => color}; || ${({ theme }) => theme.colors.text};
   ${({ variant }) => variantStyles(variant)}
 `;
 

@@ -1,29 +1,35 @@
-import { ReactElement } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { Card, CardProps } from '../common/Card';
+import { Heading } from '../common/Typography';
 import { Box } from '../common/Layout';
 
-const CardWrapper = styled(Box)`
-  border: 1px solid ${({ theme }) => theme.colors.muted};
-  border-radius: ${({ theme }) => theme.radii.curved};
+const cardWrapperStyles = css`
   margin-bottom: 1rem;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2);
 `;
 
-const CardHeader = styled(Box)`
-  border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
-`;
-
-interface SidebarCardProps {
-  header?: ReactElement | ReactElement[];
-  children?: ReactElement | ReactElement[];
-}
-
-const SidebarCard: React.FC<SidebarCardProps> = ({ header, children }) => {
+const SidebarCard: React.FC<CardProps> = ({ header, children }) => {
   return (
-    <CardWrapper>
-      {header && <CardHeader>{header}</CardHeader>}
+    <Card header={header} customStyles={cardWrapperStyles}>
       {children}
-    </CardWrapper>
+    </Card>
   );
 };
 
 export default SidebarCard;
+
+export const SidebarCardHeader = styled(Heading)`
+  font-weight: 600;
+  margin: 0.5rem;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+export const SidebarCardHeaderSpaced = styled(SidebarCardHeader)`
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const SidebarCardContent = styled(Box)`
+  padding: 1rem;
+  color: ${({ theme }) => theme.colors.text};
+`;

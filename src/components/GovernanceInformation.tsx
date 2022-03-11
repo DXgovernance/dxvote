@@ -43,7 +43,7 @@ const GovernanceInformation = observer(() => {
     context: { daoStore },
   } = useContext();
 
-  const daoInfo = daoStore.getDaoInfo();
+  const totalRep = daoStore.daoCache.reputation.total;
   const governanceInfo = daoStore.getGovernanceInfo();
 
   function toNumber(weiNumber) {
@@ -55,7 +55,7 @@ const GovernanceInformation = observer(() => {
     <GovernanceInfoWrapper>
       <Title centered>Stats</Title>
       <Row>
-        <InfoBox>{toNumber(daoInfo.totalRep)} REP</InfoBox>
+        <InfoBox>{toNumber(totalRep)} REP</InfoBox>
         <InfoBox>{governanceInfo.totalPositiveVotes} Positive Votes</InfoBox>
         <InfoBox>{governanceInfo.totalNegativeVotes} Negative Votes</InfoBox>
         <InfoBox>{governanceInfo.totalProposalsCreated} Proposals</InfoBox>

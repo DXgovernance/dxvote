@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import { InjectedConnector } from '@web3-react/injected-connector';
 import { useWeb3React } from '@web3-react/core';
-
 import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
 import arbitrumIcon from '../../../assets/images/arbitrum.png';
@@ -9,7 +7,7 @@ import ethereumIcon from '../../../assets/images/ethereum.svg';
 import gnosisIcon from '../../../assets/images/gnosis-icon-green.svg';
 import { Modal } from '../common/Modal';
 import Option from './components/Option';
-import { useHistory } from 'react-router-dom';
+import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
 
 const iconsByChain = {
   1: ethereumIcon,
@@ -29,7 +27,7 @@ const Wrapper = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  background-color: var(--panel-background);
+  background-color: ${({ theme }) => theme.colors.background};
   color: var(--body-text);
   padding: 2rem;
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
@@ -67,35 +65,9 @@ interface NetworkModalProps {
 }
 
 const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
-  const { chainId, connector, deactivate } = useWeb3React();
-  const history = useHistory();
+  const { chainId } = useWeb3React();
   const rpcUrls = useRpcUrls();
-
-  const trySwitching = async chain => {
-    if (connector instanceof InjectedConnector) {
-      const chainIdHex = `0x${chain.id.toString(16)}`;
-      try {
-        await window.ethereum?.send('wallet_switchEthereumChain', [
-          { chainId: chainIdHex },
-        ]);
-      } catch (e: any) {
-        window.ethereum?.send('wallet_addEthereumChain', [
-          {
-            chainId: chainIdHex,
-            chainName: chain.displayName,
-            nativeCurrency: chain.nativeAsset,
-            rpcUrls: [chain.rpcUrl, chain.defaultRpc],
-            blockExplorerUrls: [chain.blockExplorer],
-          },
-        ]);
-      }
-    }
-
-    deactivate();
-    onClose();
-
-    history.push(`/${chain.name}`);
-  };
+  const { trySwitching } = useNetworkSwitching();
 
   return (
     <Modal
@@ -111,7 +83,7 @@ const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
               <OptionGrid>
                 {getChains(rpcUrls).map(chain => (
                   <Option
-                    onClick={() => trySwitching(chain)}
+                    onClick={() => trySwitching(chain).then(onClose)}
                     key={chain.name}
                     icon={iconsByChain[chain.id] || null}
                     active={chain.id === chainId}

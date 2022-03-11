@@ -1,22 +1,32 @@
 import { useState } from 'react';
-
 import { Button } from 'components/Guilds/common/Button';
-import { Modal } from '../common/Modal';
-import { StakeTokens } from './StakeTokens';
+import StakeTokensModal from '../StakeTokensModal';
+import { useWeb3React } from '@web3-react/core';
+import WalletModal from '../Web3Modals/WalletModal';
 
-export const GuestActions = ({ onJoin }) => {
+export const GuestActions = () => {
+  const { account } = useWeb3React();
   const [showJoin, setShowJoin] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+
   return (
     <>
-      <Button onClick={() => setShowJoin(true)}>Join</Button>
-      <Modal
-        header="Stake DXdao tokens"
+      <Button
+        variant="secondary"
+        onClick={() =>
+          account ? setShowJoin(true) : setIsWalletModalOpen(true)
+        }
+      >
+        {account ? 'Join' : 'Connect Wallet'}
+      </Button>
+      <StakeTokensModal
         isOpen={showJoin}
         onDismiss={() => setShowJoin(false)}
-        maxWidth={300}
-      >
-        <StakeTokens onJoin={onJoin} />
-      </Modal>
+      />
+      <WalletModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+      />
     </>
   );
 };

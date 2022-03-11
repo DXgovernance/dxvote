@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
 import moment from 'moment';
 
 import { Box } from '../common/Layout';
 import { ProposalState } from '../../../types/types.guilds.d';
 import { useParams } from 'react-router';
-import { useProposal } from '../../../hooks/Guilds/ether-swr/useProposal';
+import { useProposal } from '../../../hooks/Guilds/ether-swr/guild/useProposal';
+import { Loading } from '../common/Loading';
 
 const Status = styled.div`
   font-size: 0.8rem;
@@ -23,26 +23,27 @@ const Status = styled.div`
     `}
 `;
 
-const Pill = styled(Box)`
+const ProposalStatusDetail = styled(Box)`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-
-  border-radius: 1.5rem;
-  padding: ${props => (props.padded ? '0.5rem 0.8rem' : '0')};
+  margin: 0.5rem;
+  border-radius: 15px;
+  border: 1px solid
+    ${props =>
+      props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
+  background-color: ${({ theme }) => theme.colors.background};
   color: ${props =>
-    props.filled ? props.theme.colors.background : props.theme.colors.text};
-  background-color: ${props =>
-    props.filled ? props.theme.colors.text : 'transparent'};
-  border: 1px solid ${({ theme }) => theme.colors.text};
+    props.statusDetail === ProposalState.Failed ? '#D500F9' : '#1DE9B6'};
+  padding: 0.25rem 0.4rem;
 `;
 
 const DetailText = styled(Box)`
-  padding: 0 0.2rem;
+padding: 0 0.2rem;
 
-  @media only screen and (min-width: 768px) {
-    padding-right: 0.5rem;
-  }
+@media only screen and (min-width: 768px) {
+  padding - right: 0.5rem;
+}
 `;
 
 interface ProposalStatusProps {
@@ -84,17 +85,23 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
 
   const statusDetail = useMemo(() => {
     if (!proposal?.endTime) return null;
-
-    if (proposal.state === ProposalState.Submitted) {
-      const currentTime = moment();
-      if (currentTime.isSameOrAfter(proposal.endTime)) {
-        return 'Ended';
-      } else {
-        return 'Active';
-      }
+    switch (proposal.state) {
+      case ProposalState.Active:
+        const currentTime = moment();
+        if (currentTime.isSameOrAfter(proposal.endTime)) {
+          return ProposalState.Failed;
+        } else {
+          return ProposalState.Active;
+        }
+      case ProposalState.Executed:
+        return ProposalState.Executed;
+      case ProposalState.Passed:
+        return ProposalState.Passed;
+      case ProposalState.Failed:
+        return ProposalState.Failed;
+      default:
+        return proposal.state;
     }
-
-    return proposal.state;
   }, [proposal]);
 
   return (
@@ -106,20 +113,28 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
               {timeDetail}
             </span>
           ) : (
-            <Skeleton test-id="skeleton" width={50} />
+            <Loading
+              test-id="skeleton"
+              loading
+              text
+              skeletonProps={{ width: '50px' }}
+            />
           )}
         </DetailText>
       )}
-      <Pill filled padded>
-        {statusDetail || (
-          <Skeleton
-            test-id="skeleton"
-            width={50}
-            baseColor="#333"
-            highlightColor="#555"
-          />
-        )}
-      </Pill>
+      {statusDetail ? (
+        <ProposalStatusDetail statusDetail={statusDetail}>
+          {' '}
+          {statusDetail}
+        </ProposalStatusDetail>
+      ) : (
+        <Loading
+          test-id="skeleton"
+          loading
+          text
+          skeletonProps={{ width: '50px' }}
+        />
+      )}
     </Status>
   );
 };

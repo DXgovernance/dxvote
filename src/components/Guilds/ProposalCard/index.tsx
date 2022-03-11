@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
@@ -9,18 +8,24 @@ import ProposalStatus from '../ProposalStatus';
 import { Heading } from '../common/Typography';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UnstyledLink from '../common/UnstyledLink';
-import { useProposal } from 'hooks/Guilds/ether-swr/useProposal';
-import useENSAvatar from '../../../hooks/Guilds/ens/useENSAvatar';
-import { useMemo } from 'react';
+import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
+import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';
 import { shortenAddress } from '../../../utils';
+import { Loading } from '../common/Loading';
+import useVoteSummary from 'hooks/Guilds/useVoteSummary';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
   margin-bottom: 1rem;
   padding: 1rem;
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.border.hover};
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
 
 const CardHeader = styled(Box)`
@@ -42,7 +47,7 @@ const CardFooter = styled(Box)`
 const CardTitle = styled(Heading)`
   font-size: 1rem;
   font-weight: 700;
-
+  color: ${({ theme }) => theme.colors.text};
   @media only screen and (min-width: 768px) {
     font-size: 1.25rem;
   }
@@ -84,7 +89,7 @@ const Icon = styled.img<{
 `;
 
 const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
-  border: 1px solid #000;
+  border: 1px solid ${({ theme }) => theme.colors.border.initial};
   border-radius: 1rem;
   padding: 0.25rem 0.8rem;
   flex: none;
@@ -105,21 +110,11 @@ interface ProposalCardProps {
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
   const { data: proposal } = useProposal(guildId, id);
-  const { avatarUri, imageUrl, ensName } = useENSAvatar(
+  const votes = useVoteSummary(guildId, id);
+  const { imageUrl, ensName } = useENSAvatar(
     proposal?.creator,
     DEFAULT_ETH_CHAIN_ID
   );
-
-  const imageUrlToUse = useMemo(() => {
-    if (avatarUri) {
-      // TODO: Consider chainId when generating ENS metadata service fallback URL
-      return (
-        imageUrl || `https://metadata.ens.domains/mainnet/avatar/${ensName}`
-      );
-    } else {
-      return null;
-    }
-  }, [imageUrl, ensName, avatarUri]);
 
   return (
     <UnstyledLink to={href || '#'}>
@@ -127,20 +122,21 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         <CardHeader>
           <IconDetailWrapper>
             {proposal?.creator ? (
-              <Avatar
-                src={imageUrlToUse}
-                defaultSeed={proposal.creator}
-                size={24}
-              />
+              <Avatar src={imageUrl} defaultSeed={proposal.creator} size={24} />
             ) : (
-              <Skeleton test-id="skeleton" circle width={24} height={24} />
+              <Loading
+                style={{ margin: 0 }}
+                loading
+                text
+                skeletonProps={{ circle: true, width: '24px', height: '24px' }}
+              />
             )}
             <Detail>
               {ensName ||
                 (proposal?.creator ? (
                   shortenAddress(proposal.creator)
                 ) : (
-                  <Skeleton width={100} />
+                  <Loading style={{ margin: 0 }} loading text />
                 ))}
             </Detail>
           </IconDetailWrapper>
@@ -154,28 +150,62 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         </CardHeader>
         <CardContent>
           <CardTitle size={2}>
-            <strong>{proposal?.title || <Skeleton />}</strong>
+            <strong>
+              {proposal?.title || (
+                <Loading style={{ margin: 0 }} loading text />
+              )}
+            </strong>
           </CardTitle>
         </CardContent>
         <CardFooter>
-          <BorderedIconDetailWrapper>
-            <Detail>150 ETH</Detail>
-            {isDesktop && (
-              <>
-                <Icon as="div" spaceLeft spaceRight>
-                  <FiArrowRight />
-                </Icon>{' '}
-                <Detail>geronimo.eth</Detail>
-              </>
-            )}
-          </BorderedIconDetailWrapper>
-          <BorderedIconDetailWrapper>
-            <Detail>15.60%</Detail>
-            <Icon as="div" spaceLeft spaceRight>
-              <FiCircle />
-            </Icon>
-            <Detail>5.25%</Detail>
-          </BorderedIconDetailWrapper>
+          {proposal?.value ? (
+            <BorderedIconDetailWrapper>
+              <Detail>150 ETH</Detail>
+              {isDesktop && (
+                <>
+                  <Icon as="div" spaceLeft spaceRight>
+                    <FiArrowRight />
+                  </Icon>{' '}
+                  <Detail>geronimo.eth</Detail>
+                </>
+              )}
+            </BorderedIconDetailWrapper>
+          ) : (
+            <Loading
+              style={{ margin: 0 }}
+              skeletonProps={{ width: '200px' }}
+              loading
+              text
+            />
+          )}
+
+          {proposal?.totalVotes ? (
+            <BorderedIconDetailWrapper>
+              {votes
+                .sort((a, b) => b - a)
+                .map((vote, i) => {
+                  if (i < 3 && !(i === votes.length - 1)) {
+                    return (
+                      <>
+                        <Detail>{vote}%</Detail>
+                        <Icon as="div" spaceLeft spaceRight>
+                          <FiCircle />
+                        </Icon>
+                      </>
+                    );
+                  } else {
+                    return <Detail>{vote}%</Detail>;
+                  }
+                })}
+            </BorderedIconDetailWrapper>
+          ) : (
+            <Loading
+              style={{ margin: 0 }}
+              loading
+              text
+              skeletonProps={{ width: '200px' }}
+            />
+          )}
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>

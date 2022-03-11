@@ -122,7 +122,9 @@ const theme = darkMode => ({
   bodyText: '#90a4ae',
   //green
   connectedGreen: '#27AE60',
-
+  red: '#e75c5c',
+  blue: '#295ff4',
+  gray: '#a1a6b0',
   //branded
   metaMaskOrange: '#E8831D',
 

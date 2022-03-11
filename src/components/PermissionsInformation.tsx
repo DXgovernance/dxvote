@@ -34,7 +34,7 @@ const PermissionsInformation = observer(() => {
 
   const web3 = providerStore.getActiveWeb3React().library;
   const schemes = daoStore.getAllSchemes();
-  const rawPermissions = daoStore.getCache().callPermissions;
+  const rawPermissions = daoStore.daoCache.callPermissions;
   const networkContracts = configStore.getNetworkContracts();
   const tokens = configStore.getTokensOfNetwork();
   const recommendedCalls = configStore.getRecommendedCalls();
@@ -45,9 +45,10 @@ const PermissionsInformation = observer(() => {
   addressesNames[ANY_ADDRESS] = 'Any Address';
   addressesNames[networkContracts.avatar] = 'Avatar';
   addressesNames[networkContracts.controller] = 'Controller';
-  if (networkContracts.votingMachines.dxd)
-    addressesNames[networkContracts.votingMachines.dxd.address] =
-      'DXDVotingMachine';
+  for (const votingMachineAddress in networkContracts.votingMachines) {
+    addressesNames[votingMachineAddress] =
+      networkContracts.votingMachines[votingMachineAddress].type;
+  }
 
   functionNames[
     web3.eth.abi.encodeFunctionSignature('mintTokens(uint256,address,address)')

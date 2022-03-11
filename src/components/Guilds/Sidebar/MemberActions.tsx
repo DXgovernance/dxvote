@@ -1,29 +1,32 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
 import { useWeb3React } from '@web3-react/core';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
-
 import {
   DropdownMenu,
   DropdownContent,
   DropdownHeader,
 } from '../common/DropdownMenu';
 import { IconButton, Button } from '../common/Button';
-import dxIcon from '../../../assets/images/dxdao-icon.svg';
-
 import { useDetectBlur } from 'hooks/Guilds/useDetectBlur';
-import { useERC20 } from '../../../hooks/Guilds/contracts/useContract';
-import { ZERO_ADDRESS } from '../../../utils';
-import { BigNumber } from 'ethers';
+import { shortenAddress } from '../../../utils';
+import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
+import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
+import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
+import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
+import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';
+import Avatar from '../Avatar';
+import { formatUnits } from 'ethers/lib/utils';
+import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/guild/useVoterLockTimestamp';
+import moment from 'moment';
+import StakeTokensModal from '../StakeTokensModal';
 import { useTransactions } from '../../../contexts/Guilds';
-import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/useVotingPowerOf';
-
-const Icon = styled.img`
-  height: 1.1rem;
-  width: 1.1rem;
-`;
+import { useERC20Guild } from '../../../hooks/Guilds/contracts/useContract';
+import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
+import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
+import { Loading } from '../common/Loading';
 
 const UserActionButton = styled(IconButton)`
   border-radius: 50px;
@@ -33,6 +36,20 @@ const UserActionButton = styled(IconButton)`
   font-weight: 600;
   & > div:first-child {
     display: flex;
+  }
+`;
+
+const IconHolder = styled.span`
+  display: flex;
+  justify-content: center;
+
+  @media only screen and (min-width: 768px) {
+    margin-right: 0.3rem;
+  }
+
+  img {
+    border-radius: 50%;
+    margin-right: 0;
   }
 `;
 
@@ -64,55 +81,131 @@ const LockButton = styled(Button)`
 
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const { createTransaction } = useTransactions();
-  const { guild_id: contractAddress } = useParams<{ guild_id?: string }>();
+  const [showStakeModal, setShowStakeModal] = useState(false);
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { account: userAddress } = useWeb3React();
-  // TODO: Parse votingPower value to represent in percentage
-  const { data: votingPower } = useVotingPowerOf({
-    contractAddress,
+  const { ensName, imageUrl } = useENSAvatar(userAddress, DEFAULT_ETH_CHAIN_ID);
+  const { data: guildConfig } = useGuildConfig(guildAddress);
+  const { data: tokenInfo } = useERC20Info(guildConfig?.token);
+  const { data: userVotingPower } = useVotingPowerOf({
+    contractAddress: guildAddress,
     userAddress,
   });
+  const { data: unlockedTimestamp } = useVoterLockTimestamp(
+    guildAddress,
+    userAddress
+  );
 
-  // Temporary code to test transactions provider
-  const contract = useERC20('0x022E292b44B5a146F2e8ee36Ff44D3dd863C915c');
+  useEffect(() => {
+    if (showStakeModal) setShowMenu(false);
+  }, [showStakeModal]);
 
-  const lockDXD = async () => {
-    // Sends a hardcoded transaction to test transactions provider
-    createTransaction(`Approve token`, async () =>
-      contract.approve(ZERO_ADDRESS, BigNumber.from(1))
+  const votingPowerPercent = useVotingPowerPercent(
+    userVotingPower,
+    guildConfig?.totalLocked
+  );
+
+  const roundedBalance = useBigNumberToNumber(
+    userVotingPower,
+    tokenInfo?.decimals,
+    3
+  );
+
+  const isUnlockable = unlockedTimestamp
+    ? unlockedTimestamp.isBefore(moment.now())
+    : false;
+
+  const { createTransaction } = useTransactions();
+  const guildContract = useERC20Guild(guildAddress);
+  const withdrawTokens = async () => {
+    setShowMenu(false);
+    createTransaction(
+      `Unlock and withdraw ${formatUnits(
+        userVotingPower,
+        tokenInfo?.decimals
+      )} ${tokenInfo?.symbol} tokens`,
+      async () => guildContract.withdrawTokens(userVotingPower)
     );
   };
 
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
   return (
-    <DropdownMenu ref={memberMenuRef}>
-      <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
-        <div>
-          <Icon src={dxIcon} alt={'Icon'} />
-          <span>geronimo.eth</span>
-        </div>
-        <VotingPower>{votingPower?.toString() ?? 0}%</VotingPower>
-      </UserActionButton>
-      <DropdownContent fullScreenMobile={true} show={showMenu}>
-        {isMobile && (
-          <DropdownHeader noTopPadding onClick={() => setShowMenu(false)}>
-            <FiArrowLeft /> <span>Membership</span>
-          </DropdownHeader>
-        )}
-        <MemberContainer>
-          <ContentItem>
-            Voting Power <span>{votingPower?.toString() ?? 0}%</span>
-          </ContentItem>
-          <ContentItem>
-            Locked <span>3.54%</span>
-          </ContentItem>
-          <ContentItem>
-            Unlocked in <span>542 days</span>
-          </ContentItem>
-          <LockButton onClick={() => lockDXD()}> Lock DXD</LockButton>
-        </MemberContainer>
-      </DropdownContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu ref={memberMenuRef}>
+        <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
+          <div>
+            <IconHolder>
+              <Avatar src={imageUrl} defaultSeed={userAddress} size={18} />
+            </IconHolder>
+            <span>{ensName || shortenAddress(userAddress)}</span>
+          </div>
+          <VotingPower>
+            {votingPowerPercent != null ? (
+              `${votingPowerPercent}%`
+            ) : (
+              <Loading loading text skeletonProps={{ width: '40px' }} />
+            )}
+          </VotingPower>
+        </UserActionButton>
+        <DropdownContent fullScreenMobile={true} show={showMenu}>
+          {isMobile && (
+            <DropdownHeader noTopPadding onClick={() => setShowMenu(false)}>
+              <FiArrowLeft /> <span>Membership</span>
+            </DropdownHeader>
+          )}
+          <MemberContainer>
+            <ContentItem>
+              Voting Power{' '}
+              <span>
+                {votingPowerPercent != null ? (
+                  `${votingPowerPercent}%`
+                ) : (
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
+                )}
+              </span>
+            </ContentItem>
+            <ContentItem>
+              {!isUnlockable ? 'Locked' : 'Staked'}{' '}
+              <span>
+                {userVotingPower && tokenInfo ? (
+                  `${roundedBalance} ${tokenInfo.symbol}`
+                ) : (
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
+                )}
+              </span>
+            </ContentItem>
+
+            <ContentItem>
+              {isUnlockable ? 'Unlocked' : 'Unlocked in'}{' '}
+              <span>
+                {unlockedTimestamp ? (
+                  isUnlockable ? (
+                    unlockedTimestamp?.fromNow()
+                  ) : (
+                    unlockedTimestamp?.toNow(true)
+                  )
+                ) : (
+                  <Loading loading text skeletonProps={{ width: '40px' }} />
+                )}
+              </span>
+            </ContentItem>
+
+            <LockButton onClick={() => setShowStakeModal(true)}>
+              Increase Voting Power
+            </LockButton>
+
+            {isUnlockable && (
+              <LockButton onClick={withdrawTokens}>Withdraw</LockButton>
+            )}
+          </MemberContainer>
+        </DropdownContent>
+      </DropdownMenu>
+
+      <StakeTokensModal
+        isOpen={showStakeModal}
+        onDismiss={() => setShowStakeModal(false)}
+      />
+    </>
   );
 };

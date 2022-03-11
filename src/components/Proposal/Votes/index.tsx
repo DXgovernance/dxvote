@@ -69,13 +69,13 @@ const Votes = () => {
   const { account } = providerStore.getActiveWeb3React();
   const signedVoteMessageId = utils.id(`dxvote:${proposalId}`);
   const { finishTime } = daoStore.getProposalStatus(proposalId);
-  const votingParameters = daoStore.getVotingParametersOfProposal(proposalId);
-  const votingMachineAddress = daoStore.getVotingMachineOfProposal(proposalId);
+  const votingMachineOfProposal =
+    daoStore.getVotingMachineOfProposal(proposalId);
   const finishTimeReached = finishTime.toNumber() < moment().unix();
   const isDXDVotingMachine =
-    configStore.getNetworkContracts().votingMachines.dxd &&
-    configStore.getNetworkContracts().votingMachines.dxd.address ==
-      votingMachineAddress;
+    configStore.getNetworkContracts().votingMachines[
+      votingMachineOfProposal.address
+    ].type == 'DXDVotingMachine';
 
   const rinkebyProvider = useJsonRpcProvider(4);
 
@@ -230,7 +230,7 @@ const Votes = () => {
 
   const executeSignedVote = function (signedVote) {
     daoService.executeSignedVote(
-      votingMachineAddress,
+      votingMachineOfProposal.address,
       proposalId,
       signedVote.voter,
       signedVote.vote,
@@ -471,12 +471,14 @@ const Votes = () => {
 
       {(proposal.stateInVotingMachine === 3 ||
         proposal.stateInVotingMachine === 4) &&
-        votingParameters.votersReputationLossRatio.toNumber() > 0 &&
+        votingMachineOfProposal.params.votersReputationLossRatio.toNumber() >
+          0 &&
         finishTime.toNumber() > 0 && (
           <TextCenter>
             <small>
               Voter REP Loss Ratio:
-              {votingParameters.votersReputationLossRatio.toString()}%
+              {votingMachineOfProposal.params.votersReputationLossRatio.toString()}
+              %
             </small>
           </TextCenter>
         )}
@@ -495,7 +497,7 @@ const Votes = () => {
             onConfirm={submitVote}
             onCancel={() => setDecision(0)}
             voteDetails={{
-              votingMachine: votingMachineAddress,
+              votingMachine: votingMachineOfProposal.address,
               proposalId: proposalId,
               voter: account,
               decision: decision.toString(),

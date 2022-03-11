@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import contentHash from 'content-hash';
 import { FiChevronLeft } from 'react-icons/fi';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
 import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Input } from '../../components/Guilds/common/Form';
-import SidebarCard from '../../components/Guilds/SidebarCard';
+import {
+  ActionsBuilder,
+  SidebarInfoCard,
+} from '../../components/Guilds/CreateProposalPage';
 import Editor from 'components/Guilds/Editor';
 
 import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
+import { useTransactions } from 'contexts/Guilds';
+import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
+import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
+import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
+import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
+import { Loading } from 'components/Guilds/common/Loading';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -36,19 +46,10 @@ const PageContent = styled(Box)`
   }
 `;
 
-const Button = styled(IconButton)`
+const StyledButton = styled(IconButton)`
   margin: 0;
-`;
-
-const SidebarHeader = styled.h3`
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
-  color: #000000;
-  padding: 16px;
-  margin: 0;
+  padding: 0.5rem 0.8rem;
+  margin-left: ${props => props.marginLeft}; || 0
 `;
 
 const Label = styled.span`
@@ -58,16 +59,26 @@ const Label = styled.span`
   font-size: ${({ size }) => (size ? size : `14px`)};
   line-height: 20px;
   display: flex;
-  color: ${({ color }) => (color ? color : `#000000`)};
-  margin-bottom: 0.5rem;
+  color: ${({ color }) => (color ? color : '#BDC0C7')};
+  margin: 12px 0px;
+`;
+
+const InputWrapper = styled(Flex)`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const CreateProposalPage: React.FC = () => {
+  const { isLoading: isGuildAvailabilityLoading } = useContext(
+    GuildAvailabilityContext
+  );
+
   const ttlMs = 345600000;
   const history = useHistory();
-  const [editMode, setEditMode] = React.useState(true);
-  const [title, setTitle] = React.useState('');
-  const [referenceLink, setReferenceLink] = React.useState('');
+  const [editMode, setEditMode] = useState(true);
+  const [title, setTitle] = useState('');
+  const [referenceLink, setReferenceLink] = useState('');
   const [proposalBodyHTML, setProposalBodyHTML] =
     useLocalStorageWithExpiry<string>(
       `guild/newProposal/description/html`,
@@ -88,9 +99,39 @@ const CreateProposalPage: React.FC = () => {
 
   const handleBack = () => history.push('/');
 
-  const handleCreateProposal = () => {
-    // TODO: build this functionality
+  const ipfs = useIPFSNode();
+  const uploadToIPFS = async () => {
+    const content = { description: proposalBodyHTML, url: referenceLink };
+    const cid = await ipfs.add(JSON.stringify(content));
+    await ipfs.pin(cid);
+    return contentHash.fromIpfs(cid);
   };
+
+  const { createTransaction } = useTransactions();
+  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const guildContract = useERC20Guild(guildAddress);
+  const handleCreateProposal = async () => {
+    const contentHash = await uploadToIPFS();
+    createTransaction(`Create proposal ${title}`, async () => {
+      return guildContract.createProposal(
+        [ZERO_ADDRESS],
+        [ZERO_HASH],
+        [1],
+        0,
+        title,
+        `0x${contentHash}`
+      );
+    });
+  };
+
+  const isValid = useMemo(() => {
+    if (!title) return false;
+    if (!proposalBodyHTML) return false;
+
+    return true;
+  }, [title, proposalBodyHTML]);
+
+  if (isGuildAvailabilityLoading) return <Loading loading />;
 
   return (
     <PageContainer>
@@ -100,28 +141,30 @@ const CreateProposalPage: React.FC = () => {
           justifyContent="space-between"
           margin="0px 0px 24px"
         >
-          <Button iconLeft onClick={handleBack}>
+          <StyledButton iconLeft onClick={handleBack}>
             <FiChevronLeft />
-            Back to Overview
-          </Button>
+            Change proposal type
+          </StyledButton>
 
-          <Button
+          <StyledButton
             padding="8px"
             onClick={handleToggleEditMode}
             disabled={!title || !proposalBodyMd}
+            data-testId="create-proposal-editor-toggle-button"
           >
             {editMode ? (
               <MdOutlinePreview size={18} />
             ) : (
               <MdOutlineModeEdit size={18} />
             )}
-          </Button>
+          </StyledButton>
         </Flex>
         <Box margin="0px 0px 24px">
           {editMode ? (
             <>
               <Label>Title</Label>
               <Input
+                data-testId="create-proposal-title"
                 placeholder="Proposal Title"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
@@ -134,19 +177,25 @@ const CreateProposalPage: React.FC = () => {
         <Box margin="0px 0px 24px">
           {editMode ? (
             <>
-              <Label color="#A1A6B0"> Reference link (optional)</Label>
-
-              <Input
-                placeholder="https://daotalk.org/..."
-                value={referenceLink}
-                onChange={e => setReferenceLink(e.target.value)}
-                icon={<MdLink size={18} color="#BDC0C7" />}
-              />
+              <Label>Reference link (optional)</Label>
+              <InputWrapper>
+                <Input
+                  placeholder="https://daotalk.org/..."
+                  value={referenceLink}
+                  onChange={e => setReferenceLink(e.target.value)}
+                  icon={<MdLink size={18} />}
+                  data-testId="create-proposal-link"
+                />
+                <StyledButton variant="secondary" marginLeft={'1rem'}>
+                  Import
+                </StyledButton>
+              </InputWrapper>
             </>
           ) : referenceLink ? (
-            <Label color="#A1A6B0" size="16px">
-              {referenceLink}
-            </Label>
+            <>
+              <Label size="16px">{referenceLink}</Label>
+              <StyledButton> Import </StyledButton>
+            </>
           ) : null}
         </Box>
         {editMode ? (
@@ -154,51 +203,29 @@ const CreateProposalPage: React.FC = () => {
             onMdChange={setProposalBodyMd}
             onHTMLChange={setProposalBodyHTML}
             content={proposalBodyHTML}
+            placeholder="What do you want to propose?"
           />
         ) : (
           <div
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(proposalBodyHTML) }}
           />
         )}
+        <Box margin="16px 0px 24px">
+          <ActionsBuilder editable={editMode} />
+        </Box>
         <Box margin="16px 0px">
-          <Button
+          <StyledButton
             onClick={handleCreateProposal}
             variant="secondary"
-            disabled={editMode}
+            disabled={!isValid}
+            data-testId="create-proposal-action-button"
           >
             Create Proposal
-          </Button>
+          </StyledButton>
         </Box>
       </PageContent>
       <SidebarContent>
-        <SidebarCard header={<SidebarHeader>Information</SidebarHeader>}>
-          <Box padding="12px 0">
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Consensus System</Label>
-              <Label> Guild</Label>
-            </Flex>
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Proposal Duration</Label>
-              <Label> 8 days</Label>
-            </Flex>
-            <Flex
-              direction="row"
-              justifyContent="space-between"
-              padding="5px 16px"
-            >
-              <Label> Quorum</Label>
-              <Label> 40%</Label>
-            </Flex>
-          </Box>
-        </SidebarCard>
+        <SidebarInfoCard />
       </SidebarContent>
     </PageContainer>
   );

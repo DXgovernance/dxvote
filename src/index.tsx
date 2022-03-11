@@ -35,6 +35,8 @@ import { useEffect } from 'react';
 import { useContext } from './contexts';
 import { DEFAULT_ETH_CHAIN_ID } from './provider/connectors';
 
+import EtherSWRManager from 'components/Guilds/EtherSWRManager';
+
 const Content = styled.div`
   margin: auto;
   height: 100%;
@@ -131,7 +133,7 @@ const SplitApp = () => {
   }, [mainnetProvider, ensService]);
 
   return (
-    <>
+    <EtherSWRManager>
       {!isGuilds ? (
         <Switch>
           <Web3ReactManager>
@@ -146,7 +148,7 @@ const SplitApp = () => {
       ) : (
         <GuildsApp />
       )}
-    </>
+    </EtherSWRManager>
   );
 };
 

@@ -4,7 +4,7 @@ import { render } from '../../../utils/tests';
 
 import { default as ProposalStatus } from './';
 
-jest.mock('hooks/Guilds/ether-swr/useProposal', () => ({
+jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
   useProposal: () => ({
     data: {
       title: 'Proposal Title',
@@ -28,7 +28,7 @@ test('renders Ended Proposal Status', async () => {
   expect(screen.queryAllByText('Active')).toHaveLength(0);
 });
 
-jest.mock('hooks/Guilds/ether-swr/useProposal', () => ({
+jest.mock('hooks/Guilds/ether-swr/guild/useProposal', () => ({
   useProposal: () => ({
     data: {},
     isValidating: true,

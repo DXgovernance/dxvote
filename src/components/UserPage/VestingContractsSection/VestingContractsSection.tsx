@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import moment from 'moment';
 import UserVestingInfoModal from '../../UserVestingInfoModal';
-import useContract from '../../../hooks/useContract';
+import { useContract } from '../../../hooks/useContract';
 import { useContext } from '../../../contexts';
 import { formatBalance, bnum } from '../../../utils';
 import ERC20Json from '../../../contracts/ERC20.json';

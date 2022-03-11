@@ -5,9 +5,9 @@ import Web3ConnectStatus from '../Web3ConnectStatus';
 import { useContext } from '../../contexts';
 import { FiSettings, FiUser, FiBarChart2 } from 'react-icons/fi';
 import dxdaoIcon from 'assets/images/DXdao.svg';
-import Web3 from 'web3';
-import { bnum } from '../../utils';
+import { bnum, formatCurrency, normalizeBalance } from '../../utils';
 import { Box } from '../../components/common';
+import { useBalance } from 'hooks/useERC20';
 
 const NavWrapper = styled.div`
   display: flex;
@@ -71,30 +71,61 @@ const Header = observer(() => {
   );
 
   const {
-    context: {
-      userStore,
-      providerStore,
-      blockchainStore,
-      configStore,
-      daoStore,
-    },
+    context: { providerStore, blockchainStore, configStore, daoStore },
   } = useContext();
 
   const { active, account } = providerStore.getActiveWeb3React();
 
   const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
-  if (!active) {
-    return (
-      <NavWrapper>
-        <NavSection>
-          <NavItem route={`/`}>
-            <MenuItem>
-              <img alt="dxdao" src={dxdaoIcon} />
-              {isTestingEnv && <WarningDev>Testing Environment</WarningDev>}
-            </MenuItem>
-          </NavItem>
-        </NavSection>
+  const votingMachines = configStore.getNetworkContracts().votingMachines;
+
+  const votingMachineTokens = [];
+  for (const votingMachineAddress in votingMachines) {
+    const votingMachineToken = configStore
+      .getTokensOfNetwork()
+      .find(
+        token => token.address === votingMachines[votingMachineAddress].token
+      );
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const votingMachineTokenBalance = useBalance(
+      account,
+      votingMachineToken?.address
+    );
+
+    if (
+      !votingMachineTokens.find(
+        votingMachineTokenBalance =>
+          votingMachineTokenBalance.symbol == votingMachineToken?.symbol
+      )
+    )
+      votingMachineTokens.push({
+        symbol: votingMachineToken?.symbol,
+        balance: votingMachineTokenBalance,
+      });
+  }
+
+  const networkName = configStore.getActiveChainName();
+
+  const { userRep, totalSupply } =
+    active && blockchainStore.initialLoadComplete
+      ? daoStore.getRepAt(account, providerStore.getCurrentBlockNumber())
+      : { userRep: bnum(0), totalSupply: bnum(0) };
+  const repPercentage = active
+    ? userRep.times(100).div(totalSupply).toFixed(4)
+    : bnum(0);
+
+  return (
+    <NavWrapper>
+      <NavSection>
+        <NavItem route={`/${networkName}/proposals`}>
+          <MenuItem>
+            <img alt="dxdao" src={dxdaoIcon} />
+            {isTestingEnv && <WarningDev>Testing Environment</WarningDev>}
+          </MenuItem>
+        </NavItem>
+      </NavSection>
+      {!active ? (
         <NavSection>
           <Web3ConnectStatus text="Connect Wallet" />
           <NavItem route={`/config`}>
@@ -103,98 +134,57 @@ const Header = observer(() => {
             </a>
           </NavItem>
         </NavSection>
-      </NavWrapper>
-    );
-  } else {
-    const networkName = configStore.getActiveChainName();
-    const userInfo = userStore.getUserInfo();
-    const votingMachines = blockchainStore.initialLoadComplete
-      ? configStore.getNetworkContracts().votingMachines
-      : {};
-
-    const dxdBalance =
-      active && userInfo.dxdBalance
-        ? parseFloat(
-            Number(Web3.utils.fromWei(userInfo.dxdBalance.toString())).toFixed(
-              2
-            )
-          )
-        : 0;
-    const genBalance =
-      active && userInfo.genBalance
-        ? parseFloat(
-            Number(Web3.utils.fromWei(userInfo.genBalance.toString())).toFixed(
-              2
-            )
-          )
-        : 0;
-    const { userRep, totalSupply } =
-      active && blockchainStore.initialLoadComplete
-        ? daoStore.getRepAt(account, providerStore.getCurrentBlockNumber())
-        : { userRep: bnum(0), totalSupply: bnum(0) };
-    const repPercentage = active
-      ? userRep.times(100).div(totalSupply).toFixed(4)
-      : bnum(0);
-
-    return (
-      <NavWrapper>
+      ) : blockchainStore.initialLoadComplete ? (
         <NavSection>
-          <NavItem route={`/${networkName}/proposals`}>
-            <MenuItem>
-              <img alt="dxdao" src={dxdaoIcon} />
-              {isTestingEnv && <WarningDev>Testing Environment</WarningDev>}
-            </MenuItem>
+          {account && (
+            <>
+              {votingMachineTokens.map((votingMachineToken, i) => {
+                return (
+                  <ItemBox key={i}>
+                    {' '}
+                    {formatCurrency(
+                      normalizeBalance(votingMachineToken.balance)
+                    )}{' '}
+                    {votingMachineToken.symbol}{' '}
+                  </ItemBox>
+                );
+              })}
+              {repPercentage.toString() !== 'NaN' && (
+                <ItemBox> {repPercentage.toString()} % REP </ItemBox>
+              )}
+            </>
+          )}
+          <Web3ConnectStatus text="Connect Wallet" />
+          <NavItem route={`/${networkName}/info`}>
+            <a>
+              <FiBarChart2 style={{ margin: '0px 10px', color: '#616161' }} />
+            </a>
+          </NavItem>
+          <NavItem route={`/config`}>
+            <a>
+              <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
+            </a>
+          </NavItem>
+          {account && (
+            <NavItem route={`/${networkName}/user/${account}`}>
+              <a>
+                <FiUser style={{ margin: '0px 10px', color: '#616161' }} />
+              </a>
+            </NavItem>
+          )}
+        </NavSection>
+      ) : (
+        <NavSection>
+          <Web3ConnectStatus text="Connect Wallet" />
+          <NavItem route={`/config`}>
+            <a>
+              <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
+            </a>
           </NavItem>
         </NavSection>
-        {blockchainStore.initialLoadComplete ? (
-          <NavSection>
-            {account && (
-              <>
-                {votingMachines.dxd ? (
-                  <ItemBox> {dxdBalance} DXD </ItemBox>
-                ) : (
-                  <div />
-                )}
-                {votingMachines.gen ? (
-                  <ItemBox> {genBalance} GEN </ItemBox>
-                ) : (
-                  <div />
-                )}
-                <ItemBox> {repPercentage.toString()} % REP </ItemBox>
-              </>
-            )}
-            <Web3ConnectStatus text="Connect Wallet" />
-            <NavItem route={`/${networkName}/info`}>
-              <a>
-                <FiBarChart2 style={{ margin: '0px 10px', color: '#616161' }} />
-              </a>
-            </NavItem>
-            <NavItem route={`/config`}>
-              <a>
-                <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
-              </a>
-            </NavItem>
-            {account && (
-              <NavItem route={`/${networkName}/user/${account}`}>
-                <a>
-                  <FiUser style={{ margin: '0px 10px', color: '#616161' }} />
-                </a>
-              </NavItem>
-            )}
-          </NavSection>
-        ) : (
-          <NavSection>
-            <Web3ConnectStatus text="Connect Wallet" />
-            <NavItem route={`/config`}>
-              <a>
-                <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
-              </a>
-            </NavItem>
-          </NavSection>
-        )}
-      </NavWrapper>
-    );
-  }
+      )}
+    </NavWrapper>
+  );
 });
 
 export default Header;

@@ -9,8 +9,8 @@
     "controller": "0xf89f66329e7298246de22D210Ac246DCddff4621",
     "reputation": "0x033B0C959Ca16Ae1fBbBC3d7815dd5dF34a5E648",
     "votingMachines": {
-      "dxd": {
-        "address": "0x890Aff9B651A056FD79D304942203C3d5B1dB301",
+      "0x890Aff9B651A056FD79D304942203C3d5B1dB301": {
+        "type": "DXDVotingMachine",
         "token": "0x9F513d1823D68D0064f78d3337e6221C5D31169c"
       }
     },

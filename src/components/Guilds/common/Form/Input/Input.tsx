@@ -7,38 +7,38 @@ const baseInputStyles = css`
   padding: 0.5rem 0.8rem;
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
-
+  ::placeholder {
+    color: ${({ theme }) => theme.colors.proposalText.lightGrey};
+  }
   :hover:enabled {
-    background-color: ${({ theme }) => theme.colors.text};
     color: ${({ theme }) => theme.colors.background};
+    border-color: ${({ theme }) => theme.colors.border.hover};
   }
 
   :active:enabled {
     border: 0.1rem solid ${({ theme }) => theme.colors.muted};
   }
   width: -webkit-fill-available;
+
+  :focus:enabled {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
 
 const InputWrapper = styled.div`
   ${baseInputStyles}
   display: flex;
-  :hover {
-    background-color: ${({ theme }) => theme.colors.text};
-    color: ${({ theme }) => theme.colors.background};
-    & > input {
-      background-color: ${({ theme }) => theme.colors.text};
-      color: ${({ theme }) => theme.colors.background};
-    }
-  }
-  :active:enabled {
-    border: 0.1rem solid ${({ theme }) => theme.colors.muted};
-    & > input {
-      border: 0.1rem solid ${({ theme }) => theme.colors.muted};
-    }
+  width: 100%;
+  &:hover,
+  &:focus {
+    border: 0.1rem solid ${({ theme }) => theme.colors.text};
   }
 `;
 
 const InputBase = styled.input`
+  display: flex;
   border: none;
   width: 100%;
   &:focus,
@@ -46,9 +46,11 @@ const InputBase = styled.input`
   &:hover {
     outline: none;
     border: none;
+    color: ${({ theme }) => theme.colors.text};
   }
   margin-left: 12px;
   padding: 0;
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const BaseInput = styled.input`
