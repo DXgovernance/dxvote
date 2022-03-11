@@ -80,31 +80,6 @@ const Header = observer(() => {
 
   const votingMachines = configStore.getNetworkContracts().votingMachines;
 
-  const votingMachineTokens = [];
-  for (const votingMachineAddress in votingMachines) {
-    const votingMachineToken = configStore
-      .getTokensOfNetwork()
-      .find(
-        token => token.address === votingMachines[votingMachineAddress].token
-      );
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const votingMachineTokenBalance = useBalance(
-      account,
-      votingMachineToken?.address
-    );
-
-    if (
-      !votingMachineTokens.find(
-        votingMachineTokenBalance =>
-          votingMachineTokenBalance.symbol == votingMachineToken?.symbol
-      )
-    )
-      votingMachineTokens.push({
-        symbol: votingMachineToken?.symbol,
-        balance: votingMachineTokenBalance,
-      });
-  }
-
   const networkName = configStore.getActiveChainName();
 
   const { userRep, totalSupply } =
@@ -138,12 +113,25 @@ const Header = observer(() => {
         <NavSection>
           {account && (
             <>
-              {votingMachineTokens.map((votingMachineToken, i) => {
+              {Object.keys(votingMachines).map((votingMachineAddress, i) => {
+                const votingMachineToken = configStore
+                  .getTokensOfNetwork()
+                  .find(
+                    token =>
+                      token.address ===
+                      votingMachines[votingMachineAddress].token
+                  );
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                const votingMachineTokenBalance = useBalance(
+                  account,
+                  votingMachineToken?.address
+                );
+
                 return (
                   <ItemBox key={i}>
                     {' '}
                     {formatCurrency(
-                      normalizeBalance(votingMachineToken.balance)
+                      normalizeBalance(votingMachineTokenBalance)
                     )}{' '}
                     {votingMachineToken.symbol}{' '}
                   </ItemBox>
