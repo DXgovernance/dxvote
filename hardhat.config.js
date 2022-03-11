@@ -1,6 +1,8 @@
-require('dotenv').config();
+const moment = require('moment');
 require('@nomiclabs/hardhat-truffle5');
 require('hardhat-dependency-compiler');
+require("./node_modules/dxdao-contracts/scripts/deploy-dxvote");
+require("./node_modules/dxdao-contracts/scripts/deploy-dxvote-develop");
 
 const MNEMONIC = "dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao";
 const INFURA_API_KEY = process.env.REACT_APP_KEY_INFURA_API_KEY;
@@ -67,7 +69,12 @@ module.exports = {
       accounts: { mnemonic: MNEMONIC },
       throwOnTransactionFailures: true,
       throwOnCallFailures: true,
-      allowUnlimitedContractSize: false
+      allowUnlimitedContractSize: false,
+      initialDate: moment().subtract(32, 'days').toDate().toString(),
+      mining: {
+        auto: true,
+        interval: 1000,
+      },
     },
     mainnet: {
       url: ALCHEMY_API_KEY.length > 0
