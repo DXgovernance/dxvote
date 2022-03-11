@@ -90,7 +90,8 @@ export default class ConfigStore {
       if (ipfsConfig?.version == this.networkConfig.version)
         this.networkConfig = Object.assign(ipfsConfig, this.networkConfig);
 
-      console.log(ipfsConfig, this.networkConfig);
+      console.debug('[OLD CONFIG]', ipfsConfig);
+      console.debug('[NEW CONFIG]', this.networkConfig);
     } catch (e) {
       console.error(
         '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',

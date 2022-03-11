@@ -45,10 +45,9 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     // Queded && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestAbove10 = allProposals
       .filter(proposal => {
-        const queuedVotePeriodLimit =
-          daoStore.getCache().votingMachines[
-            daoStore.getCache().schemes[proposal.scheme].votingMachine
-          ].votingParameters[proposal.paramsHash].queuedVotePeriodLimit;
+        const queuedVotePeriodLimit = daoStore.getVotingMachineOfProposal(
+          proposal.id
+        ).params.queuedVotePeriodLimit;
 
         const repAtCreation = getRep(
           proposal.creationEvent.blockNumber
@@ -94,10 +93,9 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
     // Queded && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestUnder10 = allProposals
       .filter((proposal): Boolean => {
-        const queuedVotePeriodLimit =
-          daoStore.getCache().votingMachines[
-            daoStore.getCache().schemes[proposal.scheme].votingMachine
-          ].votingParameters[proposal.paramsHash].queuedVotePeriodLimit;
+        const queuedVotePeriodLimit = daoStore.getVotingMachineOfProposal(
+          proposal.id
+        ).params.queuedVotePeriodLimit;
 
         const repAtCreation = getRep(
           proposal.creationEvent.blockNumber

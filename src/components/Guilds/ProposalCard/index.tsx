@@ -14,6 +14,7 @@ import Avatar from '../Avatar';
 import { DEFAULT_CHAIN_ID } from '../../../utils/constants';
 import { shortenAddress } from '../../../utils';
 import { Loading } from '../common/Loading';
+import useVoteSummary from 'hooks/Guilds/useVoteSummary';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -109,6 +110,7 @@ interface ProposalCardProps {
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
   const { data: proposal } = useProposal(guildId, id);
+  const votes = useVoteSummary(guildId, id);
   const { imageUrl, ensName } = useENSAvatar(
     proposal?.creator,
     DEFAULT_CHAIN_ID
@@ -179,11 +181,22 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
 
           {proposal?.totalVotes ? (
             <BorderedIconDetailWrapper>
-              <Detail>15.60%</Detail>
-              <Icon as="div" spaceLeft spaceRight>
-                <FiCircle />
-              </Icon>
-              <Detail>5.25%</Detail>
+              {votes
+                .sort((a, b) => b - a)
+                .map((vote, i) => {
+                  if (i < 3 && !(i === votes.length - 1)) {
+                    return (
+                      <>
+                        <Detail>{vote}%</Detail>
+                        <Icon as="div" spaceLeft spaceRight>
+                          <FiCircle />
+                        </Icon>
+                      </>
+                    );
+                  } else {
+                    return <Detail>{vote}%</Detail>;
+                  }
+                })}
             </BorderedIconDetailWrapper>
           ) : (
             <Loading

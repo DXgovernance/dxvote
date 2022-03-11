@@ -24,7 +24,8 @@ import useExporters from '../hooks/useExporters';
 import { Button } from './common/Button';
 import { flatten } from '../utils/array';
 import moment from 'moment';
-import { useBalance } from 'hooks/useBalance';
+import { useBalance } from 'hooks/useERC20';
+import { useETHBalance } from 'hooks/useETHBalance';
 
 const FinanceInfoWrapper = styled.div`
   background: white;
@@ -68,7 +69,7 @@ const FinanceInformation = observer(() => {
       {
         address: ZERO_ADDRESS,
         name: networkAssetSymbol,
-        amount: useBalance(networkContracts.avatar, ZERO_ADDRESS),
+        amount: useETHBalance(networkContracts.avatar),
         decimals: 18,
       },
     ],
@@ -76,7 +77,7 @@ const FinanceInformation = observer(() => {
       {
         address: ZERO_ADDRESS,
         name: networkAssetSymbol,
-        amount: useBalance(networkContracts.avatar, ZERO_ADDRESS),
+        amount: useETHBalance(networkContracts.avatar),
         decimals: 18,
       },
     ],
@@ -104,7 +105,7 @@ const FinanceInformation = observer(() => {
         {
           address: ZERO_ADDRESS,
           name: networkAssetSymbol,
-          amount: useBalance(scheme.address, ZERO_ADDRESS),
+          amount: useETHBalance(scheme.address),
           decimals: 18,
         },
       ];

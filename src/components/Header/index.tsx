@@ -7,7 +7,7 @@ import { FiSettings, FiUser, FiBarChart2 } from 'react-icons/fi';
 import dxdaoIcon from 'assets/images/DXdao.svg';
 import { bnum, formatCurrency, normalizeBalance } from '../../utils';
 import { Box } from '../../components/common';
-import { useBalance } from 'hooks/useBalance';
+import { useBalance } from 'hooks/useERC20';
 
 const NavWrapper = styled.div`
   display: flex;
