@@ -2,21 +2,11 @@ import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
 import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
-import arbitrumIcon from '../../../assets/images/arbitrum.png';
-import ethereumIcon from '../../../assets/images/ethereum.svg';
-import gnosisIcon from '../../../assets/images/gnosis-icon-green.svg';
 import { Modal } from '../common/Modal';
 import Option from './components/Option';
 import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
+import iconsByChain from '../common/ChainIcons';
 
-const iconsByChain = {
-  1: ethereumIcon,
-  4: ethereumIcon,
-  100: gnosisIcon,
-  42161: arbitrumIcon,
-  421611: arbitrumIcon,
-  1337: ethereumIcon,
-};
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
