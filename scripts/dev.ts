@@ -1,7 +1,7 @@
 const hre = require('hardhat');
 
 async function main() {
-  await hre.run("deploy-dxvote-develop");
+  await hre.run('deploy-dxvote-develop');
 }
 
 main()
