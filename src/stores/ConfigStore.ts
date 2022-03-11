@@ -7,7 +7,7 @@ import {
   NETWORK_ASSET_SYMBOL,
   NETWORK_NAMES,
   NETWORK_DISPLAY_NAMES,
-  DEFUALT_CHAIN_ID,
+  DEFAULT_CHAIN_ID,
 } from '../utils';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
 
@@ -109,14 +109,14 @@ export default class ConfigStore {
   getActiveChainName() {
     return NETWORK_NAMES[
       this.context?.providerStore.getActiveWeb3React().chainId ||
-        DEFUALT_CHAIN_ID
+        DEFAULT_CHAIN_ID
     ];
   }
 
   getActiveChainDisplayName() {
     return NETWORK_DISPLAY_NAMES[
       this.context?.providerStore.getActiveWeb3React().chainId ||
-        DEFUALT_CHAIN_ID
+        DEFAULT_CHAIN_ID
     ];
   }
 

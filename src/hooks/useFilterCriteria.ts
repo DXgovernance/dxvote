@@ -91,7 +91,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       )
       .sort(orderByNewestTimeToFinish);
 
-    //   Queded && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
+    // Queded && positiveVotes < 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestUnder10 = allProposals
       .filter((proposal): Boolean => {
         const queuedVotePeriodLimit =

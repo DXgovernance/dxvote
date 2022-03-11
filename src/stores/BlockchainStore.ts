@@ -3,6 +3,7 @@ import { makeObservable, observable, action } from 'mobx';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { CacheLoadError } from '../utils/errors';
+import { bnum } from 'utils';
 
 const targetCacheVersion = 1;
 
@@ -69,6 +70,25 @@ export default class BlockchainStore {
           networkCache = JSON.parse(await match.text());
         }
 
+        if (networkName === 'localhost') {
+          networkCache = {
+            networkId: 1337,
+            version: 1,
+            blockNumber: 1,
+            address: '0xf89f66329e7298246de22D210Ac246DCddff4621',
+            reputation: {
+              events: [],
+              total: bnum(0),
+            },
+            schemes: {},
+            proposals: {},
+            callPermissions: {},
+            votingMachines: {},
+            ipfsHashes: [],
+            vestingContracts: [],
+          };
+        }
+
         if (
           networkCache &&
           (!networkCache?.version ||
@@ -83,8 +103,9 @@ export default class BlockchainStore {
         const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
 
         if (
-          !networkCache ||
-          !(newestCacheIpfsHash === networkCache.baseCacheIpfsHash)
+          networkName !== 'localhost' &&
+          (!networkCache ||
+            !(newestCacheIpfsHash === networkCache.baseCacheIpfsHash))
         ) {
           console.debug('[IPFS Cache Fetch]', networkName, newestCacheIpfsHash);
           notificationStore.setGlobalLoading(

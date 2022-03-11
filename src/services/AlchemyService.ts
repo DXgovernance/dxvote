@@ -1,6 +1,6 @@
 import RootContext from '../contexts';
 import axios from 'axios';
-import { ETH_NETWORKS_IDS, DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
+import { ETH_NETWORKS_IDS } from 'provider/connectors';
 import { ALCHEMY_NETWORK_URLS, DEFAULT_RPC_URLS } from 'utils';
 
 export default class AlchemyService {
@@ -13,7 +13,7 @@ export default class AlchemyService {
 
   async isAuthenticated() {
     const alchemyAPIKey = this.context.configStore.getLocalConfig().alchemy;
-    const networkUrl = ALCHEMY_NETWORK_URLS[DEFAULT_ETH_CHAIN_ID];
+    const networkUrl = ALCHEMY_NETWORK_URLS[1];
 
     if (alchemyAPIKey && alchemyAPIKey.length > 0) {
       try {
