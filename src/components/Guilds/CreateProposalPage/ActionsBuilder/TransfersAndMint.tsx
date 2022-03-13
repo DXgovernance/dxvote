@@ -10,12 +10,6 @@ import iconsByChain from 'components/Guilds/common/ChainIcons';
 import CircleDots from '../../../../assets/images/circle.svg';
 import StyledIcon from 'components/Guilds/common/SVG';
 import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
-import {
-  DropdownContent,
-  DropdownMenu,
-  DropdownPosition,
-  DropdownButton,
-} from '../../common/DropdownMenu';
 import { AssetDropDown } from './AssetDropdown';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
@@ -76,6 +70,8 @@ const MiddleDetailsWrapper = styled(DetailWrapper)`
 
 const RecipientInput: React.FC = () => {
   const [address, setAddress] = useState('');
+  const [amount, setAmount] = useState('');
+
   const { chainId } = useWeb3React();
   return (
     <MiddleDetailsWrapper>
@@ -102,9 +98,9 @@ const RecipientInput: React.FC = () => {
           <WrapperText>Amount</WrapperText>
           <Segment>
             <NumericalInput
-              onUserInput={e => setAddress(e)}
+              onUserInput={e => setAmount(e)}
               placeholder="0.00"
-              value={address}
+              value={amount}
               width="85%"
             />
           </Segment>

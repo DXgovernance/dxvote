@@ -10,6 +10,7 @@ import SidebarCard, {
 import OptionRow, { Option } from './Option';
 import AddButton from './AddButton';
 import TransferAndMint from './TransfersAndMint';
+import { useActionsBuilder } from 'contexts/Guilds/ActionsBuilder';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -28,6 +29,8 @@ interface ActionsBuilderProps {
 
 export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
   const [actionsEditMode, setActionsEditMode] = useState(true);
+
+  const { transferBuilder } = useActionsBuilder();
 
   // TODO: remove when actions are implemented
   const [options, setOptions] = useState<Option[]>([
@@ -103,13 +106,15 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
             data={option}
             editable={editable && actionsEditMode}
           />
+          {transferBuilder && editable && option.label === 'For' && (
+            <TransferAndMint />
+          )}
           {idx !== options.length - 1 && <Divider />}
         </>
       ))}
 
       {editable && actionsEditMode && (
         <>
-          <TransferAndMint />
           <Divider />
           <AddOptionWrapper>
             <AddButton

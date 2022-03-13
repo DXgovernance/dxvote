@@ -17,6 +17,7 @@ export const ActionsModalProvider = ({ children }) => {
     ActionsModalView.Base,
   ]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [transferBuilder, setTransferBuilder] = useState(false);
 
   // closes modal and resets the view
   const closeModal = () => {
@@ -70,7 +71,14 @@ export const ActionsModalProvider = ({ children }) => {
 
   return (
     <ActionsModalContext.Provider
-      value={{ modalView, setModalView, isOpen, setIsOpen }}
+      value={{
+        modalView,
+        setModalView,
+        isOpen,
+        setIsOpen,
+        transferBuilder,
+        setTransferBuilder,
+      }}
     >
       {children}
       <Modal

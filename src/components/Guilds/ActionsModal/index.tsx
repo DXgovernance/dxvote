@@ -24,7 +24,9 @@ const Wrapper = styled(Flex)`
   margin: 24px auto;
 `;
 
-const ActionsButton = styled(Button)`
+const ActionsButton = styled(Button).attrs(() => ({
+  variant: 'secondary',
+}))`
   width: 90%;
   height: 40px;
   margin: 6px 0;
@@ -36,41 +38,51 @@ const ActionsButton = styled(Button)`
   }
 `;
 
-const WrapperText = styled(ContainerText)`
+const WrapperText = styled(ContainerText).attrs(() => ({
+  variant: 'bold',
+}))`
   justify-content: left;
   flex-direction: row;
   width: 85%;
+  color: ${({ theme }) => theme.colors.proposalText.grey};
 `;
 
-const ButtonText = styled(ContainerText)`
+const ButtonText = styled(ContainerText).attrs(() => ({
+  variant: 'medium',
+}))`
   justify-content: space-between;
   flex-direction: row;
+  color: ${({ theme }) => theme.colors.proposalText.grey};
 `;
 
-const ExternalButton = styled(ActionsButton)`
+const ExternalButton = styled(ActionsButton).attrs(() => ({
+  variant: 'secondary',
+}))`
   justify-content: space-between;
 `;
 
 const ActionModal: React.FC = () => {
   //TODO: remove hardcoded external contracts with actual data
 
-  const { setModalView } = useActionsBuilder();
+  const { setModalView, setTransferBuilder, transferBuilder, setIsOpen } =
+    useActionsBuilder();
+
+  const handleTransfer = () => {
+    setTransferBuilder(true);
+    setIsOpen(false);
+  };
 
   return (
     <Wrapper>
       <CoreWrapper>
-        <WrapperText variant="bold" color="grey">
-          Core
-        </WrapperText>
-        <ActionsButton variant="secondary">
+        <WrapperText>Core</WrapperText>
+        <ActionsButton disabled={transferBuilder} onClick={handleTransfer}>
           <StyledIcon src={Vector} />
           Transfer & Mint
         </ActionsButton>
       </CoreWrapper>
       <ExternalWrapper>
-        <WrapperText variant="bold" color="grey">
-          External Contracts
-        </WrapperText>
+        <WrapperText>External Contracts</WrapperText>
         <ExternalButton
           variant="secondary"
           onClick={() =>
@@ -81,45 +93,31 @@ const ActionModal: React.FC = () => {
           }
         >
           DXdao Controller
-          <ButtonText variant="medium" color="grey">
-            2 Actions
-          </ButtonText>
+          <ButtonText>2 Actions</ButtonText>
         </ExternalButton>
-        <ExternalButton variant="secondary">
+        <ExternalButton>
           Permissions Registry
-          <ButtonText variant="medium" color="grey">
-            4 Actions
-          </ButtonText>
+          <ButtonText>4 Actions</ButtonText>
         </ExternalButton>
-        <ExternalButton variant="secondary">
+        <ExternalButton>
           DXD Voting Machine
-          <ButtonText variant="medium" color="grey">
-            1 Actions
-          </ButtonText>
+          <ButtonText>1 Actions</ButtonText>
         </ExternalButton>
-        <ExternalButton variant="secondary">
+        <ExternalButton>
           RegistrarWalletScheme
-          <ButtonText variant="medium" color="grey">
-            2 Actions
-          </ButtonText>
+          <ButtonText>2 Actions</ButtonText>
         </ExternalButton>
-        <ExternalButton variant="secondary">
+        <ExternalButton>
           MasterWalletScheme
-          <ButtonText variant="medium" color="grey">
-            1 Actions
-          </ButtonText>
+          <ButtonText>1 Actions</ButtonText>
         </ExternalButton>
-        <ExternalButton variant="secondary">
+        <ExternalButton>
           QuickWalletScheme
-          <ButtonText variant="medium" color="grey">
-            1 Actions
-          </ButtonText>
+          <ButtonText>1 Actions</ButtonText>
         </ExternalButton>
-        <ExternalButton variant="secondary">
+        <ExternalButton>
           SWPRWalletScheme
-          <ButtonText variant="medium" color="grey">
-            1 Actions
-          </ButtonText>
+          <ButtonText>1 Actions</ButtonText>
         </ExternalButton>
       </ExternalWrapper>
     </Wrapper>
