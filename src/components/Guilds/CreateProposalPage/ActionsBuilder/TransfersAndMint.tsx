@@ -3,10 +3,20 @@ import { CardWrapper, Header } from 'components/Guilds/common/Card';
 import AddButton from './AddButton';
 import { Flex } from 'components/Guilds/common/Layout';
 import { ContainerText } from 'components/Guilds/common/Layout/Text';
-import { Input } from 'components/Guilds/common/Form';
+import { TextInput } from 'components/Guilds/common/Form';
 import { useWeb3React } from '@web3-react/core';
 import { useState } from 'react';
 import iconsByChain from 'components/Guilds/common/ChainIcons';
+import CircleDots from '../../../../assets/images/circle.svg';
+import StyledIcon from 'components/Guilds/common/SVG';
+import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
+import {
+  DropdownContent,
+  DropdownMenu,
+  DropdownPosition,
+  DropdownButton,
+} from '../../common/DropdownMenu';
+import { AssetDropDown } from './AssetDropdown';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   margin: 1.5rem;
@@ -38,6 +48,7 @@ const WrapperText = styled(ContainerText).attrs(() => ({
   flex-direction: row;
   width: 90%;
   margin: 12px auto;
+  color: ${({ theme }) => theme.colors.proposalText.grey};
 `;
 
 const RecText = styled(WrapperText)`
@@ -50,31 +61,30 @@ const Segment = styled(Flex)`
 
 const HorizontalWrapper = styled(Flex)`
   flex-direction: row;
-  justify-content: space-evenly;
   width: 100%;
+  justify-content: space-evenly;
 `;
 
 const Container = styled(Flex)`
   width: 100%;
 `;
+
 const MiddleDetailsWrapper = styled(DetailWrapper)`
   border-radius: revert;
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.initial};
 `;
 
-const TransferAndMint: React.FC = () => {
+const RecipientInput: React.FC = () => {
   const [address, setAddress] = useState('');
   const { chainId } = useWeb3React();
   return (
-    <CardWrapperWithMargin>
-      <CardHeader>Transfer and Mint</CardHeader>
-
-      <MiddleDetailsWrapper>
-        <Container>
-          <RecText>Recipient</RecText>
+    <MiddleDetailsWrapper>
+      <Container>
+        <RecText>Recipient</RecText>
+        <HorizontalWrapper>
           <Segment>
-            <Input
-              placeholder="Ethereum Address"
+            <TextInput
+              placeholder="Address"
               value={address}
               onChange={e => setAddress(e.target.value)}
               icon={iconsByChain[chainId] || null}
@@ -83,39 +93,48 @@ const TransferAndMint: React.FC = () => {
               width="92%"
             />
           </Segment>
+          <StyledIcon src={CircleDots} margin="0" />
+        </HorizontalWrapper>
+      </Container>
+
+      <HorizontalWrapper>
+        <Container>
+          <WrapperText>Amount</WrapperText>
+          <Segment>
+            <NumericalInput
+              onUserInput={e => setAddress(e)}
+              placeholder="0.00"
+              value={address}
+              width="85%"
+            />
+          </Segment>
         </Container>
 
-        <HorizontalWrapper>
-          <Container>
-            <WrapperText>Amount</WrapperText>
-            <Segment>
-              <Input
-                placeholder="Ethereum Address"
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                icon={iconsByChain[chainId] || null}
-                size={24}
-                cross
-                width="85%"
-              />
-            </Segment>
-          </Container>
+        <Container>
+          <WrapperText>Asset</WrapperText>
+          <Segment>
+            <AssetDropDown />
+          </Segment>
+        </Container>
+        <StyledIcon src={CircleDots} margin="50px 0 0 0" />
+      </HorizontalWrapper>
+    </MiddleDetailsWrapper>
+  );
+};
 
-          <Container>
-            <WrapperText>Asset</WrapperText>
-            <Segment>
-              <Input
-                placeholder="0.00"
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                width="85%"
-              />
-            </Segment>
-          </Container>
-        </HorizontalWrapper>
-      </MiddleDetailsWrapper>
+const TransferAndMint: React.FC = () => {
+  const [addChild, setAddChild] = useState<number>(1);
+  return (
+    <CardWrapperWithMargin>
+      <CardHeader>Transfer and Mint</CardHeader>
+      {[...Array(addChild)].map(_ => (
+        <RecipientInput />
+      ))}
       <DetailFooter>
-        <AddButton label="Add Recipient" />
+        <AddButton
+          onClick={() => setAddChild(prevCount => prevCount + 1)}
+          label="Add Recipient"
+        />
       </DetailFooter>
     </CardWrapperWithMargin>
   );

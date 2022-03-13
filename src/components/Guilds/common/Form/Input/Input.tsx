@@ -49,6 +49,7 @@ const InputBase = styled.input`
     border: none;
     color: ${({ theme }) => theme.colors.text};
   }
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
   margin-left: 12px;
   padding: 0;
   background-color: ${({ theme }) => theme.colors.background};
@@ -94,7 +95,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   cross?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({
+const TextInput: React.FC<InputProps> = ({
   icon = null,
   cross,
   size,
@@ -121,4 +122,15 @@ const Input: React.FC<InputProps> = ({
   );
 };
 
-export { BaseInput, InputText, Input };
+const Input: React.FC<InputProps> = ({ icon = null, ...rest }) => {
+  return !!icon ? (
+    <InputWrapper>
+      {icon}
+      <InputBase {...rest} />
+    </InputWrapper>
+  ) : (
+    <BaseInput {...rest} />
+  );
+};
+
+export { BaseInput, InputText, Input, TextInput };
