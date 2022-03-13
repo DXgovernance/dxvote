@@ -156,7 +156,7 @@ export const Modal: React.FC<ModalProps> = ({
   header,
   contentHeader,
   confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  cancelText,
   onConfirm,
   onCancel,
   hideHeader,

@@ -44,6 +44,7 @@ export const ActionsModalProvider = ({ children }) => {
       case ActionsModalView.MintRep:
         modalHeader = <div>Mint Reputation</div>;
         modalChildren = <MintReputationModal />;
+        confirmText = 'Add Action';
         backnCross = true;
         prevContent = () => setModalView(content => content.slice(0, -1));
         break;
