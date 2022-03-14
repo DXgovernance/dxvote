@@ -111,9 +111,7 @@ contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
 # Deploy local contracts
-rm -rf .temp && mkdir .temp
 yarn hardhat run --network localhost scripts/dev.ts
-cp .temp/develop-config.json src/configs/localhost/config.json
 
 # Enable isolatedModules and use esnext as module in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \

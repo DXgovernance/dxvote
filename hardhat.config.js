@@ -2,7 +2,7 @@ const moment = require('moment');
 require('@nomiclabs/hardhat-truffle5');
 require('hardhat-dependency-compiler');
 require("./node_modules/dxdao-contracts/scripts/deploy-dxvote");
-require("./node_modules/dxdao-contracts/scripts/deploy-dxvote-develop");
+require('@typechain/hardhat')
 
 const MNEMONIC = "dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao";
 const INFURA_API_KEY = process.env.REACT_APP_KEY_INFURA_API_KEY;
@@ -29,6 +29,8 @@ module.exports = {
       'dxdao-contracts/contracts/daostack/universalSchemes/SchemeRegistrar.sol',
       'dxdao-contracts/contracts/daostack/utils/Redeemer.sol',
       'dxdao-contracts/contracts/erc20guild/ERC20Guild.sol',
+      'dxdao-contracts/contracts/erc20guild/implementations/DXDGuild.sol',
+      'dxdao-contracts/contracts/erc20guild/implementations/SnapshotRepERC20Guild.sol',
       '@daostack/infra/contracts/votingMachines/GenesisProtocol.sol'
     ],
   },
@@ -70,10 +72,10 @@ module.exports = {
       throwOnTransactionFailures: true,
       throwOnCallFailures: true,
       allowUnlimitedContractSize: false,
-      initialDate: moment().subtract(32, 'days').toDate().toString(),
+      initialDate: moment.unix(0).toDate().toString(),
       mining: {
         auto: true,
-        interval: 1000,
+        interval: 500,
       },
     },
     mainnet: {
@@ -111,5 +113,10 @@ module.exports = {
       chainId: 421611,
       timeout: 60000
     }
-  }
+  },
+  typechain: {
+    outDir: 'src/types/contracts',
+    target: 'ethers-v5',
+    alwaysGenerateOverloads: false, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
+  },
 };
