@@ -2,34 +2,35 @@
   "cache": {
     "fromBlock": 0,
     "toBlock": 1,
-    "ipfsHash": "QmVz2vSovUfKuvtugoo8AtSJnV6cXiqixVsA8TLgv4Fxzv"
+    "ipfsHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
   },
   "contracts": {
-    "fromBlock": 6,
-    "avatar": "0xf89f66329e7298246de22D210Ac246DCddff4621",
+    "fromBlock": 19,
+    "avatar": "0xE0FC07f3aC4F6AF1463De20eb60Cf1A764E259db",
     "reputation": "0x033B0C959Ca16Ae1fBbBC3d7815dd5dF34a5E648",
     "token": "0xD899Be87df2076e0Be28486b60dA406Be6757AfC",
-    "controller": "0x7963EDD55E0e11cf8055c9206b425607b8d6591e",
-    "permissionRegistry": "0xEF01c4181A71683E79cbaA55ad149b01a04D9594",
+    "controller": "0x0047a0E2507bf7faF9Dc05a148AfE921bB213624",
+    "permissionRegistry": "0x7cb06EdEeee18935e6865497eAFAee1511c75562",
     "schemes": {
-      "RegistrarWalletScheme": "0x8aaD93e8237d9Bd84760aD3584e52b9A6b8cC5CB",
-      "MasterWalletScheme": "0x8A4e2ABC9BBD16799b713CCB1b96B31AD220A7bB",
-      "QuickWalletScheme": "0x2245CE863Bcf3914D9Ade65916e7DEC8A2453B65"
+      "RegistrarWalletScheme": "0x8A4e2ABC9BBD16799b713CCB1b96B31AD220A7bB",
+      "MasterWalletScheme": "0x5c58F44E049Bcd36354Ffd26579382ad6852C8Cf",
+      "QuickWalletScheme": "0xFfC5aAa15D50E23aA461aa479b3f1C9d28A320F5"
     },
     "utils": {
       "multicall": "0x9F513d1823D68D0064f78d3337e6221C5D31169c",
-      "dxDaoNFT": "0x1973AC51c91Bd82C010a83E7f8fBaBCD64178190",
-      "dxdVestingFactory": "0x055Be953171bd821B33E9E60c4739eebEce76bb3"
+      "dxDaoNFT": "0x4A275920C445f5812BE2fb3C8690c9aBbC2994bD",
+      "dxdVestingFactory": "0xD5250DF764E47ed89De5402Af91193c3eAB5C232"
     },
     "votingMachines": {
-      "0x0047a0E2507bf7faF9Dc05a148AfE921bB213624": {
+      "dxd": {},
+      "0xab2005240EEAD45313Aa86d57004FC107540fd02": {
         "type": "DXDVotingMachine",
         "token": "0xD899Be87df2076e0Be28486b60dA406Be6757AfC"
       }
     },
     "daostack": {
-      "0x33B1b15a8DD0E3A4444c7Aa25E26f57b78acBe84": {
-        "contractToCall": "0x7963EDD55E0e11cf8055c9206b425607b8d6591e",
+      "0x8aaD93e8237d9Bd84760aD3584e52b9A6b8cC5CB": {
+        "contractToCall": "0x0047a0E2507bf7faF9Dc05a148AfE921bB213624",
         "creationLogEncoding": [
           [
             {
@@ -61,11 +62,11 @@
             "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
           ]
         ],
-        "redeemer": "0x47fe8D61F412BE48FcBfFd2D4219C18d2A4eF718",
+        "redeemer": "0xce453C4e0CD27d108F08d9519DFe18E8bb54B911",
         "supported": true,
         "type": "ContributionReward",
-        "voteParams": "0x9e6cbe6db6fb7901c708cdb451dde294e6613c5c819530a0969d8ddb9a2e2a7e",
-        "votingMachine": "0x0047a0E2507bf7faF9Dc05a148AfE921bB213624"
+        "voteParams": "0x74d80ddacc285fc040919561ccc5ae5e4879ac4b64ce2b6c4541401d906d4b44",
+        "votingMachine": "0xab2005240EEAD45313Aa86d57004FC107540fd02"
       }
     }
   },
@@ -123,5 +124,9 @@
       "fetchPrice": true,
       "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
     }
+  ],
+  "guilds": [
+    "0x1621d6C9fB665E495A8c1475F9b713DF58DEC853",
+    "0x34AB195c2eDa5b09228A8fB16Be84fACF2F06652"
   ]
 }

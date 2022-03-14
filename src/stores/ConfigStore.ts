@@ -57,48 +57,49 @@ export default class ConfigStore {
     this.networkConfig = defaultAppConfigs[this.getActiveChainName()];
     const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
-    try {
-      const metadataHash = await ensService.resolveContentHash(
-        CACHE_METADATA_ENS
-      );
-      if (!metadataHash)
-        throw new Error('Cannot resolve content metadata hash.');
-
-      if (!isTestingEnv)
-        console.debug(
-          `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
-          metadataHash
+    if (this.getActiveChainName() !== 'localhost')
+      try {
+        const metadataHash = await ensService.resolveContentHash(
+          CACHE_METADATA_ENS
         );
+        if (!metadataHash)
+          throw new Error('Cannot resolve content metadata hash.');
 
-      const configRefs = isTestingEnv
-        ? defaultCacheConfig
-        : await ipfsService.getContentFromIPFS(metadataHash);
+        if (!isTestingEnv)
+          console.debug(
+            `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
+            metadataHash
+          );
 
-      const configContentHash = configRefs[this.getActiveChainName()];
-      if (!configContentHash)
-        throw new Error('Cannot resolve config metadata hash.');
+        const configRefs = isTestingEnv
+          ? defaultCacheConfig
+          : await ipfsService.getContentFromIPFS(metadataHash);
 
-      console.info(`[ConfigStore] IPFS config hash: ${configContentHash}`);
+        const configContentHash = configRefs[this.getActiveChainName()];
+        if (!configContentHash)
+          throw new Error('Cannot resolve config metadata hash.');
 
-      const ipfsConfig = await ipfsService.getContentFromIPFS(
-        configContentHash
-      );
-      console.debug('[ConfigStore] IPFS config content:', ipfsConfig);
-      console.debug('[ConfigStore] Default config:', this.networkConfig);
+        console.info(`[ConfigStore] IPFS config hash: ${configContentHash}`);
 
-      // Override defaultConfig to ipfsConfig
-      if (ipfsConfig?.version == this.networkConfig.version)
-        this.networkConfig = Object.assign(ipfsConfig, this.networkConfig);
+        const ipfsConfig = await ipfsService.getContentFromIPFS(
+          configContentHash
+        );
+        console.debug('[ConfigStore] IPFS config content:', ipfsConfig);
+        console.debug('[ConfigStore] Default config:', this.networkConfig);
 
-      console.debug('[OLD CONFIG]', ipfsConfig);
-      console.debug('[NEW CONFIG]', this.networkConfig);
-    } catch (e) {
-      console.error(
-        '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
-        this.networkConfig,
-        e
-      );
-    }
+        // Override defaultConfig to ipfsConfig
+        if (ipfsConfig?.version == this.networkConfig.version)
+          this.networkConfig = Object.assign(ipfsConfig, this.networkConfig);
+
+        console.debug('[OLD CONFIG]', ipfsConfig);
+        console.debug('[NEW CONFIG]', this.networkConfig);
+      } catch (e) {
+        console.error(
+          '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
+          this.networkConfig,
+          e
+        );
+      }
 
     return this.networkConfig;
   }
