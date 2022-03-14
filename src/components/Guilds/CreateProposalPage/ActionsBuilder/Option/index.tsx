@@ -14,6 +14,7 @@ export interface Option {
 interface OptionRowProps {
   data: Option;
   editable: boolean;
+  showData: boolean;
 }
 
 const ActionCountLabel = styled.span`
@@ -35,7 +36,7 @@ const DetailWrapper = styled(Box)`
   justify-content: space-between;
 `;
 
-const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
+const OptionRow: React.FC<OptionRowProps> = ({ data, editable, showData }) => {
   const { setIsOpen } = useActionsBuilder();
   return (
     <OptionWrapper>
@@ -47,7 +48,7 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
         </ActionCountLabel>
       </DetailWrapper>
 
-      {!editable &&
+      {showData &&
         data?.actions?.map((action, index) => (
           <ActionView key={index} action={action} />
         ))}

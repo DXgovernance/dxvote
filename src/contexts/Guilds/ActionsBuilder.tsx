@@ -18,6 +18,7 @@ export const ActionsModalProvider = ({ children }) => {
   ]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [transferBuilder, setTransferBuilder] = useState(false);
+  const [mintRep, setMintRep] = useState(false);
 
   // closes modal and resets the view
   const closeModal = () => {
@@ -40,11 +41,17 @@ export const ActionsModalProvider = ({ children }) => {
       backnCross: boolean,
       prevContent: () => void;
 
+    const handleMintRep = () => {
+      setMintRep(true);
+      setIsOpen(false);
+    };
+
     switch (modalView[modalView.length - 1]) {
       case ActionsModalView.MintRep:
         modalHeader = <div>Mint Reputation</div>;
         modalChildren = <MintReputationModal />;
         confirmText = 'Add Action';
+        onConfirm = handleMintRep;
         backnCross = true;
         prevContent = () => setModalView(content => content.slice(0, -1));
         break;
@@ -79,6 +86,8 @@ export const ActionsModalProvider = ({ children }) => {
         setIsOpen,
         transferBuilder,
         setTransferBuilder,
+        mintRep,
+        setMintRep,
       }}
     >
       {children}

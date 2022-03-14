@@ -30,7 +30,7 @@ interface ActionsBuilderProps {
 export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
   const [actionsEditMode, setActionsEditMode] = useState(true);
 
-  const { transferBuilder } = useActionsBuilder();
+  const { transferBuilder, mintRep } = useActionsBuilder();
 
   // TODO: remove when actions are implemented
   const [options, setOptions] = useState<Option[]>([
@@ -105,6 +105,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
             key={idx}
             data={option}
             editable={editable && actionsEditMode}
+            showData={mintRep}
           />
           {transferBuilder && editable && option.label === 'For' && (
             <TransferAndMint />
@@ -125,6 +126,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
                   ...prev,
                   {
                     index: prev.length + 1,
+
                     label: 'Option ' + (prev.length + 1),
                   },
                 ]);
