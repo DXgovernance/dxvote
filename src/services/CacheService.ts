@@ -1070,7 +1070,7 @@ export default class UtilsService {
           const maxSecondsForExecution = isWalletScheme(
             networkCache.schemes[schemeAddress]
           )
-            ? callsResponse.decodedReturnData[2]
+            ? callsResponse.decodedReturnData[1]
             : 0;
 
           const boostedVoteRequiredPercentage = isWalletScheme(
@@ -1078,7 +1078,7 @@ export default class UtilsService {
           )
             ? web3.eth.abi.decodeParameters(
                 ['uint256'],
-                callsResponse.returnData[3]
+                callsResponse.returnData[2]
               )['0']
             : 0;
 
