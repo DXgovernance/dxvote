@@ -246,7 +246,8 @@ export async function tryCacheUpdates(promises, networkCache) {
         networkCache = Object.assign(networkCache, networkCacheUpdated);
       });
     } catch (e) {
-      console.error('[CACHE UPDATE] (trying again)', e.message);
+      console.error('[CACHE UPDATE] (trying again)');
+      console.error(e);
     } finally {
       retry = false;
     }

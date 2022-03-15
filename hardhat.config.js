@@ -28,10 +28,10 @@ module.exports = {
       'dxdao-contracts/contracts/daostack/universalSchemes/ContributionReward.sol',
       'dxdao-contracts/contracts/daostack/universalSchemes/SchemeRegistrar.sol',
       'dxdao-contracts/contracts/daostack/utils/Redeemer.sol',
+      'dxdao-contracts/contracts/daostack/votingMachines/GenesisProtocol.sol',
       'dxdao-contracts/contracts/erc20guild/ERC20Guild.sol',
       'dxdao-contracts/contracts/erc20guild/implementations/DXDGuild.sol',
-      'dxdao-contracts/contracts/erc20guild/implementations/SnapshotRepERC20Guild.sol',
-      '@daostack/infra/contracts/votingMachines/GenesisProtocol.sol'
+      'dxdao-contracts/contracts/erc20guild/implementations/SnapshotRepERC20Guild.sol'
     ],
   },
   solidity: {

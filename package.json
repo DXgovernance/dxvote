@@ -54,7 +54,7 @@
     "bignumber.js": "^9.0.2",
     "content-hash": "^2.5.2",
     "copy-to-clipboard": "^3.3.1",
-    "dxdao-contracts": "https://github.com/AugustoL/dxdao-contracts.git#43414df7749d28b4edadb77f3d6726892f53800c",
+    "dxdao-contracts": "https://github.com/AugustoL/dxdao-contracts.git#6d3cbf24d5c806f8459403db1ba64de937b1fed7",
     "eslint-plugin-cypress": "^2.12.1",
     "ether-swr": "^2.0.1",
     "ethers": "^5.5.2",

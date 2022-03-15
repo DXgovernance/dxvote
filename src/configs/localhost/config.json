@@ -8,7 +8,7 @@
     "fromBlock": 19,
     "avatar": "0xE0FC07f3aC4F6AF1463De20eb60Cf1A764E259db",
     "reputation": "0x033B0C959Ca16Ae1fBbBC3d7815dd5dF34a5E648",
-    "token": "0xD899Be87df2076e0Be28486b60dA406Be6757AfC",
+    "token": "0xf89f66329e7298246de22D210Ac246DCddff4621",
     "controller": "0x0047a0E2507bf7faF9Dc05a148AfE921bB213624",
     "permissionRegistry": "0x7cb06EdEeee18935e6865497eAFAee1511c75562",
     "schemes": {
@@ -22,10 +22,9 @@
       "dxdVestingFactory": "0xD5250DF764E47ed89De5402Af91193c3eAB5C232"
     },
     "votingMachines": {
-      "dxd": {},
       "0xab2005240EEAD45313Aa86d57004FC107540fd02": {
         "type": "DXDVotingMachine",
-        "token": "0xD899Be87df2076e0Be28486b60dA406Be6757AfC"
+        "token": "0xf89f66329e7298246de22D210Ac246DCddff4621"
       }
     },
     "daostack": {
@@ -117,7 +116,7 @@
   ],
   "tokens": [
     {
-      "address": "0xD899Be87df2076e0Be28486b60dA406Be6757AfC",
+      "address": "0xf89f66329e7298246de22D210Ac246DCddff4621",
       "name": "DXdao on Localhost",
       "decimals": 18,
       "symbol": "DXD",
