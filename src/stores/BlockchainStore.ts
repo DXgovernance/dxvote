@@ -78,7 +78,7 @@ export default class BlockchainStore {
           networkCache = null;
         }
 
-        const blockNumber = (await library.eth.getBlockNumber()) - 1;
+        const blockNumber = (await library.eth.getBlockNumber()) - 5;
 
         const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
 
