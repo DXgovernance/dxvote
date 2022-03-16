@@ -9030,9 +9030,9 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-"dxdao-contracts@https://github.com/AugustoL/dxdao-contracts.git#6d3cbf24d5c806f8459403db1ba64de937b1fed7":
+"dxdao-contracts@https://github.com/DXGovernance/dxdao-contracts.git#develop":
   version "0.0.1"
-  resolved "https://github.com/AugustoL/dxdao-contracts.git#6d3cbf24d5c806f8459403db1ba64de937b1fed7"
+  resolved "https://github.com/DXGovernance/dxdao-contracts.git#e01c863bacd06f4072782e5140c5db9374492ffd"
   dependencies:
     "@maticnetwork/eth-decoder" "^0.0.4"
     "@openzeppelin/contracts" "4.3.2"
