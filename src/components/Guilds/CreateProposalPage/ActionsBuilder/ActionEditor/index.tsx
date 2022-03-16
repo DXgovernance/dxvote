@@ -5,6 +5,8 @@ import { Input, BaseInput } from 'components/Guilds/common/Form/Input';
 import AddButton from '../AddButton';
 import { FiChevronDown, FiMoreHorizontal, FiX } from 'react-icons/fi';
 import { Button } from 'components/Guilds/common/Button';
+import TokenPicker from 'components/Guilds/TokenPicker';
+import { useState } from 'react';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   margin: 0.8rem 0;
@@ -74,6 +76,8 @@ interface ActionEditorProps {
 }
 
 const ActionEditor: React.FC<ActionEditorProps> = ({ title, icon }) => {
+  const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
+
   return (
     <CardWrapperWithMargin>
       <HeaderWrapper>
@@ -117,6 +121,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({ title, icon }) => {
                     height="24"
                   />
                 }
+                onClick={() => setIsTokenPickerOpen(true)}
                 iconRight={<FiChevronDown size={24} />}
               />
             </ControlRow>
@@ -142,6 +147,11 @@ const ActionEditor: React.FC<ActionEditorProps> = ({ title, icon }) => {
       <FooterWrapper>
         <AddButton label="Add Recipient" />
       </FooterWrapper>
+
+      <TokenPicker
+        isOpen={isTokenPickerOpen}
+        onClose={() => setIsTokenPickerOpen(false)}
+      />
     </CardWrapperWithMargin>
   );
 };

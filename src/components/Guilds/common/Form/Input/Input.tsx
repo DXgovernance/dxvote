@@ -51,6 +51,7 @@ const InputBase = styled.input`
   margin-left: 12px;
   padding: 0;
   background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const BaseInput = styled.input`
