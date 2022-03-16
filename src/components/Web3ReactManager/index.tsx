@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import {
   DEFAULT_ETH_CHAIN_ID,
@@ -9,9 +9,8 @@ import {
 import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { useContext } from 'contexts';
 import { useInterval, usePrevious } from 'utils';
-// import { InjectedConnector } from '@web3-react/injected-connector';
-// import { NetworkConnector } from '@web3-react/network-connector';
-// import useSWR from 'swr';
+import { InjectedConnector } from '@web3-react/injected-connector';
+import { NetworkConnector } from '@web3-react/network-connector';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -20,7 +19,7 @@ const Web3ReactManager = ({ children }) => {
   const { providerStore, blockchainStore } = context;
 
   const location = useLocation();
-  // const history = useHistory();
+  const history = useHistory();
   const rpcUrls = useRpcUrls();
 
   // Overriding default fetch to check for RPC url and setting correct headers if matched
@@ -40,17 +39,13 @@ const Web3ReactManager = ({ children }) => {
     error: networkError,
     chainId,
     account,
-    // connector,
+    connector,
     activate,
   } = web3Context;
 
   console.debug('[Web3ReactManager] Start of render', {
     web3Context,
   });
-
-  // const fetcher = () => location.pathname.split('/')[1];
-
-  // const { data, error } = useSWR(fetcher);
 
   // Make sure providerStore is synchronized with web3-react
   useEffect(() => {
@@ -81,7 +76,6 @@ const Web3ReactManager = ({ children }) => {
   }, [triedEager, networkActive, activate, rpcUrls, location]);
 
   const prevChainId = usePrevious(chainId);
-  console.log({ chainId });
   const prevAccount = usePrevious(account);
   useEffect(() => {
     // Listen to chain / account changes and reset the app
@@ -100,32 +94,32 @@ const Web3ReactManager = ({ children }) => {
   }, [chainId, prevChainId, account, prevAccount]);
 
   // Setup listener to handle injected wallet events
-  // useEffect(() => {
-  //   if (!window.ethereum) return () => {};
+  useEffect(() => {
+    if (!window.ethereum) return () => {};
 
-  //   const handleChainChange = (chainId: string) => {
-  //     const chains = getChains();
-  //     const chain = chains.find(
-  //       chain => `0x${chain.id.toString(16)}` == chainId
-  //     );
+    const handleChainChange = (chainId: string) => {
+      const chains = getChains();
+      const chain = chains.find(
+        chain => `0x${chain.id.toString(16)}` == chainId
+      );
 
-  //     // If currently connected to an injected wallet, keep synced with it
-  //     if (connector instanceof InjectedConnector) {
-  //       history.push(`/${chain.name}/proposals`);
-  //     } else if (connector instanceof NetworkConnector) {
-  //       const urlNetworkName = location.pathname.split('/')[1];
-  //       if (urlNetworkName == chain.name) {
-  //         tryConnecting();
-  //       }
-  //     }
-  //   };
+      // If currently connected to an injected wallet, keep synced with it
+      if (connector instanceof InjectedConnector) {
+        history.push(`/${chain.name}/proposals`);
+      } else if (connector instanceof NetworkConnector) {
+        const urlNetworkName = location.pathname.split('/')[1];
+        if (urlNetworkName == chain.name) {
+          tryConnecting();
+        }
+      }
+    };
 
-  //   window.ethereum.on('chainChanged', handleChainChange);
+    window.ethereum.on('chainChanged', handleChainChange);
 
-  //   return () => {
-  //     window.ethereum?.removeListener('accountsChanged', handleChainChange);
-  //   };
-  // }, [location, connector]);
+    return () => {
+      window.ethereum?.removeListener('accountsChanged', handleChainChange);
+    };
+  }, [location, connector]);
 
   const urlNetworkName = useMemo(
     () => location.pathname.split('/')[1],
