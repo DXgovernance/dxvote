@@ -7,7 +7,8 @@ import { FiSettings, FiUser, FiBarChart2 } from 'react-icons/fi';
 import dxdaoIcon from 'assets/images/DXdao.svg';
 import { bnum, formatCurrency, normalizeBalance } from '../../utils';
 import { Box } from '../../components/common';
-import { useBalance } from 'hooks/useERC20';
+import { useBalances } from 'hooks/useERC20';
+import _ from 'lodash';
 
 const NavWrapper = styled.div`
   display: flex;
@@ -90,6 +91,23 @@ const Header = observer(() => {
     ? userRep.times(100).div(totalSupply).toFixed(4)
     : bnum(0);
 
+  const votingMachineTokens = _.uniq(
+    Object.keys(votingMachines).map((votingMachineAddress, i) =>
+      configStore
+        .getTokensOfNetwork()
+        .find(
+          token => token.address === votingMachines[votingMachineAddress].token
+        )
+    )
+  );
+
+  const votingMachineBalances = useBalances(
+    votingMachineTokens.map(votingMachineToken => ({
+      assetAddress: votingMachineToken.address,
+      fromAddress: account,
+    }))
+  );
+
   return (
     <NavWrapper>
       <NavSection>
@@ -113,23 +131,12 @@ const Header = observer(() => {
         <NavSection>
           {account && (
             <>
-              {Object.keys(votingMachines).map((votingMachineAddress, i) => {
-                const votingMachineToken = configStore
-                  .getTokensOfNetwork()
-                  .find(
-                    token =>
-                      token.address ===
-                      votingMachines[votingMachineAddress].token
-                  );
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const votingMachineTokenBalance = useBalance(
-                  account,
-                  votingMachineToken?.address
+              {votingMachineTokens.map((votingMachineToken, i) => {
+                const votingMachineTokenBalance = bnum(
+                  votingMachineBalances[i] || '0'
                 );
-
                 return (
                   <ItemBox key={i}>
-                    {' '}
                     {formatCurrency(
                       normalizeBalance(votingMachineTokenBalance)
                     )}{' '}
