@@ -3,6 +3,8 @@ import { Box } from 'components/Guilds/common/Layout';
 import { ProposalOptionTag } from '../ProposalOptionTag';
 import AddButton from '../AddButton';
 import ActionView, { Action } from '../Action';
+import ActionEditor from '../ActionEditor';
+import { FiNavigation } from 'react-icons/fi';
 
 export interface Option {
   index: number;
@@ -48,6 +50,15 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
       {!editable &&
         data?.actions?.map((action, index) => (
           <ActionView key={index} action={action} />
+        ))}
+
+      {editable &&
+        data?.actions?.map((_, index) => (
+          <ActionEditor
+            key={index}
+            title="Transfers & Mint"
+            icon={<FiNavigation size={16} />}
+          />
         ))}
 
       {editable && <AddButton label="Add Action" />}

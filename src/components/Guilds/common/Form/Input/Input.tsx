@@ -64,13 +64,19 @@ const InputText = styled(BaseInput)`
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactElement;
+  iconRight?: React.ReactElement;
 }
 
-const Input: React.FC<InputProps> = ({ icon = null, ...rest }) => {
+const Input: React.FC<InputProps> = ({
+  icon = null,
+  iconRight = null,
+  ...rest
+}) => {
   return !!icon ? (
     <InputWrapper>
       {icon}
       <InputBase {...rest} />
+      {iconRight}
     </InputWrapper>
   ) : (
     <BaseInput {...rest} />

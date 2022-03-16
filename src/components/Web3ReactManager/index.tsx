@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import {
@@ -120,6 +120,26 @@ const Web3ReactManager = ({ children }) => {
       window.ethereum?.removeListener('accountsChanged', handleChainChange);
     };
   }, [location, connector]);
+
+  const urlNetworkName = useMemo(
+    () => location.pathname.split('/')[1],
+    [location]
+  );
+  const prevUrlNetworkName = usePrevious(urlNetworkName);
+  if (
+    urlNetworkName &&
+    prevUrlNetworkName &&
+    urlNetworkName !== prevUrlNetworkName
+  ) {
+    console.log(
+      '[ChainChange] URL Changed from',
+      prevUrlNetworkName,
+      'to',
+      urlNetworkName
+    );
+
+    tryConnecting();
+  }
 
   // Fetch user blockchain data on an interval using current params
   useInterval(
