@@ -5,7 +5,7 @@ const baseInputStyles = css`
   border: 0.1rem solid ${({ theme }) => theme.colors.muted};
   border-radius: 1.5rem;
   padding: 0.5rem 0.8rem;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: transparent;
   color: ${({ theme }) => theme.colors.text};
   ::placeholder {
     color: ${({ theme }) => theme.colors.proposalText.lightGrey};
@@ -50,7 +50,7 @@ const InputBase = styled.input`
   }
   margin-left: 12px;
   padding: 0;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: transparent;
   color: ${({ theme }) => theme.colors.text};
 `;
 

@@ -24,16 +24,16 @@ export const Backdrop = styled.div`
   height: 100%;
   top: 0;
   left: 0;
-  background: rgba(0, 6, 41, 0.5);
+  background: rgba(27, 29, 31, 0.5);
   z-index: ${props => props.zIndex};
 `;
 
 export const StyledModal = styled.div`
   z-index: 100;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.background3};
   position: relative;
   margin: auto;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
   box-sizing: border-box;
   box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.25);

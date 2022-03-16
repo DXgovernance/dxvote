@@ -123,6 +123,7 @@ const ActionEditor: React.FC<ActionEditorProps> = ({ title, icon }) => {
                 }
                 onClick={() => setIsTokenPickerOpen(true)}
                 iconRight={<FiChevronDown size={24} />}
+                readOnly
               />
             </ControlRow>
           </Control>

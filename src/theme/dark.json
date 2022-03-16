@@ -9,6 +9,7 @@
       "lightGrey": "#BDC0C7"
     },
     "background": "#1B1D1F",
+    "background3": "#26282D",
     "button": {
       "primary": "#295FF4",
       "secondary": "#000"
