@@ -94,7 +94,7 @@ export default class ConfigStore {
         console.debug('[OLD CONFIG]', ipfsConfig);
         console.debug('[NEW CONFIG]', this.networkConfig);
       } catch (e) {
-        console.error(
+        console.warn(
           '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
           this.networkConfig,
           e

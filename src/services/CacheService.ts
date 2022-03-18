@@ -1719,18 +1719,30 @@ export default class UtilsService {
     );
 
     // Update existent active proposals
-    await Promise.all(
-      Object.keys(networkCache.proposals).map(async proposalId => {
-        if (
-          networkCache.proposals[proposalId].stateInVotingMachine >
-            VotingMachineProposalState.Executed ||
-          networkCache.proposals[proposalId].stateInScheme ===
-            WalletSchemeProposalState.Submitted
-        ) {
+    // @ts-ignore
+    const activeProposals = [];
+    Object.keys(networkCache.proposals).map(proposalId => {
+      if (
+        networkCache.proposals[proposalId].stateInVotingMachine >
+          VotingMachineProposalState.Executed ||
+        networkCache.proposals[proposalId].stateInScheme ===
+          WalletSchemeProposalState.Submitted
+      )
+        activeProposals.push(networkCache.proposals[proposalId]);
+    });
+
+    let activeProposalsBatch = [];
+    let activeProposalsBatchIndex = 0;
+    for (var i = 0; i < activeProposals.length; i += 5)
+      activeProposalsBatch.push(activeProposals.slice(i, i + 5));
+
+    while (activeProposalsBatchIndex < activeProposalsBatch.length) {
+      await Promise.all(
+        activeProposalsBatch[activeProposalsBatchIndex].map(async proposal => {
           let retry = true;
           while (retry) {
             try {
-              const schemeAddress = networkCache.proposals[proposalId].scheme;
+              const schemeAddress = networkCache.proposals[proposal.id].scheme;
               const schemeTypeData = getSchemeConfig(
                 networkContractsConfig,
                 schemeAddress
@@ -1742,12 +1754,12 @@ export default class UtilsService {
 
               // Get all the proposal information from the scheme and voting machine
               let callsToExecute = [
-                [votingMachine, 'proposals', [proposalId]],
-                [votingMachine, 'voteStatus', [proposalId, 1]],
-                [votingMachine, 'voteStatus', [proposalId, 2]],
-                [votingMachine, 'proposalStatus', [proposalId]],
-                [votingMachine, 'getProposalTimes', [proposalId]],
-                [votingMachine, 'shouldBoost', [proposalId]],
+                [votingMachine, 'proposals', [proposal.id]],
+                [votingMachine, 'voteStatus', [proposal.id, 1]],
+                [votingMachine, 'voteStatus', [proposal.id, 2]],
+                [votingMachine, 'proposalStatus', [proposal.id]],
+                [votingMachine, 'getProposalTimes', [proposal.id]],
+                [votingMachine, 'shouldBoost', [proposal.id]],
               ];
 
               if (schemeTypeData.type === 'WalletScheme') {
@@ -1757,13 +1769,13 @@ export default class UtilsService {
                     schemeAddress
                   ),
                   'getOrganizationProposal',
-                  [proposalId],
+                  [proposal.id],
                 ]);
               } else if (
                 schemeTypeData.type === 'ContributionReward' &&
-                networkCache.proposals[proposalId].stateInVotingMachine ===
+                networkCache.proposals[proposal.id].stateInVotingMachine ===
                   VotingMachineProposalState.Executed &&
-                networkCache.proposals[proposalId].stateInScheme ===
+                networkCache.proposals[proposal.id].stateInScheme ===
                   WalletSchemeProposalState.Submitted
               ) {
                 callsToExecute.push([
@@ -1772,7 +1784,7 @@ export default class UtilsService {
                     schemeAddress
                   ),
                   'getRedeemedPeriods',
-                  [proposalId, networkWeb3Contracts.avatar._address, 0],
+                  [proposal.id, networkWeb3Contracts.avatar._address, 0],
                 ]);
                 callsToExecute.push([
                   await new web3.eth.Contract(
@@ -1780,7 +1792,7 @@ export default class UtilsService {
                     schemeAddress
                   ),
                   'getRedeemedPeriods',
-                  [proposalId, networkWeb3Contracts.avatar._address, 1],
+                  [proposal.id, networkWeb3Contracts.avatar._address, 1],
                 ]);
                 callsToExecute.push([
                   await new web3.eth.Contract(
@@ -1788,7 +1800,7 @@ export default class UtilsService {
                     schemeAddress
                   ),
                   'getRedeemedPeriods',
-                  [proposalId, networkWeb3Contracts.avatar._address, 2],
+                  [proposal.id, networkWeb3Contracts.avatar._address, 2],
                 ]);
                 callsToExecute.push([
                   await new web3.eth.Contract(
@@ -1796,7 +1808,7 @@ export default class UtilsService {
                     schemeAddress
                   ),
                   'getRedeemedPeriods',
-                  [proposalId, networkWeb3Contracts.avatar._address, 3],
+                  [proposal.id, networkWeb3Contracts.avatar._address, 3],
                 ]);
               }
 
@@ -1837,7 +1849,7 @@ export default class UtilsService {
               const proposalShouldBoost = callsResponse.decodedReturnData[5];
 
               if (schemeTypeData.type === 'WalletScheme') {
-                networkCache.proposals[proposalId].stateInScheme = Number(
+                networkCache.proposals[proposal.id].stateInScheme = Number(
                   web3.eth.abi.decodeParameters(
                     [
                       { type: 'address[]', name: 'to' },
@@ -1853,9 +1865,9 @@ export default class UtilsService {
                 );
               } else if (
                 schemeTypeData.type === 'ContributionReward' &&
-                networkCache.proposals[proposalId].stateInVotingMachine ===
+                networkCache.proposals[proposal.id].stateInVotingMachine ===
                   VotingMachineProposalState.Executed &&
-                networkCache.proposals[proposalId].stateInScheme ===
+                networkCache.proposals[proposal.id].stateInScheme ===
                   WalletSchemeProposalState.Submitted
               ) {
                 if (schemeTypeData.type === 'ContributionReward') {
@@ -1865,89 +1877,99 @@ export default class UtilsService {
                     callsResponse.decodedReturnData[8] > 0 ||
                     callsResponse.decodedReturnData[9] > 0
                   ) {
-                    networkCache.proposals[proposalId].stateInScheme =
+                    networkCache.proposals[proposal.id].stateInScheme =
                       WalletSchemeProposalState.ExecutionSucceded;
                   } else if (
                     votingMachineProposalInfo.state === '1' ||
                     votingMachineProposalInfo.state === '2'
                   ) {
-                    networkCache.proposals[proposalId].stateInScheme =
+                    networkCache.proposals[proposal.id].stateInScheme =
                       WalletSchemeProposalState.Rejected;
                   }
                 }
               } else if (schemeTypeData.type === 'GenericMulticall') {
                 const executionEvent = await web3.eth.getPastLogs({
                   fromBlock:
-                    networkCache.proposals[proposalId].creationEvent
+                    networkCache.proposals[proposal.id].creationEvent
                       .blockNumber,
                   address: schemeAddress,
                   topics: [
                     '0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe',
                     avatarAddressEncoded,
-                    proposalId,
+                    proposal.id,
                   ],
                 });
                 if (executionEvent.length > 0)
-                  networkCache.proposals[proposalId].stateInScheme =
+                  networkCache.proposals[proposal.id].stateInScheme =
                     WalletSchemeProposalState.ExecutionSucceded;
                 else
-                  networkCache.proposals[proposalId].stateInScheme =
+                  networkCache.proposals[proposal.id].stateInScheme =
                     WalletSchemeProposalState.Submitted;
               } else if (
-                networkCache.proposals[proposalId].stateInVotingMachine ===
+                networkCache.proposals[proposal.id].stateInVotingMachine ===
                 VotingMachineProposalState.Executed
               ) {
-                networkCache.proposals[proposalId].stateInScheme =
+                networkCache.proposals[proposal.id].stateInScheme =
                   WalletSchemeProposalState.ExecutionSucceded;
               }
 
-              networkCache.proposals[proposalId].stateInVotingMachine = Number(
+              networkCache.proposals[proposal.id].stateInVotingMachine = Number(
                 votingMachineProposalInfo.state
               );
-              networkCache.proposals[proposalId].winningVote =
+              networkCache.proposals[proposal.id].winningVote =
                 votingMachineProposalInfo.winningVote;
-              networkCache.proposals[proposalId].currentBoostedVotePeriodLimit =
+              networkCache.proposals[
+                proposal.id
+              ].currentBoostedVotePeriodLimit =
                 votingMachineProposalInfo.currentBoostedVotePeriodLimit;
-              networkCache.proposals[proposalId].daoBountyRemain = bnum(
+              networkCache.proposals[proposal.id].daoBountyRemain = bnum(
                 votingMachineProposalInfo.daoBountyRemain
               );
-              networkCache.proposals[proposalId].daoBounty = bnum(
+              networkCache.proposals[proposal.id].daoBounty = bnum(
                 votingMachineProposalInfo.daoBounty
               );
-              networkCache.proposals[proposalId].confidenceThreshold =
+              networkCache.proposals[proposal.id].confidenceThreshold =
                 votingMachineProposalInfo.confidenceThreshold;
               networkCache.proposals[
-                proposalId
+                proposal.id
               ].secondsFromTimeOutTillExecuteBoosted =
                 votingMachineProposalInfo.secondsFromTimeOutTillExecuteBoosted;
-              networkCache.proposals[proposalId].boostedPhaseTime = bnum(
+              networkCache.proposals[proposal.id].boostedPhaseTime = bnum(
                 proposalTimes[1]
               );
-              networkCache.proposals[proposalId].preBoostedPhaseTime = bnum(
+              networkCache.proposals[proposal.id].preBoostedPhaseTime = bnum(
                 proposalTimes[2]
               );
-              networkCache.proposals[proposalId].daoRedeemItsWinnings =
+              networkCache.proposals[proposal.id].daoRedeemItsWinnings =
                 votingMachineProposalInfo.daoRedeemItsWinnings;
-              networkCache.proposals[proposalId].shouldBoost =
+              networkCache.proposals[proposal.id].shouldBoost =
                 proposalShouldBoost;
-              networkCache.proposals[proposalId].positiveVotes =
+              networkCache.proposals[proposal.id].positiveVotes =
                 bnum(positiveVotes);
-              networkCache.proposals[proposalId].negativeVotes =
+              networkCache.proposals[proposal.id].negativeVotes =
                 bnum(negativeVotes);
-              networkCache.proposals[proposalId].positiveStakes = bnum(
+              networkCache.proposals[proposal.id].positiveStakes = bnum(
                 proposalStatusWithVotes[2]
               );
-              networkCache.proposals[proposalId].negativeStakes = bnum(
+              networkCache.proposals[proposal.id].negativeStakes = bnum(
                 proposalStatusWithVotes[3]
               );
-            } finally {
+
               retry = false;
+            } catch (e) {
+              console.error(
+                'Error on updating proposal (trying again)',
+                proposal
+              );
+              console.error(e);
+              retry = true;
             }
           }
-          retry = true;
-        }
-      })
-    );
+        })
+      );
+
+      activeProposalsBatchIndex++;
+    }
 
     // Sort cache data, so the IPFS hash is consistent
     Object.keys(networkCache.schemes).forEach(schemeId => {
@@ -2024,7 +2046,7 @@ export default class UtilsService {
           if (response && response.data && response.data.title) {
             proposalTitles[proposal.id] = response.data.title;
           } else {
-            console.error(
+            console.warn(
               `Couldnt not get title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
             );
           }
