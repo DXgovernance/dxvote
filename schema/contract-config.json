@@ -396,7 +396,7 @@
                                                     "type": "string",
                                                     "title": "The component schema",
                                                     "description": "An explanation about the purpose of this instance.",
-                                                    "enum": ["address", "integer", "real", "date", "time", "boolean", "tokenAmount", "contentHash"],
+                                                    "enum": ["address", "integer", "decimal", "date", "time", "boolean", "tokenAmount", "contentHash"],
                                                     "default": "",
                                                     "examples": [
                                                         "address"
