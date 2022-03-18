@@ -1,5 +1,9 @@
 const fs = require('fs');
 
+if (!fs.existsSync('./src/configs/localhost')) {
+  fs.mkdirSync('./src/configs/localhost');
+}
+
 fs.writeFileSync(
   './src/configs/localhost/config.json',
   JSON.stringify(
