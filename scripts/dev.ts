@@ -1,4 +1,5 @@
-import { writeFileSync } from 'fs';
+import { mkdirSync, writeFileSync } from 'fs';
+import path from 'path';
 import {
   ANY_FUNC_SIGNATURE,
   ZERO_ADDRESS,
@@ -528,8 +529,11 @@ async function main() {
     guilds: [addresses.DXDGuild, addresses.REPGuild],
   };
 
+  mkdirSync(path.resolve(__dirname, '../src/configs/localhost'), {
+    recursive: true,
+  });
   await writeFileSync(
-    './src/configs/localhost/config.json',
+    path.resolve(__dirname, '../src/configs/localhost/config.json'),
     JSON.stringify(developConfig, null, 2)
   );
 }

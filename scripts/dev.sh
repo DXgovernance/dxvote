@@ -95,7 +95,7 @@ start-hardhat_node() {
 
 if hardhat_running; then
   echo "Killing existent hardhat"
-  fuser -k 8545/tcp
+  kill $(lsof -t -i:8545) 
 fi
 
 echo "Starting our own hardhat node instance"
@@ -109,6 +109,8 @@ contents="$(jq '.compilerOptions.isolatedModules = false' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
+
+node scripts/beforeBuild.js
 
 # Deploy local contracts
 yarn hardhat run --network localhost scripts/dev.ts
