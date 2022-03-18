@@ -38,7 +38,7 @@ export const useBalances = (
     fromAddress: string;
     assetAddress: string;
   }[]
-): BigNumber => {
+): BigNumber[] => {
   const { data } = useContractCalls(
     calls.map(call => ({
       address: call.assetAddress,
@@ -48,5 +48,5 @@ export const useBalances = (
     }))
   );
 
-  return data;
+  return data ? data.map(balance => bnum(balance)) : [];
 };
