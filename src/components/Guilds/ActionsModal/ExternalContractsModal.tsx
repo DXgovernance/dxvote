@@ -10,11 +10,14 @@ import {
 const RepWrapper = styled(Flex)`
   margin: 16px auto;
 `;
-const WrapperText = styled(ContainerText)`
+const WrapperText = styled(ContainerText).attrs(() => ({
+  variant: 'bold',
+}))`
   justify-content: left;
   flex-direction: row;
   width: 85%;
   margin: 8px auto;
+  color: ${({ theme }) => theme.colors.proposal.grey};
 `;
 
 const ExternalWrapper = styled(Flex)`
@@ -22,7 +25,9 @@ const ExternalWrapper = styled(Flex)`
   margin: 8px auto;
 `;
 
-const ButtonText = styled(ContainerText)`
+const ButtonText = styled(ContainerText).attrs(() => ({
+  variant: 'medium',
+}))`
   justify-content: space-between;
   flex-direction: row;
 `;
@@ -39,29 +44,35 @@ const ActionsButton = styled(Button)`
   }
 `;
 
-const DxdControllerModal: React.FC = () => {
+interface ExternalContractsProps {
+  noOfActions: number;
+  functionDescription: string;
+  functionName: string;
+}
+
+const ExternalContractsModal: React.FC<ExternalContractsProps> = ({
+  noOfActions,
+  functionDescription,
+  functionName,
+}) => {
   const { setModalView } = useActionsBuilder();
 
   return (
     <RepWrapper>
       <ExternalWrapper>
-        <WrapperText variant="bold" color="grey">
-          6 Actions
-        </WrapperText>
+        <WrapperText>6 Actions</WrapperText>
         <ActionsButton
           variant="secondary"
           onClick={() =>
             setModalView(content => [...content, ActionsModalView.MintRep])
           }
         >
-          Mint Reputation
-          <ButtonText variant="medium" color="grey">
-            mintReputation(uint256, address, address)
-          </ButtonText>
+          {functionDescription}
+          <ButtonText>{functionName}</ButtonText>
         </ActionsButton>
       </ExternalWrapper>
     </RepWrapper>
   );
 };
 
-export default DxdControllerModal;
+export default ExternalContractsModal;

@@ -1,5 +1,5 @@
 import ActionModal from 'components/Guilds/ActionsModal';
-import DxdControllerModal from 'components/Guilds/ActionsModal/DXDController';
+import ExternalContractsModal from 'components/Guilds/ActionsModal/DXDController';
 import MintReputationModal from 'components/Guilds/ActionsModal/MintRepModal';
 import { Modal } from 'components/Guilds/common/Modal';
 import { createContext, useContext, useMemo, useState } from 'react';
@@ -21,6 +21,7 @@ export const ActionsModalProvider = ({ children }) => {
   const [transferBuilder, setTransferBuilder] = useState(false);
   const [mintRep, setMintRep] = useState(false);
   const [actionType, setActionType] = useState(null);
+  const [showActionType, setShowActionType] = useState(false);
   // closes modal and resets the view
   const closeModal = () => {
     setMintRep(false);
@@ -48,6 +49,12 @@ export const ActionsModalProvider = ({ children }) => {
       setIsOpen(false);
     };
 
+    const fakeData = {
+      noOfActions: 6,
+      functionDescription: 'Mint Reputation',
+      functionName: 'mintReputation(uint256, address, address)',
+    };
+
     switch (modalView[modalView.length - 1]) {
       case ActionsModalView.MintRep:
         modalHeader = <div>Mint Reputation</div>;
@@ -60,7 +67,13 @@ export const ActionsModalProvider = ({ children }) => {
 
       case ActionsModalView.DxdaoController:
         modalHeader = <div>Dxdao Controller</div>;
-        modalChildren = <DxdControllerModal />;
+        modalChildren = (
+          <ExternalContractsModal
+            functionDescription={fakeData.functionDescription}
+            functionName={fakeData.functionName}
+            noOfActions={fakeData.noOfActions}
+          />
+        );
         backnCross = true;
         prevContent = () => setModalView(content => content.slice(0, -1));
         break;
@@ -92,6 +105,8 @@ export const ActionsModalProvider = ({ children }) => {
         setMintRep,
         actionType,
         setActionType,
+        showActionType,
+        setShowActionType,
       }}
     >
       {children}

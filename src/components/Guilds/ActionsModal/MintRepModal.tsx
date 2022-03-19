@@ -56,9 +56,7 @@ const MintReputationModal: React.FC = () => {
         />
       </ExternalWrapper>
       <ExternalWrapper>
-        <WrapperText variant="bold" color="grey">
-          Reputation in %
-        </WrapperText>
+        <WrapperText>Reputation in %</WrapperText>
         <TextInput
           placeholder="0.00"
           value={repPercent}

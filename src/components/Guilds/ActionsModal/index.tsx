@@ -84,7 +84,6 @@ const ActionModal: React.FC = () => {
       <ExternalWrapper>
         <WrapperText>External Contracts</WrapperText>
         <ExternalButton
-          variant="secondary"
           onClick={() =>
             setModalView(content => [
               ...content,
