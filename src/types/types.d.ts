@@ -93,7 +93,7 @@ declare global {
     proposer: string;
     paramsHash: string;
     submittedTime: BigNumber;
-    
+
     // mutable data
     stateInScheme: WalletSchemeProposalState;
     stateInVotingMachine: VotingMachineProposalState;
@@ -153,7 +153,7 @@ declare global {
     type: string;
     controllerAddress: string;
     votingMachine: string;
-    
+
     // mutable data
     registered: boolean;
     paramsHash: string;
@@ -305,6 +305,7 @@ export interface ChainConfig {
   id: number;
   name: string;
   displayName: string;
+  rpcUrl?: string;
   defaultRpc: string;
   nativeAsset: {
     name: string;

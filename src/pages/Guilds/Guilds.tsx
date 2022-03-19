@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { Box } from '../../components/Guilds/common/Layout';
@@ -8,6 +8,7 @@ import ProposalCard from '../../components/Guilds/ProposalCard';
 import InView from 'react-intersection-observer';
 import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/guild/useGuildProposalIds';
 import Result, { ResultState } from 'components/Guilds/common/Result';
+import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -39,6 +40,7 @@ const GuildsPage: React.FC = () => {
   const { chain_name: chainName, guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
   const { data: proposalIds, error } = useGuildProposalIds(guildId);
+  const { isLoading } = useContext(GuildAvailabilityContext);
   const filteredProposalIds = useMemo(() => {
     if (!proposalIds) return null;
 
@@ -51,7 +53,7 @@ const GuildsPage: React.FC = () => {
     return clone.reverse();
   }, [proposalIds]);
 
-  if (!proposalIds && error) {
+  if (!isLoading && !proposalIds && error) {
     return (
       <Result
         state={ResultState.ERROR}

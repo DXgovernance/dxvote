@@ -131,13 +131,6 @@ const Web3ReactManager = ({ children }) => {
     prevUrlNetworkName &&
     urlNetworkName !== prevUrlNetworkName
   ) {
-    console.log(
-      '[ChainChange] URL Changed from',
-      prevUrlNetworkName,
-      'to',
-      urlNetworkName
-    );
-
     tryConnecting();
   }
 
