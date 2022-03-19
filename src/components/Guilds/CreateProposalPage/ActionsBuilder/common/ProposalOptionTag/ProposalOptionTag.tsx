@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
-import { Option } from '..';
+import { Option } from '../..';
 
 interface ProposalActionTagProps {
   option: Option;

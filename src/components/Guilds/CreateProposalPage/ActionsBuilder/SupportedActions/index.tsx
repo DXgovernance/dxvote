@@ -1,7 +1,8 @@
 import { DecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 import { RequireAtLeastOne } from 'utils/types';
 import { Call } from '..';
-import { ERC20TransferInfoLine } from './ERC20Transfer';
+import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
+import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
 
 export interface ActionViewProps {
   call: Call;
@@ -29,6 +30,7 @@ export const supportedActions: Record<
 > = {
   [SupportedAction.ERC20_TRANSFER]: {
     infoLineView: ERC20TransferInfoLine,
+    summaryView: ERC20TransferSummary,
     editor: () => <div>ERC20 Editor</div>,
   },
   [SupportedAction.GENERIC_CALL]: {
@@ -41,4 +43,10 @@ export const getInfoLineView = (actionType: SupportedAction) => {
   if (actionType == null) return null;
 
   return supportedActions[actionType].infoLineView;
+};
+
+export const getSummaryView = (actionType: SupportedAction) => {
+  if (actionType == null) return null;
+
+  return supportedActions[actionType].summaryView;
 };

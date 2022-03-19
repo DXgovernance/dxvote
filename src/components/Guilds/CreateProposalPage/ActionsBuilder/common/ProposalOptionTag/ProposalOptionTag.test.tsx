@@ -1,4 +1,4 @@
-import { render } from '../../../../../utils/tests';
+import { render } from '../../../../../../utils/tests';
 import { ProposalOptionTag } from './ProposalOptionTag';
 
 describe('ProposalOptionTag', () => {

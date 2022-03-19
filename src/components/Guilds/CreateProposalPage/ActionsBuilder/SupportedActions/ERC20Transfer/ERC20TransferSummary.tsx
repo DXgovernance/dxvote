@@ -5,12 +5,12 @@ import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
 import { useMemo } from 'react';
-import { FiArrowRight, FiPlus } from 'react-icons/fi';
 import { shortenAddress } from 'utils';
-import { ActionViewProps } from '.';
-import { Segment } from './common/infoLine';
+import { ActionViewProps } from '..';
+import { Segment } from '../common/infoLine';
+import { DetailCell, DetailHeader, DetailRow } from '../common/summary';
 
-export const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({
+const ERC20TransferSummary: React.FC<ActionViewProps> = ({
   call,
   decodedCall,
 }) => {
@@ -38,23 +38,30 @@ export const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({
 
   return (
     <>
-      <Segment>
-        <FiPlus size={16} />
-      </Segment>
-      <Segment>
-        Transfer {roundedBalance} {tokenInfo?.symbol}
-      </Segment>
-      <Segment>
-        <FiArrowRight />
-      </Segment>
-      <Segment>
-        <Avatar
-          defaultSeed={parsedData?.destination}
-          src={imageUrl}
-          size={24}
-        />
-      </Segment>
-      <Segment>{ensName || shortenAddress(parsedData?.destination)}</Segment>
+      <DetailHeader>
+        <DetailCell>Receiver</DetailCell>
+        <DetailCell>Amount</DetailCell>
+      </DetailHeader>
+
+      <DetailRow>
+        <DetailCell>
+          <Segment>
+            <Avatar
+              defaultSeed={parsedData?.destination}
+              src={imageUrl}
+              size={24}
+            />
+          </Segment>
+          <Segment>
+            {ensName || shortenAddress(parsedData?.destination)}
+          </Segment>
+        </DetailCell>
+        <DetailCell>
+          {roundedBalance} {tokenInfo?.symbol}
+        </DetailCell>
+      </DetailRow>
     </>
   );
 };
+
+export default ERC20TransferSummary;

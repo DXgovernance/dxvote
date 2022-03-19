@@ -8,7 +8,7 @@ import SidebarCard, {
   SidebarCardHeaderSpaced,
 } from 'components/Guilds/SidebarCard';
 import OptionRow from './Option';
-import AddButton from './AddButton';
+import AddButton from './common/AddButton';
 import { BigNumber } from 'ethers';
 
 const Button = styled(CommonButton)`

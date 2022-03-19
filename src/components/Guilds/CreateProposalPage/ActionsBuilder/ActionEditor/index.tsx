@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { CardWrapper, Header } from 'components/Guilds/common/Card';
 import { Box } from 'components/Guilds/common/Layout';
 import { Input, BaseInput } from 'components/Guilds/common/Form/Input';
-import AddButton from '../AddButton';
+import AddButton from '../common/AddButton';
 import { FiChevronDown, FiMoreHorizontal, FiX } from 'react-icons/fi';
 import { Button } from 'components/Guilds/common/Button';
 import TokenPicker from 'components/Guilds/TokenPicker';

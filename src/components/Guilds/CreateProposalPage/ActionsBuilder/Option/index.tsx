@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Box } from 'components/Guilds/common/Layout';
-import { ProposalOptionTag } from '../ProposalOptionTag';
-import AddButton from '../AddButton';
+import { ProposalOptionTag } from '../common/ProposalOptionTag';
+import AddButton from '../common/AddButton';
 import ActionView from '../Action';
 import { Option } from '..';
 
