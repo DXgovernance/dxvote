@@ -1,13 +1,7 @@
 import styled, { css, useTheme } from 'styled-components';
 import { Box } from 'components/Guilds/common/Layout';
 import { CardWrapper, Header } from 'components/Guilds/common/Card';
-import {
-  FiArrowRight,
-  FiChevronDown,
-  FiChevronUp,
-  FiExternalLink,
-  FiPlus,
-} from 'react-icons/fi';
+import { FiChevronDown, FiChevronUp, FiExternalLink } from 'react-icons/fi';
 import { useState } from 'react';
 import Avatar from 'components/Guilds/Avatar';
 import { shortenAddress } from 'utils';
@@ -15,21 +9,10 @@ import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
 import { Button } from 'components/Guilds/common/Button';
 import UnstyledLink from 'components/Guilds/common/UnstyledLink';
-
-// TODO: Update this
-export interface Action {
-  from: string;
-  to: string;
-  functionName: string;
-  params: {
-    type: string;
-    name: string;
-    value: string;
-    isDecodable?: boolean;
-    externalLink?: string;
-  }[];
-  decodeText: string;
-}
+import { Call } from '..';
+import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
+import { MetadataTag, Segment } from '../SupportedActions/common/infoLine';
+import { getInfoLineView } from '../SupportedActions';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   margin-top: 0.8rem;
@@ -68,19 +51,6 @@ const ChevronIcon = styled.span`
     css`
       border-color: ${({ theme }) => theme.colors.border.hover};
     `}
-`;
-
-const Segment = styled.span`
-  margin-right: 0.5rem;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const MetadataTag = styled.span`
-  padding: 0.125rem 0.375rem;
-  background-color: ${({ theme }) => theme.colors.muted};
-  border-radius: ${({ theme }) => theme.radii.curved};
 `;
 
 const DetailWrapper = styled(Box)`
@@ -143,33 +113,24 @@ const ParamDetail = styled(Box)`
 `;
 
 interface ActionViewProps {
-  action: Action;
+  call: Call;
 }
 
-const ActionView: React.FC<ActionViewProps> = ({ action }) => {
+const ActionView: React.FC<ActionViewProps> = ({ call }) => {
+  const { decodedCall } = useDecodedCall(call);
+
   const [expanded, setExpanded] = useState(false);
-  const { ensName, imageUrl } = useENSAvatar(action?.to, DEFAULT_ETH_CHAIN_ID);
+  const { ensName, imageUrl } = useENSAvatar(call?.to, DEFAULT_ETH_CHAIN_ID);
   const [activeTab, setActiveTab] = useState(0);
   const theme = useTheme();
+
+  const InfoLine = getInfoLineView(decodedCall?.callType);
 
   return (
     <CardWrapperWithMargin>
       <CardHeader>
         <CardLabel>
-          <Segment>
-            <FiPlus size={16} />
-          </Segment>
-          <Segment>{action?.decodeText}</Segment>
-          <Segment>
-            <FiArrowRight />
-          </Segment>
-          <Segment>
-            <Avatar defaultSeed={action?.to} src={imageUrl} size={24} />
-          </Segment>
-          <Segment>{ensName || shortenAddress(action?.to)}</Segment>
-          <Segment>
-            <MetadataTag>5.54%</MetadataTag>
-          </Segment>
+          {InfoLine && <InfoLine call={call} decodedCall={decodedCall} />}
         </CardLabel>
         <ChevronIcon onClick={() => setExpanded(!expanded)}>
           {expanded ? (
@@ -205,9 +166,9 @@ const ActionView: React.FC<ActionViewProps> = ({ action }) => {
               <DetailRow>
                 <DetailCell>
                   <Segment>
-                    <Avatar defaultSeed={action?.to} src={imageUrl} size={24} />
+                    <Avatar defaultSeed={call?.to} src={imageUrl} size={24} />
                   </Segment>
-                  <Segment>{ensName || shortenAddress(action?.to)}</Segment>
+                  <Segment>{ensName || shortenAddress(call?.to)}</Segment>
                 </DetailCell>
                 <DetailCell>1200.00 REP</DetailCell>
               </DetailRow>
@@ -218,8 +179,8 @@ const ActionView: React.FC<ActionViewProps> = ({ action }) => {
             <DetailWrapper>
               <ActionParamRow>
                 <Box>
-                  {action?.functionName}(
-                  {action?.params?.map((param, index, params) => (
+                  {decodedCall?.function?.name}(
+                  {([] || decodedCall?.args)?.map((param, index, params) => (
                     <span key={index}>
                       <ParamTag
                         key={index}
@@ -234,7 +195,7 @@ const ActionView: React.FC<ActionViewProps> = ({ action }) => {
                 </Box>
               </ActionParamRow>
 
-              {action?.params?.map((param, index, params) => (
+              {([] || decodedCall?.args)?.map((param, index, params) => (
                 <ActionParamRow key={index}>
                   <ParamTitleRow>
                     <ParamTitleTag color={theme?.colors?.params?.[index]}>

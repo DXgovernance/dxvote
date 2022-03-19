@@ -7,8 +7,9 @@ import { Box } from '../../common/Layout';
 import SidebarCard, {
   SidebarCardHeaderSpaced,
 } from 'components/Guilds/SidebarCard';
-import OptionRow, { Option } from './Option';
+import OptionRow from './Option';
 import AddButton from './AddButton';
+import { BigNumber } from 'ethers';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -20,6 +21,19 @@ const Button = styled(CommonButton)`
 const AddOptionWrapper = styled(Box)`
   padding: 1rem;
 `;
+
+export interface Call {
+  from: string;
+  to: string;
+  data: string;
+  value: BigNumber;
+}
+
+export interface Option {
+  index: number;
+  label: string;
+  actions?: Call[];
+}
 
 interface ActionsBuilderProps {
   editable?: boolean;
@@ -35,33 +49,10 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
       label: 'For',
       actions: [
         {
-          decodeText: 'Mint 0.16% REP',
-          from: '0x0000000000000000000000000000000000000000',
-          to: '0x95a223299319022a842d0dfe4851c145a2f615b9',
-          functionName: 'genericCalls',
-          params: [
-            {
-              name: 'Contract',
-              type: 'address',
-              value: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
-            },
-            {
-              name: 'data',
-              type: 'bytes',
-              value:
-                '0x8efcc7500000000000000000000000006a023ccd1ff6f2045c3309768ead9e68f978f6e1000000000000000000000000b90d6bec20993be5d72a5ab353343f7a0281f1580000000000000000000000000000000000000000000000006d37db4d8e530000000000000000000000000000000000000000000000000001e5b8fa8fe2ac00000000000000000000000000000000000000000000000000000000000000009c400000000000000000000000000000000000000000000000008ac7230489e80000000000000000000000000000000000000000000000000000000000006194e23c0000000000000000000000000000000000000000000000000000000061bc6f3c0000000000000000000000005d48c95adffd4b40c1aaadc4e08fc44117e02179',
-            },
-            {
-              name: 'Avatar',
-              type: 'address',
-              value: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
-            },
-            {
-              name: 'value',
-              type: 'uint256',
-              value: '0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46',
-            },
-          ],
+          from: '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+          to: '0x698dd4ddeeda3cca704dc4c2ae4942137edd99d5',
+          data: '0xa9059cbb00000000000000000000000001349510117dc9081937794939552463f5616dfb00000000000000000000000000000000000000000000021e19e0c9bab2400000',
+          value: BigNumber.from(0),
         },
       ],
     },
