@@ -16,12 +16,14 @@ export const ActionsModalProvider = ({ children }) => {
   const [modalView, setModalView] = useState<ActionsModalView[]>([
     ActionsModalView.Base,
   ]);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [transferBuilder, setTransferBuilder] = useState(false);
   const [mintRep, setMintRep] = useState(false);
-
+  const [actionType, setActionType] = useState(null);
   // closes modal and resets the view
   const closeModal = () => {
+    setMintRep(false);
     setModalView([ActionsModalView.Base]);
     setIsOpen(false);
   };
@@ -88,6 +90,8 @@ export const ActionsModalProvider = ({ children }) => {
         setTransferBuilder,
         mintRep,
         setMintRep,
+        actionType,
+        setActionType,
       }}
     >
       {children}

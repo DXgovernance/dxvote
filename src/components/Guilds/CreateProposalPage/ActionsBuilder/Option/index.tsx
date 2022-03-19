@@ -4,6 +4,7 @@ import { ProposalOptionTag } from '../ProposalOptionTag';
 import AddButton from '../AddButton';
 import ActionView, { Action } from '../Action';
 import { useActionsBuilder } from 'contexts/Guilds/ActionsBuilder';
+import TransferAndMint from '../TransfersAndMint';
 
 export interface Option {
   index: number;
@@ -14,7 +15,6 @@ export interface Option {
 interface OptionRowProps {
   data: Option;
   editable: boolean;
-  showData: boolean;
 }
 
 const ActionCountLabel = styled.span`
@@ -36,8 +36,26 @@ const DetailWrapper = styled(Box)`
   justify-content: space-between;
 `;
 
-const OptionRow: React.FC<OptionRowProps> = ({ data, editable, showData }) => {
-  const { setIsOpen } = useActionsBuilder();
+const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
+  // better and more modular way of handling actionBuilder system
+  // refactor this with useReducer and dispatch
+  // use enums instead of useState
+  // allow dynamic creation of minting rep with state
+  // think about performance issues with constantly updating components
+  // create helper functions to switch different states
+  // make this super developer friendly
+  // create hook for fake data
+  // share hook data with modal and option comp
+  const { setIsOpen, transferBuilder, actionType, setActionType } =
+    useActionsBuilder();
+
+  const handleAddAction = () => {
+    setActionType(data.label);
+    setIsOpen(true);
+  };
+
+  const checkActionType: boolean = data.label === actionType;
+
   return (
     <OptionWrapper>
       <DetailWrapper>
@@ -48,13 +66,19 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable, showData }) => {
         </ActionCountLabel>
       </DetailWrapper>
 
-      {showData &&
+      {transferBuilder && checkActionType && <TransferAndMint />}
+
+      {!editable &&
         data?.actions?.map((action, index) => (
           <ActionView key={index} action={action} />
         ))}
 
       {editable && (
-        <AddButton onClick={() => setIsOpen(true)} label="Add Action" />
+        <AddButton
+          onClick={handleAddAction}
+          disabled={transferBuilder}
+          label="Add Action"
+        />
       )}
     </OptionWrapper>
   );

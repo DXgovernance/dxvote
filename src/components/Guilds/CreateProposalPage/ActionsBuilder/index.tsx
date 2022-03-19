@@ -9,8 +9,6 @@ import SidebarCard, {
 } from 'components/Guilds/SidebarCard';
 import OptionRow, { Option } from './Option';
 import AddButton from './AddButton';
-import TransferAndMint from './TransfersAndMint';
-import { useActionsBuilder } from 'contexts/Guilds/ActionsBuilder';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -30,9 +28,9 @@ interface ActionsBuilderProps {
 export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
   const [actionsEditMode, setActionsEditMode] = useState(true);
 
-  const { transferBuilder, mintRep } = useActionsBuilder();
-
   // TODO: remove when actions are implemented
+  //  label read from contract or proposal type
+  //  actions set by the user input modal
   const [options, setOptions] = useState<Option[]>([
     {
       index: 0,
@@ -92,9 +90,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
               <Button
                 variant="secondary"
                 onClick={() => setActionsEditMode(true)}
-              >
-                Edit
-              </Button>
+              ></Button>
             ))}
         </SidebarCardHeaderSpaced>
       }
@@ -105,11 +101,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
             key={idx}
             data={option}
             editable={editable && actionsEditMode}
-            showData={mintRep}
           />
-          {transferBuilder && editable && option.label === 'For' && (
-            <TransferAndMint />
-          )}
           {idx !== options.length - 1 && <Divider />}
         </>
       ))}
