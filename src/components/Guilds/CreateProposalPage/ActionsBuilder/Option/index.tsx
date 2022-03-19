@@ -37,15 +37,6 @@ const DetailWrapper = styled(Box)`
 `;
 
 const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
-  // better and more modular way of handling actionBuilder system
-  // refactor this with useReducer and dispatch
-  // use enums instead of useState
-  // allow dynamic creation of minting rep with state
-  // think about performance issues with constantly updating components
-  // create helper functions to switch different states
-  // make this super developer friendly
-  // create hook for fake data
-  // share hook data with modal and option comp
   const { setIsOpen, transferBuilder, actionType, setActionType } =
     useActionsBuilder();
 
@@ -56,6 +47,8 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
 
   const checkActionType: boolean = data.label === actionType;
 
+  //TODO: refactor when data is pulled form contracts
+  //TODO: remove the disabled button from add actions
   return (
     <OptionWrapper>
       <DetailWrapper>

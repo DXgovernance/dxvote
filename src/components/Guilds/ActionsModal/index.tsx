@@ -87,7 +87,7 @@ const ActionModal: React.FC = () => {
           onClick={() =>
             setModalView(content => [
               ...content,
-              ActionsModalView.DxdaoController,
+              ActionsModalView.ExternalContracts,
             ])
           }
         >

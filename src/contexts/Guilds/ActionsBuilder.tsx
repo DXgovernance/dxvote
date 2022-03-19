@@ -1,12 +1,12 @@
 import ActionModal from 'components/Guilds/ActionsModal';
-import ExternalContractsModal from 'components/Guilds/ActionsModal/DXDController';
+import ExternalContractsModal from 'components/Guilds/ActionsModal/ExternalContractsModal';
 import MintReputationModal from 'components/Guilds/ActionsModal/MintRepModal';
 import { Modal } from 'components/Guilds/common/Modal';
 import { createContext, useContext, useMemo, useState } from 'react';
 
 export enum ActionsModalView {
   Base,
-  DxdaoController,
+  ExternalContracts,
   MintRep,
 }
 
@@ -65,7 +65,7 @@ export const ActionsModalProvider = ({ children }) => {
         prevContent = () => setModalView(content => content.slice(0, -1));
         break;
 
-      case ActionsModalView.DxdaoController:
+      case ActionsModalView.ExternalContracts:
         modalHeader = <div>Dxdao Controller</div>;
         modalChildren = (
           <ExternalContractsModal
