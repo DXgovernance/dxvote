@@ -135,8 +135,9 @@ const ProposalsPage = observer(() => {
               const timeToFinish = timeToTimestamp(proposal.finishTime);
 
               const votingMachineTokenName =
-                votingMachines[daoStore.getVotingMachineOfProposal(proposal.id)]
-                  .type == 'DXDVotingMachine'
+                votingMachines[
+                  daoStore.getVotingMachineOfProposal(proposal.id).address
+                ].type == 'DXDVotingMachine'
                   ? 'DXD'
                   : 'GEN';
 
@@ -208,7 +209,7 @@ const ProposalsPage = observer(() => {
                     </Link>
                   </DataCell>
                   <DataCell>
-                    {daoStore.getCache().schemes[proposal.scheme].name}
+                    {daoStore.daoCache.schemes[proposal.scheme].name}
                   </DataCell>
                   <DataCell>
                     <span>

@@ -44,10 +44,12 @@ const SchemesInformation = observer(() => {
       </TableHeader>
       <TableBody>
         {schemes.map(scheme => {
-          const schemeProposals = daoStore.getSchemeProposals(scheme.address);
-          const votingMachineParameters = daoStore.getVotingParametersOfScheme(
+          const schemeProposals = daoStore.getAllProposals({
+            scheme: scheme.address,
+          });
+          const votingMachineParameters = daoStore.getVotingMachineOfScheme(
             scheme.address
-          );
+          ).params;
           if (votingMachineParameters)
             return (
               <TableRow>

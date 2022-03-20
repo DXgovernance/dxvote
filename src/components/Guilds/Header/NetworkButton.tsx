@@ -8,7 +8,7 @@ import arbitrumIcon from '../../../assets/images/arbitrum.png';
 import ethereumIcon from '../../../assets/images/ether.svg';
 import gnosisIcon from '../../../assets/images/gnosis-icon-green.svg';
 
-const iconsByChain = {
+export const iconsByChain = {
   1: ethereumIcon,
   4: ethereumIcon,
   100: gnosisIcon,

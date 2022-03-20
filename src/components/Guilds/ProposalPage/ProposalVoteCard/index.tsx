@@ -7,7 +7,7 @@ import { Button } from '../../common/Button';
 import moment from 'moment';
 import SidebarCard, {
   SidebarCardContent,
-  SidebarCardHeader,
+  SidebarCardHeaderSpaced,
 } from '../../SidebarCard';
 import useTimedRerender from 'hooks/Guilds/time/useTimedRerender';
 import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
@@ -18,11 +18,6 @@ import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf'
 import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
-
-const SidebarCardHeaderSpaced = styled(SidebarCardHeader)`
-  display: flex;
-  justify-content: space-between;
-`;
 
 const ButtonsContainer = styled.div`
   flex-direction: column;
