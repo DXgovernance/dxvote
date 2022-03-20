@@ -53,9 +53,9 @@ const ProposalsInformation = styled(Box)`
   border-radius: 15px;
   border: 1px solid
     ${({ proposals, theme }) =>
-    proposals === 'active'
-      ? theme.colors.card.green
-      : theme.colors.card.grey};
+      proposals === 'active'
+        ? theme.colors.card.green
+        : theme.colors.card.grey};
   background-color: ${({ theme }) => theme.colors.background};
   color: ${({ proposals, theme }) =>
     proposals === 'active' ? theme.colors.card.green : theme.colors.card.grey};
@@ -107,22 +107,22 @@ const LandingPage: React.FC = () => {
       <CardContainer>
         {totalGuilds
           ? totalGuilds.map((guildAddress, key) => (
-            <GuildCard key={key} guildAddress={guildAddress}>
-              <GuildCardHeader>
-                <MemberWrapper>
-                  <MdOutlinePeopleAlt size={24} />
-                  500
-                </MemberWrapper>
-                <ProposalsInformation proposals={'active'}>
-                  4 Proposals
-                </ProposalsInformation>
-              </GuildCardHeader>
-              <GuildCardContent>
-                <DaoIcon src={dxDaoIcon} />
-                <Title guildAddress={guildAddress} />
-              </GuildCardContent>
-            </GuildCard>
-          ))
+              <GuildCard key={key} guildAddress={guildAddress}>
+                <GuildCardHeader>
+                  <MemberWrapper>
+                    <MdOutlinePeopleAlt size={24} />
+                    500
+                  </MemberWrapper>
+                  <ProposalsInformation proposals={'active'}>
+                    4 Proposals
+                  </ProposalsInformation>
+                </GuildCardHeader>
+                <GuildCardContent>
+                  <DaoIcon src={dxDaoIcon} />
+                  <Title guildAddress={guildAddress} />
+                </GuildCardContent>
+              </GuildCard>
+            ))
           : null}
       </CardContainer>
     </>
