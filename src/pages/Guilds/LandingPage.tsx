@@ -12,6 +12,9 @@ import GuildCard, {
 } from 'components/Guilds/GuildCard';
 import dxDaoIcon from '../../assets/images/dxdao-icon.svg';
 import { Heading } from 'components/Guilds/common/Typography';
+import { useGuildRegistry } from 'hooks/Guilds/ether-swr/guild/useGuildRegistry';
+import { GUILDS_REGISTRY_ADDRESS } from 'constants/addresses';
+import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
 
 const InputContainer = styled(Flex)`
   display: flex;
@@ -69,16 +72,22 @@ const DaoTitle = styled(Heading)`
   line-height: 24px;
 `;
 
+interface TitleProps {
+  guildAddress: string;
+}
+const Title: React.FC<TitleProps> = ({ guildAddress }) => {
+  const guildName = useENSNameFromAddress(guildAddress)?.split('.')[0];
+  return <DaoTitle size={2}>{guildName}</DaoTitle>;
+};
+
 const LandingPage: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
+  const { totalGuilds } = useGuildRegistry(GUILDS_REGISTRY_ADDRESS);
   /*TODO:
     1. Members should be dynamic
     2. Amount of proposals should be dynamic
     3. Logo should be dynamic
-    4. Name should be dynamic
-    5. Should be redirected to the ENS subdomain or guildId on click
-    6. Amount of guilds should be dynamic
     */
   return (
     <>
@@ -96,66 +105,25 @@ const LandingPage: React.FC = () => {
         </StyledButton>
       </InputContainer>
       <CardContainer>
-        <GuildCard>
-          <GuildCardHeader>
-            <MemberWrapper>
-              <MdOutlinePeopleAlt size={24} />
-              500
-            </MemberWrapper>
-            <ProposalsInformation proposals={'active'}>
-              4 Proposals
-            </ProposalsInformation>
-          </GuildCardHeader>
-          <GuildCardContent>
-            <DaoIcon src={dxDaoIcon} />
-            <DaoTitle size={2}>DXdao</DaoTitle>
-          </GuildCardContent>
-        </GuildCard>
-        <GuildCard>
-          <GuildCardHeader>
-            <MemberWrapper>
-              <MdOutlinePeopleAlt size={24} />
-              500
-            </MemberWrapper>
-            <ProposalsInformation proposals={'not-active'}>
-              0 Proposals
-            </ProposalsInformation>
-          </GuildCardHeader>
-          <GuildCardContent>
-            <DaoIcon src={dxDaoIcon} />
-            <DaoTitle size={2}>DXdao</DaoTitle>
-          </GuildCardContent>
-        </GuildCard>
-        <GuildCard>
-          <GuildCardHeader>
-            <MemberWrapper>
-              <MdOutlinePeopleAlt size={24} />
-              500
-            </MemberWrapper>
-            <ProposalsInformation proposals={'active'}>
-              4 Proposals
-            </ProposalsInformation>
-          </GuildCardHeader>
-          <GuildCardContent>
-            <DaoIcon src={dxDaoIcon} />
-            <DaoTitle size={2}>DXdao</DaoTitle>
-          </GuildCardContent>
-        </GuildCard>
-        <GuildCard>
-          <GuildCardHeader>
-            <MemberWrapper>
-              <MdOutlinePeopleAlt size={24} />
-              500
-            </MemberWrapper>
-            <ProposalsInformation proposals={'active'}>
-              4 Proposals
-            </ProposalsInformation>
-          </GuildCardHeader>
-          <GuildCardContent>
-            <DaoIcon src={dxDaoIcon} />
-            <DaoTitle size={2}>DXdao</DaoTitle>
-          </GuildCardContent>
-        </GuildCard>
+        {totalGuilds
+          ? totalGuilds.map((guildAddress, key) => (
+              <GuildCard key={key} guildAddress={guildAddress}>
+                <GuildCardHeader>
+                  <MemberWrapper>
+                    <MdOutlinePeopleAlt size={24} />
+                    500
+                  </MemberWrapper>
+                  <ProposalsInformation proposals={'active'}>
+                    4 Proposals
+                  </ProposalsInformation>
+                </GuildCardHeader>
+                <GuildCardContent>
+                  <DaoIcon src={dxDaoIcon} />
+                  <Title guildAddress={guildAddress} />
+                </GuildCardContent>
+              </GuildCard>
+            ))
+          : null}
       </CardContainer>
     </>
   );
