@@ -48,7 +48,7 @@ const GuildsApp = () => {
                       <Redirect
                         exact
                         from="/:chain_name"
-                        to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                        to="/:chain_name/0x1621d6C9fB665E495A8c1475F9b713DF58DEC853"
                       />
 
                       <Route exact path="/:chain_name/:guild_id">
