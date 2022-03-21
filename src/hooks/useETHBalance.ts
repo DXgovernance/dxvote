@@ -14,7 +14,7 @@ export const useETHBalance = (fromAddress: string): BigNumber => {
     configStore.getNetworkContracts().utils.multicall,
     MulticallJSON.abi,
     'getEthBalance',
-    [fromAddress]
+    fromAddress
   );
 
   return balance ? bnum(balance) : bnum('0');

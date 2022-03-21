@@ -34,7 +34,7 @@ export const getIPFSFile = async function (
       }),
     ]);
   } catch (e) {
-    console.error(e);
+    console.warn(e);
     return undefined;
   }
 };

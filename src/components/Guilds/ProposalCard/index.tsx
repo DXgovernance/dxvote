@@ -11,7 +11,7 @@ import UnstyledLink from '../common/UnstyledLink';
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
 import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import Avatar from '../Avatar';
-import { DEFAULT_ETH_CHAIN_ID } from '../../../provider/connectors';
+import { DEFAULT_CHAIN_ID } from '../../../utils/constants';
 import { shortenAddress } from '../../../utils';
 import { Loading } from '../common/Loading';
 import useVoteSummary from 'hooks/Guilds/useVoteSummary';
@@ -113,7 +113,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const votes = useVoteSummary(guildId, id);
   const { imageUrl, ensName } = useENSAvatar(
     proposal?.creator,
-    DEFAULT_ETH_CHAIN_ID
+    DEFAULT_CHAIN_ID
   );
 
   return (

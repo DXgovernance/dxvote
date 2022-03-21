@@ -7,13 +7,11 @@ import {
   getBlockchainLink,
   NETWORK_NAMES,
   shortenAddress,
+  DEFAULT_CHAIN_ID,
 } from '../../../../utils';
 import useENSAvatar from '../../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import useClipboard from '../../../../hooks/Guilds/useClipboard';
-import {
-  DEFAULT_ETH_CHAIN_ID,
-  findWalletType,
-} from '../../../../provider/connectors';
+import { findWalletType } from '../../../../provider/connectors';
 
 import LiveIndicator from './LiveIndicator';
 import { Button, IconButton } from '../../common/Button';
@@ -88,7 +86,7 @@ interface Props {
 
 export default function WalletInfoBox({ openOptions }: Props) {
   const { account, connector, chainId } = useWeb3React();
-  const { ensName, imageUrl } = useENSAvatar(account, DEFAULT_ETH_CHAIN_ID);
+  const { ensName, imageUrl } = useENSAvatar(account, DEFAULT_CHAIN_ID);
   const [isCopied, copyAddress] = useClipboard(account, 3000);
 
   const networkName = NETWORK_NAMES[chainId];
