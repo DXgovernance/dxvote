@@ -97,7 +97,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
         </>
       ))}
 
-      {editable && actionsEditMode && (
+      {editable && actionsEditMode && options.length < 2 && (
         <>
           <Divider />
           <AddOptionWrapper>

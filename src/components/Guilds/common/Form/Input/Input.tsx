@@ -11,7 +11,7 @@ const baseInputStyles = css`
     color: ${({ theme }) => theme.colors.proposalText.lightGrey};
   }
   :hover:enabled {
-    color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
     border-color: ${({ theme }) => theme.colors.border.hover};
   }
 

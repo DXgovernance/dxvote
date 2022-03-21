@@ -1,12 +1,19 @@
 import { DecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 import { RequireAtLeastOne } from 'utils/types';
 import { Call } from '..';
+import ERC20TransferEditor from './ERC20Transfer/ERC20TransferEditor';
 import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
 import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
 
 export interface ActionViewProps {
   call: Call;
   decodedCall: DecodedCall;
+}
+
+export interface ActionEditorProps {
+  call: Call;
+  decodedCall: DecodedCall;
+  updateCall: (updatedCall: Call) => void;
 }
 
 export enum SupportedAction {
@@ -20,8 +27,8 @@ type SupportedActionViews = {
 };
 
 type SupportedActionEditors = RequireAtLeastOne<{
-  bulkEditor?: React.FC<ActionViewProps>;
-  editor?: React.FC<ActionViewProps>;
+  bulkEditor?: React.FC<ActionEditorProps>;
+  editor?: React.FC<ActionEditorProps>;
 }>;
 
 export const supportedActions: Record<
@@ -31,7 +38,7 @@ export const supportedActions: Record<
   [SupportedAction.ERC20_TRANSFER]: {
     infoLineView: ERC20TransferInfoLine,
     summaryView: ERC20TransferSummary,
-    editor: () => <div>ERC20 Editor</div>,
+    editor: ERC20TransferEditor,
   },
   [SupportedAction.GENERIC_CALL]: {
     infoLineView: () => <div>Generic Call</div>,
@@ -49,4 +56,10 @@ export const getSummaryView = (actionType: SupportedAction) => {
   if (actionType == null) return null;
 
   return supportedActions[actionType].summaryView;
+};
+
+export const getEditor = (actionType: SupportedAction) => {
+  if (actionType == null) return null;
+
+  return supportedActions[actionType].editor;
 };

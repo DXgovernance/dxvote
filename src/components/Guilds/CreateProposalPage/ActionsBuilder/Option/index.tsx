@@ -2,8 +2,9 @@ import styled from 'styled-components';
 import { Box } from 'components/Guilds/common/Layout';
 import { ProposalOptionTag } from '../common/ProposalOptionTag';
 import AddButton from '../common/AddButton';
-import ActionView from '../Action';
+import ActionView from '../ActionView';
 import { Option } from '..';
+import ActionEditor from '../ActionEditor';
 
 interface OptionRowProps {
   data: Option;
@@ -45,14 +46,10 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
           <ActionView key={index} call={action} />
         ))}
 
-      {/* {editable &&
-        data?.actions?.map((_, index) => (
-          <ActionEditor
-            key={index}
-            title="Transfers & Mint"
-            icon={<FiNavigation size={16} />}
-          />
-        ))} */}
+      {editable &&
+        data?.actions?.map((action, index) => (
+          <ActionEditor key={index} call={action} />
+        ))}
 
       {editable && <AddButton label="Add Action" />}
     </OptionWrapper>
