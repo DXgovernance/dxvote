@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+node scripts/beforeBuild.js
+yarn hardhat compile
 export REACT_APP_GIT_SHA=$(echo $(git rev-parse  HEAD) | cut -c1-9)
 export REACT_APP_VERSION=$npm_package_version
 export SKIP_PREFLIGHT_CHECK=true
