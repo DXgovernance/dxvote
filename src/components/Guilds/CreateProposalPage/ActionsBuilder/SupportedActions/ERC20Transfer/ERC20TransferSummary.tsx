@@ -3,9 +3,8 @@ import { BigNumber } from 'ethers';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
-import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
 import { useMemo } from 'react';
-import { shortenAddress } from 'utils';
+import { DEFAULT_CHAIN_ID, shortenAddress } from 'utils';
 import { ActionViewProps } from '..';
 import { Segment } from '../common/infoLine';
 import { DetailCell, DetailHeader, DetailRow } from '../common/summary';
@@ -33,7 +32,7 @@ const ERC20TransferSummary: React.FC<ActionViewProps> = ({
   );
   const { ensName, imageUrl } = useENSAvatar(
     parsedData?.destination,
-    DEFAULT_ETH_CHAIN_ID
+    DEFAULT_CHAIN_ID
   );
 
   return (

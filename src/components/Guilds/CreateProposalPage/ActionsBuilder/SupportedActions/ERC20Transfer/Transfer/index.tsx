@@ -12,10 +12,10 @@ import { BigNumber } from 'ethers';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
-import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
 import TokenPicker from 'components/Guilds/TokenPicker';
 import { Box } from 'components/Guilds/common/Layout';
 import { Button } from 'components/Guilds/common/Button';
+import { DEFAULT_CHAIN_ID } from 'utils';
 
 const Control = styled(Box)`
   display: flex;
@@ -77,10 +77,7 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, decodedCall }) => {
     tokenInfo?.decimals,
     10
   );
-  const { imageUrl } = useENSAvatar(
-    parsedData?.destination,
-    DEFAULT_ETH_CHAIN_ID
-  );
+  const { imageUrl } = useENSAvatar(parsedData?.destination, DEFAULT_CHAIN_ID);
 
   return (
     <DetailWrapper>
