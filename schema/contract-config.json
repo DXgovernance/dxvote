@@ -14,11 +14,11 @@
                 "factory"
             ],
             "networks": {
-                "mainnet": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
-                "rinkeby": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
-                "gnosis": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
-                "arbitrum": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
-                "arbitrumRinkeby": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+                "1": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                "4": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                "100": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                "42161": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                "421611": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
             },
             "functions": [
                 {
@@ -396,6 +396,7 @@
                                                     "type": "string",
                                                     "title": "The component schema",
                                                     "description": "An explanation about the purpose of this instance.",
+                                                    "enum": ["address", "integer", "decimal", "date", "time", "boolean", "tokenAmount", "contentHash"],
                                                     "default": "",
                                                     "examples": [
                                                         "address"
