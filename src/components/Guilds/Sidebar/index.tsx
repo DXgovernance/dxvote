@@ -6,7 +6,6 @@ import { GuestActions } from './GuestActions';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
-import useGuildImplementationType from '../../../hooks/Guilds/guild/useGuildImplementationType';
 import { useParams } from 'react-router-dom';
 import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
@@ -100,7 +99,6 @@ export const Sidebar = () => {
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { data } = useGuildConfig(guildAddress);
 
-  const type = useGuildImplementationType(guildAddress);
   const { data: votingPower } = useVotingPowerOf({
     contractAddress: guildAddress,
     userAddress,
@@ -118,7 +116,6 @@ export const Sidebar = () => {
             </DaoTitle>
           </DaoBrand>
           <DaoMemberCount>464 Members</DaoMemberCount>
-          <DaoMemberCount>{type}</DaoMemberCount>
         </DaoInfo>
         {votingPower && !votingPower?.isZero() ? (
           <MemberActions />

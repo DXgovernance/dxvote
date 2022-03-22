@@ -16,6 +16,7 @@
     "cy:run:production": "cypress run --env configFile=production",
     "test:e2e": "start-server-and-test 'yarn start --no-browser' 3000 cy:run:development",
     "test": "react-app-rewired test --watchAll=false --coverage --verbose",
+    "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
     "prepare": "husky install"
   },
   "engines": {
