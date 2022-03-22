@@ -5,7 +5,7 @@ import deployedBytecodes from '../../../bytecodes/config.json';
 
 /**
  * @function useGuildImplementationType
- * @param guildAddress address
+ * @param {string} guildAddress
  * @returns {string} GuildImplementationType. 'SnapshotRepERC20Guild' | 'DXDGuild' | 'ERC20Guild' | 'IERC20Guild'
  */
 export default function useGuildImplementationType(
@@ -25,9 +25,9 @@ export default function useGuildImplementationType(
   const implementationType: GuildImplementationType = useMemo(() => {
     if (!guildBytecode) return GuildImplementationType.IERC20Guild;
 
-    const match = deployedBytecodes.find(({ bytecode }) => {
-      return guildBytecode === bytecode;
-    });
+    const match = deployedBytecodes.find(
+      ({ bytecode }) => guildBytecode === bytecode
+    );
 
     return match ? match.type : GuildImplementationType.IERC20Guild; // default to IERC20Guild
   }, [guildBytecode]) as GuildImplementationType;
