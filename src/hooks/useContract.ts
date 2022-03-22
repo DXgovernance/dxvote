@@ -3,6 +3,7 @@ import { providers } from 'ethers';
 import { useMemo } from 'react';
 import { getContract } from '../utils/contracts';
 import useEtherSWR from './Guilds/ether-swr/useEtherSWR';
+import { SWRResponse } from 'swr';
 
 export const useContract = function (address: string, abi: any[]) {
   const { library } = useWeb3React();
@@ -23,9 +24,9 @@ export const useContractCall = (
   address: string,
   abi: any[],
   functionName: string,
-  params: string
-): string => {
-  const { data } = useContractCalls([
+  params: string[]
+): SWRResponse => {
+  return useContractCalls([
     {
       address,
       abi,
@@ -33,8 +34,6 @@ export const useContractCall = (
       params,
     },
   ]);
-
-  return data ? data.toString() : '0x0';
 };
 
 export const useContractCalls = (
@@ -42,21 +41,15 @@ export const useContractCalls = (
     address: string;
     abi: any[];
     functionName: string;
-    params: string;
+    params: string[];
   }[]
-) => {
-  const { data, error, isValidating, mutate } = useEtherSWR(
-    calls.map(call => [call.address, call.functionName, call.params]),
+): SWRResponse => {
+  return useEtherSWR(
+    calls.map(call => {
+      return [call.address, call.functionName, ...call.params];
+    }),
     {
       ABIs: new Map(calls.map(call => [call.address, call.abi])),
-      refreshInterval: 0,
     }
   );
-
-  return {
-    error,
-    isValidating,
-    mutate,
-    data,
-  };
 };
