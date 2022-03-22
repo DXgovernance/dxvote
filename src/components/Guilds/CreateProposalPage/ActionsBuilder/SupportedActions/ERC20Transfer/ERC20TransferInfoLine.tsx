@@ -5,7 +5,7 @@ import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useMemo } from 'react';
 import { FiArrowRight, FiNavigation } from 'react-icons/fi';
-import { DEFAULT_CHAIN_ID, shortenAddress } from 'utils';
+import { MAINNET_ID, shortenAddress } from 'utils';
 import { ActionViewProps } from '..';
 import { Segment } from '../common/infoLine';
 
@@ -32,7 +32,7 @@ const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({
   );
   const { ensName, imageUrl } = useENSAvatar(
     parsedData?.destination,
-    DEFAULT_CHAIN_ID
+    MAINNET_ID
   );
 
   return (

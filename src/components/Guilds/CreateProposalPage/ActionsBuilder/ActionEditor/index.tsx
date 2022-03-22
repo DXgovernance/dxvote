@@ -4,12 +4,13 @@ import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 
 interface ActionEditorProps {
   call: Call;
+  updateCall: (updatedCall: Call) => void;
 }
 
-const ActionEditor: React.FC<ActionEditorProps> = ({ call }) => {
+const ActionEditor: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
   const { decodedCall } = useDecodedCall(call);
   const Editor = getEditor(decodedCall?.callType);
-  return <Editor call={call} decodedCall={decodedCall} updateCall={() => {}} />;
+  return <Editor call={call} updateCall={updateCall} />;
 };
 
 export default ActionEditor;

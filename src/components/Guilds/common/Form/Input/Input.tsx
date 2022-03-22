@@ -30,6 +30,7 @@ const baseInputStyles = css`
 const InputWrapper = styled.div`
   ${baseInputStyles}
   display: flex;
+  align-items: center;
   width: 100%;
   &:hover,
   &:focus {
@@ -73,7 +74,7 @@ const Input: React.FC<InputProps> = ({
   iconRight = null,
   ...rest
 }) => {
-  return !!icon ? (
+  return !!icon || !!iconRight ? (
     <InputWrapper>
       {icon}
       <InputBase {...rest} />

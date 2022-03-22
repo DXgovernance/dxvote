@@ -15,7 +15,8 @@ import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import TokenPicker from 'components/Guilds/TokenPicker';
 import { Box } from 'components/Guilds/common/Layout';
 import { Button } from 'components/Guilds/common/Button';
-import { DEFAULT_CHAIN_ID } from 'utils';
+import { MAINNET_ID } from 'utils';
+import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 
 const Control = styled(Box)`
   display: flex;
@@ -48,13 +49,21 @@ const MenuButton = styled(Button).attrs(() => ({
   margin: 0;
 `;
 
-const Transfer: React.FC<ActionEditorProps> = ({ call, decodedCall }) => {
+interface TransferState {
+  tokenAddress: string;
+  amount: BigNumber;
+  source: string;
+  destination: string;
+}
+
+const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
 
+  const { contract, decodedCall } = useDecodedCall(call);
   const { chainId } = useWeb3React();
-  const { tokens } = useTokenList(chainId);
 
-  const parsedData = useMemo(() => {
+  // parse transfer state from calls
+  const parsedData = useMemo<TransferState>(() => {
     if (!call || !decodedCall) return null;
 
     return {
@@ -65,6 +74,8 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, decodedCall }) => {
     };
   }, [call, decodedCall]);
 
+  // Get token details from the token address
+  const { tokens } = useTokenList(chainId);
   const token = useMemo(() => {
     if (!parsedData?.tokenAddress || !tokens) return null;
 
@@ -77,7 +88,22 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, decodedCall }) => {
     tokenInfo?.decimals,
     10
   );
-  const { imageUrl } = useENSAvatar(parsedData?.destination, DEFAULT_CHAIN_ID);
+  const { imageUrl: destinationAvatarUrl } = useENSAvatar(
+    parsedData?.destination,
+    MAINNET_ID
+  );
+
+  const setTransferAddress = (walletAddress: string) => {
+    const encodedData = contract.encodeFunctionData('transfer', [
+      walletAddress,
+      parsedData?.amount,
+    ]);
+
+    updateCall({
+      ...call,
+      data: encodedData,
+    });
+  };
 
   return (
     <DetailWrapper>
@@ -89,14 +115,15 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, decodedCall }) => {
             icon={
               <div>
                 <Avatar
-                  src={imageUrl}
+                  src={destinationAvatarUrl}
                   defaultSeed={parsedData.destination}
                   size={24}
                 />
               </div>
             }
-            iconRight={<FiX size={24} />}
+            iconRight={<FiX size={18} />}
             placeholder="Ethereum address"
+            onChange={e => setTransferAddress(e.target.value)}
           />
           <Spacer />
           <div>
@@ -118,7 +145,7 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, decodedCall }) => {
                   <Avatar
                     src={resolveUri(token?.logoURI)}
                     defaultSeed={parsedData.tokenAddress}
-                    size={24}
+                    size={18}
                   />
                 </div>
               }

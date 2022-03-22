@@ -12,7 +12,6 @@ export interface ActionViewProps {
 
 export interface ActionEditorProps {
   call: Call;
-  decodedCall: DecodedCall;
   updateCall: (updatedCall: Call) => void;
 }
 

@@ -8,16 +8,17 @@ import { SupportedAction } from 'components/Guilds/CreateProposalPage/ActionsBui
 const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
 
-const knownSigHashes = {
-  [ERC20_TRANSFER_SIGNATURE]: {
-    callType: SupportedAction.ERC20_TRANSFER,
-    ABI: ERC20ABI,
-  },
-  [ERC20_APPROVE_SIGNATURE]: {
-    callType: SupportedAction.GENERIC_CALL,
-    ABI: ERC20ABI,
-  },
-};
+const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
+  {
+    [ERC20_TRANSFER_SIGNATURE]: {
+      callType: SupportedAction.ERC20_TRANSFER,
+      ABI: ERC20ABI,
+    },
+    [ERC20_APPROVE_SIGNATURE]: {
+      callType: SupportedAction.GENERIC_CALL,
+      ABI: ERC20ABI,
+    },
+  };
 
 export interface DecodedCall {
   callType: SupportedAction;
@@ -46,17 +47,7 @@ const decodeCallUsingEthersInterface = (
   };
 };
 
-const decodeCallUsingABI = (
-  data: string,
-  contractABI: string,
-  callType?: SupportedAction
-) => {
-  let contractInterface = new utils.Interface(contractABI);
-  return decodeCallUsingEthersInterface(data, contractInterface, callType);
-};
-
-const decodeCallUsingRegistryContract = (
-  data: string,
+const getContractInterfaceFromRegistryContract = (
   registryContract: RegistryContract
 ) => {
   // Construct the interface for the contract.
@@ -71,17 +62,20 @@ const decodeCallUsingRegistryContract = (
     })
   );
 
-  return decodeCallUsingEthersInterface(data, contractInterface);
+  return { contractInterface, callType: SupportedAction.GENERIC_CALL };
 };
 
-const decodeCallUsingKnownSighashes = (data: string) => {
+const getContractFromKnownSighashes = (data: string) => {
   // Get the first 10 characters of Tx data, which is the Function Selector (SigHash).
   const sigHash = data.substring(0, 10);
 
   // Heuristic detection using known sighashes
   const match = knownSigHashes[sigHash];
-
-  return match ? decodeCallUsingABI(data, match.ABI, match.callType) : null;
+  let contractInterface = new utils.Interface(match.ABI);
+  return {
+    contractInterface,
+    callType: match.callType,
+  };
 };
 
 export const useDecodedCall = ({ to, data }: Call) => {
@@ -94,13 +88,20 @@ export const useDecodedCall = ({ to, data }: Call) => {
   const matchedContract = contracts?.find(
     contract => contract.networks[chainId] === to
   );
-  if (matchedContract) {
-    decodedCall = decodeCallUsingRegistryContract(data, matchedContract);
-  } else {
-    decodedCall = decodeCallUsingKnownSighashes(data);
-  }
+  const { callType, contractInterface } = matchedContract
+    ? getContractInterfaceFromRegistryContract(matchedContract)
+    : getContractFromKnownSighashes(data);
+
+  if (!contractInterface) return null;
+
+  decodedCall = decodeCallUsingEthersInterface(
+    data,
+    contractInterface,
+    callType
+  );
 
   return {
+    contract: contractInterface,
     decodedCall,
   };
 };

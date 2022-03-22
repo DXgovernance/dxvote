@@ -62,6 +62,10 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
     },
   ]);
 
+  function updateOption(index: number, option: Option) {
+    setOptions(options.map((o, i) => (i === index ? option : o)));
+  }
+
   return (
     <SidebarCard
       header={
@@ -92,6 +96,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
             key={idx}
             data={option}
             editable={editable && actionsEditMode}
+            onChange={updatedOption => updateOption(idx, updatedOption)}
           />
           {idx !== options.length - 1 && <Divider />}
         </>
