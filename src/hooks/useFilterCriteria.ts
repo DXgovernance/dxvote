@@ -121,6 +121,18 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       )
       .sort(orderByOldestTimeToFinish);
 
+    //Proposals finished status. (Expired in queue, rejected or passed)
+    const stateFinished = allProposals
+      .filter(
+        (proposal): Boolean =>
+          proposal.stateInVotingMachine ===
+            VotingMachineProposalState.ExpiredInQueue ||
+          proposal.stateInVotingMachine ===
+            VotingMachineProposalState.Rejected ||
+          proposal.stateInVotingMachine === VotingMachineProposalState.Passed
+      )
+      .sort(orderByOldestTimeToFinish);
+
     setFilteredProposals([
       ...stateBoosted,
       ...statePreBoosted,
@@ -128,6 +140,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       ...stateEarliestAbove10,
       ...stateEarliestUnder10,
       ...stateExecuted,
+      ...stateFinished,
     ]);
 
     setLoading(false);
