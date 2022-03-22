@@ -24,7 +24,7 @@ function main() {
       ];
     } catch (e) {
       console.error(
-        `[updateDeployedBytecodes.js] Didn't find file: ${path}. Skipping ${type}`
+        `[updateDeployedBytecodes.js] File was not found: ${path}. Skipping ${type}`
       );
       return acc;
     }
