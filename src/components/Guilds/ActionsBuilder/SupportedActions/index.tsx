@@ -1,6 +1,5 @@
-import { DecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 import { RequireAtLeastOne } from 'utils/types';
-import { Call } from '..';
+import { Call, DecodedCall, SupportedAction } from '../types';
 import ERC20TransferEditor from './ERC20Transfer/ERC20TransferEditor';
 import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
 import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
@@ -13,11 +12,6 @@ export interface ActionViewProps {
 export interface ActionEditorProps {
   call: Call;
   updateCall: (updatedCall: Call) => void;
-}
-
-export enum SupportedAction {
-  ERC20_TRANSFER = 'ERC20_TRANSFER',
-  GENERIC_CALL = 'GENERIC_CALL',
 }
 
 type SupportedActionViews = {

@@ -2,8 +2,11 @@ import { utils } from 'ethers';
 import { RegistryContract, useContractRegistry } from './useContractRegistry';
 import ERC20ABI from '../../../abis/ERC20.json';
 import { useWeb3React } from '@web3-react/core';
-import { Call } from 'components/Guilds/CreateProposalPage';
-import { SupportedAction } from 'components/Guilds/ActionsBuilder/SupportedActions';
+import {
+  Call,
+  DecodedCall,
+  SupportedAction,
+} from 'components/Guilds/ActionsBuilder/types';
 
 const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
@@ -19,12 +22,6 @@ const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
       ABI: ERC20ABI,
     },
   };
-
-export interface DecodedCall {
-  callType: SupportedAction;
-  function: utils.FunctionFragment;
-  args: utils.Result;
-}
 
 const decodeCallUsingEthersInterface = (
   data: string,

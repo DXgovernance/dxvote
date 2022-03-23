@@ -1,16 +1,13 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { Header as CardHeader } from '../common/Card';
-import { Divider } from '../common/Divider';
 import { Button as CommonButton } from '../common/Button';
-import { Box } from '../common/Layout';
 import SidebarCard, {
   SidebarCardHeaderSpaced,
 } from 'components/Guilds/SidebarCard';
-import OptionRow from './Option';
-import AddButton from './common/AddButton';
-import { BigNumber } from 'ethers';
-import { DecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
+import EditMode from './EditMode';
+import ViewMode from './ViewMode';
+import { Option } from './types';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -19,29 +16,12 @@ const Button = styled(CommonButton)`
   padding: 0.25rem 0.75rem;
 `;
 
-const AddOptionWrapper = styled(Box)`
-  padding: 1rem;
-`;
-
-export interface Call {
-  from: string;
-  to: string;
-  data: string;
-  value: BigNumber;
-}
-
-export interface Option {
-  index: number;
-  label: string;
-  actions?: Call[] | DecodedCall[];
-}
-
 interface ActionsBuilderProps {
   editable?: boolean;
 }
 
 export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
-  const [actionsEditMode, setActionsEditMode] = useState(true);
+  const [actionsEditMode, setActionsEditMode] = useState(editable);
 
   // TODO: remove when actions are implemented
   const [options, setOptions] = useState<Option[]>([
@@ -56,18 +36,13 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
         //   value: BigNumber.from(0),
         // },
       ],
+      decodedActions: [],
     },
     {
       index: 1,
       label: 'Against',
     },
   ]);
-
-  // const [decodedOptions, setDecodedOptions] = useState<
-  //   Record<number, DecodedCall[]>
-  // >({
-  //   0: [],
-  // });
 
   function updateOption(index: number, option: Option) {
     setOptions(options.map((o, i) => (i === index ? option : o)));
@@ -78,56 +53,19 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
       header={
         <SidebarCardHeaderSpaced>
           <CardHeader>Actions</CardHeader>
-          {editable &&
-            (actionsEditMode ? (
-              <Button
-                variant="secondary"
-                onClick={() => setActionsEditMode(false)}
-              >
-                Save
-              </Button>
-            ) : (
-              <Button
-                variant="secondary"
-                onClick={() => setActionsEditMode(true)}
-              >
-                Edit
-              </Button>
-            ))}
+          <Button
+            variant="secondary"
+            onClick={() => setActionsEditMode(!actionsEditMode)}
+          >
+            {actionsEditMode ? 'Save' : 'Edit'}
+          </Button>
         </SidebarCardHeaderSpaced>
       }
     >
-      {options.map((option, idx) => (
-        <>
-          <OptionRow
-            key={idx}
-            data={option}
-            editable={editable && actionsEditMode}
-            onChange={updatedOption => updateOption(idx, updatedOption)}
-          />
-          {idx !== options.length - 1 && <Divider />}
-        </>
-      ))}
-
-      {editable && actionsEditMode && options.length < 2 && (
-        <>
-          <Divider />
-          <AddOptionWrapper>
-            <AddButton
-              label="Add Option"
-              onClick={() => {
-                // TODO: remove this random functionality when building "add option" funcionality
-                setOptions(prev => [
-                  ...prev,
-                  {
-                    index: prev.length + 1,
-                    label: 'Option ' + (prev.length + 1),
-                  },
-                ]);
-              }}
-            />
-          </AddOptionWrapper>
-        </>
+      {actionsEditMode ? (
+        <EditMode options={options} updateOption={updateOption} />
+      ) : (
+        <ViewMode options={options} />
       )}
     </SidebarCard>
   );

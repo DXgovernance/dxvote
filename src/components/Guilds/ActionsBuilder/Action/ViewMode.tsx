@@ -4,10 +4,10 @@ import { CardWrapper, Header } from 'components/Guilds/common/Card';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { useState } from 'react';
 import { Button } from 'components/Guilds/common/Button';
-import { Call } from '..';
 import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 import { getInfoLineView, getSummaryView } from '../SupportedActions';
 import CallDetails from '../CallDetails';
+import { Call } from '../types';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   margin-top: 0.8rem;

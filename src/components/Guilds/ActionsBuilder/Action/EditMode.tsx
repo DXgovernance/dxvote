@@ -1,6 +1,6 @@
-import { Call } from '..';
 import { getEditor } from '../SupportedActions';
 import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
+import { Call } from '../types';
 
 interface ActionEditorProps {
   call: Call;
