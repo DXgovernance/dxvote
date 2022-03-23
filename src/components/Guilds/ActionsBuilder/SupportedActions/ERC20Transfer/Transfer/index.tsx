@@ -134,7 +134,9 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
   };
 
   const setAmount = (value: string) => {
-    const amount = utils.parseUnits(value, tokenInfo?.decimals || 18);
+    const amount = value
+      ? utils.parseUnits(value, tokenInfo?.decimals || 18)
+      : null;
     updateCall({
       ...call,
       args: {
