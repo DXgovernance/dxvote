@@ -146,7 +146,7 @@ const Stakes = () => {
   const approveVotingMachineToken = function () {
     daoService.approveVotingMachineToken(votingMachineUsed);
   };
-
+  console.log(proposal.stateInVotingMachine);
   return (
     <>
       <SpaceAroundRow>
@@ -228,7 +228,7 @@ const Stakes = () => {
       !finishTimeReached &&
       (proposal.stateInVotingMachine === 3 ||
         proposal.stateInVotingMachine === 4) &&
-      votingMachineTokenApproved.toString() === '0' ? (
+      !votingMachineTokenApproved ? (
         <SpaceAroundRow>
           <ActionArea>
             <small>Approve {votingMachineTokenName} to stake</small>
