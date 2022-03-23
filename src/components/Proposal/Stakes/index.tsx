@@ -146,7 +146,7 @@ const Stakes = () => {
   const approveVotingMachineToken = function () {
     daoService.approveVotingMachineToken(votingMachineUsed);
   };
-  console.log(proposal.stateInVotingMachine);
+
   return (
     <>
       <SpaceAroundRow>
