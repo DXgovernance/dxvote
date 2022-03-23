@@ -5,6 +5,7 @@ import { useWeb3React } from '@web3-react/core';
 import {
   Call,
   DecodedCall,
+  Option,
   SupportedAction,
 } from 'components/Guilds/ActionsBuilder/types';
 
@@ -24,23 +25,35 @@ const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
   };
 
 const decodeCallUsingEthersInterface = (
-  data: string,
+  call: Call,
   contractInterface: utils.Interface,
   callType?: SupportedAction
 ): DecodedCall => {
   // Get the first 10 characters of Tx data, which is the Function Selector (SigHash).
-  const sigHash = data.substring(0, 10);
+  const sigHash = call.data.substring(0, 10);
 
   // Find the ABI function fragment for the sighash.
   const functionFragment = contractInterface.getFunction(sigHash);
   if (!functionFragment) return null;
 
   // Decode the function parameters.
-  const params = contractInterface.decodeFunctionData(functionFragment, data);
+  const params = contractInterface.decodeFunctionData(
+    functionFragment,
+    call.data
+  );
+
+  const paramsJson = functionFragment.inputs.reduce((acc, input) => {
+    acc[input.name] = params[input.name];
+    return acc;
+  }, {} as Record<string, any>);
+
   return {
     callType: callType || SupportedAction.GENERIC_CALL,
+    from: call.from,
+    to: call.to,
+    value: call.value,
     function: functionFragment,
-    args: params,
+    args: paramsJson,
   };
 };
 
@@ -75,30 +88,55 @@ const getContractFromKnownSighashes = (data: string) => {
   };
 };
 
-export const useDecodedCall = ({ to, data }: Call) => {
-  const { chainId } = useWeb3React();
-
+const decodeCall = (
+  call: Call,
+  contracts: RegistryContract[],
+  chainId: number
+) => {
   let decodedCall: DecodedCall = null;
 
   // Detect using the Guild calls registry.
-  const { contracts } = useContractRegistry();
   const matchedContract = contracts?.find(
-    contract => contract.networks[chainId] === to
+    contract => contract.networks[chainId] === call.to
   );
   const { callType, contractInterface } = matchedContract
     ? getContractInterfaceFromRegistryContract(matchedContract)
-    : getContractFromKnownSighashes(data);
+    : getContractFromKnownSighashes(call.data);
 
   if (!contractInterface) return null;
 
   decodedCall = decodeCallUsingEthersInterface(
-    data,
+    call,
     contractInterface,
     callType
   );
 
   return {
-    contract: contractInterface,
     decodedCall,
+    contract: contractInterface,
   };
+};
+
+export const bulkDecodeCallsFromOptions = (
+  options: Option[],
+  contracts: RegistryContract[],
+  chainId: number
+) => {
+  return options.map(option => {
+    const { actions } = option;
+    const decodedCalls = actions?.map(call =>
+      decodeCall(call, contracts, chainId)
+    );
+    return {
+      ...option,
+      decodedActions: decodedCalls,
+    };
+  });
+};
+
+export const useDecodedCall = (call: Call) => {
+  const { chainId } = useWeb3React();
+  const { contracts } = useContractRegistry();
+
+  return decodeCall(call, contracts, chainId);
 };

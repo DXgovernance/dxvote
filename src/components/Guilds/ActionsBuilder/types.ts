@@ -15,13 +15,21 @@ export interface Call {
 
 export interface DecodedCall {
   callType: SupportedAction;
+  from: string;
+  to: string;
+  value: BigNumber;
   function: utils.FunctionFragment;
-  args: utils.Result;
+  args: Record<string, any>;
+}
+
+export interface DecodedAction {
+  decodedCall: DecodedCall;
+  contract: utils.Interface;
 }
 
 export interface Option {
   index: number;
   label: string;
   actions?: Call[];
-  decodedActions?: DecodedCall[];
+  decodedActions?: DecodedAction[];
 }

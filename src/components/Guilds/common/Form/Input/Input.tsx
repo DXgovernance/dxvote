@@ -1,7 +1,7 @@
 import React, { InputHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 
-const baseInputStyles = css`
+export const baseInputStyles = css`
   border: 0.1rem solid ${({ theme }) => theme.colors.muted};
   border-radius: 1.5rem;
   padding: 0.5rem 0.8rem;

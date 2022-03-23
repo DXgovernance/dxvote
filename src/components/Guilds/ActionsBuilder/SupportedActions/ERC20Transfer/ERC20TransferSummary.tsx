@@ -31,7 +31,9 @@ const ERC20TransferSummary: React.FC<ActionViewProps> = ({
     4
   );
   const { ensName, imageUrl } = useENSAvatar(
-    parsedData?.destination,
+    parsedData?.destination?.isValid
+      ? parsedData?.destination?.value
+      : undefined,
     MAINNET_ID
   );
 
@@ -46,7 +48,7 @@ const ERC20TransferSummary: React.FC<ActionViewProps> = ({
         <DetailCell>
           <Segment>
             <Avatar
-              defaultSeed={parsedData?.destination}
+              defaultSeed={parsedData?.destination?.value}
               src={imageUrl}
               size={24}
             />

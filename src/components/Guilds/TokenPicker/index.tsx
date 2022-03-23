@@ -101,7 +101,17 @@ const Token: React.FC<TokenProps> = ({ token, onSelect }) => {
 
 type TokenWithBalanceIndexable = TokenWithBalance & { id: string };
 
-const TokenPicker = ({ isOpen, onClose }) => {
+interface TokenPickerProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (tokenAddress: string) => void;
+}
+
+const TokenPicker: React.FC<TokenPickerProps> = ({
+  isOpen,
+  onSelect,
+  onClose,
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const { account } = useWeb3React();
@@ -156,7 +166,11 @@ const TokenPicker = ({ isOpen, onClose }) => {
         </SearchWrapper>
         <TokenList>
           {(searchQuery ? searchResults : data)?.slice(0, 4).map(token => (
-            <Token key={token.address} token={token} onSelect={() => {}} />
+            <Token
+              key={token.address}
+              token={token}
+              onSelect={() => onSelect(token.address)}
+            />
           ))}
         </TokenList>
       </TokenPickerContainer>

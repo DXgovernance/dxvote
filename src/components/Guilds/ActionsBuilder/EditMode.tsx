@@ -10,17 +10,21 @@ const AddOptionWrapper = styled(Box)`
 `;
 interface EditModeProps {
   options: Option[];
-  updateOption: (idx: number, option: Option) => void;
+  onChange: (options: Option[]) => void;
 }
 
-const EditMode: React.FC<EditModeProps> = ({ options, updateOption }) => {
+const EditMode: React.FC<EditModeProps> = ({ options, onChange }) => {
+  function updateOption(index: number, option: Option) {
+    onChange(options.map((o, i) => (i === index ? option : o)));
+  }
+
   return (
     <>
       {options.map((option, idx) => (
         <>
           <OptionEditMode
             key={idx}
-            data={option}
+            option={option}
             onChange={updatedOption => updateOption(idx, updatedOption)}
           />
           {idx !== options.length - 1 && <Divider />}

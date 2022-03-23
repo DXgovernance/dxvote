@@ -1,3 +1,4 @@
+import { utils } from 'ethers';
 import { RequireAtLeastOne } from 'utils/types';
 import { Call, DecodedCall, SupportedAction } from '../types';
 import ERC20TransferEditor from './ERC20Transfer/ERC20TransferEditor';
@@ -10,8 +11,9 @@ export interface ActionViewProps {
 }
 
 export interface ActionEditorProps {
-  call: Call;
-  updateCall: (updatedCall: Call) => void;
+  contract: utils.Interface;
+  call: DecodedCall;
+  updateCall: (updatedCall: DecodedCall) => void;
 }
 
 type SupportedActionViews = {

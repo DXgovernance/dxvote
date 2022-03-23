@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Input, BaseInput } from 'components/Guilds/common/Form/Input';
+import { Input } from 'components/Guilds/common/Form/Input';
 import { FiChevronDown, FiMoreHorizontal, FiX } from 'react-icons/fi';
 import { DetailWrapper } from '../../common/editor';
 import Avatar from 'components/Guilds/Avatar';
@@ -8,7 +8,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
 import { useMemo, useState } from 'react';
 import { ActionEditorProps } from '../..';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
@@ -16,7 +16,8 @@ import TokenPicker from 'components/Guilds/TokenPicker';
 import { Box } from 'components/Guilds/common/Layout';
 import { Button } from 'components/Guilds/common/Button';
 import { MAINNET_ID } from 'utils';
-import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
+import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
+import { baseInputStyles } from 'components/Guilds/common/Form/Input';
 
 const Control = styled(Box)`
   display: flex;
@@ -49,30 +50,52 @@ const MenuButton = styled(Button).attrs(() => ({
   margin: 0;
 `;
 
+const ClickableIcon = styled(Box)`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const TransferAmountInput = styled(NumericalInput)`
+  ${baseInputStyles}
+  display: flex;
+  align-items: center;
+  width: 100%;
+  &:hover,
+  &:focus {
+    border: 0.1rem solid ${({ theme }) => theme.colors.text};
+  }
+`;
+
 interface TransferState {
   tokenAddress: string;
   amount: BigNumber;
-  source: string;
   destination: string;
 }
 
 const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
 
-  const { contract, decodedCall } = useDecodedCall(call);
   const { chainId } = useWeb3React();
 
   // parse transfer state from calls
   const parsedData = useMemo<TransferState>(() => {
-    if (!call || !decodedCall) return null;
+    if (!call) return null;
 
     return {
       tokenAddress: call.to,
-      amount: BigNumber.from(decodedCall.args._value),
-      source: call.from,
-      destination: decodedCall.args._to,
+      amount: call.args._value,
+      destination: call.args._to,
     };
-  }, [call, decodedCall]);
+  }, [call]);
+
+  const validations = useMemo(() => {
+    return {
+      tokenAddress: utils.isAddress(parsedData?.tokenAddress),
+      amount: BigNumber.isBigNumber(parsedData?.amount),
+      destination: utils.isAddress(parsedData?.destination),
+    };
+  }, [parsedData]);
 
   // Get token details from the token address
   const { tokens } = useTokenList(chainId);
@@ -94,14 +117,30 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
   );
 
   const setTransferAddress = (walletAddress: string) => {
-    const encodedData = contract.encodeFunctionData('transfer', [
-      walletAddress,
-      parsedData?.amount,
-    ]);
-
     updateCall({
       ...call,
-      data: encodedData,
+      args: {
+        ...call.args,
+        _to: walletAddress,
+      },
+    });
+  };
+
+  const setToken = (tokenAddress: string) => {
+    updateCall({
+      ...call,
+      to: tokenAddress,
+    });
+  };
+
+  const setAmount = (value: string) => {
+    const amount = utils.parseUnits(value, tokenInfo?.decimals || 18);
+    updateCall({
+      ...call,
+      args: {
+        ...call.args,
+        _value: amount,
+      },
     });
   };
 
@@ -114,14 +153,22 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
             value={parsedData.destination}
             icon={
               <div>
-                <Avatar
-                  src={destinationAvatarUrl}
-                  defaultSeed={parsedData.destination}
-                  size={24}
-                />
+                {validations.destination && (
+                  <Avatar
+                    src={destinationAvatarUrl}
+                    defaultSeed={parsedData.destination}
+                    size={24}
+                  />
+                )}
               </div>
             }
-            iconRight={<FiX size={18} />}
+            iconRight={
+              parsedData?.destination ? (
+                <ClickableIcon onClick={() => setTransferAddress('')}>
+                  <FiX size={18} />
+                </ClickableIcon>
+              ) : null
+            }
             placeholder="Ethereum address"
             onChange={e => setTransferAddress(e.target.value)}
           />
@@ -137,19 +184,18 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
       <ControlRow>
         <Control>
           <ControlLabel>Asset</ControlLabel>
-          <ControlRow>
+          <ControlRow onClick={() => setIsTokenPickerOpen(true)}>
             <Input
               value={tokenInfo?.symbol}
               icon={
                 <div>
                   <Avatar
                     src={resolveUri(token?.logoURI)}
-                    defaultSeed={parsedData.tokenAddress}
+                    defaultSeed={parsedData?.tokenAddress}
                     size={18}
                   />
                 </div>
               }
-              onClick={() => setIsTokenPickerOpen(true)}
               iconRight={<FiChevronDown size={24} />}
               readOnly
             />
@@ -161,7 +207,10 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
         <Control>
           <ControlLabel>Amount</ControlLabel>
           <ControlRow>
-            <BaseInput value={roundedBalance} />
+            <TransferAmountInput
+              value={roundedBalance}
+              onUserInput={setAmount}
+            />
             <Spacer />
             <div>
               <MenuButton>
@@ -175,6 +224,10 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
       <TokenPicker
         isOpen={isTokenPickerOpen}
         onClose={() => setIsTokenPickerOpen(false)}
+        onSelect={tokenAddress => {
+          setToken(tokenAddress);
+          setIsTokenPickerOpen(false);
+        }}
       />
     </DetailWrapper>
   );

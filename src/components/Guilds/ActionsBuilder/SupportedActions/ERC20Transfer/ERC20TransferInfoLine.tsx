@@ -20,7 +20,7 @@ const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({
       tokenAddress: call.to,
       amount: BigNumber.from(decodedCall.args._value),
       source: call.from,
-      destination: decodedCall.args._to,
+      destination: decodedCall.args._to as string,
     };
   }, [call, decodedCall]);
 

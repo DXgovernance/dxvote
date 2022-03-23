@@ -2,36 +2,36 @@ import { ProposalOptionTag } from '../common/ProposalOptionTag';
 import AddButton from '../common/AddButton';
 import ActionEditor from '../Action/EditMode';
 import { ActionCountLabel, DetailWrapper, OptionWrapper } from './styles';
-import { Call, Option } from '../types';
+import { DecodedAction, Option } from '../types';
 
 interface OptionRowProps {
-  data: Option;
+  option: Option;
   onChange?: (updatedOption: Option) => void;
 }
 
-const OptionEditMode: React.FC<OptionRowProps> = ({ data, onChange }) => {
-  function updateAction(index: number, action: Call) {
-    const updatedActions = data?.actions.map((a, i) =>
+const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
+  function updateAction(index: number, action: DecodedAction) {
+    const updatedActions = option?.decodedActions.map((a, i) =>
       index === i ? action : a
     );
-    onChange({ ...data, actions: updatedActions });
+    onChange({ ...option, decodedActions: updatedActions });
   }
 
   return (
     <OptionWrapper>
       <DetailWrapper>
-        <ProposalOptionTag option={data} />
+        <ProposalOptionTag option={option} />
         <ActionCountLabel>
-          {data?.actions?.length || 'No'} on-chain{' '}
-          {data?.actions?.length > 2 ? 'actions' : 'action'}
+          {option?.actions?.length || 'No'} on-chain{' '}
+          {option?.actions?.length > 2 ? 'actions' : 'action'}
         </ActionCountLabel>
       </DetailWrapper>
 
-      {data?.actions?.map((action, index) => (
+      {option?.decodedActions?.map((action, index) => (
         <ActionEditor
           key={index}
-          call={action}
-          updateCall={updatedAction => updateAction(index, updatedAction)}
+          action={action}
+          onChange={updatedAction => updateAction(index, updatedAction)}
         />
       ))}
 
