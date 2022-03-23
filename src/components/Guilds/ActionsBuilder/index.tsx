@@ -12,6 +12,8 @@ import { BigNumber } from 'ethers';
 import { bulkDecodeCallsFromOptions } from 'hooks/Guilds/contracts/useDecodedCall';
 import { useContractRegistry } from 'hooks/Guilds/contracts/useContractRegistry';
 import { useWeb3React } from '@web3-react/core';
+import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
+import { useParams } from 'react-router-dom';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -26,6 +28,16 @@ interface ActionsBuilderProps {
 
 export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
   const [actionsEditMode, setActionsEditMode] = useState(editable);
+
+  const { proposal_id: proposalId } = useParams<{
+    proposal_id?: string;
+  }>();
+
+  // const { data: proposal, error } = useProposal(guildId, proposalId);
+
+  console.log({
+    proposalId,
+  });
 
   // TODO: remove when actions are implemented
   const [options, setOptions] = useState<Option[]>([]);
@@ -60,17 +72,32 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
     setOptions(decodedOptions);
   }, [chainId, contracts]);
 
+  useEffect(() => {
+    if (editable && proposalId) {
+    }
+  }, [editable, proposalId]);
+
+  const onEdit = () => setActionsEditMode(true);
+
+  const onSave = () => {
+    const encodedOptions = bulkEncodeCallsFromOptions(options);
+    setOptions(encodedOptions);
+    setActionsEditMode(false);
+  };
+
   return (
     <SidebarCard
       header={
         <SidebarCardHeaderSpaced>
           <CardHeader>Actions</CardHeader>
-          <Button
-            variant="secondary"
-            onClick={() => setActionsEditMode(!actionsEditMode)}
-          >
-            {actionsEditMode ? 'Save' : 'Edit'}
-          </Button>
+          {editable && (
+            <Button
+              variant="secondary"
+              onClick={() => (actionsEditMode ? onSave() : onEdit())}
+            >
+              {actionsEditMode ? 'Save' : 'Edit'}
+            </Button>
+          )}
         </SidebarCardHeaderSpaced>
       }
     >
