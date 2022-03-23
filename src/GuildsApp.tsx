@@ -21,7 +21,6 @@ import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBo
 import ProposalTypes from 'components/Guilds/ProposalTypes';
 import { ProposalTypesConfig } from 'configs/proposalTypes';
 import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
-import { ActionsModalProvider } from 'contexts/Guilds/ActionsBuilder';
 import GuildAvailabilityProvider from 'contexts/Guilds/guildAvailability';
 import NotFound from 'pages/Guilds/NotFound';
 
@@ -41,38 +40,36 @@ const GuildsApp = () => {
           <WalletWeb3Manager>
             <TransactionsProvider>
               <GuildsContextProvider>
-                <ActionsModalProvider>
-                  <GlobalStyle />
-                  <Header />
-                  <Container>
-                    <GuildAvailabilityProvider>
-                      <Switch>
-                        <Redirect
-                          exact
-                          from="/:chain_name"
-                          to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                        />
+                <GlobalStyle />
+                <Header />
+                <Container>
+                  <GuildAvailabilityProvider>
+                    <Switch>
+                      <Redirect
+                        exact
+                        from="/:chain_name"
+                        to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
+                      />
 
-                        <Route exact path="/:chain_name/:guild_id">
-                          <GuildsPage />
-                        </Route>
-                        <Route path="/:chain_name/:guild_id/proposalType">
-                          <ProposalTypes data={ProposalTypesConfig} />
-                        </Route>
-                        <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
-                          <ProposalPage />
-                        </Route>
-                        <Route path="/:chain_name/:guild_id/create/:proposal_type">
-                          <CreateProposalPage />
-                        </Route>
+                      <Route exact path="/:chain_name/:guild_id">
+                        <GuildsPage />
+                      </Route>
+                      <Route path="/:chain_name/:guild_id/proposalType">
+                        <ProposalTypes data={ProposalTypesConfig} />
+                      </Route>
+                      <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                        <ProposalPage />
+                      </Route>
+                      <Route path="/:chain_name/:guild_id/create/:proposal_type">
+                        <CreateProposalPage />
+                      </Route>
 
-                        <Route>
-                          <NotFound />
-                        </Route>
-                      </Switch>
-                    </GuildAvailabilityProvider>
-                  </Container>
-                </ActionsModalProvider>
+                      <Route>
+                        <NotFound />
+                      </Route>
+                    </Switch>
+                  </GuildAvailabilityProvider>
+                </Container>
               </GuildsContextProvider>
             </TransactionsProvider>
           </WalletWeb3Manager>

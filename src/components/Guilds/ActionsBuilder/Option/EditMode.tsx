@@ -3,6 +3,8 @@ import AddButton from '../common/AddButton';
 import ActionEditor from '../Action/EditMode';
 import { ActionCountLabel, DetailWrapper, OptionWrapper } from './styles';
 import { DecodedAction, Option } from '../types';
+import { useState } from 'react';
+import ActionModal from 'components/Guilds/ActionsModal';
 
 interface OptionRowProps {
   option: Option;
@@ -10,6 +12,8 @@ interface OptionRowProps {
 }
 
 const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
+  const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
+
   function updateAction(index: number, action: DecodedAction) {
     const updatedActions = option?.decodedActions.map((a, i) =>
       index === i ? action : a
@@ -35,7 +39,15 @@ const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
         />
       ))}
 
-      <AddButton label="Add Action" />
+      <AddButton
+        label="Add Action"
+        onClick={() => setIsActionsModalOpen(true)}
+      />
+
+      <ActionModal
+        isOpen={isActionsModalOpen}
+        setIsOpen={setIsActionsModalOpen}
+      />
     </OptionWrapper>
   );
 };
