@@ -3,7 +3,7 @@ import { RegistryContract, useContractRegistry } from './useContractRegistry';
 import ERC20ABI from '../../../abis/ERC20.json';
 import { useWeb3React } from '@web3-react/core';
 import { Call } from 'components/Guilds/CreateProposalPage';
-import { SupportedAction } from 'components/Guilds/CreateProposalPage/ActionsBuilder/SupportedActions';
+import { SupportedAction } from 'components/Guilds/ActionsBuilder/SupportedActions';
 
 const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';

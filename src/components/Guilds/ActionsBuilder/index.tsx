@@ -1,15 +1,16 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import { Header as CardHeader } from '../../common/Card';
-import { Divider } from '../../common/Divider';
-import { Button as CommonButton } from '../../common/Button';
-import { Box } from '../../common/Layout';
+import { Header as CardHeader } from '../common/Card';
+import { Divider } from '../common/Divider';
+import { Button as CommonButton } from '../common/Button';
+import { Box } from '../common/Layout';
 import SidebarCard, {
   SidebarCardHeaderSpaced,
 } from 'components/Guilds/SidebarCard';
 import OptionRow from './Option';
 import AddButton from './common/AddButton';
 import { BigNumber } from 'ethers';
+import { DecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -32,7 +33,7 @@ export interface Call {
 export interface Option {
   index: number;
   label: string;
-  actions?: Call[];
+  actions?: Call[] | DecodedCall[];
 }
 
 interface ActionsBuilderProps {
@@ -48,12 +49,12 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
       index: 0,
       label: 'For',
       actions: [
-        {
-          from: '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
-          to: '0x698dd4ddeeda3cca704dc4c2ae4942137edd99d5',
-          data: '0xa9059cbb00000000000000000000000001349510117dc9081937794939552463f5616dfb00000000000000000000000000000000000000000000021e19e0c9bab2400000',
-          value: BigNumber.from(0),
-        },
+        // {
+        //   from: '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
+        //   to: '0x698dd4ddeeda3cca704dc4c2ae4942137edd99d5',
+        //   data: '0xa9059cbb00000000000000000000000001349510117dc9081937794939552463f5616dfb00000000000000000000000000000000000000000000021e19e0c9bab2400000',
+        //   value: BigNumber.from(0),
+        // },
       ],
     },
     {
@@ -61,6 +62,12 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
       label: 'Against',
     },
   ]);
+
+  // const [decodedOptions, setDecodedOptions] = useState<
+  //   Record<number, DecodedCall[]>
+  // >({
+  //   0: [],
+  // });
 
   function updateOption(index: number, option: Option) {
     setOptions(options.map((o, i) => (i === index ? option : o)));
