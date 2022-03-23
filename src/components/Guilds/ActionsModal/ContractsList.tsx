@@ -10,6 +10,7 @@ import {
   useContractRegistry,
 } from 'hooks/Guilds/contracts/useContractRegistry';
 import { useWeb3React } from '@web3-react/core';
+import { SupportedAction } from '../ActionsBuilder/types';
 
 const CoreWrapper = styled(Flex)`
   width: 100%;
@@ -64,9 +65,13 @@ const ExternalButton = styled(ActionsButton).attrs(() => ({
 
 interface ContractsListProps {
   onSelect: (contract: RegistryContract) => void;
+  onSupportedActionSelect: (actionType: SupportedAction) => void;
 }
 
-const ContractsList: React.FC<ContractsListProps> = ({ onSelect }) => {
+const ContractsList: React.FC<ContractsListProps> = ({
+  onSelect,
+  onSupportedActionSelect,
+}) => {
   const { chainId } = useWeb3React();
   const { contracts } = useContractRegistry(chainId);
 
@@ -74,7 +79,11 @@ const ContractsList: React.FC<ContractsListProps> = ({ onSelect }) => {
     <Wrapper>
       <CoreWrapper>
         <WrapperText>Core</WrapperText>
-        <ActionsButton>
+        <ActionsButton
+          onClick={() =>
+            onSupportedActionSelect(SupportedAction.ERC20_TRANSFER)
+          }
+        >
           <StyledIcon src={Vector} />
           Transfer & Mint
         </ActionsButton>

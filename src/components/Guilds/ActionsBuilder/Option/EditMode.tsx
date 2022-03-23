@@ -14,6 +14,13 @@ interface OptionRowProps {
 const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
   const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
 
+  function addAction(action: DecodedAction) {
+    onChange({
+      ...option,
+      decodedActions: [...option.decodedActions, action],
+    });
+  }
+
   function updateAction(index: number, action: DecodedAction) {
     const updatedActions = option?.decodedActions.map((a, i) =>
       index === i ? action : a
@@ -47,6 +54,10 @@ const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
       <ActionModal
         isOpen={isActionsModalOpen}
         setIsOpen={setIsActionsModalOpen}
+        onAddAction={action => {
+          addAction(action);
+          setIsActionsModalOpen(false);
+        }}
       />
     </OptionWrapper>
   );

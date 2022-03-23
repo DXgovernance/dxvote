@@ -1,6 +1,7 @@
-import { utils } from 'ethers';
-import { RequireAtLeastOne } from 'utils/types';
-import { Call, DecodedCall, SupportedAction } from '../types';
+import { BigNumber, utils } from 'ethers';
+import { DeepPartial, RequireAtLeastOne } from 'utils/types';
+import { Call, DecodedAction, DecodedCall, SupportedAction } from '../types';
+import ERC20ABI from '../../../../abis/ERC20.json';
 import ERC20TransferEditor from './ERC20Transfer/ERC20TransferEditor';
 import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
 import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
@@ -39,6 +40,27 @@ export const supportedActions: Record<
     infoLineView: () => <div>Generic Call</div>,
     editor: () => <div>Generic Call Editor</div>,
   },
+};
+
+let ERC20Contract = new utils.Interface(ERC20ABI);
+
+export const defaultValues: Record<
+  SupportedAction,
+  DeepPartial<DecodedAction>
+> = {
+  [SupportedAction.ERC20_TRANSFER]: {
+    contract: ERC20Contract,
+    decodedCall: {
+      function: ERC20Contract.getFunction('transfer'),
+      to: '',
+      value: BigNumber.from(0),
+      args: {
+        _to: '',
+        _value: BigNumber.from(0),
+      },
+    },
+  },
+  [SupportedAction.GENERIC_CALL]: {},
 };
 
 export const getInfoLineView = (actionType: SupportedAction) => {
