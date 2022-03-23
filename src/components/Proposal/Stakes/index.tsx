@@ -124,10 +124,10 @@ const Stakes = () => {
   const redeem = function () {
     if (
       scheme.type === 'ContributionReward' &&
-      networkContracts.daostack.contributionReward.redeemer
+      networkContracts.daostack[scheme.address].redeemer
     ) {
       daoService.redeemContributionReward(
-        networkContracts.daostack.contributionReward.redeemer,
+        networkContracts.daostack[scheme.address].redeemer,
         scheme.address,
         scheme.votingMachine,
         proposalId,
