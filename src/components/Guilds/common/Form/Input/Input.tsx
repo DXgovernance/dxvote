@@ -49,6 +49,7 @@ const InputBase = styled.input`
     border: none;
     color: ${({ theme }) => theme.colors.text};
   }
+  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
   margin-left: 12px;
   padding: 0;
   background-color: transparent;

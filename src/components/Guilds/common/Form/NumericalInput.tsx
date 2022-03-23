@@ -1,6 +1,7 @@
 // Based on https://github.com/levelkdev/dxswap-dapp/blob/master/src/components/Input/NumericalInput/index.tsx
 
 import React from 'react';
+import { Input } from '.';
 import { escapeRegExp } from '../../../../utils';
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -24,7 +25,7 @@ const NumericalInput = ({
   };
 
   return (
-    <input
+    <Input
       {...rest}
       value={value}
       onChange={event => {
