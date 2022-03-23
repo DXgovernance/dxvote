@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Header as CardHeader } from '../common/Card';
 import { Button as CommonButton } from '../common/Button';
 import SidebarCard, {
@@ -8,12 +8,9 @@ import SidebarCard, {
 import EditMode from './EditMode';
 import ViewMode from './ViewMode';
 import { Option } from './types';
-import { BigNumber } from 'ethers';
-import { bulkDecodeCallsFromOptions } from 'hooks/Guilds/contracts/useDecodedCall';
-import { useContractRegistry } from 'hooks/Guilds/contracts/useContractRegistry';
-import { useWeb3React } from '@web3-react/core';
 import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
 import { useParams } from 'react-router-dom';
+import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -29,61 +26,23 @@ interface ActionsBuilderProps {
 export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
   const [actionsEditMode, setActionsEditMode] = useState(editable);
 
-  const { proposal_id: proposalId } = useParams<{
+  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
     proposal_id?: string;
+    guild_id?: string;
   }>();
+  const { options: existingOptions } = useProposalCalls(guildId, proposalId);
 
-  // const { data: proposal, error } = useProposal(guildId, proposalId);
-
-  console.log({
-    proposalId,
-  });
-
-  // TODO: remove when actions are implemented
-  const [options, setOptions] = useState<Option[]>([]);
-
-  const { contracts } = useContractRegistry();
-  const { chainId } = useWeb3React();
-  useEffect(() => {
-    // TODO: Get the calls from the contract
-    const decodedOptions = bulkDecodeCallsFromOptions(
-      [
-        {
-          index: 0,
-          label: 'For',
-          actions: [
-            {
-              from: '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef',
-              to: '0x698dd4ddeeda3cca704dc4c2ae4942137edd99d5',
-              data: '0xa9059cbb00000000000000000000000001349510117dc9081937794939552463f5616dfb00000000000000000000000000000000000000000000021e19e0c9bab2400000',
-              value: BigNumber.from(0),
-            },
-          ],
-        },
-        {
-          index: 1,
-          label: 'Against',
-        },
-      ],
-      contracts,
-      chainId
-    );
-
-    setOptions(decodedOptions);
-  }, [chainId, contracts]);
-
-  useEffect(() => {
-    if (editable && proposalId) {
-    }
-  }, [editable, proposalId]);
+  const [updatedOptions, setUpdatedOptions] = useState<Option[]>(null);
 
   const onEdit = () => setActionsEditMode(true);
 
   const onSave = () => {
-    const encodedOptions = bulkEncodeCallsFromOptions(options);
-    setOptions(encodedOptions);
+    const encodedOptions = bulkEncodeCallsFromOptions(updatedOptions);
+    setUpdatedOptions(encodedOptions);
     setActionsEditMode(false);
   };
+
+  const options = existingOptions || updatedOptions;
 
   return (
     <SidebarCard
@@ -102,7 +61,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
       }
     >
       {actionsEditMode ? (
-        <EditMode options={options} onChange={setOptions} />
+        <EditMode options={options} onChange={setUpdatedOptions} />
       ) : (
         <ViewMode options={options} />
       )}

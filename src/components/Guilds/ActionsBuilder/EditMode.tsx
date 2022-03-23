@@ -20,7 +20,7 @@ const EditMode: React.FC<EditModeProps> = ({ options, onChange }) => {
 
   return (
     <>
-      {options.map((option, idx) => (
+      {options?.map((option, idx) => (
         <>
           <OptionEditMode
             key={idx}

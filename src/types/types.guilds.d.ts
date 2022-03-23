@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import {
   BigNumber,
-} from './utils';
+} from 'ethers';
 export interface Proposal {
   id: string;
   creator: string;
