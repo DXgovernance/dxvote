@@ -91,6 +91,24 @@ const Header = observer(() => {
     ? userRep.times(100).div(totalSupply).toFixed(4)
     : bnum(0);
 
+  const votingMachineTokens = _.uniq(
+    Object.keys(votingMachines).map((votingMachineAddress, i) =>
+      configStore
+        .getTokensOfNetwork()
+        .find(
+          token => token.address === votingMachines[votingMachineAddress].token
+        )
+    )
+  );
+
+  const votingMachineBalances = useBalances(
+    account
+      ? votingMachineTokens.map(votingMachineToken => ({
+          assetAddress: votingMachineToken.address,
+          fromAddress: account,
+        }))
+      : []
+  );
   return (
     <NavWrapper>
       <NavSection>
@@ -114,38 +132,19 @@ const Header = observer(() => {
         <NavSection>
           {account && (
             <>
-              {() => {
-                const votingMachineTokens = _.uniq(
-                  Object.keys(votingMachines).map((votingMachineAddress, i) =>
-                    configStore
-                      .getTokensOfNetwork()
-                      .find(
-                        token =>
-                          token.address ===
-                          votingMachines[votingMachineAddress].token
-                      )
-                  )
+              {votingMachineTokens.map((votingMachineToken, i) => {
+                const votingMachineTokenBalance = bnum(
+                  votingMachineBalances[i] || '0'
                 );
-                const votingMachineBalances = useBalances(
-                  votingMachineTokens.map(votingMachineToken => ({
-                    assetAddress: votingMachineToken.address,
-                    fromAddress: account,
-                  }))
+                return (
+                  <ItemBox key={i}>
+                    {formatCurrency(
+                      normalizeBalance(votingMachineTokenBalance)
+                    )}{' '}
+                    {votingMachineToken.symbol}{' '}
+                  </ItemBox>
                 );
-                return votingMachineTokens.map((votingMachineToken, i) => {
-                  const votingMachineTokenBalance = bnum(
-                    votingMachineBalances[i] || '0'
-                  );
-                  return (
-                    <ItemBox key={i}>
-                      {formatCurrency(
-                        normalizeBalance(votingMachineTokenBalance)
-                      )}{' '}
-                      {votingMachineToken.symbol}{' '}
-                    </ItemBox>
-                  );
-                });
-              }}
+              })}
               {repPercentage.toString() !== 'NaN' && (
                 <ItemBox> {repPercentage.toString()} % REP </ItemBox>
               )}
