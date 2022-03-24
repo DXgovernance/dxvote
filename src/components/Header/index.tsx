@@ -101,14 +101,6 @@ const Header = observer(() => {
     )
   );
 
-  const votingMachineBalances = useBalances(
-    account
-      ? votingMachineTokens.map(votingMachineToken => ({
-          assetAddress: votingMachineToken.address,
-          fromAddress: account,
-        }))
-      : []
-  );
   return (
     <NavWrapper>
       <NavSection>
@@ -130,18 +122,22 @@ const Header = observer(() => {
         </NavSection>
       ) : blockchainStore.initialLoadComplete ? (
         <NavSection>
-          {account && (
+          {account && active && (
             <>
-              {votingMachineTokens.map((votingMachineToken, i) => {
-                const votingMachineTokenBalance = bnum(
-                  votingMachineBalances[i] || '0'
-                );
+              {useBalances(
+                account
+                  ? votingMachineTokens.map(votingMachineToken => ({
+                      assetAddress: votingMachineToken.address,
+                      fromAddress: account,
+                    }))
+                  : []
+              ).map((votingMachineTokenBalance, i) => {
                 return (
                   <ItemBox key={i}>
                     {formatCurrency(
                       normalizeBalance(votingMachineTokenBalance)
                     )}{' '}
-                    {votingMachineToken.symbol}{' '}
+                    {votingMachineTokens[i].symbol}{' '}
                   </ItemBox>
                 );
               })}
