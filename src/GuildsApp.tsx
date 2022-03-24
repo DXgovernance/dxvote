@@ -69,11 +69,11 @@ const GuildsApp = () => {
               </GuildsContextProvider>
             </TransactionsProvider>
           </WalletWeb3Manager>
-        </GlobalErrorBoundary >
-      </HashRouter >
+        </GlobalErrorBoundary>
+      </HashRouter>
 
       <ToastNotificationContainer autoClose={10000} limit={4} />
-    </ThemeProvider >
+    </ThemeProvider>
   );
 };
 
