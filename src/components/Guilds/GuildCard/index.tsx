@@ -1,8 +1,8 @@
 import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
-import { useHistory, useLocation } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { Card, CardProps } from '../common/Card';
 import { Box, Flex } from '../common/Layout';
+import { Link } from 'react-router-dom';
 
 const cardWrapperStyles = css`
   margin-bottom: 1rem;
@@ -17,22 +17,33 @@ const cardWrapperStyles = css`
   }
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: ${({ theme }) => theme.colors.text};
+  &:focus,
+  &:hover,
+  &:visited,
+  &:link,
+  &:active {
+    text-decoration: none;
+  }
+`
+
 interface GuildCardProps extends CardProps {
   guildAddress: string;
 }
 
 const GuildCard: React.FC<GuildCardProps> = ({ children, guildAddress }) => {
-  const history = useHistory();
-  const location = useLocation();
   const ensName = useENSNameFromAddress(guildAddress)?.split('.')[0];
-
   return (
-    <Card
-      customStyles={cardWrapperStyles}
-      onClick={() => history.push(`${location.pathname}/${ensName}`)}
-    >
-      {children}
-    </Card>
+    <StyledLink to={location => `${location.pathname}/${ensName}`}>
+      <Card
+        customStyles={cardWrapperStyles}
+      >
+        {children}
+      </Card >
+    </StyledLink>
+
   );
 };
 export default GuildCard;

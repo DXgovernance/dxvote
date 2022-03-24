@@ -30,7 +30,6 @@ export interface CardProps extends CardWrapperProps {
   header?: ReactElement | ReactElement[] | ReactNode;
   children?: ReactElement | ReactElement[] | ReactNode;
   headerStyles?: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -38,10 +37,9 @@ export const Card: React.FC<CardProps> = ({
   children,
   customStyles,
   headerStyles,
-  onClick,
 }) => {
   return (
-    <CardWrapper customStyles={customStyles} onClick={onClick}>
+    <CardWrapper customStyles={customStyles}>
       {header && (
         <CardHeader>
           {typeof header === 'string' ? (
