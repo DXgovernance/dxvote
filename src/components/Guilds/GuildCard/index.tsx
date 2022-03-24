@@ -27,7 +27,7 @@ const StyledLink = styled(Link)`
   &:active {
     text-decoration: none;
   }
-`
+`;
 
 interface GuildCardProps extends CardProps {
   guildAddress: string;
@@ -37,13 +37,8 @@ const GuildCard: React.FC<GuildCardProps> = ({ children, guildAddress }) => {
   const ensName = useENSNameFromAddress(guildAddress)?.split('.')[0];
   return (
     <StyledLink to={location => `${location.pathname}/${ensName}`}>
-      <Card
-        customStyles={cardWrapperStyles}
-      >
-        {children}
-      </Card >
+      <Card customStyles={cardWrapperStyles}>{children}</Card>
     </StyledLink>
-
   );
 };
 export default GuildCard;
