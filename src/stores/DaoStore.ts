@@ -675,6 +675,7 @@ export default class DaoStore {
     }[] = [];
 
     const cache = this.daoCache;
+    const totalRep = this.getRepAt().totalSupply;
 
     let proposalEvents = {
       votes: [],
@@ -741,7 +742,10 @@ export default class DaoStore {
       .concat(
         proposalEvents.votes.map(event => {
           return {
-            text: `Voted with ${event.amount} REP for decision ${
+            text: `Voted with ${bnum(event.amount)
+              .times('100')
+              .div(totalRep)
+              .toFixed(4)} % REP for decision ${
               VoteDecision[event.vote]
             } on proposal ${event.proposalId}`,
             event: {
