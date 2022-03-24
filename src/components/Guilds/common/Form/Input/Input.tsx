@@ -10,8 +10,8 @@ const baseInputStyles = css`
 
   ::placeholder {
     color: ${({ theme }) => theme.colors.proposalText.grey};
-    font-size: 14;
-    font-weight: 500;
+    font-size: ${({ theme }) => theme.fontSizes.body};
+    font-weight: ${({ theme }) => theme.fontWeights.regular};
   }
   :hover:enabled {
     color: ${({ theme }) => theme.colors.background};

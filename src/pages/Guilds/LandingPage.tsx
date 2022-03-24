@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Button } from 'components/Guilds/common/Button';
 import { Input } from 'components/Guilds/common/Form';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { useHistory, useLocation } from 'react-router';
 import { Flex, Box } from 'components/Guilds/common/Layout';
 import { MdOutlinePeopleAlt } from 'react-icons/md';
 import GuildCard, {
@@ -15,9 +14,9 @@ import { Heading } from 'components/Guilds/common/Typography';
 import { useGuildRegistry } from 'hooks/Guilds/ether-swr/guild/useGuildRegistry';
 import { GUILDS_REGISTRY_ADDRESS } from 'constants/addresses';
 import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
+import { Link } from 'react-router-dom';
 
 const InputContainer = styled(Flex)`
-  display: flex;
   flex-direction: row;
   /* Medium devices (landscape tablets, 768px and up) */
   @media only screen and (min-width: 768px) {
@@ -25,12 +24,15 @@ const InputContainer = styled(Flex)`
   }
 `;
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button).attrs(() => ({
+  variant: 'secondary',
+}))`
   margin-left: 1rem;
   width: 9rem;
   padding: 0.7rem;
   color: ${({ theme }) => theme.colors.text};
 `;
+
 const CardContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
@@ -67,6 +69,17 @@ const DaoIcon = styled.img`
   width: 4rem;
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: ${({ theme }) => theme.colors.text};
+  &:focus,
+  &:hover,
+  &:visited,
+  &:link,
+  &:active {
+    text-decoration: none;
+  }
+`;
 const DaoTitle = styled(Heading)`
   margin-left: 4px;
   line-height: 24px;
@@ -81,9 +94,8 @@ const Title: React.FC<TitleProps> = ({ guildAddress }) => {
 };
 
 const LandingPage: React.FC = () => {
-  const history = useHistory();
-  const location = useLocation();
-  const { totalGuilds } = useGuildRegistry(GUILDS_REGISTRY_ADDRESS);
+  const { data: totalGuilds } = useGuildRegistry(GUILDS_REGISTRY_ADDRESS);
+
   /*TODO:
     1. Members should be dynamic
     2. Amount of proposals should be dynamic
@@ -96,18 +108,17 @@ const LandingPage: React.FC = () => {
           icon={<AiOutlineSearch size={24} />}
           placeholder="Search Guild"
         />
-        <StyledButton
-          variant="secondary"
-          onClick={() => history.push(location.pathname + '/createGuild')}
-          data-testid="create-guild-button"
-        >
-          Create Guild
+        <StyledButton data-testid="create-guild-button">
+          {' '}
+          <StyledLink to={location => `${location.pathname}/createGuild`}>
+            Create Guild
+          </StyledLink>
         </StyledButton>
       </InputContainer>
       <CardContainer>
         {totalGuilds
-          ? totalGuilds.map((guildAddress, key) => (
-              <GuildCard key={key} guildAddress={guildAddress}>
+          ? totalGuilds.map(guildAddress => (
+              <GuildCard key={guildAddress} guildAddress={guildAddress}>
                 <GuildCardHeader>
                   <MemberWrapper>
                     <MdOutlinePeopleAlt size={24} />
