@@ -74,7 +74,7 @@ const Header = observer(() => {
   const {
     context: { providerStore, blockchainStore, configStore, daoStore },
   } = useContext();
-
+  // TEST
   const { active, account } = providerStore.getActiveWeb3React();
 
   const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
