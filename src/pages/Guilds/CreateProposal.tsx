@@ -18,9 +18,12 @@ import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
 import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
-import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import { Loading } from 'components/Guilds/common/Loading';
+import { Call, Option } from 'components/Guilds/ActionsBuilder/types';
+import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
+import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
+import { BigNumber } from 'ethers';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -69,6 +72,13 @@ const InputWrapper = styled(Flex)`
   justify-content: space-between;
 `;
 
+const EMPTY_CALL: Call = {
+  data: ZERO_HASH,
+  from: ZERO_ADDRESS,
+  to: ZERO_ADDRESS,
+  value: BigNumber.from(0),
+};
+
 const CreateProposalPage: React.FC = () => {
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
@@ -79,6 +89,7 @@ const CreateProposalPage: React.FC = () => {
   const [editMode, setEditMode] = useState(true);
   const [title, setTitle] = useState('');
   const [referenceLink, setReferenceLink] = useState('');
+  const [options, setOptions] = useState<Option[]>([]);
   const [proposalBodyHTML, setProposalBodyHTML] =
     useLocalStorageWithExpiry<string>(
       `guild/newProposal/description/html`,
@@ -112,12 +123,44 @@ const CreateProposalPage: React.FC = () => {
   const guildContract = useERC20Guild(guildAddress);
   const handleCreateProposal = async () => {
     const contentHash = await uploadToIPFS();
+
+    const encodedOptions = bulkEncodeCallsFromOptions(options);
+    const totalActions = encodedOptions.length;
+    const maxActionsPerOption = encodedOptions.reduce(
+      (acc, cur) => (acc < cur.actions.length ? cur.actions.length : acc),
+      0
+    );
+
+    const calls = encodedOptions
+      .map(option => {
+        const actions = option.actions;
+        if (option.actions.length < maxActionsPerOption) {
+          // Pad array with empty calls
+          return actions.concat(
+            Array(maxActionsPerOption - option.actions.length).fill(EMPTY_CALL)
+          );
+        } else {
+          return actions;
+        }
+      })
+      .reduce((acc, actions) => acc.concat(actions), [] as Call[]);
+
+    const toArray = calls.map(call => call.to);
+    const dataArray = calls.map(call => call.data);
+    const valueArray = calls.map(call => call.value);
+
+    console.log({
+      toArray,
+      dataArray,
+      valueArray,
+    });
+
     createTransaction(`Create proposal ${title}`, async () => {
       return guildContract.createProposal(
-        [ZERO_ADDRESS],
-        [ZERO_HASH],
-        [1],
-        0,
+        toArray,
+        dataArray,
+        valueArray,
+        totalActions,
         title,
         `0x${contentHash}`
       );
@@ -211,7 +254,11 @@ const CreateProposalPage: React.FC = () => {
           />
         )}
         <Box margin="16px 0px 24px">
-          <ActionsBuilder editable={editMode} />
+          <ActionsBuilder
+            options={options}
+            onChange={setOptions}
+            editable={editMode}
+          />
         </Box>
         <Box margin="16px 0px">
           <StyledButton

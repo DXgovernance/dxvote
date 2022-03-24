@@ -189,13 +189,16 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
           <ControlRow onClick={() => setIsTokenPickerOpen(true)}>
             <Input
               value={tokenInfo?.symbol}
+              placeholder="Token"
               icon={
                 <div>
-                  <Avatar
-                    src={resolveUri(token?.logoURI)}
-                    defaultSeed={parsedData?.tokenAddress}
-                    size={18}
-                  />
+                  {parsedData?.tokenAddress && (
+                    <Avatar
+                      src={resolveUri(token?.logoURI)}
+                      defaultSeed={parsedData?.tokenAddress}
+                      size={18}
+                    />
+                  )}
                 </div>
               }
               iconRight={<FiChevronDown size={24} />}

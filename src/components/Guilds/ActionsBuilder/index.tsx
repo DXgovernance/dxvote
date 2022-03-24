@@ -9,8 +9,6 @@ import EditMode from './EditMode';
 import ViewMode from './ViewMode';
 import { Option } from './types';
 import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
-import { useParams } from 'react-router-dom';
-import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
 
 const Button = styled(CommonButton)`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
@@ -20,29 +18,25 @@ const Button = styled(CommonButton)`
 `;
 
 interface ActionsBuilderProps {
+  options: Option[];
   editable?: boolean;
+  onChange?: (options: Option[]) => void;
 }
 
-export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
+export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
+  editable,
+  options,
+  onChange,
+}) => {
   const [actionsEditMode, setActionsEditMode] = useState(editable);
-
-  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
-    proposal_id?: string;
-    guild_id?: string;
-  }>();
-  const { options: existingOptions } = useProposalCalls(guildId, proposalId);
-
-  const [updatedOptions, setUpdatedOptions] = useState<Option[]>(null);
 
   const onEdit = () => setActionsEditMode(true);
 
   const onSave = () => {
-    const encodedOptions = bulkEncodeCallsFromOptions(updatedOptions);
-    setUpdatedOptions(encodedOptions);
+    const encodedOptions = bulkEncodeCallsFromOptions(options);
+    onChange(encodedOptions);
     setActionsEditMode(false);
   };
-
-  const options = existingOptions || updatedOptions;
 
   return (
     <SidebarCard
@@ -61,7 +55,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
       }
     >
       {actionsEditMode ? (
-        <EditMode options={options} onChange={setUpdatedOptions} />
+        <EditMode options={options} onChange={onChange} />
       ) : (
         <ViewMode options={options} />
       )}

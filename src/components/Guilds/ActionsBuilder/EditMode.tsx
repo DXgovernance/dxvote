@@ -14,6 +14,17 @@ interface EditModeProps {
 }
 
 const EditMode: React.FC<EditModeProps> = ({ options, onChange }) => {
+  function addOption() {
+    onChange([
+      ...options,
+      {
+        index: options.length,
+        label: `Option ${options.length + 1}`,
+        decodedActions: [],
+      },
+    ]);
+  }
+
   function updateOption(index: number, option: Option) {
     onChange(options.map((o, i) => (i === index ? option : o)));
   }
@@ -33,7 +44,7 @@ const EditMode: React.FC<EditModeProps> = ({ options, onChange }) => {
 
       <Divider />
       <AddOptionWrapper>
-        <AddButton label="Add Option" onClick={() => {}} />
+        <AddButton label="Add Option" onClick={addOption} />
       </AddOptionWrapper>
     </>
   );
