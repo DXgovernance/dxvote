@@ -1,6 +1,7 @@
 import { useWeb3React } from '@web3-react/core';
 import { Call, Option } from 'components/Guilds/ActionsBuilder/types';
 import { useMemo } from 'react';
+import { ZERO_HASH } from 'utils';
 import { useContractRegistry } from '../contracts/useContractRegistry';
 import { bulkDecodeCallsFromOptions } from '../contracts/useDecodedCall';
 import { useProposal } from '../ether-swr/guild/useProposal';
@@ -41,7 +42,9 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
     const encodedOptions: Option[] = splitCalls.map((calls, index) => ({
       index,
       label: `Option ${index + 1}`,
-      actions: calls,
+      actions: calls.filter(
+        call => call.data !== ZERO_HASH || !call.value?.isZero()
+      ),
     }));
 
     return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);

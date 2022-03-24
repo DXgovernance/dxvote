@@ -68,6 +68,7 @@ const TransferAmountInput = styled(NumericalInput)`
 `;
 
 interface TransferState {
+  source: string;
   tokenAddress: string;
   amount: BigNumber;
   destination: string;
@@ -83,6 +84,7 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
     if (!call) return null;
 
     return {
+      source: call.from,
       tokenAddress: call.to,
       amount: call.args._value,
       destination: call.args._to,
@@ -227,6 +229,7 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
       </ControlRow>
 
       <TokenPicker
+        walletAddress={parsedData?.source}
         isOpen={isTokenPickerOpen}
         onClose={() => setIsTokenPickerOpen(false)}
         onSelect={tokenAddress => {

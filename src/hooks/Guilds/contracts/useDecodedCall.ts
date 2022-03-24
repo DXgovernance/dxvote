@@ -81,6 +81,8 @@ const getContractFromKnownSighashes = (data: string) => {
 
   // Heuristic detection using known sighashes
   const match = knownSigHashes[sigHash];
+  if (!match) return null;
+
   let contractInterface = new utils.Interface(match.ABI);
   return {
     contractInterface,
@@ -96,13 +98,16 @@ const decodeCall = (
   let decodedCall: DecodedCall = null;
 
   // Detect using the Guild calls registry.
-  const matchedContract = contracts?.find(
+  const matchedRegistryContract = contracts?.find(
     contract => contract.networks[chainId] === call.to
   );
-  const { callType, contractInterface } = matchedContract
-    ? getContractInterfaceFromRegistryContract(matchedContract)
+  const matchedContractData = matchedRegistryContract
+    ? getContractInterfaceFromRegistryContract(matchedRegistryContract)
     : getContractFromKnownSighashes(call.data);
 
+  if (!matchedContractData) return null;
+
+  const { callType, contractInterface } = matchedContractData;
   if (!contractInterface) return null;
 
   decodedCall = decodeCallUsingEthersInterface(

@@ -102,12 +102,14 @@ const Token: React.FC<TokenProps> = ({ token, onSelect }) => {
 type TokenWithBalanceIndexable = TokenWithBalance & { id: string };
 
 interface TokenPickerProps {
+  walletAddress?: string;
   isOpen: boolean;
   onClose: () => void;
   onSelect: (tokenAddress: string) => void;
 }
 
 const TokenPicker: React.FC<TokenPickerProps> = ({
+  walletAddress,
   isOpen,
   onSelect,
   onClose,
@@ -115,7 +117,7 @@ const TokenPicker: React.FC<TokenPickerProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   const { account } = useWeb3React();
-  const { data } = useAllERC20Balances(account);
+  const { data } = useAllERC20Balances(walletAddress || account);
 
   const { instance, buildIndex, query } =
     useMiniSearch<TokenWithBalanceIndexable>({
