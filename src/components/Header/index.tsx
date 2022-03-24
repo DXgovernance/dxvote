@@ -5,9 +5,8 @@ import Web3ConnectStatus from '../Web3ConnectStatus';
 import { useContext } from '../../contexts';
 import { FiSettings, FiUser, FiBarChart2 } from 'react-icons/fi';
 import dxdaoIcon from 'assets/images/DXdao.svg';
-import { bnum, formatCurrency, normalizeBalance } from '../../utils';
+import { bnum } from '../../utils';
 import { Box } from '../../components/common';
-import { useBalances } from 'hooks/useERC20';
 import _ from 'lodash';
 
 const NavWrapper = styled.div`
@@ -79,8 +78,6 @@ const Header = observer(() => {
 
   const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
-  const votingMachines = configStore.getNetworkContracts().votingMachines;
-
   const networkName = configStore.getActiveChainName();
 
   const { userRep, totalSupply } =
@@ -91,15 +88,16 @@ const Header = observer(() => {
     ? userRep.times(100).div(totalSupply).toFixed(4)
     : bnum(0);
 
-  const votingMachineTokens = _.uniq(
-    Object.keys(votingMachines).map((votingMachineAddress, i) =>
-      configStore
-        .getTokensOfNetwork()
-        .find(
-          token => token.address === votingMachines[votingMachineAddress].token
-        )
-    )
-  );
+  // const votingMachines = configStore.getNetworkContracts().votingMachines;
+  // const votingMachineTokens = _.uniq(
+  //   Object.keys(votingMachines).map((votingMachineAddress, i) =>
+  //     configStore
+  //       .getTokensOfNetwork()
+  //       .find(
+  //         token => token.address === votingMachines[votingMachineAddress].token
+  //       )
+  //   )
+  // );
 
   return (
     <NavWrapper>
@@ -124,7 +122,7 @@ const Header = observer(() => {
         <NavSection>
           {account && active && (
             <>
-              {useBalances(
+              {/* {useBalances(
                 account
                   ? votingMachineTokens.map(votingMachineToken => ({
                       assetAddress: votingMachineToken.address,
@@ -140,7 +138,7 @@ const Header = observer(() => {
                     {votingMachineTokens[i].symbol}{' '}
                   </ItemBox>
                 );
-              })}
+              })} */}
               {repPercentage.toString() !== 'NaN' && (
                 <ItemBox> {repPercentage.toString()} % REP </ItemBox>
               )}
