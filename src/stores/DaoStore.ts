@@ -493,16 +493,16 @@ export default class DaoStore {
     };
 
     const proposal = this.getProposal(proposalId);
-    const totalRep = this.getRepAt().totalSupply;
 
     let history = proposalEvents.votes
       .map(event => {
+        const { totalSupply } = this.getRepAt(null, event.blockNumber);
         return {
           text: [
             `Vote from `,
             `of ${bnum(event.amount)
               .times('100')
-              .div(totalRep)
+              .div(totalSupply)
               .toFixed(4)} % REP on decision ${VoteDecision[event.vote]}`,
           ],
           textParams: [event.voter],
@@ -675,7 +675,6 @@ export default class DaoStore {
     }[] = [];
 
     const cache = this.daoCache;
-    const totalRep = this.getRepAt().totalSupply;
 
     let proposalEvents = {
       votes: [],
@@ -741,10 +740,12 @@ export default class DaoStore {
     history = history
       .concat(
         proposalEvents.votes.map(event => {
+          const { totalSupply } = this.getRepAt(null, event.blockNumber);
+
           return {
             text: `Voted with ${bnum(event.amount)
               .times('100')
-              .div(totalRep)
+              .div(totalSupply)
               .toFixed(4)} % REP for decision ${
               VoteDecision[event.vote]
             } on proposal ${event.proposalId}`,
