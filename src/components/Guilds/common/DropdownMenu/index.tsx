@@ -62,6 +62,7 @@ export const DropdownContent = styled<DropdownContentProps>(Box)`
 
 export const DropdownMenu = styled<DropdownProps>(Box)`
   position: relative;
+  width: 100%;
 
   ${DropdownContent} {
     left: ${props =>

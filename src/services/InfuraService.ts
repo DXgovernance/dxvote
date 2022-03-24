@@ -1,6 +1,6 @@
 import RootContext from '../contexts';
 import axios from 'axios';
-import { ETH_NETWORKS_IDS, DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
+import { ETH_NETWORKS_IDS } from 'provider/connectors';
 import { DEFAULT_RPC_URLS, INFURA_NETWORK_NAMES } from 'utils';
 
 export default class InfuraService {
@@ -13,7 +13,7 @@ export default class InfuraService {
 
   async isAuthenticated() {
     const infuraAPIKey = this.context.configStore.getLocalConfig().infura;
-    const networkName = INFURA_NETWORK_NAMES[DEFAULT_ETH_CHAIN_ID];
+    const networkName = INFURA_NETWORK_NAMES[1];
 
     if (infuraAPIKey && infuraAPIKey.length > 0) {
       try {

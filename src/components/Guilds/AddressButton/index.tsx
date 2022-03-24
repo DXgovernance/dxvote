@@ -6,7 +6,6 @@ import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { Badge } from '../common/Badge';
-import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
 import { Loading } from '../common/Loading';
 
 const IconHolder = styled.span`
@@ -58,7 +57,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({
   transactionsCounter,
   onClick,
 }) => {
-  const { ensName, imageUrl } = useENSAvatar(address, DEFAULT_ETH_CHAIN_ID);
+  const { ensName, imageUrl } = useENSAvatar(address, 1);
 
   return (
     <StyledAddressButton variant="secondary" onClick={onClick} iconLeft>

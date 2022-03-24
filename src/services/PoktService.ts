@@ -1,6 +1,6 @@
 import RootContext from '../contexts';
 import axios from 'axios';
-import { ETH_NETWORKS_IDS, DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
+import { ETH_NETWORKS_IDS } from 'provider/connectors';
 import { DEFAULT_RPC_URLS, POKT_NETWORK_URLS } from 'utils';
 
 export default class poktService {
@@ -18,7 +18,7 @@ export default class poktService {
       try {
         const auth = await axios({
           method: 'POST',
-          url: POKT_NETWORK_URLS[DEFAULT_ETH_CHAIN_ID],
+          url: POKT_NETWORK_URLS[1],
           data: {
             jsonrpc: '2.0',
             method: 'eth_blockNumber',

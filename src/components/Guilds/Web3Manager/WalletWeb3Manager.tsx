@@ -1,13 +1,10 @@
 import { useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import {
-  DEFAULT_ETH_CHAIN_ID,
-  getChains,
-  getNetworkConnector,
-} from 'provider/connectors';
+import { getChains, getNetworkConnector } from 'provider/connectors';
 import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { NetworkConnector } from '@web3-react/network-connector';
+import { DEFAULT_CHAIN_ID } from '../../../utils/constants';
 
 const WalletWeb3Manager = ({ children }) => {
   const history = useHistory();
@@ -45,7 +42,7 @@ const WalletWeb3Manager = ({ children }) => {
     if (triedEager && !networkActive && rpcUrls) {
       const chainId =
         chains.find(chain => chain.name === urlNetworkName)?.id ||
-        DEFAULT_ETH_CHAIN_ID;
+        DEFAULT_CHAIN_ID;
       const networkConnector = getNetworkConnector(rpcUrls, chainId);
 
       activate(networkConnector, undefined, true).catch(e => {
