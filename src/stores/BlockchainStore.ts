@@ -56,7 +56,7 @@ export default class BlockchainStore {
           true,
           'Looking for latest chain configurations'
         );
-        await configStore.loadNetworkConfig();
+        const networkConfig = await configStore.loadNetworkConfig();
 
         notificationStore.setGlobalLoading(
           true,
@@ -100,7 +100,7 @@ export default class BlockchainStore {
 
         const blockNumber = (await library.eth.getBlockNumber()) - 5;
 
-        const newestCacheIpfsHash = configStore.getCacheIPFSHash(networkName);
+        const newestCacheIpfsHash = networkConfig.cache.ipfsHash;
 
         if (
           networkName !== 'localhost' &&
