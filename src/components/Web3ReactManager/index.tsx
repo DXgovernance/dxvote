@@ -1,14 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import {
-  DEFAULT_ETH_CHAIN_ID,
-  getChains,
-  getNetworkConnector,
-} from 'provider/connectors';
+import { getChains, getNetworkConnector } from 'provider/connectors';
 import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { useContext } from 'contexts';
-import { useInterval, usePrevious } from 'utils';
+import { DEFAULT_CHAIN_ID, useInterval, usePrevious } from 'utils';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { NetworkConnector } from '@web3-react/network-connector';
 
@@ -63,7 +59,7 @@ const Web3ReactManager = ({ children }) => {
       const urlNetworkName = location.pathname.split('/')[1];
       const chainId =
         chains.find(chain => chain.name == urlNetworkName)?.id ||
-        DEFAULT_ETH_CHAIN_ID;
+        DEFAULT_CHAIN_ID;
       const networkConnector = getNetworkConnector(rpcUrls, chainId);
 
       activate(networkConnector, undefined, true).catch(e => {
@@ -120,6 +116,19 @@ const Web3ReactManager = ({ children }) => {
       window.ethereum?.removeListener('accountsChanged', handleChainChange);
     };
   }, [location, connector]);
+
+  const urlNetworkName = useMemo(
+    () => location.pathname.split('/')[1],
+    [location]
+  );
+  const prevUrlNetworkName = usePrevious(urlNetworkName);
+  if (
+    urlNetworkName &&
+    prevUrlNetworkName &&
+    urlNetworkName !== prevUrlNetworkName
+  ) {
+    tryConnecting();
+  }
 
   // Fetch user blockchain data on an interval using current params
   useInterval(

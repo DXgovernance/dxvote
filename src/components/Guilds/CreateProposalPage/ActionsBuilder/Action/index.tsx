@@ -12,7 +12,6 @@ import { useState } from 'react';
 import Avatar from 'components/Guilds/Avatar';
 import { shortenAddress } from 'utils';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
-import { DEFAULT_ETH_CHAIN_ID } from 'provider/connectors';
 import { Button } from 'components/Guilds/common/Button';
 import UnstyledLink from 'components/Guilds/common/UnstyledLink';
 
@@ -148,7 +147,7 @@ interface ActionViewProps {
 
 const ActionView: React.FC<ActionViewProps> = ({ action }) => {
   const [expanded, setExpanded] = useState(false);
-  const { ensName, imageUrl } = useENSAvatar(action?.to, DEFAULT_ETH_CHAIN_ID);
+  const { ensName, imageUrl } = useENSAvatar(action?.to, 1);
   const [activeTab, setActiveTab] = useState(0);
   const theme = useTheme();
 

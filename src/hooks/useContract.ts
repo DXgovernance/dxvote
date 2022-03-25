@@ -1,9 +1,9 @@
 import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
-import { id } from 'ethers/lib/utils';
 import { useMemo } from 'react';
-import useSWR from 'swr';
 import { getContract } from '../utils/contracts';
+import useEtherSWR from './Guilds/ether-swr/useEtherSWR';
+import { SWRResponse } from 'swr';
 
 export const useContract = function (address: string, abi: any[]) {
   const { library } = useWeb3React();
@@ -25,15 +25,31 @@ export const useContractCall = (
   abi: any[],
   functionName: string,
   params: string[]
-): string => {
-  const { active, library } = useWeb3React();
-  const { data } = useSWR(id(address + functionName + params), async () => {
-    if (!active) return '0x0';
+): SWRResponse => {
+  return useContractCalls([
+    {
+      address,
+      abi,
+      functionName,
+      params,
+    },
+  ]);
+};
 
-    const provider = new providers.Web3Provider(library.currentProvider);
-    const tokenContract = getContract(address, abi, provider);
-    return await tokenContract[functionName](...params);
-  });
-
-  return data ? data.toString() : '0x0';
+export const useContractCalls = (
+  calls: {
+    address: string;
+    abi: any[];
+    functionName: string;
+    params: string[];
+  }[]
+): SWRResponse => {
+  return useEtherSWR(
+    calls.map(call => {
+      return [call.address, call.functionName, ...call.params];
+    }),
+    {
+      ABIs: new Map(calls.map(call => [call.address, call.abi])),
+    }
+  );
 };

@@ -39,3 +39,10 @@ export interface Transaction {
   addedTime: number
   confirmedTime?: number
 }
+
+export enum GuildImplementationType {
+  SnapshotRepERC20Guild = 'SnapshotRepERC20Guild',
+  DXDGuild = 'DXDGuild',
+  ERC20Guild = 'ERC20Guild',
+  IERC20Guild = 'IERC20Guild',
+}

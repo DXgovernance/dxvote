@@ -3,6 +3,8 @@ import { Box } from 'components/Guilds/common/Layout';
 import { ProposalOptionTag } from '../ProposalOptionTag';
 import AddButton from '../AddButton';
 import ActionView, { Action } from '../Action';
+import { useActionsBuilder } from 'contexts/Guilds/ActionsBuilder';
+import TransferAndMint from '../TransfersAndMint';
 
 export interface Option {
   index: number;
@@ -35,6 +37,18 @@ const DetailWrapper = styled(Box)`
 `;
 
 const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
+  const { setIsOpen, transferBuilder, actionType, setActionType } =
+    useActionsBuilder();
+
+  const handleAddAction = () => {
+    setActionType(data.label);
+    setIsOpen(true);
+  };
+
+  const checkActionType: boolean = data.label === actionType;
+
+  //TODO: refactor when data is pulled form contracts
+  //TODO: remove the disabled button from add actions
   return (
     <OptionWrapper>
       <DetailWrapper>
@@ -45,12 +59,20 @@ const OptionRow: React.FC<OptionRowProps> = ({ data, editable }) => {
         </ActionCountLabel>
       </DetailWrapper>
 
+      {transferBuilder && checkActionType && <TransferAndMint />}
+
       {!editable &&
         data?.actions?.map((action, index) => (
           <ActionView key={index} action={action} />
         ))}
 
-      {editable && <AddButton label="Add Action" />}
+      {editable && (
+        <AddButton
+          onClick={handleAddAction}
+          disabled={transferBuilder}
+          label="Add Action"
+        />
+      )}
     </OptionWrapper>
   );
 };
