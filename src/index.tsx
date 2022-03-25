@@ -33,7 +33,6 @@ import MultichainProvider from './contexts/MultichainProvider';
 import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
 import { useEffect } from 'react';
 import { useContext } from './contexts';
-import { DEFAULT_CHAIN_ID } from './utils';
 
 import EtherSWRManager from 'components/Guilds/EtherSWRManager';
 
@@ -126,7 +125,7 @@ const SplitApp = () => {
   const {
     context: { ensService },
   } = useContext();
-  const mainnetProvider = useJsonRpcProvider(DEFAULT_CHAIN_ID);
+  const mainnetProvider = useJsonRpcProvider(1);
 
   useEffect(() => {
     ensService.setWeb3Provider(mainnetProvider);
