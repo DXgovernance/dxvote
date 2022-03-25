@@ -14,6 +14,7 @@
     "cy:run:development": "cypress run --env configFile=development --browser electron",
     "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run:development",
     "test": "react-app-rewired test --watchAll=false --coverage --verbose",
+    "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
     "prepare": "husky install"
   },
   "engines": {
