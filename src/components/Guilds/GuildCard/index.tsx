@@ -1,4 +1,3 @@
-import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
 import styled, { css } from 'styled-components';
 import { Card, CardProps } from '../common/Card';
 import { Box, Flex } from '../common/Layout';
@@ -34,9 +33,8 @@ interface GuildCardProps extends CardProps {
 }
 
 const GuildCard: React.FC<GuildCardProps> = ({ children, guildAddress }) => {
-  const ensName = useENSNameFromAddress(guildAddress)?.split('.')[0];
   return (
-    <StyledLink to={location => `${location.pathname}/${ensName}`}>
+    <StyledLink to={location => `${location.pathname}/${guildAddress}`}>
       <Card customStyles={cardWrapperStyles}>{children}</Card>
     </StyledLink>
   );

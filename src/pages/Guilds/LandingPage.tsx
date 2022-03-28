@@ -12,9 +12,19 @@ import GuildCard, {
 import dxDaoIcon from '../../assets/images/dxdao-icon.svg';
 import { Heading } from 'components/Guilds/common/Typography';
 import { useGuildRegistry } from 'hooks/Guilds/ether-swr/guild/useGuildRegistry';
-import { GUILDS_REGISTRY_ADDRESS } from 'constants/addresses';
 import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
 import { Link } from 'react-router-dom';
+import { getChains } from 'provider/connectors';
+import { useWeb3React } from '@web3-react/core';
+
+const configs = {
+  arbitrum: require('configs/arbitrum/config.json'),
+  arbitrumTestnet: require('configs/arbitrumTestnet/config.json'),
+  mainnet: require('configs/mainnet/config.json'),
+  xdai: require('configs/xdai/config.json'),
+  rinkeby: require('configs/rinkeby/config.json'),
+  localhost: require('configs/localhost/config.json'),
+};
 
 const InputContainer = styled(Flex)`
   flex-direction: row;
@@ -94,7 +104,13 @@ const Title: React.FC<TitleProps> = ({ guildAddress }) => {
 };
 
 const LandingPage: React.FC = () => {
-  const { data: totalGuilds } = useGuildRegistry(GUILDS_REGISTRY_ADDRESS);
+  const { chainId } = useWeb3React();
+  const chainName =
+    getChains().find(chain => chain.id === chainId)?.name || null;
+
+  const { data: allGuilds } = useGuildRegistry(
+    configs[chainName].contracts.utils.guildRegistry
+  );
 
   /*TODO:
     1. Members should be dynamic
@@ -116,8 +132,8 @@ const LandingPage: React.FC = () => {
         </StyledButton>
       </InputContainer>
       <CardContainer>
-        {totalGuilds
-          ? totalGuilds.map(guildAddress => (
+        {allGuilds
+          ? allGuilds.map(guildAddress => (
               <GuildCard key={guildAddress} guildAddress={guildAddress}>
                 <GuildCardHeader>
                   <MemberWrapper>
