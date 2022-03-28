@@ -29,6 +29,8 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
   const [actionsEditMode, setActionsEditMode] = useState(true);
 
   // TODO: remove when actions are implemented
+  //  label read from contract or proposal type
+  //  actions set by the user input modal
   const [options, setOptions] = useState<Option[]>([
     {
       index: 0,
@@ -88,9 +90,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
               <Button
                 variant="secondary"
                 onClick={() => setActionsEditMode(true)}
-              >
-                Edit
-              </Button>
+              ></Button>
             ))}
         </SidebarCardHeaderSpaced>
       }
@@ -118,6 +118,7 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({ editable }) => {
                   ...prev,
                   {
                     index: prev.length + 1,
+
                     label: 'Option ' + (prev.length + 1),
                   },
                 ]);

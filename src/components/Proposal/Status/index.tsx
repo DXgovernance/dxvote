@@ -31,7 +31,7 @@ const Status = () => {
     switch (pendingAction) {
       case PendingAction.Redeem:
         daoService.redeemContributionReward(
-          networkContracts.daostack.contributionReward.redeemer,
+          networkContracts.daostack[scheme.address].redeemer,
           scheme.address,
           scheme.votingMachine,
           proposalId,

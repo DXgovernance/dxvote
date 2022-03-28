@@ -1,0 +1,479 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "title": "Vesting contract for DXD token",
+            "tags": [
+                "DXD",
+                "DXdao",
+                "factory"
+            ],
+            "networks": {
+                "1": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                "4": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                "100": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                "42161": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                "421611": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+            },
+            "functions": [
+                {
+                    "title": "Create vesting contract",
+                    "functionName": "create",
+                    "params": [
+                        {
+                            "type": "address",
+                            "component": "address",
+                            "name": "beneficiary",
+                            "defaultValue": "",
+                            "description": "Receiving address of tokens"
+                        },
+                        {
+                            "type": "uint256",
+                            "component": "date",
+                            "name": "start",
+                            "defaultValue": "",
+                            "description": "Starting time for contract"
+                        },
+                        {
+                            "type": "uint256",
+                            "component": "time",
+                            "name": "cliffDuration",
+                            "defaultValue": "",
+                            "description": "How long before cliff"
+                        },
+                        {
+                            "type": "uint256",
+                            "component": "time",
+                            "name": "duration",
+                            "defaultValue": "",
+                            "description": "How long before contract finishes fully"
+                        },
+                        {
+                            "type": "uint256",
+                            "component": "tokenAmount",
+                            "name": "value",
+                            "defaultValue": "",
+                            "description": "Number of tokens to vest"
+                        }
+                    ],
+                    "shortDescription": "Creates DXD vesting contracts for worker proposals",
+                    "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+                    "spendsTokens": true
+                }
+            ]
+        }
+    ],
+    "required": [
+        "title",
+        "tags",
+        "networks",
+        "functions"
+    ],
+    "properties": {
+        "title": {
+            "$id": "#/properties/title",
+            "type": "string",
+            "title": "The title schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Vesting contract for DXD token"
+            ]
+        },
+        "tags": {
+            "$id": "#/properties/tags",
+            "type": "array",
+            "title": "The tags schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+                [
+                    "DXD",
+                    "DXdao"
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/tags/items",
+                "anyOf": [
+                    {
+                        "$id": "#/properties/tags/items/anyOf/0",
+                        "type": "string",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": "",
+                        "examples": [
+                            "DXD",
+                            "DXdao"
+                        ]
+                    }
+                ]
+            }
+        },
+        "networks": {
+            "$id": "#/properties/networks",
+            "type": "object",
+            "title": "The networks schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "mainnet": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                    "rinkeby": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                    "gnosis": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                    "arbitrum": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                    "arbitrumRinkeby": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+                }
+            ],
+            "required": [
+                "mainnet",
+                "rinkeby",
+                "gnosis",
+                "arbitrum",
+                "arbitrumRinkeby"
+            ],
+            "properties": {
+                "mainnet": {
+                    "$id": "#/properties/networks/properties/mainnet",
+                    "type": "string",
+                    "title": "The mainnet schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+                    ]
+                },
+                "rinkeby": {
+                    "$id": "#/properties/networks/properties/rinkeby",
+                    "type": "string",
+                    "title": "The rinkeby schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+                    ]
+                },
+                "gnosis": {
+                    "$id": "#/properties/networks/properties/gnosis",
+                    "type": "string",
+                    "title": "The gnosis schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+                    ]
+                },
+                "arbitrum": {
+                    "$id": "#/properties/networks/properties/arbitrum",
+                    "type": "string",
+                    "title": "The arbitrum schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+                    ]
+                },
+                "arbitrumRinkeby": {
+                    "$id": "#/properties/networks/properties/arbitrumRinkeby",
+                    "type": "string",
+                    "title": "The arbitrumRinkeby schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+                    ]
+                }
+            },
+            "additionalProperties": true
+        },
+        "functions": {
+            "$id": "#/properties/functions",
+            "type": "array",
+            "title": "The functions schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+                [
+                    {
+                        "title": "Create vesting contract",
+                        "functionName": "create",
+                        "params": [
+                            {
+                                "type": "address",
+                                "component": "address",
+                                "name": "beneficiary",
+                                "defaultValue": "",
+                                "description": "Receiving address of tokens"
+                            },
+                            {
+                                "type": "uint256",
+                                "component": "date",
+                                "name": "start",
+                                "defaultValue": "",
+                                "description": "Starting time for contract"
+                            },
+                            {
+                                "type": "uint256",
+                                "component": "time",
+                                "name": "cliffDuration",
+                                "defaultValue": "",
+                                "description": "How long before cliff"
+                            },
+                            {
+                                "type": "uint256",
+                                "component": "time",
+                                "name": "duration",
+                                "defaultValue": "",
+                                "description": "How long before contract finishes fully"
+                            },
+                            {
+                                "type": "uint256",
+                                "component": "tokenAmount",
+                                "name": "value",
+                                "defaultValue": "",
+                                "description": "Number of tokens to vest"
+                            }
+                        ],
+                        "shortDescription": "Creates DXD vesting contracts for worker proposals",
+                        "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+                        "spendsTokens": true
+                    }
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/functions/items",
+                "anyOf": [
+                    {
+                        "$id": "#/properties/functions/items/anyOf/0",
+                        "type": "object",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": {},
+                        "examples": [
+                            {
+                                "title": "Create vesting contract",
+                                "functionName": "create",
+                                "params": [
+                                    {
+                                        "type": "address",
+                                        "component": "address",
+                                        "name": "beneficiary",
+                                        "defaultValue": "",
+                                        "description": "Receiving address of tokens"
+                                    },
+                                    {
+                                        "type": "uint256",
+                                        "component": "date",
+                                        "name": "start",
+                                        "defaultValue": "",
+                                        "description": "Starting time for contract"
+                                    },
+                                    {
+                                        "type": "uint256",
+                                        "component": "time",
+                                        "name": "cliffDuration",
+                                        "defaultValue": "",
+                                        "description": "How long before cliff"
+                                    },
+                                    {
+                                        "type": "uint256",
+                                        "component": "time",
+                                        "name": "duration",
+                                        "defaultValue": "",
+                                        "description": "How long before contract finishes fully"
+                                    },
+                                    {
+                                        "type": "uint256",
+                                        "component": "tokenAmount",
+                                        "name": "value",
+                                        "defaultValue": "",
+                                        "description": "Number of tokens to vest"
+                                    }
+                                ],
+                                "shortDescription": "Creates DXD vesting contracts for worker proposals",
+                                "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+                                "spendsTokens": true
+                            }
+                        ],
+                        "required": [
+                            "title",
+                            "functionName",
+                            "params",
+                            "shortDescription",
+                            "longDescription",
+                            "spendsTokens"
+                        ],
+                        "properties": {
+                            "title": {
+                                "$id": "#/properties/functions/items/anyOf/0/properties/title",
+                                "type": "string",
+                                "title": "The title schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "Create vesting contract"
+                                ]
+                            },
+                            "functionName": {
+                                "$id": "#/properties/functions/items/anyOf/0/properties/functionName",
+                                "type": "string",
+                                "title": "The functionName schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "create"
+                                ]
+                            },
+                            "params": {
+                                "$id": "#/properties/functions/items/anyOf/0/properties/params",
+                                "type": "array",
+                                "title": "The params schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": [],
+                                "examples": [
+                                    [
+                                        {
+                                            "type": "address",
+                                            "component": "address",
+                                            "name": "beneficiary",
+                                            "defaultValue": "",
+                                            "description": "Receiving address of tokens"
+                                        },
+                                        {
+                                            "type": "uint256",
+                                            "component": "date",
+                                            "name": "start",
+                                            "defaultValue": "",
+                                            "description": "Starting time for contract"
+                                        }
+                                    ]
+                                ],
+                                "additionalItems": true,
+                                "items": {
+                                    "$id": "#/properties/functions/items/anyOf/0/properties/params/items",
+                                    "anyOf": [
+                                        {
+                                            "$id": "#/properties/functions/items/anyOf/0/properties/params/items/anyOf/0",
+                                            "type": "object",
+                                            "title": "The first anyOf schema",
+                                            "description": "An explanation about the purpose of this instance.",
+                                            "default": {},
+                                            "examples": [
+                                                {
+                                                    "type": "address",
+                                                    "component": "address",
+                                                    "name": "beneficiary",
+                                                    "defaultValue": "",
+                                                    "description": "Receiving address of tokens"
+                                                }
+                                            ],
+                                            "required": [
+                                                "type",
+                                                "component",
+                                                "name",
+                                                "defaultValue",
+                                                "description"
+                                            ],
+                                            "properties": {
+                                                "type": {
+                                                    "$id": "#/properties/functions/items/anyOf/0/properties/params/items/anyOf/0/properties/type",
+                                                    "type": "string",
+                                                    "title": "The type schema",
+                                                    "description": "An explanation about the purpose of this instance.",
+                                                    "default": "",
+                                                    "examples": [
+                                                        "address"
+                                                    ]
+                                                },
+                                                "component": {
+                                                    "$id": "#/properties/functions/items/anyOf/0/properties/params/items/anyOf/0/properties/component",
+                                                    "type": "string",
+                                                    "title": "The component schema",
+                                                    "description": "An explanation about the purpose of this instance.",
+                                                    "enum": ["address", "integer", "decimal", "date", "time", "boolean", "tokenAmount", "contentHash"],
+                                                    "default": "",
+                                                    "examples": [
+                                                        "address"
+                                                    ]
+                                                },
+                                                "name": {
+                                                    "$id": "#/properties/functions/items/anyOf/0/properties/params/items/anyOf/0/properties/name",
+                                                    "type": "string",
+                                                    "title": "The name schema",
+                                                    "description": "An explanation about the purpose of this instance.",
+                                                    "default": "",
+                                                    "examples": [
+                                                        "beneficiary"
+                                                    ]
+                                                },
+                                                "defaultValue": {
+                                                    "$id": "#/properties/functions/items/anyOf/0/properties/params/items/anyOf/0/properties/defaultValue",
+                                                    "type": "string",
+                                                    "title": "The defaultValue schema",
+                                                    "description": "An explanation about the purpose of this instance.",
+                                                    "default": "",
+                                                    "examples": [
+                                                        ""
+                                                    ]
+                                                },
+                                                "description": {
+                                                    "$id": "#/properties/functions/items/anyOf/0/properties/params/items/anyOf/0/properties/description",
+                                                    "type": "string",
+                                                    "title": "The description schema",
+                                                    "description": "An explanation about the purpose of this instance.",
+                                                    "default": "",
+                                                    "examples": [
+                                                        "Receiving address of tokens"
+                                                    ]
+                                                }
+                                            },
+                                            "additionalProperties": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "shortDescription": {
+                                "$id": "#/properties/functions/items/anyOf/0/properties/shortDescription",
+                                "type": "string",
+                                "title": "The shortDescription schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "Creates DXD vesting contracts for worker proposals"
+                                ]
+                            },
+                            "longDescription": {
+                                "$id": "#/properties/functions/items/anyOf/0/properties/longDescription",
+                                "type": "string",
+                                "title": "The longDescription schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao"
+                                ]
+                            },
+                            "spendsTokens": {
+                                "$id": "#/properties/functions/items/anyOf/0/properties/spendsTokens",
+                                "type": "boolean",
+                                "title": "The spendsTokens schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": false,
+                                "examples": [
+                                    true
+                                ]
+                            }
+                        },
+                        "additionalProperties": true
+                    }
+                ]
+            }
+        }
+    },
+    "additionalProperties": true
+}

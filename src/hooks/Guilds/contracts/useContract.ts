@@ -2,9 +2,9 @@ import { Contract } from 'ethers';
 import { useMemo } from 'react';
 import { getContract } from '../../../utils/contracts';
 import ERC20Guild_ABI from '../../../contracts/ERC20Guild.json';
-import { ERC20Guild } from '../../../types/ERC20Guild';
+import { ERC20Guild } from '../../../types/contracts/ERC20Guild';
 import ERC20_ABI from '../../../contracts/ERC20.json';
-import { ERC20 } from '../../../types/ERC20';
+import { ERC20 } from '../../../types/contracts/ERC20';
 import useJsonRpcProvider from '../web3/useJsonRpcProvider';
 import { useWeb3React } from '@web3-react/core';
 

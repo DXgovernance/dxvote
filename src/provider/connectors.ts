@@ -21,7 +21,6 @@ export const ACTIVE_NETWORKS = NETWORKS.filter(network =>
 );
 
 export const ETH_NETWORKS_IDS = ACTIVE_NETWORKS.map(network => network.id);
-export const DEFAULT_ETH_CHAIN_ID = ACTIVE_NETWORKS[0].id;
 
 export const isChainIdSupported = (chainId: ChainConfig['id']): boolean => {
   return ETH_NETWORKS_IDS ? ETH_NETWORKS_IDS.indexOf(chainId) >= 0 : false;

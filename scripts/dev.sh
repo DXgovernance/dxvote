@@ -7,18 +7,16 @@ set -o errexit
 trap cleanup EXIT
 
 cleanup() {
-  # Kill the ganache instance that we started (if we started one and if it's still running).
-  if [ -n "$ganache_pid" ] && ps -p $ganache_pid > /dev/null; then
-    kill -9 $ganache_pid
+  # Kill the hardhat instance that we started (if we started one and if it's still running).
+  if [ -n "$hardhat_pid" ] && ps -p $hardhat_pid > /dev/null; then
+    kill -9 $hardhat_pid
   fi
 }
 mnemonic="dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao"
 
-ganache_running() {
+hardhat_running() {
   nc -z localhost 8545
 }
-
-time=date
 
 start-hardhat_node() {
 
@@ -84,23 +82,24 @@ start-hardhat_node() {
   # Account #19: 0x5a485c203d9537095a6be2acc5a7ad83805d301d (10000 ETH)
   # Private Key: 0xb86f3287c11a77c7317c2484be2bd386816876ead8ceaf86971b7b7c1afbb12b
 
-  ganache_pid=$!
+  hardhat_pid=$!
 
-  echo "Waiting for ganache to launch..."
+  echo "Waiting for hardhat to launch..."
 
-  while ! ganache_running; do
+  while ! hardhat_running; do
     sleep 0.1 # wait for 1/10 of the second before check again
   done
 
   echo "Harhat node launched!"
 }
 
-if ganache_running; then
-  echo "Using existing hardhat node instance"
-else
-  echo "Starting our own hardhat node instance"
-  start-hardhat_node
+if hardhat_running; then
+  echo "Killing existent hardhat"
+  kill $(lsof -t -i:8545) 
 fi
+
+echo "Starting our own hardhat node instance"
+start-hardhat_node
 
 # Compile your contracts
 yarn hardhat compile
@@ -111,12 +110,10 @@ echo "${contents}" > tsconfig.json
 contents="$(jq '.compilerOptions.module = "commonjs"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
-# Deploy local contracts
-yarn hardhat run --network localhost scripts/deployDevContracts.ts
+node scripts/beforeBuild.js
 
-# Run build cache
-yarn hardhat run --network localhost scripts/buildCache.ts
-sleep 1
+# Deploy local contracts
+yarn hardhat run --network localhost scripts/dev.ts
 
 # Enable isolatedModules and use esnext as module in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \
@@ -124,9 +121,13 @@ echo "${contents}" > tsconfig.json
 contents="$(jq '.compilerOptions.module = "esnext"' tsconfig.json)" && \
 echo "${contents}" > tsconfig.json
 
-#commit nr
-export REACT_APP_GIT_SHA=`git rev-parse --short HEAD`
-
 # Run dapp with localhost contracts
-FORCE_COLOR=true \
-SKIP_PREFLIGHT_CHECK=true FORCE_COLOR=true npx react-app-rewired start | cat
+export REACT_APP_GIT_SHA=$(echo $(git rev-parse  HEAD) | cut -c1-9)
+export SKIP_PREFLIGHT_CHECK=true
+
+if [[ $* == *--no-browser* ]]; then
+    echo "Setting BROWSER=none. No browser window will pop up"
+    export BROWSER=none
+fi
+
+FORCE_COLOR=true yarn react-app-rewired start | cat

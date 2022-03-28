@@ -121,6 +121,25 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       )
       .sort(orderByOldestTimeToFinish);
 
+    //Proposals finished status. (Expired in queue, rejected or passed)
+    const stateFinished = allProposals
+      .filter((proposal): Boolean => {
+        const queuedVotePeriodLimit = daoStore.getVotingMachineOfProposal(
+          proposal.id
+        ).params.queuedVotePeriodLimit;
+        return (
+          (proposal.stateInVotingMachine ===
+            VotingMachineProposalState.Queued &&
+            timeNow.gt(proposal.submittedTime.plus(queuedVotePeriodLimit))) ||
+          proposal.stateInVotingMachine ===
+            VotingMachineProposalState.ExpiredInQueue ||
+          proposal.stateInVotingMachine ===
+            VotingMachineProposalState.Rejected ||
+          proposal.stateInVotingMachine === VotingMachineProposalState.Passed
+        );
+      })
+      .sort(orderByOldestTimeToFinish);
+
     setFilteredProposals([
       ...stateBoosted,
       ...statePreBoosted,
@@ -128,6 +147,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
       ...stateEarliestAbove10,
       ...stateEarliestUnder10,
       ...stateExecuted,
+      ...stateFinished,
     ]);
 
     setLoading(false);

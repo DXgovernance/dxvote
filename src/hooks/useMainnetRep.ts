@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useContext } from '../contexts';
-import { DEFAULT_ETH_CHAIN_ID } from '../provider/connectors';
 import { bnum, ZERO_ADDRESS } from '../utils';
 import useJsonRpcProvider from './Guilds/web3/useJsonRpcProvider';
 
@@ -14,7 +13,7 @@ const useMainnetRep = (
   const {
     context: { configStore, ipfsService, daoStore },
   } = useContext();
-  const provider = useJsonRpcProvider(DEFAULT_ETH_CHAIN_ID);
+  const provider = useJsonRpcProvider(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isStale, setIsStale] = useState(false);
   const [userRep, setUserRep] = useState(bnum(0));
@@ -31,7 +30,9 @@ const useMainnetRep = (
         console.error("[useMainnetRep] Couldn't fetch cache locally");
       }
 
-      const newestCacheIpfsHash = configStore.getCacheIPFSHash('mainnet');
+      const newestCacheIpfsHash = await (
+        await configStore.loadNetworkConfig()
+      ).cache.ipfsHash;
 
       if (
         !localCache ||

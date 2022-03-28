@@ -1,10 +1,11 @@
 import styled, { css } from 'styled-components';
 import ReactDOM from 'react-dom';
 import { isMobile } from 'react-device-detect';
-
 import { Button } from '../Button';
 import { FiArrowLeft, FiX } from 'react-icons/fi';
+import { IoIosArrowBack } from 'react-icons/io';
 import { Heading } from '../Typography';
+import { Flex } from '../Layout';
 
 export const Wrapper = styled.div`
   position: fixed;
@@ -56,7 +57,6 @@ export const Header = styled.div`
 export const SecondaryHeader = styled(Header)`
   justify-content: center;
   border-bottom: none;
-
   @media only screen and (max-width: 768px) {
     position: relative;
     top: 25%;
@@ -64,7 +64,7 @@ export const SecondaryHeader = styled(Header)`
 `;
 
 export const HeaderText = styled(Heading)`
-  margin: 0;
+  margin: auto 8px;
 `;
 
 const CloseIcon = styled(FiX)`
@@ -133,11 +133,21 @@ export interface ModalProps {
   showSecondaryHeader?: boolean;
   cross?: boolean;
   zIndex?: number;
+  backnCross?: boolean;
+  prevContent?: () => void;
 }
 
 export const ModalButton = styled(Button)`
   margin: 8px;
   flex: 1;
+`;
+
+const LeftArrowContainer = styled(Flex)`
+  flex-direction: row;
+`;
+
+const BackButton = styled(IoIosArrowBack)`
+  cursor: pointer;
 `;
 
 export const Modal: React.FC<ModalProps> = ({
@@ -146,7 +156,7 @@ export const Modal: React.FC<ModalProps> = ({
   header,
   contentHeader,
   confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  cancelText,
   onConfirm,
   onCancel,
   hideHeader,
@@ -155,6 +165,8 @@ export const Modal: React.FC<ModalProps> = ({
   showSecondaryHeader,
   cross,
   zIndex = 500,
+  backnCross,
+  prevContent,
 }) => {
   const modal = (
     <div>
@@ -169,8 +181,21 @@ export const Modal: React.FC<ModalProps> = ({
           )}{' '}
           {!hideHeader && !isMobile && (
             <Header>
-              <HeaderText>{header}</HeaderText>
-              <CloseIcon onClick={onDismiss} />
+              {!backnCross && (
+                <>
+                  <HeaderText>{header}</HeaderText>
+                  <CloseIcon onClick={onDismiss} />
+                </>
+              )}
+              {backnCross && (
+                <>
+                  <LeftArrowContainer>
+                    <BackButton onClick={prevContent} />
+                    <HeaderText>{header}</HeaderText>
+                  </LeftArrowContainer>
+                  <CloseIcon onClick={onDismiss} />
+                </>
+              )}
             </Header>
           )}
           {showSecondaryHeader && (
@@ -194,7 +219,9 @@ export const Modal: React.FC<ModalProps> = ({
                 </ModalButton>
               )}
               {onConfirm && (
-                <ModalButton onClick={onConfirm}>{confirmText}</ModalButton>
+                <ModalButton variant="secondary" onClick={onConfirm}>
+                  {confirmText}
+                </ModalButton>
               )}
             </Footer>
           )}

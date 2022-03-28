@@ -57,7 +57,6 @@ Install all dependencies with yarn.
 
 ## Development
 
-First create an `env.development` file based on the ``.env.development.example` file.
 The development script will start a local hardhat node, deploy all dxdao contracts with local development configuration and start the dapp with the development configuration in the port 3000.
 
 `yarn dev`
@@ -66,12 +65,12 @@ To understand a bit better what the script will do you can see `scripts/dev.sh` 
 
 ## Start
 
-The script will start the dapp with the production configuration locally in the port 3000.
+The script will start the dapp with the production configuration locally on port 8080 serving the folder build after running the production build.
 
 `yarn start`
 
 ## Build
 
-The script build the dapp with the production configuration.
+The script build the dapp with the production configuration and save it in the build folder.
 
 `yarn build`

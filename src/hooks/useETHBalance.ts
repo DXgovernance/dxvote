@@ -1,7 +1,7 @@
 import { useContext } from 'contexts';
 import { bnum } from 'utils';
 import { BigNumber } from 'utils/bignumber';
-import { useContractCall } from './useContract';
+import { useContractCalls } from './useContract';
 
 const MulticallJSON = require('../contracts/Multicall.json');
 
@@ -10,12 +10,16 @@ export const useETHBalance = (fromAddress: string): BigNumber => {
     context: { configStore },
   } = useContext();
 
-  const balance = useContractCall(
-    configStore.getNetworkContracts().utils.multicall,
-    MulticallJSON.abi,
-    'getEthBalance',
-    [fromAddress]
-  );
+  const { data, error } = useContractCalls([
+    {
+      address: configStore.getNetworkContracts().utils.multicall,
+      abi: MulticallJSON.abi,
+      functionName: 'getEthBalance',
+      params: [fromAddress],
+    },
+  ]);
 
-  return balance ? bnum(balance) : bnum('0');
+  if (error) return bnum('0');
+  else if (!data) return bnum('0');
+  else return bnum(data[0]);
 };
