@@ -32,83 +32,151 @@ export const POKT_NETWORK_URLS = {
     'https://poa-xdai-archival.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a',
 };
 
-export const NETWORKS: ChainConfig[] = [
-  {
-    id: 1,
-    name: 'mainnet',
-    displayName: 'Ethereum Mainnet',
-    defaultRpc: POKT_NETWORK_URLS['1'],
-    nativeAsset: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    blockExplorer: 'https://etherscan.io',
-    api: 'https://api.etherscan.io',
-  },
-  {
-    id: 4,
-    name: 'rinkeby',
-    displayName: 'Rinkeby Testnet',
-    defaultRpc: POKT_NETWORK_URLS['4'],
-    nativeAsset: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    blockExplorer: 'https://rinkeby.etherscan.io/',
-    api: 'https://api-rinkeby.etherscan.io/',
-  },
-  {
-    id: 100,
-    name: 'xdai',
-    displayName: 'Gnosis Chain',
-    defaultRpc: POKT_NETWORK_URLS['100'],
-    nativeAsset: {
-      name: 'xDai',
-      symbol: 'xDAI',
-      decimals: 18,
-    },
-    blockExplorer: 'https://blockscout.com/xdai/mainnet/',
-    api: 'https://blockscout.com/xdai/mainnet/api',
-  },
-  {
-    id: 42161,
-    name: 'arbitrum',
-    displayName: 'Arbitrum One',
-    defaultRpc: `https://arb-mainnet.g.alchemy.com/v2/${defaultAlchemyKey}`,
-    nativeAsset: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    blockExplorer: 'https://arbiscan.io/',
-    api: 'https://api.arbiscan.io/',
-  },
-  {
-    id: 421611,
-    name: 'arbitrumTestnet',
-    displayName: 'Arbitrum Testnet',
-    defaultRpc: `https://arb-rinkeby.g.alchemy.com/v2/${defaultAlchemyKey}`,
-    nativeAsset: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
-  },
-  {
-    id: 1337,
-    name: 'localhost',
-    displayName: 'Localhost',
-    defaultRpc: `http://127.0.0.1:8545`,
-    nativeAsset: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-  },
-];
+export const NETWORKS: ChainConfig[] =
+  process.env.NODE_ENV === 'development'
+    ? [
+        {
+          id: 1,
+          name: 'mainnet',
+          displayName: 'Ethereum Mainnet',
+          defaultRpc: POKT_NETWORK_URLS['1'],
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          blockExplorer: 'https://etherscan.io',
+          api: 'https://api.etherscan.io',
+        },
+        {
+          id: 4,
+          name: 'rinkeby',
+          displayName: 'Rinkeby Testnet',
+          defaultRpc: POKT_NETWORK_URLS['4'],
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          blockExplorer: 'https://rinkeby.etherscan.io/',
+          api: 'https://api-rinkeby.etherscan.io/',
+        },
+        {
+          id: 100,
+          name: 'xdai',
+          displayName: 'Gnosis Chain',
+          defaultRpc: POKT_NETWORK_URLS['100'],
+          nativeAsset: {
+            name: 'xDai',
+            symbol: 'xDAI',
+            decimals: 18,
+          },
+          blockExplorer: 'https://blockscout.com/xdai/mainnet/',
+          api: 'https://blockscout.com/xdai/mainnet/api',
+        },
+        {
+          id: 42161,
+          name: 'arbitrum',
+          displayName: 'Arbitrum One',
+          defaultRpc: `https://arb-mainnet.g.alchemy.com/v2/${defaultAlchemyKey}`,
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          blockExplorer: 'https://arbiscan.io/',
+          api: 'https://api.arbiscan.io/',
+        },
+        {
+          id: 421611,
+          name: 'arbitrumTestnet',
+          displayName: 'Arbitrum Testnet',
+          defaultRpc: `https://arb-rinkeby.g.alchemy.com/v2/${defaultAlchemyKey}`,
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
+        },
+        {
+          id: 1337,
+          name: 'localhost',
+          displayName: 'Localhost',
+          defaultRpc: `http://127.0.0.1:8545`,
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+        },
+      ]
+    : [
+        {
+          id: 1,
+          name: 'mainnet',
+          displayName: 'Ethereum Mainnet',
+          defaultRpc: POKT_NETWORK_URLS['1'],
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          blockExplorer: 'https://etherscan.io',
+          api: 'https://api.etherscan.io',
+        },
+        {
+          id: 4,
+          name: 'rinkeby',
+          displayName: 'Rinkeby Testnet',
+          defaultRpc: POKT_NETWORK_URLS['4'],
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          blockExplorer: 'https://rinkeby.etherscan.io/',
+          api: 'https://api-rinkeby.etherscan.io/',
+        },
+        {
+          id: 100,
+          name: 'xdai',
+          displayName: 'Gnosis Chain',
+          defaultRpc: POKT_NETWORK_URLS['100'],
+          nativeAsset: {
+            name: 'xDai',
+            symbol: 'xDAI',
+            decimals: 18,
+          },
+          blockExplorer: 'https://blockscout.com/xdai/mainnet/',
+          api: 'https://blockscout.com/xdai/mainnet/api',
+        },
+        {
+          id: 42161,
+          name: 'arbitrum',
+          displayName: 'Arbitrum One',
+          defaultRpc: `https://arb-mainnet.g.alchemy.com/v2/${defaultAlchemyKey}`,
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          blockExplorer: 'https://arbiscan.io/',
+          api: 'https://api.arbiscan.io/',
+        },
+        {
+          id: 421611,
+          name: 'arbitrumTestnet',
+          displayName: 'Arbitrum Testnet',
+          defaultRpc: `https://arb-rinkeby.g.alchemy.com/v2/${defaultAlchemyKey}`,
+          nativeAsset: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
+        },
+      ];
 
 export const NETWORK_NAMES: Record<ChainConfig['id'], ChainConfig['name']> =
   NETWORKS.reduce((acc, network) => {

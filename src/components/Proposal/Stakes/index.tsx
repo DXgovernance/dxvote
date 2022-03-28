@@ -124,10 +124,10 @@ const Stakes = () => {
   const redeem = function () {
     if (
       scheme.type === 'ContributionReward' &&
-      networkContracts.daostack.contributionReward.redeemer
+      networkContracts.daostack[scheme.address].redeemer
     ) {
       daoService.redeemContributionReward(
-        networkContracts.daostack.contributionReward.redeemer,
+        networkContracts.daostack[scheme.address].redeemer,
         scheme.address,
         scheme.votingMachine,
         proposalId,
@@ -228,7 +228,7 @@ const Stakes = () => {
       !finishTimeReached &&
       (proposal.stateInVotingMachine === 3 ||
         proposal.stateInVotingMachine === 4) &&
-      votingMachineTokenApproved.toString() === '0' ? (
+      !votingMachineTokenApproved ? (
         <SpaceAroundRow>
           <ActionArea>
             <small>Approve {votingMachineTokenName} to stake</small>

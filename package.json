@@ -1,6 +1,6 @@
 {
   "name": "dxvote",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "dxvote application of DXdao.",
   "scripts": {
     "dev": "./scripts/dev.sh",
@@ -11,11 +11,10 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
     "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
     "cy:open": "cypress open",
-    "cy:run": "cypress run",
-    "cy:run:development": "cypress run --env configFile=development",
-    "cy:run:production": "cypress run --env configFile=production",
-    "test:e2e": "start-server-and-test 'yarn start --no-browser' 3000 cy:run:development",
+    "cy:run:development": "cypress run --env configFile=development --browser electron",
+    "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run:development",
     "test": "react-app-rewired test --watchAll=false --coverage --verbose",
+    "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
     "prepare": "husky install"
   },
   "engines": {
@@ -108,11 +107,12 @@
     "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
+    "@testing-library/cypress": "^8.0.2",
     "@types/jest": "^27.4.0",
     "@types/jsonexport": "^3.0.2",
     "@types/react-router-dom": "^5.1.2",
     "cra-bundle-analyzer": "^0.1.0",
-    "cypress": "^9.2.0",
+    "cypress": "^9.5.2",
     "husky": "^6.0.0",
     "prettier": "2.5.0",
     "start-server-and-test": "^1.14.0",
@@ -132,5 +132,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "electron": "^17.1.2"
   }
 }

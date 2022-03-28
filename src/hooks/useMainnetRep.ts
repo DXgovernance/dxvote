@@ -30,7 +30,9 @@ const useMainnetRep = (
         console.error("[useMainnetRep] Couldn't fetch cache locally");
       }
 
-      const newestCacheIpfsHash = configStore.getCacheIPFSHash('mainnet');
+      const newestCacheIpfsHash = await (
+        await configStore.loadNetworkConfig()
+      ).cache.ipfsHash;
 
       if (
         !localCache ||

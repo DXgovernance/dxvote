@@ -5,9 +5,8 @@ import Web3ConnectStatus from '../Web3ConnectStatus';
 import { useContext } from '../../contexts';
 import { FiSettings, FiUser, FiBarChart2 } from 'react-icons/fi';
 import dxdaoIcon from 'assets/images/DXdao.svg';
-import { bnum, formatCurrency, normalizeBalance } from '../../utils';
+import { bnum } from '../../utils';
 import { Box } from '../../components/common';
-import { useBalances } from 'hooks/useERC20';
 import _ from 'lodash';
 
 const NavWrapper = styled.div`
@@ -79,8 +78,6 @@ const Header = observer(() => {
 
   const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
-  const votingMachines = configStore.getNetworkContracts().votingMachines;
-
   const networkName = configStore.getActiveChainName();
 
   const { userRep, totalSupply } =
@@ -90,6 +87,17 @@ const Header = observer(() => {
   const repPercentage = active
     ? userRep.times(100).div(totalSupply).toFixed(4)
     : bnum(0);
+
+  // const votingMachines = configStore.getNetworkContracts().votingMachines;
+  // const votingMachineTokens = _.uniq(
+  //   Object.keys(votingMachines).map((votingMachineAddress, i) =>
+  //     configStore
+  //       .getTokensOfNetwork()
+  //       .find(
+  //         token => token.address === votingMachines[votingMachineAddress].token
+  //       )
+  //   )
+  // );
 
   return (
     <NavWrapper>
@@ -112,40 +120,25 @@ const Header = observer(() => {
         </NavSection>
       ) : blockchainStore.initialLoadComplete ? (
         <NavSection>
-          {account && (
+          {account && active && (
             <>
-              {() => {
-                const votingMachineTokens = _.uniq(
-                  Object.keys(votingMachines).map((votingMachineAddress, i) =>
-                    configStore
-                      .getTokensOfNetwork()
-                      .find(
-                        token =>
-                          token.address ===
-                          votingMachines[votingMachineAddress].token
-                      )
-                  )
+              {/* {useBalances(
+                account
+                  ? votingMachineTokens.map(votingMachineToken => ({
+                      assetAddress: votingMachineToken.address,
+                      fromAddress: account,
+                    }))
+                  : []
+              ).map((votingMachineTokenBalance, i) => {
+                return (
+                  <ItemBox key={i}>
+                    {formatCurrency(
+                      normalizeBalance(votingMachineTokenBalance)
+                    )}{' '}
+                    {votingMachineTokens[i].symbol}{' '}
+                  </ItemBox>
                 );
-                const votingMachineBalances = useBalances(
-                  votingMachineTokens.map(votingMachineToken => ({
-                    assetAddress: votingMachineToken.address,
-                    fromAddress: account,
-                  }))
-                );
-                return votingMachineTokens.map((votingMachineToken, i) => {
-                  const votingMachineTokenBalance = bnum(
-                    votingMachineBalances[i] || '0'
-                  );
-                  return (
-                    <ItemBox key={i}>
-                      {formatCurrency(
-                        normalizeBalance(votingMachineTokenBalance)
-                      )}{' '}
-                      {votingMachineToken.symbol}{' '}
-                    </ItemBox>
-                  );
-                });
-              }}
+              })} */}
               {repPercentage.toString() !== 'NaN' && (
                 <ItemBox> {repPercentage.toString()} % REP </ItemBox>
               )}

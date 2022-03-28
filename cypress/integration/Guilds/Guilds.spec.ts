@@ -1,23 +1,17 @@
 /// <reference types="cypress" />
 import Guilds from '../../support/pageObjects/Guilds';
-import { NETWORKS } from '../../support/utils';
-
-const rinkeby = NETWORKS.find(network => network.id === 4);
 
 describe('Guilds', () => {
-  beforeEach(() => {
-    Guilds.goToGuildsPage(rinkeby.name);
+  it('Should show Guild not available page', () => {
+    Guilds.goToGuildsPage('localhost', '0xbadAddress555555');
+    cy.contains('No guild exists on this address.');
   });
 
-  it('Should render proper components on Proposals page', () => {
+  it('Should render proper components on Guild page', () => {
+    const guildAddress = Guilds.deployedGuildsAddresses[0];
+    expect(Guilds.deployedGuildsAddresses.length).to.be.equal(2);
+    Guilds.goToGuildsPage('localhost', guildAddress);
     Guilds.shouldRenderProposalsList();
     Guilds.shouldRenderSidebar();
-  });
-
-  it.skip('Should Create a proposal', () => {
-    Guilds.handleProposalsPageCreateProposalBtnClick();
-    Guilds.handleCreateProposalTypeBtnClick();
-    Guilds.fillCreateProposalForm();
-    Guilds.toggleEditorMode();
   });
 });

@@ -374,6 +374,8 @@ export default class UtilsService {
       }
     });
 
+    networkCache.reputation.events = _.uniq(networkCache.reputation.events);
+
     return networkCache;
   }
 

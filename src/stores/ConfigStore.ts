@@ -33,12 +33,15 @@ const defaultCacheConfig = require('../configs/default.json');
 
 export default class ConfigStore {
   darkMode: boolean;
+  networkConfigLoaded: boolean;
   context: RootContext;
-  networkConfig: NetworkConfig = defaultAppConfigs[this.getActiveChainName()];
+  networkConfig: NetworkConfig;
 
   constructor(context) {
     this.context = context;
     this.darkMode = false;
+    this.networkConfigLoaded = false;
+
     makeObservable(this, {
       darkMode: observable,
       loadNetworkConfig: action,
@@ -49,6 +52,7 @@ export default class ConfigStore {
 
   reset() {
     this.networkConfig = defaultAppConfigs[this.getActiveChainName()];
+    this.networkConfigLoaded = false;
   }
 
   async loadNetworkConfig() {
@@ -57,7 +61,7 @@ export default class ConfigStore {
     this.networkConfig = defaultAppConfigs[this.getActiveChainName()];
     const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
-    if (this.getActiveChainName() !== 'localhost')
+    if (this.getActiveChainName() !== 'localhost' && !this.networkConfigLoaded)
       try {
         const metadataHash = await ensService.resolveContentHash(
           CACHE_METADATA_ENS
@@ -88,11 +92,9 @@ export default class ConfigStore {
         console.debug('[ConfigStore] Default config:', this.networkConfig);
 
         // Override defaultConfig to ipfsConfig
-        if (ipfsConfig?.version == this.networkConfig.version)
-          this.networkConfig = Object.assign(ipfsConfig, this.networkConfig);
-
-        console.debug('[OLD CONFIG]', ipfsConfig);
-        console.debug('[NEW CONFIG]', this.networkConfig);
+        if (ipfsConfig?.version >= this.networkConfig.version)
+          this.networkConfig = ipfsConfig;
+        this.networkConfigLoaded = true;
       } catch (e) {
         console.warn(
           '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
@@ -100,7 +102,6 @@ export default class ConfigStore {
           e
         );
       }
-
     return this.networkConfig;
   }
 
@@ -182,10 +183,6 @@ export default class ConfigStore {
 
   @action setDarkMode(visible: boolean) {
     this.darkMode = visible;
-  }
-
-  getCacheIPFSHash(networkName) {
-    return this.networkConfig.cache.ipfsHash;
   }
 
   getTokenData(tokenAddress) {
