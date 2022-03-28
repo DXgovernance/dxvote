@@ -46,9 +46,10 @@ const StyledButton = styled(Button).attrs(() => ({
 const CardContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-top: 1rem;
   flex-wrap: wrap;
+  gap: 1.7rem;
 `;
 const MemberWrapper = styled(Flex)`
   display: flex;
