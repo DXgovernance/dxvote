@@ -14,7 +14,7 @@ const OptionViewMode: React.FC<OptionRowProps> = ({ data }) => {
         <ProposalOptionTag option={data} />
         <ActionCountLabel>
           {data?.actions?.length || 'No'} on-chain{' '}
-          {data?.actions?.length > 2 ? 'actions' : 'action'}
+          {data?.actions?.length >= 2 ? 'actions' : 'action'}
         </ActionCountLabel>
       </DetailWrapper>
 

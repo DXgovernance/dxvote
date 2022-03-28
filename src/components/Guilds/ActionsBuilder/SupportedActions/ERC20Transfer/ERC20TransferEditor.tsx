@@ -1,12 +1,14 @@
 import { FiNavigation } from 'react-icons/fi';
 import {
   EditorWrapper,
+  FooterWrapper,
   HeaderWrapper,
   IconWrapper,
   TitleWrapper,
 } from '../common/editor';
 import { ActionEditorProps } from '..';
 import Transfer from './Transfer';
+import AddButton from '../../common/AddButton';
 
 const ERC20TransferEditor: React.FC<ActionEditorProps> = ({
   call,
@@ -24,9 +26,9 @@ const ERC20TransferEditor: React.FC<ActionEditorProps> = ({
 
       <Transfer contract={contract} call={call} updateCall={updateCall} />
 
-      {/* <FooterWrapper>
+      <FooterWrapper>
         <AddButton label="Add Recipient" />
-      </FooterWrapper> */}
+      </FooterWrapper>
     </EditorWrapper>
   );
 };

@@ -149,12 +149,6 @@ const CreateProposalPage: React.FC = () => {
     const dataArray = calls.map(call => call.data);
     const valueArray = calls.map(call => call.value);
 
-    console.log({
-      toArray,
-      dataArray,
-      valueArray,
-    });
-
     createTransaction(`Create proposal ${title}`, async () => {
       return guildContract.createProposal(
         toArray,

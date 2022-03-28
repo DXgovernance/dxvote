@@ -20,9 +20,10 @@ const defaultAlchemyKey = '7i7fiiOx1b7bGmgWY_oI9twyQBCsuXKC';
 export const DISCOURSE_URL_ROOT = 'https://daotalk.org';
 
 export const MAINNET_ID = 1;
+export const LOCALHOST_ID = 1337;
 
 export const DEFAULT_CHAIN_ID =
-  process.env.NODE_ENV === 'development' ? 1337 : MAINNET_ID;
+  process.env.NODE_ENV === 'development' ? LOCALHOST_ID : MAINNET_ID;
 
 export const POKT_NETWORK_URLS = {
   '1': 'https://eth-archival.gateway.pokt.network/v1/lb/61f86d630d66d80038fb8c38',
