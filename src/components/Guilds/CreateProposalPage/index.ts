@@ -1,2 +1,2 @@
-export * from './ActionsBuilder';
+export * from '../ActionsBuilder';
 export * from './SidebarInfoCard';
