@@ -1,8 +1,8 @@
 import { useMemo, useEffect, useState } from 'react';
+import sha256 from 'crypto-js/sha256';
 import useJsonRpcProvider from '../web3/useJsonRpcProvider';
 import { GuildImplementationType } from '../../../types/types.guilds.d';
 import deployedHashedBytecodes from '../../../bytecodes/config.json';
-import sha256 from 'crypto-js/sha256';
 
 /**
  * @function useGuildImplementationType
