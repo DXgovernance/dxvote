@@ -31,7 +31,8 @@ module.exports = {
       'dxdao-contracts/contracts/daostack/votingMachines/GenesisProtocol.sol',
       'dxdao-contracts/contracts/erc20guild/ERC20Guild.sol',
       'dxdao-contracts/contracts/erc20guild/implementations/DXDGuild.sol',
-      'dxdao-contracts/contracts/erc20guild/implementations/SnapshotRepERC20Guild.sol'
+      'dxdao-contracts/contracts/erc20guild/implementations/SnapshotRepERC20Guild.sol',
+      'dxdao-contracts/contracts/erc20guild/utils/GuildRegistry.sol'
     ],
   },
   solidity: {
