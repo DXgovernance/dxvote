@@ -67,6 +67,24 @@ async function main() {
           },
         ],
       },
+      {
+        name: 'Snapshot Guild',
+        symbol: 'SET',
+        distribution: [
+          {
+            address: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+            amount: 1000,
+          },
+          {
+            address: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
+            amount: 4000,
+          },
+          {
+            address: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+            amount: 10000,
+          },
+        ],
+      },
     ],
 
     permissionRegistryDelay: moment.duration(10, 'minutes').asSeconds(),
@@ -218,6 +236,19 @@ async function main() {
         token: 'RGT',
         contractName: 'SnapshotRepERC20Guild',
         name: 'REPGuild',
+        proposalTime: moment.duration(5, 'minutes').asSeconds(),
+        timeForExecution: moment.duration(2, 'minutes').asSeconds(),
+        votingPowerForProposalExecution: '50',
+        votingPowerForProposalCreation: '5',
+        voteGas: '0',
+        maxGasPrice: '0',
+        maxActiveProposals: '5',
+        lockTime: moment.duration(5, 'minutes').asSeconds(),
+      },
+      {
+        token: 'SET',
+        contractName: 'SnapshotERC20Guild',
+        name: 'SnapshotGuild',
         proposalTime: moment.duration(5, 'minutes').asSeconds(),
         timeForExecution: moment.duration(2, 'minutes').asSeconds(),
         votingPowerForProposalExecution: '50',
@@ -551,7 +582,7 @@ async function main() {
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
     ],
-    guilds: [addresses.DXDGuild, addresses.REPGuild],
+    guilds: [addresses.DXDGuild, addresses.REPGuild, addresses.SnapshotGuild],
   };
 
   mkdirSync(path.resolve(__dirname, '../src/configs/localhost'), {
