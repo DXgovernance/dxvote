@@ -31,7 +31,7 @@ export const Backdrop = styled.div`
 
 export const StyledModal = styled.div`
   z-index: 100;
-  background: ${({ theme }) => theme.colors.background3};
+  background: ${({ theme }) => theme.colors.modalBackground};
   position: relative;
   margin: auto;
   border: 1px solid ${({ theme }) => theme.colors.muted};
