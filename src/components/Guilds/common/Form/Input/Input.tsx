@@ -1,12 +1,11 @@
 import React, { InputHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
-import { FiX } from 'react-icons/fi';
 
-const baseInputStyles = css`
+export const baseInputStyles = css`
   border: 0.1rem solid ${({ theme }) => theme.colors.muted};
   border-radius: 1.5rem;
   padding: 0.5rem 0.8rem;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: transparent;
   color: ${({ theme }) => theme.colors.text};
 
   ::placeholder {
@@ -15,7 +14,7 @@ const baseInputStyles = css`
     font-weight: ${({ theme }) => theme.fontWeights.regular};
   }
   :hover:enabled {
-    color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
     border-color: ${({ theme }) => theme.colors.border.hover};
   }
 
@@ -34,7 +33,8 @@ const baseInputStyles = css`
 const InputWrapper = styled.div`
   ${baseInputStyles}
   display: flex;
-  width: ${({ width }) => (width ? width : '100%')};
+  align-items: center;
+  width: 100%;
   &:hover,
   &:focus {
     border: 0.1rem solid ${({ theme }) => theme.colors.text};
@@ -55,7 +55,8 @@ const InputBase = styled.input`
   color: ${({ theme }) => theme.colors.proposalText.lightGrey};
   margin-left: 12px;
   padding: 0;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: transparent;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const BaseInput = styled.input`
@@ -67,73 +68,25 @@ const InputText = styled(BaseInput)`
   margin: 0.2rem;
 `;
 
-const CloseIcon = styled(FiX)`
-  color: ${({ theme }) => theme.colors.text};
-  height: 1.5rem;
-  width: 1.5rem;
-
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
-  }
-`;
-
-const IconWrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  align-items: center;
-  justify-content: center;
-  & > img,
-  span {
-    height: ${({ size }) => (size ? size + 'px' : '24px')};
-    width: ${({ size }) => (size ? size + 'px' : '24px')};
-  }
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    align-items: flex-end;
-  `};
-`;
-
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  icon?: React.ReactElement | string;
-  size?: number;
-  cross?: boolean;
+  icon?: React.ReactElement;
+  iconRight?: React.ReactElement;
 }
 
-const TextInput: React.FC<InputProps> = ({
+const Input: React.FC<InputProps> = ({
   icon = null,
-  cross,
-  size,
-  width,
+  iconRight = null,
   ...rest
 }) => {
-  return !!icon ? (
-    <InputWrapper width={width}>
-      <IconWrapper size={size}>
-        {icon == typeof 'React.ReactElement' ? (
-          icon
-        ) : (
-          <img src={icon as string} alt={'Icon'} />
-        )}
-      </IconWrapper>
-      <InputBase {...rest} />
-      {cross && <CloseIcon />}
-    </InputWrapper>
-  ) : (
-    <InputWrapper width={width}>
-      <InputBase {...rest} />
-      {cross && <CloseIcon />}
-    </InputWrapper>
-  );
-};
-
-const Input: React.FC<InputProps> = ({ icon = null, ...rest }) => {
-  return !!icon ? (
+  return !!icon || !!iconRight ? (
     <InputWrapper>
       {icon}
       <InputBase {...rest} />
+      {iconRight}
     </InputWrapper>
   ) : (
     <BaseInput {...rest} />
   );
 };
 
-export { BaseInput, InputText, Input, TextInput };
+export { BaseInput, InputText, Input };

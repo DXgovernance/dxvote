@@ -2,12 +2,9 @@ import styled from 'styled-components';
 import { Flex } from '../common/Layout';
 import { ContainerText } from '../common/Layout/Text';
 import { Button } from '../common/Button';
-import {
-  ActionsModalView,
-  useActionsBuilder,
-} from 'contexts/Guilds/ActionsBuilder';
+import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
 
-const RepWrapper = styled(Flex)`
+const Wrapper = styled(Flex)`
   margin: 16px auto;
 `;
 const WrapperText = styled(ContainerText).attrs(() => ({
@@ -17,7 +14,7 @@ const WrapperText = styled(ContainerText).attrs(() => ({
   flex-direction: row;
   width: 85%;
   margin: 8px auto;
-  color: ${({ theme }) => theme.colors.proposal.grey};
+  color: ${({ theme }) => theme.colors.proposalText.grey};
 `;
 
 const ExternalWrapper = styled(Flex)`
@@ -44,35 +41,31 @@ const ActionsButton = styled(Button)`
   }
 `;
 
-interface ExternalContractsProps {
-  noOfActions: number;
-  functionDescription: string;
-  functionName: string;
+interface ContractActionsListProps {
+  contract: RegistryContract;
+  onSelect: (functionName: string) => void;
 }
 
-const ExternalContractsModal: React.FC<ExternalContractsProps> = ({
-  noOfActions,
-  functionDescription,
-  functionName,
+const ContractActionsList: React.FC<ContractActionsListProps> = ({
+  contract,
+  onSelect,
 }) => {
-  const { setModalView } = useActionsBuilder();
-
   return (
-    <RepWrapper>
+    <Wrapper>
       <ExternalWrapper>
         <WrapperText>6 Actions</WrapperText>
-        <ActionsButton
-          variant="secondary"
-          onClick={() =>
-            setModalView(content => [...content, ActionsModalView.MintRep])
-          }
-        >
-          {functionDescription}
-          <ButtonText>{functionName}</ButtonText>
-        </ActionsButton>
+        {contract.functions.map(contractFunction => (
+          <ActionsButton
+            variant="secondary"
+            onClick={() => onSelect(contractFunction.functionName)}
+          >
+            {contractFunction.title}
+            <ButtonText>{contractFunction.functionName}</ButtonText>
+          </ActionsButton>
+        ))}
       </ExternalWrapper>
-    </RepWrapper>
+    </Wrapper>
   );
 };
 
-export default ExternalContractsModal;
+export default ContractActionsList;

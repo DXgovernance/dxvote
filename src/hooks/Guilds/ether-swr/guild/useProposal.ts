@@ -24,8 +24,11 @@ const formatterMiddleware: Middleware =
   };
 
 export const useProposal = (guildId: string, proposalId: string) => {
-  return useEtherSWR<Proposal>([guildId, 'getProposal', proposalId], {
-    use: [formatterMiddleware],
-    ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
-  });
+  return useEtherSWR<Proposal>(
+    guildId && proposalId ? [guildId, 'getProposal', proposalId] : [],
+    {
+      use: [formatterMiddleware],
+      ABIs: new Map([[guildId, ERC20GuildContract.abi]]),
+    }
+  );
 };

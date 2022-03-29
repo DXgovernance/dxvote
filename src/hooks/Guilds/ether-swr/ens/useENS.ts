@@ -4,8 +4,9 @@ import useENSNameFromAddress from './useENSNameFromAddress';
 
 export default function useENS(nameOrAddress: string, chainId?: number) {
   const validAddress = isAddress(nameOrAddress);
+  const validENS = nameOrAddress?.endsWith('.eth');
   const resolvedAddress = useAddressFromENSName(
-    !validAddress ? nameOrAddress : undefined,
+    !validAddress && validENS ? nameOrAddress : undefined,
     chainId
   );
 
