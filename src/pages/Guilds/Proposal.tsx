@@ -17,6 +17,7 @@ import { ActionsBuilder } from 'components/Guilds/CreateProposalPage';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import Result, { ResultState } from 'components/Guilds/common/Result';
 import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
+import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -93,6 +94,7 @@ const ProposalPage: React.FC = () => {
   );
   const { data: proposalIds } = useGuildProposalIds(guildId);
   const { data: proposal, error } = useProposal(guildId, proposalId);
+  const { options } = useProposalCalls(guildId, proposalId);
 
   if (!isGuildAvailabilityLoading) {
     if (!proposalIds?.includes(proposalId)) {
@@ -148,7 +150,7 @@ const ProposalPage: React.FC = () => {
         <ProposalDescription />
 
         <ProposalActionsWrapper>
-          <ActionsBuilder editable={false} />
+          <ActionsBuilder options={options} editable={false} />
         </ProposalActionsWrapper>
       </PageContent>
       <SidebarContent>

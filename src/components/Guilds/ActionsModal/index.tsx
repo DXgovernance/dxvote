@@ -1,125 +1,93 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Flex } from '../common/Layout';
-import { ContainerText } from '../common/Layout/Text';
-import { Button } from '../common/Button';
-import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
-import StyledIcon from '../common/SVG';
-import {
-  ActionsModalView,
-  useActionsBuilder,
-} from 'contexts/Guilds/ActionsBuilder';
+import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { defaultValues } from '../ActionsBuilder/SupportedActions';
+import { DecodedAction, SupportedAction } from '../ActionsBuilder/types';
+import { Modal } from '../common/Modal';
+import ContractActionsList from './ContractActionsList';
+import ContractsList from './ContractsList';
 
-const CoreWrapper = styled(Flex)`
-  width: 100%;
-  margin-bottom: 16px;
-`;
+interface ActionModalProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  onAddAction: (action: DecodedAction) => void;
+}
 
-const ExternalWrapper = styled(Flex)`
-  width: 100%;
-`;
+const ActionModal: React.FC<ActionModalProps> = ({
+  isOpen,
+  setIsOpen,
+  onAddAction,
+}) => {
+  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
 
-const Wrapper = styled(Flex)`
-  width: 100%;
-  margin: 24px auto;
-`;
+  const [selectedContract, setSelectedContract] =
+    useState<RegistryContract>(null);
+  const [selectedFunction, setSelectedFunction] = useState<string>(null);
 
-const ActionsButton = styled(Button).attrs(() => ({
-  variant: 'secondary',
-}))`
-  width: 90%;
-  height: 40px;
-  margin: 6px 0;
-  flex-direction: row;
-  justify-content: left;
-  &:active,
-  &:focus {
-    border: 2px solid ${({ theme }) => theme.colors.text};
+  function getHeader() {
+    if (selectedFunction) {
+      return selectedContract.functions.find(
+        fn => fn.functionName === selectedFunction
+      )?.title;
+    }
+
+    if (selectedContract) {
+      return selectedContract?.title;
+    }
+
+    return 'Add action';
   }
-`;
 
-const WrapperText = styled(ContainerText).attrs(() => ({
-  variant: 'bold',
-}))`
-  justify-content: left;
-  flex-direction: row;
-  width: 85%;
-  color: ${({ theme }) => theme.colors.proposalText.grey};
-`;
+  function getContent() {
+    if (selectedFunction) {
+      return null;
+    }
 
-const ButtonText = styled(ContainerText).attrs(() => ({
-  variant: 'medium',
-}))`
-  justify-content: space-between;
-  flex-direction: row;
-  color: ${({ theme }) => theme.colors.proposalText.grey};
-`;
+    if (selectedContract) {
+      return (
+        <ContractActionsList
+          contract={selectedContract}
+          onSelect={setSelectedFunction}
+        />
+      );
+    }
 
-const ExternalButton = styled(ActionsButton).attrs(() => ({
-  variant: 'secondary',
-}))`
-  justify-content: space-between;
-`;
+    return (
+      <ContractsList
+        onSelect={setSelectedContract}
+        onSupportedActionSelect={addSupportedAction}
+      />
+    );
+  }
 
-const ActionModal: React.FC = () => {
-  //TODO: remove hardcoded external contracts with actual data
+  function goBack() {
+    if (selectedFunction) {
+      setSelectedFunction(null);
+    } else if (selectedContract) {
+      setSelectedContract(null);
+    }
+  }
 
-  const { setModalView, setTransferBuilder, transferBuilder, setIsOpen } =
-    useActionsBuilder();
+  function addSupportedAction(action: SupportedAction) {
+    const defaultDecodedAction = defaultValues[action];
+    if (!defaultDecodedAction) return null;
 
-  const handleTransfer = () => {
-    setTransferBuilder(true);
-    setIsOpen(false);
-  };
+    defaultDecodedAction.decodedCall.from = guildId;
+    defaultDecodedAction.decodedCall.callType = action;
+    onAddAction(defaultDecodedAction as DecodedAction);
+  }
 
   return (
-    <Wrapper>
-      <CoreWrapper>
-        <WrapperText>Core</WrapperText>
-        <ActionsButton disabled={transferBuilder} onClick={handleTransfer}>
-          <StyledIcon src={Vector} />
-          Transfer & Mint
-        </ActionsButton>
-      </CoreWrapper>
-      <ExternalWrapper>
-        <WrapperText>External Contracts</WrapperText>
-        <ExternalButton
-          onClick={() =>
-            setModalView(content => [
-              ...content,
-              ActionsModalView.ExternalContracts,
-            ])
-          }
-        >
-          DXdao Controller
-          <ButtonText>2 Actions</ButtonText>
-        </ExternalButton>
-        <ExternalButton>
-          Permissions Registry
-          <ButtonText>4 Actions</ButtonText>
-        </ExternalButton>
-        <ExternalButton>
-          DXD Voting Machine
-          <ButtonText>1 Actions</ButtonText>
-        </ExternalButton>
-        <ExternalButton>
-          RegistrarWalletScheme
-          <ButtonText>2 Actions</ButtonText>
-        </ExternalButton>
-        <ExternalButton>
-          MasterWalletScheme
-          <ButtonText>1 Actions</ButtonText>
-        </ExternalButton>
-        <ExternalButton>
-          QuickWalletScheme
-          <ButtonText>1 Actions</ButtonText>
-        </ExternalButton>
-        <ExternalButton>
-          SWPRWalletScheme
-          <ButtonText>1 Actions</ButtonText>
-        </ExternalButton>
-      </ExternalWrapper>
-    </Wrapper>
+    <Modal
+      isOpen={isOpen}
+      onDismiss={() => setIsOpen(false)}
+      header={getHeader()}
+      maxWidth={300}
+      backnCross={!!selectedContract}
+      prevContent={goBack}
+    >
+      {getContent()}
+    </Modal>
   );
 };
 

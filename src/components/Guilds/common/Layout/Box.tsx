@@ -25,7 +25,6 @@ export const Flex = styled.div`
     justifyContent ? justifyContent : 'center'};
   align-items: ${({ alignItems }) => (alignItems ? alignItems : 'center')};
   text-align: center;
-  background: ${({ theme }) => theme.colors.background};
   border-radius: ${({ theme }) => theme.radii.curved};
   margin: ${({ margin }) => (margin ? margin : '0')};
   padding: ${({ padding }) => (padding ? padding : '0')};

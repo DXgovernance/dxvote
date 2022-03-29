@@ -4,6 +4,7 @@ import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import { Loading } from '../../common/Loading';
 import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
+import { BigNumber } from 'ethers';
 
 const VotesChartContainer = styled.div`
   display: flex;
@@ -102,10 +103,9 @@ export const VotesChart = ({ isPercent }) => {
       {voteData?.options ? (
         <VotesChartRow>
           {Object.values(voteData.options).map((item, i) => {
-            const percentBN = item
-              .mul(100)
-              .mul(Math.pow(10, 2))
-              .div(voteData?.totalLocked);
+            const percentBN = voteData?.totalLocked?.isZero()
+              ? BigNumber.from(0)
+              : item.mul(100).mul(Math.pow(10, 2)).div(voteData?.totalLocked);
             const percent = Math.round(percentBN.toNumber()) / Math.pow(10, 2);
 
             return (
