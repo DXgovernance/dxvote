@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const sha256 = require('crypto-js/sha256');
 
 function main() {
   const paths = {
@@ -19,12 +20,13 @@ function main() {
         ...acc,
         {
           type,
-          bytecode: json.deployedBytecode,
+          bytecode: sha256(json.deployedBytecode).toString(),
         },
       ];
     } catch (e) {
       console.error(
-        `[updateDeployedBytecodes.js] File was not found: ${path}. Skipping ${type}`
+        `[updateDeployedBytecodes.js] File was not found: ${path}. Skipping ${type} \n`,
+        e
       );
       return acc;
     }
