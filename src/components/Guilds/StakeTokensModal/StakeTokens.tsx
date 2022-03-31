@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { FiArrowRight, FiInfo } from 'react-icons/fi';
 import moment from 'moment';
+import { useHistory, useLocation } from 'react-router';
 import { useParams } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 
@@ -20,6 +21,7 @@ import NumericalInput from '../common/Form/NumericalInput';
 import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
 import useStringToBigNumber from '../../../hooks/Guilds/conversions/useStringToBigNumber';
 import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
+import useGuildImplementationType from '../../../hooks/Guilds/guild/useGuildImplementationType';
 import { Loading } from '../common/Loading';
 
 const GuestContainer = styled.div`
@@ -111,7 +113,7 @@ const StakeAmountInput = styled(NumericalInput)`
   font-family: inherit;
 `;
 
-const ButtonLock = styled(Button)`
+const ActionButton = styled(Button)`
   width: 100%;
   margin-top: 22px;
   self-align: flex-end;
@@ -188,7 +190,9 @@ export const StakeTokens = () => {
     stakeAmountParsed?.add(guildConfig?.totalLocked),
     3
   );
-
+  const history = useHistory();
+  const location = useLocation();
+  const { isRep } = useGuildImplementationType(guildAddress);
   return (
     <GuestContainer>
       <DaoBrand>
@@ -209,9 +213,39 @@ export const StakeTokens = () => {
         )}{' '}
       </InfoItem>
 
-      <BalanceWidget>
+      {!isRep && (
+        <BalanceWidget>
+          <InfoRow>
+            <InfoLabel>Balance:</InfoLabel>
+            <InfoValue>
+              {tokenBalance && tokenInfo ? (
+                roundedBalance
+              ) : (
+                <Loading loading text skeletonProps={{ width: 30 }} />
+              )}{' '}
+              {tokenInfo?.symbol || (
+                <Loading loading text skeletonProps={{ width: 10 }} />
+              )}
+            </InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <StakeAmountInput
+              value={stakeAmount}
+              onUserInput={setStakeAmount}
+            />
+            <Button
+              onClick={() =>
+                setStakeAmount(formatUnits(tokenBalance, tokenInfo?.decimals))
+              }
+            >
+              Max
+            </Button>
+          </InfoRow>
+        </BalanceWidget>
+      )}
+      {isRep && (
         <InfoRow>
-          <InfoLabel>Balance:</InfoLabel>
+          <InfoLabel>Balance</InfoLabel>
           <InfoValue>
             {tokenBalance && tokenInfo ? (
               roundedBalance
@@ -223,17 +257,7 @@ export const StakeTokens = () => {
             )}
           </InfoValue>
         </InfoRow>
-        <InfoRow>
-          <StakeAmountInput value={stakeAmount} onUserInput={setStakeAmount} />
-          <Button
-            onClick={() =>
-              setStakeAmount(formatUnits(tokenBalance, tokenInfo?.decimals))
-            }
-          >
-            Max
-          </Button>
-        </InfoRow>
-      </BalanceWidget>
+      )}
       <InfoRow>
         <InfoLabel>Your voting power</InfoLabel>
         <InfoValue>
@@ -260,41 +284,51 @@ export const StakeTokens = () => {
           )}
         </InfoValue>
       </InfoRow>
-      <InfoRow>
-        <InfoLabel>Unlock Date</InfoLabel>
-        <InfoValue>
-          {isStakeAmountValid ? (
-            <>
-              <strong>
-                {moment()
-                  .add(guildConfig.lockTime.toNumber(), 'seconds')
-                  .format('MMM Do, YYYY - h:mm a')}
-              </strong>{' '}
-              <FiInfo />
-            </>
-          ) : (
-            '-'
-          )}
-        </InfoValue>
-      </InfoRow>
-      {stakeAmountParsed && tokenAllowance?.gte(stakeAmountParsed) ? (
-        <ButtonLock disabled={!isStakeAmountValid} onClick={lockTokens}>
-          Lock{' '}
-          {tokenInfo?.symbol || (
-            <Loading loading text skeletonProps={{ width: 10 }} />
-          )}
-        </ButtonLock>
+      {!isRep && (
+        <InfoRow>
+          <InfoLabel>Unlock Date</InfoLabel>
+          <InfoValue>
+            {isStakeAmountValid ? (
+              <>
+                <strong>
+                  {moment()
+                    .add(guildConfig.lockTime.toNumber(), 'seconds')
+                    .format('MMM Do, YYYY - h:mm a')}
+                </strong>{' '}
+                <FiInfo />
+              </>
+            ) : (
+              '-'
+            )}
+          </InfoValue>
+        </InfoRow>
+      )}
+      {!isRep ? (
+        stakeAmountParsed && tokenAllowance?.gte(stakeAmountParsed) ? (
+          <ActionButton disabled={!isStakeAmountValid} onClick={lockTokens}>
+            Lock{' '}
+            {tokenInfo?.symbol || (
+              <Loading loading text skeletonProps={{ width: 10 }} />
+            )}
+          </ActionButton>
+        ) : (
+          <ActionButton
+            disabled={!isStakeAmountValid}
+            onClick={approveTokenSpending}
+          >
+            Approve{' '}
+            {tokenInfo?.symbol || (
+              <Loading loading text skeletonProps={{ width: 10 }} />
+            )}{' '}
+            Spending
+          </ActionButton>
+        )
       ) : (
-        <ButtonLock
-          disabled={!isStakeAmountValid}
-          onClick={approveTokenSpending}
+        <ActionButton
+          onClick={() => history.push(location.pathname + '/proposalType')}
         >
-          Approve{' '}
-          {tokenInfo?.symbol || (
-            <Loading loading text skeletonProps={{ width: 10 }} />
-          )}{' '}
-          Spending
-        </ButtonLock>
+          Mint Rep
+        </ActionButton>
       )}
     </GuestContainer>
   );
