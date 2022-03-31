@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const sha256 = require('crypto-js/sha256');
+const { utils } = require('ethers');
 
 const GUILD_TYPES = {
   SnapshotRepERC20Guild: 'SnapshotRepERC20Guild',
@@ -48,7 +48,7 @@ function main() {
         ...acc,
         {
           type,
-          bytecode: sha256(json.deployedBytecode).toString(),
+          bytecode_hash: utils.sha256(json.deployedBytecode),
           features: getGuildFeatures(type),
         },
       ];

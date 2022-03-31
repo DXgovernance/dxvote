@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useState } from 'react';
-import sha256 from 'crypto-js/sha256';
+import { utils } from 'ethers';
 import useJsonRpcProvider from '../web3/useJsonRpcProvider';
 import { GuildImplementationType } from '../../../types/types.guilds.d';
 import deployedHashedBytecodes from '../../../bytecodes/config.json';
@@ -17,9 +17,7 @@ export default function useGuildImplementationType(
 
   useEffect(() => {
     const getBytecode = async () => {
-      const hashedBytecode = sha256(
-        await provider.getCode(guildAddress)
-      ).toString();
+      const hashedBytecode = utils.sha256(await provider.getCode(guildAddress));
       setGuildBytecode(hashedBytecode);
     };
     getBytecode();
@@ -29,7 +27,7 @@ export default function useGuildImplementationType(
     if (!guildBytecode) return GuildImplementationType.IERC20Guild;
 
     const match = deployedHashedBytecodes.find(
-      ({ bytecode }) => guildBytecode === bytecode
+      ({ bytecode_hash }) => guildBytecode === bytecode_hash
     );
 
     return match ? match.type : GuildImplementationType.IERC20Guild; // default to IERC20Guild

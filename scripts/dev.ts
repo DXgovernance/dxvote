@@ -68,8 +68,8 @@ async function main() {
         ],
       },
       {
-        name: 'Snapshot Guild',
-        symbol: 'SET',
+        name: 'Snapshot Guild Token',
+        symbol: 'SGT',
         distribution: [
           {
             address: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
@@ -246,7 +246,7 @@ async function main() {
         lockTime: moment.duration(5, 'minutes').asSeconds(),
       },
       {
-        token: 'SET',
+        token: 'SGT',
         contractName: 'SnapshotERC20Guild',
         name: 'SnapshotGuild',
         proposalTime: moment.duration(5, 'minutes').asSeconds(),
