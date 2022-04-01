@@ -132,7 +132,7 @@ export const MemberActions = () => {
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
 
-  const { isRep } = useGuildImplementationType(guildAddress);
+  const { isRepGuild } = useGuildImplementationType(guildAddress);
   return (
     <>
       <DropdownMenu ref={memberMenuRef}>
@@ -198,7 +198,7 @@ export const MemberActions = () => {
               Increase Voting Power
             </LockButton>
 
-            {isUnlockable && !isRep && (
+            {isUnlockable && !isRepGuild && (
               <LockButton onClick={withdrawTokens}>Withdraw</LockButton>
             )}
           </MemberContainer>

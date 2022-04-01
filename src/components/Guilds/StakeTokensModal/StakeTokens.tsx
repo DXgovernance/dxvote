@@ -53,7 +53,7 @@ const DaoTitle = styled(Heading)`
 const InfoItem = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.fontSizes.body};
-  color: ${({ theme }) => theme.colors.muted};
+  color: ${({ theme }) => theme.colors.card.grey};
   margin-bottom: 0.4rem;
 `;
 
@@ -86,7 +86,7 @@ const BaseFont = css`
 
 const InfoLabel = styled.span`
   ${BaseFont}
-  color: ${({ theme }) => theme.colors.muted};
+  color: ${({ theme }) => theme.colors.card.grey};
 `;
 
 const InfoValue = styled.span`
@@ -192,7 +192,7 @@ export const StakeTokens = () => {
   );
   const history = useHistory();
   const location = useLocation();
-  const { isRep } = useGuildImplementationType(guildAddress);
+  const { isRepGuild } = useGuildImplementationType(guildAddress);
   return (
     <GuestContainer>
       <DaoBrand>
@@ -203,17 +203,19 @@ export const StakeTokens = () => {
           )}
         </DaoTitle>
       </DaoBrand>
-      <InfoItem>
-        {guildConfig?.lockTime ? (
-          `${moment
-            .duration(guildConfig.lockTime.toNumber(), 'seconds')
-            .humanize()} staking period`
-        ) : (
-          <Loading loading text skeletonProps={{ width: 200 }} />
-        )}{' '}
-      </InfoItem>
+      {!isRepGuild && (
+        <InfoItem>
+          {guildConfig?.lockTime ? (
+            `${moment
+              .duration(guildConfig.lockTime.toNumber(), 'seconds')
+              .humanize()} staking period`
+          ) : (
+            <Loading loading text skeletonProps={{ width: 200 }} />
+          )}{' '}
+        </InfoItem>
+      )}
 
-      {!isRep && (
+      {!isRepGuild && (
         <BalanceWidget>
           <InfoRow>
             <InfoLabel>Balance:</InfoLabel>
@@ -243,7 +245,7 @@ export const StakeTokens = () => {
           </InfoRow>
         </BalanceWidget>
       )}
-      {isRep && (
+      {isRepGuild && (
         <InfoRow>
           <InfoLabel>Balance</InfoLabel>
           <InfoValue>
@@ -284,7 +286,7 @@ export const StakeTokens = () => {
           )}
         </InfoValue>
       </InfoRow>
-      {!isRep && (
+      {!isRepGuild && (
         <InfoRow>
           <InfoLabel>Unlock Date</InfoLabel>
           <InfoValue>
@@ -303,7 +305,7 @@ export const StakeTokens = () => {
           </InfoValue>
         </InfoRow>
       )}
-      {!isRep ? (
+      {!isRepGuild ? (
         stakeAmountParsed && tokenAllowance?.gte(stakeAmountParsed) ? (
           <ActionButton disabled={!isStakeAmountValid} onClick={lockTokens}>
             Lock{' '}
