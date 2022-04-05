@@ -1,10 +1,13 @@
 import { ProposalOptionTag } from '../common/ProposalOptionTag';
 import AddButton from '../common/AddButton';
 import ActionEditor from '../Action/EditMode';
-import { ActionCountLabel, DetailWrapper, OptionWrapper } from './styles';
+import { Detail, DetailWrapper, OptionWrapper } from './styles';
 import { DecodedAction, Option } from '../types';
 import { useState } from 'react';
 import ActionModal from 'components/Guilds/ActionsModal';
+import Grip from '../common/Grip';
+import DataTag from '../common/DataTag';
+import EditButton from '../common/EditButton';
 
 interface OptionRowProps {
   option: Option;
@@ -31,11 +34,23 @@ const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
   return (
     <OptionWrapper>
       <DetailWrapper>
-        <ProposalOptionTag option={option} />
-        <ActionCountLabel>
-          {option?.actions?.length || 'No'} on-chain{' '}
-          {option?.actions?.length > 2 ? 'actions' : 'action'}
-        </ActionCountLabel>
+        <div>
+          <Detail>
+            <Grip />
+          </Detail>
+          <Detail>
+            <ProposalOptionTag option={option} />
+          </Detail>
+          <Detail>
+            <DataTag>
+              {option?.actions?.length || 'No'} on-chain{' '}
+              {option?.actions?.length >= 2 ? 'actions' : 'action'}
+            </DataTag>
+          </Detail>
+        </div>
+        <div>
+          <EditButton>Edit</EditButton>
+        </div>
       </DetailWrapper>
 
       {option?.decodedActions?.map((action, index) => (
