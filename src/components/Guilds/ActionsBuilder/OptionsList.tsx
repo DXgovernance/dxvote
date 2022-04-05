@@ -1,20 +1,20 @@
 import styled from 'styled-components';
 import { Divider } from '../common/Divider';
 import { Box } from '../common/Layout';
-import OptionEditMode from './Option/EditMode';
+import OptionRow from './Option';
 import AddButton from './common/AddButton';
 import { Option } from './types';
 
 const AddOptionWrapper = styled(Box)`
   padding: 1rem;
 `;
-interface EditModeProps {
+interface OptionsListProps {
   isEditable: boolean;
   options: Option[];
   onChange: (options: Option[]) => void;
 }
 
-const EditMode: React.FC<EditModeProps> = ({
+const OptionsList: React.FC<OptionsListProps> = ({
   isEditable,
   options,
   onChange,
@@ -38,7 +38,7 @@ const EditMode: React.FC<EditModeProps> = ({
     <>
       {options?.map((option, idx) => (
         <>
-          <OptionEditMode
+          <OptionRow
             key={idx}
             option={option}
             onChange={updatedOption => updateOption(idx, updatedOption)}
@@ -60,4 +60,4 @@ const EditMode: React.FC<EditModeProps> = ({
   );
 };
 
-export default EditMode;
+export default OptionsList;

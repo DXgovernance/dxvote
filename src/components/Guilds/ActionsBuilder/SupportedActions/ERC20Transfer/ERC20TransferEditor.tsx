@@ -172,7 +172,7 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
           <ControlLabel>Amount</ControlLabel>
           <ControlRow>
             <TransferAmountInput
-              value={roundedBalance || 0}
+              value={roundedBalance}
               onUserInput={setAmount}
             />
           </ControlRow>

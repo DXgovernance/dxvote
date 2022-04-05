@@ -1,15 +1,31 @@
 import styled from 'styled-components';
-import { ProposalOptionTag } from '../common/ProposalOptionTag';
-import AddButton from '../common/AddButton';
-import ActionEditor from '../Action/EditMode';
-import { Detail, DetailWrapper, OptionWrapper } from './styles';
-import { DecodedAction, Option } from '../types';
+import { ProposalOptionTag } from './common/ProposalOptionTag';
+import AddButton from './common/AddButton';
+import ActionEditor from './Action/EditMode';
+import { DecodedAction, Option } from './types';
 import { useState } from 'react';
 import ActionModal from 'components/Guilds/ActionsModal';
-import Grip from '../common/Grip';
-import DataTag from '../common/DataTag';
-import EditButton from '../common/EditButton';
-import ActionView from '../Action/ViewMode';
+import Grip from './common/Grip';
+import DataTag from './common/DataTag';
+import EditButton from './common/EditButton';
+import ActionView from './Action/ViewMode';
+import { Box } from 'components/Guilds/common/Layout';
+
+export const OptionWrapper = styled(Box)`
+  padding: 1rem;
+`;
+
+export const DetailWrapper = styled(Box)`
+  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const Detail = styled(Box)`
+  display: inline-flex;
+  margin-right: 0.75rem;
+`;
 
 const ActionsWrapper = styled.div`
   margin-left: ${({ indented }) => (indented ? '1.75rem' : '0')};
@@ -21,7 +37,7 @@ interface OptionRowProps {
   onChange?: (updatedOption: Option) => void;
 }
 
-const OptionEditMode: React.FC<OptionRowProps> = ({
+const OptionRow: React.FC<OptionRowProps> = ({
   isEditable,
   option,
   onChange,
@@ -103,4 +119,4 @@ const OptionEditMode: React.FC<OptionRowProps> = ({
   );
 };
 
-export default OptionEditMode;
+export default OptionRow;
