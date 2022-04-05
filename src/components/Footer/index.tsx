@@ -101,7 +101,7 @@ const Footer = () => {
           v
           {`${process.env.REACT_APP_VERSION}${
             process.env.NODE_ENV !== 'production'
-              ? `-${process.env.NODE_ENV}-${process.env.REACT_APP_GIT_SHA}`
+              ? `-${process.env.NODE_ENV}`
               : ''
           }`}
         </FooterItem>
