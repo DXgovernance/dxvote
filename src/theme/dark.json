@@ -2,13 +2,18 @@
   "colors": {
     "text": "#fff",
     "primary": "#295FF4",
-    "secondary": "#1B1D1F",
+    "secondary": "#181B1B",
     "red": "#E75C5C",
     "proposalText": {
       "grey": "#A1A6B0",
       "lightGrey": "#BDC0C7"
     },
+    "card": {
+      "grey": "#A1A6B0",
+      "green": "#1DE9B6"
+    },
     "background": "#1B1D1F",
+    "modalBackground": "#26282D",
     "button": {
       "primary": "#295FF4",
       "secondary": "#000"

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { TextInput } from '../../../components/Guilds/common/Form';
+import { Input } from '../../../components/Guilds/common/Form';
 import { useWeb3React } from '@web3-react/core';
 import { useState } from 'react';
 import { Flex } from '../common/Layout';
@@ -34,34 +34,31 @@ const MintReputationModal: React.FC = () => {
     <RepWrapper>
       <ExternalWrapper>
         <WrapperText>Recipient</WrapperText>
-        <TextInput
+        <Input
           placeholder="Ethereum Address"
           value={address}
           onChange={e => setAddress(e.target.value)}
           icon={iconsByChain[chainId] || null}
           size={24}
-          cross
           width="85%"
         />
       </ExternalWrapper>
       <ExternalWrapper>
         <WrapperText>Reputation Amount</WrapperText>
-        <TextInput
+        <Input
           placeholder="0.00"
           value={repAmount}
           onChange={e => setRepAmount(e.target.value)}
           size={24}
-          cross
           width="85%"
         />
       </ExternalWrapper>
       <ExternalWrapper>
         <WrapperText>Reputation in %</WrapperText>
-        <TextInput
+        <Input
           placeholder="0.00"
           value={repPercent}
           onChange={e => setRepPercent(e.target.value)}
-          cross
           width="85%"
         />
       </ExternalWrapper>

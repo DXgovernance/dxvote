@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import {
   BigNumber,
-} from './utils';
+} from 'ethers';
 export interface Proposal {
   id: string;
   creator: string;
@@ -42,6 +42,7 @@ export interface Transaction {
 
 export enum GuildImplementationType {
   SnapshotRepERC20Guild = 'SnapshotRepERC20Guild',
+  SnapshotERC20Guild = 'SnapshotERC20Guild',
   DXDGuild = 'DXDGuild',
   ERC20Guild = 'ERC20Guild',
   IERC20Guild = 'IERC20Guild',
