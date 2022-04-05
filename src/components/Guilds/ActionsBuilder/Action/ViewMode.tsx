@@ -7,7 +7,7 @@ import { Button } from 'components/Guilds/common/Button';
 import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 import { getInfoLineView, getSummaryView } from '../SupportedActions';
 import CallDetails from '../CallDetails';
-import { Call } from '../types';
+import { Call, DecodedCall } from '../types';
 import Grip from '../common/Grip';
 import EditButton from '../common/EditButton';
 
@@ -81,12 +81,20 @@ const CardActions = styled.div`
 `;
 
 interface ActionViewProps {
-  call: Call;
+  call?: Call;
+  decodedCall?: DecodedCall;
   isEditable?: boolean;
+  onEdit?: () => void;
 }
 
-const ActionView: React.FC<ActionViewProps> = ({ call, isEditable }) => {
-  const { decodedCall } = useDecodedCall(call);
+const ActionView: React.FC<ActionViewProps> = ({
+  call,
+  decodedCall: decodedCallFromProps,
+  isEditable,
+}) => {
+  const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
+
+  const decodedCall = decodedCallFromCall || decodedCallFromProps;
 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -101,7 +109,7 @@ const ActionView: React.FC<ActionViewProps> = ({ call, isEditable }) => {
         <CardLabel>
           {isEditable && <GripWithMargin />}
 
-          {InfoLine && <InfoLine call={call} decodedCall={decodedCall} />}
+          {InfoLine && <InfoLine decodedCall={decodedCall} />}
         </CardLabel>
         <CardActions>
           {isEditable && <EditButtonWithMargin>Edit</EditButtonWithMargin>}
@@ -137,13 +145,13 @@ const ActionView: React.FC<ActionViewProps> = ({ call, isEditable }) => {
 
           {ActionSummary && activeTab === 0 && (
             <DetailWrapper>
-              <ActionSummary call={call} decodedCall={decodedCall} />
+              <ActionSummary decodedCall={decodedCall} />
             </DetailWrapper>
           )}
 
           {(!ActionSummary || activeTab === 1) && (
             <DetailWrapper>
-              <CallDetails call={call} decodedCall={decodedCall} />
+              <CallDetails decodedCall={decodedCall} />
             </DetailWrapper>
           )}
         </>

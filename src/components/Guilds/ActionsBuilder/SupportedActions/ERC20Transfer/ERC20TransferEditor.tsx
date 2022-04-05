@@ -11,8 +11,7 @@ import Transfer from './Transfer';
 import AddButton from '../../common/AddButton';
 
 const ERC20TransferEditor: React.FC<ActionEditorProps> = ({
-  call,
-  contract,
+  decodedCall,
   updateCall,
 }) => {
   return (
@@ -24,7 +23,7 @@ const ERC20TransferEditor: React.FC<ActionEditorProps> = ({
         <TitleWrapper>Transfers & Mint</TitleWrapper>
       </HeaderWrapper>
 
-      <Transfer contract={contract} call={call} updateCall={updateCall} />
+      <Transfer decodedCall={decodedCall} updateCall={updateCall} />
 
       <FooterWrapper>
         <AddButton label="Add Recipient" />

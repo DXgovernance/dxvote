@@ -1,8 +1,16 @@
 import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { defaultValues } from '../ActionsBuilder/SupportedActions';
-import { DecodedAction, SupportedAction } from '../ActionsBuilder/types';
+import {
+  defaultValues,
+  getEditor,
+  supportedActions,
+} from '../ActionsBuilder/SupportedActions';
+import {
+  DecodedAction,
+  DecodedCall,
+  SupportedAction,
+} from '../ActionsBuilder/types';
 import { Modal } from '../common/Modal';
 import ContractActionsList from './ContractActionsList';
 import ContractsList from './ContractsList';
@@ -20,9 +28,12 @@ const ActionModal: React.FC<ActionModalProps> = ({
 }) => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
 
+  const [selectedAction, setSelectedAction] = useState<SupportedAction>(null);
   const [selectedContract, setSelectedContract] =
     useState<RegistryContract>(null);
   const [selectedFunction, setSelectedFunction] = useState<string>(null);
+
+  const [data, setData] = useState<DecodedCall>(null);
 
   function getHeader() {
     if (selectedFunction) {
@@ -33,6 +44,10 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
     if (selectedContract) {
       return selectedContract?.title;
+    }
+
+    if (selectedAction) {
+      return supportedActions[selectedAction].title;
     }
 
     return 'Add action';
@@ -52,10 +67,15 @@ const ActionModal: React.FC<ActionModalProps> = ({
       );
     }
 
+    if (selectedAction) {
+      const Editor = getEditor(selectedAction);
+      return <Editor decodedCall={data} updateCall={setData} />;
+    }
+
     return (
       <ContractsList
         onSelect={setSelectedContract}
-        onSupportedActionSelect={addSupportedAction}
+        onSupportedActionSelect={setSupportedAction}
       />
     );
   }
@@ -65,16 +85,21 @@ const ActionModal: React.FC<ActionModalProps> = ({
       setSelectedFunction(null);
     } else if (selectedContract) {
       setSelectedContract(null);
+    } else if (selectedAction) {
+      setSelectedAction(null);
     }
+
+    setData(null);
   }
 
-  function addSupportedAction(action: SupportedAction) {
-    const defaultDecodedAction = defaultValues[action];
+  function setSupportedAction(action: SupportedAction) {
+    const defaultDecodedAction = defaultValues[action] as DecodedAction;
     if (!defaultDecodedAction) return null;
 
     defaultDecodedAction.decodedCall.from = guildId;
     defaultDecodedAction.decodedCall.callType = action;
-    onAddAction(defaultDecodedAction as DecodedAction);
+    setData(defaultDecodedAction.decodedCall);
+    setSelectedAction(action);
   }
 
   return (

@@ -69,26 +69,27 @@ const OptionEditMode: React.FC<OptionRowProps> = ({
       </DetailWrapper>
 
       <ActionsWrapper indented={isEditable}>
-        {option?.actions?.map((action, index) => (
-          <ActionView key={index} call={action} isEditable={isEditable} />
-        ))}
-      </ActionsWrapper>
+        {!isEditable &&
+          option?.actions?.map((action, index) => (
+            <ActionView key={index} call={action} isEditable={isEditable} />
+          ))}
 
-      {isEditable &&
-        option?.decodedActions?.map((action, index) => (
-          <ActionEditor
-            key={index}
-            action={action}
-            onChange={updatedAction => updateAction(index, updatedAction)}
+        {isEditable &&
+          option?.decodedActions?.map((action, index) => (
+            <ActionEditor
+              key={index}
+              action={action}
+              onChange={updatedAction => updateAction(index, updatedAction)}
+            />
+          ))}
+
+        {isEditable && (
+          <AddButton
+            label="Add Action"
+            onClick={() => setIsActionsModalOpen(true)}
           />
-        ))}
-
-      {isEditable && (
-        <AddButton
-          label="Add Action"
-          onClick={() => setIsActionsModalOpen(true)}
-        />
-      )}
+        )}
+      </ActionsWrapper>
 
       <ActionModal
         isOpen={isActionsModalOpen}

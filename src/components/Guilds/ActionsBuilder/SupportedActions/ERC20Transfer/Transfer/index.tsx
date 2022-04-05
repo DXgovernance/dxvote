@@ -74,22 +74,22 @@ interface TransferState {
   destination: string;
 }
 
-const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
+const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
 
   const { chainId } = useWeb3React();
 
   // parse transfer state from calls
   const parsedData = useMemo<TransferState>(() => {
-    if (!call) return null;
+    if (!decodedCall) return null;
 
     return {
-      source: call.from,
-      tokenAddress: call.to,
-      amount: call.args._value,
-      destination: call.args._to,
+      source: decodedCall.from,
+      tokenAddress: decodedCall.to,
+      amount: decodedCall.args._value,
+      destination: decodedCall.args._to,
     };
-  }, [call]);
+  }, [decodedCall]);
 
   const validations = useMemo(() => {
     return {
@@ -120,9 +120,9 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
 
   const setTransferAddress = (walletAddress: string) => {
     updateCall({
-      ...call,
+      ...decodedCall,
       args: {
-        ...call.args,
+        ...decodedCall.args,
         _to: walletAddress,
       },
     });
@@ -130,7 +130,7 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
 
   const setToken = (tokenAddress: string) => {
     updateCall({
-      ...call,
+      ...decodedCall,
       to: tokenAddress,
     });
   };
@@ -140,9 +140,9 @@ const Transfer: React.FC<ActionEditorProps> = ({ call, updateCall }) => {
       ? utils.parseUnits(value, tokenInfo?.decimals || 18)
       : null;
     updateCall({
-      ...call,
+      ...decodedCall,
       args: {
-        ...call.args,
+        ...decodedCall.args,
         _value: amount,
       },
     });

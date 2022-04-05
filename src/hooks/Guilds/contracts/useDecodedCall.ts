@@ -143,5 +143,7 @@ export const useDecodedCall = (call: Call) => {
   const { chainId } = useWeb3React();
   const { contracts } = useContractRegistry();
 
-  return decodeCall(call, contracts, chainId);
+  return call
+    ? decodeCall(call, contracts, chainId)
+    : { decodedCall: null, contract: null };
 };
