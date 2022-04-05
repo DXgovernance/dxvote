@@ -44,13 +44,16 @@ export const supportedActions: Record<
   },
 };
 
+const ERC20Contract = new utils.Interface(ERC20ABI);
+
 export const defaultValues: Record<
   SupportedAction,
   DeepPartial<DecodedAction>
 > = {
   [SupportedAction.ERC20_TRANSFER]: {
+    contract: ERC20Contract,
     decodedCall: {
-      function: new utils.Interface(ERC20ABI).getFunction('transfer'),
+      function: ERC20Contract.getFunction('transfer'),
       to: '',
       value: BigNumber.from(0),
       args: {
