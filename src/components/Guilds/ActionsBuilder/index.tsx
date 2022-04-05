@@ -4,7 +4,6 @@ import SidebarCard, {
   SidebarCardHeaderSpaced,
 } from 'components/Guilds/SidebarCard';
 import EditMode from './EditMode';
-import ViewMode from './ViewMode';
 import { Option } from './types';
 import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
 import EditButton from './common/EditButton';
@@ -20,14 +19,14 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
   options,
   onChange,
 }) => {
-  const [actionsEditMode, setActionsEditMode] = useState(editable);
+  const [isEditable, setIsEditable] = useState(editable);
 
-  const onEdit = () => setActionsEditMode(true);
+  const onEdit = () => setIsEditable(true);
 
   const onSave = () => {
     const encodedOptions = bulkEncodeCallsFromOptions(options);
     onChange(encodedOptions);
-    setActionsEditMode(false);
+    setIsEditable(false);
   };
 
   return (
@@ -35,22 +34,16 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
       header={
         <SidebarCardHeaderSpaced>
           <CardHeader>Actions</CardHeader>
-          {editable && (
-            <EditButton
-              variant="secondary"
-              onClick={() => (actionsEditMode ? onSave() : onEdit())}
-            >
-              {actionsEditMode ? 'Save' : 'Edit'}
-            </EditButton>
-          )}
+          <EditButton
+            variant="secondary"
+            onClick={() => (isEditable ? onSave() : onEdit())}
+          >
+            {isEditable ? 'Save' : 'Edit'}
+          </EditButton>
         </SidebarCardHeaderSpaced>
       }
     >
-      {actionsEditMode ? (
-        <EditMode options={options} onChange={onChange} />
-      ) : (
-        <ViewMode options={options} />
-      )}
+      <EditMode isEditable={isEditable} options={options} onChange={onChange} />
     </SidebarCard>
   );
 };

@@ -9,11 +9,16 @@ const AddOptionWrapper = styled(Box)`
   padding: 1rem;
 `;
 interface EditModeProps {
+  isEditable: boolean;
   options: Option[];
   onChange: (options: Option[]) => void;
 }
 
-const EditMode: React.FC<EditModeProps> = ({ options, onChange }) => {
+const EditMode: React.FC<EditModeProps> = ({
+  isEditable,
+  options,
+  onChange,
+}) => {
   function addOption() {
     onChange([
       ...options,
@@ -37,15 +42,20 @@ const EditMode: React.FC<EditModeProps> = ({ options, onChange }) => {
             key={idx}
             option={option}
             onChange={updatedOption => updateOption(idx, updatedOption)}
+            isEditable={isEditable}
           />
           {idx !== options.length - 1 && <Divider />}
         </>
       ))}
 
-      <Divider />
-      <AddOptionWrapper>
-        <AddButton label="Add Option" onClick={addOption} />
-      </AddOptionWrapper>
+      {isEditable && (
+        <>
+          <Divider />
+          <AddOptionWrapper>
+            <AddButton label="Add Option" onClick={addOption} />
+          </AddOptionWrapper>
+        </>
+      )}
     </>
   );
 };

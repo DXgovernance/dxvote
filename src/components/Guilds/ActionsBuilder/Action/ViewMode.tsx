@@ -82,9 +82,10 @@ const CardActions = styled.div`
 
 interface ActionViewProps {
   call: Call;
+  isEditable?: boolean;
 }
 
-const ActionView: React.FC<ActionViewProps> = ({ call }) => {
+const ActionView: React.FC<ActionViewProps> = ({ call, isEditable }) => {
   const { decodedCall } = useDecodedCall(call);
 
   const [expanded, setExpanded] = useState(false);
@@ -98,12 +99,12 @@ const ActionView: React.FC<ActionViewProps> = ({ call }) => {
     <CardWrapperWithMargin>
       <CardHeader>
         <CardLabel>
-          <GripWithMargin />
+          {isEditable && <GripWithMargin />}
 
           {InfoLine && <InfoLine call={call} decodedCall={decodedCall} />}
         </CardLabel>
         <CardActions>
-          <EditButtonWithMargin>Edit</EditButtonWithMargin>
+          {isEditable && <EditButtonWithMargin>Edit</EditButtonWithMargin>}
           <ChevronIcon onClick={() => setExpanded(!expanded)}>
             {expanded ? (
               <FiChevronUp height={16} />

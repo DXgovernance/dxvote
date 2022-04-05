@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import { ProposalOptionTag } from '../common/ProposalOptionTag';
 import AddButton from '../common/AddButton';
 import ActionEditor from '../Action/EditMode';
@@ -8,13 +9,23 @@ import ActionModal from 'components/Guilds/ActionsModal';
 import Grip from '../common/Grip';
 import DataTag from '../common/DataTag';
 import EditButton from '../common/EditButton';
+import ActionView from '../Action/ViewMode';
+
+const ActionsWrapper = styled.div`
+  margin-left: ${({ indented }) => (indented ? '1.75rem' : '0')};
+`;
 
 interface OptionRowProps {
   option: Option;
+  isEditable?: boolean;
   onChange?: (updatedOption: Option) => void;
 }
 
-const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
+const OptionEditMode: React.FC<OptionRowProps> = ({
+  isEditable,
+  option,
+  onChange,
+}) => {
   const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
 
   function addAction(action: DecodedAction) {
@@ -35,9 +46,11 @@ const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
     <OptionWrapper>
       <DetailWrapper>
         <div>
-          <Detail>
-            <Grip />
-          </Detail>
+          {isEditable && (
+            <Detail>
+              <Grip />
+            </Detail>
+          )}
           <Detail>
             <ProposalOptionTag option={option} />
           </Detail>
@@ -48,23 +61,34 @@ const OptionEditMode: React.FC<OptionRowProps> = ({ option, onChange }) => {
             </DataTag>
           </Detail>
         </div>
-        <div>
-          <EditButton>Edit</EditButton>
-        </div>
+        {isEditable && (
+          <div>
+            <EditButton>Edit</EditButton>
+          </div>
+        )}
       </DetailWrapper>
 
-      {option?.decodedActions?.map((action, index) => (
-        <ActionEditor
-          key={index}
-          action={action}
-          onChange={updatedAction => updateAction(index, updatedAction)}
-        />
-      ))}
+      <ActionsWrapper indented={isEditable}>
+        {option?.actions?.map((action, index) => (
+          <ActionView key={index} call={action} isEditable={isEditable} />
+        ))}
+      </ActionsWrapper>
 
-      <AddButton
-        label="Add Action"
-        onClick={() => setIsActionsModalOpen(true)}
-      />
+      {isEditable &&
+        option?.decodedActions?.map((action, index) => (
+          <ActionEditor
+            key={index}
+            action={action}
+            onChange={updatedAction => updateAction(index, updatedAction)}
+          />
+        ))}
+
+      {isEditable && (
+        <AddButton
+          label="Add Action"
+          onClick={() => setIsActionsModalOpen(true)}
+        />
+      )}
 
       <ActionModal
         isOpen={isActionsModalOpen}
