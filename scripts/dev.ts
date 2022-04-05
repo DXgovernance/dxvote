@@ -55,15 +55,15 @@ async function main() {
         distribution: [
           {
             address: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
-            amount: 1000,
+            amount: web3.utils.toWei('200'),
           },
           {
             address: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
-            amount: 4000,
+            amount: web3.utils.toWei('50'),
           },
           {
             address: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
-            amount: 10000,
+            amount: web3.utils.toWei('10'),
           },
         ],
       },
@@ -73,15 +73,15 @@ async function main() {
         distribution: [
           {
             address: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
-            amount: 1000,
+            amount: web3.utils.toWei('200'),
           },
           {
             address: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
-            amount: 4000,
+            amount: web3.utils.toWei('40'),
           },
           {
             address: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
-            amount: 10000,
+            amount: web3.utils.toWei('10'),
           },
         ],
       },
@@ -581,6 +581,24 @@ async function main() {
         logoURI:
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
+      {
+        address: addresses.RGT,
+        name: 'REP Guild Token on Localhost',
+        decimals: 18,
+        symbol: 'RGT',
+        fetchPrice: true,
+        logoURI:
+          'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
+      },
+      {
+        address: addresses.SGT,
+        name: 'Snapshot Guild Token on Localhost',
+        decimals: 18,
+        symbol: 'SGT',
+        fetchPrice: true,
+        logoURI:
+          'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
+      },
     ],
     guilds: [addresses.DXDGuild, addresses.REPGuild, addresses.SnapshotGuild],
   };
@@ -588,7 +606,7 @@ async function main() {
   mkdirSync(path.resolve(__dirname, '../src/configs/localhost'), {
     recursive: true,
   });
-  await writeFileSync(
+  writeFileSync(
     path.resolve(__dirname, '../src/configs/localhost/config.json'),
     JSON.stringify(developConfig, null, 2)
   );

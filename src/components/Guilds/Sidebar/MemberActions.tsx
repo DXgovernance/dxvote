@@ -26,6 +26,7 @@ import { useTransactions } from '../../../contexts/Guilds';
 import { useERC20Guild } from '../../../hooks/Guilds/contracts/useContract';
 import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
 import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
+import useGuildImplementationType from '../../../hooks/Guilds/guild/useGuildImplementationType';
 import { Loading } from '../common/Loading';
 
 const UserActionButton = styled(IconButton)`
@@ -130,6 +131,8 @@ export const MemberActions = () => {
 
   const memberMenuRef = useRef(null);
   useDetectBlur(memberMenuRef, () => setShowMenu(false));
+
+  const { isRepGuild } = useGuildImplementationType(guildAddress);
   return (
     <>
       <DropdownMenu ref={memberMenuRef}>
@@ -195,7 +198,7 @@ export const MemberActions = () => {
               Increase Voting Power
             </LockButton>
 
-            {isUnlockable && (
+            {isUnlockable && !isRepGuild && (
               <LockButton onClick={withdrawTokens}>Withdraw</LockButton>
             )}
           </MemberContainer>
