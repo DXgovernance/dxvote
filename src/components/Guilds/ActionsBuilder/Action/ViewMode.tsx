@@ -8,6 +8,8 @@ import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 import { getInfoLineView, getSummaryView } from '../SupportedActions';
 import CallDetails from '../CallDetails';
 import { Call } from '../types';
+import Grip from '../common/Grip';
+import EditButton from '../common/EditButton';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   margin-top: 0.8rem;
@@ -29,10 +31,10 @@ const CardLabel = styled(Box)`
 
 const ChevronIcon = styled.span`
   cursor: pointer;
-  height: 1.25rem;
-  width: 1.25rem;
+  height: 1.4rem;
+  width: 1.4rem;
   border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.proposalText.grey};
+  border: 1px solid ${({ theme }) => theme.colors.muted};
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -64,6 +66,20 @@ const TabButton = styled(Button)`
     `}
 `;
 
+const GripWithMargin = styled(Grip)`
+  margin-right: 1rem;
+`;
+
+const EditButtonWithMargin = styled(EditButton)`
+  margin-right: 0.625rem;
+`;
+
+const CardActions = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 interface ActionViewProps {
   call: Call;
 }
@@ -82,15 +98,20 @@ const ActionView: React.FC<ActionViewProps> = ({ call }) => {
     <CardWrapperWithMargin>
       <CardHeader>
         <CardLabel>
+          <GripWithMargin />
+
           {InfoLine && <InfoLine call={call} decodedCall={decodedCall} />}
         </CardLabel>
-        <ChevronIcon onClick={() => setExpanded(!expanded)}>
-          {expanded ? (
-            <FiChevronUp height={16} />
-          ) : (
-            <FiChevronDown height={16} />
-          )}
-        </ChevronIcon>
+        <CardActions>
+          <EditButtonWithMargin>Edit</EditButtonWithMargin>
+          <ChevronIcon onClick={() => setExpanded(!expanded)}>
+            {expanded ? (
+              <FiChevronUp height={16} />
+            ) : (
+              <FiChevronDown height={16} />
+            )}
+          </ChevronIcon>
+        </CardActions>
       </CardHeader>
 
       {expanded && (

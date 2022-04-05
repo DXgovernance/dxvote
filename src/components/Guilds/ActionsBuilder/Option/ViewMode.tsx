@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import { ProposalOptionTag } from '../common/ProposalOptionTag';
 import ActionView from '../Action/ViewMode';
 import { Detail, DetailWrapper, OptionWrapper } from './styles';
@@ -9,6 +10,10 @@ import EditButton from '../common/EditButton';
 interface OptionRowProps {
   data: Option;
 }
+
+const ActionsWrapper = styled.div`
+  margin-left: 1.75rem;
+`;
 
 const OptionViewMode: React.FC<OptionRowProps> = ({ data }) => {
   return (
@@ -33,9 +38,11 @@ const OptionViewMode: React.FC<OptionRowProps> = ({ data }) => {
         </div>
       </DetailWrapper>
 
-      {data?.actions?.map((action, index) => (
-        <ActionView key={index} call={action} />
-      ))}
+      <ActionsWrapper>
+        {data?.actions?.map((action, index) => (
+          <ActionView key={index} call={action} />
+        ))}
+      </ActionsWrapper>
     </OptionWrapper>
   );
 };
