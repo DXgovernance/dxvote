@@ -29,6 +29,10 @@
   },
   "dependencies": {
     "@0xsequence/multicall": "^0.35.5",
+    "@dnd-kit/core": "^5.0.3",
+    "@dnd-kit/modifiers": "^5.0.0",
+    "@dnd-kit/sortable": "^6.0.1",
+    "@dnd-kit/utilities": "^3.1.0",
     "@nomiclabs/hardhat-truffle5": "^2.0.5",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@testing-library/jest-dom": "^5.16.2",

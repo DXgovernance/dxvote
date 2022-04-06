@@ -28,8 +28,9 @@ export interface DecodedAction {
 }
 
 export interface Option {
-  index: number;
+  id: string;
   label: string;
+  color: string;
   actions?: Call[];
   decodedActions?: DecodedAction[];
 }

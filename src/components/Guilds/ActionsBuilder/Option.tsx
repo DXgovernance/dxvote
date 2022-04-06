@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { CSS } from '@dnd-kit/utilities';
+
 import { ProposalOptionTag } from './common/ProposalOptionTag';
 import AddButton from './common/AddButton';
 import ActionEditor from './Action/EditMode';
@@ -10,6 +12,7 @@ import DataTag from './common/DataTag';
 import EditButton from './common/EditButton';
 import ActionView from './Action/ViewMode';
 import { Box } from 'components/Guilds/common/Layout';
+import { useSortable } from '@dnd-kit/sortable';
 
 export const OptionWrapper = styled(Box)`
   padding: 1rem;
@@ -42,6 +45,8 @@ const OptionRow: React.FC<OptionRowProps> = ({
   option,
   onChange,
 }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: option.id });
   const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
 
   function addAction(action: DecodedAction) {
@@ -58,12 +63,17 @@ const OptionRow: React.FC<OptionRowProps> = ({
     onChange({ ...option, decodedActions: updatedActions });
   }
 
+  const dndStyles = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
+
   return (
-    <OptionWrapper>
+    <OptionWrapper ref={setNodeRef} style={dndStyles} {...attributes}>
       <DetailWrapper>
         <div>
           {isEditable && (
-            <Detail>
+            <Detail {...listeners}>
               <Grip />
             </Detail>
           )}
