@@ -6,6 +6,7 @@ import { DecodedAction, SupportedAction } from '../ActionsBuilder/types';
 import { Modal } from '../common/Modal';
 import ContractActionsList from './ContractActionsList';
 import ContractsList from './ContractsList';
+import ParamsModal from './ParamsModal';
 
 interface ActionModalProps {
   isOpen: boolean;
@@ -40,7 +41,13 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   function getContent() {
     if (selectedFunction) {
-      return null;
+      return (
+        <ParamsModal
+          fn={selectedContract.functions.find(
+            fn => fn.functionName === selectedFunction
+          )}
+        />
+      );
     }
 
     if (selectedContract) {
