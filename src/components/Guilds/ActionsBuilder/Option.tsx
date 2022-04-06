@@ -11,7 +11,11 @@ import DataTag from './common/DataTag';
 import EditButton from './common/EditButton';
 import ActionRow from './Action';
 import { Box } from 'components/Guilds/common/Layout';
-import { SortableContext, useSortable } from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 export const OptionWrapper = styled(Box)`
   padding: 1rem;
@@ -101,9 +105,8 @@ const OptionRow: React.FC<OptionRowProps> = ({
 
         {isEditable && (
           <SortableContext
-            items={option.decodedActions.map(
-              (_, index) => `${option.id}-${index}`
-            )}
+            items={option.decodedActions.map(action => action.id)}
+            strategy={verticalListSortingStrategy}
           >
             {option?.decodedActions?.map((action, index) => (
               <ActionRow

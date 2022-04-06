@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { CSS } from '@dnd-kit/utilities';
 import { Box } from 'components/Guilds/common/Layout';
 import { CardWrapper, Header } from 'components/Guilds/common/Card';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
@@ -10,6 +11,7 @@ import CallDetails from './CallDetails';
 import { Call, DecodedAction } from './types';
 import Grip from './common/Grip';
 import EditButton from './common/EditButton';
+import { useSortable } from '@dnd-kit/sortable';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   margin-top: 0.8rem;
@@ -92,6 +94,9 @@ const ActionRow: React.FC<ActionViewProps> = ({
   decodedAction,
   isEditable,
 }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: decodedAction?.id });
+
   const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
 
   const decodedCall = decodedCallFromCall || decodedAction.decodedCall;
@@ -103,11 +108,16 @@ const ActionRow: React.FC<ActionViewProps> = ({
   const InfoLine = getInfoLineView(decodedCall?.callType);
   const ActionSummary = getSummaryView(decodedCall?.callType);
 
+  const dndStyles = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
+
   return (
-    <CardWrapperWithMargin>
+    <CardWrapperWithMargin ref={setNodeRef} style={dndStyles} {...attributes}>
       <CardHeader>
         <CardLabel>
-          {isEditable && <GripWithMargin />}
+          {isEditable && <GripWithMargin {...listeners} />}
 
           {InfoLine && <InfoLine decodedCall={decodedCall} />}
         </CardLabel>

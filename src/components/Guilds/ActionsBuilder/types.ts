@@ -23,6 +23,7 @@ export interface DecodedCall {
 }
 
 export interface DecodedAction {
+  id: string;
   decodedCall: DecodedCall;
   contract: utils.Interface;
 }
