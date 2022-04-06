@@ -38,8 +38,6 @@ interface OptionsListProps {
   onChange: (options: Option[]) => void;
 }
 
-const PLACEHOLDER_ID = 'placeholder';
-
 const OptionsList: React.FC<OptionsListProps> = ({
   isEditable,
   options,
@@ -164,6 +162,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
   }
 
   function handleDragEnd({ active, over }: DragEndEvent) {
+    // Reorder options
     if (options.find(option => option.id === active.id) && over?.id) {
       const items = [...options];
       const oldIndex = items.findIndex(item => item.id === active.id);
@@ -172,40 +171,16 @@ const OptionsList: React.FC<OptionsListProps> = ({
     }
 
     const activeContainer = findContainer(active.id);
-
     if (!activeContainer) {
       setActiveId(null);
       return;
     }
 
-    const overId = over?.id;
-
-    if (!overId) {
+    const overContainer = over?.id ? findContainer(over?.id) : null;
+    if (!overContainer) {
       setActiveId(null);
       return;
     }
-
-    if (overId === PLACEHOLDER_ID) {
-      const newOptions = options.map(option => {
-        if (option.id === activeContainer) {
-          option.decodedActions = option.decodedActions.filter(
-            action => action.id === activeId
-          );
-        }
-        return option;
-      });
-
-      newOptions.push({
-        id: `option-${options.length}`,
-        label: `Option ${options.length + 1}`,
-        color: theme?.colors?.votes?.[options.length],
-        decodedActions: [],
-      });
-      onChange(newOptions);
-      return;
-    }
-
-    const overContainer = findContainer(overId);
 
     if (overContainer) {
       const activeIndex = options
@@ -213,7 +188,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
         .decodedActions.findIndex(item => item.id === active.id);
       const overIndex = options
         .find(option => option.id === overContainer)
-        .decodedActions.findIndex(item => item.id === active.id);
+        .decodedActions.findIndex(item => item.id === over.id);
 
       if (activeIndex !== overIndex) {
         const newOptions = options.map(option => {
@@ -328,10 +303,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <SortableContext
-        items={[...options, PLACEHOLDER_ID]}
-        strategy={verticalListSortingStrategy}
-      >
+      <SortableContext items={options} strategy={verticalListSortingStrategy}>
         {options?.map((option, idx) => (
           <>
             <OptionRow
