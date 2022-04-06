@@ -15,7 +15,9 @@
     "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run:development",
     "test": "react-app-rewired test --watchAll=false --coverage --verbose",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "ceramic:create-model": "node --experimental-json-modules ./src/forum/scripts/create-model.mjs",
+    "ceramic:publish-model": "node --experimental-json-modules ./src/forum/scripts/publish-model.mjs"
   },
   "engines": {
     "node": "^16.13.0"
@@ -143,3 +145,4 @@
     "electron": "^17.1.2"
   }
 }
+
