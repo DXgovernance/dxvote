@@ -5,11 +5,11 @@ import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { useState } from 'react';
 import { Button } from 'components/Guilds/common/Button';
 import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
-import { getInfoLineView, getSummaryView } from '../SupportedActions';
-import CallDetails from '../CallDetails';
-import { Call, DecodedCall } from '../types';
-import Grip from '../common/Grip';
-import EditButton from '../common/EditButton';
+import { getInfoLineView, getSummaryView } from './SupportedActions';
+import CallDetails from './CallDetails';
+import { Call, DecodedAction } from './types';
+import Grip from './common/Grip';
+import EditButton from './common/EditButton';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   margin-top: 0.8rem;
@@ -82,19 +82,19 @@ const CardActions = styled.div`
 
 interface ActionViewProps {
   call?: Call;
-  decodedCall?: DecodedCall;
+  decodedAction?: DecodedAction;
   isEditable?: boolean;
-  onEdit?: () => void;
+  onEdit?: (updatedCall: DecodedAction) => void;
 }
 
-const ActionView: React.FC<ActionViewProps> = ({
+const ActionRow: React.FC<ActionViewProps> = ({
   call,
-  decodedCall: decodedCallFromProps,
+  decodedAction,
   isEditable,
 }) => {
   const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
 
-  const decodedCall = decodedCallFromCall || decodedCallFromProps;
+  const decodedCall = decodedCallFromCall || decodedAction.decodedCall;
 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -160,4 +160,4 @@ const ActionView: React.FC<ActionViewProps> = ({
   );
 };
 
-export default ActionView;
+export default ActionRow;

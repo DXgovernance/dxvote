@@ -3,16 +3,15 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { ProposalOptionTag } from './common/ProposalOptionTag';
 import AddButton from './common/AddButton';
-import ActionEditor from './Action/EditMode';
 import { DecodedAction, Option } from './types';
 import { useState } from 'react';
 import ActionModal from 'components/Guilds/ActionsModal';
 import Grip from './common/Grip';
 import DataTag from './common/DataTag';
 import EditButton from './common/EditButton';
-import ActionView from './Action/ViewMode';
+import ActionRow from './Action';
 import { Box } from 'components/Guilds/common/Layout';
-import { useSortable } from '@dnd-kit/sortable';
+import { SortableContext, useSortable } from '@dnd-kit/sortable';
 
 export const OptionWrapper = styled(Box)`
   padding: 1rem;
@@ -97,17 +96,25 @@ const OptionRow: React.FC<OptionRowProps> = ({
       <ActionsWrapper indented={isEditable}>
         {!isEditable &&
           option?.actions?.map((action, index) => (
-            <ActionView key={index} call={action} isEditable={isEditable} />
+            <ActionRow key={index} call={action} isEditable={isEditable} />
           ))}
 
-        {isEditable &&
-          option?.decodedActions?.map((action, index) => (
-            <ActionEditor
-              key={index}
-              action={action}
-              onChange={updatedAction => updateAction(index, updatedAction)}
-            />
-          ))}
+        {isEditable && (
+          <SortableContext
+            items={option.decodedActions.map(
+              (_, index) => `${option.id}-${index}`
+            )}
+          >
+            {option?.decodedActions?.map((action, index) => (
+              <ActionRow
+                key={index}
+                isEditable={true}
+                decodedAction={action}
+                onEdit={updatedAction => updateAction(index, updatedAction)}
+              />
+            ))}
+          </SortableContext>
+        )}
 
         {isEditable && (
           <AddButton
