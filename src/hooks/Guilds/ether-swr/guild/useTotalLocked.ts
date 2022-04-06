@@ -23,15 +23,6 @@ const useTotalLocked = (guildAddress: string) => {
     proposalId,
   });
 
-  //   console.log({
-  //     isSnapshotGuild,
-  //     isRepGuild,
-  //     isSnapshotRepGuild,
-  //     'totalLockedResponse.data': totalLockedResponse.data,
-  //     'totalLockedAtProposalSnapshotResponse.data':
-  //       totalLockedAtProposalSnapshotResponse.data,
-  //   });
-
   // Return response based on implementation type
   if (isSnapshotGuild) return totalLockedAtProposalSnapshotResponse;
   if (isRepGuild) return totalLockedResponse; // TODO: replace with rep implementation totalLocked call

@@ -29,9 +29,3 @@ const useTotalLockedAtSnapshot: UseTotalLockedAtSnapshotHook = ({
 };
 
 export default useTotalLockedAtSnapshot;
-
-// Create useSnapshotIf hook
-// Create useTotalLockedAtSnapshot hook
-// Create snapshotERC20Guild instance with proposal in dev script.
-// Create useTotalLocked hook to use with multiple implementations
-// Remove getTotalLocked call from useGuildConfig hook
