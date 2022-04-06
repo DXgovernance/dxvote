@@ -1,12 +1,19 @@
 import { useParams } from 'react-router-dom';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import useEtherSWR from '../useEtherSWR';
-import useTotalLockedAtSnapshot from 'hooks/Guilds/ether-swr/guild/useTotalLockedAtSnapshot';
+import useTotalLockedAt from 'hooks/Guilds/ether-swr/guild/useTotalLockedAt';
+import useSnapshotId from 'hooks/Guilds/ether-swr/guild/useSnapshotId';
 import useGuildImplementationType from 'hooks/Guilds/guild/useGuildImplementationType';
 
 const useTotalLocked = (guildAddress: string) => {
   // Hooks call
   const { proposal_id: proposalId } = useParams<{ proposal_id?: string }>();
+
+  const { data: snapshotId } = useSnapshotId({
+    contractAddress: guildAddress,
+    proposalId,
+  });
+
   const { isSnapshotGuild, isRepGuild, isSnapshotRepGuild } =
     useGuildImplementationType(guildAddress);
 
@@ -18,9 +25,9 @@ const useTotalLocked = (guildAddress: string) => {
     }
   );
 
-  const totalLockedAtProposalSnapshotResponse = useTotalLockedAtSnapshot({
+  const totalLockedAtProposalSnapshotResponse = useTotalLockedAt({
     contractAddress: guildAddress,
-    proposalId,
+    snapshotId: snapshotId?.toString(),
   });
 
   // Return response based on implementation type
