@@ -22,4 +22,3 @@ const useSnapshotId: UseSnapshotIdHook = ({ contractAddress, proposalId }) => {
 };
 
 export default useSnapshotId;
-

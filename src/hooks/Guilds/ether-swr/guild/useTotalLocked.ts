@@ -40,4 +40,3 @@ const useTotalLocked = (guildAddress: string) => {
 };
 
 export default useTotalLocked;
-
