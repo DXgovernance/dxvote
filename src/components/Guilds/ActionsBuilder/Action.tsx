@@ -14,7 +14,15 @@ import EditButton from './common/EditButton';
 import { useSortable } from '@dnd-kit/sortable';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
+  position: relative;
+  background-color: ${({ theme }) => theme.colors.background};
   margin-top: 0.8rem;
+  border: 1px solid;
+  border-color: ${({ dragging, theme }) =>
+    dragging ? theme.colors.text : theme.colors.muted};
+  z-index: ${({ dragging }) => (dragging ? 999 : 'initial')};
+  box-shadow: ${({ dragging }) =>
+    dragging ? '0px 4px 8px 0px rgba(0, 0, 0, 0.2)' : 'none'};
 `;
 
 const CardHeader = styled(Header)`
@@ -94,8 +102,14 @@ const ActionRow: React.FC<ActionViewProps> = ({
   decodedAction,
   isEditable,
 }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: decodedAction?.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: decodedAction?.id, disabled: !isEditable });
 
   const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
 
@@ -114,7 +128,12 @@ const ActionRow: React.FC<ActionViewProps> = ({
   };
 
   return (
-    <CardWrapperWithMargin ref={setNodeRef} style={dndStyles} {...attributes}>
+    <CardWrapperWithMargin
+      dragging={isEditable && isDragging}
+      ref={setNodeRef}
+      style={dndStyles}
+      {...attributes}
+    >
       <CardHeader>
         <CardLabel>
           {isEditable && <GripWithMargin {...listeners} />}

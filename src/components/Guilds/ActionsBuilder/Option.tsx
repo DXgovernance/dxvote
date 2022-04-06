@@ -18,7 +18,16 @@ import {
 } from '@dnd-kit/sortable';
 
 export const OptionWrapper = styled(Box)`
+  position: relative;
+  background-color: ${({ theme }) => theme.colors.background};
   padding: 1rem;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  border-color: ${({ dragging, theme }) =>
+    dragging ? theme.colors.text : 'transparent'};
+  z-index: ${({ dragging }) => (dragging ? 999 : 'initial')};
+  box-shadow: ${({ dragging }) =>
+    dragging ? '0px 4px 8px 0px rgba(0, 0, 0, 0.2)' : 'none'};
 `;
 
 export const DetailWrapper = styled(Box)`
@@ -48,8 +57,14 @@ const OptionRow: React.FC<OptionRowProps> = ({
   option,
   onChange,
 }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: option.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: option.id });
   const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
 
   function addAction(action: DecodedAction) {
@@ -72,7 +87,12 @@ const OptionRow: React.FC<OptionRowProps> = ({
   };
 
   return (
-    <OptionWrapper ref={setNodeRef} style={dndStyles} {...attributes}>
+    <OptionWrapper
+      dragging={isDragging}
+      ref={setNodeRef}
+      style={dndStyles}
+      {...attributes}
+    >
       <DetailWrapper>
         <div>
           {isEditable && (
@@ -85,8 +105,8 @@ const OptionRow: React.FC<OptionRowProps> = ({
           </Detail>
           <Detail>
             <DataTag>
-              {option?.actions?.length || 'No'} on-chain{' '}
-              {option?.actions?.length >= 2 ? 'actions' : 'action'}
+              {option?.decodedActions?.length || 'No'} on-chain{' '}
+              {option?.decodedActions?.length >= 2 ? 'actions' : 'action'}
             </DataTag>
           </Detail>
         </div>
@@ -100,7 +120,7 @@ const OptionRow: React.FC<OptionRowProps> = ({
       <ActionsWrapper indented={isEditable}>
         {!isEditable &&
           option?.actions?.map((action, index) => (
-            <ActionRow key={index} call={action} isEditable={isEditable} />
+            <ActionRow key={index} call={action} isEditable={false} />
           ))}
 
         {isEditable && (

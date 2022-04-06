@@ -27,6 +27,10 @@ import OptionRow from './Option';
 import AddButton from './common/AddButton';
 import { DecodedAction, Option } from './types';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  restrictToVerticalAxis,
+  restrictToFirstScrollableAncestor,
+} from '@dnd-kit/modifiers';
 
 const AddOptionWrapper = styled(Box)`
   padding: 1rem;
@@ -105,6 +109,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
       return;
     }
 
+    // When dragging an action between options, move the action over to the new option
     if (activeContainer !== overContainer) {
       const activeOption = options.find(
         option => option.id === activeContainer
@@ -182,6 +187,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
       return;
     }
 
+    // Reorder actions
     if (overContainer) {
       const activeIndex = options
         .find(option => option.id === activeContainer)
@@ -230,7 +236,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
    */
   const collisionDetectionStrategy: CollisionDetection = useCallback(
     args => {
-      // Collision detection when dragging Options
+      // --- Collision detection when dragging Options
       if (activeId && options.find(option => option.id === activeId)) {
         return closestCenter({
           ...args,
@@ -240,7 +246,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
         });
       }
 
-      // Collision detection when dragging Actions
+      // --- Collision detection when dragging Actions
 
       // Start by finding any intersecting droppable
       const pointerIntersections = pointerWithin(args);
@@ -297,6 +303,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
           strategy: MeasuringStrategy.Always,
         },
       }}
+      modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
       collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
