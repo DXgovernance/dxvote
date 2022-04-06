@@ -101,7 +101,6 @@ const ProposalVoteCard = () => {
       contract.setVote(proposalId, selectedAction, userVotingPower)
     );
   };
-
   return (
     <SidebarCard
       header={

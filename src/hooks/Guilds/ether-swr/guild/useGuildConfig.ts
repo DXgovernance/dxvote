@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import useEtherSWR from '../useEtherSWR';
+import useTotalLocked from './useTotalLocked';
 
 type GuildConfig = {
   name: string;
@@ -31,7 +32,6 @@ export const useGuildConfig = (guildAddress: string) => {
           [guildAddress, 'getVotingPowerForProposalExecution'],
           [guildAddress, 'getTokenVault'],
           [guildAddress, 'getLockTime'],
-          [guildAddress, 'getTotalLocked'],
         ]
       : [],
     {
@@ -39,6 +39,8 @@ export const useGuildConfig = (guildAddress: string) => {
       refreshInterval: 0,
     }
   );
+
+  const { data: totalLocked } = useTotalLocked(guildAddress);
 
   // TODO: Move this into a SWR middleware
   const transformedData: GuildConfig = useMemo(() => {
@@ -55,7 +57,6 @@ export const useGuildConfig = (guildAddress: string) => {
       votingPowerForProposalExecution,
       tokenVault,
       lockTime,
-      totalLocked,
     ] = data;
 
     return {
@@ -73,9 +74,9 @@ export const useGuildConfig = (guildAddress: string) => {
       ),
       tokenVault,
       lockTime: BigNumber.from(lockTime),
-      totalLocked: BigNumber.from(totalLocked),
+      totalLocked: totalLocked,
     };
-  }, [data]);
+  }, [data, totalLocked]);
 
   return {
     error,
