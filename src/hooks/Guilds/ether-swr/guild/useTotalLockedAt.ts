@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
 import { SWRResponse } from 'swr';
 import useEtherSWR from '../useEtherSWR';
-// import useSnapshotId from './useSnapshotId';
 import SnapshotERC20Guild from 'contracts/SnapshotERC20Guild.json';
 
 interface UseTotalLockedAtProps {
