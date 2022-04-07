@@ -1281,15 +1281,17 @@ export default class UtilsService {
                     );
                   } else {
                     if (schemeTypeData.type === 'GenericMulticall') {
-                      const executionEvent = await web3.eth.getPastLogs({
-                        fromBlock: schemeEvent.blockNumber,
-                        address: schemeAddress,
-                        topics: [
+                      const executionEvent = await getRawEvents(
+                        web3,
+                        schemeAddress,
+                        schemeEvent.blockNumber,
+                        toBlock,
+                        [
                           '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
                           avatarAddressEncoded,
                           proposalId,
-                        ],
-                      });
+                        ]
+                      );
                       if (executionEvent.length > 0)
                         schemeProposalInfo.state =
                           WalletSchemeProposalState.ExecutionSucceded;
@@ -1889,17 +1891,17 @@ export default class UtilsService {
                   }
                 }
               } else if (schemeTypeData.type === 'GenericMulticall') {
-                const executionEvent = await web3.eth.getPastLogs({
-                  fromBlock:
-                    networkCache.proposals[proposal.id].creationEvent
-                      .blockNumber,
-                  address: schemeAddress,
-                  topics: [
+                const executionEvent = await await getRawEvents(
+                  web3,
+                  schemeAddress,
+                  networkCache.proposals[proposal.id].creationEvent.blockNumber,
+                  toBlock,
+                  [
                     '0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe',
                     avatarAddressEncoded,
                     proposal.id,
-                  ],
-                });
+                  ]
+                );
                 if (executionEvent.length > 0)
                   networkCache.proposals[proposal.id].stateInScheme =
                     WalletSchemeProposalState.ExecutionSucceded;
