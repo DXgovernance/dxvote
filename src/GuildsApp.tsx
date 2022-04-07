@@ -18,6 +18,7 @@ import ToastNotificationContainer from './components/Guilds/ToastNotifications/T
 import LandingPage from 'pages/Guilds/LandingPage';
 import GuildAvailabilityProvider from 'contexts/Guilds/guildAvailability';
 import NotFound from 'pages/Guilds/NotFound';
+import ForumProvider from 'forum/ForumProvider';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -29,48 +30,50 @@ const GuildsApp = () => {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <HashRouter basename="/guilds">
-        <GlobalErrorBoundary>
-          <WalletWeb3Manager>
-            <TransactionsProvider>
-              <GuildsContextProvider>
-                <GlobalStyle />
-                <Header />
-                <Container>
-                  <GuildAvailabilityProvider>
-                    <Switch>
-                      <Route exact path="/:chain_name">
-                        <LandingPage />
-                      </Route>
+    <ForumProvider>
+      <ThemeProvider theme={theme}>
+        <HashRouter basename="/guilds">
+          <GlobalErrorBoundary>
+            <WalletWeb3Manager>
+              <TransactionsProvider>
+                <GuildsContextProvider>
+                  <GlobalStyle />
+                  <Header />
+                  <Container>
+                    <GuildAvailabilityProvider>
+                      <Switch>
+                        <Route exact path="/:chain_name">
+                          <LandingPage />
+                        </Route>
 
-                      <Route exact path="/:chain_name/:guild_id">
-                        <GuildsPage />
-                      </Route>
-                      <Route path="/:chain_name/:guild_id/proposalType">
-                        <ProposalTypes data={ProposalTypesConfig} />
-                      </Route>
-                      <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
-                        <ProposalPage />
-                      </Route>
-                      <Route path="/:chain_name/:guild_id/create/:proposal_type">
-                        <CreateProposalPage />
-                      </Route>
+                        <Route exact path="/:chain_name/:guild_id">
+                          <GuildsPage />
+                        </Route>
+                        <Route path="/:chain_name/:guild_id/proposalType">
+                          <ProposalTypes data={ProposalTypesConfig} />
+                        </Route>
+                        <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                          <ProposalPage />
+                        </Route>
+                        <Route path="/:chain_name/:guild_id/create/:proposal_type">
+                          <CreateProposalPage />
+                        </Route>
 
-                      <Route>
-                        <NotFound />
-                      </Route>
-                    </Switch>
-                  </GuildAvailabilityProvider>
-                </Container>
-              </GuildsContextProvider>
-            </TransactionsProvider>
-          </WalletWeb3Manager>
-        </GlobalErrorBoundary>
-      </HashRouter>
+                        <Route>
+                          <NotFound />
+                        </Route>
+                      </Switch>
+                    </GuildAvailabilityProvider>
+                  </Container>
+                </GuildsContextProvider>
+              </TransactionsProvider>
+            </WalletWeb3Manager>
+          </GlobalErrorBoundary>
+        </HashRouter>
 
-      <ToastNotificationContainer autoClose={10000} limit={4} />
-    </ThemeProvider>
+        <ToastNotificationContainer autoClose={10000} limit={4} />
+      </ThemeProvider>
+    </ForumProvider>
   );
 };
 
