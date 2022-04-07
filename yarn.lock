@@ -3142,15 +3142,15 @@
     find-up "^4.1.0"
     fs-extra "^8.1.0"
 
-"@openzeppelin/contracts-upgradeable@4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.3.2.tgz#92df481362e366c388fc02133cf793029c744cea"
-  integrity sha512-i/pOaOtcqDk4UqsrOv735uYyTbn6dvfiuVu5hstsgV6c4ZKUtu88/31zT2BzkCg+3JfcwOfgg2TtRKVKKZIGkQ==
+"@openzeppelin/contracts-upgradeable@4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.4.0.tgz#85161d87c840c5bce2b6ed0c727b407e774852ae"
+  integrity sha512-hIEyWJHu7bDTv6ckxOaV+K3+7mVzhjtyvp3QSaz56Rk5PscXtPAbkiNTb3yz6UJCWHPWpxVyULVgZ6RubuFEZg==
 
-"@openzeppelin/contracts@4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.3.2.tgz#ff80affd6d352dbe1bbc5b4e1833c41afd6283b6"
-  integrity sha512-AybF1cesONZStg5kWf6ao9OlqTZuPqddvprc0ky7lrUVOjXeKpmQ2Y9FK+6ygxasb+4aic4O5pneFBfwVsRRRg==
+"@openzeppelin/contracts@4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.4.0.tgz#4a1df71f736c31230bbbd634dfb006a756b51e6b"
+  integrity sha512-dlKiZmDvJnGRLHojrDoFZJmsQVeltVeoiRN7RK+cf2FmkhASDEblE0RiaYdxPNsUZa6mRG8393b9bfyp+V5IAw==
 
 "@openzeppelin/test-helpers@^0.5.15":
   version "0.5.15"
@@ -9056,11 +9056,11 @@ duplexify@^3.4.2, duplexify@^3.6.0:
 
 "dxdao-contracts@https://github.com/DXGovernance/dxdao-contracts.git#develop":
   version "0.0.1"
-  resolved "https://github.com/DXGovernance/dxdao-contracts.git#4361fd7270d275f8d046471b4bbfa3b1062d15ab"
+  resolved "https://github.com/DXGovernance/dxdao-contracts.git#fe74c569b0721a23e1975f714aa324181381bab3"
   dependencies:
     "@maticnetwork/eth-decoder" "^0.0.4"
-    "@openzeppelin/contracts" "4.3.2"
-    "@openzeppelin/contracts-upgradeable" "4.3.2"
+    "@openzeppelin/contracts" "4.4.0"
+    "@openzeppelin/contracts-upgradeable" "4.4.0"
     "@openzeppelin/test-helpers" "^0.5.15"
     "@realitio/realitio-contracts" ">=0.0.0"
     "@truffle/hdwallet-provider" "^1.4.0"
