@@ -4,15 +4,19 @@ import useEtherSWR from '../useEtherSWR';
 import useTotalLockedAt from 'hooks/Guilds/ether-swr/guild/useTotalLockedAt';
 import useSnapshotId from 'hooks/Guilds/ether-swr/guild/useSnapshotId';
 import useGuildImplementationType from 'hooks/Guilds/guild/useGuildImplementationType';
+import useGuildToken from './useGuildToken';
+import useTotalSupplyAt from './useTotalSupplyAt';
 
-const useTotalLocked = (guildAddress: string) => {
+const useTotalLocked = (guildAddress: string, snapshotId?: string) => {
   // Hooks call
   const { proposal_id: proposalId } = useParams<{ proposal_id?: string }>();
 
-  const { data: snapshotId } = useSnapshotId({
+  const { data: _snapshotId } = useSnapshotId({
     contractAddress: guildAddress,
     proposalId,
   });
+
+  const SNAPSHOT_ID = snapshotId ? snapshotId : _snapshotId?.toString();
 
   const { isSnapshotGuild, isRepGuild, isSnapshotRepGuild } =
     useGuildImplementationType(guildAddress);
@@ -27,13 +31,20 @@ const useTotalLocked = (guildAddress: string) => {
 
   const totalLockedAtProposalSnapshotResponse = useTotalLockedAt({
     contractAddress: guildAddress,
-    snapshotId: snapshotId?.toString(),
+    snapshotId: SNAPSHOT_ID,
+  });
+
+  const { data: guildTokenAddress } = useGuildToken(guildAddress);
+
+  const totalSupplyAtSnapshotResponse = useTotalSupplyAt({
+    contractAddress: guildTokenAddress,
+    snapshotId: SNAPSHOT_ID,
   });
 
   // Return response based on implementation type
   if (isSnapshotGuild) return totalLockedAtProposalSnapshotResponse;
-  if (isRepGuild) return totalLockedResponse; // TODO: replace with rep implementation totalLocked call
-  if (isSnapshotRepGuild) return totalLockedResponse; // TODO: replace with rep implementation totalLocked call
+  if (isSnapshotRepGuild) return totalSupplyAtSnapshotResponse;
+  if (isRepGuild) return totalLockedResponse;
   return totalLockedResponse;
 };
 
