@@ -42,7 +42,11 @@ const InputWrapper = styled.div`
   }
 `;
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+const IconContainer = styled.div`
+  margin-${({ right }) => (right ? 'left' : 'right')}: 0.3rem;
+`;
+
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactElement;
   iconRight?: React.ReactElement;
 }
@@ -54,9 +58,9 @@ const Input: React.FC<InputProps> = ({
 }) => {
   return (
     <InputWrapper>
-      {icon}
+      <IconContainer>{icon}</IconContainer>
       <UnstyledInput {...rest} />
-      {iconRight}
+      <IconContainer right>{iconRight}</IconContainer>
     </InputWrapper>
   );
 };

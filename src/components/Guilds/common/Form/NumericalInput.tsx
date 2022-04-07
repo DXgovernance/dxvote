@@ -29,7 +29,7 @@ const NumericalInput = ({
       {...rest}
       value={value}
       onChange={event => {
-        // replace commas with periods, because dxswap exclusively uses period as the decimal separator
+        // replace commas with periods, because Guilds exclusively uses period as the decimal separator
         enforcer(event.target.value.replace(/,/g, '.'));
       }}
       // universal input options
