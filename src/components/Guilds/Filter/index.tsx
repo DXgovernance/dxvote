@@ -4,7 +4,7 @@ import { isDesktop, isMobile } from 'react-device-detect';
 import { useParams } from 'react-router';
 import { useFilter } from 'contexts/Guilds/filters';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { Input } from '../common/Form';
+import Input from '../common/Form/Input';
 import { Flex, Box } from '../common/Layout/Box';
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
 import { Button, IconButton } from '../common/Button';

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Input } from 'components/Guilds/common/Form/Input';
+import Input from 'components/Guilds/common/Form/Input';
 import { FiChevronDown, FiMoreHorizontal, FiX } from 'react-icons/fi';
 import { DetailWrapper } from '../../common/editor';
 import Avatar from 'components/Guilds/Avatar';
@@ -17,7 +17,6 @@ import { Box } from 'components/Guilds/common/Layout';
 import { Button } from 'components/Guilds/common/Button';
 import { MAINNET_ID } from 'utils';
 import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
-import { baseInputStyles } from 'components/Guilds/common/Form/Input';
 
 const Control = styled(Box)`
   display: flex;
@@ -57,7 +56,6 @@ const ClickableIcon = styled(Box)`
 `;
 
 const TransferAmountInput = styled(NumericalInput)`
-  ${baseInputStyles}
   display: flex;
   align-items: center;
   width: 100%;
