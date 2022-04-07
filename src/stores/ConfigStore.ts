@@ -1,4 +1,4 @@
-import { makeObservable, observable, action } from 'mobx';
+import { makeObservable, /*observable,*/ action } from 'mobx';
 import RootContext from '../contexts';
 
 import {
@@ -42,12 +42,13 @@ export default class ConfigStore {
     this.darkMode = false;
     this.networkConfigLoaded = false;
 
-    makeObservable(this, {
-      darkMode: observable,
-      loadNetworkConfig: action,
-      toggleDarkMode: action,
-      reset: action,
-    });
+    makeObservable(this);
+    // makeObservable(this, {
+    //   darkMode: observable,
+    //   loadNetworkConfig: action,
+    //   toggleDarkMode: action,
+    //   reset: action,
+    // });
   }
 
   reset() {
