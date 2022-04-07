@@ -59,7 +59,7 @@ export default class DaoStore {
               ].value = bnum(
                 unparsedCache.callPermissions[asset][from][to][
                   functionSignature
-                ].value
+                ].value || 0
               );
             }
           );

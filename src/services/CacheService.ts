@@ -835,7 +835,26 @@ export default class UtilsService {
             schemeType = 'Wallet Scheme v1.0';
 
           switch (schemeType) {
-            case 'Wallet Scheme v1.1':
+            case 'Wallet Scheme v1.0':
+              callsToExecute.push([walletSchemeContract, 'votingMachine', []]);
+              callsToExecute.push([
+                walletSchemeContract,
+                'controllerAddress',
+                [],
+              ]);
+              callsToExecute.push([walletSchemeContract, 'schemeName', []]);
+              callsToExecute.push([
+                walletSchemeContract,
+                'maxSecondsForExecution',
+                [],
+              ]);
+              callsToExecute.push([
+                walletSchemeContract,
+                'maxRepPercentageChange',
+                [],
+              ]);
+              break;
+            default:
               const walletSchemeContract1_1 = await new web3.eth.Contract(
                 WalletScheme1_1JSON.abi,
                 schemeAddress
@@ -862,28 +881,8 @@ export default class UtilsService {
                 [],
               ]);
               break;
-            default:
-              callsToExecute.push([walletSchemeContract, 'votingMachine', []]);
-              callsToExecute.push([
-                walletSchemeContract,
-                'controllerAddress',
-                [],
-              ]);
-              callsToExecute.push([walletSchemeContract, 'schemeName', []]);
-              callsToExecute.push([
-                walletSchemeContract,
-                'maxSecondsForExecution',
-                [],
-              ]);
-              callsToExecute.push([
-                walletSchemeContract,
-                'maxRepPercentageChange',
-                [],
-              ]);
-              break;
           }
         }
-
         const callsResponse1 = await executeMulticall(
           web3,
           networkWeb3Contracts.multicall,
@@ -905,13 +904,13 @@ export default class UtilsService {
 
         if (schemeTypeData.type === 'WalletScheme') {
           switch (schemeType) {
-            case 'Wallet Scheme v1.1':
+            case 'Wallet Scheme v1.0':
+              controllerAddress = callsResponse1.decodedReturnData[3];
+              break;
+            default:
               controllerAddress = callsResponse1.decodedReturnData[3]
                 ? networkWeb3Contracts.controller._address
                 : ZERO_ADDRESS;
-              break;
-            default:
-              controllerAddress = callsResponse1.decodedReturnData[3];
               break;
           }
           schemeName = callsResponse1.decodedReturnData[4];
