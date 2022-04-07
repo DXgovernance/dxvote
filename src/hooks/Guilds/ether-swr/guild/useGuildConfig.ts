@@ -82,6 +82,8 @@ export const useGuildConfig = (
     error,
     isValidating,
     mutate,
-    data: { ...transformedData, totalLocked, token },
+    data: transformedData
+      ? { ...transformedData, totalLocked, token }
+      : undefined,
   };
 };
