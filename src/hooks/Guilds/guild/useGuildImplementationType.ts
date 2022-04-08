@@ -21,14 +21,19 @@ interface ImplementationTypeConfig {
 interface ImplementationTypeConfigReturn extends ImplementationTypeConfig {
   isRepGuild: boolean;
   isSnapshotGuild: boolean;
+  isSnapshotRepGuild: boolean;
 }
 const parseConfig = (
   config: ImplementationTypeConfig
 ): ImplementationTypeConfigReturn => {
   return {
     ...config,
-    isRepGuild: config.features.includes('REP'),
-    isSnapshotGuild: config.features.includes('SNAPSHOT'),
+    isRepGuild:
+      config.features.includes('REP') && !config.features.includes('SNAPSHOT'),
+    isSnapshotGuild:
+      config.features.includes('SNAPSHOT') && !config.features.includes('REP'),
+    isSnapshotRepGuild:
+      config.features.includes('SNAPSHOT') && config.features.includes('REP'),
   };
 };
 
