@@ -7,7 +7,9 @@ import { Button } from 'components/Guilds/common/Button';
 import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 import { getInfoLineView, getSummaryView } from '../SupportedActions';
 import CallDetails from '../CallDetails';
-import { Call } from '../types';
+import { Call, DecodedCall } from '../types';
+import Grip from '../common/Grip';
+import EditButton from '../common/EditButton';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   margin-top: 0.8rem;
@@ -29,10 +31,10 @@ const CardLabel = styled(Box)`
 
 const ChevronIcon = styled.span`
   cursor: pointer;
-  height: 1.25rem;
-  width: 1.25rem;
+  height: 1.4rem;
+  width: 1.4rem;
   border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.proposalText.grey};
+  border: 1px solid ${({ theme }) => theme.colors.muted};
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -64,12 +66,35 @@ const TabButton = styled(Button)`
     `}
 `;
 
+const GripWithMargin = styled(Grip)`
+  margin-right: 1rem;
+`;
+
+const EditButtonWithMargin = styled(EditButton)`
+  margin-right: 0.625rem;
+`;
+
+const CardActions = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 interface ActionViewProps {
-  call: Call;
+  call?: Call;
+  decodedCall?: DecodedCall;
+  isEditable?: boolean;
+  onEdit?: () => void;
 }
 
-const ActionView: React.FC<ActionViewProps> = ({ call }) => {
-  const { decodedCall } = useDecodedCall(call);
+const ActionView: React.FC<ActionViewProps> = ({
+  call,
+  decodedCall: decodedCallFromProps,
+  isEditable,
+}) => {
+  const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
+
+  const decodedCall = decodedCallFromCall || decodedCallFromProps;
 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -82,15 +107,20 @@ const ActionView: React.FC<ActionViewProps> = ({ call }) => {
     <CardWrapperWithMargin>
       <CardHeader>
         <CardLabel>
-          {InfoLine && <InfoLine call={call} decodedCall={decodedCall} />}
+          {isEditable && <GripWithMargin />}
+
+          {InfoLine && <InfoLine decodedCall={decodedCall} />}
         </CardLabel>
-        <ChevronIcon onClick={() => setExpanded(!expanded)}>
-          {expanded ? (
-            <FiChevronUp height={16} />
-          ) : (
-            <FiChevronDown height={16} />
-          )}
-        </ChevronIcon>
+        <CardActions>
+          {isEditable && <EditButtonWithMargin>Edit</EditButtonWithMargin>}
+          <ChevronIcon onClick={() => setExpanded(!expanded)}>
+            {expanded ? (
+              <FiChevronUp height={16} />
+            ) : (
+              <FiChevronDown height={16} />
+            )}
+          </ChevronIcon>
+        </CardActions>
       </CardHeader>
 
       {expanded && (
@@ -115,13 +145,13 @@ const ActionView: React.FC<ActionViewProps> = ({ call }) => {
 
           {ActionSummary && activeTab === 0 && (
             <DetailWrapper>
-              <ActionSummary call={call} decodedCall={decodedCall} />
+              <ActionSummary decodedCall={decodedCall} />
             </DetailWrapper>
           )}
 
           {(!ActionSummary || activeTab === 1) && (
             <DetailWrapper>
-              <CallDetails call={call} decodedCall={decodedCall} />
+              <CallDetails decodedCall={decodedCall} />
             </DetailWrapper>
           )}
         </>

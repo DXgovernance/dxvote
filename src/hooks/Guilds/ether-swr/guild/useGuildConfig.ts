@@ -1,7 +1,10 @@
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
+import { SWRResponse } from 'swr';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import useEtherSWR from '../useEtherSWR';
+import useTotalLocked from './useTotalLocked';
+import useGuildToken from './useGuildToken';
 
 type GuildConfig = {
   name: string;
@@ -17,11 +20,12 @@ type GuildConfig = {
   totalLocked: BigNumber;
 };
 
-export const useGuildConfig = (guildAddress: string) => {
+export const useGuildConfig = (
+  guildAddress: string
+): SWRResponse<GuildConfig> => {
   const { data, error, isValidating, mutate } = useEtherSWR(
     guildAddress
       ? [
-          [guildAddress, 'getToken'], // Get the address of the ERC20Token used for voting
           [guildAddress, 'getPermissionRegistry'], // Get the address of the permission registry contract
           [guildAddress, 'getName'], // Get the name of the ERC20Guild
           [guildAddress, 'getProposalTime'], // Get the proposalTime (seconds)
@@ -31,7 +35,6 @@ export const useGuildConfig = (guildAddress: string) => {
           [guildAddress, 'getVotingPowerForProposalExecution'],
           [guildAddress, 'getTokenVault'],
           [guildAddress, 'getLockTime'],
-          [guildAddress, 'getTotalLocked'],
         ]
       : [],
     {
@@ -39,13 +42,14 @@ export const useGuildConfig = (guildAddress: string) => {
       refreshInterval: 0,
     }
   );
+  const { data: token } = useGuildToken(guildAddress);
+  const { data: totalLocked } = useTotalLocked(guildAddress);
 
   // TODO: Move this into a SWR middleware
-  const transformedData: GuildConfig = useMemo(() => {
+  const transformedData = useMemo(() => {
     if (!data) return undefined;
 
     const [
-      token,
       permissionRegistry,
       name,
       proposalTime,
@@ -55,11 +59,9 @@ export const useGuildConfig = (guildAddress: string) => {
       votingPowerForProposalExecution,
       tokenVault,
       lockTime,
-      totalLocked,
     ] = data;
 
     return {
-      token,
       permissionRegistry,
       name,
       proposalTime: BigNumber.from(proposalTime),
@@ -73,7 +75,6 @@ export const useGuildConfig = (guildAddress: string) => {
       ),
       tokenVault,
       lockTime: BigNumber.from(lockTime),
-      totalLocked: BigNumber.from(totalLocked),
     };
   }, [data]);
 
@@ -81,6 +82,8 @@ export const useGuildConfig = (guildAddress: string) => {
     error,
     isValidating,
     mutate,
-    data: transformedData,
+    data: transformedData
+      ? { ...transformedData, totalLocked, token }
+      : undefined,
   };
 };
