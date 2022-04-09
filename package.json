@@ -33,7 +33,7 @@
     "@0xsequence/multicall": "^0.35.5",
     "@nomiclabs/hardhat-truffle5": "^2.0.5",
     "@nomiclabs/hardhat-web3": "^2.0.0",
-    "@self.id/react": "^0.2.0",
+    "@self.id/react": "^0.3.0-alpha.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@tiptap/extension-focus": "^2.0.0-beta.39",
@@ -145,4 +145,3 @@
     "electron": "^17.1.2"
   }
 }
-
