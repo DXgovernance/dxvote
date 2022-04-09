@@ -1,19 +1,20 @@
 import { BigNumber, utils } from 'ethers';
 import { DeepPartial, RequireAtLeastOne } from 'utils/types';
-import { Call, DecodedAction, DecodedCall, SupportedAction } from '../types';
+import { DecodedAction, DecodedCall, SupportedAction } from '../types';
 import ERC20ABI from '../../../../abis/ERC20.json';
 import ERC20TransferEditor from './ERC20Transfer/ERC20TransferEditor';
 import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
 import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
 
+export interface SupportedActionMetadata {
+  title: string;
+}
 export interface ActionViewProps {
-  call: Call;
   decodedCall: DecodedCall;
 }
 
 export interface ActionEditorProps {
-  contract: utils.Interface;
-  call: DecodedCall;
+  decodedCall: DecodedCall;
   updateCall: (updatedCall: DecodedCall) => void;
 }
 
@@ -23,26 +24,27 @@ type SupportedActionViews = {
 };
 
 type SupportedActionEditors = RequireAtLeastOne<{
-  bulkEditor?: React.FC<ActionEditorProps>;
   editor?: React.FC<ActionEditorProps>;
 }>;
 
 export const supportedActions: Record<
   SupportedAction,
-  SupportedActionViews & SupportedActionEditors
+  SupportedActionViews & SupportedActionEditors & SupportedActionMetadata
 > = {
   [SupportedAction.ERC20_TRANSFER]: {
+    title: 'Transfers & Mint',
     infoLineView: ERC20TransferInfoLine,
     summaryView: ERC20TransferSummary,
     editor: ERC20TransferEditor,
   },
   [SupportedAction.GENERIC_CALL]: {
+    title: 'Generic Call',
     infoLineView: () => <div>Generic Call</div>,
     editor: () => <div>Generic Call Editor</div>,
   },
 };
 
-let ERC20Contract = new utils.Interface(ERC20ABI);
+const ERC20Contract = new utils.Interface(ERC20ABI);
 
 export const defaultValues: Record<
   SupportedAction,

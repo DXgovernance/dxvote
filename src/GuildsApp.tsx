@@ -1,10 +1,4 @@
-import {
-  HashRouter,
-  Redirect,
-  Route,
-  Switch,
-  useHistory,
-} from 'react-router-dom';
+import { HashRouter, Route, Switch, useHistory } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import { Container } from './components/Guilds/common/Layout';
@@ -21,6 +15,7 @@ import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBo
 import ProposalTypes from 'components/Guilds/ProposalTypes';
 import { ProposalTypesConfig } from 'configs/proposalTypes';
 import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
+import LandingPage from 'pages/Guilds/LandingPage';
 import GuildAvailabilityProvider from 'contexts/Guilds/guildAvailability';
 import NotFound from 'pages/Guilds/NotFound';
 
@@ -45,11 +40,9 @@ const GuildsApp = () => {
                 <Container>
                   <GuildAvailabilityProvider>
                     <Switch>
-                      <Redirect
-                        exact
-                        from="/:chain_name"
-                        to="/:chain_name/0x9cdc16b5f95229b856cba5f38095fd8e00f8edef"
-                      />
+                      <Route exact path="/:chain_name">
+                        <LandingPage />
+                      </Route>
 
                       <Route exact path="/:chain_name/:guild_id">
                         <GuildsPage />

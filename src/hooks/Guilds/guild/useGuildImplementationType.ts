@@ -1,36 +1,70 @@
 import { useMemo, useEffect, useState } from 'react';
+import { utils } from 'ethers';
 import useJsonRpcProvider from '../web3/useJsonRpcProvider';
 import { GuildImplementationType } from '../../../types/types.guilds.d';
-import deployedBytecodes from '../../../bytecodes/config.json';
+import deployedHashedBytecodes from '../../../bytecodes/config.json';
+
+const defaultImplementation = deployedHashedBytecodes.find(
+  ({ type }) => type === GuildImplementationType.IERC20Guild
+) ?? {
+  type: GuildImplementationType.IERC20Guild,
+  features: [],
+  bytecode_hash: '',
+};
+
+interface ImplementationTypeConfig {
+  type: string;
+  features: string[];
+  bytecode_hash: string;
+}
+
+interface ImplementationTypeConfigReturn extends ImplementationTypeConfig {
+  isRepGuild: boolean;
+  isSnapshotGuild: boolean;
+  isSnapshotRepGuild: boolean;
+}
+const parseConfig = (
+  config: ImplementationTypeConfig
+): ImplementationTypeConfigReturn => {
+  return {
+    ...config,
+    isRepGuild:
+      config.features.includes('REP') && !config.features.includes('SNAPSHOT'),
+    isSnapshotGuild:
+      config.features.includes('SNAPSHOT') && !config.features.includes('REP'),
+    isSnapshotRepGuild:
+      config.features.includes('SNAPSHOT') && config.features.includes('REP'),
+  };
+};
 
 /**
  * @function useGuildImplementationType
  * @param {string} guildAddress
  * @returns {string} GuildImplementationType. 'SnapshotRepERC20Guild' | 'DXDGuild' | 'ERC20Guild' | 'IERC20Guild'
  */
-export default function useGuildImplementationType(
+export default function useGuildImplementationTypeConfig(
   guildAddress: string
-): GuildImplementationType {
+): ImplementationTypeConfigReturn {
   const [guildBytecode, setGuildBytecode] = useState<string>('');
   const provider = useJsonRpcProvider();
 
   useEffect(() => {
     const getBytecode = async () => {
-      const bytecode = await provider.getCode(guildAddress);
-      setGuildBytecode(bytecode);
+      const hashedBytecode = utils.sha256(await provider.getCode(guildAddress));
+      setGuildBytecode(hashedBytecode);
     };
     getBytecode();
   }, [guildAddress, provider]);
 
-  const implementationType: GuildImplementationType = useMemo(() => {
-    if (!guildBytecode) return GuildImplementationType.IERC20Guild;
+  const implementationTypeConfig: ImplementationTypeConfig = useMemo(() => {
+    if (!guildBytecode) return defaultImplementation;
 
-    const match = deployedBytecodes.find(
-      ({ bytecode }) => guildBytecode === bytecode
+    const match = deployedHashedBytecodes.find(
+      ({ bytecode_hash }) => guildBytecode === bytecode_hash
     );
 
-    return match ? match.type : GuildImplementationType.IERC20Guild; // default to IERC20Guild
-  }, [guildBytecode]) as GuildImplementationType;
+    return match ? match : defaultImplementation; // default to IERC20Guild
+  }, [guildBytecode]);
 
-  return implementationType;
+  return parseConfig(implementationTypeConfig);
 }
