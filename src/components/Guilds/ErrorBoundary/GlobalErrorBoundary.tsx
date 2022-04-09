@@ -1,6 +1,9 @@
 import React from 'react';
 
-class GlobalErrorBoundary extends React.Component<{}, { hasError: boolean }> {
+class GlobalErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
   constructor(props) {
     super(props);
     this.state = { hasError: false };

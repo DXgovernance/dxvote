@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
 import { Web3ReactProvider } from '@web3-react/core';
 import Web3ReactManager from 'components/Web3ReactManager';
@@ -167,7 +167,7 @@ const Root = () => {
     </GlobalErrorBoundary>
   );
 };
-ReactDOM.render(<Root />, document.getElementById('root'));
+createRoot(document.getElementById('root')).render(<Root />);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
