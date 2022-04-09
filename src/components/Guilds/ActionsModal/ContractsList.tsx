@@ -1,5 +1,6 @@
 import React from 'react';
 import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
+import { ReactComponent as Mint } from '../../../assets/images/mint.svg';
 import StyledIcon from '../common/SVG';
 import {
   RegistryContract,
@@ -40,6 +41,14 @@ const ContractsList: React.FC<ContractsListProps> = ({
           <ButtonLabel>
             <StyledIcon src={Vector} />
             Transfer & Mint
+          </ButtonLabel>
+        </ActionsButton>
+        <ActionsButton
+          onClick={() => onSupportedActionSelect(SupportedAction.REP_MINT)}
+        >
+          <ButtonLabel>
+            <StyledIcon src={Mint} />
+            Mint REP
           </ButtonLabel>
         </ActionsButton>
       </SectionWrapper>
