@@ -55,7 +55,10 @@ const ContractsList: React.FC<ContractsListProps> = ({
       <SectionWrapper>
         <SectionTitle>External Contracts</SectionTitle>
         {contracts?.map(contract => (
-          <ActionsButton onClick={() => onSelect(contract)}>
+          <ActionsButton
+            key={contract.title}
+            onClick={() => onSelect(contract)}
+          >
             <ButtonLabel>{contract.title}</ButtonLabel>
             <ButtonDetail>
               {contract.functions?.length}{' '}

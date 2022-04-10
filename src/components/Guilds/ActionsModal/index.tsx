@@ -18,6 +18,7 @@ import { Modal } from '../common/Modal';
 import ContractActionsList from './ContractActionsList';
 import ContractsList from './ContractsList';
 import ParamsModal from './ParamsModal';
+import { useWeb3React } from '@web3-react/core';
 
 export const EditorWrapper = styled.div`
   margin: 1.25rem;
@@ -40,7 +41,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
   onAddAction,
 }) => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
-
+  const { account: walletAddress } = useWeb3React();
   // Supported Actions
   const [selectedAction, setSelectedAction] = useState<SupportedAction>(null);
   const [selectedActionContract, setSelectedActionContract] =
@@ -128,6 +129,11 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
     defaultDecodedAction.decodedCall.from = guildId;
     defaultDecodedAction.decodedCall.callType = action;
+    switch (action) {
+      case SupportedAction.REP_MINT:
+        defaultDecodedAction.decodedCall.args.to = walletAddress;
+        break;
+    }
     setData(defaultDecodedAction.decodedCall);
     setSelectedAction(action);
     setSelectedActionContract(defaultDecodedAction.contract);

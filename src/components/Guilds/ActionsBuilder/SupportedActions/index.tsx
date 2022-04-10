@@ -9,7 +9,6 @@ import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
 import REPMintEditor from './REPMint/REPMintEditor';
 import REPMintInfoLine from './REPMint/REPMintInfoLine';
 import REPMintSummary from './REPMint/REPMintSummary';
-
 export interface SupportedActionMetadata {
   title: string;
 }
@@ -53,10 +52,8 @@ export const supportedActions: Record<
     editor: () => <div>Generic Call Editor</div>,
   },
 };
-
 const ERC20Contract = new utils.Interface(ERC20ABI);
 const ERC20SnapshotRepContract = new utils.Interface(ERC20SnapshotRep.abi);
-
 export const defaultValues: Record<
   SupportedAction,
   DeepPartial<DecodedAction>
@@ -74,14 +71,14 @@ export const defaultValues: Record<
     },
   },
   [SupportedAction.REP_MINT]: {
-    contract: ERC20Contract,
+    contract: ERC20SnapshotRepContract,
     decodedCall: {
       function: ERC20SnapshotRepContract.getFunction('mint'),
       to: '',
       value: BigNumber.from(0),
       args: {
-        _to: '',
-        _value: BigNumber.from(0),
+        to: '',
+        amount: BigNumber.from(0),
       },
     },
   },

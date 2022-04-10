@@ -2,17 +2,17 @@
 import styled from 'styled-components';
 import { Input } from 'components/Guilds/common/Form/Input';
 import Avatar from 'components/Guilds/Avatar';
-import { useWeb3React } from '@web3-react/core';
 import { useMemo } from 'react';
 import { ActionEditorProps } from '..';
-import { utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { Box } from 'components/Guilds/common/Layout';
 import { shortenAddress, MAINNET_ID } from 'utils';
-import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
 import { baseInputStyles } from 'components/Guilds/common/Form/Input';
 import { ReactComponent as Info } from '../../../../../assets/images/info.svg';
 import StyledIcon from 'components/Guilds/common/SVG';
+// import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
+import { useState } from 'react';
 
 const Control = styled(Box)`
   display: flex;
@@ -36,7 +36,7 @@ const ControlRow = styled(Box)`
   height: 100%;
 `;
 
-const RepMintInput = styled(NumericalInput)`
+const RepMintInput = styled(Input)`
   ${baseInputStyles}
   display: flex;
   align-items: center;
@@ -47,34 +47,61 @@ const RepMintInput = styled(NumericalInput)`
   }
 `;
 
-// interface REPMintState {
-//   source: string;
-//   tokenAddress: string;
-//   amount: BigNumber;
-//   destination: string;
-// }
+interface REPMintState {
+  toAddress: string;
+  amount: BigNumber;
+}
 
-const Mint: React.FC<ActionEditorProps> = ({ decodedCall }) => {
+const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   // parse transfer state from calls
-  // const parsedData = useMemo<REPMintState>(() => {
-  //   if (!decodedCall) return null;
-
-  //   return {
-  //     source: decodedCall.from,
-  //     tokenAddress: decodedCall.to,
-  //     amount: decodedCall.args._value,
-  //     destination: decodedCall.args._to,
-  //   };
-  // }, [decodedCall]);
-
-  const { account: userAddress } = useWeb3React();
-  const { imageUrl } = useENSAvatar(userAddress, MAINNET_ID);
-
-  const validations = useMemo(() => {
+  console.log({ decodedCall });
+  const [repPercent, setRepPercent] = useState(0);
+  const [repAmount, setRepAmount] = useState(0);
+  const parsedData = useMemo<REPMintState>(() => {
+    if (!decodedCall) return null;
     return {
-      destination: utils.isAddress(userAddress),
+      toAddress: decodedCall.args.to,
+      amount: decodedCall.args.amount,
     };
-  }, [userAddress]);
+  }, [decodedCall]);
+
+  console.log({ parsedData });
+  const { imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
+
+  const setCallDataAmount = (value: string) => {
+    const amount = value ? BigNumber.from(value) : null;
+    updateCall({
+      ...decodedCall,
+      args: {
+        ...decodedCall.args,
+        amount,
+      },
+    });
+  };
+
+  const handleRepPercentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      setRepPercent(parseInt(e.target.value));
+      setRepAmount(parseInt(e.target.value) * 100);
+      setCallDataAmount((parseInt(e.target.value) * 100).toString());
+    } else {
+      setRepPercent(0);
+      setRepAmount(0);
+      setCallDataAmount('0');
+    }
+  };
+
+  const handleRepAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      setRepAmount(parseInt(e.target.value));
+      setRepPercent(parseInt(e.target.value) / 100);
+      setCallDataAmount(e.target.value);
+    } else {
+      setRepPercent(0);
+      setRepAmount(0);
+      setCallDataAmount('0');
+    }
+  };
 
   return (
     <div>
@@ -85,11 +112,13 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall }) => {
         </ControlLabel>
         <ControlRow>
           <Input
-            value={shortenAddress(userAddress)}
+            value={shortenAddress(parsedData?.toAddress)}
             icon={
-              validations.destination && (
-                <Avatar src={imageUrl} defaultSeed={userAddress} size={18} />
-              )
+              <Avatar
+                src={imageUrl}
+                defaultSeed={parsedData?.toAddress}
+                size={18}
+              />
             }
             readOnly
           />
@@ -101,7 +130,10 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall }) => {
             Reputation in % <StyledIcon src={Info} />
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={''} onUserInput={''} />
+            <RepMintInput
+              value={repPercent}
+              onChange={handleRepPercentChange}
+            />
           </ControlRow>
         </Control>
       </ControlRow>
@@ -111,7 +143,7 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall }) => {
             Reputation Amount <StyledIcon src={Info} />
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={''} onUserInput={''} />
+            <RepMintInput value={repAmount} onChange={handleRepAmountChange} />
           </ControlRow>
         </Control>
       </ControlRow>

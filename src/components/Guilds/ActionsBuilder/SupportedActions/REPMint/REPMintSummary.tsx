@@ -1,26 +1,30 @@
 import Avatar from 'components/Guilds/Avatar';
+import { BigNumber } from 'ethers';
+import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
-// import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { MAINNET_ID, shortenAddress } from 'utils';
 import { ActionViewProps } from '..';
 import { Segment } from '../common/infoLine';
 import { DetailCell, DetailHeader, DetailRow } from '../common/summary';
-import { useWeb3React } from '@web3-react/core';
+
+interface REPMintState {
+  toAddress: string;
+  amount: BigNumber;
+}
 
 const REPMintSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
-  // const parsedData = useMemo(() => {
-  //   if (!decodedCall) return null;
+  const parsedData = useMemo<REPMintState>(() => {
+    if (!decodedCall) return null;
+    return {
+      toAddress: decodedCall.args.to,
+      amount: decodedCall.args.amount,
+    };
+  }, [decodedCall]);
 
-  //   return {
-  //     tokenAddress: decodedCall.to,
-  //     amount: BigNumber.from(decodedCall.args._value),
-  //     source: decodedCall.from,
-  //     destination: decodedCall.args._to,
-  //   };
-  // }, [decodedCall]);
+  const { ensName, imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
 
-  const { account: userAddress } = useWeb3React();
-  const { ensName, imageUrl } = useENSAvatar(userAddress, MAINNET_ID);
+  const roundedRepAmount = useBigNumberToNumber(parsedData?.amount, 1, 3) * 10;
 
   return (
     <>
@@ -32,11 +36,15 @@ const REPMintSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
       <DetailRow>
         <DetailCell>
           <Segment>
-            <Avatar defaultSeed={userAddress} src={imageUrl} size={24} />
+            <Avatar
+              defaultSeed={parsedData?.toAddress}
+              src={imageUrl}
+              size={24}
+            />
           </Segment>
-          <Segment>{ensName || shortenAddress(userAddress)}</Segment>
+          <Segment>{ensName || shortenAddress(parsedData?.toAddress)}</Segment>
         </DetailCell>
-        <DetailCell>100 REP</DetailCell>
+        <DetailCell>{roundedRepAmount} REP</DetailCell>
       </DetailRow>
     </>
   );
