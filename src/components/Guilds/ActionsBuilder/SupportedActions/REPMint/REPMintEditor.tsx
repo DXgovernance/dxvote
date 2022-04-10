@@ -1,17 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from 'styled-components';
 import { Input } from 'components/Guilds/common/Form/Input';
-import { FiX } from 'react-icons/fi';
 import Avatar from 'components/Guilds/Avatar';
 import { useWeb3React } from '@web3-react/core';
-import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
 import { useMemo } from 'react';
 import { ActionEditorProps } from '..';
-import { BigNumber, utils } from 'ethers';
-import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
-import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
+import { utils } from 'ethers';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { Box } from 'components/Guilds/common/Layout';
-import { MAINNET_ID, shortenAddress } from 'utils';
+import { shortenAddress, MAINNET_ID } from 'utils';
 import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
 import { baseInputStyles } from 'components/Guilds/common/Form/Input';
 import { ReactComponent as Info } from '../../../../../assets/images/info.svg';
@@ -39,12 +36,6 @@ const ControlRow = styled(Box)`
   height: 100%;
 `;
 
-const ClickableIcon = styled(Box)`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-`;
-
 const RepMintInput = styled(NumericalInput)`
   ${baseInputStyles}
   display: flex;
@@ -56,78 +47,34 @@ const RepMintInput = styled(NumericalInput)`
   }
 `;
 
-interface TransferState {
-  source: string;
-  tokenAddress: string;
-  amount: BigNumber;
-  destination: string;
-}
+// interface REPMintState {
+//   source: string;
+//   tokenAddress: string;
+//   amount: BigNumber;
+//   destination: string;
+// }
 
-const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
-  const { chainId } = useWeb3React();
-
+const Mint: React.FC<ActionEditorProps> = ({ decodedCall }) => {
   // parse transfer state from calls
-  const parsedData = useMemo<TransferState>(() => {
-    if (!decodedCall) return null;
+  // const parsedData = useMemo<REPMintState>(() => {
+  //   if (!decodedCall) return null;
 
-    return {
-      source: decodedCall.from,
-      tokenAddress: decodedCall.to,
-      amount: decodedCall.args._value,
-      destination: decodedCall.args._to,
-    };
-  }, [decodedCall]);
+  //   return {
+  //     source: decodedCall.from,
+  //     tokenAddress: decodedCall.to,
+  //     amount: decodedCall.args._value,
+  //     destination: decodedCall.args._to,
+  //   };
+  // }, [decodedCall]);
+
+  const { account: userAddress } = useWeb3React();
+  const { imageUrl } = useENSAvatar(userAddress, MAINNET_ID);
 
   const validations = useMemo(() => {
     return {
-      tokenAddress: utils.isAddress(parsedData?.tokenAddress),
-      amount: BigNumber.isBigNumber(parsedData?.amount),
-      destination: utils.isAddress(parsedData?.destination),
+      destination: utils.isAddress(userAddress),
     };
-  }, [parsedData]);
-
-  // // Get token details from the token address
-  const { tokens } = useTokenList(chainId);
-  const token = useMemo(() => {
-    if (!parsedData?.tokenAddress || !tokens) return null;
-
-    return tokens.find(({ address }) => address === parsedData.tokenAddress);
-  }, [tokens, parsedData]);
-  console.log(token);
-
-  const { data: tokenInfo } = useERC20Info(parsedData?.tokenAddress);
-  const roundedBalance = useBigNumberToNumber(
-    parsedData?.amount,
-    tokenInfo?.decimals,
-    10
-  );
-  const { ensName, imageUrl: destinationAvatarUrl } = useENSAvatar(
-    parsedData?.destination,
-    MAINNET_ID
-  );
-
-  const setTransferAddress = (walletAddress: string) => {
-    updateCall({
-      ...decodedCall,
-      args: {
-        ...decodedCall.args,
-        _to: walletAddress,
-      },
-    });
-  };
-
-  const setAmount = (value: string) => {
-    const amount = value
-      ? utils.parseUnits(value, tokenInfo?.decimals || 18)
-      : null;
-    updateCall({
-      ...decodedCall,
-      args: {
-        ...decodedCall.args,
-        _value: amount,
-      },
-    });
-  };
+  }, [userAddress]);
 
   return (
     <div>
@@ -138,33 +85,13 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
         </ControlLabel>
         <ControlRow>
           <Input
-            value={parsedData.destination || ''}
+            value={shortenAddress(userAddress)}
             icon={
-              <div>
-                {validations.destination && (
-                  <>
-                    <Avatar
-                      src={destinationAvatarUrl}
-                      defaultSeed={parsedData.destination}
-                      size={24}
-                    />
-                    <span>
-                      {ensName || parsedData?.destination
-                        ? shortenAddress(parsedData?.destination)
-                        : ''}
-                    </span>
-                  </>
-                )}
-              </div>
+              validations.destination && (
+                <Avatar src={imageUrl} defaultSeed={userAddress} size={18} />
+              )
             }
-            iconRight={
-              parsedData?.destination ? (
-                <ClickableIcon onClick={() => setTransferAddress('')}>
-                  <FiX size={18} />
-                </ClickableIcon>
-              ) : null
-            }
-            onChange={e => setTransferAddress(e.target.value)}
+            readOnly
           />
         </ControlRow>
       </Control>
@@ -174,7 +101,7 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
             Reputation in % <StyledIcon src={Info} />
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={roundedBalance} onUserInput={setAmount} />
+            <RepMintInput value={''} onUserInput={''} />
           </ControlRow>
         </Control>
       </ControlRow>
@@ -184,7 +111,7 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
             Reputation Amount <StyledIcon src={Info} />
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={roundedBalance} onUserInput={setAmount} />
+            <RepMintInput value={''} onUserInput={''} />
           </ControlRow>
         </Control>
       </ControlRow>
