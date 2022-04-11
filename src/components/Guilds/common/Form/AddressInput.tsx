@@ -3,17 +3,9 @@ import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { MAINNET_ID } from 'utils';
 import Input, { InputProps } from './Input';
 
-type AddressInputProps = {
-  value: string;
-  onValueChange: (input: string) => void;
-  error?: boolean;
-  fontSize?: string;
-  align?: 'right' | 'left';
-} & InputProps;
-
-const AddressInput: React.FC<AddressInputProps> = ({
+const AddressInput: React.FC<InputProps<string>> = ({
   value,
-  onValueChange,
+  onChange,
   ...rest
 }) => {
   const { imageUrl } = useENSAvatar(value, MAINNET_ID);
@@ -27,7 +19,7 @@ const AddressInput: React.FC<AddressInputProps> = ({
           <Avatar src={imageUrl} defaultSeed={value} size={24} />
         </div>
       }
-      onChange={e => onValueChange(e.target.value)}
+      onChange={e => onChange(e.target.value)}
     />
   );
 };

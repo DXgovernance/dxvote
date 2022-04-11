@@ -1,5 +1,6 @@
 import styled, { useTheme } from 'styled-components';
 import Switch from 'react-switch';
+import { FormElementProps } from './common';
 
 const StyledSwitch = styled(Switch)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -13,12 +14,7 @@ const StyledSwitch = styled(Switch)`
   }
 `;
 
-interface ToggleProps {
-  value: boolean;
-  onChange: (value: boolean) => void;
-}
-
-const Toggle: React.FC<ToggleProps> = ({ value, onChange }) => {
+const Toggle: React.FC<FormElementProps<boolean>> = ({ value, onChange }) => {
   const theme = useTheme();
 
   return (

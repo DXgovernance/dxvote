@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import DateTime from 'react-datetime';
 import { Moment } from 'moment';
 import 'react-datetime/css/react-datetime.css';
-import Input from './Input';
+import Input, { InputProps } from './Input';
 import { useMemo } from 'react';
 
 const StyledDateTime = styled(DateTime)`
@@ -87,28 +87,26 @@ export enum InputType {
   DATETIME,
 }
 
-interface DateInputProps {
-  value: Moment;
-  onChange: (date: Moment) => void;
+interface DateInputProps extends InputProps<Moment> {
   isUTC?: boolean;
-  type?: InputType;
+  inputType?: InputType;
   isValidDate?: (date: Moment) => boolean;
 }
 
 const DateInput: React.FC<DateInputProps> = ({
   value,
   onChange,
-  type = InputType.DATE,
+  inputType = InputType.DATE,
   isUTC = false,
   isValidDate = () => true,
 }) => {
   const { dateFormat, timeFormat } = useMemo(() => {
-    if (type === InputType.DATETIME) {
+    if (inputType === InputType.DATETIME) {
       return {
         dateFormat: 'DD/MM/YYYY',
         timeFormat: 'HH:mm:ss A',
       };
-    } else if (type === InputType.TIME) {
+    } else if (inputType === InputType.TIME) {
       return {
         dateFormat: false,
         timeFormat: 'HH:mm:ss A',
@@ -119,7 +117,7 @@ const DateInput: React.FC<DateInputProps> = ({
       dateFormat: 'DD/MM/YYYY',
       timeFormat: false,
     };
-  }, [type]);
+  }, [inputType]);
 
   return (
     <StyledDateTime

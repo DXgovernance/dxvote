@@ -122,6 +122,7 @@ const LandingPage: React.FC = () => {
     <>
       <InputContainer>
         <Input
+          value=""
           icon={<AiOutlineSearch size={24} />}
           placeholder="Search Guild"
         />

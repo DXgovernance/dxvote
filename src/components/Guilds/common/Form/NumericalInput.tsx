@@ -1,26 +1,20 @@
 // Based on https://github.com/levelkdev/dxswap-dapp/blob/master/src/components/Input/NumericalInput/index.tsx
 
 import React from 'react';
-import Input from './Input';
+import Input, { InputProps } from './Input';
 import { escapeRegExp } from '../../../../utils';
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
 
-const NumericalInput = ({
+const NumericalInput: React.FC<InputProps<string>> = ({
   value,
-  onUserInput,
+  onChange,
   placeholder,
   ...rest
-}: {
-  value: string | number;
-  onUserInput: (input: string) => void;
-  error?: boolean;
-  fontSize?: string;
-  align?: 'right' | 'left';
-} & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) => {
+}) => {
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserInput(nextUserInput);
+      onChange(nextUserInput);
     }
   };
 
@@ -34,7 +28,6 @@ const NumericalInput = ({
       }}
       // universal input options
       inputMode="decimal"
-      title="Token Amount"
       autoComplete="off"
       autoCorrect="off"
       // text-specific options

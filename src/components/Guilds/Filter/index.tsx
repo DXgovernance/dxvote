@@ -109,6 +109,7 @@ export const Filter = () => {
       {openSearchBar ? (
         <StyledInputWrapper>
           <Input
+            value={''}
             icon={<AiOutlineSearch size={24} />}
             placeholder="Search title, ENS, address"
           />
