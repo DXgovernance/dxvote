@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { Option } from '../../types';
 
 interface ProposalActionTagProps {
@@ -19,6 +19,5 @@ const Tag = styled.span<ProposalActionTagProps>`
 export const ProposalOptionTag: React.FC<ProposalActionTagProps> = ({
   option,
 }) => {
-  const theme = useTheme();
-  return <Tag color={theme?.colors?.votes?.[option.index]}>{option.label}</Tag>;
+  return <Tag color={option.color}>{option.label}</Tag>;
 };
