@@ -15,6 +15,7 @@ import { Loading } from 'components/Guilds/common/Loading';
 import { VoteResults } from './VoteResults';
 import { VotesChart } from './VoteChart';
 import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf';
+import useSnapshotId from 'hooks/Guilds/ether-swr/guild/useSnapshotId';
 import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
@@ -86,11 +87,13 @@ const ProposalVoteCard = () => {
   const voteData = useVotingResults();
 
   const timestamp = useTimedRerender(1000);
-  const isOpen = useMemo(
+  //@ts-ignore
+  const isOpens = useMemo(
     () => proposal?.endTime.isAfter(moment(timestamp)),
     [proposal, timestamp]
   );
 
+  const isOpen = true;
   const { account: userAddress } = useWeb3React();
   const { data: userVotingPower } = useVotingPowerOf({
     contractAddress: guildId,
@@ -98,7 +101,46 @@ const ProposalVoteCard = () => {
   });
   const { createTransaction } = useTransactions();
   const contract = useERC20Guild(guildId, true);
+  const { data: snapshotId } = useSnapshotId({
+    contractAddress: guildId,
+    proposalId: proposalId,
+  });
+  //@ts-ignore
+  const { data: votingPowerAtProposalSnapshotId } = useVotingPowerOf({
+    contractAddress: guildId,
+    userAddress: userAddress,
+    snapshotId: snapshotId?.toString(),
+    fallbackSnapshotId: false,
+  });
+  const { data: votingPowerAtProposalCurrentSnapshot } = useVotingPowerOf({
+    contractAddress: guildId,
+    userAddress: userAddress,
+    snapshotId: null,
+    fallbackSnapshotId: true,
+  });
+
   const voteOnProposal = async () => {
+    const noVotingPowerAtSnapshot =
+      Number(votingPowerAtProposalSnapshotId?.toString()) <= 0;
+    const hasVotingPowerAtCurrentSnapshot =
+      Number(votingPowerAtProposalCurrentSnapshot?.toString()) > 0;
+    if (noVotingPowerAtSnapshot) {
+      if (hasVotingPowerAtCurrentSnapshot) {
+        console.log('Current voting power gained after proposal creation');
+        return;
+      }
+      console.log('No voting power');
+      return;
+    }
+    console.log(
+      'votingPowerAtProposalSnapshotId',
+      Number(votingPowerAtProposalSnapshotId?.toString())
+    );
+    console.log(
+      'votingPowerAtProposalCurrentSnapshot',
+      Number(votingPowerAtProposalCurrentSnapshot?.toString())
+    );
+
     setModalOpen(true);
   };
 

@@ -50,7 +50,8 @@ export default function useGuildImplementationTypeConfig(
 
   useEffect(() => {
     const getBytecode = async () => {
-      const hashedBytecode = utils.sha256(await provider.getCode(guildAddress));
+      const btcode = await provider.getCode(guildAddress);
+      const hashedBytecode = utils.sha256(btcode);
       setGuildBytecode(hashedBytecode);
     };
     getBytecode();
@@ -65,6 +66,5 @@ export default function useGuildImplementationTypeConfig(
 
     return match ? match : defaultImplementation; // default to IERC20Guild
   }, [guildBytecode]);
-
   return parseConfig(implementationTypeConfig);
 }

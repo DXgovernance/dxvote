@@ -25,6 +25,7 @@ const useTotalSupplyAt: UseTotalSupplyAtHook = ({
       : [],
     {
       ABIs: new Map([[contractAddress, ERC20SnapshotRep.abi]]),
+      refreshInterval: 0,
     }
   );
 };

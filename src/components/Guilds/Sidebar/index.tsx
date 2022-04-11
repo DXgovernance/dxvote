@@ -104,6 +104,8 @@ export const Sidebar = () => {
     userAddress,
   });
 
+  console.log('votingPower', votingPower);
+
   return (
     <SidebarWrapper data-testid="sidebar">
       <DaoInfoPanel>
