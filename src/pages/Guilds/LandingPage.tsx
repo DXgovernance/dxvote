@@ -108,7 +108,6 @@ const Title: React.FC<TitleProps> = ({ guildAddress }) => {
 };
 const Proposals: React.FC<TitleProps> = ({ guildAddress }) => {
   const { data } = useActiveProposalsNow(guildAddress);
-  console.log({ data });
   return (
     <ProposalsInformation proposals={'active'}>
       {data?.toString() ?? ''} Proposal
