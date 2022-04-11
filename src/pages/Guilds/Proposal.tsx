@@ -19,6 +19,8 @@ import Result, { ResultState } from 'components/Guilds/common/Result';
 import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
 import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
 
+import CommentCompose from 'forum/components/CommentCompose';
+
 const PageContainer = styled(Box)`
   display: grid;
   grid-template-columns: 1fr;
@@ -144,14 +146,13 @@ const ProposalPage: React.FC = () => {
             )}
           </PageTitle>
         </PageHeader>
-
         <AddressButton address={proposal?.creator} />
-
         <ProposalDescription />
-
         <ProposalActionsWrapper>
           <ActionsBuilder options={options} editable={false} />
         </ProposalActionsWrapper>
+
+        <CommentCompose />
       </PageContent>
       <SidebarContent>
         <ProposalVoteCard />

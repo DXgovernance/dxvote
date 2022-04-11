@@ -4,6 +4,8 @@
     "primary": "#295FF4",
     "secondary": "#181B1B",
     "red": "#E75C5C",
+    "grey": "#a1a6b0",
+    "grey2": "#bdc0c7",
     "proposalText": {
       "grey": "#A1A6B0",
       "lightGrey": "#BDC0C7"
