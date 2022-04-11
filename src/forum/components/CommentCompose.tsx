@@ -5,23 +5,22 @@ import Editor from 'components/Guilds/Editor';
 import { Button } from 'components/Guilds/common/Button';
 import { useState } from 'react';
 
-// Move to theme config
-const spacing = [0, 2, 4, 8, 16, 32, 64, 128, 256, 512];
-
-const getSpacing = val => spacing[Math.abs(val)] * (val / Math.abs(val)) || 0;
+const getSpacing = (val, { spacing }) =>
+  spacing[Math.abs(val)] * (val / Math.abs(val)) || 0;
 
 // Define a standard box with helpers for spacing - Many component libraries such as ChakraUI and ThemeUI use this. Tailwind has similar convention.
 const Box = styled.div`
-  margin: ${({ m = 0 }) => getSpacing(m)}px;
-  margin-left: ${({ ml = 0, mx = 0 }) => getSpacing(ml || mx)}px;
-  margin-right: ${({ mr = 0, mx = 0 }) => getSpacing(mr || mx)}px;
-  margin-top: ${({ my = 0 }) => getSpacing(my)}px;
-  margin-bottom: ${({ my = 0 }) => getSpacing(my)}px;
-  padding: ${({ p = 0 }) => getSpacing(p)}px;
-  padding-left: ${({ pl = 0, px = 0 }) => getSpacing(pl || px)}px;
-  padding-right: ${({ pr = 0, px = 0 }) => getSpacing(pr || px)}px;
-  padding-top: ${({ py = 0 }) => getSpacing(py)}px;
-  padding-bottom: ${({ py = 0 }) => getSpacing(py)}px;
+  margin: ${({ m = 0, theme }) => getSpacing(m, theme)}px;
+  margin-left: ${({ ml = 0, mx = 0, theme }) => getSpacing(ml || mx, theme)}px;
+  margin-right: ${({ mr = 0, mx = 0, theme }) => getSpacing(mr || mx, theme)}px;
+  margin-top: ${({ my = 0, theme }) => getSpacing(my, theme)}px;
+  margin-bottom: ${({ my = 0, theme }) => getSpacing(my, theme)}px;
+  padding: ${({ p = 0, theme }) => getSpacing(p, theme)}px;
+  padding-left: ${({ pl = 0, px = 0, theme }) => getSpacing(pl || px, theme)}px;
+  padding-right: ${({ pr = 0, px = 0, theme }) =>
+    getSpacing(pr || px, theme)}px;
+  padding-top: ${({ py = 0, theme }) => getSpacing(py, theme)}px;
+  padding-bottom: ${({ py = 0, theme }) => getSpacing(py, theme)}px;
 `;
 const Text = styled(Box)`
   display: inline;
