@@ -18,6 +18,7 @@ import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf'
 import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
+import { VoteConfirmationModal } from './VoteConfirmationModal';
 
 const ButtonsContainer = styled.div`
   flex-direction: column;
@@ -77,6 +78,7 @@ const VoteOptionButton = styled(VoteActionButton)`
 const ProposalVoteCard = () => {
   const [isPercent, setIsPercent] = useState(true);
   const [selectedAction, setSelectedAction] = useState<BigNumber>();
+  const [modalOpen, setModalOpen] = useState<boolean>();
 
   const { guild_id: guildId, proposal_id: proposalId } =
     useParams<{ guild_id?: string; proposal_id?: string }>();
@@ -97,6 +99,10 @@ const ProposalVoteCard = () => {
   const { createTransaction } = useTransactions();
   const contract = useERC20Guild(guildId, true);
   const voteOnProposal = async () => {
+    setModalOpen(true);
+  };
+
+  const confirmVoteProposal = () => {
     createTransaction(`Vote on proposal ${proposal?.title}`, async () =>
       contract.setVote(proposalId, selectedAction, userVotingPower)
     );
@@ -164,6 +170,14 @@ const ProposalVoteCard = () => {
           </ButtonsContainer>
         )}
       </SidebarCardContent>
+      <VoteConfirmationModal
+        isOpen={modalOpen}
+        onDismiss={() => setModalOpen(false)}
+        onConfirm={confirmVoteProposal}
+        selectedAction="Yes"
+        votingPower="0.12"
+        previousVotingPercentage="0"
+      />
     </SidebarCard>
   );
 };
