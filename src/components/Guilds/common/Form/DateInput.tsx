@@ -3,6 +3,7 @@ import DateTime from 'react-datetime';
 import { Moment } from 'moment';
 import 'react-datetime/css/react-datetime.css';
 import Input from './Input';
+import { useMemo } from 'react';
 
 const StyledDateTime = styled(DateTime)`
   .rdtPicker {
@@ -34,11 +35,16 @@ const StyledDateTime = styled(DateTime)`
   .rdtPicker td.rdtDay:hover,
   .rdtPicker td.rdtHour:hover,
   .rdtPicker td.rdtMinute:hover,
-  .rdtPicker td.rdtSecond:hover,
-  .rdtPicker .rdtTimeToggle:hover {
+  .rdtPicker td.rdtSecond:hover {
     background: ${({ theme }) => theme.colors.secondary};
     border-radius: 50%;
     outline: 1px solid ${({ theme }) => theme.colors.text};
+  }
+
+  .rdtPicker td.rdtTimeToggle:hover,
+  .rdtPicker td.rdtSwitch:hover {
+    background: ${({ theme }) => theme.colors.secondary};
+    cursor: pointer;
   }
 
   .rdtPicker td.rdtOld,
@@ -54,6 +60,7 @@ const StyledDateTime = styled(DateTime)`
   .rdtPicker td.rdtActive:hover {
     border-radius: 50%;
     background-color: ${({ theme }) => theme.colors.background};
+    cursor: pointer;
   }
 
   .rdtPicker th {
@@ -67,27 +74,66 @@ const StyledDateTime = styled(DateTime)`
 
   .rdtPicker th.rdtSwitch:hover,
   .rdtPicker th.rdtNext:hover,
-  .rdtPicker th.rdtPrev:hover {
+  .rdtPicker th.rdtPrev:hover,
+  .rdtPicker .rdtCounter .rdtBtn:hover {
     background: ${({ theme }) => theme.colors.secondary};
+    cursor: pointer;
   }
 `;
 
-const DateInput = ({
+export enum InputType {
+  DATE,
+  TIME,
+  DATETIME,
+}
+
+interface DateInputProps {
+  value: Moment;
+  onChange: (date: Moment) => void;
+  isUTC?: boolean;
+  type?: InputType;
+  isValidDate?: (date: Moment) => boolean;
+}
+
+const DateInput: React.FC<DateInputProps> = ({
   value,
   onChange,
-  width = 200,
-  isValidDate = (date: Moment) => true,
-}) => (
-  <StyledDateTime
-    value={value}
-    onChange={onChange}
-    dateFormat="DD/MM/YYYY"
-    timeFormat={false}
-    isValidDate={isValidDate}
-    renderInput={(props, openCalendar) => (
-      <Input onClick={openCalendar} {...props} />
-    )}
-  />
-);
+  type = InputType.DATE,
+  isUTC = false,
+  isValidDate = () => true,
+}) => {
+  const { dateFormat, timeFormat } = useMemo(() => {
+    if (type === InputType.DATETIME) {
+      return {
+        dateFormat: 'DD/MM/YYYY',
+        timeFormat: 'HH:mm:ss A',
+      };
+    } else if (type === InputType.TIME) {
+      return {
+        dateFormat: false,
+        timeFormat: 'HH:mm:ss A',
+      };
+    }
+
+    return {
+      dateFormat: 'DD/MM/YYYY',
+      timeFormat: false,
+    };
+  }, [type]);
+
+  return (
+    <StyledDateTime
+      value={value}
+      onChange={onChange}
+      dateFormat={dateFormat}
+      timeFormat={timeFormat}
+      isValidDate={isValidDate}
+      utc={isUTC}
+      renderInput={(props, openCalendar) => (
+        <Input onClick={openCalendar} {...props} />
+      )}
+    />
+  );
+};
 
 export default DateInput;
