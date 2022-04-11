@@ -53,6 +53,12 @@ jobs:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote' && steps.source-run-info.outputs.sourceHeadBranch == 'develop'
 
+      - name: Update DNS record for 1.1 beta branch
+        run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink.beta --link /ipfs/${{ steps.web3.outputs.cid }}
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote' && steps.source-run-info.outputs.sourceHeadBranch == 'v1.1-beta'
+
       - name: Update DNS record for Master branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
