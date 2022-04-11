@@ -9,20 +9,17 @@ import { MAINNET_ID, shortenAddress } from 'utils';
 import { ActionViewProps } from '..';
 import { Segment } from '../common/infoLine';
 
-const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({
-  call,
-  decodedCall,
-}) => {
+const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
   const parsedData = useMemo(() => {
-    if (!call || !decodedCall) return null;
+    if (!decodedCall) return null;
 
     return {
-      tokenAddress: call.to,
+      tokenAddress: decodedCall.to,
       amount: BigNumber.from(decodedCall.args._value),
-      source: call.from,
+      source: decodedCall.from,
       destination: decodedCall.args._to as string,
     };
-  }, [call, decodedCall]);
+  }, [decodedCall]);
 
   const { data: tokenInfo } = useERC20Info(parsedData?.tokenAddress);
   const roundedBalance = useBigNumberToNumber(
@@ -53,7 +50,11 @@ const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({
           size={24}
         />
       </Segment>
-      <Segment>{ensName || shortenAddress(parsedData?.destination)}</Segment>
+      <Segment>
+        {ensName || parsedData?.destination
+          ? shortenAddress(parsedData?.destination)
+          : ''}
+      </Segment>
     </>
   );
 };
