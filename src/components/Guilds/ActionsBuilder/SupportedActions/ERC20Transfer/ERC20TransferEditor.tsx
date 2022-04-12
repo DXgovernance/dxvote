@@ -9,12 +9,11 @@ import { useMemo, useState } from 'react';
 import { ActionEditorProps } from '..';
 import { BigNumber, utils } from 'ethers';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
-import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import TokenPicker from 'components/Guilds/TokenPicker';
 import { Box } from 'components/Guilds/common/Layout';
 import { MAINNET_ID } from 'utils';
-import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
+import TokenAmountInput from 'components/Guilds/common/Form/TokenAmountInput';
 
 const Control = styled(Box)`
   display: flex;
@@ -84,11 +83,6 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   }, [tokens, parsedData]);
 
   const { data: tokenInfo } = useERC20Info(parsedData?.tokenAddress);
-  const roundedBalance = useBigNumberToNumber(
-    parsedData?.amount,
-    tokenInfo?.decimals,
-    10
-  );
   const { imageUrl: destinationAvatarUrl } = useENSAvatar(
     parsedData?.destination,
     MAINNET_ID
@@ -111,15 +105,12 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
     });
   };
 
-  const setAmount = (value: string) => {
-    const amount = value
-      ? utils.parseUnits(value, tokenInfo?.decimals || 18)
-      : null;
+  const setAmount = (value: BigNumber) => {
     updateCall({
       ...decodedCall,
       args: {
         ...decodedCall.args,
-        _value: amount,
+        _value: value,
       },
     });
   };
@@ -159,7 +150,11 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
         <Control>
           <ControlLabel>Amount</ControlLabel>
           <ControlRow>
-            <NumericalInput value={`${roundedBalance}`} onChange={setAmount} />
+            <TokenAmountInput
+              decimals={tokenInfo?.decimals}
+              value={parsedData?.amount}
+              onChange={setAmount}
+            />
           </ControlRow>
         </Control>
 
