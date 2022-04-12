@@ -30,7 +30,7 @@ export const InfoRow = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 5px 0;
+  margin: 8px 0;
 `;
 
 export const BaseFont = css`
@@ -57,15 +57,16 @@ export const InfoValue = styled.span`
 export const ActionWrapper = styled.div`
   display: flex;
 `;
-export const Button = styled(CommonButton)`
+export const ConfirmButton = styled(CommonButton)`
   height: 40px;
   margin: 0 8px;
   border: 0;
   flex: 1;
-  &:first-child {
-    margin-left: 0;
-  }
-  &:last-child {
-    margin-right: 0;
-  }
+  margin-right: 0;
+`;
+
+export const CancelButton = styled(ConfirmButton)`
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.muted};
+  margin-left: 0;
 `;

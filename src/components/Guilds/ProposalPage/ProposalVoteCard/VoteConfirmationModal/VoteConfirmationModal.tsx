@@ -8,7 +8,8 @@ import {
   InfoLabel,
   InfoValue,
   ActionWrapper,
-  Button,
+  CancelButton,
+  ConfirmButton,
 } from './VoteConfirmationModal.styled';
 import { Modal } from 'components/Guilds/common/Modal';
 
@@ -59,10 +60,14 @@ export const VoteConfirmationModal: React.FC<VoteConfirmationModalProps> = ({
           </InfoRow>
         </Widget>
         <ActionWrapper>
-          <Button variant="secondary" onClick={onDismiss}>
+          <CancelButton
+            variant="secondary"
+            onClick={onDismiss}
+            color="transparent"
+          >
             Cancel
-          </Button>
-          <Button onClick={onConfirm}>Vote</Button>
+          </CancelButton>
+          <ConfirmButton onClick={onConfirm}>Vote</ConfirmButton>
         </ActionWrapper>
       </Container>
     </Modal>
