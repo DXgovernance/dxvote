@@ -135,6 +135,7 @@ export interface ModalProps {
   zIndex?: number;
   backnCross?: boolean;
   prevContent?: () => void;
+  leftIcon?: boolean;
 }
 
 export const ModalButton = styled(Button)`
@@ -167,6 +168,7 @@ export const Modal: React.FC<ModalProps> = ({
   zIndex = 500,
   backnCross,
   prevContent,
+  leftIcon = true,
 }) => {
   const modal = (
     <div>
@@ -175,7 +177,7 @@ export const Modal: React.FC<ModalProps> = ({
         <StyledModal>
           {isMobile && (
             <Header onClick={onDismiss}>
-              {cross ? <CloseIcon /> : <FiArrowLeft />}
+              {cross ? leftIcon ? <CloseIcon /> : <FiArrowLeft /> : null}
               <HeaderText>{header}</HeaderText>
             </Header>
           )}{' '}
