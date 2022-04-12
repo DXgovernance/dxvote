@@ -4,6 +4,8 @@ import Avatar from 'components/Guilds/Avatar';
 import Editor from 'components/Guilds/Editor';
 import { Button } from 'components/Guilds/common/Button';
 import { useState } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 
 const getSpacing = (val, { spacing }) =>
   spacing[Math.abs(val)] * (val / Math.abs(val)) || 0;
@@ -21,6 +23,7 @@ const Box = styled.div`
     getSpacing(pr || px, theme)}px;
   padding-top: ${({ py = 0, theme }) => getSpacing(py, theme)}px;
   padding-bottom: ${({ py = 0, theme }) => getSpacing(py, theme)}px;
+  height: ${({ height }) => height || 'auto'};
 `;
 const Text = styled(Box)`
   display: inline;
@@ -38,17 +41,18 @@ const AvatarBorder = styled.div`
   margin-right: 8px; // Do we have some kind of spacing config for consistency?
   height: 24px; // Avatar is inline-block which messes up the box
 `;
-const CommentAs = styled(Flex)`
-  height: 42px;
-`;
 
 export default function CommentCompose() {
+  const { account } = useWeb3React();
+  const avatar = useENSAvatar(account);
   const [content, setContent] = useState('');
+
+  const user = avatar.ensName || account;
   return (
     <Flex>
       <div>
         <AvatarBorder>
-          <Avatar defaultSeed={'parsedData?.destination'} size={24} />
+          <Avatar defaultSeed={user} src={avatar.imageUrl} size={24} />
         </AvatarBorder>
       </div>
       <form
@@ -57,18 +61,18 @@ export default function CommentCompose() {
           console.log('Create post', content);
         }}
       >
-        <CommentAs alignItems="center">
+        <Flex alignItems="center" height={'42px'}>
           <Text>
-            Comment as <Text color="grey">user.eth</Text>
+            Comment as <Text color="grey">{user}</Text>
           </Text>
-        </CommentAs>
+        </Flex>
         <Editor
           placeholder="What do you want to propose?"
           onMdChange={setContent}
         />
         {/* Button has margin which is why we negate that here with mr (margin-right) */}
         <Flex justifyContent="flex-end" mr={-2}>
-          <Button variant="secondary" type="submit">
+          <Button variant="secondary" type="submit" disabled={!content}>
             Submit
           </Button>
         </Flex>
