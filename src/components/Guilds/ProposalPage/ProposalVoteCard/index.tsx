@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
 import { useState, useMemo } from 'react';
 import { useParams } from 'react-router';
-import styled, { css } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 import { Button } from '../../common/Button';
 import moment from 'moment';
 import SidebarCard, {
@@ -11,6 +11,7 @@ import SidebarCard, {
 } from '../../SidebarCard';
 import useTimedRerender from 'hooks/Guilds/time/useTimedRerender';
 import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
+import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import { Loading } from 'components/Guilds/common/Loading';
 import { VoteResults } from './VoteResults';
 import { VotesChart } from './VoteChart';
@@ -20,6 +21,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import { VoteConfirmationModal } from './VoteConfirmationModal';
+import { toast } from 'react-toastify';
 
 const ButtonsContainer = styled.div`
   flex-direction: column;
@@ -77,6 +79,7 @@ const VoteOptionButton = styled(VoteActionButton)`
 `;
 
 const ProposalVoteCard = () => {
+  const theme = useTheme();
   const [isPercent, setIsPercent] = useState(true);
   const [selectedAction, setSelectedAction] = useState<BigNumber>();
   const [modalOpen, setModalOpen] = useState<boolean>();
@@ -87,12 +90,11 @@ const ProposalVoteCard = () => {
   const voteData = useVotingResults();
 
   const timestamp = useTimedRerender(1000);
-  //@ts-ignore
-  const isOpens = useMemo(
+  // @ts-ignore
+  const isOpen_ = useMemo(
     () => proposal?.endTime.isAfter(moment(timestamp)),
     [proposal, timestamp]
   );
-
   const isOpen = true;
   const { account: userAddress } = useWeb3React();
   const { data: userVotingPower } = useVotingPowerOf({
@@ -105,19 +107,30 @@ const ProposalVoteCard = () => {
     contractAddress: guildId,
     proposalId: proposalId,
   });
-  //@ts-ignore
+
   const { data: votingPowerAtProposalSnapshotId } = useVotingPowerOf({
     contractAddress: guildId,
     userAddress: userAddress,
     snapshotId: snapshotId?.toString(),
     fallbackSnapshotId: false,
   });
+
   const { data: votingPowerAtProposalCurrentSnapshot } = useVotingPowerOf({
     contractAddress: guildId,
     userAddress: userAddress,
     snapshotId: null,
     fallbackSnapshotId: true,
   });
+
+  const votingPowerPercent = useVotingPowerPercent(
+    votingPowerAtProposalSnapshotId,
+    voteData?.totalLocked
+  );
+
+  const currentLockedPercent = useVotingPowerPercent(
+    voteData?.quorum,
+    voteData?.totalLocked
+  );
 
   const voteOnProposal = async () => {
     const noVotingPowerAtSnapshot =
@@ -126,20 +139,12 @@ const ProposalVoteCard = () => {
       Number(votingPowerAtProposalCurrentSnapshot?.toString()) > 0;
     if (noVotingPowerAtSnapshot) {
       if (hasVotingPowerAtCurrentSnapshot) {
-        console.log('Current voting power gained after proposal creation');
+        toastError('Current voting power gained after proposal creation');
         return;
       }
-      console.log('No voting power');
+      toastError('No Voting Power');
       return;
     }
-    console.log(
-      'votingPowerAtProposalSnapshotId',
-      Number(votingPowerAtProposalSnapshotId?.toString())
-    );
-    console.log(
-      'votingPowerAtProposalCurrentSnapshot',
-      Number(votingPowerAtProposalCurrentSnapshot?.toString())
-    );
 
     setModalOpen(true);
   };
@@ -149,6 +154,15 @@ const ProposalVoteCard = () => {
       contract.setVote(proposalId, selectedAction, userVotingPower)
     );
   };
+
+  const toastError = (msg: string) =>
+    toast.error(msg, {
+      style: {
+        backgroundColor: theme.colors.background,
+        borderColor: theme.colors.muted,
+      },
+    });
+
   return (
     <SidebarCard
       header={
@@ -198,7 +212,7 @@ const ProposalVoteCard = () => {
                     );
                   }}
                 >
-                  {'Action ' + actionKey}
+                  {String(actionKey) === '1' ? 'Yes' : 'No'}
                 </VoteOptionButton>
               );
             })}
@@ -216,9 +230,9 @@ const ProposalVoteCard = () => {
         isOpen={modalOpen}
         onDismiss={() => setModalOpen(false)}
         onConfirm={confirmVoteProposal}
-        selectedAction="Yes"
-        votingPower={0.12}
-        totalLocked={0}
+        selectedAction={selectedAction?.toString() === '1' ? 'Yes' : 'No'}
+        votingPower={votingPowerPercent}
+        totalLocked={currentLockedPercent}
       />
     </SidebarCard>
   );
