@@ -175,8 +175,8 @@ const ProposalVoteCard = () => {
         onDismiss={() => setModalOpen(false)}
         onConfirm={confirmVoteProposal}
         selectedAction="Yes"
-        votingPower="0.12"
-        previousVotingPercentage="0"
+        votingPower={0.12}
+        totalLocked={0}
       />
     </SidebarCard>
   );

@@ -18,8 +18,8 @@ interface VoteConfirmationModalProps {
   onDismiss: () => void;
   selectedAction?: string;
   onConfirm: () => void;
-  votingPower?: string;
-  previousVotingPercentage?: string;
+  votingPower?: number;
+  totalLocked?: number;
 }
 
 export const VoteConfirmationModal: React.FC<VoteConfirmationModalProps> = ({
@@ -28,7 +28,7 @@ export const VoteConfirmationModal: React.FC<VoteConfirmationModalProps> = ({
   onConfirm,
   selectedAction,
   votingPower,
-  previousVotingPercentage,
+  totalLocked,
 }) => {
   return (
     <Modal
@@ -54,19 +54,13 @@ export const VoteConfirmationModal: React.FC<VoteConfirmationModalProps> = ({
           <InfoRow>
             <InfoLabel>Vote Impact</InfoLabel>
             <InfoValue>
-              <InfoValue grey> {previousVotingPercentage}% </InfoValue>
+              <InfoValue grey> {totalLocked}% </InfoValue>
               {' -> '} {votingPower}%
             </InfoValue>
           </InfoRow>
         </Widget>
         <ActionWrapper>
-          <CancelButton
-            variant="secondary"
-            onClick={onDismiss}
-            color="transparent"
-          >
-            Cancel
-          </CancelButton>
+          <CancelButton onClick={onDismiss}>Cancel</CancelButton>
           <ConfirmButton onClick={onConfirm}>Vote</ConfirmButton>
         </ActionWrapper>
       </Container>
