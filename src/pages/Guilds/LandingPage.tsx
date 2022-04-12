@@ -107,10 +107,11 @@ const Title: React.FC<TitleProps> = ({ guildAddress }) => {
   return <DaoTitle size={2}>{ensName ?? data?.name}</DaoTitle>;
 };
 const Proposals: React.FC<TitleProps> = ({ guildAddress }) => {
-  const { data } = useActiveProposalsNow(guildAddress);
+  const { data: numberOfActiveProposals } = useActiveProposalsNow(guildAddress);
   return (
     <ProposalsInformation proposals={'active'}>
-      {data?.toString() ?? ''} Proposal
+      {numberOfActiveProposals?.toString() ?? ''}{' '}
+      {numberOfActiveProposals?.eq(1) ? 'Proposal' : 'Proposals'}
     </ProposalsInformation>
   );
 };

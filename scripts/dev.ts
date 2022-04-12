@@ -58,6 +58,7 @@ async function main() {
       {
         name: 'DXDao on localhost',
         symbol: 'DXD',
+        type: 'ERC20',
         distribution: [
           {
             address: accounts[0],
@@ -76,6 +77,7 @@ async function main() {
       {
         name: 'REPGuildToken',
         symbol: 'RGT',
+        type: 'ERC20SnapshotRep',
         distribution: [
           {
             address: accounts[0],
@@ -94,6 +96,7 @@ async function main() {
       {
         name: 'Snapshot Guild Token',
         symbol: 'SGT',
+        type: 'ERC20',
         distribution: [
           {
             address: accounts[0],
