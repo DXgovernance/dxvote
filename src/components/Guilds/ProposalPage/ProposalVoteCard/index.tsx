@@ -216,7 +216,7 @@ const ProposalVoteCard = () => {
                     );
                   }}
                 >
-                  {String(actionKey) === '1' ? 'Yes' : 'No'}
+                  {'Action ' + actionKey}
                 </VoteOptionButton>
               );
             })}
@@ -234,7 +234,7 @@ const ProposalVoteCard = () => {
         isOpen={modalOpen}
         onDismiss={() => setModalOpen(false)}
         onConfirm={confirmVoteProposal}
-        selectedAction={selectedAction?.toString() === '1' ? 'Yes' : 'No'}
+        selectedAction={selectedAction?.toString()}
         votingPower={votingPowerPercent}
         totalLocked={currentLockedPercent}
       />
