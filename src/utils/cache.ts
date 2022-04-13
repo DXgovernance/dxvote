@@ -33,6 +33,7 @@ export const getEvents = async function (
     } catch (error) {
       if ((error as Error).message.indexOf('Relay attempts exhausted') > -1) {
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
+        console.error('Relay attempts exhausted');
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
         await sleep(5000);
@@ -41,8 +42,11 @@ export const getEvents = async function (
           'You cannot query logs for more than 100000 blocks at once.'
         ) > -1
       ) {
-        maxBlocksPerFetch = 100000;
+        maxBlocksPerFetch = maxBlocksPerFetch / 4;
         to = from + 100000;
+        console.error(
+          'You cannot query logs for more than 100000 blocks at once.'
+        );
         console.debug('Lowering toBlock to', to);
       } else if (
         (error as Error).message.indexOf('Relay attempts exhausted') === -1 &&
@@ -87,15 +91,23 @@ export const getRawEvents = async function (
       from = to;
       to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
-      if (
+      if ((error as Error).message.indexOf('Relay attempts exhausted') > -1) {
+        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
+        console.error('Relay attempts exhausted');
+        console.debug('Lowering toBlock', blocksToLower, 'blocks');
+        to = to - blocksToLower;
+        await sleep(5000);
+      } else if (
         (error as Error).message.indexOf(
           'You cannot query logs for more than 100000 blocks at once.'
         ) > -1
       ) {
-        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
-        console.debug('Lowering toBlock', blocksToLower, 'blocks');
-        to = to - blocksToLower;
-        await sleep(5000);
+        maxBlocksPerFetch = maxBlocksPerFetch / 4;
+        to = from + 100000;
+        console.error(
+          'You cannot query logs for more than 100000 blocks at once.'
+        );
+        console.debug('Lowering toBlock to', to);
       } else if (
         (error as Error).message.indexOf('Relay attempts exhausted') === -1 &&
         Math.trunc((to - from) / 2) > 10000
