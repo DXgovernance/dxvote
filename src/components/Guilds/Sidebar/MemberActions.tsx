@@ -92,7 +92,6 @@ export const MemberActions = () => {
     contractAddress: guildAddress,
     userAddress,
   });
-
   const { data: unlockedTimestamp } = useVoterLockTimestamp(
     guildAddress,
     userAddress
@@ -106,9 +105,6 @@ export const MemberActions = () => {
     userVotingPower,
     guildConfig?.totalLocked
   );
-
-  // console.log('totallocked', guildConfig?.totalLocked?.toString());
-  // console.log('userVotingPower', userVotingPower?.toString());
 
   const roundedBalance = useBigNumberToNumber(
     userVotingPower,
