@@ -39,7 +39,7 @@ async function main() {
         distribution: [
           {
             address: accounts[0],
-            amount: web3.utils.toWei('220'),
+            amount: web3.utils.toWei('320'),
           },
           {
             address: accounts[1],
