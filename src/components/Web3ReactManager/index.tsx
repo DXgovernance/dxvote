@@ -54,7 +54,7 @@ const Web3ReactManager = ({ children }) => {
   // If eager-connect failed, try to connect to network in the URL
   // If no chain in the URL, fallback to default chain
   useEffect(() => {
-    if (triedEager && !networkActive && rpcUrls) {
+    if (!networkActive && rpcUrls) {
       const chains = getChains(rpcUrls);
       const urlNetworkName = location.pathname.split('/')[1];
       const chainId =
