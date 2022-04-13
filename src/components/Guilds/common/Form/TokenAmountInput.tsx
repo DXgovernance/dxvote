@@ -6,13 +6,13 @@ import { InputProps } from './Input';
 import NumericalInput from './NumericalInput';
 
 interface TokenAmountInputProps extends InputProps<BigNumber> {
-  decimals: number;
+  decimals?: number;
 }
 
 const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
   value,
   onChange,
-  decimals,
+  decimals = 18,
   ...rest
 }) => {
   const [amount, setAmount] = useState<string>('');
