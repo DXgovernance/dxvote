@@ -42,7 +42,7 @@ export const getEvents = async function (
           'You cannot query logs for more than 100000 blocks at once.'
         ) > -1
       ) {
-        maxBlocksPerFetch = maxBlocksPerFetch / 4;
+        maxBlocksPerFetch = Number((maxBlocksPerFetch / 4).toFixed(0));
         to = from + 100000;
         console.error(
           'You cannot query logs for more than 100000 blocks at once.'
@@ -102,7 +102,7 @@ export const getRawEvents = async function (
           'You cannot query logs for more than 100000 blocks at once.'
         ) > -1
       ) {
-        maxBlocksPerFetch = maxBlocksPerFetch / 4;
+        maxBlocksPerFetch = Number((maxBlocksPerFetch / 4).toFixed(0));
         to = from + 100000;
         console.error(
           'You cannot query logs for more than 100000 blocks at once.'
