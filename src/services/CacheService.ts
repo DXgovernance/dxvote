@@ -1281,23 +1281,56 @@ export default class UtilsService {
                     );
                   } else {
                     if (schemeTypeData.type === 'GenericMulticall') {
+                      // event ProposalExecutedByVotingMachine(
+                      //     address indexed _avatar,
+                      //     bytes32 indexed _proposalId,
+                      //     int256 _param
+                      // );
+                      const votingMachineExecutionEvent =
+                        schemeProposalInfo.state ===
+                        WalletSchemeProposalState.Submitted
+                          ? await getRawEvents(
+                              web3,
+                              schemeAddress,
+                              fromBlock,
+                              toBlock,
+                              [
+                                '0x25d4c89430c1f10c60c292556941e3e624ec1ec04972a5da46cee1b352429cbe',
+                                avatarAddressEncoded,
+                                proposalId,
+                              ],
+                              10000000
+                            )
+                          : [];
+
+                      if (
+                        votingMachineExecutionEvent.length > 0 &&
+                        votingMachineExecutionEvent[0].data ===
+                          '0x0000000000000000000000000000000000000000000000000000000000000001'
+                      )
+                        schemeProposalInfo.state =
+                          WalletSchemeProposalState.Submitted;
+                      else if (votingMachineExecutionEvent.length > 0) {
+                        schemeProposalInfo.state =
+                          WalletSchemeProposalState.Rejected;
+                      }
+
                       const executionEvent = await getRawEvents(
                         web3,
                         schemeAddress,
-                        schemeEvent.blockNumber,
+                        fromBlock,
                         toBlock,
                         [
                           '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
                           avatarAddressEncoded,
                           proposalId,
-                        ]
+                        ],
+                        10000000
                       );
-                      if (executionEvent.length > 0)
+                      if (executionEvent.length > 0) {
                         schemeProposalInfo.state =
                           WalletSchemeProposalState.ExecutionSucceded;
-                      else
-                        schemeProposalInfo.state =
-                          WalletSchemeProposalState.Submitted;
+                      }
                     } else if (schemeTypeData.type === 'ContributionReward') {
                       if (
                         callsResponse.decodedReturnData[5] > 0 ||
@@ -1891,23 +1924,66 @@ export default class UtilsService {
                   }
                 }
               } else if (schemeTypeData.type === 'GenericMulticall') {
-                const executionEvent = await await getRawEvents(
-                  web3,
-                  schemeAddress,
-                  networkCache.proposals[proposal.id].creationEvent.blockNumber,
-                  toBlock,
-                  [
-                    '0x6bc0cb9e9967b59a69ace442598e1df4368d38661bd5c0800fbcbc9fe855fbbe',
-                    avatarAddressEncoded,
-                    proposal.id,
-                  ]
-                );
-                if (executionEvent.length > 0)
+                // event ProposalExecutedByVotingMachine(
+                //     address indexed _avatar,
+                //     bytes32 indexed _proposalId,
+                //     int256 _param
+                // );
+                const votingMachineExecutionEvent =
+                  networkCache.proposals[proposal.id].stateInScheme ===
+                  WalletSchemeProposalState.Submitted
+                    ? await getRawEvents(
+                        web3,
+                        schemeAddress,
+                        fromBlock,
+                        toBlock,
+                        [
+                          '0x25d4c89430c1f10c60c292556941e3e624ec1ec04972a5da46cee1b352429cbe',
+                          avatarAddressEncoded,
+                          proposal.id,
+                        ],
+                        10000000
+                      )
+                    : [];
+
+                if (
+                  votingMachineExecutionEvent.length > 0 &&
+                  votingMachineExecutionEvent[0].data ===
+                    '0x0000000000000000000000000000000000000000000000000000000000000001'
+                )
+                  networkCache.proposals[proposal.id].stateInVotingMachine =
+                    VotingMachineProposalState.Executed;
+                else if (votingMachineExecutionEvent.length > 0) {
+                  networkCache.proposals[proposal.id].stateInScheme =
+                    WalletSchemeProposalState.Rejected;
+                  networkCache.proposals[proposal.id].stateInVotingMachine =
+                    VotingMachineProposalState.Rejected;
+                }
+
+                // event ProposalExecuted(
+                //     address indexed _avatar,
+                //     bytes32 indexed _proposalId
+                // );
+                const executionEvent =
+                  networkCache.proposals[proposal.id].stateInVotingMachine ===
+                  VotingMachineProposalState.Passed
+                    ? await getRawEvents(
+                        web3,
+                        schemeAddress,
+                        fromBlock,
+                        toBlock,
+                        [
+                          '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
+                          avatarAddressEncoded,
+                          proposal.id,
+                        ],
+                        10000000
+                      )
+                    : [];
+                if (executionEvent.length > 0) {
                   networkCache.proposals[proposal.id].stateInScheme =
                     WalletSchemeProposalState.ExecutionSucceded;
-                else
-                  networkCache.proposals[proposal.id].stateInScheme =
-                    WalletSchemeProposalState.Submitted;
+                }
               } else if (
                 networkCache.proposals[proposal.id].stateInVotingMachine ===
                 VotingMachineProposalState.Executed
