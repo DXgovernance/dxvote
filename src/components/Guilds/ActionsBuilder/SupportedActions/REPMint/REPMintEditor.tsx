@@ -2,17 +2,20 @@
 import styled from 'styled-components';
 import { Input } from 'components/Guilds/common/Form/Input';
 import Avatar from 'components/Guilds/Avatar';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ActionEditorProps } from '..';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { Box } from 'components/Guilds/common/Layout';
 import { shortenAddress, MAINNET_ID } from 'utils';
 import { baseInputStyles } from 'components/Guilds/common/Form/Input';
 import { ReactComponent as Info } from '../../../../../assets/images/info.svg';
 import StyledIcon from 'components/Guilds/common/SVG';
-// import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
+import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import { useState } from 'react';
+import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
+import { useParams } from 'react-router-dom';
 
 const Control = styled(Box)`
   display: flex;
@@ -54,9 +57,14 @@ interface REPMintState {
 
 const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   // parse transfer state from calls
-  console.log({ decodedCall });
-  const [repPercent, setRepPercent] = useState(0);
-  const [repAmount, setRepAmount] = useState(0);
+  const [repPercent, setRepPercent] = useState(null);
+  const [repAmount, setRepAmount] = useState(null);
+  const { guild_id: guildId } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { data } = useGuildConfig(guildId);
+  const { data: tokenData } = useERC20Info(data?.token);
+  const totalSupply = useBigNumberToNumber(tokenData?.totalSupply, 18);
+
   const parsedData = useMemo<REPMintState>(() => {
     if (!decodedCall) return null;
     return {
@@ -65,11 +73,10 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
     };
   }, [decodedCall]);
 
-  console.log({ parsedData });
   const { imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
 
   const setCallDataAmount = (value: string) => {
-    const amount = value ? BigNumber.from(value) : null;
+    const amount = value ? ethers.utils.parseUnits(value) : null;
     updateCall({
       ...decodedCall,
       args: {
@@ -79,30 +86,18 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
     });
   };
 
-  const handleRepPercentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    setRepAmount((repPercent / 100) * totalSupply);
+    if (repAmount) {
+      setCallDataAmount(repAmount.toString());
+    }
+  }, [repPercent, repAmount, totalSupply]);
+
+  const handleRepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value) {
-      setRepPercent(parseInt(e.target.value));
-      setRepAmount(parseInt(e.target.value) * 100);
-      setCallDataAmount((parseInt(e.target.value) * 100).toString());
-    } else {
-      setRepPercent(0);
-      setRepAmount(0);
-      setCallDataAmount('0');
+      setRepPercent(parseFloat(e.target.value));
     }
   };
-
-  const handleRepAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
-      setRepAmount(parseInt(e.target.value));
-      setRepPercent(parseInt(e.target.value) / 100);
-      setCallDataAmount(e.target.value);
-    } else {
-      setRepPercent(0);
-      setRepAmount(0);
-      setCallDataAmount('0');
-    }
-  };
-
   return (
     <div>
       <Control>
@@ -130,10 +125,7 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
             Reputation in % <StyledIcon src={Info} />
           </ControlLabel>
           <ControlRow>
-            <RepMintInput
-              value={repPercent}
-              onChange={handleRepPercentChange}
-            />
+            <RepMintInput value={repPercent} onChange={handleRepChange} />
           </ControlRow>
         </Control>
       </ControlRow>
@@ -143,7 +135,7 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
             Reputation Amount <StyledIcon src={Info} />
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={repAmount} onChange={handleRepAmountChange} />
+            <RepMintInput value={repAmount} onChange={handleRepChange} />
           </ControlRow>
         </Control>
       </ControlRow>

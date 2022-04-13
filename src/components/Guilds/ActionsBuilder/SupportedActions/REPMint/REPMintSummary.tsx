@@ -24,7 +24,7 @@ const REPMintSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
 
   const { ensName, imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
 
-  const roundedRepAmount = useBigNumberToNumber(parsedData?.amount, 1, 3) * 10;
+  const roundedRepAmount = useBigNumberToNumber(parsedData?.amount, 18);
 
   return (
     <>
