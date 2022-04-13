@@ -68,7 +68,7 @@ export const ConfirmButton = styled(CommonButton)`
 export const CancelButton = styled(ConfirmButton).attrs({
   variant: 'secondary',
 })`
+  background: transparent;
   border: 1px solid ${({ theme }) => theme.colors.muted};
   margin-left: 0;
-  background: transparent;
 `;
