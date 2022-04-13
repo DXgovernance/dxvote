@@ -7,17 +7,12 @@
   {
     "type": "SnapshotRepERC20Guild",
     "bytecode_hash": "0x9e0c89b40a2d0b049fdd2394e2a17075a5e0d0d7d7fed9b303d4d0d07a305e32",
-    "features": [
-      "REP",
-      "SNAPSHOT"
-    ]
+    "features": ["REP", "SNAPSHOT"]
   },
   {
     "type": "SnapshotERC20Guild",
     "bytecode_hash": "0x90667be4e8dd34e0646834da3d1240e35e77f72d3d32835493d7f76567418e5e",
-    "features": [
-      "SNAPSHOT"
-    ]
+    "features": ["SNAPSHOT"]
   },
   {
     "type": "DXDGuild",
