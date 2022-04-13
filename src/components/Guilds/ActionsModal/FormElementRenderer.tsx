@@ -2,10 +2,11 @@ import { RegistryContractFunctionParam } from 'hooks/Guilds/contracts/useContrac
 import { useMemo } from 'react';
 import AddressInput from '../common/Form/AddressInput';
 import { FormElementProps } from '../common/Form/common';
-import DateInput from '../common/Form/DateInput';
+import DateInput, { InputType } from '../common/Form/DateInput';
 import Input from '../common/Form/Input';
 import NumericalInput from '../common/Form/NumericalInput';
 import Toggle from '../common/Form/Toggle';
+import TokenAmountInput from '../common/Form/TokenAmountInput';
 
 interface FormElementRendererProps extends FormElementProps<any> {
   param: RegistryContractFunctionParam;
@@ -29,7 +30,7 @@ const FormElementRenderer: React.FC<FormElementRendererProps> = ({
       case 'boolean':
         return Toggle;
       case 'tokenAmount':
-        return NumericalInput;
+        return TokenAmountInput;
       case 'contentHash':
         return Input;
       default:
@@ -37,7 +38,28 @@ const FormElementRenderer: React.FC<FormElementRendererProps> = ({
     }
   }, [param]);
 
-  return <FormElement value={value} onChange={onChange} />;
+  const props = useMemo(() => {
+    switch (param.component) {
+      case 'date':
+        return {
+          isUTC: true,
+          inputType: InputType.DATE,
+        };
+      case 'time':
+        return {
+          isUTC: true,
+          inputType: InputType.DATETIME,
+        };
+      case 'tokenAmount':
+        return {
+          decimals: 18,
+        };
+      default:
+        return {};
+    }
+  }, [param]);
+
+  return <FormElement value={value} onChange={onChange} {...props} />;
 };
 
 export default FormElementRenderer;

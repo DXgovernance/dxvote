@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import Input from '../common/Form/Input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActionsButton, FormElement, FormLabel, Wrapper } from './styles';
 import { RegistryContractFunction } from 'hooks/Guilds/contracts/useContractRegistry';
+import FormElementRenderer from './FormElementRenderer';
 
 const SubmitButton = styled(ActionsButton).attrs(() => ({
   variant: 'primary',
@@ -16,18 +16,34 @@ interface ParamsModalProps {
 }
 
 const ParamsModal: React.FC<ParamsModalProps> = ({ fn }) => {
-  const [address, setAddress] = useState('');
+  const [values, setValues] = useState<{ [key: string]: any }>({});
+
+  // Set initial values for the fields
+  useEffect(() => {
+    setValues(
+      fn.params.reduce((acc, param) => {
+        acc[param.name] = param.defaultValue;
+        return acc;
+      }, {})
+    );
+  }, [fn]);
+
+  const setFieldValue = (fieldName: string, value: any) => {
+    setValues({
+      ...values,
+      [fieldName]: value,
+    });
+  };
 
   return (
     <Wrapper>
       {fn.params.map(param => (
         <FormElement>
           <FormLabel>{param.description}</FormLabel>
-          <Input
-            placeholder={param.defaultValue}
-            value={address}
-            onChange={e => setAddress(e.target.value)}
-            size={24}
+          <FormElementRenderer
+            param={param}
+            value={values[param.name]}
+            onChange={(value: any) => setFieldValue(param.name, value)}
           />
         </FormElement>
       ))}

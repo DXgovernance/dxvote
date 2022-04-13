@@ -16,7 +16,7 @@ const AddressInput: React.FC<InputProps<string>> = ({
       value={value}
       icon={
         <div>
-          <Avatar src={imageUrl} defaultSeed={value} size={24} />
+          {value && <Avatar src={imageUrl} defaultSeed={value} size={24} />}
         </div>
       }
       onChange={e => onChange(e.target.value)}
