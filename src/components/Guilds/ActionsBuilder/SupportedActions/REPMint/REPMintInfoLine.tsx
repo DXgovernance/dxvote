@@ -41,7 +41,7 @@ const REPMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
   }, [decodedCall]);
   const { ensName, imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
 
-  const roundedRepAmount = useBigNumberToNumber(parsedData?.amount, 16);
+  const roundedRepAmount = useBigNumberToNumber(parsedData?.amount, 16, 3);
   const roundedRepPercent = roundedRepAmount / totalSupply;
 
   return (

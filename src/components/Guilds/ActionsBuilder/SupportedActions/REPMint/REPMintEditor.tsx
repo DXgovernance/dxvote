@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from 'styled-components';
 import { Input } from 'components/Guilds/common/Form/Input';
 import Avatar from 'components/Guilds/Avatar';
@@ -16,6 +15,7 @@ import { useState } from 'react';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import { useParams } from 'react-router-dom';
+import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
 
 const Control = styled(Box)`
   display: flex;
@@ -39,7 +39,7 @@ const ControlRow = styled(Box)`
   height: 100%;
 `;
 
-const RepMintInput = styled(Input)`
+const RepMintInput = styled(NumericalInput)`
   ${baseInputStyles}
   display: flex;
   align-items: center;
@@ -57,8 +57,8 @@ interface REPMintState {
 
 const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   // parse transfer state from calls
-  const [repPercent, setRepPercent] = useState(null);
-  const [repAmount, setRepAmount] = useState(null);
+  const [repPercent, setRepPercent] = useState(0);
+  const [repAmount, setRepAmount] = useState(0);
   const { guild_id: guildId } =
     useParams<{ chain_name?: string; guild_id?: string }>();
   const { data } = useGuildConfig(guildId);
@@ -93,9 +93,9 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
     }
   }, [repPercent, repAmount, totalSupply]);
 
-  const handleRepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
-      setRepPercent(parseFloat(e.target.value));
+  const handleRepChange = (e: number) => {
+    if (e) {
+      setRepPercent(e);
     }
   };
   return (
@@ -125,7 +125,7 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
             Reputation in % <StyledIcon src={Info} />
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={repPercent} onChange={handleRepChange} />
+            <RepMintInput value={repPercent} onUserInput={handleRepChange} />
           </ControlRow>
         </Control>
       </ControlRow>
@@ -135,7 +135,11 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
             Reputation Amount <StyledIcon src={Info} />
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={repAmount} onChange={handleRepChange} />
+            <RepMintInput
+              value={repAmount}
+              onUserInput={handleRepChange}
+              readOnly
+            />
           </ControlRow>
         </Control>
       </ControlRow>
