@@ -1,8 +1,16 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
-import { ActionsButton, FormElement, FormLabel, Wrapper } from './styles';
+import { Controller, useForm } from 'react-hook-form';
+import {
+  ActionsButton,
+  FormElement,
+  FormError,
+  FormLabel,
+  Wrapper,
+} from './styles';
 import { RegistryContractFunction } from 'hooks/Guilds/contracts/useContractRegistry';
-import FormElementRenderer from './FormElementRenderer';
+import FormElementRenderer, {
+  getDefaultValidationsByFormElement,
+} from './FormElementRenderer';
 
 const SubmitButton = styled(ActionsButton).attrs(() => ({
   variant: 'primary',
@@ -16,41 +24,45 @@ interface ParamsModalProps {
 }
 
 const ParamsModal: React.FC<ParamsModalProps> = ({ fn }) => {
-  const [values, setValues] = useState<{ [key: string]: any }>({});
+  const { control, handleSubmit } = useForm();
 
-  // Set initial values for the fields
-  useEffect(() => {
-    setValues(
-      fn.params.reduce((acc, param) => {
-        acc[param.name] = param.defaultValue;
-        return acc;
-      }, {})
-    );
-  }, [fn]);
-
-  const setFieldValue = (fieldName: string, value: any) => {
-    setValues({
-      ...values,
-      [fieldName]: value,
-    });
-  };
+  const onSubmit = (data: any) => console.log(data);
 
   return (
     <Wrapper>
-      {fn.params.map(param => (
-        <FormElement>
-          <FormLabel>{param.description}</FormLabel>
-          <FormElementRenderer
-            param={param}
-            value={values[param.name]}
-            onChange={(value: any) => setFieldValue(param.name, value)}
-          />
-        </FormElement>
-      ))}
+      <form
+        onSubmit={handleSubmit(onSubmit, errors => {
+          console.log(errors);
+        })}
+      >
+        {fn.params.map(param => (
+          <FormElement key={param.name}>
+            <FormLabel>{param.description}</FormLabel>
+            <Controller
+              name={param.name}
+              control={control}
+              defaultValue={param.defaultValue}
+              rules={getDefaultValidationsByFormElement(param)}
+              render={({ field, fieldState }) => (
+                <>
+                  <FormElementRenderer
+                    param={param}
+                    {...field}
+                    isInvalid={fieldState.invalid}
+                  />
+                  {fieldState.error && (
+                    <FormError>{fieldState.error.message}</FormError>
+                  )}
+                </>
+              )}
+            />
+          </FormElement>
+        ))}
 
-      <FormElement>
-        <SubmitButton>Add action</SubmitButton>
-      </FormElement>
+        <FormElement>
+          <SubmitButton type="submit">Add action</SubmitButton>
+        </FormElement>
+      </form>
     </Wrapper>
   );
 };

@@ -1,5 +1,8 @@
+import { BigNumber } from 'ethers';
 import { RegistryContractFunctionParam } from 'hooks/Guilds/contracts/useContractRegistry';
 import { useMemo } from 'react';
+import { RegisterOptions } from 'react-hook-form';
+import { isAddress } from 'utils';
 import AddressInput from '../common/Form/AddressInput';
 import { FormElementProps } from '../common/Form/common';
 import DateInput, { InputType } from '../common/Form/DateInput';
@@ -16,6 +19,7 @@ const FormElementRenderer: React.FC<FormElementRendererProps> = ({
   param,
   value,
   onChange,
+  ...remainingProps
 }) => {
   const FormElement: React.FC<FormElementProps<any>> = useMemo(() => {
     switch (param.component) {
@@ -59,7 +63,38 @@ const FormElementRenderer: React.FC<FormElementRendererProps> = ({
     }
   }, [param]);
 
-  return <FormElement value={value} onChange={onChange} {...props} />;
+  return (
+    <FormElement
+      value={value}
+      onChange={onChange}
+      {...props}
+      {...remainingProps}
+    />
+  );
+};
+
+type Validations = Omit<
+  RegisterOptions,
+  'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
+>;
+
+export const getDefaultValidationsByFormElement = (
+  param: RegistryContractFunctionParam
+) => {
+  const validations: Validations = { required: 'This field is required.' };
+
+  switch (param.component) {
+    case 'address':
+      validations.validate = (value: string) =>
+        !!isAddress(value) || 'Invalid address.';
+      break;
+    case 'tokenAmount':
+      validations.validate = (value: BigNumber) =>
+        (value && value.gte(0)) || 'Token amount should not be negative.';
+      break;
+  }
+
+  return validations;
 };
 
 export default FormElementRenderer;
