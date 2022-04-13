@@ -26,7 +26,6 @@ export const useVotingPowerOf: UseVotingPowerOfHook = ({
   fallbackSnapshotId = true,
 }) => {
   const { isSnapshotGuild } = useGuildImplementationType(contractAddress);
-
   const votingPowerOfResponse = useEtherSWR(
     contractAddress && userAddress
       ? [contractAddress, 'votingPowerOf', userAddress]

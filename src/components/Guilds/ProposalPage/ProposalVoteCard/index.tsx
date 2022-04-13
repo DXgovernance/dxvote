@@ -90,12 +90,11 @@ const ProposalVoteCard = () => {
   const voteData = useVotingResults();
 
   const timestamp = useTimedRerender(1000);
-  // @ts-ignore
-  const isOpen_ = useMemo(
+
+  const isOpen = useMemo(
     () => proposal?.endTime.isAfter(moment(timestamp)),
     [proposal, timestamp]
   );
-  const isOpen = true;
   const { account: userAddress } = useWeb3React();
   const { data: userVotingPower } = useVotingPowerOf({
     contractAddress: guildId,
@@ -108,13 +107,15 @@ const ProposalVoteCard = () => {
     proposalId: proposalId,
   });
 
-  const { data: votingPowerAtProposalSnapshotId } = useVotingPowerOf({
+  // Get voting power without fallbackSnapshotId
+  const { data: votingPower } = useVotingPowerOf({
     contractAddress: guildId,
     userAddress: userAddress,
     snapshotId: snapshotId?.toString(),
     fallbackSnapshotId: false,
   });
 
+  // Get voting power at current snapshotId
   const { data: votingPowerAtProposalCurrentSnapshot } = useVotingPowerOf({
     contractAddress: guildId,
     userAddress: userAddress,
@@ -123,7 +124,7 @@ const ProposalVoteCard = () => {
   });
 
   const votingPowerPercent = useVotingPowerPercent(
-    votingPowerAtProposalSnapshotId,
+    votingPower,
     voteData?.totalLocked
   );
 
@@ -132,21 +133,22 @@ const ProposalVoteCard = () => {
     voteData?.totalLocked
   );
 
-  const voteOnProposal = async () => {
-    const noVotingPowerAtSnapshot =
-      Number(votingPowerAtProposalSnapshotId?.toString()) <= 0;
-    const hasVotingPowerAtCurrentSnapshot =
-      Number(votingPowerAtProposalCurrentSnapshot?.toString()) > 0;
-    if (noVotingPowerAtSnapshot) {
-      if (hasVotingPowerAtCurrentSnapshot) {
-        toastError('Current voting power gained after proposal creation');
-        return;
-      }
-      toastError('No Voting Power');
-      return;
-    }
+  const voteOnProposal = () => {
+    const hasNoVotingPower =
+      votingPower && Number(votingPower?.toString()) <= 0;
 
-    setModalOpen(true);
+    const hasVotingPowerAtCurrentSnapshot =
+      votingPowerAtProposalCurrentSnapshot &&
+      Number(votingPowerAtProposalCurrentSnapshot?.toString()) > 0;
+    if (hasNoVotingPower) {
+      if (hasVotingPowerAtCurrentSnapshot) {
+        return toastError(
+          'Current voting power gained after proposal creation'
+        );
+      }
+      return toastError('No Voting Power');
+    }
+    return setModalOpen(true);
   };
 
   const confirmVoteProposal = () => {
@@ -161,6 +163,8 @@ const ProposalVoteCard = () => {
         backgroundColor: theme.colors.background,
         borderColor: theme.colors.muted,
       },
+      autoClose: 2800,
+      hideProgressBar: true,
     });
 
   return (
