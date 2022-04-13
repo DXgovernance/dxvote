@@ -1,8 +1,10 @@
+import { Contract } from 'ethers';
 import _ from 'lodash';
 import { MAX_BLOCKS_PER_EVENTS_FETCH } from './constants';
 import { sleep } from './helpers';
 
 const Web3 = require('web3');
+const web3 = new Web3();
 
 export const getEvents = async function (
   web3,
@@ -59,7 +61,7 @@ export const getEvents = async function (
       }
     }
   }
-  return events;
+  return sortEvents(events);
 };
 
 export const getRawEvents = async function (
@@ -119,7 +121,7 @@ export const getRawEvents = async function (
       }
     }
   }
-  return events;
+  return sortEvents(events);
 };
 
 export const getTimestampOfEvents = async function (web3, events) {
@@ -180,27 +182,30 @@ export const sortEvents = function (events) {
   );
 };
 
-export const executeMulticall = async function (web3, multicall, calls) {
+export const executeMulticall = async function (
+  multicall: Contract,
+  calls: any[]
+) {
   const rawCalls = calls.map(call => {
+    const functionParams = [...call[1].matchAll(/\(([^)]+)\)/g)]
+      .flat()[1]
+      ?.split(',');
     return [
-      call[0]._address,
-      web3.eth.abi.encodeFunctionCall(
-        call[0]._jsonInterface.find(method => method.name === call[1]),
-        call[2]
-      ),
+      call[0],
+      web3.eth.abi.encodeFunctionSignature(call[1]) +
+        (functionParams
+          ? web3.eth.abi.encodeParameters(functionParams, call[2]).substring(2)
+          : ''),
     ];
   });
-
   const { returnData } = await multicall.methods.aggregate(rawCalls).call();
 
   return {
     returnData,
     decodedReturnData: returnData.map((callResult, i) => {
-      return web3.eth.abi.decodeParameters(
-        calls[i][0]._jsonInterface.find(method => method.name === calls[i][1])
-          .outputs,
-        callResult
-      )['0'];
+      return calls[i][3].length > 0
+        ? web3.eth.abi.decodeParameters(calls[i][3], callResult)
+        : '';
     }),
   };
 };
@@ -265,4 +270,40 @@ export async function tryCacheUpdates(promises, networkCache) {
     }
   }
   return networkCache;
+}
+
+export async function batchPromisesOntarget(
+  promises,
+  targetObject,
+  maxPromisesPerTry = 0,
+  maxErrorsTry = 5
+) {
+  let promisesBatch = maxPromisesPerTry === 0 ? [promises] : [];
+  let promisesBatchIndex = 0;
+  let errorsTry = 0;
+
+  if (maxPromisesPerTry > 0)
+    for (var i = 0; i < promises.length; i += maxPromisesPerTry)
+      promisesBatch.push(promises.slice(i, i + maxPromisesPerTry));
+
+  while (
+    promisesBatchIndex < promisesBatch.length &&
+    errorsTry < maxErrorsTry
+  ) {
+    try {
+      (await Promise.all(promisesBatch[promisesBatchIndex])).map(
+        targetObjectUpdated => {
+          targetObject = Object.assign(targetObject, targetObjectUpdated);
+        }
+      );
+      promisesBatchIndex++;
+    } catch (e) {
+      console.error(e);
+      errorsTry++;
+    } finally {
+      if (errorsTry >= maxErrorsTry)
+        console.error('[BATCH PROMISES] (max errors reached)');
+    }
+  }
+  return targetObject;
 }

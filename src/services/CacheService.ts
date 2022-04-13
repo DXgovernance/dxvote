@@ -1,5 +1,5 @@
 import RootContext from '../contexts';
-import { getIPFSFile, NETWORK_NAMES } from '../utils';
+import { batchPromisesOntarget, getIPFSFile, NETWORK_NAMES } from '../utils';
 import Web3 from 'web3';
 import _ from 'lodash';
 import {
@@ -10,20 +10,15 @@ import {
   decodePermission,
   WalletSchemeProposalState,
   VotingMachineProposalState,
-  tryCacheUpdates,
   isWalletScheme,
   getEvents,
   getRawEvents,
-  sortEvents,
   executeMulticall,
   descriptionHashToIPFSHash,
   ipfsHashToDescriptionHash,
   getSchemeConfig,
 } from '../utils';
-import WalletScheme1_0JSON from '../contracts/WalletScheme1_0.json';
-import WalletScheme1_1JSON from '../contracts/WalletScheme1_1.json';
-import ContributionRewardJSON from '../contracts/ContributionReward.json';
-import TokenVestingJSON from '../contracts/TokenVesting.json';
+
 import { getContracts } from '../contracts';
 
 const Hash = require('ipfs-only-hash');
@@ -54,107 +49,6 @@ export default class UtilsService {
 
   constructor(context: RootContext) {
     this.context = context;
-  }
-
-  async buildCacheForNetwork(
-    web3: Web3,
-    chainId: number,
-    toBlock: number,
-    resetCache: boolean = false
-  ): Promise<{
-    configHash: string;
-    config: NetworkConfig;
-    cache: DaoNetworkCache;
-  }> {
-    const networkName = NETWORK_NAMES[chainId];
-
-    // Get the network configuration
-    let networkConfig = appConfig[networkName];
-    let networkCache: DaoNetworkCache;
-
-    const emptyCache: DaoNetworkCache = {
-      networkId: chainId,
-      version: 1,
-      blockNumber: 1,
-      address: networkConfig.contracts.avatar,
-      reputation: {
-        events: [],
-        total: bnum(0),
-      },
-      schemes: {},
-      proposals: {},
-      callPermissions: {},
-      votingMachines: {},
-      ipfsHashes: [],
-      vestingContracts: [],
-    };
-
-    // Set network cache and config objects
-    if (networkName === 'localhost') {
-      networkCache = emptyCache;
-    } else {
-      if (resetCache) {
-        networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
-        networkConfig.cache.ipfsHash = '';
-        networkConfig.version = 1;
-        emptyCache.blockNumber = networkConfig.cache.fromBlock;
-        networkCache = emptyCache;
-      } else {
-        console.log(
-          `Getting config file from https://ipfs.io/ipfs/${defaultConfigHashes[networkName]}`
-        );
-        const networkConfigFileFetch = await getIPFSFile(
-          defaultConfigHashes[networkName],
-          5000
-        );
-        console.log(
-          `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
-        );
-        const networkCacheFetch = await getIPFSFile(
-          networkConfigFileFetch.data.cache.ipfsHash,
-          60000
-        );
-        networkCache = networkCacheFetch.data;
-      }
-    }
-
-    // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
-    const fromBlock = networkCache.blockNumber;
-
-    if (Number(fromBlock) < toBlock) {
-      // The cache file is updated with the data that had before plus new data in the network cache file
-      console.debug(
-        'Running cache script from block',
-        fromBlock,
-        'to block',
-        toBlock,
-        'in network',
-        networkName
-      );
-      networkCache = await this.getUpdatedCache(
-        this.context,
-        networkCache,
-        networkConfig.contracts,
-        fromBlock,
-        toBlock,
-        web3
-      );
-    }
-
-    // Write network cache file
-    networkCache = await jsonSort.sortAsync(networkCache, true);
-    const networkCacheString = JSON.stringify(networkCache, null, 2);
-
-    // Update appConfig file with the latest network config
-    networkConfig.cache.toBlock = toBlock;
-    networkConfig.cache.ipfsHash = await Hash.of(networkCacheString);
-    networkConfig = await jsonSort.sortAsync(networkConfig, true);
-
-    return {
-      configHash: await Hash.of(JSON.stringify(networkConfig, null, 2)),
-      config: networkConfig,
-      cache: networkCache,
-    };
   }
 
   async getUpdatedCacheConfig(
@@ -222,57 +116,136 @@ export default class UtilsService {
     return updatedCacheConfig;
   }
 
+  async buildCacheForNetwork(
+    web3: Web3,
+    chainId: number,
+    toBlock: number,
+    resetCache: boolean = false
+  ): Promise<{
+    configHash: string;
+    config: NetworkConfig;
+    cache: DaoNetworkCache;
+  }> {
+    const networkName = NETWORK_NAMES[chainId];
+
+    // Get the network configuration
+    let networkConfig = appConfig[networkName];
+    let networkCache: DaoNetworkCache;
+
+    const emptyCache: DaoNetworkCache = {
+      networkId: chainId,
+      version: 1,
+      blockNumber: 1,
+      address: networkConfig.contracts.avatar,
+      reputation: {
+        events: [],
+        total: bnum(0),
+      },
+      schemes: {},
+      proposals: {},
+      callPermissions: {},
+      votingMachines: {},
+      ipfsHashes: [],
+      vestingContracts: [],
+    };
+
+    // Set network cache and config objects
+    if (networkName === 'localhost') {
+      networkCache = emptyCache;
+    } else {
+      if (resetCache) {
+        networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
+        networkConfig.cache.ipfsHash = '';
+        networkConfig.version = 1;
+        emptyCache.blockNumber = networkConfig.cache.fromBlock;
+        networkCache = emptyCache;
+      } else {
+        console.log(
+          `Getting config file from https://ipfs.io/ipfs/${defaultConfigHashes[networkName]}`
+        );
+        const networkConfigFileFetch = await getIPFSFile(
+          defaultConfigHashes[networkName],
+          5000
+        );
+        console.log(
+          `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
+        );
+        const networkCacheFetch = await getIPFSFile(
+          networkConfigFileFetch.data.cache.ipfsHash,
+          60000
+        );
+        networkCache = networkCacheFetch.data;
+      }
+    }
+
+    // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
+    if (Number(networkCache.blockNumber) + 1 < toBlock) {
+      // The cache file is updated with the data that had before plus new data in the network cache file
+      console.debug(
+        'Running cache script from block',
+        networkCache.blockNumber + 1,
+        'to block',
+        toBlock,
+        'in network',
+        networkName
+      );
+      networkCache = await this.getUpdatedCache(
+        this.context,
+        networkCache,
+        networkConfig.contracts,
+        toBlock,
+        web3
+      );
+    }
+
+    // Write network cache file
+    networkCache = await jsonSort.sortAsync(networkCache, true);
+    const networkCacheString = JSON.stringify(networkCache, null, 2);
+
+    // Update appConfig file with the latest network config
+    networkConfig.cache.toBlock = toBlock;
+    networkConfig.cache.ipfsHash = await Hash.of(networkCacheString);
+    networkConfig = await jsonSort.sortAsync(networkConfig, true);
+
+    return {
+      configHash: await Hash.of(JSON.stringify(networkConfig, null, 2)),
+      config: networkConfig,
+      cache: networkCache,
+    };
+  }
+
   async getUpdatedCache(
     context: RootContext,
     networkCache: DaoNetworkCache,
-    networkContractsConfig: NetworkContracts,
-    fromBlock: number,
+    networkContracts: NetworkContracts,
     toBlock: number,
-    web3: any
+    web3: Web3
   ): Promise<DaoNetworkCache> {
     const notificationStore = context.notificationStore;
-
+    const fromBlock = networkCache.blockNumber + 1;
     console.debug(`[CACHE UPDATE] from ${fromBlock} to ${toBlock}`);
-    const networkWeb3Contracts = await getContracts(
-      networkContractsConfig,
-      web3
-    );
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
 
     notificationStore.setGlobalLoading(
       true,
       `Collecting reputation and governance events in blocks ${fromBlock} - ${toBlock}`
     );
 
-    networkCache = await tryCacheUpdates(
+    networkCache = await batchPromisesOntarget(
       [
         this.updateReputationEvents(
           networkCache,
           networkWeb3Contracts.reputation,
-          fromBlock,
           toBlock,
           web3
         ),
         this.updateVotingMachineEvents(
           networkCache,
-          networkContractsConfig,
-          fromBlock,
+          networkContracts,
           toBlock,
           web3
         ),
-        this.updatePermissionRegistry(
-          networkCache,
-          networkContractsConfig,
-          fromBlock,
-          toBlock,
-          web3
-        ),
-        this.updateVestingContracts(
-          networkCache,
-          networkContractsConfig,
-          fromBlock,
-          toBlock,
-          web3
-        ),
+        this.updateSchemes(networkCache, networkContracts, toBlock, web3),
       ],
       networkCache
     );
@@ -282,12 +255,17 @@ export default class UtilsService {
       `Updating scheme data in blocks ${fromBlock} - ${toBlock}`
     );
 
-    networkCache = await tryCacheUpdates(
+    networkCache = await batchPromisesOntarget(
       [
-        this.updateSchemes(
+        this.updatePermissionRegistry(
           networkCache,
-          networkContractsConfig,
-          fromBlock,
+          networkContracts,
+          toBlock,
+          web3
+        ),
+        this.updateVestingContracts(
+          networkCache,
+          networkContracts,
           toBlock,
           web3
         ),
@@ -300,16 +278,8 @@ export default class UtilsService {
       `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
     );
 
-    networkCache = await tryCacheUpdates(
-      [
-        this.updateProposals(
-          networkCache,
-          networkContractsConfig,
-          fromBlock,
-          toBlock,
-          web3
-        ),
-      ],
+    networkCache = await batchPromisesOntarget(
+      [this.updateProposals(networkCache, networkContracts, toBlock, web3)],
       networkCache
     );
 
@@ -324,6 +294,22 @@ export default class UtilsService {
     //   console.debug(proposalId, mutableData, cacheData);
     // })
 
+    // Sort cache data, so the IPFS hash is consistent
+    Object.keys(networkCache.schemes).forEach(schemeId => {
+      networkCache.schemes[schemeId].proposalIds.sort();
+      networkCache.schemes[schemeId].newProposalEvents.sort((a, b) =>
+        a.proposalId.localeCompare(b.proposalId)
+      );
+    });
+    networkCache.proposals = Object.keys(networkCache.proposals)
+      .sort()
+      .reduce((obj, key) => {
+        obj[key] = networkCache.proposals[key];
+        return obj;
+      }, {});
+    networkCache.ipfsHashes = _.uniqBy(networkCache.ipfsHashes, 'name');
+    networkCache.ipfsHashes.sort((a, b) => a.name.localeCompare(b.name));
+
     return networkCache;
   }
 
@@ -331,14 +317,18 @@ export default class UtilsService {
   async updateReputationEvents(
     networkCache: DaoNetworkCache,
     reputation: any,
-    fromBlock: number,
     toBlock: number,
-    web3: any
+    web3: Web3
   ): Promise<DaoNetworkCache> {
     if (!networkCache.reputation.events) networkCache.reputation.events = [];
+    const fromBlock = networkCache.blockNumber + 1;
 
-    let reputationEvents = sortEvents(
-      await getEvents(web3, reputation, fromBlock, toBlock, 'allEvents')
+    let reputationEvents = await getEvents(
+      web3,
+      reputation,
+      fromBlock,
+      toBlock,
+      'allEvents'
     );
 
     reputationEvents.map(reputationEvent => {
@@ -382,15 +372,11 @@ export default class UtilsService {
   // Update all voting machines
   async updateVotingMachineEvents(
     networkCache: DaoNetworkCache,
-    networkContractsConfig: NetworkContracts,
-    fromBlock: number,
+    networkContracts: NetworkContracts,
     toBlock: number,
-    web3: any
+    web3: Web3
   ): Promise<DaoNetworkCache> {
-    const networkWeb3Contracts = await getContracts(
-      networkContractsConfig,
-      web3
-    );
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
 
     await Promise.all(
       Object.keys(networkWeb3Contracts.votingMachines).map(
@@ -418,9 +404,8 @@ export default class UtilsService {
 
           networkCache = await this.updateVotingMachine(
             networkCache,
-            networkContractsConfig,
+            networkContracts,
             votingMachine,
-            fromBlock,
             toBlock,
             web3
           );
@@ -430,21 +415,25 @@ export default class UtilsService {
 
     return networkCache;
   }
-  // Update all voting machine information, events, token and voting parameters used.
+
+  // Update a voting machine information, events, token and voting parameters used.
   async updateVotingMachine(
     networkCache: DaoNetworkCache,
-    networkContractsConfig: NetworkContracts,
+    networkContracts: NetworkContracts,
     votingMachine: any,
-    fromBlock: number,
     toBlock: number,
-    web3: any
+    web3: Web3
   ): Promise<DaoNetworkCache> {
-    let newVotingMachineEvents = sortEvents(
-      await getEvents(web3, votingMachine, fromBlock, toBlock, 'allEvents')
+    const fromBlock = networkCache.blockNumber + 1;
+
+    let newVotingMachineEvents = await getEvents(
+      web3,
+      votingMachine,
+      fromBlock,
+      toBlock,
+      'allEvents'
     );
-    const avatarAddress = web3.utils.toChecksumAddress(
-      networkContractsConfig.avatar
-    );
+    const avatarAddress = web3.utils.toChecksumAddress(networkContracts.avatar);
     const votingMachineEventsInCache =
       networkCache.votingMachines[votingMachine._address].events;
     newVotingMachineEvents.map(votingMachineEvent => {
@@ -626,24 +615,20 @@ export default class UtilsService {
   // Gets all the events form the permission registry and stores the permissions set.
   async updatePermissionRegistry(
     networkCache: DaoNetworkCache,
-    networkContractsConfig: NetworkContracts,
-    fromBlock: number,
+    networkContracts: NetworkContracts,
     toBlock: number,
-    web3: any
+    web3: Web3
   ): Promise<DaoNetworkCache> {
-    const networkWeb3Contracts = await getContracts(
-      networkContractsConfig,
-      web3
-    );
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
+    const fromBlock = networkCache.blockNumber + 1;
+
     if (networkWeb3Contracts.permissionRegistry._address !== ZERO_ADDRESS) {
-      let permissionRegistryEvents = sortEvents(
-        await getEvents(
-          web3,
-          networkWeb3Contracts.permissionRegistry,
-          fromBlock,
-          toBlock,
-          'allEvents'
-        )
+      let permissionRegistryEvents = await getEvents(
+        web3,
+        networkWeb3Contracts.permissionRegistry,
+        fromBlock,
+        toBlock,
+        'allEvents'
       );
 
       permissionRegistryEvents.map(permissionRegistryEvent => {
@@ -684,25 +669,21 @@ export default class UtilsService {
 
   async updateVestingContracts(
     networkCache: DaoNetworkCache,
-    networkContractsConfig: NetworkContracts,
-    fromBlock: number,
+    networkContracts: NetworkContracts,
     toBlock: number,
-    web3: any
+    web3: Web3
   ): Promise<DaoNetworkCache> {
-    const networkWeb3Contracts = await getContracts(
-      networkContractsConfig,
-      web3
-    );
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
+    const fromBlock = networkCache.blockNumber + 1;
+
     if (networkWeb3Contracts.vestingFactory) {
       try {
-        const vestingFactoryEvents = sortEvents(
-          await getEvents(
-            web3,
-            networkWeb3Contracts.vestingFactory,
-            fromBlock,
-            toBlock,
-            'allEvents'
-          )
+        const vestingFactoryEvents = await getEvents(
+          web3,
+          networkWeb3Contracts.vestingFactory,
+          fromBlock,
+          toBlock,
+          'allEvents'
         );
 
         console.debug(
@@ -711,35 +692,65 @@ export default class UtilsService {
         );
 
         for (let event of vestingFactoryEvents) {
-          const tokenVestingContract = await new web3.eth.Contract(
-            TokenVestingJSON.abi,
-            event.returnValues.vestingContractAddress
-          );
           const callsToExecute = [
-            [tokenVestingContract, 'beneficiary', []],
-            [tokenVestingContract, 'cliff', []],
-            [tokenVestingContract, 'duration', []],
-            [tokenVestingContract, 'owner', []],
-            [tokenVestingContract, 'start', []],
-            [tokenVestingContract, 'isOwner', []],
-            [tokenVestingContract, 'revocable', []],
+            [
+              event.returnValues.vestingContractAddress,
+              'beneficiary()',
+              [],
+              ['address'],
+            ],
+            [
+              event.returnValues.vestingContractAddress,
+              'cliff()',
+              [],
+              ['uint256'],
+            ],
+            [
+              event.returnValues.vestingContractAddress,
+              'duration()',
+              [],
+              ['uint256'],
+            ],
+            [
+              event.returnValues.vestingContractAddress,
+              'owner()',
+              [],
+              ['address'],
+            ],
+            [
+              event.returnValues.vestingContractAddress,
+              'start()',
+              [],
+              ['uint256'],
+            ],
+            [
+              event.returnValues.vestingContractAddress,
+              'isOwner()',
+              [],
+              ['bool'],
+            ],
+            [
+              event.returnValues.vestingContractAddress,
+              'revocable()',
+              [],
+              ['bool'],
+            ],
           ];
 
           const callsResponse = await executeMulticall(
-            web3,
             networkWeb3Contracts.multicall,
             callsToExecute
           );
 
           const tokenContractInfo = {
             address: event.returnValues.vestingContractAddress,
-            beneficiary: callsResponse.decodedReturnData[0],
-            cliff: callsResponse.decodedReturnData[1],
-            duration: callsResponse.decodedReturnData[2],
-            owner: callsResponse.decodedReturnData[3],
-            start: callsResponse.decodedReturnData[4],
-            isOwner: callsResponse.decodedReturnData[5],
-            revocable: callsResponse.decodedReturnData[6],
+            beneficiary: callsResponse.decodedReturnData[0][0],
+            cliff: callsResponse.decodedReturnData[1][0],
+            duration: callsResponse.decodedReturnData[2][0],
+            owner: callsResponse.decodedReturnData[3][0],
+            start: callsResponse.decodedReturnData[4][0],
+            isOwner: callsResponse.decodedReturnData[5][0],
+            revocable: callsResponse.decodedReturnData[6][0],
           };
 
           networkCache.vestingContracts = [
@@ -758,26 +769,22 @@ export default class UtilsService {
   // Update all the schemes information
   async updateSchemes(
     networkCache: DaoNetworkCache,
-    networkContractsConfig: NetworkContracts,
-    fromBlock: number,
+    networkContracts: NetworkContracts,
     toBlock: number,
-    web3: any
+    web3: Web3
   ): Promise<DaoNetworkCache> {
-    const networkWeb3Contracts = await getContracts(
-      networkContractsConfig,
-      web3
-    );
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
+    const fromBlock = networkCache.blockNumber + 1;
 
     // Get all the events from the Controller
-    let controllerEvents = sortEvents(
-      await getEvents(
-        web3,
-        networkWeb3Contracts.controller,
-        fromBlock,
-        toBlock,
-        'allEvents'
-      )
+    let controllerEvents = await getEvents(
+      web3,
+      networkWeb3Contracts.controller,
+      fromBlock,
+      toBlock,
+      'allEvents'
     );
+
     // Go over all controller events and add update or remove schemes depending on the event
     for (
       let controllerEventsIndex = 0;
@@ -791,10 +798,7 @@ export default class UtilsService {
       // Add or update the scheme information,
       // register scheme is used to add a scheme or update the parametersHash of an existent one
       if (controllerEvent.event === 'RegisterScheme') {
-        const schemeTypeData = getSchemeConfig(
-          networkContractsConfig,
-          schemeAddress
-        );
+        const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
 
         console.debug(
           'Register Scheme event for ',
@@ -810,25 +814,25 @@ export default class UtilsService {
 
         let callsToExecute = [
           [
-            networkWeb3Contracts.controller,
-            'getSchemePermissions',
+            controllerAddress,
+            'getSchemePermissions(address,address)',
             [schemeAddress, networkWeb3Contracts.avatar._address],
+            ['bytes4'],
           ],
           [
-            networkWeb3Contracts.controller,
-            'getSchemeParameters',
+            controllerAddress,
+            'getSchemeParameters(address,address)',
             [schemeAddress, networkWeb3Contracts.avatar._address],
+            ['bytes32'],
           ],
         ];
 
         if (schemeType === 'WalletScheme') {
-          const walletSchemeContract = await new web3.eth.Contract(
-            WalletScheme1_0JSON.abi,
-            schemeAddress
-          );
-          const walletSchemeType = await walletSchemeContract.methods
-            .SCHEME_TYPE()
-            .call();
+          const walletSchemeType = (
+            await executeMulticall(networkWeb3Contracts.multicall, [
+              [schemeAddress, 'SCHEME_TYPE()', [], ['string']],
+            ])
+          ).decodedReturnData[0][0];
 
           schemeType = walletSchemeType;
           if (schemeType == 'Wallet Scheme v1')
@@ -836,68 +840,87 @@ export default class UtilsService {
 
           switch (schemeType) {
             case 'Wallet Scheme v1.0':
-              callsToExecute.push([walletSchemeContract, 'votingMachine', []]);
               callsToExecute.push([
-                walletSchemeContract,
-                'controllerAddress',
+                schemeAddress,
+                'votingMachine()',
                 [],
-              ]);
-              callsToExecute.push([walletSchemeContract, 'schemeName', []]);
-              callsToExecute.push([
-                walletSchemeContract,
-                'maxSecondsForExecution',
-                [],
+                ['address'],
               ]);
               callsToExecute.push([
-                walletSchemeContract,
-                'maxRepPercentageChange',
+                schemeAddress,
+                'controllerAddress()',
                 [],
+                ['address'],
+              ]);
+              callsToExecute.push([
+                schemeAddress,
+                'schemeName()',
+                [],
+                ['string'],
+              ]);
+              callsToExecute.push([
+                schemeAddress,
+                'maxSecondsForExecution()',
+                [],
+                ['uint256'],
+              ]);
+              callsToExecute.push([
+                schemeAddress,
+                'maxRepPercentageChange()',
+                [],
+                ['uint256'],
               ]);
               break;
             default:
-              const walletSchemeContract1_1 = await new web3.eth.Contract(
-                WalletScheme1_1JSON.abi,
-                schemeAddress
-              );
               callsToExecute.push([
-                walletSchemeContract1_1,
-                'votingMachine',
+                schemeAddress,
+                'votingMachine()',
                 [],
+                ['address'],
               ]);
               callsToExecute.push([
-                walletSchemeContract1_1,
-                'doAvatarGenericCalls',
+                schemeAddress,
+                'doAvatarGenericCalls()',
                 [],
-              ]);
-              callsToExecute.push([walletSchemeContract1_1, 'schemeName', []]);
-              callsToExecute.push([
-                walletSchemeContract1_1,
-                'maxSecondsForExecution',
-                [],
+                ['bool'],
               ]);
               callsToExecute.push([
-                walletSchemeContract1_1,
-                'maxRepPercentageChange',
+                schemeAddress,
+                'schemeName()',
                 [],
+                ['string'],
+              ]);
+              callsToExecute.push([
+                schemeAddress,
+                'maxSecondsForExecution()',
+                [],
+                ['uint256'],
+              ]);
+              callsToExecute.push([
+                schemeAddress,
+                'maxRepPercentageChange()',
+                [],
+                ['uint256'],
               ]);
               break;
           }
         }
+
         const callsResponse1 = await executeMulticall(
-          web3,
           networkWeb3Contracts.multicall,
           callsToExecute
         );
         callsToExecute = [];
 
         const permissions = decodePermission(
-          callsResponse1.decodedReturnData[0]
+          callsResponse1.decodedReturnData[0][0]
         );
         const paramsHash =
-          schemeTypeData.voteParams || callsResponse1.decodedReturnData[1];
+          schemeTypeData.voteParams || callsResponse1.decodedReturnData[1][0];
 
         const votingMachineAddress =
-          schemeTypeData.votingMachine || callsResponse1.decodedReturnData[2];
+          schemeTypeData.votingMachine ||
+          callsResponse1.decodedReturnData[2][0];
 
         const votingMachine =
           networkWeb3Contracts.votingMachines[votingMachineAddress].contract;
@@ -905,17 +928,17 @@ export default class UtilsService {
         if (schemeTypeData.type === 'WalletScheme') {
           switch (schemeType) {
             case 'Wallet Scheme v1.0':
-              controllerAddress = callsResponse1.decodedReturnData[3];
+              controllerAddress = callsResponse1.decodedReturnData[3][0];
               break;
             default:
-              controllerAddress = callsResponse1.decodedReturnData[3]
+              controllerAddress = callsResponse1.decodedReturnData[3][0]
                 ? networkWeb3Contracts.controller._address
                 : ZERO_ADDRESS;
               break;
           }
-          schemeName = callsResponse1.decodedReturnData[4];
-          maxSecondsForExecution = callsResponse1.decodedReturnData[5];
-          maxRepPercentageChange = callsResponse1.decodedReturnData[6];
+          schemeName = callsResponse1.decodedReturnData[4][0];
+          maxSecondsForExecution = callsResponse1.decodedReturnData[5][0];
+          maxRepPercentageChange = callsResponse1.decodedReturnData[6][0];
         }
 
         // Register the new voting parameters in the voting machine params
@@ -969,38 +992,31 @@ export default class UtilsService {
         // This condition is added to skip the first scheme added (that is the dao creator account)
         controllerEvent.returnValues._sender !== schemeAddress
       ) {
-        const schemeTypeData = getSchemeConfig(
-          networkContractsConfig,
-          schemeAddress
-        );
-        const votingMachine =
-          networkWeb3Contracts.votingMachines[
-            networkCache.schemes[schemeAddress].votingMachine
-          ].contract;
-
+        const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
         console.debug('Unregister scheme event', schemeAddress, schemeTypeData);
         let callsToExecute = [
           [
-            votingMachine,
-            'orgBoostedProposalsCnt',
+            networkCache.schemes[schemeAddress].votingMachine,
+            'orgBoostedProposalsCnt(bytes32)',
             [
               web3.utils.soliditySha3(
                 schemeAddress,
                 networkWeb3Contracts.avatar._address
               ),
             ],
+            ['uint256'],
           ],
         ];
 
         if (isWalletScheme(networkCache.schemes[schemeAddress])) {
           callsToExecute.push([
-            await new web3.eth.Contract(WalletScheme1_0JSON.abi, schemeAddress),
-            'maxSecondsForExecution',
+            schemeAddress,
+            'maxSecondsForExecution()',
             [],
+            ['uint256'],
           ]);
         }
         const callsResponse = await executeMulticall(
-          web3,
           networkWeb3Contracts.multicall,
           callsToExecute
         );
@@ -1008,51 +1024,46 @@ export default class UtilsService {
         const maxSecondsForExecution = isWalletScheme(
           networkCache.schemes[schemeAddress]
         )
-          ? callsResponse.decodedReturnData[2]
+          ? callsResponse.decodedReturnData[2][0]
           : 0;
 
         // Update the scheme values a last time
         networkCache.schemes[schemeAddress].boostedProposals =
-          callsResponse.decodedReturnData[0];
+          callsResponse.decodedReturnData[0][0];
         networkCache.schemes[schemeAddress].maxSecondsForExecution =
           maxSecondsForExecution;
         networkCache.schemes[schemeAddress].registered = false;
       }
     }
+
     // Update registered schemes
     await Promise.all(
       Object.keys(networkCache.schemes).map(async schemeAddress => {
         if (networkCache.schemes[schemeAddress].registered) {
-          const votingMachine =
-            networkWeb3Contracts.votingMachines[
-              networkCache.schemes[schemeAddress].votingMachine
-            ].contract;
-
           let callsToExecute = [
             [
-              votingMachine,
-              'orgBoostedProposalsCnt',
+              networkCache.schemes[schemeAddress].votingMachine,
+              'orgBoostedProposalsCnt(bytes32)',
               [
                 web3.utils.soliditySha3(
                   schemeAddress,
                   networkWeb3Contracts.avatar._address
                 ),
               ],
+              ['uint256'],
             ],
           ];
 
           if (isWalletScheme(networkCache.schemes[schemeAddress])) {
             callsToExecute.push([
-              await new web3.eth.Contract(
-                WalletScheme1_0JSON.abi,
-                schemeAddress
-              ),
-              'maxSecondsForExecution',
+              schemeAddress,
+              'maxSecondsForExecution()',
               [],
+              ['uint256'],
             ]);
             callsToExecute.push([
-              votingMachine,
-              'boostedVoteRequiredPercentage',
+              networkCache.schemes[schemeAddress].votingMachine,
+              'boostedVoteRequiredPercentage(bytes32,bytes32)',
               [
                 web3.utils.soliditySha3(
                   schemeAddress,
@@ -1060,10 +1071,10 @@ export default class UtilsService {
                 ),
                 networkCache.schemes[schemeAddress].paramsHash,
               ],
+              ['uint256'],
             ]);
           }
           const callsResponse = await executeMulticall(
-            web3,
             networkWeb3Contracts.multicall,
             callsToExecute
           );
@@ -1071,20 +1082,16 @@ export default class UtilsService {
           const maxSecondsForExecution = isWalletScheme(
             networkCache.schemes[schemeAddress]
           )
-            ? callsResponse.decodedReturnData[1]
+            ? callsResponse.decodedReturnData[1][0]
             : 0;
 
           const boostedVoteRequiredPercentage = isWalletScheme(
             networkCache.schemes[schemeAddress]
           )
-            ? web3.eth.abi.decodeParameters(
-                ['uint256'],
-                callsResponse.returnData[2]
-              )['0']
+            ? callsResponse.decodedReturnData[2][0]
             : 0;
-
           networkCache.schemes[schemeAddress].boostedProposals =
-            callsResponse.decodedReturnData[0];
+            callsResponse.decodedReturnData[0][0];
           networkCache.schemes[schemeAddress].maxSecondsForExecution =
             maxSecondsForExecution;
           networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage =
@@ -1099,33 +1106,23 @@ export default class UtilsService {
   // Update all the proposals information
   async updateProposals(
     networkCache: DaoNetworkCache,
-    networkContractsConfig: NetworkContracts,
-    fromBlock: number,
+    networkContracts: NetworkContracts,
     toBlock: number,
-    web3: any
+    web3: Web3
   ): Promise<DaoNetworkCache> {
-    const networkWeb3Contracts = await getContracts(
-      networkContractsConfig,
-      web3
-    );
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
     const avatarAddress = networkWeb3Contracts.avatar._address;
     const avatarAddressEncoded = web3.eth.abi.encodeParameter(
       'address',
       avatarAddress
     );
+    const fromBlock = networkCache.blockNumber + 1;
 
     // Get new proposals
+    // TO DO: Get only proposals from registered schemes, change registered to block number of unregisterScheme
     await Promise.all(
       Object.keys(networkCache.schemes).map(async schemeAddress => {
-        const schemeTypeData = getSchemeConfig(
-          networkContractsConfig,
-          schemeAddress
-        );
-        const votingMachine =
-          networkWeb3Contracts.votingMachines[
-            networkCache.schemes[schemeAddress].votingMachine
-          ].contract;
-
+        const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
         let schemeEvents = [];
         for (let i = 0; i < schemeTypeData.newProposalTopics.length; i++) {
           schemeEvents = schemeEvents.concat(
@@ -1139,932 +1136,51 @@ export default class UtilsService {
           );
         }
 
-        let schemeEventsBatchs = [];
-        let schemeEventsBatchsIndex = 0;
-        for (var i = 0; i < schemeEvents.length; i += 50)
-          schemeEventsBatchs.push(schemeEvents.slice(i, i + 50));
+        await batchPromisesOntarget(
+          schemeEvents.map(schemeEvent => {
+            const proposalId: string =
+              schemeEvent.topics[1] === avatarAddressEncoded
+                ? schemeEvent.topics[2]
+                : schemeEvent.topics[1];
 
-        while (schemeEventsBatchsIndex < schemeEventsBatchs.length) {
-          try {
-            console.debug(
-              `Getting proposals of scheme ${schemeTypeData.name}: ${schemeAddress}, batch: ${schemeEventsBatchsIndex}`
+            return this.processProposal(
+              proposalId,
+              networkCache,
+              networkContracts,
+              web3,
+              fromBlock,
+              toBlock,
+              schemeEvent
             );
-            await Promise.all(
-              schemeEventsBatchs[schemeEventsBatchsIndex].map(
-                async schemeEvent => {
-                  const proposalId =
-                    schemeEvent.topics[1] === avatarAddressEncoded
-                      ? web3.eth.abi.decodeParameter(
-                          'bytes32',
-                          schemeEvent.topics[2]
-                        )
-                      : web3.eth.abi.decodeParameter(
-                          'bytes32',
-                          schemeEvent.topics[1]
-                        );
-                  // Get all the proposal information from the scheme and voting machine
-                  let callsToExecute = [
-                    [votingMachine, 'proposals', [proposalId]],
-                    [votingMachine, 'voteStatus', [proposalId, 1]],
-                    [votingMachine, 'voteStatus', [proposalId, 2]],
-                    [votingMachine, 'proposalStatus', [proposalId]],
-                    [votingMachine, 'getProposalTimes', [proposalId]],
-                  ];
-
-                  if (schemeTypeData.type === 'WalletScheme') {
-                    callsToExecute.push([
-                      await new web3.eth.Contract(
-                        WalletScheme1_0JSON.abi,
-                        schemeAddress
-                      ),
-                      'getOrganizationProposal',
-                      [proposalId],
-                    ]);
-                  } else if (schemeTypeData.type === 'ContributionReward') {
-                    callsToExecute.push([
-                      await new web3.eth.Contract(
-                        ContributionRewardJSON.abi,
-                        schemeAddress
-                      ),
-                      'getRedeemedPeriods',
-                      [proposalId, networkWeb3Contracts.avatar._address, 0],
-                    ]);
-                    callsToExecute.push([
-                      await new web3.eth.Contract(
-                        ContributionRewardJSON.abi,
-                        schemeAddress
-                      ),
-                      'getRedeemedPeriods',
-                      [proposalId, networkWeb3Contracts.avatar._address, 1],
-                    ]);
-                    callsToExecute.push([
-                      await new web3.eth.Contract(
-                        ContributionRewardJSON.abi,
-                        schemeAddress
-                      ),
-                      'getRedeemedPeriods',
-                      [proposalId, networkWeb3Contracts.avatar._address, 2],
-                    ]);
-                    callsToExecute.push([
-                      await new web3.eth.Contract(
-                        ContributionRewardJSON.abi,
-                        schemeAddress
-                      ),
-                      'getRedeemedPeriods',
-                      [proposalId, networkWeb3Contracts.avatar._address, 3],
-                    ]);
-                  }
-
-                  const callsResponse = await executeMulticall(
-                    web3,
-                    networkWeb3Contracts.multicall,
-                    callsToExecute
-                  );
-
-                  const votingMachineProposalInfo =
-                    web3.eth.abi.decodeParameters(
-                      [
-                        { type: 'bytes32', name: 'organizationId' },
-                        { type: 'address', name: 'callbacks' },
-                        { type: 'uint256', name: 'state' },
-                        { type: 'uint256', name: 'winningVote' },
-                        { type: 'address', name: 'proposer' },
-                        {
-                          type: 'uint256',
-                          name: 'currentBoostedVotePeriodLimit',
-                        },
-                        { type: 'bytes32', name: 'paramsHash' },
-                        { type: 'uint256', name: 'daoBountyRemain' },
-                        { type: 'uint256', name: 'daoBounty' },
-                        { type: 'uint256', name: 'totalStakes' },
-                        { type: 'uint256', name: 'confidenceThreshold' },
-                        {
-                          type: 'uint256',
-                          name: 'secondsFromTimeOutTillExecuteBoosted',
-                        },
-                      ],
-                      callsResponse.returnData[0]
-                    );
-                  const positiveVotes = callsResponse.returnData[1];
-                  const negativeVotes = callsResponse.returnData[2];
-
-                  const proposalStatusWithVotes = web3.eth.abi.decodeParameters(
-                    ['uint256', 'uint256', 'uint256', 'uint256'],
-                    callsResponse.returnData[3]
-                  );
-                  const proposalTimes = callsResponse.decodedReturnData[4];
-
-                  let schemeProposalInfo = {
-                    to: [],
-                    callData: [],
-                    value: [],
-                    state: WalletSchemeProposalState.Submitted,
-                    title: '',
-                    descriptionHash: '',
-                    submittedTime: 0,
-                  };
-                  let decodedProposer;
-                  let creationLogDecoded;
-
-                  if (schemeTypeData.type === 'WalletScheme') {
-                    schemeProposalInfo = web3.eth.abi.decodeParameters(
-                      [
-                        { type: 'address[]', name: 'to' },
-                        { type: 'bytes[]', name: 'callData' },
-                        { type: 'uint256[]', name: 'value' },
-                        { type: 'uint256', name: 'state' },
-                        { type: 'string', name: 'title' },
-                        { type: 'string', name: 'descriptionHash' },
-                        { type: 'uint256', name: 'submittedTime' },
-                      ],
-                      callsResponse.returnData[5]
-                    );
-                  } else {
-                    if (schemeTypeData.type === 'GenericMulticall') {
-                      // event ProposalExecutedByVotingMachine(
-                      //     address indexed _avatar,
-                      //     bytes32 indexed _proposalId,
-                      //     int256 _param
-                      // );
-                      const votingMachineExecutionEvent =
-                        schemeProposalInfo.state ===
-                        WalletSchemeProposalState.Submitted
-                          ? await getRawEvents(
-                              web3,
-                              schemeAddress,
-                              fromBlock,
-                              toBlock,
-                              [
-                                '0x25d4c89430c1f10c60c292556941e3e624ec1ec04972a5da46cee1b352429cbe',
-                                avatarAddressEncoded,
-                                proposalId,
-                              ],
-                              10000000
-                            )
-                          : [];
-
-                      if (
-                        votingMachineExecutionEvent.length > 0 &&
-                        votingMachineExecutionEvent[0].data ===
-                          '0x0000000000000000000000000000000000000000000000000000000000000001'
-                      )
-                        schemeProposalInfo.state =
-                          WalletSchemeProposalState.Submitted;
-                      else if (votingMachineExecutionEvent.length > 0) {
-                        schemeProposalInfo.state =
-                          WalletSchemeProposalState.Rejected;
-                      }
-
-                      const executionEvent = await getRawEvents(
-                        web3,
-                        schemeAddress,
-                        fromBlock,
-                        toBlock,
-                        [
-                          '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
-                          avatarAddressEncoded,
-                          proposalId,
-                        ],
-                        10000000
-                      );
-                      if (executionEvent.length > 0) {
-                        schemeProposalInfo.state =
-                          WalletSchemeProposalState.ExecutionSucceded;
-                      }
-                    } else if (schemeTypeData.type === 'ContributionReward') {
-                      if (
-                        callsResponse.decodedReturnData[5] > 0 ||
-                        callsResponse.decodedReturnData[6] > 0 ||
-                        callsResponse.decodedReturnData[7] > 0 ||
-                        callsResponse.decodedReturnData[8] > 0
-                      ) {
-                        schemeProposalInfo.state =
-                          WalletSchemeProposalState.ExecutionSucceded;
-                      } else if (
-                        votingMachineProposalInfo.state === '1' ||
-                        votingMachineProposalInfo.state === '2'
-                      ) {
-                        schemeProposalInfo.state =
-                          WalletSchemeProposalState.Rejected;
-                      } else {
-                        schemeProposalInfo.state =
-                          WalletSchemeProposalState.Submitted;
-                      }
-                    }
-
-                    const transactionReceipt =
-                      await web3.eth.getTransactionReceipt(
-                        schemeEvent.transactionHash
-                      );
-                    try {
-                      schemeTypeData.newProposalTopics.map(
-                        (newProposalTopic, i) => {
-                          transactionReceipt.logs.map(log => {
-                            if (
-                              log.topics[0] ===
-                              '0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c'
-                            ) {
-                              decodedProposer = web3.eth.abi.decodeParameters(
-                                [
-                                  { type: 'uint256', name: '_numOfChoices' },
-                                  { type: 'address', name: '_proposer' },
-                                  { type: 'bytes32', name: '_paramsHash' },
-                                ],
-                                log.data
-                              )._proposer;
-                            }
-                            if (
-                              !creationLogDecoded &&
-                              log.topics[0] === newProposalTopic[0]
-                            ) {
-                              creationLogDecoded =
-                                web3.eth.abi.decodeParameters(
-                                  schemeTypeData.creationLogEncoding[i],
-                                  log.data
-                                );
-                              if (
-                                creationLogDecoded._descriptionHash.length >
-                                  0 &&
-                                creationLogDecoded._descriptionHash !==
-                                  ZERO_HASH
-                              ) {
-                                schemeProposalInfo.descriptionHash =
-                                  ipfsHashToDescriptionHash(
-                                    creationLogDecoded._descriptionHash
-                                  );
-                              }
-                            }
-                          });
-                        }
-                      );
-                    } catch (error) {
-                      console.error(
-                        'Error in getting proposal data from creation event',
-                        error
-                      );
-                    }
-
-                    if (schemeTypeData.type === 'SchemeRegistrar') {
-                      schemeProposalInfo.to = [schemeTypeData.contractToCall];
-                      schemeProposalInfo.value = [0];
-
-                      if (creationLogDecoded._parametersHash) {
-                        schemeProposalInfo.callData = [
-                          web3.eth.abi.encodeFunctionCall(
-                            {
-                              name: 'registerScheme',
-                              type: 'function',
-                              inputs: [
-                                { type: 'address', name: '_scheme' },
-                                { type: 'bytes32', name: '_paramsHash' },
-                                { type: 'bytes4', name: '_permissions' },
-                                { type: 'address', name: '_avatar' },
-                              ],
-                            },
-                            [
-                              creationLogDecoded['_scheme '],
-                              creationLogDecoded._parametersHash,
-                              creationLogDecoded._permissions,
-                              avatarAddress,
-                            ]
-                          ),
-                        ];
-                      } else {
-                        schemeProposalInfo.callData = [
-                          web3.eth.abi.encodeFunctionCall(
-                            {
-                              name: 'unregisterScheme',
-                              type: 'function',
-                              inputs: [
-                                { type: 'address', name: '_scheme' },
-                                { type: 'address', name: '_avatar' },
-                              ],
-                            },
-                            [creationLogDecoded['_scheme '], avatarAddress]
-                          ),
-                        ];
-                      }
-                    } else if (schemeTypeData.type === 'ContributionReward') {
-                      if (creationLogDecoded._reputationChange > 0) {
-                        schemeProposalInfo.to.push(
-                          schemeTypeData.contractToCall
-                        );
-                        schemeProposalInfo.value.push(0);
-                        schemeProposalInfo.callData.push(
-                          web3.eth.abi.encodeFunctionCall(
-                            {
-                              name: 'mintReputation',
-                              type: 'function',
-                              inputs: [
-                                { type: 'uint256', name: '_amount' },
-                                { type: 'address', name: '_to' },
-                                { type: 'address', name: '_avatar' },
-                              ],
-                            },
-                            [
-                              creationLogDecoded._reputationChange,
-                              creationLogDecoded._beneficiary,
-                              avatarAddress,
-                            ]
-                          )
-                        );
-                      } else if (creationLogDecoded._reputationChange < 0) {
-                        schemeProposalInfo.to.push(
-                          schemeTypeData.contractToCall
-                        );
-                        schemeProposalInfo.value.push(0);
-
-                        // Remove the negative sign in the number
-                        if (creationLogDecoded._reputationChange[0] == '-')
-                          creationLogDecoded._reputationChange =
-                            creationLogDecoded._reputationChange.substring(1);
-
-                        schemeProposalInfo.callData.push(
-                          web3.eth.abi.encodeFunctionCall(
-                            {
-                              name: 'burnReputation',
-                              type: 'function',
-                              inputs: [
-                                { type: 'uint256', name: '_amount' },
-                                { type: 'address', name: '_from' },
-                                { type: 'address', name: '_avatar' },
-                              ],
-                            },
-                            [
-                              creationLogDecoded._reputationChange,
-                              creationLogDecoded._beneficiary,
-                              avatarAddress,
-                            ]
-                          )
-                        );
-                      }
-
-                      if (creationLogDecoded._rewards[0] > 0) {
-                        schemeProposalInfo.to.push(
-                          schemeTypeData.contractToCall
-                        );
-                        schemeProposalInfo.value.push(0);
-                        schemeProposalInfo.callData.push(
-                          web3.eth.abi.encodeFunctionCall(
-                            {
-                              name: 'mintTokens',
-                              type: 'function',
-                              inputs: [
-                                { type: 'uint256', name: '_amount' },
-                                { type: 'address', name: '_beneficiary' },
-                                { type: 'address', name: '_avatar' },
-                              ],
-                            },
-                            [
-                              creationLogDecoded._rewards[0],
-                              creationLogDecoded._beneficiary,
-                              avatarAddress,
-                            ]
-                          )
-                        );
-                      }
-
-                      if (creationLogDecoded._rewards[1] > 0) {
-                        schemeProposalInfo.to.push(
-                          schemeTypeData.contractToCall
-                        );
-                        schemeProposalInfo.value.push(0);
-                        schemeProposalInfo.callData.push(
-                          web3.eth.abi.encodeFunctionCall(
-                            {
-                              name: 'sendEther',
-                              type: 'function',
-                              inputs: [
-                                { type: 'uint256', name: '_amountInWei' },
-                                { type: 'address', name: '_to' },
-                                { type: 'address', name: '_avatar' },
-                              ],
-                            },
-                            [
-                              creationLogDecoded._rewards[1],
-                              creationLogDecoded._beneficiary,
-                              avatarAddress,
-                            ]
-                          )
-                        );
-                      }
-
-                      if (creationLogDecoded._rewards[2] > 0) {
-                        schemeProposalInfo.to.push(
-                          schemeTypeData.contractToCall
-                        );
-                        schemeProposalInfo.value.push(0);
-                        schemeProposalInfo.callData.push(
-                          web3.eth.abi.encodeFunctionCall(
-                            {
-                              name: 'externalTokenTransfer',
-                              type: 'function',
-                              inputs: [
-                                { type: 'address', name: '_externalToken' },
-                                { type: 'address', name: '_to' },
-                                { type: 'uint256', name: '_value' },
-                                { type: 'address', name: '_avatar' },
-                              ],
-                            },
-                            [
-                              creationLogDecoded._externalToken,
-                              creationLogDecoded._beneficiary,
-                              creationLogDecoded._rewards[2],
-                              avatarAddress,
-                            ]
-                          )
-                        );
-                      }
-                    } else if (schemeTypeData.type === 'GenericScheme') {
-                      schemeProposalInfo.to = [
-                        networkWeb3Contracts.controller._address,
-                      ];
-                      schemeProposalInfo.value = [0];
-                      schemeProposalInfo.callData = [
-                        web3.eth.abi.encodeFunctionCall(
-                          {
-                            name: 'genericCall',
-                            type: 'function',
-                            inputs: [
-                              { type: 'address', name: '_contract' },
-                              { type: 'bytes', name: '_data' },
-                              { type: 'address', name: '_avatar' },
-                              { type: 'uint256', name: '_value' },
-                            ],
-                          },
-                          [
-                            schemeTypeData.contractToCall,
-                            creationLogDecoded._data,
-                            avatarAddress,
-                            creationLogDecoded._value,
-                          ]
-                        ),
-                      ];
-                    } else if (schemeTypeData.type === 'GenericMulticall') {
-                      for (
-                        let callIndex = 0;
-                        callIndex < creationLogDecoded._contractsToCall.length;
-                        callIndex++
-                      ) {
-                        schemeProposalInfo.to.push(
-                          networkWeb3Contracts.controller._address
-                        );
-                        schemeProposalInfo.value.push(0);
-                        schemeProposalInfo.callData.push(
-                          web3.eth.abi.encodeFunctionCall(
-                            {
-                              name: 'genericCall',
-                              type: 'function',
-                              inputs: [
-                                { type: 'address', name: '_contract' },
-                                { type: 'bytes', name: '_data' },
-                                { type: 'address', name: '_avatar' },
-                                { type: 'uint256', name: '_value' },
-                              ],
-                            },
-                            [
-                              creationLogDecoded._contractsToCall[callIndex],
-                              creationLogDecoded._callsData[callIndex],
-                              avatarAddress,
-                              creationLogDecoded._values[callIndex],
-                            ]
-                          )
-                        );
-                      }
-                    }
-                  }
-
-                  // Register the new voting parameters in the voting machine params
-                  if (
-                    !networkCache.votingMachines[votingMachine._address]
-                      .votingParameters[votingMachineProposalInfo.paramsHash]
-                  ) {
-                    const votingParameters = await votingMachine.methods
-                      .parameters(votingMachineProposalInfo.paramsHash)
-                      .call();
-                    networkCache.votingMachines[
-                      votingMachine._address
-                    ].votingParameters[votingMachineProposalInfo.paramsHash] = {
-                      queuedVoteRequiredPercentage:
-                        votingParameters.queuedVoteRequiredPercentage,
-                      queuedVotePeriodLimit:
-                        votingParameters.queuedVotePeriodLimit,
-                      boostedVotePeriodLimit:
-                        votingParameters.boostedVotePeriodLimit,
-                      preBoostedVotePeriodLimit:
-                        votingParameters.preBoostedVotePeriodLimit,
-                      thresholdConst: votingParameters.thresholdConst,
-                      limitExponentValue: votingParameters.limitExponentValue,
-                      quietEndingPeriod: votingParameters.quietEndingPeriod,
-                      proposingRepReward: votingParameters.proposingRepReward,
-                      votersReputationLossRatio:
-                        votingParameters.votersReputationLossRatio,
-                      minimumDaoBounty: votingParameters.minimumDaoBounty,
-                      daoBountyConst: votingParameters.daoBountyConst,
-                      activationTime: votingParameters.activationTime,
-                    };
-                  }
-
-                  networkCache.proposals[proposalId] = {
-                    id: proposalId,
-                    scheme: schemeAddress,
-                    to: schemeProposalInfo.to,
-                    title: schemeProposalInfo.title || '',
-                    callData: schemeProposalInfo.callData,
-                    values: schemeProposalInfo.value.map(value => bnum(value)),
-                    stateInScheme: Number(schemeProposalInfo.state),
-                    stateInVotingMachine: Number(
-                      votingMachineProposalInfo.state
-                    ),
-                    descriptionHash: schemeProposalInfo.descriptionHash,
-                    creationEvent: {
-                      event: schemeEvent.event,
-                      signature: schemeEvent.signature,
-                      address: schemeEvent.address,
-                      tx: schemeEvent.transactionHash,
-                      blockNumber: schemeEvent.blockNumber,
-                      timestamp: schemeEvent.timestamp,
-                      transactionIndex: schemeEvent.transactionIndex,
-                      logIndex: schemeEvent.logIndex,
-                    },
-                    winningVote: votingMachineProposalInfo.winningVote,
-                    proposer: decodedProposer
-                      ? decodedProposer
-                      : votingMachineProposalInfo.proposer,
-                    currentBoostedVotePeriodLimit:
-                      votingMachineProposalInfo.currentBoostedVotePeriodLimit,
-                    paramsHash: votingMachineProposalInfo.paramsHash,
-                    daoBountyRemain: bnum(
-                      votingMachineProposalInfo.daoBountyRemain
-                    ),
-                    daoBounty: bnum(votingMachineProposalInfo.daoBounty),
-                    confidenceThreshold:
-                      votingMachineProposalInfo.confidenceThreshold,
-                    secondsFromTimeOutTillExecuteBoosted:
-                      votingMachineProposalInfo.secondsFromTimeOutTillExecuteBoosted,
-                    submittedTime: bnum(proposalTimes[0]),
-                    boostedPhaseTime: bnum(proposalTimes[1]),
-                    preBoostedPhaseTime: bnum(proposalTimes[2]),
-                    daoRedeemItsWinnings:
-                      votingMachineProposalInfo.daoRedeemItsWinnings,
-                    shouldBoost: false,
-                    positiveVotes: bnum(positiveVotes),
-                    negativeVotes: bnum(negativeVotes),
-                    positiveStakes: bnum(proposalStatusWithVotes[2]),
-                    negativeStakes: bnum(proposalStatusWithVotes[3]),
-                  };
-
-                  networkCache.schemes[schemeAddress].proposalIds.push(
-                    proposalId
-                  );
-                  networkCache.schemes[schemeAddress].newProposalEvents.push({
-                    proposalId: proposalId,
-                    event: schemeEvent.event,
-                    signature: schemeEvent.signature,
-                    address: schemeEvent.address,
-                    tx: schemeEvent.transactionHash,
-                    blockNumber: schemeEvent.blockNumber,
-                    timestamp: schemeEvent.timestamp,
-                    transactionIndex: schemeEvent.transactionIndex,
-                    logIndex: schemeEvent.logIndex,
-                  });
-
-                  if (schemeProposalInfo.descriptionHash.length > 1) {
-                    networkCache.ipfsHashes.push({
-                      hash: descriptionHashToIPFSHash(
-                        schemeProposalInfo.descriptionHash
-                      ),
-                      type: 'proposal',
-                      name: proposalId,
-                    });
-                  }
-                }
-              )
-            );
-
-            schemeEventsBatchsIndex++;
-          } catch (error) {
-            console.error(
-              'Error in getting proposal info of schemeEventsBatchs index',
-              schemeEventsBatchsIndex,
-              error
-            );
-          }
-        }
+          }),
+          networkCache,
+          50
+        );
       })
     );
 
     // Update existent active proposals
-    // @ts-ignore
-    const activeProposals = [];
-    Object.keys(networkCache.proposals).map(proposalId => {
-      if (
-        networkCache.proposals[proposalId].stateInVotingMachine >
-          VotingMachineProposalState.Executed ||
-        networkCache.proposals[proposalId].stateInScheme ===
-          WalletSchemeProposalState.Submitted
-      )
-        activeProposals.push(networkCache.proposals[proposalId]);
-    });
-
-    let activeProposalsBatch = [];
-    let activeProposalsBatchIndex = 0;
-    for (var i = 0; i < activeProposals.length; i += 5)
-      activeProposalsBatch.push(activeProposals.slice(i, i + 5));
-
-    while (activeProposalsBatchIndex < activeProposalsBatch.length) {
-      await Promise.all(
-        activeProposalsBatch[activeProposalsBatchIndex].map(async proposal => {
-          let retry = true;
-          while (retry) {
-            try {
-              const schemeAddress = networkCache.proposals[proposal.id].scheme;
-              const schemeTypeData = getSchemeConfig(
-                networkContractsConfig,
-                schemeAddress
-              );
-              const votingMachine =
-                networkWeb3Contracts.votingMachines[
-                  networkCache.schemes[schemeAddress].votingMachine
-                ].contract;
-
-              // Get all the proposal information from the scheme and voting machine
-              let callsToExecute = [
-                [votingMachine, 'proposals', [proposal.id]],
-                [votingMachine, 'voteStatus', [proposal.id, 1]],
-                [votingMachine, 'voteStatus', [proposal.id, 2]],
-                [votingMachine, 'proposalStatus', [proposal.id]],
-                [votingMachine, 'getProposalTimes', [proposal.id]],
-                [votingMachine, 'shouldBoost', [proposal.id]],
-              ];
-
-              if (schemeTypeData.type === 'WalletScheme') {
-                callsToExecute.push([
-                  await new web3.eth.Contract(
-                    WalletScheme1_0JSON.abi,
-                    schemeAddress
-                  ),
-                  'getOrganizationProposal',
-                  [proposal.id],
-                ]);
-              } else if (
-                schemeTypeData.type === 'ContributionReward' &&
-                networkCache.proposals[proposal.id].stateInVotingMachine ===
-                  VotingMachineProposalState.Executed &&
-                networkCache.proposals[proposal.id].stateInScheme ===
-                  WalletSchemeProposalState.Submitted
-              ) {
-                callsToExecute.push([
-                  await new web3.eth.Contract(
-                    ContributionRewardJSON.abi,
-                    schemeAddress
-                  ),
-                  'getRedeemedPeriods',
-                  [proposal.id, networkWeb3Contracts.avatar._address, 0],
-                ]);
-                callsToExecute.push([
-                  await new web3.eth.Contract(
-                    ContributionRewardJSON.abi,
-                    schemeAddress
-                  ),
-                  'getRedeemedPeriods',
-                  [proposal.id, networkWeb3Contracts.avatar._address, 1],
-                ]);
-                callsToExecute.push([
-                  await new web3.eth.Contract(
-                    ContributionRewardJSON.abi,
-                    schemeAddress
-                  ),
-                  'getRedeemedPeriods',
-                  [proposal.id, networkWeb3Contracts.avatar._address, 2],
-                ]);
-                callsToExecute.push([
-                  await new web3.eth.Contract(
-                    ContributionRewardJSON.abi,
-                    schemeAddress
-                  ),
-                  'getRedeemedPeriods',
-                  [proposal.id, networkWeb3Contracts.avatar._address, 3],
-                ]);
-              }
-
-              const callsResponse = await executeMulticall(
-                web3,
-                networkWeb3Contracts.multicall,
-                callsToExecute
-              );
-
-              const votingMachineProposalInfo = web3.eth.abi.decodeParameters(
-                [
-                  { type: 'bytes32', name: 'organizationId' },
-                  { type: 'address', name: 'callbacks' },
-                  { type: 'uint256', name: 'state' },
-                  { type: 'uint256', name: 'winningVote' },
-                  { type: 'address', name: 'proposer' },
-                  { type: 'uint256', name: 'currentBoostedVotePeriodLimit' },
-                  { type: 'bytes32', name: 'paramsHash' },
-                  { type: 'uint256', name: 'daoBountyRemain' },
-                  { type: 'uint256', name: 'daoBounty' },
-                  { type: 'uint256', name: 'totalStakes' },
-                  { type: 'uint256', name: 'confidenceThreshold' },
-                  {
-                    type: 'uint256',
-                    name: 'secondsFromTimeOutTillExecuteBoosted',
-                  },
-                ],
-                callsResponse.returnData[0]
-              );
-              const positiveVotes = callsResponse.returnData[1];
-              const negativeVotes = callsResponse.returnData[2];
-
-              const proposalStatusWithVotes = web3.eth.abi.decodeParameters(
-                ['uint256', 'uint256', 'uint256', 'uint256'],
-                callsResponse.returnData[3]
-              );
-              const proposalTimes = callsResponse.decodedReturnData[4];
-              const proposalShouldBoost = callsResponse.decodedReturnData[5];
-
-              if (schemeTypeData.type === 'WalletScheme') {
-                networkCache.proposals[proposal.id].stateInScheme = Number(
-                  web3.eth.abi.decodeParameters(
-                    [
-                      { type: 'address[]', name: 'to' },
-                      { type: 'bytes[]', name: 'callData' },
-                      { type: 'uint256[]', name: 'value' },
-                      { type: 'uint256', name: 'state' },
-                      { type: 'string', name: 'title' },
-                      { type: 'string', name: 'descriptionHash' },
-                      { type: 'uint256', name: 'submittedTime' },
-                    ],
-                    callsResponse.returnData[6]
-                  ).state
-                );
-              } else if (
-                schemeTypeData.type === 'ContributionReward' &&
-                networkCache.proposals[proposal.id].stateInVotingMachine ===
-                  VotingMachineProposalState.Executed &&
-                networkCache.proposals[proposal.id].stateInScheme ===
-                  WalletSchemeProposalState.Submitted
-              ) {
-                if (schemeTypeData.type === 'ContributionReward') {
-                  if (
-                    callsResponse.decodedReturnData[6] > 0 ||
-                    callsResponse.decodedReturnData[7] > 0 ||
-                    callsResponse.decodedReturnData[8] > 0 ||
-                    callsResponse.decodedReturnData[9] > 0
-                  ) {
-                    networkCache.proposals[proposal.id].stateInScheme =
-                      WalletSchemeProposalState.ExecutionSucceded;
-                  } else if (
-                    votingMachineProposalInfo.state === '1' ||
-                    votingMachineProposalInfo.state === '2'
-                  ) {
-                    networkCache.proposals[proposal.id].stateInScheme =
-                      WalletSchemeProposalState.Rejected;
-                  }
-                }
-              } else if (schemeTypeData.type === 'GenericMulticall') {
-                // event ProposalExecutedByVotingMachine(
-                //     address indexed _avatar,
-                //     bytes32 indexed _proposalId,
-                //     int256 _param
-                // );
-                const votingMachineExecutionEvent =
-                  networkCache.proposals[proposal.id].stateInScheme ===
-                  WalletSchemeProposalState.Submitted
-                    ? await getRawEvents(
-                        web3,
-                        schemeAddress,
-                        fromBlock,
-                        toBlock,
-                        [
-                          '0x25d4c89430c1f10c60c292556941e3e624ec1ec04972a5da46cee1b352429cbe',
-                          avatarAddressEncoded,
-                          proposal.id,
-                        ],
-                        10000000
-                      )
-                    : [];
-
-                if (
-                  votingMachineExecutionEvent.length > 0 &&
-                  votingMachineExecutionEvent[0].data ===
-                    '0x0000000000000000000000000000000000000000000000000000000000000001'
-                )
-                  networkCache.proposals[proposal.id].stateInVotingMachine =
-                    VotingMachineProposalState.Executed;
-                else if (votingMachineExecutionEvent.length > 0) {
-                  networkCache.proposals[proposal.id].stateInScheme =
-                    WalletSchemeProposalState.Rejected;
-                  networkCache.proposals[proposal.id].stateInVotingMachine =
-                    VotingMachineProposalState.Rejected;
-                }
-
-                // event ProposalExecuted(
-                //     address indexed _avatar,
-                //     bytes32 indexed _proposalId
-                // );
-                const executionEvent =
-                  networkCache.proposals[proposal.id].stateInVotingMachine ===
-                  VotingMachineProposalState.Passed
-                    ? await getRawEvents(
-                        web3,
-                        schemeAddress,
-                        fromBlock,
-                        toBlock,
-                        [
-                          '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
-                          avatarAddressEncoded,
-                          proposal.id,
-                        ],
-                        10000000
-                      )
-                    : [];
-                if (executionEvent.length > 0) {
-                  networkCache.proposals[proposal.id].stateInScheme =
-                    WalletSchemeProposalState.ExecutionSucceded;
-                }
-              } else if (
-                networkCache.proposals[proposal.id].stateInVotingMachine ===
-                VotingMachineProposalState.Executed
-              ) {
-                networkCache.proposals[proposal.id].stateInScheme =
-                  WalletSchemeProposalState.ExecutionSucceded;
-              }
-
-              networkCache.proposals[proposal.id].stateInVotingMachine = Number(
-                votingMachineProposalInfo.state
-              );
-              networkCache.proposals[proposal.id].winningVote =
-                votingMachineProposalInfo.winningVote;
-              networkCache.proposals[
-                proposal.id
-              ].currentBoostedVotePeriodLimit =
-                votingMachineProposalInfo.currentBoostedVotePeriodLimit;
-              networkCache.proposals[proposal.id].daoBountyRemain = bnum(
-                votingMachineProposalInfo.daoBountyRemain
-              );
-              networkCache.proposals[proposal.id].daoBounty = bnum(
-                votingMachineProposalInfo.daoBounty
-              );
-              networkCache.proposals[proposal.id].confidenceThreshold =
-                votingMachineProposalInfo.confidenceThreshold;
-              networkCache.proposals[
-                proposal.id
-              ].secondsFromTimeOutTillExecuteBoosted =
-                votingMachineProposalInfo.secondsFromTimeOutTillExecuteBoosted;
-              networkCache.proposals[proposal.id].boostedPhaseTime = bnum(
-                proposalTimes[1]
-              );
-              networkCache.proposals[proposal.id].preBoostedPhaseTime = bnum(
-                proposalTimes[2]
-              );
-              networkCache.proposals[proposal.id].daoRedeemItsWinnings =
-                votingMachineProposalInfo.daoRedeemItsWinnings;
-              networkCache.proposals[proposal.id].shouldBoost =
-                proposalShouldBoost;
-              networkCache.proposals[proposal.id].positiveVotes =
-                bnum(positiveVotes);
-              networkCache.proposals[proposal.id].negativeVotes =
-                bnum(negativeVotes);
-              networkCache.proposals[proposal.id].positiveStakes = bnum(
-                proposalStatusWithVotes[2]
-              );
-              networkCache.proposals[proposal.id].negativeStakes = bnum(
-                proposalStatusWithVotes[3]
-              );
-
-              retry = false;
-            } catch (e) {
-              console.error(
-                'Error on updating proposal (trying again)',
-                proposal
-              );
-              console.error(e);
-              retry = true;
-            }
-          }
-        })
-      );
-
-      activeProposalsBatchIndex++;
-    }
-
-    // Sort cache data, so the IPFS hash is consistent
-    Object.keys(networkCache.schemes).forEach(schemeId => {
-      networkCache.schemes[schemeId].proposalIds.sort();
-      networkCache.schemes[schemeId].newProposalEvents.sort((a, b) =>
-        a.proposalId.localeCompare(b.proposalId)
-      );
-    });
-    networkCache.proposals = Object.keys(networkCache.proposals)
-      .sort()
-      .reduce((obj, key) => {
-        obj[key] = networkCache.proposals[key];
-        return obj;
-      }, {});
-    networkCache.ipfsHashes = _.uniqBy(networkCache.ipfsHashes, 'name');
-    networkCache.ipfsHashes.sort((a, b) => a.name.localeCompare(b.name));
+    await batchPromisesOntarget(
+      //@ts-ignore
+      Object.keys(networkCache.proposals).map(proposalId => {
+        if (
+          networkCache.proposals[proposalId].stateInVotingMachine >
+            VotingMachineProposalState.Executed ||
+          networkCache.proposals[proposalId].stateInScheme ===
+            WalletSchemeProposalState.Submitted
+        )
+          return this.processProposal(
+            proposalId,
+            networkCache,
+            networkContracts,
+            web3,
+            fromBlock,
+            toBlock
+          );
+      }),
+      networkCache,
+      5
+    );
 
     return networkCache;
   }
@@ -2149,5 +1265,654 @@ export default class UtilsService {
     }
 
     return proposalTitles;
+  }
+
+  async processProposal(
+    proposalId: string,
+    networkCache: DaoNetworkCache,
+    networkContracts: NetworkContracts,
+    web3: Web3,
+    fromBlock: number,
+    toBlock: number,
+    creationEvent?: any
+  ): Promise<DaoNetworkCache> {
+    const newProposal = !networkCache.proposals[proposalId];
+    const schemeAddress = newProposal
+      ? creationEvent.address
+      : networkCache.proposals[proposalId].scheme;
+    const schemeOfProposal = networkCache.schemes[schemeAddress];
+    const avatarAddress = networkCache.address;
+    const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
+    const avatarAddressEncoded = web3.eth.abi.encodeParameter(
+      'address',
+      avatarAddress
+    );
+
+    let callsToExecute: any[] = [
+      [
+        networkCache.schemes[schemeAddress].votingMachine,
+        'proposals(bytes32)',
+        [proposalId],
+        [
+          { type: 'bytes32', name: 'organizationId' },
+          { type: 'address', name: 'callbacks' },
+          { type: 'uint256', name: 'state' },
+          { type: 'uint256', name: 'winningVote' },
+          { type: 'address', name: 'proposer' },
+          {
+            type: 'uint256',
+            name: 'currentBoostedVotePeriodLimit',
+          },
+          { type: 'bytes32', name: 'paramsHash' },
+          { type: 'uint256', name: 'daoBountyRemain' },
+          { type: 'uint256', name: 'daoBounty' },
+          { type: 'uint256', name: 'totalStakes' },
+          { type: 'uint256', name: 'confidenceThreshold' },
+          {
+            type: 'uint256',
+            name: 'secondsFromTimeOutTillExecuteBoosted',
+          },
+        ],
+      ],
+      [
+        networkCache.schemes[schemeAddress].votingMachine,
+        'voteStatus(bytes32,uint256)',
+        [proposalId, 1],
+        ['uint256'],
+      ],
+      [
+        networkCache.schemes[schemeAddress].votingMachine,
+        'voteStatus(bytes32,uint256)',
+        [proposalId, 2],
+        ['uint256'],
+      ],
+      [
+        networkCache.schemes[schemeAddress].votingMachine,
+        'proposalStatus(bytes32)',
+        [proposalId],
+        ['uint256', 'uint256', 'uint256', 'uint256'],
+      ],
+      [
+        networkCache.schemes[schemeAddress].votingMachine,
+        'getProposalTimes(bytes32)',
+        [proposalId],
+        ['uint256', 'uint256', 'uint256'],
+      ],
+      [
+        networkCache.schemes[schemeAddress].votingMachine,
+        'shouldBoost(bytes32)',
+        [proposalId],
+        ['bool'],
+      ],
+    ];
+
+    if (schemeTypeData.type === 'ContributionReward') {
+      callsToExecute.push([
+        schemeAddress,
+        'getRedeemedPeriods(bytes32,address,uint256)',
+        [proposalId, schemeAddress, 0],
+        ['uint256'],
+      ]);
+      callsToExecute.push([
+        schemeAddress,
+        'getRedeemedPeriods(bytes32,address,uint256)',
+        [proposalId, avatarAddress, 1],
+        ['uint256'],
+      ]);
+      callsToExecute.push([
+        schemeAddress,
+        'getRedeemedPeriods(bytes32,address,uint256)',
+        [proposalId, avatarAddress, 2],
+        ['uint256'],
+      ]);
+      callsToExecute.push([
+        schemeAddress,
+        'getRedeemedPeriods(bytes32,address,uint256)',
+        [proposalId, avatarAddress, 3],
+        ['uint256'],
+      ]);
+    } else if (isWalletScheme(schemeOfProposal)) {
+      callsToExecute.push([
+        schemeAddress,
+        'getOrganizationProposal(bytes32)',
+        [proposalId],
+        [
+          { type: 'address[]', name: 'to' },
+          { type: 'bytes[]', name: 'callData' },
+          { type: 'uint256[]', name: 'value' },
+          { type: 'uint256', name: 'state' },
+          { type: 'string', name: 'title' },
+          { type: 'string', name: 'descriptionHash' },
+          { type: 'uint256', name: 'submittedTime' },
+        ],
+      ]);
+    }
+
+    const callsResponse = await executeMulticall(
+      networkWeb3Contracts.multicall,
+      callsToExecute
+    );
+
+    const positiveVotes = callsResponse.decodedReturnData[1][0];
+    const negativeVotes = callsResponse.decodedReturnData[2][0];
+    const proposalTimes = callsResponse.decodedReturnData[4];
+
+    let schemeProposalInfo = {
+      to: [],
+      callData: [],
+      value: [],
+      state: WalletSchemeProposalState.Submitted,
+      title: '',
+      descriptionHash: '',
+      submittedTime: 0,
+    };
+    let decodedProposer;
+    let creationLogDecoded;
+
+    if (newProposal && isWalletScheme(schemeOfProposal)) {
+      // @ts-ignore
+      schemeProposalInfo.to = callsResponse.decodedReturnData[6].to;
+      schemeProposalInfo.callData = callsResponse.decodedReturnData[6].callData;
+      schemeProposalInfo.value = callsResponse.decodedReturnData[6].value;
+      schemeProposalInfo.state = callsResponse.decodedReturnData[6].state;
+      schemeProposalInfo.title = callsResponse.decodedReturnData[6].title;
+      schemeProposalInfo.descriptionHash =
+        callsResponse.decodedReturnData[6].descriptionHash;
+      schemeProposalInfo.submittedTime =
+        callsResponse.decodedReturnData[6].submittedTime;
+    } else if (isWalletScheme(schemeOfProposal)) {
+      schemeProposalInfo.state = callsResponse.decodedReturnData[6].state;
+    } else {
+      if (schemeOfProposal.type === 'GenericMulticall') {
+        // event ProposalExecutedByVotingMachine(
+        //     address indexed _avatar,
+        //     bytes32 indexed _proposalId,
+        //     int256 _param
+        // );
+        const votingMachineExecutionEvent =
+          schemeProposalInfo.state === WalletSchemeProposalState.Submitted
+            ? await getRawEvents(
+                web3,
+                schemeAddress,
+                fromBlock,
+                toBlock,
+                [
+                  '0x25d4c89430c1f10c60c292556941e3e624ec1ec04972a5da46cee1b352429cbe',
+                  avatarAddressEncoded,
+                  proposalId,
+                ],
+                10000000
+              )
+            : [];
+
+        if (
+          votingMachineExecutionEvent.length > 0 &&
+          votingMachineExecutionEvent[0].data ===
+            '0x0000000000000000000000000000000000000000000000000000000000000001'
+        )
+          schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
+        else if (votingMachineExecutionEvent.length > 0) {
+          schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
+        }
+
+        const executionEvent = await getRawEvents(
+          web3,
+          schemeAddress,
+          fromBlock,
+          toBlock,
+          [
+            '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
+            avatarAddressEncoded,
+            proposalId,
+          ],
+          10000000
+        );
+        if (executionEvent.length > 0) {
+          schemeProposalInfo.state =
+            WalletSchemeProposalState.ExecutionSucceded;
+        }
+      } else if (schemeOfProposal.type === 'ContributionReward') {
+        if (
+          callsResponse.decodedReturnData[6][0] > 0 ||
+          callsResponse.decodedReturnData[7][0] > 0 ||
+          callsResponse.decodedReturnData[8][0] > 0 ||
+          callsResponse.decodedReturnData[9][0] > 0
+        ) {
+          schemeProposalInfo.state =
+            WalletSchemeProposalState.ExecutionSucceded;
+        } else if (
+          callsResponse.decodedReturnData[0].state === '1' ||
+          callsResponse.decodedReturnData[0].state === '2'
+        ) {
+          schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
+        } else {
+          schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
+        }
+      }
+    }
+
+    // If the proposal is processed with a creation event it means that it has to be added to the cache
+    if (newProposal) {
+      if (creationEvent && !isWalletScheme(schemeOfProposal)) {
+        const transactionReceipt = await web3.eth.getTransactionReceipt(
+          creationEvent.transactionHash
+        );
+        try {
+          schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
+            transactionReceipt.logs.map(log => {
+              if (
+                log.topics[0] ===
+                '0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c'
+              ) {
+                decodedProposer = web3.eth.abi.decodeParameters(
+                  [
+                    { type: 'uint256', name: '_numOfChoices' },
+                    { type: 'address', name: '_proposer' },
+                    { type: 'bytes32', name: '_paramsHash' },
+                  ],
+                  log.data
+                )._proposer;
+              }
+              if (
+                !creationLogDecoded &&
+                log.topics[0] === newProposalTopic[0]
+              ) {
+                creationLogDecoded = web3.eth.abi.decodeParameters(
+                  schemeTypeData.creationLogEncoding[i],
+                  log.data
+                );
+                if (
+                  creationLogDecoded._descriptionHash.length > 0 &&
+                  creationLogDecoded._descriptionHash !== ZERO_HASH
+                ) {
+                  schemeProposalInfo.descriptionHash =
+                    ipfsHashToDescriptionHash(
+                      creationLogDecoded._descriptionHash
+                    );
+                }
+              }
+            });
+          });
+        } catch (error) {
+          console.error(
+            'Error in getting proposal data from creation event',
+            error
+          );
+        }
+      }
+
+      if (schemeTypeData.type === 'SchemeRegistrar') {
+        schemeProposalInfo.to = [schemeTypeData.contractToCall];
+        schemeProposalInfo.value = [0];
+
+        if (creationLogDecoded._parametersHash) {
+          schemeProposalInfo.callData = [
+            web3.eth.abi.encodeFunctionCall(
+              {
+                name: 'registerScheme',
+                type: 'function',
+                inputs: [
+                  { type: 'address', name: '_scheme' },
+                  { type: 'bytes32', name: '_paramsHash' },
+                  { type: 'bytes4', name: '_permissions' },
+                  { type: 'address', name: '_avatar' },
+                ],
+              },
+              [
+                creationLogDecoded['_scheme '],
+                creationLogDecoded._parametersHash,
+                creationLogDecoded._permissions,
+                avatarAddress,
+              ]
+            ),
+          ];
+        } else {
+          schemeProposalInfo.callData = [
+            web3.eth.abi.encodeFunctionCall(
+              {
+                name: 'unregisterScheme',
+                type: 'function',
+                inputs: [
+                  { type: 'address', name: '_scheme' },
+                  { type: 'address', name: '_avatar' },
+                ],
+              },
+              [creationLogDecoded['_scheme '], avatarAddress]
+            ),
+          ];
+        }
+      } else if (schemeTypeData.type === 'ContributionReward') {
+        if (creationLogDecoded._reputationChange > 0) {
+          schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+          schemeProposalInfo.value.push(0);
+          schemeProposalInfo.callData.push(
+            web3.eth.abi.encodeFunctionCall(
+              {
+                name: 'mintReputation',
+                type: 'function',
+                inputs: [
+                  { type: 'uint256', name: '_amount' },
+                  { type: 'address', name: '_to' },
+                  { type: 'address', name: '_avatar' },
+                ],
+              },
+              [
+                creationLogDecoded._reputationChange,
+                creationLogDecoded._beneficiary,
+                avatarAddress,
+              ]
+            )
+          );
+        } else if (creationLogDecoded._reputationChange < 0) {
+          schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+          schemeProposalInfo.value.push(0);
+
+          // Remove the negative sign in the number
+          if (creationLogDecoded._reputationChange[0] == '-')
+            creationLogDecoded._reputationChange =
+              creationLogDecoded._reputationChange.substring(1);
+
+          schemeProposalInfo.callData.push(
+            web3.eth.abi.encodeFunctionCall(
+              {
+                name: 'burnReputation',
+                type: 'function',
+                inputs: [
+                  { type: 'uint256', name: '_amount' },
+                  { type: 'address', name: '_from' },
+                  { type: 'address', name: '_avatar' },
+                ],
+              },
+              [
+                creationLogDecoded._reputationChange,
+                creationLogDecoded._beneficiary,
+                avatarAddress,
+              ]
+            )
+          );
+        }
+
+        if (creationLogDecoded._rewards[0] > 0) {
+          schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+          schemeProposalInfo.value.push(0);
+          schemeProposalInfo.callData.push(
+            web3.eth.abi.encodeFunctionCall(
+              {
+                name: 'mintTokens',
+                type: 'function',
+                inputs: [
+                  { type: 'uint256', name: '_amount' },
+                  { type: 'address', name: '_beneficiary' },
+                  { type: 'address', name: '_avatar' },
+                ],
+              },
+              [
+                creationLogDecoded._rewards[0],
+                creationLogDecoded._beneficiary,
+                avatarAddress,
+              ]
+            )
+          );
+        }
+
+        if (creationLogDecoded._rewards[1] > 0) {
+          schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+          schemeProposalInfo.value.push(0);
+          schemeProposalInfo.callData.push(
+            web3.eth.abi.encodeFunctionCall(
+              {
+                name: 'sendEther',
+                type: 'function',
+                inputs: [
+                  { type: 'uint256', name: '_amountInWei' },
+                  { type: 'address', name: '_to' },
+                  { type: 'address', name: '_avatar' },
+                ],
+              },
+              [
+                creationLogDecoded._rewards[1],
+                creationLogDecoded._beneficiary,
+                avatarAddress,
+              ]
+            )
+          );
+        }
+
+        if (creationLogDecoded._rewards[2] > 0) {
+          schemeProposalInfo.to.push(schemeTypeData.contractToCall);
+          schemeProposalInfo.value.push(0);
+          schemeProposalInfo.callData.push(
+            web3.eth.abi.encodeFunctionCall(
+              {
+                name: 'externalTokenTransfer',
+                type: 'function',
+                inputs: [
+                  { type: 'address', name: '_externalToken' },
+                  { type: 'address', name: '_to' },
+                  { type: 'uint256', name: '_value' },
+                  { type: 'address', name: '_avatar' },
+                ],
+              },
+              [
+                creationLogDecoded._externalToken,
+                creationLogDecoded._beneficiary,
+                creationLogDecoded._rewards[2],
+                avatarAddress,
+              ]
+            )
+          );
+        }
+      } else if (schemeTypeData.type === 'GenericScheme') {
+        schemeProposalInfo.to = [networkWeb3Contracts.controller._address];
+        schemeProposalInfo.value = [0];
+        schemeProposalInfo.callData = [
+          web3.eth.abi.encodeFunctionCall(
+            {
+              name: 'genericCall',
+              type: 'function',
+              inputs: [
+                { type: 'address', name: '_contract' },
+                { type: 'bytes', name: '_data' },
+                { type: 'address', name: '_avatar' },
+                { type: 'uint256', name: '_value' },
+              ],
+            },
+            [
+              schemeTypeData.contractToCall,
+              creationLogDecoded._data,
+              avatarAddress,
+              creationLogDecoded._value,
+            ]
+          ),
+        ];
+      } else if (schemeTypeData.type === 'GenericMulticall') {
+        for (
+          let callIndex = 0;
+          callIndex < creationLogDecoded._contractsToCall.length;
+          callIndex++
+        ) {
+          schemeProposalInfo.to.push(networkWeb3Contracts.controller._address);
+          schemeProposalInfo.value.push(0);
+          schemeProposalInfo.callData.push(
+            web3.eth.abi.encodeFunctionCall(
+              {
+                name: 'genericCall',
+                type: 'function',
+                inputs: [
+                  { type: 'address', name: '_contract' },
+                  { type: 'bytes', name: '_data' },
+                  { type: 'address', name: '_avatar' },
+                  { type: 'uint256', name: '_value' },
+                ],
+              },
+              [
+                creationLogDecoded._contractsToCall[callIndex],
+                creationLogDecoded._callsData[callIndex],
+                avatarAddress,
+                creationLogDecoded._values[callIndex],
+              ]
+            )
+          );
+        }
+      }
+
+      // Register the new voting parameters in the voting machine params
+      if (
+        !networkCache.votingMachines[
+          networkCache.schemes[schemeAddress].votingMachine
+        ].votingParameters[callsResponse.decodedReturnData[0].paramsHash]
+      ) {
+        const votingParameters = (
+          await executeMulticall(networkWeb3Contracts.multicall, [
+            [
+              networkCache.schemes[schemeAddress].votingMachine,
+              'parameters(bytes32)',
+              [callsResponse.decodedReturnData[0].paramsHash],
+              [
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'uint256',
+                'address',
+              ],
+            ],
+          ])
+        ).decodedReturnData[0];
+        networkCache.votingMachines[
+          networkCache.schemes[schemeAddress].votingMachine
+        ].votingParameters[callsResponse.decodedReturnData[0].paramsHash] = {
+          queuedVoteRequiredPercentage: votingParameters[0],
+          queuedVotePeriodLimit: votingParameters[1],
+          boostedVotePeriodLimit: votingParameters[2],
+          preBoostedVotePeriodLimit: votingParameters[3],
+          thresholdConst: votingParameters[4],
+          limitExponentValue: votingParameters[5],
+          quietEndingPeriod: votingParameters[6],
+          proposingRepReward: votingParameters[7],
+          votersReputationLossRatio: votingParameters[8],
+          minimumDaoBounty: votingParameters[9],
+          daoBountyConst: votingParameters[10],
+          activationTime: votingParameters[11],
+        };
+      }
+
+      networkCache.proposals[proposalId] = {
+        id: proposalId,
+        scheme: schemeAddress,
+        to: schemeProposalInfo.to,
+        title: schemeProposalInfo.title || '',
+        callData: schemeProposalInfo.callData,
+        values: schemeProposalInfo.value.map(value => bnum(value)),
+        stateInScheme: Number(schemeProposalInfo.state),
+        stateInVotingMachine: Number(callsResponse.decodedReturnData[0].state),
+        descriptionHash: schemeProposalInfo.descriptionHash,
+        creationEvent: {
+          event: creationEvent.event,
+          signature: creationEvent.signature,
+          address: creationEvent.address,
+          tx: creationEvent.transactionHash,
+          blockNumber: creationEvent.blockNumber,
+          timestamp: creationEvent.timestamp,
+          transactionIndex: creationEvent.transactionIndex,
+          logIndex: creationEvent.logIndex,
+        },
+        winningVote: callsResponse.decodedReturnData[0].winningVote,
+        proposer: decodedProposer
+          ? decodedProposer
+          : callsResponse.decodedReturnData[0].proposer,
+        currentBoostedVotePeriodLimit:
+          callsResponse.decodedReturnData[0].currentBoostedVotePeriodLimit,
+        paramsHash: callsResponse.decodedReturnData[0].paramsHash,
+        daoBountyRemain: bnum(
+          callsResponse.decodedReturnData[0].daoBountyRemain
+        ),
+        daoBounty: bnum(callsResponse.decodedReturnData[0].daoBounty),
+        confidenceThreshold:
+          callsResponse.decodedReturnData[0].confidenceThreshold,
+        secondsFromTimeOutTillExecuteBoosted:
+          callsResponse.decodedReturnData[0]
+            .secondsFromTimeOutTillExecuteBoosted,
+        submittedTime: bnum(proposalTimes[0]),
+        boostedPhaseTime: bnum(proposalTimes[1]),
+        preBoostedPhaseTime: bnum(proposalTimes[2]),
+        daoRedeemItsWinnings:
+          callsResponse.decodedReturnData[0].daoRedeemItsWinnings,
+        shouldBoost: callsResponse.decodedReturnData[5][0],
+        positiveVotes: bnum(positiveVotes),
+        negativeVotes: bnum(negativeVotes),
+        positiveStakes: bnum(callsResponse.decodedReturnData[3][2]),
+        negativeStakes: bnum(callsResponse.decodedReturnData[3][3]),
+      };
+
+      networkCache.schemes[schemeAddress].proposalIds.push(proposalId);
+      networkCache.schemes[schemeAddress].newProposalEvents.push({
+        proposalId: proposalId,
+        event: creationEvent.event,
+        signature: creationEvent.signature,
+        address: creationEvent.address,
+        tx: creationEvent.transactionHash,
+        blockNumber: creationEvent.blockNumber,
+        timestamp: creationEvent.timestamp,
+        transactionIndex: creationEvent.transactionIndex,
+        logIndex: creationEvent.logIndex,
+      });
+
+      if (schemeProposalInfo.descriptionHash.length > 1) {
+        networkCache.ipfsHashes.push({
+          hash: descriptionHashToIPFSHash(schemeProposalInfo.descriptionHash),
+          type: 'proposal',
+          name: proposalId,
+        });
+      }
+    } else {
+      networkCache.proposals[proposalId].stateInScheme = Number(
+        schemeProposalInfo.state
+      );
+      networkCache.proposals[proposalId].stateInVotingMachine = Number(
+        callsResponse.decodedReturnData[0].state
+      );
+      networkCache.proposals[proposalId].winningVote =
+        callsResponse.decodedReturnData[0].winningVote;
+      networkCache.proposals[proposalId].currentBoostedVotePeriodLimit =
+        callsResponse.decodedReturnData[0].currentBoostedVotePeriodLimit;
+      networkCache.proposals[proposalId].daoBountyRemain = bnum(
+        callsResponse.decodedReturnData[0].daoBountyRemain
+      );
+      networkCache.proposals[proposalId].daoBounty = bnum(
+        callsResponse.decodedReturnData[0].daoBounty
+      );
+      networkCache.proposals[proposalId].confidenceThreshold =
+        callsResponse.decodedReturnData[0].confidenceThreshold;
+      networkCache.proposals[proposalId].secondsFromTimeOutTillExecuteBoosted =
+        callsResponse.decodedReturnData[0].secondsFromTimeOutTillExecuteBoosted;
+      networkCache.proposals[proposalId].boostedPhaseTime = bnum(
+        proposalTimes[1]
+      );
+      networkCache.proposals[proposalId].preBoostedPhaseTime = bnum(
+        proposalTimes[2]
+      );
+      networkCache.proposals[proposalId].daoRedeemItsWinnings =
+        callsResponse.decodedReturnData[0].daoRedeemItsWinnings;
+      networkCache.proposals[proposalId].shouldBoost =
+        callsResponse.decodedReturnData[5][0];
+      networkCache.proposals[proposalId].positiveVotes = bnum(positiveVotes);
+      networkCache.proposals[proposalId].negativeVotes = bnum(negativeVotes);
+      networkCache.proposals[proposalId].positiveStakes = bnum(
+        callsResponse.decodedReturnData[3][2]
+      );
+      networkCache.proposals[proposalId].negativeStakes = bnum(
+        callsResponse.decodedReturnData[3][3]
+      );
+    }
+    return networkCache;
   }
 }

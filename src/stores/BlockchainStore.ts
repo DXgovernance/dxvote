@@ -127,7 +127,6 @@ export default class BlockchainStore {
             chainId
           );
 
-          const fromBlock = lastCheckedBlockNumber + 1;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
 
@@ -135,7 +134,6 @@ export default class BlockchainStore {
             this.context,
             networkCache,
             networkContracts,
-            fromBlock,
             toBlock,
             library
           );
