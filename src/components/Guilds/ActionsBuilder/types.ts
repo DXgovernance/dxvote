@@ -23,13 +23,15 @@ export interface DecodedCall {
 }
 
 export interface DecodedAction {
+  id: string;
   decodedCall: DecodedCall;
   contract: utils.Interface;
 }
 
 export interface Option {
-  index: number;
+  id: string;
   label: string;
+  color: string;
   actions?: Call[];
   decodedActions?: DecodedAction[];
 }

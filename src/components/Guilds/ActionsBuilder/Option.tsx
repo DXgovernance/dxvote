@@ -1,18 +1,33 @@
 import styled from 'styled-components';
+import { CSS } from '@dnd-kit/utilities';
+
 import { ProposalOptionTag } from './common/ProposalOptionTag';
 import AddButton from './common/AddButton';
-import ActionEditor from './Action/EditMode';
 import { DecodedAction, Option } from './types';
 import { useState } from 'react';
 import ActionModal from 'components/Guilds/ActionsModal';
 import Grip from './common/Grip';
 import DataTag from './common/DataTag';
 import EditButton from './common/EditButton';
-import ActionView from './Action/ViewMode';
+import ActionRow from './Action';
 import { Box } from 'components/Guilds/common/Layout';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 export const OptionWrapper = styled(Box)`
+  position: relative;
+  background-color: ${({ theme }) => theme.colors.background};
   padding: 1rem;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  border-color: ${({ dragging, theme }) =>
+    dragging ? theme.colors.text : 'transparent'};
+  z-index: ${({ dragging }) => (dragging ? 999 : 'initial')};
+  box-shadow: ${({ dragging }) =>
+    dragging ? '0px 4px 8px 0px rgba(0, 0, 0, 0.2)' : 'none'};
 `;
 
 export const DetailWrapper = styled(Box)`
@@ -42,6 +57,14 @@ const OptionRow: React.FC<OptionRowProps> = ({
   option,
   onChange,
 }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: option.id });
   const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
 
   function addAction(action: DecodedAction) {
@@ -58,12 +81,22 @@ const OptionRow: React.FC<OptionRowProps> = ({
     onChange({ ...option, decodedActions: updatedActions });
   }
 
+  const dndStyles = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
+
   return (
-    <OptionWrapper>
+    <OptionWrapper
+      dragging={isDragging}
+      ref={setNodeRef}
+      style={dndStyles}
+      {...attributes}
+    >
       <DetailWrapper>
         <div>
           {isEditable && (
-            <Detail>
+            <Detail {...listeners}>
               <Grip />
             </Detail>
           )}
@@ -72,8 +105,8 @@ const OptionRow: React.FC<OptionRowProps> = ({
           </Detail>
           <Detail>
             <DataTag>
-              {option?.actions?.length || 'No'} on-chain{' '}
-              {option?.actions?.length >= 2 ? 'actions' : 'action'}
+              {option?.decodedActions?.length || 'No'} on-chain{' '}
+              {option?.decodedActions?.length >= 2 ? 'actions' : 'action'}
             </DataTag>
           </Detail>
         </div>
@@ -87,17 +120,24 @@ const OptionRow: React.FC<OptionRowProps> = ({
       <ActionsWrapper indented={isEditable}>
         {!isEditable &&
           option?.actions?.map((action, index) => (
-            <ActionView key={index} call={action} isEditable={isEditable} />
+            <ActionRow key={index} call={action} isEditable={false} />
           ))}
 
-        {isEditable &&
-          option?.decodedActions?.map((action, index) => (
-            <ActionEditor
-              key={index}
-              action={action}
-              onChange={updatedAction => updateAction(index, updatedAction)}
-            />
-          ))}
+        {isEditable && (
+          <SortableContext
+            items={option.decodedActions.map(action => action.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {option?.decodedActions?.map((action, index) => (
+              <ActionRow
+                key={index}
+                isEditable={true}
+                decodedAction={action}
+                onEdit={updatedAction => updateAction(index, updatedAction)}
+              />
+            ))}
+          </SortableContext>
+        )}
 
         {isEditable && (
           <AddButton

@@ -168,6 +168,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
     if (!selectedAction || !data || !setSelectedActionContract) return;
 
     const decodedAction: DecodedAction = {
+      id: `action-${Math.random()}`,
       decodedCall: data,
       contract: selectedActionContract,
     };

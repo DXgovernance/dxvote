@@ -121,6 +121,7 @@ const decodeCall = (
   );
 
   return {
+    id: `action-${Math.random()}`,
     decodedCall,
     contract: contractInterface,
   };

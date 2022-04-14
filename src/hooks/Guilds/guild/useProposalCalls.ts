@@ -1,3 +1,4 @@
+import { useTheme } from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
 import { Call, Option } from 'components/Guilds/ActionsBuilder/types';
 import { useMemo } from 'react';
@@ -11,6 +12,8 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
   const { data: proposal } = useProposal(guildId, proposalId);
   const { contracts } = useContractRegistry();
   const { chainId } = useWeb3React();
+
+  const theme = useTheme();
 
   const options: Option[] = useMemo(() => {
     if (!guildId || !proposalId || !proposal) return null;
@@ -40,15 +43,16 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
     }
 
     const encodedOptions: Option[] = splitCalls.map((calls, index) => ({
-      index,
+      id: `option-${index}`,
       label: `Option ${index + 1}`,
+      color: theme?.colors?.votes?.[options.length],
       actions: calls.filter(
         call => call.data !== ZERO_HASH || !call.value?.isZero()
       ),
     }));
 
     return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);
-  }, [proposal, proposalId, guildId, chainId, contracts]);
+  }, [theme, proposal, proposalId, guildId, chainId, contracts]);
 
   return {
     options,
