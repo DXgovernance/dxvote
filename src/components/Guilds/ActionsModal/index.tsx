@@ -97,6 +97,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
           )}
           onSubmit={args => {
             onAddAction({
+              id: `action-${Math.random()}`,
               contract: contractInterface,
               decodedCall: {
                 callType: SupportedAction.GENERIC_CALL,
