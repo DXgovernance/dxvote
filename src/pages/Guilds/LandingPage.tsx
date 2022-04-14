@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from 'components/Guilds/common/Button';
-import { Input } from 'components/Guilds/common/Form';
+import Input from 'components/Guilds/common/Form/Input';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { Flex, Box } from 'components/Guilds/common/Layout';
 import { MdOutlinePeopleAlt } from 'react-icons/md';
@@ -134,6 +134,7 @@ const LandingPage: React.FC = () => {
     <>
       <InputContainer>
         <Input
+          value=""
           icon={<AiOutlineSearch size={24} />}
           placeholder="Search Guild"
         />
