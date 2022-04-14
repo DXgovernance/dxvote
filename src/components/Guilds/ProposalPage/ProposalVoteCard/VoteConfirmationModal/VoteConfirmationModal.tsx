@@ -55,7 +55,7 @@ export const VoteConfirmationModal: React.FC<VoteConfirmationModalProps> = ({
             <InfoLabel>Vote Impact</InfoLabel>
             <InfoValue>
               <InfoValue grey> {totalLocked}% </InfoValue>
-              {' -> '} {votingPower}%
+              {' -> '} {votingPower + totalLocked}%
             </InfoValue>
           </InfoRow>
         </Widget>

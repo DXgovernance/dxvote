@@ -40,7 +40,7 @@ async function main() {
         distribution: [
           {
             address: accounts[0],
-            amount: web3.utils.toWei('220'),
+            amount: web3.utils.toWei('320'),
           },
           {
             address: accounts[1],
@@ -86,7 +86,7 @@ async function main() {
           },
           {
             address: accounts[2],
-            amount: web3.utils.toWei('10'),
+            amount: web3.utils.toWei('100'),
           },
         ],
       },
@@ -522,8 +522,27 @@ async function main() {
       },
 
       {
+        type: 'approve',
+        from: accounts[2],
+        data: {
+          asset: 'SGT',
+          address: 'SnapshotERC20Guild-vault',
+          amount: web3.utils.toWei('2'),
+        },
+      },
+
+      {
+        type: 'guild-lockTokens',
+        from: accounts[2],
+        data: {
+          guildName: 'SnapshotERC20Guild',
+          amount: web3.utils.toWei('1'),
+        },
+      },
+
+      {
         type: 'guild-createProposal',
-        from: accounts[1],
+        from: accounts[2],
         data: {
           guildName: 'SnapshotERC20Guild',
           to: ['SnapshotERC20Guild'],
