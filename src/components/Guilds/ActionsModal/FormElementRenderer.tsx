@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { RegistryContractFunctionParam } from 'hooks/Guilds/contracts/useContractRegistry';
+import moment, { Moment } from 'moment';
 import { useMemo } from 'react';
 import { RegisterOptions } from 'react-hook-form';
 import { isAddress } from 'utils';
@@ -48,11 +49,15 @@ const FormElementRenderer: React.FC<FormElementRendererProps> = ({
         return {
           isUTC: true,
           inputType: InputType.DATE,
+          value: value ? moment.unix(BigNumber.from(value).toNumber()) : value,
+          onChange: (value: Moment) => onChange(BigNumber.from(value?.unix())),
         };
       case 'time':
         return {
           isUTC: true,
           inputType: InputType.DATETIME,
+          value: value ? moment.unix(BigNumber.from(value).toNumber()) : value,
+          onChange: (value: Moment) => onChange(BigNumber.from(value?.unix())),
         };
       case 'tokenAmount':
         return {
@@ -61,7 +66,7 @@ const FormElementRenderer: React.FC<FormElementRendererProps> = ({
       default:
         return {};
     }
-  }, [param]);
+  }, [param, value, onChange]);
 
   return (
     <FormElement
