@@ -129,7 +129,7 @@ const DateInput: React.FC<DateInputProps> = ({
       isValidDate={isValidDate}
       utc={isUTC}
       renderInput={(props, openCalendar) => (
-        <Input onClick={openCalendar} {...props} {...rest} />
+        <Input onClick={openCalendar} readOnly {...props} {...rest} />
       )}
     />
   );

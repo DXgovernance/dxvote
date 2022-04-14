@@ -86,7 +86,6 @@ const ActionModal: React.FC<ActionModalProps> = ({
               ),
             ''
           );
-          console.log(`function ${name}(${params})`);
           return `function ${name}(${params})`;
         })
       );
