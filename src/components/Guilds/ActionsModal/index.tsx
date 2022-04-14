@@ -1,4 +1,5 @@
-import { utils } from 'ethers';
+import { useWeb3React } from '@web3-react/core';
+import { BigNumber, utils } from 'ethers';
 import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -17,7 +18,7 @@ import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import ContractActionsList from './ContractActionsList';
 import ContractsList from './ContractsList';
-import ParamsModal from './ParamsModal';
+import ParamsForm from './ParamsForm';
 
 export const EditorWrapper = styled.div`
   margin: 1.25rem;
@@ -39,6 +40,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
   setIsOpen,
   onAddAction,
 }) => {
+  const { chainId } = useWeb3React();
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
 
   // Supported Actions
@@ -73,11 +75,41 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   function getContent() {
     if (selectedFunction) {
+      const contractInterface = new utils.Interface(
+        selectedContract.functions.map(f => {
+          const name = f.functionName;
+          const params = f.params.reduce(
+            (acc, cur, i) =>
+              acc.concat(
+                `${cur.type} ${cur.name}`,
+                i === f.params.length - 1 ? '' : ', '
+              ),
+            ''
+          );
+          console.log(`function ${name}(${params})`);
+          return `function ${name}(${params})`;
+        })
+      );
+      const contractId = selectedContract.networks?.[chainId];
       return (
-        <ParamsModal
+        <ParamsForm
           fn={selectedContract.functions.find(
             fn => fn.functionName === selectedFunction
           )}
+          onSubmit={args => {
+            onAddAction({
+              contract: contractInterface,
+              decodedCall: {
+                callType: SupportedAction.GENERIC_CALL,
+                from: guildId,
+                to: contractId,
+                function: contractInterface.getFunction(selectedFunction),
+                value: BigNumber.from(0),
+                args,
+              },
+            });
+            setIsOpen(false);
+          }}
         />
       );
     }

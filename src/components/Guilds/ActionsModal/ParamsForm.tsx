@@ -19,22 +19,17 @@ const SubmitButton = styled(ActionsButton).attrs(() => ({
   justify-content: center;
 `;
 
-interface ParamsModalProps {
+interface ParamsFormProps {
   fn: RegistryContractFunction;
+  onSubmit: (args: Record<string, any>) => void;
 }
 
-const ParamsModal: React.FC<ParamsModalProps> = ({ fn }) => {
+const ParamsForm: React.FC<ParamsFormProps> = ({ fn, onSubmit }) => {
   const { control, handleSubmit } = useForm();
-
-  const onSubmit = (data: any) => console.log(data);
 
   return (
     <Wrapper>
-      <form
-        onSubmit={handleSubmit(onSubmit, errors => {
-          console.log(errors);
-        })}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         {fn.params.map(param => (
           <FormElement key={param.name}>
             <FormLabel>{param.description}</FormLabel>
@@ -67,4 +62,4 @@ const ParamsModal: React.FC<ParamsModalProps> = ({ fn }) => {
   );
 };
 
-export default ParamsModal;
+export default ParamsForm;

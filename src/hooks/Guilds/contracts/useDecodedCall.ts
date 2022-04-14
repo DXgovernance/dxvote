@@ -65,7 +65,11 @@ const getContractInterfaceFromRegistryContract = (
     registryContract.functions.map(f => {
       const name = f.functionName;
       const params = f.params.reduce(
-        (acc, cur) => acc.concat(`${cur.type} ${cur.name}`),
+        (acc, cur, i) =>
+          acc.concat(
+            `${cur.type} ${cur.name}`,
+            i === f.params.length - 1 ? '' : ', '
+          ),
         ''
       );
       return `function ${name}(${params})`;
