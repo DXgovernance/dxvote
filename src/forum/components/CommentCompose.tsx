@@ -93,8 +93,8 @@ export default function CommentCompose({ proposalId }) {
         <form
           onSubmit={async e => {
             e.preventDefault();
-            console.log('Create post', content, create);
             create({ content, parent: proposalId, type: 'comment' });
+            setContent('');
           }}
         >
           <Editor
