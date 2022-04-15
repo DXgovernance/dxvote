@@ -29,6 +29,9 @@ export function useCreate() {
           .createTile('ForumPost', entity)
           .then(mapId);
 
+        console.log('adding to registry', created.id);
+        await registry.put(toIndex(created));
+
         console.timeEnd('creating post');
         return created.id;
       } else {
@@ -40,5 +43,8 @@ export function useCreate() {
 }
 
 const mapId = doc => ({ id: doc.id.toString(), ...doc.content });
+
+// Define what data to be indexed (currently everything except the content)
+const toIndex = ({ content, ...data }: ForumEvent) => data;
 
 export const getNow = () => new Date().toISOString();

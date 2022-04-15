@@ -2,10 +2,13 @@ import React, { createContext, useEffect, useState } from 'react';
 import { ConnectNetwork } from '@self.id/web';
 import type { ModelTypeAliases, ModelTypesToAliases } from '@glazed/types';
 import { Provider } from '@self.id/react';
+import OrbitDB from 'orbit-db';
 
 import { useContext } from 'contexts';
 
 import publishedModel from './model.json';
+import DocumentStore from 'orbit-db-docstore';
+import { ForumEvent } from './types/ForumEvent';
 
 const model: ModelTypesToAliases<ModelTypeAliases<{}, {}, {}>> = publishedModel;
 
@@ -16,13 +19,22 @@ const client = {
   aliases: model,
 };
 
-const OrbitDB = createContext({});
+const Orbit = createContext<{
+  orbitdb: OrbitDB;
+  registry: DocumentStore<ForumEvent>;
+}>({
+  orbitdb: null,
+  registry: null,
+});
 
-export const useForum = () => React.useContext(OrbitDB);
+export const useForum = () => React.useContext(Orbit);
 
 function useOrbitDB() {
   const { context } = useContext();
-  const [state, setState] = useState({});
+  const [state, setState] = useState({
+    orbitdb: null,
+    registry: null,
+  });
 
   useEffect(() => {
     if (context.orbitDBService) {
@@ -54,7 +66,7 @@ function ForumProvider({ children }) {
   const value = useOrbitDB();
   return (
     <Provider client={client}>
-      <OrbitDB.Provider value={value}>{children}</OrbitDB.Provider>
+      <Orbit.Provider value={value}>{children}</Orbit.Provider>
     </Provider>
   );
 }
