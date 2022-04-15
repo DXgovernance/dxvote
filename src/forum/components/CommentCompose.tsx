@@ -7,6 +7,10 @@ import { useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 
+import { useCreate } from '../hooks/useCreate';
+import { useConnect } from '../hooks/useConnect';
+import { Loading } from 'components/Guilds/common/Loading';
+
 const getSpacing = (val, { spacing }) =>
   spacing[Math.abs(val)] * (val / Math.abs(val)) || 0;
 
@@ -42,42 +46,73 @@ const AvatarBorder = styled.div`
   height: 24px; // Avatar is inline-block which messes up the box
 `;
 
-export default function CommentCompose() {
+function ConnectCeramicButton() {
+  const { connection, connect } = useConnect();
+  return connection.status !== 'connected' ? (
+    <Button variant="secondary" onClick={() => connect()}>
+      {connection.status === 'connecting' ? (
+        <Loading loading iconProps={{ size: 12 }} />
+      ) : (
+        'Connect Ceramic'
+      )}
+    </Button>
+  ) : null;
+}
+
+export default function CommentCompose({ proposalId }) {
   const { account } = useWeb3React();
   const avatar = useENSAvatar(account);
   const [content, setContent] = useState('');
 
   const user = avatar.ensName || account;
+  const [{ data, loading, error }, create] = useCreate();
+  console.log(data, error);
   return (
     <Flex>
       <div>
         <AvatarBorder>
-          <Avatar defaultSeed={user} src={avatar.imageUrl} size={24} />
+          <Avatar
+            defaultSeed={user || ''}
+            src={avatar.imageUrl || ''}
+            size={24}
+          />
         </AvatarBorder>
       </div>
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          console.log('Create post', content);
-        }}
-      >
-        <Flex alignItems="center" height={'42px'}>
+      <div>
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          height={'42px'}
+        >
           <Text>
             Comment as <Text color="grey">{user}</Text>
           </Text>
+          <ConnectCeramicButton />
         </Flex>
-        <Editor
-          placeholder="What do you want to propose?"
-          onMdChange={setContent}
-        />
-        {/* Button has margin which is why we negate that here with mr (margin-right) */}
-        <Flex justifyContent="flex-end" mr={-2}>
-          <Button variant="secondary" type="submit" disabled={!content}>
-            Submit
-          </Button>
-        </Flex>
-      </form>
+        <pre>{error?.message}</pre>
+        <form
+          onSubmit={async e => {
+            e.preventDefault();
+            console.log('Create post', content, create);
+            create({ content, parent: proposalId, type: 'comment' });
+          }}
+        >
+          <Editor
+            placeholder="What do you want to propose?"
+            onMdChange={setContent}
+          />
+          {/* Button has margin which is why we negate that here with mr (margin-right) */}
+          <Flex justifyContent="flex-end" mr={-2}>
+            <Button
+              variant="secondary"
+              type="submit"
+              disabled={!content || loading}
+            >
+              Submit
+            </Button>
+          </Flex>
+        </form>
+      </div>
     </Flex>
   );
 }
-

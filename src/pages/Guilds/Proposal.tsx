@@ -152,7 +152,7 @@ const ProposalPage: React.FC = () => {
           <ActionsBuilder options={options} editable={false} />
         </ProposalActionsWrapper>
 
-        <CommentCompose />
+        <CommentCompose proposalId={proposalId} />
       </PageContent>
       <SidebarContent>
         <ProposalVoteCard />
