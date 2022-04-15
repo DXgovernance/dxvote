@@ -27,8 +27,6 @@ const did = new DID({
   resolver: getResolver(),
 });
 
-console.log(seed);
-
 await did.authenticate();
 
 // Connect to the Ceramic node
@@ -42,9 +40,9 @@ const manager = new ModelManager(ceramic);
 manager.addJSONModel(profileModel);
 
 // Create the schemas
-const postSchemaId = await manager.createSchema('Event', {
+const postSchemaId = await manager.createSchema('ForumPost', {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  title: 'Event',
+  title: 'ForumPost',
   type: 'object',
   properties: {
     title: {
