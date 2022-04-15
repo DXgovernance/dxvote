@@ -7,12 +7,13 @@ import { useContext } from 'contexts';
 
 import publishedModel from './model.json';
 
-const model: ModelTypesToAliases<ModelTypeAliases<{}, {}>> = publishedModel;
+const model: ModelTypesToAliases<ModelTypeAliases<{}, {}, {}>> = publishedModel;
 
 const client = {
   ceramic: 'testnet-clay',
   connectNetwork: 'testnet-clay' as ConnectNetwork,
   model,
+  aliases: model,
 };
 
 const OrbitDB = createContext({});
