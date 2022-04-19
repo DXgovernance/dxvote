@@ -20,6 +20,7 @@ import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildPropos
 import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
 
 import CommentCompose from 'forum/components/CommentCompose';
+import CommentList from 'forum/components/CommentList';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -152,6 +153,7 @@ const ProposalPage: React.FC = () => {
           <ActionsBuilder options={options} editable={false} />
         </ProposalActionsWrapper>
 
+        <CommentList proposalId={proposalId} />
         <CommentCompose proposalId={proposalId} />
       </PageContent>
       <SidebarContent>
