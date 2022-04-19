@@ -4,18 +4,21 @@ import useEtherSWR from '../useEtherSWR';
 import useGuildImplementationTypeConfig from 'hooks/Guilds/guild/useGuildImplementationType';
 import SnapshotERC20Guild from 'contracts/SnapshotERC20Guild.json';
 
-interface UseSnapshotIdProps {
+interface UseCurrentSnapshotIdProps {
   contractAddress: string;
-  proposalId: string;
 }
 
-type UseSnapshotIdHook = (args: UseSnapshotIdProps) => SWRResponse<BigNumber>;
+type UseCurrentSnapshotIdHook = (
+  args: UseCurrentSnapshotIdProps
+) => SWRResponse<BigNumber>;
 
-const useSnapshotId: UseSnapshotIdHook = ({ contractAddress, proposalId }) => {
+const useCurrentSnapshotId: UseCurrentSnapshotIdHook = ({
+  contractAddress,
+}) => {
   const { isSnapshotGuild } = useGuildImplementationTypeConfig(contractAddress);
   return useEtherSWR(
-    isSnapshotGuild && proposalId && contractAddress
-      ? [contractAddress, 'getProposalSnapshotId', proposalId]
+    isSnapshotGuild && contractAddress
+      ? [contractAddress, 'getCurrentSnapshotId']
       : [],
     {
       ABIs: new Map([[contractAddress, SnapshotERC20Guild.abi]]),
@@ -24,4 +27,4 @@ const useSnapshotId: UseSnapshotIdHook = ({ contractAddress, proposalId }) => {
   );
 };
 
-export default useSnapshotId;
+export default useCurrentSnapshotId;
