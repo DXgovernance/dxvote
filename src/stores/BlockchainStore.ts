@@ -132,7 +132,6 @@ export default class BlockchainStore {
           const networkContracts = configStore.getNetworkContracts();
 
           networkCache = await cacheService.getUpdatedCache(
-            this.context,
             networkCache,
             networkContracts,
             toBlock,

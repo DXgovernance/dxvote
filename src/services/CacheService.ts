@@ -179,7 +179,6 @@ export default class UtilsService {
         networkName
       );
       networkCache = await this.getUpdatedCache(
-        this.context,
         networkCache,
         networkConfig.contracts,
         toBlock,
@@ -204,13 +203,12 @@ export default class UtilsService {
   }
 
   async getUpdatedCache(
-    context: RootContext,
     networkCache: DaoNetworkCache,
     networkContracts: NetworkContracts,
     toBlock: number,
     web3: Web3
   ): Promise<DaoNetworkCache> {
-    const notificationStore = context.notificationStore;
+    const notificationStore = this.context.notificationStore;
     const fromBlock = networkCache.blockNumber + 1;
     console.debug(`[CACHE UPDATE] from ${fromBlock} to ${toBlock}`);
     const networkWeb3Contracts = await getContracts(networkContracts, web3);
