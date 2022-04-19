@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/Guilds/common/Button';
 import Input from 'components/Guilds/common/Form/Input';
 import { AiOutlineSearch } from 'react-icons/ai';
@@ -107,16 +108,19 @@ const Title: React.FC<TitleProps> = ({ guildAddress }) => {
   return <DaoTitle size={2}>{ensName ?? data?.name}</DaoTitle>;
 };
 const Proposals: React.FC<TitleProps> = ({ guildAddress }) => {
+  const { t } = useTranslation();
   const { data: numberOfActiveProposals } = useActiveProposalsNow(guildAddress);
   return (
     <ProposalsInformation proposals={'active'}>
-      {numberOfActiveProposals?.toString() ?? ''}{' '}
-      {numberOfActiveProposals?.eq(1) ? 'Proposal' : 'Proposals'}
+      {t('proposals', {
+        count: parseInt(numberOfActiveProposals),
+      })}
     </ProposalsInformation>
   );
 };
 
 const LandingPage: React.FC = () => {
+  const { t } = useTranslation();
   const { chainId } = useWeb3React();
   const chainName =
     getChains().find(chain => chain.id === chainId)?.name || null;
@@ -125,11 +129,6 @@ const LandingPage: React.FC = () => {
     configs[chainName].contracts.utils.guildRegistry
   );
 
-  /*TODO:
-    1. Members should be dynamic
-    2. Amount of proposals should be dynamic
-    3. Logo should be dynamic
-    */
   return (
     <>
       <InputContainer>
@@ -141,7 +140,7 @@ const LandingPage: React.FC = () => {
         <StyledButton data-testid="create-guild-button">
           {' '}
           <StyledLink to={location => `${location.pathname}/createGuild`}>
-            Create Guild
+            {t('guilds.create')}
           </StyledLink>
         </StyledButton>
       </InputContainer>
