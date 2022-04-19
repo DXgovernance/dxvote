@@ -1,0 +1,7 @@
+{
+  "guilds": {
+    "create": "Create Guild"
+  },
+  "proposals_one": "{{count}} proposal",
+  "proposals_other": "{{count}} proposals"
+} 
