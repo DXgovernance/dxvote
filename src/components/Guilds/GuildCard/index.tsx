@@ -34,7 +34,7 @@ interface GuildCardProps extends CardProps {
 
 const GuildCard: React.FC<GuildCardProps> = ({ children, guildAddress }) => {
   return (
-    <StyledLink to={location => `${location.pathname}/${guildAddress}`}>
+    <StyledLink to={location => `/${location.pathname}/${guildAddress}`}>
       <Card customStyles={cardWrapperStyles}>{children}</Card>
     </StyledLink>
   );

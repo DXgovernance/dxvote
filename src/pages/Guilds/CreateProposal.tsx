@@ -108,7 +108,7 @@ const CreateProposalPage: React.FC = () => {
     setEditMode(v => !v);
   };
 
-  const handleBack = () => history.push('/');
+  const handleBack = () => history.push('../proposalType');
 
   const ipfs = useIPFSNode();
   const uploadToIPFS = async () => {

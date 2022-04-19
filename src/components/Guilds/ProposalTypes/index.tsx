@@ -12,6 +12,7 @@ import StyledIcon from '../common/SVG';
 import { isMobile } from 'react-device-detect';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import { Loading } from '../common/Loading';
+import { RouterButton } from 'components/common/Button';
 
 const Backdrop = styled(Flex)``;
 const CloseIcon = styled(FiX)`
@@ -171,14 +172,13 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
   );
+  const [proposalDescription, setProposalDescription] =
+    useState<ProposalTypeDescriptionProps>(data[0]);
 
   const continueUrl = location.pathname.replace(
     '/proposalType',
-    '/create/proposal_type'
+    `/create/${proposalDescription.title}`
   );
-
-  const [proposalDescription, setProposalDescription] =
-    useState<ProposalTypeDescriptionProps>(data[0]);
 
   if (isGuildAvailabilityLoading) return <Loading loading />;
 
@@ -187,15 +187,15 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
       <Wrapper>
         {!isMobile && (
           <Header>
-            <Button variant="secondary" onClick={() => history.push('/')}>
+            <RouterButton variant="secondary" to={'../'}>
               <StyledIcon margin="0 10px 0 0" src={AiOutlineArrowLeft} />
               Back to overview
-            </Button>
+            </RouterButton>
           </Header>
         )}
         {isMobile && (
           <>
-            <Header variant="secondary" onClick={() => history.push('/')}>
+            <Header variant="secondary" onClick={() => history.push('../')}>
               <HeaderWrap>
                 <StyledIcon src={FiArrowLeft} />
                 Back to overview
