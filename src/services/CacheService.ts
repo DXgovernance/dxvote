@@ -785,319 +785,45 @@ export default class UtilsService {
       'allEvents'
     );
 
-    // Go over all controller events and add update or remove schemes depending on the event
-    for (
-      let controllerEventsIndex = 0;
-      controllerEventsIndex < controllerEvents.length;
-      controllerEventsIndex++
-    ) {
-      const controllerEvent = controllerEvents[controllerEventsIndex];
-
-      const schemeAddress = controllerEvent.returnValues._scheme;
-
-      // Add or update the scheme information,
-      // register scheme is used to add a scheme or update the parametersHash of an existent one
-      if (controllerEvent.event === 'RegisterScheme') {
-        const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
-
-        console.debug(
-          'Register Scheme event for ',
-          schemeAddress,
-          schemeTypeData
-        );
-
-        let controllerAddress = networkWeb3Contracts.controller._address;
-        let schemeName = schemeTypeData.name;
-        let maxSecondsForExecution = bnum(0);
-        let maxRepPercentageChange = bnum(0);
-        let schemeType = schemeTypeData.type;
-
-        let callsToExecute = [
-          [
-            controllerAddress,
-            'getSchemePermissions(address,address)',
-            [schemeAddress, networkWeb3Contracts.avatar._address],
-            ['bytes4'],
-          ],
-          [
-            controllerAddress,
-            'getSchemeParameters(address,address)',
-            [schemeAddress, networkWeb3Contracts.avatar._address],
-            ['bytes32'],
-          ],
-        ];
-
-        if (schemeType === 'WalletScheme') {
-          const walletSchemeType = (
-            await executeMulticall(networkWeb3Contracts.multicall, [
-              [schemeAddress, 'SCHEME_TYPE()', [], ['string']],
-            ])
-          ).decodedReturnData[0][0];
-
-          schemeType = walletSchemeType;
-          if (schemeType == 'Wallet Scheme v1')
-            schemeType = 'Wallet Scheme v1.0';
-
-          switch (schemeType) {
-            case 'Wallet Scheme v1.0':
-              callsToExecute.push([
-                schemeAddress,
-                'votingMachine()',
-                [],
-                ['address'],
-              ]);
-              callsToExecute.push([
-                schemeAddress,
-                'controllerAddress()',
-                [],
-                ['address'],
-              ]);
-              callsToExecute.push([
-                schemeAddress,
-                'schemeName()',
-                [],
-                ['string'],
-              ]);
-              callsToExecute.push([
-                schemeAddress,
-                'maxSecondsForExecution()',
-                [],
-                ['uint256'],
-              ]);
-              callsToExecute.push([
-                schemeAddress,
-                'maxRepPercentageChange()',
-                [],
-                ['uint256'],
-              ]);
-              break;
-            default:
-              callsToExecute.push([
-                schemeAddress,
-                'votingMachine()',
-                [],
-                ['address'],
-              ]);
-              callsToExecute.push([
-                schemeAddress,
-                'doAvatarGenericCalls()',
-                [],
-                ['bool'],
-              ]);
-              callsToExecute.push([
-                schemeAddress,
-                'schemeName()',
-                [],
-                ['string'],
-              ]);
-              callsToExecute.push([
-                schemeAddress,
-                'maxSecondsForExecution()',
-                [],
-                ['uint256'],
-              ]);
-              callsToExecute.push([
-                schemeAddress,
-                'maxRepPercentageChange()',
-                [],
-                ['uint256'],
-              ]);
-              break;
-          }
-        }
-
-        const callsResponse1 = await executeMulticall(
-          networkWeb3Contracts.multicall,
-          callsToExecute
-        );
-        callsToExecute = [];
-
-        const permissions = decodePermission(
-          callsResponse1.decodedReturnData[0][0]
-        );
-        const paramsHash =
-          schemeTypeData.voteParams || callsResponse1.decodedReturnData[1][0];
-
-        const votingMachineAddress =
-          schemeTypeData.votingMachine ||
-          callsResponse1.decodedReturnData[2][0];
-
-        const votingMachine =
-          networkWeb3Contracts.votingMachines[votingMachineAddress].contract;
-
-        if (schemeTypeData.type === 'WalletScheme') {
-          switch (schemeType) {
-            case 'Wallet Scheme v1.0':
-              controllerAddress = callsResponse1.decodedReturnData[3][0];
-              break;
-            default:
-              controllerAddress = callsResponse1.decodedReturnData[3][0]
-                ? networkWeb3Contracts.controller._address
-                : ZERO_ADDRESS;
-              break;
-          }
-          schemeName = callsResponse1.decodedReturnData[4][0];
-          maxSecondsForExecution = callsResponse1.decodedReturnData[5][0];
-          maxRepPercentageChange = callsResponse1.decodedReturnData[6][0];
-        }
-
-        // Register the new voting parameters in the voting machine params
-        const votingParameters = await votingMachine.methods
-          .parameters(paramsHash)
-          .call();
-        networkCache.votingMachines[votingMachine._address].votingParameters[
-          paramsHash
-        ] = {
-          queuedVoteRequiredPercentage:
-            votingParameters.queuedVoteRequiredPercentage,
-          queuedVotePeriodLimit: votingParameters.queuedVotePeriodLimit,
-          boostedVotePeriodLimit: votingParameters.boostedVotePeriodLimit,
-          preBoostedVotePeriodLimit: votingParameters.preBoostedVotePeriodLimit,
-          thresholdConst: votingParameters.thresholdConst,
-          limitExponentValue: votingParameters.limitExponentValue,
-          quietEndingPeriod: votingParameters.quietEndingPeriod,
-          proposingRepReward: votingParameters.proposingRepReward,
-          votersReputationLossRatio: votingParameters.votersReputationLossRatio,
-          minimumDaoBounty: votingParameters.minimumDaoBounty,
-          daoBountyConst: votingParameters.daoBountyConst,
-          activationTime: votingParameters.activationTime,
-        };
-
-        // If the scheme not exist, register it
-        if (!networkCache.schemes[schemeAddress]) {
-          networkCache.schemes[schemeAddress] = {
-            address: schemeAddress,
-            registered: true,
-            controllerAddress,
-            name: schemeName,
-            type: schemeType,
-            votingMachine: votingMachineAddress,
-            paramsHash: paramsHash,
-            permissions,
-            boostedVoteRequiredPercentage: 0,
-            proposalIds: [],
-            boostedProposals: 0,
-            maxSecondsForExecution,
-            maxRepPercentageChange,
-            newProposalEvents: [],
-          };
-        } else {
-          networkCache.schemes[schemeAddress].paramsHash = paramsHash;
-          networkCache.schemes[schemeAddress].permissions = permissions;
-        }
-
-        // Mark scheme as not registered but save all previous data
-      } else if (
-        controllerEvent.event === 'UnregisterScheme' &&
-        // This condition is added to skip the first scheme added (that is the dao creator account)
-        controllerEvent.returnValues._sender !== schemeAddress
-      ) {
-        const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
-        console.debug('Unregister scheme event', schemeAddress, schemeTypeData);
-        let callsToExecute = [
-          [
-            networkCache.schemes[schemeAddress].votingMachine,
-            'orgBoostedProposalsCnt(bytes32)',
-            [
-              web3.utils.soliditySha3(
-                schemeAddress,
-                networkWeb3Contracts.avatar._address
-              ),
-            ],
-            ['uint256'],
-          ],
-        ];
-
-        if (isWalletScheme(networkCache.schemes[schemeAddress])) {
-          callsToExecute.push([
-            schemeAddress,
-            'maxSecondsForExecution()',
-            [],
-            ['uint256'],
-          ]);
-        }
-        const callsResponse = await executeMulticall(
-          networkWeb3Contracts.multicall,
-          callsToExecute
-        );
-
-        const maxSecondsForExecution = isWalletScheme(
-          networkCache.schemes[schemeAddress]
-        )
-          ? callsResponse.decodedReturnData[2][0]
-          : 0;
-
-        // Update the scheme values a last time
-        networkCache.schemes[schemeAddress].boostedProposals =
-          callsResponse.decodedReturnData[0][0];
-        networkCache.schemes[schemeAddress].maxSecondsForExecution =
-          maxSecondsForExecution;
-        networkCache.schemes[schemeAddress].registered = false;
-      }
-    }
-
-    // Update registered schemes
-    await Promise.all(
-      Object.keys(networkCache.schemes).map(async schemeAddress => {
-        if (networkCache.schemes[schemeAddress].registered) {
-          let callsToExecute = [
-            [
-              networkCache.schemes[schemeAddress].votingMachine,
-              'orgBoostedProposalsCnt(bytes32)',
-              [
-                web3.utils.soliditySha3(
-                  schemeAddress,
-                  networkWeb3Contracts.avatar._address
-                ),
-              ],
-              ['uint256'],
-            ],
-          ];
-
-          if (isWalletScheme(networkCache.schemes[schemeAddress])) {
-            callsToExecute.push([
-              schemeAddress,
-              'maxSecondsForExecution()',
-              [],
-              ['uint256'],
-            ]);
-            callsToExecute.push([
-              networkCache.schemes[schemeAddress].votingMachine,
-              'boostedVoteRequiredPercentage(bytes32,bytes32)',
-              [
-                web3.utils.soliditySha3(
-                  schemeAddress,
-                  networkWeb3Contracts.avatar._address
-                ),
-                networkCache.schemes[schemeAddress].paramsHash,
-              ],
-              ['uint256'],
-            ]);
-          }
-          const callsResponse = await executeMulticall(
-            networkWeb3Contracts.multicall,
-            callsToExecute
+    await batchPromisesOntarget(
+      controllerEvents
+        .filter(controllerEvent => {
+          return (
+            (controllerEvent.event === 'UnregisterScheme' ||
+              controllerEvent.event === 'RegisterScheme') &&
+            controllerEvent.returnValues._sender !==
+              controllerEvent.returnValues._scheme
           );
+        })
+        .map(controllerEvent => {
+          console.log(controllerEvent);
+          return this.processScheme(
+            controllerEvent.returnValues._scheme,
+            networkCache,
+            networkContracts,
+            web3,
+            controllerEvent.event === 'UnregisterScheme'
+          );
+        }),
+      networkCache,
+      5
+    );
 
-          const maxSecondsForExecution = isWalletScheme(
-            networkCache.schemes[schemeAddress]
-          )
-            ? callsResponse.decodedReturnData[1][0]
-            : 0;
-
-          const boostedVoteRequiredPercentage = isWalletScheme(
-            networkCache.schemes[schemeAddress]
-          )
-            ? callsResponse.decodedReturnData[2][0]
-            : 0;
-          networkCache.schemes[schemeAddress].boostedProposals =
-            callsResponse.decodedReturnData[0][0];
-          networkCache.schemes[schemeAddress].maxSecondsForExecution =
-            maxSecondsForExecution;
-          networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage =
-            boostedVoteRequiredPercentage;
-        }
-      })
+    await batchPromisesOntarget(
+      Object.keys(networkCache.schemes)
+        .filter(schemeAddress => {
+          return networkCache.schemes[schemeAddress].registered;
+        })
+        .map(schemeAddress => {
+          return this.processScheme(
+            schemeAddress,
+            networkCache,
+            networkContracts,
+            web3
+          );
+        }),
+      networkCache,
+      5
     );
 
     return networkCache;
@@ -1161,14 +887,16 @@ export default class UtilsService {
 
     // Update existent active proposals
     await batchPromisesOntarget(
-      //@ts-ignore
-      Object.keys(networkCache.proposals).map(proposalId => {
-        if (
-          networkCache.proposals[proposalId].stateInVotingMachine >
-            VotingMachineProposalState.Executed ||
-          networkCache.proposals[proposalId].stateInScheme ===
-            WalletSchemeProposalState.Submitted
-        )
+      Object.keys(networkCache.proposals)
+        .filter(proposalId => {
+          return (
+            networkCache.proposals[proposalId].stateInVotingMachine >
+              VotingMachineProposalState.Executed ||
+            networkCache.proposals[proposalId].stateInScheme ===
+              WalletSchemeProposalState.Submitted
+          );
+        })
+        .map(proposalId => {
           return this.processProposal(
             proposalId,
             networkCache,
@@ -1177,7 +905,7 @@ export default class UtilsService {
             fromBlock,
             toBlock
           );
-      }),
+        }),
       networkCache,
       5
     );
@@ -1265,6 +993,245 @@ export default class UtilsService {
     }
 
     return proposalTitles;
+  }
+
+  // Update all the schemes information
+  async processScheme(
+    schemeAddress: string,
+    networkCache: DaoNetworkCache,
+    networkContracts: NetworkContracts,
+    web3: Web3,
+    removeScheme: boolean = false
+  ): Promise<DaoNetworkCache> {
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
+    const isNewScheme = !networkCache.schemes[schemeAddress];
+    const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
+    console.debug(
+      'Processing Scheme',
+      schemeAddress,
+      schemeTypeData,
+      removeScheme
+    );
+
+    let controllerAddress = networkWeb3Contracts.controller._address;
+    let schemeName = schemeTypeData.name;
+    let maxSecondsForExecution = 0;
+    let maxRepPercentageChange = 0;
+    let schemeType = schemeTypeData.type;
+    const isWalletScheme = schemeType === 'WalletScheme';
+
+    let callsToExecute = [
+      [
+        controllerAddress,
+        'getSchemePermissions(address,address)',
+        [schemeAddress, networkWeb3Contracts.avatar._address],
+        ['bytes4'],
+      ],
+      [
+        controllerAddress,
+        'getSchemeParameters(address,address)',
+        [schemeAddress, networkWeb3Contracts.avatar._address],
+        ['bytes32'],
+      ],
+    ];
+
+    if (isNewScheme && isWalletScheme) {
+      schemeType = (
+        await executeMulticall(networkWeb3Contracts.multicall, [
+          [schemeAddress, 'SCHEME_TYPE()', [], ['string']],
+        ])
+      ).decodedReturnData[0][0];
+      if (schemeType === 'Wallet Scheme v1') schemeType = 'Wallet Scheme v1.0';
+
+      callsToExecute.push([schemeAddress, 'votingMachine()', [], ['address']]);
+      callsToExecute.push([schemeAddress, 'schemeName()', [], ['string']]);
+      callsToExecute.push([
+        schemeAddress,
+        'maxSecondsForExecution()',
+        [],
+        ['uint256'],
+      ]);
+      callsToExecute.push([
+        schemeAddress,
+        'maxRepPercentageChange()',
+        [],
+        ['uint256'],
+      ]);
+
+      switch (schemeType) {
+        case 'Wallet Scheme v1.0':
+          callsToExecute.push([
+            schemeAddress,
+            'controllerAddress()',
+            [],
+            ['address'],
+          ]);
+          break;
+        default:
+          callsToExecute.push([
+            schemeAddress,
+            'doAvatarGenericCalls()',
+            [],
+            ['bool'],
+          ]);
+          break;
+      }
+    }
+
+    const callsResponse1 = await executeMulticall(
+      networkWeb3Contracts.multicall,
+      callsToExecute
+    );
+
+    const permissions = decodePermission(
+      callsResponse1.decodedReturnData[0][0]
+    );
+    const paramsHash =
+      schemeTypeData.voteParams || callsResponse1.decodedReturnData[1][0];
+
+    const votingMachineAddress = !isNewScheme
+      ? networkCache.schemes[schemeAddress].votingMachine
+      : isWalletScheme
+      ? callsResponse1.decodedReturnData[2][0]
+      : schemeTypeData.votingMachine;
+
+    if (isNewScheme && isWalletScheme) {
+      schemeName = callsResponse1.decodedReturnData[3][0];
+      maxSecondsForExecution = callsResponse1.decodedReturnData[4][0];
+      maxRepPercentageChange = callsResponse1.decodedReturnData[5][0];
+
+      switch (schemeType) {
+        case 'Wallet Scheme v1.0':
+          controllerAddress = callsResponse1.decodedReturnData[6][0];
+          break;
+        default:
+          controllerAddress = callsResponse1.decodedReturnData[6][0]
+            ? networkWeb3Contracts.controller._address
+            : ZERO_ADDRESS;
+          break;
+      }
+    }
+
+    callsToExecute = [
+      [
+        votingMachineAddress,
+        'orgBoostedProposalsCnt(bytes32)',
+        [
+          web3.utils.soliditySha3(
+            schemeAddress,
+            networkWeb3Contracts.avatar._address
+          ),
+        ],
+        ['uint256'],
+      ],
+    ];
+
+    // Register the new voting parameters in the voting machine params
+    if (
+      !networkCache.votingMachines[votingMachineAddress].votingParameters[
+        paramsHash
+      ]
+    ) {
+      callsToExecute.push([
+        votingMachineAddress,
+        'parameters(bytes32)',
+        [paramsHash],
+        [
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'address',
+        ],
+      ]);
+    }
+
+    if (isWalletScheme) {
+      callsToExecute.push([
+        votingMachineAddress,
+        'boostedVoteRequiredPercentage(bytes32,bytes32)',
+        [
+          web3.utils.soliditySha3(
+            schemeAddress,
+            networkWeb3Contracts.avatar._address
+          ),
+          paramsHash,
+        ],
+        ['uint256'],
+      ]);
+    }
+
+    const callsResponse2 = await executeMulticall(
+      networkWeb3Contracts.multicall,
+      callsToExecute
+    );
+
+    const boostedProposals = callsResponse2.decodedReturnData[0][0];
+
+    if (
+      !networkCache.votingMachines[votingMachineAddress].votingParameters[
+        paramsHash
+      ]
+    ) {
+      networkCache.votingMachines[votingMachineAddress].votingParameters[
+        paramsHash
+      ] = {
+        queuedVoteRequiredPercentage: callsResponse2.decodedReturnData[1][0],
+        queuedVotePeriodLimit: callsResponse2.decodedReturnData[1][1],
+        boostedVotePeriodLimit: callsResponse2.decodedReturnData[1][2],
+        preBoostedVotePeriodLimit: callsResponse2.decodedReturnData[1][3],
+        thresholdConst: callsResponse2.decodedReturnData[1][4],
+        limitExponentValue: callsResponse2.decodedReturnData[1][5],
+        quietEndingPeriod: callsResponse2.decodedReturnData[1][6],
+        proposingRepReward: callsResponse2.decodedReturnData[1][7],
+        votersReputationLossRatio: callsResponse2.decodedReturnData[1][8],
+        minimumDaoBounty: callsResponse2.decodedReturnData[1][9],
+        daoBountyConst: callsResponse2.decodedReturnData[1][10],
+        activationTime: callsResponse2.decodedReturnData[1][11],
+      };
+    }
+
+    const boostedVoteRequiredPercentage = isWalletScheme
+      ? callsResponse2.decodedReturnData[callsToExecute.length - 1][0]
+      : 0;
+
+    if (isNewScheme) {
+      networkCache.schemes[schemeAddress] = {
+        address: schemeAddress,
+        registered: true,
+        controllerAddress,
+        name: schemeName,
+        type: schemeType,
+        votingMachine: votingMachineAddress,
+        paramsHash: paramsHash,
+        permissions,
+        boostedVoteRequiredPercentage,
+        proposalIds: [],
+        boostedProposals: boostedProposals,
+        maxSecondsForExecution: maxSecondsForExecution,
+        maxRepPercentageChange,
+        newProposalEvents: [],
+      };
+    } else {
+      networkCache.schemes[schemeAddress].boostedProposals = boostedProposals;
+      networkCache.schemes[schemeAddress].maxSecondsForExecution =
+        maxSecondsForExecution;
+      networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage =
+        boostedVoteRequiredPercentage;
+      networkCache.schemes[schemeAddress].paramsHash = paramsHash;
+      networkCache.schemes[schemeAddress].permissions = permissions;
+      networkCache.schemes[schemeAddress].registered = !removeScheme;
+    }
+
+    return networkCache;
   }
 
   async processProposal(
