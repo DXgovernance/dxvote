@@ -274,13 +274,6 @@ export default class UtilsService {
 
     console.log('Total Proposals', Object.keys(networkCache.proposals).length);
 
-    // Compare proposals data
-    // Object.keys(networkCache.proposals).map((proposalId) => {
-    //   const mutableData = getProposalMutableData(networkCache, proposalId);
-    //   const cacheData = networkCache.proposals[proposalId];
-    //   console.debug(proposalId, mutableData, cacheData);
-    // })
-
     // Sort cache data, so the IPFS hash is consistent
     Object.keys(networkCache.schemes).forEach(schemeId => {
       networkCache.schemes[schemeId].proposalIds.sort();
