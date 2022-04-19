@@ -1,5 +1,12 @@
 import RootContext from '../contexts';
-import { batchPromisesOntarget, getIPFSFile, NETWORK_NAMES } from '../utils';
+import {
+  batchPromisesOntarget,
+  getAppConfig,
+  getDefaultConfigHashes,
+  getIPFSFile,
+  getProposalTitles,
+  NETWORK_NAMES,
+} from '../utils';
 import Web3 from 'web3';
 import _ from 'lodash';
 import {
@@ -23,26 +30,6 @@ import { getContracts } from '../contracts';
 
 const Hash = require('ipfs-only-hash');
 const jsonSort = require('json-keys-sort');
-
-const defaultConfigHashes = require('../configs/default.json');
-
-const arbitrum = require('../configs/arbitrum/config.json');
-const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
-const mainnet = require('../configs/mainnet/config.json');
-const xdai = require('../configs/xdai/config.json');
-const rinkeby = require('../configs/rinkeby/config.json');
-const localhost = require('../configs/localhost/config.json');
-
-const proposalTitles = require('../configs/proposalTitles.json');
-
-const appConfig: AppConfig = {
-  arbitrum,
-  arbitrumTestnet,
-  mainnet,
-  xdai,
-  rinkeby,
-  localhost,
-};
 
 export default class UtilsService {
   context: RootContext;
@@ -75,7 +62,7 @@ export default class UtilsService {
     };
   }> {
     const updatedCacheConfig = {
-      proposalTitles: proposalTitles,
+      proposalTitles: getProposalTitles(),
       configHashes: {},
       configs: {},
       caches: {},
@@ -105,9 +92,9 @@ export default class UtilsService {
         );
         updatedCacheConfig.proposalTitles = Object.assign(
           updatedCacheConfig.proposalTitles,
-          await this.getProposalTitlesFromIPFS(
+          await this.updateProposalTitles(
             cacheForNetwork.cache,
-            proposalTitles
+            getProposalTitles()
           )
         );
       }
@@ -129,7 +116,7 @@ export default class UtilsService {
     const networkName = NETWORK_NAMES[chainId];
 
     // Get the network configuration
-    let networkConfig = appConfig[networkName];
+    let networkConfig = getAppConfig()[networkName];
     let networkCache: DaoNetworkCache;
 
     const emptyCache: DaoNetworkCache = {
@@ -161,10 +148,12 @@ export default class UtilsService {
         networkCache = emptyCache;
       } else {
         console.log(
-          `Getting config file from https://ipfs.io/ipfs/${defaultConfigHashes[networkName]}`
+          `Getting config file from https://ipfs.io/ipfs/${
+            getDefaultConfigHashes()[networkName]
+          }`
         );
         const networkConfigFileFetch = await getIPFSFile(
-          defaultConfigHashes[networkName],
+          getDefaultConfigHashes()[networkName],
           5000
         );
         console.log(
@@ -913,7 +902,7 @@ export default class UtilsService {
     return networkCache;
   }
 
-  async getProposalTitlesFromIPFS(
+  async updateProposalTitles(
     networkCache: DaoNetworkCache,
     proposalTitles: Record<string, string>
   ) {

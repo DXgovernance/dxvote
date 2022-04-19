@@ -6,6 +6,36 @@ import { sleep } from './helpers';
 const Web3 = require('web3');
 const web3 = new Web3();
 
+const arbitrum = require('../configs/arbitrum/config.json');
+const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
+const mainnet = require('../configs/mainnet/config.json');
+const xdai = require('../configs/xdai/config.json');
+const rinkeby = require('../configs/rinkeby/config.json');
+const localhost = require('../configs/localhost/config.json');
+
+const proposalTitles = require('../configs/proposalTitles.json');
+
+const defaultConfigHashes = require('../configs/default.json');
+
+export const getDefaultConfigHashes = (): Record<string, string> => {
+  return defaultConfigHashes;
+};
+
+export const getProposalTitles = (): Record<string, string> => {
+  return proposalTitles;
+};
+
+export const getAppConfig = (): AppConfig => {
+  return {
+    arbitrum,
+    arbitrumTestnet,
+    mainnet,
+    xdai,
+    rinkeby,
+    localhost,
+  };
+};
+
 export const getEvents = async function (
   web3,
   contract,
