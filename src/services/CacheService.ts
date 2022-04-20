@@ -22,6 +22,7 @@ import {
   getEvents,
   getRawEvents,
   executeMulticall,
+  sortNetworkCache,
   descriptionHashToIPFSHash,
   ipfsHashToDescriptionHash,
   getSchemeConfig,
@@ -274,23 +275,7 @@ export default class UtilsService {
 
     console.log('Total Proposals', Object.keys(networkCache.proposals).length);
 
-    // Sort cache data, so the IPFS hash is consistent
-    Object.keys(networkCache.schemes).forEach(schemeId => {
-      networkCache.schemes[schemeId].proposalIds.sort();
-      networkCache.schemes[schemeId].newProposalEvents.sort((a, b) =>
-        a.proposalId.localeCompare(b.proposalId)
-      );
-    });
-    networkCache.proposals = Object.keys(networkCache.proposals)
-      .sort()
-      .reduce((obj, key) => {
-        obj[key] = networkCache.proposals[key];
-        return obj;
-      }, {});
-    networkCache.ipfsHashes = _.uniqBy(networkCache.ipfsHashes, 'name');
-    networkCache.ipfsHashes.sort((a, b) => a.name.localeCompare(b.name));
-
-    return networkCache;
+    return sortNetworkCache(networkCache);
   }
 
   // Get all Mint and Burn reputation events to calculate rep by time off chain

@@ -36,6 +36,28 @@ export const getAppConfig = (): AppConfig => {
   };
 };
 
+// Sort cache data, so the IPFS hash is consistent
+export const sortNetworkCache = (
+  networkCache: DaoNetworkCache
+): DaoNetworkCache => {
+  Object.keys(networkCache.schemes).forEach(schemeId => {
+    networkCache.schemes[schemeId].proposalIds.sort();
+    networkCache.schemes[schemeId].newProposalEvents.sort((a, b) =>
+      a.proposalId.localeCompare(b.proposalId)
+    );
+  });
+  networkCache.proposals = Object.keys(networkCache.proposals)
+    .sort()
+    .reduce((obj, key) => {
+      obj[key] = networkCache.proposals[key];
+      return obj;
+    }, {});
+  networkCache.ipfsHashes = _.uniqBy(networkCache.ipfsHashes, 'name');
+  networkCache.ipfsHashes.sort((a, b) => a.name.localeCompare(b.name));
+
+  return networkCache;
+};
+
 export const getEvents = async function (
   web3,
   contract,
