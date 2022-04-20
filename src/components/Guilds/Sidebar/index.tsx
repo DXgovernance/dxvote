@@ -9,6 +9,7 @@ import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildCo
 import { useParams } from 'react-router-dom';
 import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
+import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
 
 const SidebarWrapper = styled(Box)`
   color: ${({ theme }) => theme.colors.text};
@@ -98,6 +99,7 @@ export const Sidebar = () => {
   const { account: userAddress } = useWeb3React();
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { data } = useGuildConfig(guildAddress);
+  const { data: numberOfMembers } = useGuildMemberTotal(guildAddress);
 
   const { data: votingPower } = useVotingPowerOf({
     contractAddress: guildAddress,
@@ -115,7 +117,7 @@ export const Sidebar = () => {
               {data?.name}
             </DaoTitle>
           </DaoBrand>
-          <DaoMemberCount>464 Members</DaoMemberCount>
+          <DaoMemberCount>{numberOfMembers?.toString()} Members</DaoMemberCount>
         </DaoInfo>
         {votingPower && !votingPower?.isZero() ? (
           <MemberActions />
