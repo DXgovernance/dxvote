@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from 'components/Guilds/common/Button';
-import { Input } from 'components/Guilds/common/Form';
+import Input from 'components/Guilds/common/Form/Input';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { Flex, Box } from 'components/Guilds/common/Layout';
 import { MdOutlinePeopleAlt } from 'react-icons/md';
@@ -16,6 +16,8 @@ import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddr
 import { Link } from 'react-router-dom';
 import { getChains } from 'provider/connectors';
 import { useWeb3React } from '@web3-react/core';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
+import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
 
 const configs = {
   arbitrum: require('configs/arbitrum/config.json'),
@@ -100,8 +102,18 @@ interface TitleProps {
   guildAddress: string;
 }
 const Title: React.FC<TitleProps> = ({ guildAddress }) => {
-  const guildName = useENSNameFromAddress(guildAddress)?.split('.')[0];
-  return <DaoTitle size={2}>{guildName ?? `???`}</DaoTitle>;
+  const ensName = useENSNameFromAddress(guildAddress)?.split('.')[0];
+  const { data } = useGuildConfig(guildAddress);
+  return <DaoTitle size={2}>{ensName ?? data?.name}</DaoTitle>;
+};
+const Proposals: React.FC<TitleProps> = ({ guildAddress }) => {
+  const { data: numberOfActiveProposals } = useActiveProposalsNow(guildAddress);
+  return (
+    <ProposalsInformation proposals={'active'}>
+      {numberOfActiveProposals?.toString() ?? ''}{' '}
+      {numberOfActiveProposals?.eq(1) ? 'Proposal' : 'Proposals'}
+    </ProposalsInformation>
+  );
 };
 
 const LandingPage: React.FC = () => {
@@ -117,6 +129,7 @@ const LandingPage: React.FC = () => {
     <>
       <InputContainer>
         <Input
+          value=""
           icon={<AiOutlineSearch size={24} />}
           placeholder="Search Guild"
         />
@@ -134,11 +147,8 @@ const LandingPage: React.FC = () => {
                 <GuildCardHeader>
                   <MemberWrapper>
                     <MdOutlinePeopleAlt size={24} />
-                    500
                   </MemberWrapper>
-                  <ProposalsInformation proposals={'active'}>
-                    4 Proposals
-                  </ProposalsInformation>
+                  <Proposals guildAddress={guildAddress} />
                 </GuildCardHeader>
                 <GuildCardContent>
                   <DaoIcon src={dxDaoIcon} />

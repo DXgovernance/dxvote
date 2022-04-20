@@ -7,7 +7,7 @@ import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
 import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
 import { IconButton } from '../../components/Guilds/common/Button';
-import { Input } from '../../components/Guilds/common/Form';
+import Input from '../../components/Guilds/common/Form/Input';
 import {
   ActionsBuilder,
   SidebarInfoCard,

@@ -17,12 +17,12 @@ import { formatUnits } from 'ethers/lib/utils';
 import { useERC20, useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import { useTransactions } from '../../../contexts/Guilds';
 import { useERC20Allowance } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Allowance';
-import NumericalInput from '../common/Form/NumericalInput';
 import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
-import useStringToBigNumber from '../../../hooks/Guilds/conversions/useStringToBigNumber';
 import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
 import useGuildImplementationType from '../../../hooks/Guilds/guild/useGuildImplementationType';
 import { Loading } from '../common/Loading';
+import TokenAmountInput from '../common/Form/TokenAmountInput';
+import { BigNumber } from 'ethers';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -104,7 +104,7 @@ const InfoOldValue = styled(InfoValue)`
   align-items: center;
 `;
 
-const StakeAmountInput = styled(NumericalInput)`
+const StakeAmountInput = styled(TokenAmountInput)`
   font-size: 20px;
   font-weight: 600;
   border: none;
@@ -120,7 +120,7 @@ const ActionButton = styled(Button)`
 `;
 
 export const StakeTokens = () => {
-  const [stakeAmount, setStakeAmount] = useState<string>('');
+  const [stakeAmount, setStakeAmount] = useState<BigNumber>(null);
   const { account: userAddress } = useWeb3React();
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const { data: guildConfig } = useGuildConfig(guildAddress);
@@ -146,16 +146,12 @@ export const StakeTokens = () => {
     userAddress,
   });
 
-  const stakeAmountParsed = useStringToBigNumber(
-    stakeAmount,
-    tokenInfo.decimals
-  );
   const isStakeAmountValid = useMemo(
     () =>
-      stakeAmountParsed?.gt(0) &&
+      stakeAmount?.gt(0) &&
       tokenInfo?.decimals &&
-      stakeAmountParsed.lte(tokenBalance),
-    [stakeAmountParsed, tokenBalance, tokenInfo]
+      stakeAmount.lte(tokenBalance),
+    [stakeAmount, tokenBalance, tokenInfo]
   );
 
   const { createTransaction } = useTransactions();
@@ -164,10 +160,10 @@ export const StakeTokens = () => {
     if (!isStakeAmountValid) return;
 
     createTransaction(
-      `Lock ${formatUnits(stakeAmountParsed, tokenInfo?.decimals)} ${
+      `Lock ${formatUnits(stakeAmount, tokenInfo?.decimals)} ${
         tokenInfo?.symbol
       } tokens`,
-      async () => guildContract.lockTokens(stakeAmountParsed)
+      async () => guildContract.lockTokens(stakeAmount)
     );
   };
 
@@ -176,7 +172,7 @@ export const StakeTokens = () => {
     if (!isStakeAmountValid) return;
 
     createTransaction(`Approve ${tokenInfo?.symbol} token spending`, async () =>
-      tokenContract.approve(guildConfig?.tokenVault, stakeAmountParsed)
+      tokenContract.approve(guildConfig?.tokenVault, stakeAmount)
     );
   };
 
@@ -186,8 +182,8 @@ export const StakeTokens = () => {
     3
   );
   const nextVotingPowerPercent = useVotingPowerPercent(
-    stakeAmountParsed?.add(userVotingPower),
-    stakeAmountParsed?.add(guildConfig?.totalLocked),
+    stakeAmount?.add(userVotingPower),
+    stakeAmount?.add(guildConfig?.totalLocked),
     3
   );
   const history = useHistory();
@@ -233,15 +229,10 @@ export const StakeTokens = () => {
           <InfoRow>
             <StakeAmountInput
               value={stakeAmount}
-              onUserInput={setStakeAmount}
+              onChange={setStakeAmount}
+              decimals={tokenInfo?.decimals}
             />
-            <Button
-              onClick={() =>
-                setStakeAmount(formatUnits(tokenBalance, tokenInfo?.decimals))
-              }
-            >
-              Max
-            </Button>
+            <Button onClick={() => setStakeAmount(tokenBalance)}>Max</Button>
           </InfoRow>
         </BalanceWidget>
       )}
@@ -306,7 +297,7 @@ export const StakeTokens = () => {
         </InfoRow>
       )}
       {!isRepGuild ? (
-        stakeAmountParsed && tokenAllowance?.gte(stakeAmountParsed) ? (
+        stakeAmount && tokenAllowance?.gte(stakeAmount) ? (
           <ActionButton disabled={!isStakeAmountValid} onClick={lockTokens}>
             Lock{' '}
             {tokenInfo?.symbol || (

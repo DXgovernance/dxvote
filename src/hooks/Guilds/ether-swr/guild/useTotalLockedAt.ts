@@ -25,6 +25,7 @@ const useTotalLockedAt: UseTotalLockedAtHook = ({
       : [],
     {
       ABIs: new Map([[contractAddress, SnapshotERC20Guild.abi]]),
+      refreshInterval: 0,
     }
   );
 };
