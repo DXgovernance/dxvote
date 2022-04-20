@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Input } from 'components/Guilds/common/Form/Input';
 import Avatar from 'components/Guilds/Avatar';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ActionEditorProps } from '..';
 import { ethers } from 'ethers';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
@@ -84,7 +84,7 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
     }
   };
   return (
-    <div>
+    <React.Fragment>
       <Control>
         <ControlLabel>
           Recipient
@@ -128,7 +128,7 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
           </ControlRow>
         </Control>
       </ControlRow>
-    </div>
+    </React.Fragment>
   );
 };
 
