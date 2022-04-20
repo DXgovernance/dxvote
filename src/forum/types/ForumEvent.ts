@@ -13,4 +13,3 @@ export type ForumEvent = Partial<ForumEventInput> & {
   created_at: string;
   updated_at: string;
 };
-

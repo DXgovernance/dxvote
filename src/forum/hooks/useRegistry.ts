@@ -46,4 +46,3 @@ export function useRegistry(query: Query) {
     return items;
   }, [registry]);
 }
-

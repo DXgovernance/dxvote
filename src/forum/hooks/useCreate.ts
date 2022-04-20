@@ -1,21 +1,18 @@
 import { useForum } from 'forum/ForumProvider';
 import { ForumEvent } from 'forum/types/ForumEvent';
-import { setIdentity } from 'forum/utils/setIdentity';
 
 import useAsyncFn from './useAsync';
 import { useConnect } from './useConnect';
 
 export function useCreate() {
   const { connection } = useConnect();
-  const { orbitdb, registry } = useForum();
+  const { registry } = useForum();
 
   return useAsyncFn(
     async props => {
       if (connection.status === 'connected') {
         const selfID = connection.selfID;
 
-        // Link OrbitDB and Ceramic identities
-        await setIdentity({ orbitdb, registry }, selfID.client);
         const now = getNow();
         const entity = {
           author: selfID.id,

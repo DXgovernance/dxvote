@@ -111,7 +111,6 @@
     "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
-    "@ceramicnetwork/3id-did-resolver": "^1.4.16",
     "@datamodels/identity-profile-basic": "^0.1.2",
     "@glazed/devtools": "^0.1.6",
     "@testing-library/cypress": "^8.0.2",
@@ -146,3 +145,4 @@
     "electron": "^17.1.2"
   }
 }
+
