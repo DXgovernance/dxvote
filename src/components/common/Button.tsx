@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
 
 export const Button = styled.button`
   background-color: ${({ theme }) => theme.activeButtonBackground};
