@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { Input } from 'components/Guilds/common/Form/Input';
 import Avatar from 'components/Guilds/Avatar';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { ActionEditorProps } from '..';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { Box } from 'components/Guilds/common/Layout';
 import { shortenAddress, MAINNET_ID } from 'utils';
@@ -12,10 +12,9 @@ import { ReactComponent as Info } from '../../../../../assets/images/info.svg';
 import StyledIcon from 'components/Guilds/common/SVG';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import { useState } from 'react';
-import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
-import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
-import { useParams } from 'react-router-dom';
 import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
+import { useTotalSupply } from 'hooks/Guilds/guild/useTotalSupply';
+import { useTokenData } from 'hooks/Guilds/guild/useTokenData';
 
 const Control = styled(Box)`
   display: flex;
@@ -50,28 +49,14 @@ const RepMintInput = styled(NumericalInput)`
   }
 `;
 
-interface REPMintState {
-  toAddress: string;
-  amount: BigNumber;
-}
-
 const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   // parse transfer state from calls
   const [repPercent, setRepPercent] = useState(0);
   const [repAmount, setRepAmount] = useState(0);
-  const { guild_id: guildId } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
-  const { data } = useGuildConfig(guildId);
-  const { data: tokenData } = useERC20Info(data?.token);
-  const totalSupply = useBigNumberToNumber(tokenData?.totalSupply, 18);
+  const { parsedData } = useTotalSupply({ decodedCall });
+  const { tokenData } = useTokenData();
 
-  const parsedData = useMemo<REPMintState>(() => {
-    if (!decodedCall) return null;
-    return {
-      toAddress: decodedCall.args.to,
-      amount: decodedCall.args.amount,
-    };
-  }, [decodedCall]);
+  const totalSupply = useBigNumberToNumber(tokenData?.totalSupply, 18);
 
   const { imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
 
