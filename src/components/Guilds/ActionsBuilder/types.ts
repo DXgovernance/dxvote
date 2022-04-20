@@ -3,6 +3,7 @@ import { utils } from 'ethers';
 
 export enum SupportedAction {
   ERC20_TRANSFER = 'ERC20_TRANSFER',
+  REP_MINT = 'REP_MINT',
   GENERIC_CALL = 'GENERIC_CALL',
 }
 
