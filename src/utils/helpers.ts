@@ -87,3 +87,20 @@ export const appendEthAPIKey = (
 export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
+
+export async function retryPromise(
+  promise: Promise<any>,
+  timeToWait: number = 0
+): Promise<any> {
+  let toReturn;
+  while (!toReturn) {
+    try {
+      toReturn = await promise;
+      if (!toReturn) await sleep(timeToWait);
+    } catch (error) {
+      console.warn(error);
+      await sleep(timeToWait);
+    }
+  }
+  return toReturn;
+}

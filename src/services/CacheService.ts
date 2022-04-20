@@ -6,6 +6,7 @@ import {
   getIPFSFile,
   getProposalTitles,
   NETWORK_NAMES,
+  retryPromise,
 } from '../utils';
 import Web3 from 'web3';
 import _ from 'lodash';
@@ -159,9 +160,8 @@ export default class UtilsService {
         console.log(
           `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
         );
-        const networkCacheFetch = await getIPFSFile(
-          networkConfigFileFetch.data.cache.ipfsHash,
-          60000
+        const networkCacheFetch = await retryPromise(
+          getIPFSFile(networkConfigFileFetch.data.cache.ipfsHash, 60000)
         );
         networkCache = networkCacheFetch.data;
       }
