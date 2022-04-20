@@ -69,6 +69,7 @@ export default class UtilsService {
       configs: {},
       caches: {},
     };
+
     // Update the cache and config for each network
     for (let i = 0; i < Object.keys(networksConfig).length; i++) {
       const networkId = Number(Object.keys(networksConfig)[i]);
@@ -139,9 +140,12 @@ export default class UtilsService {
     };
 
     // Set network cache and config objects
+
+    // If network is localhost we use an empty cache to force the complete cache generation in each load
     if (networkName === 'localhost') {
       networkCache = emptyCache;
     } else {
+      // If the cache is not reset, we load the cache from the local storage
       if (resetCache) {
         networkConfig.cache.toBlock = networkConfig.cache.fromBlock;
         networkConfig.cache.ipfsHash = '';
@@ -149,6 +153,10 @@ export default class UtilsService {
         emptyCache.blockNumber = networkConfig.cache.fromBlock;
         networkCache = emptyCache;
       } else {
+        this.context.notificationStore.setGlobalLoading(
+          true,
+          `Getting configuration file from IPFS`
+        );
         console.log(
           `Getting config file from https://ipfs.io/ipfs/${
             getDefaultConfigHashes()[networkName]
@@ -157,6 +165,10 @@ export default class UtilsService {
         const networkConfigFileFetch = await getIPFSFile(
           getDefaultConfigHashes()[networkName],
           5000
+        );
+        this.context.notificationStore.setGlobalLoading(
+          true,
+          `Getting cache file from IPFS`
         );
         console.log(
           `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
@@ -168,7 +180,7 @@ export default class UtilsService {
       }
     }
 
-    // Set block range for the script to run, if cache to block is set that value is used, if not we use last block
+    // Update the cache only if the toBlock is higher than the current networkCache block
     if (Number(networkCache.blockNumber) + 1 < toBlock) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug(
@@ -187,13 +199,15 @@ export default class UtilsService {
       );
     }
 
-    // Write network cache file
+    // Sort json obj and parse it to string
     networkCache = await jsonSort.sortAsync(networkCache, true);
     const networkCacheString = JSON.stringify(networkCache, null, 2);
 
-    // Update appConfig file with the latest network config
+    // Update appConfig obj with the latest network config and networkCache hash
     networkConfig.cache.toBlock = toBlock;
     networkConfig.cache.ipfsHash = await Hash.of(networkCacheString);
+
+    // Sort config obj and parse it to string
     networkConfig = await jsonSort.sortAsync(networkConfig, true);
 
     return {
@@ -209,15 +223,22 @@ export default class UtilsService {
     toBlock: number,
     web3: Web3
   ): Promise<DaoNetworkCache> {
-    const notificationStore = this.context.notificationStore;
     const fromBlock = networkCache.blockNumber + 1;
-    console.debug(`[CACHE UPDATE] from ${fromBlock} to ${toBlock}`);
     const networkWeb3Contracts = await getContracts(networkContracts, web3);
 
-    notificationStore.setGlobalLoading(
+    console.debug(`[CACHE UPDATE] from ${fromBlock} to ${toBlock}`);
+
+    this.context.notificationStore.setGlobalLoading(
       true,
       `Collecting reputation and governance events in blocks ${fromBlock} - ${toBlock}`
     );
+
+    // The first promise round:
+    // - Reputation Events
+    // - Voting Machine Events
+    // - Permission Registry
+    // - Vesting Contracts
+    // - Update schemes
 
     networkCache = await batchPromisesOntarget(
       [
@@ -233,18 +254,6 @@ export default class UtilsService {
           toBlock,
           web3
         ),
-        this.updateSchemes(networkCache, networkContracts, toBlock, web3),
-      ],
-      networkCache
-    );
-
-    notificationStore.setGlobalLoading(
-      true,
-      `Updating scheme data in blocks ${fromBlock} - ${toBlock}`
-    );
-
-    networkCache = await batchPromisesOntarget(
-      [
         this.updatePermissionRegistry(
           networkCache,
           networkContracts,
@@ -257,15 +266,17 @@ export default class UtilsService {
           toBlock,
           web3
         ),
+        this.updateSchemes(networkCache, networkContracts, toBlock, web3),
       ],
       networkCache
     );
 
-    notificationStore.setGlobalLoading(
+    this.context.notificationStore.setGlobalLoading(
       true,
       `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
     );
 
+    // The second promise round is just to update the proposals that needs the schemes udpated.
     networkCache = await batchPromisesOntarget(
       [this.updateProposals(networkCache, networkContracts, toBlock, web3)],
       networkCache
@@ -278,7 +289,7 @@ export default class UtilsService {
     return sortNetworkCache(networkCache);
   }
 
-  // Get all Mint and Burn reputation events to calculate rep by time off chain
+  // Get all Mint and Burn reputation events
   async updateReputationEvents(
     networkCache: DaoNetworkCache,
     reputation: any,
@@ -750,6 +761,7 @@ export default class UtilsService {
       'allEvents'
     );
 
+    // Process all the schemes that changed their registered state based on the events
     await batchPromisesOntarget(
       controllerEvents
         .filter(controllerEvent => {
@@ -761,12 +773,12 @@ export default class UtilsService {
           );
         })
         .map(controllerEvent => {
-          console.log(controllerEvent);
           return this.processScheme(
             controllerEvent.returnValues._scheme,
             networkCache,
             networkContracts,
             web3,
+            toBlock,
             controllerEvent.event === 'UnregisterScheme'
           );
         }),
@@ -774,6 +786,7 @@ export default class UtilsService {
       5
     );
 
+    // Process all the registered schemes
     await batchPromisesOntarget(
       Object.keys(networkCache.schemes)
         .filter(schemeAddress => {
@@ -784,7 +797,8 @@ export default class UtilsService {
             schemeAddress,
             networkCache,
             networkContracts,
-            web3
+            web3,
+            toBlock
           );
         }),
       networkCache,
@@ -794,71 +808,33 @@ export default class UtilsService {
     return networkCache;
   }
 
-  // Update all the proposals information
+  // Update the proposals information
   async updateProposals(
     networkCache: DaoNetworkCache,
     networkContracts: NetworkContracts,
     toBlock: number,
     web3: Web3
   ): Promise<DaoNetworkCache> {
-    const networkWeb3Contracts = await getContracts(networkContracts, web3);
-    const avatarAddress = networkWeb3Contracts.avatar._address;
-    const avatarAddressEncoded = web3.eth.abi.encodeParameter(
-      'address',
-      avatarAddress
-    );
     const fromBlock = networkCache.blockNumber + 1;
-
-    // Get new proposals
-    // TO DO: Get only proposals from registered schemes, change registered to block number of unregisterScheme
-    await Promise.all(
-      Object.keys(networkCache.schemes).map(async schemeAddress => {
-        const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
-        let schemeEvents = [];
-        for (let i = 0; i < schemeTypeData.newProposalTopics.length; i++) {
-          schemeEvents = schemeEvents.concat(
-            await getRawEvents(
-              web3,
-              schemeAddress,
-              fromBlock,
-              toBlock,
-              schemeTypeData.newProposalTopics[i]
-            )
-          );
-        }
-
-        await batchPromisesOntarget(
-          schemeEvents.map(schemeEvent => {
-            const proposalId: string =
-              schemeEvent.topics[1] === avatarAddressEncoded
-                ? schemeEvent.topics[2]
-                : schemeEvent.topics[1];
-
-            return this.processProposal(
-              proposalId,
-              networkCache,
-              networkContracts,
-              web3,
-              fromBlock,
-              toBlock,
-              schemeEvent
-            );
-          }),
-          networkCache,
-          50
-        );
-      })
-    );
 
     // Update existent active proposals
     await batchPromisesOntarget(
       Object.keys(networkCache.proposals)
         .filter(proposalId => {
           return (
-            networkCache.proposals[proposalId].stateInVotingMachine >
+            // Only update proposals for registered schemes
+            networkCache.schemes[networkCache.proposals[proposalId].scheme]
+              .registered &&
+            // This condition check that the proposal already existed in the current block range.
+            // If not, it means that the proposal was created in the current block range when processing the scheme,
+            // So there is no need to process it again.
+            networkCache.proposals[proposalId].creationEvent.blockNumber <
+              fromBlock &&
+            // This condition check that the proposal is active
+            (networkCache.proposals[proposalId].stateInVotingMachine >
               VotingMachineProposalState.Executed ||
-            networkCache.proposals[proposalId].stateInScheme ===
-              WalletSchemeProposalState.Submitted
+              networkCache.proposals[proposalId].stateInScheme ===
+                WalletSchemeProposalState.Submitted)
           );
         })
         .map(proposalId => {
@@ -960,12 +936,16 @@ export default class UtilsService {
     return proposalTitles;
   }
 
-  // Update all the schemes information
+  // Process a scheme in the networkCache
+  // If the scheme does not exist in the cache it gets the immutable + mutable data
+  // The scheme already exists it gets the mutable data only
+  // At the end it process all the new proposals added in the scheme to the toBlock
   async processScheme(
     schemeAddress: string,
     networkCache: DaoNetworkCache,
     networkContracts: NetworkContracts,
     web3: Web3,
+    toBlock: number,
     removeScheme: boolean = false
   ): Promise<DaoNetworkCache> {
     const networkWeb3Contracts = await getContracts(networkContracts, web3);
@@ -1196,9 +1176,53 @@ export default class UtilsService {
       networkCache.schemes[schemeAddress].registered = !removeScheme;
     }
 
+    // Get the new proposals submitted in the scheme and process it
+    const avatarAddressEncoded = web3.eth.abi.encodeParameter(
+      'address',
+      networkCache.address
+    );
+    const fromBlock = networkCache.blockNumber + 1;
+
+    let schemeEvents = [];
+    for (let i = 0; i < schemeTypeData.newProposalTopics.length; i++) {
+      schemeEvents = schemeEvents.concat(
+        await getRawEvents(
+          web3,
+          schemeAddress,
+          fromBlock,
+          toBlock,
+          schemeTypeData.newProposalTopics[i]
+        )
+      );
+    }
+
+    await batchPromisesOntarget(
+      schemeEvents.map(schemeEvent => {
+        const proposalId: string =
+          schemeEvent.topics[1] === avatarAddressEncoded
+            ? schemeEvent.topics[2]
+            : schemeEvent.topics[1];
+
+        return this.processProposal(
+          proposalId,
+          networkCache,
+          networkContracts,
+          web3,
+          fromBlock,
+          toBlock,
+          schemeEvent
+        );
+      }),
+      networkCache,
+      50
+    );
+
     return networkCache;
   }
 
+  // Process a proposal in the networkCache
+  // If the proposal does not exist in the cache it gets the immutable + mutable data
+  // The proposal already exists it gets the mutable data only
   async processProposal(
     proposalId: string,
     networkCache: DaoNetworkCache,
