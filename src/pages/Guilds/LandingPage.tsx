@@ -113,11 +113,6 @@ const LandingPage: React.FC = () => {
     configs[chainName].contracts.utils.guildRegistry
   );
 
-  /*TODO:
-    1. Members should be dynamic
-    2. Amount of proposals should be dynamic
-    3. Logo should be dynamic
-    */
   return (
     <>
       <InputContainer>

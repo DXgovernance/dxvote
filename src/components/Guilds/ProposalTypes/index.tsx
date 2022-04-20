@@ -5,14 +5,13 @@ import { FiArrowLeft, FiX } from 'react-icons/fi';
 import { Button } from '../common/Button';
 import { Flex } from '../common/Layout';
 import { ContainerText } from '../common/Layout/Text';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import { Heading } from '../common/Typography';
 import StyledIcon from '../common/SVG';
 import { isMobile } from 'react-device-detect';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import { Loading } from '../common/Loading';
-import { RouterButton } from 'components/common/Button';
 
 const Backdrop = styled(Flex)``;
 const CloseIcon = styled(FiX)`
@@ -167,6 +166,8 @@ interface ProposalTypesProps {
   data: ProposalTypeDescriptionProps[];
 }
 const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
+  const { guild_id: guildId, chain_name: chain } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
   const history = useHistory();
   const location = useLocation();
   const { isLoading: isGuildAvailabilityLoading } = useContext(
@@ -187,15 +188,21 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
       <Wrapper>
         {!isMobile && (
           <Header>
-            <RouterButton variant="secondary" to={'../'}>
+            <Button
+              variant="secondary"
+              onClick={() => history.push(`/${chain}/${guildId}`)}
+            >
               <StyledIcon margin="0 10px 0 0" src={AiOutlineArrowLeft} />
               Back to overview
-            </RouterButton>
+            </Button>
           </Header>
         )}
         {isMobile && (
           <>
-            <Header variant="secondary" onClick={() => history.push('../')}>
+            <Header
+              variant="secondary"
+              onClick={() => history.push(`/${chain}/${guildId}`)}
+            >
               <HeaderWrap>
                 <StyledIcon src={FiArrowLeft} />
                 Back to overview

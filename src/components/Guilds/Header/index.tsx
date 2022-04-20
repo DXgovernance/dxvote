@@ -47,7 +47,7 @@ const Header = () => {
   return (
     <HeaderWrapper as="header">
       <HeaderContainer>
-        <ClickableHeading onClick={() => history.push('../')} size={2}>
+        <ClickableHeading onClick={() => history.push('/')} size={2}>
           <strong>Guilds</strong>
         </ClickableHeading>
         {active && !error && (
