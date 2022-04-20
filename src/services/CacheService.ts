@@ -307,7 +307,7 @@ export default class UtilsService {
       'allEvents'
     );
 
-    reputationEvents.map(reputationEvent => {
+    reputationEvents.forEach(reputationEvent => {
       switch (reputationEvent.event) {
         case 'Mint':
           networkCache.reputation.events.push({
@@ -412,7 +412,7 @@ export default class UtilsService {
     const avatarAddress = web3.utils.toChecksumAddress(networkContracts.avatar);
     const votingMachineEventsInCache =
       networkCache.votingMachines[votingMachine._address].events;
-    newVotingMachineEvents.map(votingMachineEvent => {
+    newVotingMachineEvents.forEach(votingMachineEvent => {
       const proposalCreated =
         votingMachineEventsInCache.newProposal.findIndex(
           newProposalEvent =>
@@ -607,7 +607,7 @@ export default class UtilsService {
         'allEvents'
       );
 
-      permissionRegistryEvents.map(permissionRegistryEvent => {
+      permissionRegistryEvents.forEach(permissionRegistryEvent => {
         const eventValues = permissionRegistryEvent.returnValues;
 
         if (!networkCache.callPermissions[eventValues.asset])
@@ -1352,8 +1352,6 @@ export default class UtilsService {
       callsToExecute
     );
 
-    const positiveVotes = callsResponse.decodedReturnData[1][0];
-    const negativeVotes = callsResponse.decodedReturnData[2][0];
     const proposalTimes = callsResponse.decodedReturnData[4];
 
     let schemeProposalInfo = {
@@ -1406,29 +1404,33 @@ export default class UtilsService {
 
         if (
           votingMachineExecutionEvent.length > 0 &&
-          votingMachineExecutionEvent[0].data ===
+          votingMachineExecutionEvent[0].data !==
             '0x0000000000000000000000000000000000000000000000000000000000000001'
         )
-          schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
-        else if (votingMachineExecutionEvent.length > 0) {
           schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
-        }
 
-        const executionEvent = await getRawEvents(
-          web3,
-          schemeAddress,
-          fromBlock,
-          toBlock,
-          [
-            '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
-            avatarAddressEncoded,
-            proposalId,
-          ],
-          10000000
-        );
-        if (executionEvent.length > 0) {
-          schemeProposalInfo.state =
-            WalletSchemeProposalState.ExecutionSucceded;
+        if (
+          callsResponse.decodedReturnData[0].state ===
+            VotingMachineProposalState.Executed &&
+          schemeProposalInfo.state === WalletSchemeProposalState.Submitted
+        ) {
+          // event ProposalDeleted(address indexed _avatar, bytes32 indexed _proposalId)
+          const executionEvent = await getRawEvents(
+            web3,
+            schemeAddress,
+            fromBlock,
+            toBlock,
+            [
+              '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
+              avatarAddressEncoded,
+              proposalId,
+            ],
+            10000000
+          );
+          if (executionEvent.length > 0) {
+            schemeProposalInfo.state =
+              WalletSchemeProposalState.ExecutionSucceded;
+          }
         }
 
         // If any of the values of the redeemPeriods of the contribution reward is higher than zero it means that it executed the reward
@@ -1460,8 +1462,9 @@ export default class UtilsService {
           creationEvent.transactionHash
         );
         try {
-          schemeTypeData.newProposalTopics.map((newProposalTopic, i) => {
-            transactionReceipt.logs.map(log => {
+          // Decode the creation event data to get the num of choices, paramsHash and proposer
+          schemeTypeData.newProposalTopics.forEach((newProposalTopic, i) => {
+            transactionReceipt.logs.forEach(log => {
               if (
                 log.topics[0] ===
                 '0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c'
@@ -1572,7 +1575,7 @@ export default class UtilsService {
           schemeProposalInfo.value.push(0);
 
           // Remove the negative sign in the number
-          if (creationLogDecoded._reputationChange[0] == '-')
+          if (creationLogDecoded._reputationChange[0] === '-')
             creationLogDecoded._reputationChange =
               creationLogDecoded._reputationChange.substring(1);
 
@@ -1810,8 +1813,8 @@ export default class UtilsService {
         daoRedeemItsWinnings:
           callsResponse.decodedReturnData[0].daoRedeemItsWinnings,
         shouldBoost: callsResponse.decodedReturnData[5][0],
-        positiveVotes: bnum(positiveVotes),
-        negativeVotes: bnum(negativeVotes),
+        positiveVotes: bnum(callsResponse.decodedReturnData[1][0]),
+        negativeVotes: bnum(callsResponse.decodedReturnData[2][0]),
         positiveStakes: bnum(callsResponse.decodedReturnData[3][2]),
         negativeStakes: bnum(callsResponse.decodedReturnData[3][3]),
       };
@@ -1869,8 +1872,12 @@ export default class UtilsService {
         callsResponse.decodedReturnData[0].daoRedeemItsWinnings;
       networkCache.proposals[proposalId].shouldBoost =
         callsResponse.decodedReturnData[5][0];
-      networkCache.proposals[proposalId].positiveVotes = bnum(positiveVotes);
-      networkCache.proposals[proposalId].negativeVotes = bnum(negativeVotes);
+      networkCache.proposals[proposalId].positiveVotes = bnum(
+        callsResponse.decodedReturnData[1][0]
+      );
+      networkCache.proposals[proposalId].negativeVotes = bnum(
+        callsResponse.decodedReturnData[2][0]
+      );
       networkCache.proposals[proposalId].positiveStakes = bnum(
         callsResponse.decodedReturnData[3][2]
       );
