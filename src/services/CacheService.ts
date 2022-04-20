@@ -1245,6 +1245,7 @@ export default class UtilsService {
       avatarAddress
     );
 
+    // These first calls target mainly the voting machine where most of the proposal information is mutable
     let callsToExecute: any[] = [
       [
         networkCache.schemes[schemeAddress].votingMachine,
@@ -1303,6 +1304,7 @@ export default class UtilsService {
       ],
     ];
 
+    // The next calls added target ContributionReward and WalletScheme  to get immutable and mutable data
     if (schemeTypeData.type === 'ContributionReward') {
       callsToExecute.push([
         schemeAddress,
@@ -1380,12 +1382,12 @@ export default class UtilsService {
     } else if (isWalletScheme(schemeOfProposal)) {
       schemeProposalInfo.state = callsResponse.decodedReturnData[6].state;
     } else {
+      // Here we get the events triggered in the GenericMulticall to get their final state
+      // When the proposal is executed by the voting machine we get if the proposal was rejected
+      // If the proposal was executed by teh voting machine and not rejected we get the ProposalEnded
+      // to know if it was executed by the WalletScheme
       if (schemeOfProposal.type === 'GenericMulticall') {
-        // event ProposalExecutedByVotingMachine(
-        //     address indexed _avatar,
-        //     bytes32 indexed _proposalId,
-        //     int256 _param
-        // );
+        // event ProposalExecutedByVotingMachine(address indexed _avatar,bytes32 indexed _proposalId,int256 _param)
         const votingMachineExecutionEvent =
           schemeProposalInfo.state === WalletSchemeProposalState.Submitted
             ? await getRawEvents(
@@ -1428,6 +1430,8 @@ export default class UtilsService {
           schemeProposalInfo.state =
             WalletSchemeProposalState.ExecutionSucceded;
         }
+
+        // If any of the values of the redeemPeriods of the contribution reward is higher than zero it means that it executed the reward
       } else if (schemeOfProposal.type === 'ContributionReward') {
         if (
           callsResponse.decodedReturnData[6][0] > 0 ||
@@ -1449,6 +1453,7 @@ export default class UtilsService {
     }
 
     // If the proposal is processed with a creation event it means that it has to be added to the cache
+    // We will get the immutable data stored on the contracts by decoding the creation event logs
     if (newProposal) {
       if (creationEvent && !isWalletScheme(schemeOfProposal)) {
         const transactionReceipt = await web3.eth.getTransactionReceipt(
@@ -1498,6 +1503,8 @@ export default class UtilsService {
         }
       }
 
+      // Try to decode as much as we can from the creation event, decoding creation logs.
+      // Depending the type of the scheme we have to decode different data and parse it to decoded calls
       if (schemeTypeData.type === 'SchemeRegistrar') {
         schemeProposalInfo.to = [schemeTypeData.contractToCall];
         schemeProposalInfo.value = [0];
@@ -1713,7 +1720,7 @@ export default class UtilsService {
         }
       }
 
-      // Register the new voting parameters in the voting machine params
+      // Register the new voting parameters in the voting machine params if they dont exist in the cache
       if (
         !networkCache.votingMachines[
           networkCache.schemes[schemeAddress].votingMachine
@@ -1829,6 +1836,8 @@ export default class UtilsService {
           name: proposalId,
         });
       }
+
+      // Is the proposal is not new we only assign the values that are mutable
     } else {
       networkCache.proposals[proposalId].stateInScheme = Number(
         schemeProposalInfo.state
@@ -1869,6 +1878,7 @@ export default class UtilsService {
         callsResponse.decodedReturnData[3][3]
       );
     }
+
     return networkCache;
   }
 }
