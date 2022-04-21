@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Input } from '../common/Form';
+import Input from '../common/Form/Input';
 import { useState } from 'react';
 import { ActionsButton, FormElement, FormLabel, Wrapper } from './styles';
 import { RegistryContractFunction } from 'hooks/Guilds/contracts/useContractRegistry';

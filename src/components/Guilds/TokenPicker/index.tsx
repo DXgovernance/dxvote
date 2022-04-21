@@ -1,6 +1,6 @@
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components';
-import { Input } from '../common/Form';
+import Input from '../common/Form/Input';
 import { Modal } from '../common/Modal';
 import { useWeb3React } from '@web3-react/core';
 import Avatar from '../Avatar';
