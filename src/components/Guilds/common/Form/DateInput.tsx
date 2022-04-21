@@ -87,7 +87,7 @@ export enum InputType {
   DATETIME,
 }
 
-interface DateInputProps extends InputProps<Moment> {
+export interface DateInputProps extends InputProps<Moment> {
   isUTC?: boolean;
   inputType?: InputType;
   isValidDate?: (date: Moment) => boolean;
@@ -99,6 +99,7 @@ const DateInput: React.FC<DateInputProps> = ({
   inputType = InputType.DATE,
   isUTC = false,
   isValidDate = () => true,
+  ...rest
 }) => {
   const { dateFormat, timeFormat } = useMemo(() => {
     if (inputType === InputType.DATETIME) {
@@ -128,7 +129,7 @@ const DateInput: React.FC<DateInputProps> = ({
       isValidDate={isValidDate}
       utc={isUTC}
       renderInput={(props, openCalendar) => (
-        <Input onClick={openCalendar} {...props} />
+        <Input onClick={openCalendar} readOnly {...props} {...rest} />
       )}
     />
   );

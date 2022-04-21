@@ -14,7 +14,11 @@ const StyledSwitch = styled(Switch)`
   }
 `;
 
-const Toggle: React.FC<FormElementProps<boolean>> = ({ value, onChange }) => {
+const Toggle: React.FC<FormElementProps<boolean>> = ({
+  value,
+  onChange,
+  ...rest
+}) => {
   const theme = useTheme();
 
   return (
@@ -30,6 +34,7 @@ const Toggle: React.FC<FormElementProps<boolean>> = ({ value, onChange }) => {
       onColor={theme.colors.muted}
       handleDiameter={24}
       activeBoxShadow={`0 0 2px 3px ${theme.colors.muted}`}
+      {...rest}
     />
   );
 };
