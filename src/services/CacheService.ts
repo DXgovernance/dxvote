@@ -981,7 +981,6 @@ export default class UtilsService {
     ];
 
     if (isWalletScheme) {
-      console.log('Processing Wallet Scheme');
       callsToExecute.push([
         schemeAddress,
         'maxSecondsForExecution()',
@@ -1217,6 +1216,8 @@ export default class UtilsService {
           schemeEvent.topics[1] === avatarAddressEncoded
             ? schemeEvent.topics[2]
             : schemeEvent.topics[1];
+
+        schemeEvent.tx = schemeEvent.transactionHash;
 
         return this.processProposal(
           proposalId,
