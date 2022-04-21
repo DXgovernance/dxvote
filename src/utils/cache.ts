@@ -328,20 +328,16 @@ export async function batchPromisesOntarget(
   promises,
   targetObject,
   maxPromisesPerTry = 0,
-  maxErrorsTry = 5
+  maxTries = 10
 ) {
   let promisesBatch = maxPromisesPerTry === 0 ? [promises] : [];
   let promisesBatchIndex = 0;
-  let errorsTry = 0;
 
   if (maxPromisesPerTry > 0)
     for (var i = 0; i < promises.length; i += maxPromisesPerTry)
       promisesBatch.push(promises.slice(i, i + maxPromisesPerTry));
 
-  while (
-    promisesBatchIndex < promisesBatch.length &&
-    errorsTry < maxErrorsTry
-  ) {
+  while (promisesBatchIndex < promisesBatch.length && maxTries > 0) {
     try {
       (await Promise.all(promisesBatch[promisesBatchIndex])).map(
         targetObjectUpdated => {
@@ -351,10 +347,11 @@ export async function batchPromisesOntarget(
       promisesBatchIndex++;
     } catch (e) {
       console.error(e);
-      errorsTry++;
+      maxTries--;
     } finally {
-      if (errorsTry >= maxErrorsTry)
+      if (maxTries === 0)
         console.error('[BATCH PROMISES] (max errors reached)');
+      else maxTries = 0;
     }
   }
   return targetObject;

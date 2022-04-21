@@ -91,7 +91,7 @@ export function escapeRegExp(string: string): string {
 export async function retryPromise(
   promise: Promise<any>,
   timeToWait: number = 0,
-  maxTries: number = 5
+  maxTries: number = 10
 ): Promise<any> {
   let toReturn;
   while (!toReturn && maxTries > 0) {
@@ -105,6 +105,9 @@ export async function retryPromise(
       console.warn(error);
       await sleep(timeToWait);
       maxTries--;
+    } finally {
+      if (maxTries === 0) console.error('[RETRY PROMISE] (max errors reached)');
+      else maxTries = 0;
     }
   }
   return toReturn;
