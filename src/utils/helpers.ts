@@ -90,16 +90,21 @@ export function escapeRegExp(string: string): string {
 
 export async function retryPromise(
   promise: Promise<any>,
-  timeToWait: number = 0
+  timeToWait: number = 0,
+  maxTries: number = 5
 ): Promise<any> {
   let toReturn;
-  while (!toReturn) {
+  while (!toReturn && maxTries > 0) {
     try {
       toReturn = await promise;
-      if (!toReturn) await sleep(timeToWait);
+      if (!toReturn) {
+        await sleep(timeToWait);
+        maxTries--;
+      }
     } catch (error) {
       console.warn(error);
       await sleep(timeToWait);
+      maxTries--;
     }
   }
   return toReturn;
