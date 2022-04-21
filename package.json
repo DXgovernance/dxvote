@@ -90,6 +90,7 @@
     "react-device-detect": "^2.1.2",
     "react-dom": "^16.10.2",
     "react-google-charts": "^3.0.15",
+    "react-hook-form": "^7.29.0",
     "react-i18next": "^11.16.7",
     "react-icons": "^4.3.1",
     "react-intersection-observer": "^8.33.1",

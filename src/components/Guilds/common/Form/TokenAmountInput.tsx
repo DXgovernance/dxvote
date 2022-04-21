@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { InputProps } from './Input';
 import NumericalInput from './NumericalInput';
 
-interface TokenAmountInputProps extends InputProps<BigNumber> {
+export interface TokenAmountInputProps extends InputProps<BigNumber> {
   decimals?: number;
 }
 
