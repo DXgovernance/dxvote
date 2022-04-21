@@ -980,16 +980,8 @@ export default class UtilsService {
       ],
     ];
 
-    if (isNewScheme && isWalletScheme) {
-      schemeType = (
-        await executeMulticall(networkWeb3Contracts.multicall, [
-          [schemeAddress, 'SCHEME_TYPE()', [], ['string']],
-        ])
-      ).decodedReturnData[0][0];
-      if (schemeType === 'Wallet Scheme v1') schemeType = 'Wallet Scheme v1.0';
-
-      callsToExecute.push([schemeAddress, 'votingMachine()', [], ['address']]);
-      callsToExecute.push([schemeAddress, 'schemeName()', [], ['string']]);
+    if (isWalletScheme) {
+      console.log('Processing Wallet Scheme');
       callsToExecute.push([
         schemeAddress,
         'maxSecondsForExecution()',
@@ -1003,23 +995,41 @@ export default class UtilsService {
         ['uint256'],
       ]);
 
-      switch (schemeType) {
-        case 'Wallet Scheme v1.0':
-          callsToExecute.push([
-            schemeAddress,
-            'controllerAddress()',
-            [],
-            ['address'],
-          ]);
-          break;
-        default:
-          callsToExecute.push([
-            schemeAddress,
-            'doAvatarGenericCalls()',
-            [],
-            ['bool'],
-          ]);
-          break;
+      if (isNewScheme) {
+        schemeType = (
+          await executeMulticall(networkWeb3Contracts.multicall, [
+            [schemeAddress, 'SCHEME_TYPE()', [], ['string']],
+          ])
+        ).decodedReturnData[0][0];
+        if (schemeType === 'Wallet Scheme v1')
+          schemeType = 'Wallet Scheme v1.0';
+
+        callsToExecute.push([
+          schemeAddress,
+          'votingMachine()',
+          [],
+          ['address'],
+        ]);
+        callsToExecute.push([schemeAddress, 'schemeName()', [], ['string']]);
+
+        switch (schemeType) {
+          case 'Wallet Scheme v1.0':
+            callsToExecute.push([
+              schemeAddress,
+              'controllerAddress()',
+              [],
+              ['address'],
+            ]);
+            break;
+          default:
+            callsToExecute.push([
+              schemeAddress,
+              'doAvatarGenericCalls()',
+              [],
+              ['bool'],
+            ]);
+            break;
+        }
       }
     }
 
@@ -1037,23 +1047,26 @@ export default class UtilsService {
     const votingMachineAddress = !isNewScheme
       ? networkCache.schemes[schemeAddress].votingMachine
       : isWalletScheme
-      ? callsResponse1.decodedReturnData[2][0]
+      ? callsResponse1.decodedReturnData[4][0]
       : schemeTypeData.votingMachine;
 
-    if (isNewScheme && isWalletScheme) {
-      schemeName = callsResponse1.decodedReturnData[3][0];
-      maxSecondsForExecution = callsResponse1.decodedReturnData[4][0];
-      maxRepPercentageChange = callsResponse1.decodedReturnData[5][0];
+    if (isWalletScheme) {
+      maxSecondsForExecution = callsResponse1.decodedReturnData[2][0];
+      maxRepPercentageChange = callsResponse1.decodedReturnData[3][0];
 
-      switch (schemeType) {
-        case 'Wallet Scheme v1.0':
-          controllerAddress = callsResponse1.decodedReturnData[6][0];
-          break;
-        default:
-          controllerAddress = callsResponse1.decodedReturnData[6][0]
-            ? networkWeb3Contracts.controller._address
-            : ZERO_ADDRESS;
-          break;
+      if (isNewScheme) {
+        schemeName = callsResponse1.decodedReturnData[5][0];
+
+        switch (schemeType) {
+          case 'Wallet Scheme v1.0':
+            controllerAddress = callsResponse1.decodedReturnData[6][0];
+            break;
+          default:
+            controllerAddress = callsResponse1.decodedReturnData[6][0]
+              ? networkWeb3Contracts.controller._address
+              : ZERO_ADDRESS;
+            break;
+        }
       }
     }
 
@@ -1161,7 +1174,7 @@ export default class UtilsService {
         boostedVoteRequiredPercentage,
         proposalIds: [],
         boostedProposals: boostedProposals,
-        maxSecondsForExecution: maxSecondsForExecution,
+        maxSecondsForExecution,
         maxRepPercentageChange,
         newProposalEvents: [],
       };
@@ -1169,6 +1182,8 @@ export default class UtilsService {
       networkCache.schemes[schemeAddress].boostedProposals = boostedProposals;
       networkCache.schemes[schemeAddress].maxSecondsForExecution =
         maxSecondsForExecution;
+      networkCache.schemes[schemeAddress].maxRepPercentageChange =
+        maxRepPercentageChange;
       networkCache.schemes[schemeAddress].boostedVoteRequiredPercentage =
         boostedVoteRequiredPercentage;
       networkCache.schemes[schemeAddress].paramsHash = paramsHash;
