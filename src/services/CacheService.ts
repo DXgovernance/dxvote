@@ -822,20 +822,19 @@ export default class UtilsService {
     await batchPromisesOntarget(
       Object.keys(networkCache.proposals)
         .filter(proposalId => {
+          const proposal = networkCache.proposals[proposalId];
+          const scheme = networkCache.schemes[proposal.scheme];
           return (
             // Only update proposals for registered schemes
-            networkCache.schemes[networkCache.proposals[proposalId].scheme]
-              .registered &&
+            scheme.registered &&
             // This condition check that the proposal already existed in the current block range.
             // If not, it means that the proposal was created in the current block range when processing the scheme,
             // So there is no need to process it again.
-            networkCache.proposals[proposalId].creationEvent.blockNumber <
-              fromBlock &&
+            proposal.creationEvent.blockNumber < fromBlock &&
             // This condition check that the proposal is active
-            (networkCache.proposals[proposalId].stateInVotingMachine >
+            (proposal.stateInVotingMachine >
               VotingMachineProposalState.Executed ||
-              networkCache.proposals[proposalId].stateInScheme ===
-                WalletSchemeProposalState.Submitted)
+              proposal.stateInScheme === WalletSchemeProposalState.Submitted)
           );
         })
         .map(proposalId => {
