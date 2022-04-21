@@ -1,4 +1,3 @@
-import { useWeb3React } from '@web3-react/core';
 import { BigNumber, utils } from 'ethers';
 import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
 import React, { useState } from 'react';
@@ -40,7 +39,6 @@ const ActionModal: React.FC<ActionModalProps> = ({
   setIsOpen,
   onAddAction,
 }) => {
-  const { chainId } = useWeb3React();
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
 
   // Supported Actions
@@ -75,21 +73,8 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   function getContent() {
     if (selectedFunction) {
-      const contractInterface = new utils.Interface(
-        selectedContract.functions.map(f => {
-          const name = f.functionName;
-          const params = f.params.reduce(
-            (acc, cur, i) =>
-              acc.concat(
-                `${cur.type} ${cur.name}`,
-                i === f.params.length - 1 ? '' : ', '
-              ),
-            ''
-          );
-          return `function ${name}(${params})`;
-        })
-      );
-      const contractId = selectedContract.networks?.[chainId];
+      const contractInterface = selectedContract.contractInterface;
+      const contractId = selectedContract.contractAddress;
       return (
         <ParamsForm
           fn={selectedContract.functions.find(

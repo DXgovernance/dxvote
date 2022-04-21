@@ -60,23 +60,10 @@ const decodeCallUsingEthersInterface = (
 const getContractInterfaceFromRegistryContract = (
   registryContract: RegistryContract
 ) => {
-  // Construct the interface for the contract.
-  const contractInterface = new utils.Interface(
-    registryContract.functions.map(f => {
-      const name = f.functionName;
-      const params = f.params.reduce(
-        (acc, cur, i) =>
-          acc.concat(
-            `${cur.type} ${cur.name}`,
-            i === f.params.length - 1 ? '' : ', '
-          ),
-        ''
-      );
-      return `function ${name}(${params})`;
-    })
-  );
-
-  return { contractInterface, callType: SupportedAction.GENERIC_CALL };
+  return {
+    contractInterface: registryContract.contractInterface,
+    callType: SupportedAction.GENERIC_CALL,
+  };
 };
 
 const getContractFromKnownSighashes = (data: string) => {
