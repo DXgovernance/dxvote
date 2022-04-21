@@ -29,6 +29,7 @@ import {
 } from '../utils';
 
 import { getContracts } from '../contracts';
+import { Contract } from 'ethers';
 
 const Hash = require('ipfs-only-hash');
 const jsonSort = require('json-keys-sort');
@@ -292,7 +293,7 @@ export default class UtilsService {
   // Get all Mint and Burn reputation events
   async updateReputationEvents(
     networkCache: DaoNetworkCache,
-    reputation: any,
+    reputation: Contract,
     toBlock: number,
     web3: Web3
   ): Promise<DaoNetworkCache> {
@@ -396,7 +397,7 @@ export default class UtilsService {
   async updateVotingMachine(
     networkCache: DaoNetworkCache,
     networkContracts: NetworkContracts,
-    votingMachine: any,
+    votingMachine: Contract,
     toBlock: number,
     web3: Web3
   ): Promise<DaoNetworkCache> {
@@ -1230,7 +1231,7 @@ export default class UtilsService {
     web3: Web3,
     fromBlock: number,
     toBlock: number,
-    creationEvent?: any
+    creationEvent?: BlockchainEvent
   ): Promise<DaoNetworkCache> {
     const newProposal = !networkCache.proposals[proposalId];
     const schemeAddress = newProposal
@@ -1246,7 +1247,7 @@ export default class UtilsService {
     );
 
     // These first calls target mainly the voting machine where most of the proposal information is mutable
-    let callsToExecute: any[] = [
+    let callsToExecute = [
       [
         networkCache.schemes[schemeAddress].votingMachine,
         'proposals(bytes32)',
@@ -1459,7 +1460,7 @@ export default class UtilsService {
     if (newProposal) {
       if (creationEvent && !isWalletScheme(schemeOfProposal)) {
         const transactionReceipt = await web3.eth.getTransactionReceipt(
-          creationEvent.transactionHash
+          creationEvent.tx
         );
         try {
           // Decode the creation event data to get the num of choices, paramsHash and proposer
@@ -1785,7 +1786,7 @@ export default class UtilsService {
           event: creationEvent.event,
           signature: creationEvent.signature,
           address: creationEvent.address,
-          tx: creationEvent.transactionHash,
+          tx: creationEvent.tx,
           blockNumber: creationEvent.blockNumber,
           timestamp: creationEvent.timestamp,
           transactionIndex: creationEvent.transactionIndex,
@@ -1825,7 +1826,7 @@ export default class UtilsService {
         event: creationEvent.event,
         signature: creationEvent.signature,
         address: creationEvent.address,
-        tx: creationEvent.transactionHash,
+        tx: creationEvent.tx,
         blockNumber: creationEvent.blockNumber,
         timestamp: creationEvent.timestamp,
         transactionIndex: creationEvent.transactionIndex,
