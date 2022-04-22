@@ -57,6 +57,10 @@ const postSchemaId = await manager.createSchema('ForumPost', {
       type: 'string',
       title: 'Author',
     },
+    did: {
+      type: 'string',
+      title: 'Author',
+    },
     type: {
       // post || comment || like || ...
       type: 'string',
@@ -75,7 +79,7 @@ const postSchemaId = await manager.createSchema('ForumPost', {
       maxLength: 30,
     },
   },
-  required: ['author', 'type', 'created_at', 'updated_at'],
+  required: ['author', 'did', 'type', 'created_at', 'updated_at'],
 });
 
 // Write model to JSON file

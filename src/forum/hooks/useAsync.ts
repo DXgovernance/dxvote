@@ -46,7 +46,7 @@ export function useAsync<T extends FunctionReturningPromise>(
   return state;
 }
 
-export default function useAsyncFn<T extends FunctionReturningPromise>(
+export function useAsyncFn<T extends FunctionReturningPromise>(
   fn: T,
   deps: DependencyList = [],
   initialState: StateFromFunctionReturningPromise<T> = { loading: false }

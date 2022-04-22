@@ -52,7 +52,7 @@ function useOrbitDB() {
         };
         const registry = await orbitdb.open(dbName, dbConfig);
 
-        registry.load();
+        await registry.load();
 
         setState({ orbitdb, registry });
       });

@@ -3002,7 +3002,7 @@
     did-resolver "^3.2.0"
     key-did-resolver "^2.0.0"
 
-"@self.id/react@^0.3.0-alpha.0":
+"@self.id/react@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@self.id/react/-/react-0.3.0.tgz#541878171561ddff8c29e89a7edada18953ca2d8"
   integrity sha512-4CfrGua/KEyknXNCjtkE+jCMHPkKFWqsQ0fa/95HsJTM0CKY1s8f4hSRmpevhIFr8s25U8LbpHoIM9he2MP2cA==

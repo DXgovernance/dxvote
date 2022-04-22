@@ -1,12 +1,26 @@
+import { useContent } from 'forum/hooks/useForum';
 import { useRegistry } from 'forum/hooks/useRegistry';
+import { formatDate } from 'utils';
+import { CommentAvatar, ENSName } from './User';
+import { Box, Text, Flex } from './common/Box';
 
 function Comment({ id, author, created_at }) {
-  // Todo - load TileDocument and content
-  // const { data, error, loading  } = useContent(id)
+  const { data, error, loading } = useContent(id);
+  console.log('COmment', data, error, loading);
   return (
-    <div>
-      {author} - {id} - {created_at}
-    </div>
+    <Flex mb={4}>
+      <CommentAvatar address={author} />
+      <Box flex="1 100%">
+        <Flex justifyContent="space-between" mb={2}>
+          <ENSName address={author} />
+          <Text>{formatDate(created_at)}</Text>
+        </Flex>
+
+        <Box>
+          <Text>{data?.content}</Text>
+        </Box>
+      </Box>
+    </Flex>
   );
 }
 
