@@ -6,6 +6,7 @@ import { useConnect } from './useConnect';
 
 import { useClient } from '@self.id/react';
 import { useWeb3React } from '@web3-react/core';
+import { useSWRConfig } from 'swr';
 
 export function useContent(streamID) {
   const client = useClient();
@@ -13,6 +14,8 @@ export function useContent(streamID) {
 }
 
 export function useCreate() {
+  const { mutate } = useSWRConfig();
+
   const { account } = useWeb3React();
   const { connection } = useConnect();
   const { registry } = useForum();
@@ -40,6 +43,7 @@ export function useCreate() {
         console.log('adding to registry', created.id);
         await registry.put(toIndex(created));
 
+        mutate(`forum/registry`);
         console.timeEnd('creating post');
         return created.id;
       } else {

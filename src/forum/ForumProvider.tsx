@@ -40,10 +40,10 @@ function useOrbitDB() {
     if (context.orbitDBService) {
       context.orbitDBService.getOrbitDB().then(async orbitdb => {
         // Do we want to use a seperate DB for each chain?
-        const dbName = `dxforum-0.1_${process.env.NODE_ENV || 'development'}`;
+        const dbName = `dxforum-0.10_${process.env.NODE_ENV || 'development'}`;
         const dbConfig = {
           create: true,
-          sync: false,
+          sync: true,
           type: 'docstore',
           indexBy: 'id',
           accessController: {

@@ -6,7 +6,6 @@ import { Box, Text, Flex } from './common/Box';
 
 function Comment({ id, author, created_at }) {
   const { data, error, loading } = useContent(id);
-  console.log('COmment', data, error, loading);
   return (
     <Flex mb={4}>
       <CommentAvatar address={author} />
@@ -25,16 +24,13 @@ function Comment({ id, author, created_at }) {
 }
 
 export default function CommentList({ proposalId }) {
-  const {
-    data = [],
-    error,
-    loading,
-  } = useRegistry({
+  const { data, error } = useRegistry({
     parent: proposalId,
     type: 'comment',
   });
-
-  console.log(data, error, loading);
+  if (!data && !error) {
+    return <div>Loading comments...</div>;
+  }
   return (
     <div>
       {data.map(comment => (

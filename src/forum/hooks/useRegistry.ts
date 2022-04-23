@@ -1,5 +1,5 @@
 import { useForum } from 'forum/ForumProvider';
-import { useAsync } from './useAsync';
+import useSWR from 'swr';
 
 type Query = {
   id?: string;
@@ -26,8 +26,8 @@ export function useRegistry(query: Query) {
 
   const dirMap = { asc: 1, desc: -1 };
 
-  return useAsync(async () => {
-    if (!registry) return [];
+  return useSWR('forum/registry', async () => {
+    if (!registry) return null;
 
     console.time('Querying registry');
     // console.info("Registry query:", query);
@@ -44,5 +44,5 @@ export function useRegistry(query: Query) {
 
     console.timeEnd('Querying registry');
     return items;
-  }, [registry]);
+  });
 }
