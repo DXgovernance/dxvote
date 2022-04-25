@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Input } from 'components/Guilds/common/Form/Input';
+import Input from 'components/Guilds/common/Form/Input';
 import { FiChevronDown, FiX } from 'react-icons/fi';
 import Avatar from 'components/Guilds/Avatar';
 import { resolveUri } from 'utils/url';
@@ -9,13 +9,11 @@ import { useMemo, useState } from 'react';
 import { ActionEditorProps } from '..';
 import { BigNumber, utils } from 'ethers';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
-import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import TokenPicker from 'components/Guilds/TokenPicker';
 import { Box } from 'components/Guilds/common/Layout';
 import { MAINNET_ID } from 'utils';
-import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
-import { baseInputStyles } from 'components/Guilds/common/Form/Input';
+import TokenAmountInput from 'components/Guilds/common/Form/TokenAmountInput';
 
 const Control = styled(Box)`
   display: flex;
@@ -42,17 +40,6 @@ const ClickableIcon = styled(Box)`
   display: flex;
   align-items: center;
   cursor: pointer;
-`;
-
-const TransferAmountInput = styled(NumericalInput)`
-  ${baseInputStyles}
-  display: flex;
-  align-items: center;
-  width: 100%;
-  &:hover,
-  &:focus {
-    border: 0.1rem solid ${({ theme }) => theme.colors.text};
-  }
 `;
 
 interface TransferState {
@@ -95,11 +82,6 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   }, [tokens, parsedData]);
 
   const { data: tokenInfo } = useERC20Info(parsedData?.tokenAddress);
-  const roundedBalance = useBigNumberToNumber(
-    parsedData?.amount,
-    tokenInfo?.decimals,
-    10
-  );
   const { imageUrl: destinationAvatarUrl } = useENSAvatar(
     parsedData?.destination,
     MAINNET_ID
@@ -122,15 +104,12 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
     });
   };
 
-  const setAmount = (value: string) => {
-    const amount = value
-      ? utils.parseUnits(value, tokenInfo?.decimals || 18)
-      : null;
+  const setAmount = (value: BigNumber) => {
     updateCall({
       ...decodedCall,
       args: {
         ...decodedCall.args,
-        _value: amount,
+        _value: value,
       },
     });
   };
@@ -170,9 +149,10 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
         <Control>
           <ControlLabel>Amount</ControlLabel>
           <ControlRow>
-            <TransferAmountInput
-              value={roundedBalance}
-              onUserInput={setAmount}
+            <TokenAmountInput
+              decimals={tokenInfo?.decimals}
+              value={parsedData?.amount}
+              onChange={setAmount}
             />
           </ControlRow>
         </Control>

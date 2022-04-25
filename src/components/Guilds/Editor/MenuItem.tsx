@@ -8,10 +8,11 @@ interface Props {
 }
 
 const Item = styled.button`
-  background-color: ${props => (props.active ? '#0d0d0d' : 'white')};
+  background-color: ${props =>
+    props.active ? 'white' : ({ theme }) => theme.colors.background};
   border: none;
   border-radius: 0.4rem;
-  color: ${props => (props.active ? 'white' : '#0d0d0d')};
+  color: ${props => (props.active ? '#0d0d0d' : 'white')};
   height: 1.75rem;
   margin-right: 0.25rem;
   padding: 0.25rem;
@@ -19,16 +20,10 @@ const Item = styled.button`
   cursor: pointer;
 
   &:hover: {
-    background-color: #0d0d0d;
-    color: white;
+    background-color: white;
+    color: #0d0d0d;
   }
 `;
-
-// const SVG = styled.svg`
-//   fill: currentColor;
-//   height: 100%;
-//   width: 100%;
-// `;
 
 const MenuItem = ({ icon, title, action, isActive = null }: Props) => {
   return (

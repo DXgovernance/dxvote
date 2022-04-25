@@ -310,19 +310,21 @@ const OptionsList: React.FC<OptionsListProps> = ({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <SortableContext items={options} strategy={verticalListSortingStrategy}>
-        {options?.map((option, idx) => (
-          <>
-            <OptionRow
-              key={idx}
-              option={option}
-              onChange={updatedOption => updateOption(idx, updatedOption)}
-              isEditable={isEditable}
-            />
-            {idx !== options.length - 1 && <Divider />}
-          </>
-        ))}
-      </SortableContext>
+      {options && (
+        <SortableContext items={options} strategy={verticalListSortingStrategy}>
+          {options?.map((option, idx) => (
+            <>
+              <OptionRow
+                key={idx}
+                option={option}
+                onChange={updatedOption => updateOption(idx, updatedOption)}
+                isEditable={isEditable}
+              />
+              {idx !== options.length - 1 && <Divider />}
+            </>
+          ))}
+        </SortableContext>
+      )}
 
       {isEditable && (
         <>

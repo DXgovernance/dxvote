@@ -125,7 +125,7 @@ const OptionRow: React.FC<OptionRowProps> = ({
 
         {isEditable && (
           <SortableContext
-            items={option.decodedActions.map(action => action.id)}
+            items={option?.decodedActions?.map(action => action.id)}
             strategy={verticalListSortingStrategy}
           >
             {option?.decodedActions?.map((action, index) => (

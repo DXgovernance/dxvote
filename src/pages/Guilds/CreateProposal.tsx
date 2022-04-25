@@ -7,7 +7,7 @@ import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
 import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
 import { IconButton } from '../../components/Guilds/common/Button';
-import { Input } from '../../components/Guilds/common/Form';
+import Input from '../../components/Guilds/common/Form/Input';
 import {
   ActionsBuilder,
   SidebarInfoCard,
@@ -80,6 +80,8 @@ const EMPTY_CALL: Call = {
 };
 
 const CreateProposalPage: React.FC = () => {
+  const { guild_id: guildId, chain_name: chain } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
   );
@@ -108,7 +110,7 @@ const CreateProposalPage: React.FC = () => {
     setEditMode(v => !v);
   };
 
-  const handleBack = () => history.push('/');
+  const handleBack = () => history.push(`/${chain}/${guildId}/proposalType`);
 
   const ipfs = useIPFSNode();
   const uploadToIPFS = async () => {
