@@ -17,7 +17,6 @@ import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import ContractActionsList from './ContractActionsList';
 import ContractsList from './ContractsList';
-import ParamsModal from './ParamsModal';
 import ParamsForm from './ParamsForm';
 import { useWeb3React } from '@web3-react/core';
 
