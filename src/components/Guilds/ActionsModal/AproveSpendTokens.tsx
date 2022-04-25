@@ -1,21 +1,20 @@
-// import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
 import { useState, useMemo } from 'react';
-import { SectionTitle, SectionWrapper, Wrapper } from './styles';
 import styled from 'styled-components';
-
-import { BlockButton } from '.';
 import { FiChevronDown } from 'react-icons/fi';
-import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
-import Input from 'components/Guilds/common/Form/Input';
-import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
 import { useWeb3React } from '@web3-react/core';
-import Avatar from 'components/Guilds/Avatar';
-import { resolveUri } from 'utils/url';
-
 import { BigNumber } from 'ethers';
+
+import Input from 'components/Guilds/common/Form/Input';
+import Avatar from 'components/Guilds/Avatar';
 import TokenPicker from 'components/Guilds/TokenPicker';
 import { Box } from 'components/Guilds/common/Layout';
 import TokenAmountInput from 'components/Guilds/common/Form/TokenAmountInput';
+import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
+import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
+import { resolveUri } from 'utils/url';
+import { SectionTitle, SectionWrapper, Wrapper } from './styles';
+import { BlockButton } from '.';
+
 const ControlRow = styled(Box)`
   display: flex;
   align-items: stretch;
@@ -38,7 +37,7 @@ const Spacer = styled(Box)`
 `;
 
 interface TokensToSpendProps {
-  onConfirm: ({ amount, token }: { amount: BigNumber; token: string }) => void;
+  onConfirm: (args: { amount: BigNumber; token: string }) => void;
 }
 
 const TokensToSpend: React.FC<TokensToSpendProps> = ({ onConfirm }) => {
@@ -108,11 +107,9 @@ const TokensToSpend: React.FC<TokensToSpendProps> = ({ onConfirm }) => {
         </ControlRow>
 
         <TokenPicker
-          // walletAddress={''}
           isOpen={isTokenPickerOpen}
           onClose={() => setIsTokenPickerOpen(false)}
           onSelect={tokenAddress => {
-            console.log('tokenAddress', tokenAddress);
             setToken(tokenAddress);
             setIsTokenPickerOpen(false);
           }}
