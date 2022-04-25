@@ -16,7 +16,7 @@ import {
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import ContractActionsList from './ContractActionsList';
-import AproveSpendTokens from './AproveSpendTokens';
+import ApproveSpendTokens from './ApproveSpendTokens';
 import ContractsList from './ContractsList';
 import ParamsForm from './ParamsForm';
 import { useWeb3React } from '@web3-react/core';
@@ -84,7 +84,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
       const isPayable: boolean = fn?.spendsTokens;
       // Return approval form if function is marked with spendsTokens=true
       if (isPayable && !payableFnData) {
-        return <AproveSpendTokens onConfirm={updatePayableFnData} />;
+        return <ApproveSpendTokens onConfirm={updatePayableFnData} />;
       }
 
       return (

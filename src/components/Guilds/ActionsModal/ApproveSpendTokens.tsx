@@ -36,11 +36,13 @@ const Spacer = styled(Box)`
   margin-right: 1rem;
 `;
 
-interface TokensToSpendProps {
+interface ApproveSpendTokensProps {
   onConfirm: (args: { amount: BigNumber; token: string }) => void;
 }
 
-const TokensToSpend: React.FC<TokensToSpendProps> = ({ onConfirm }) => {
+const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
+  onConfirm,
+}) => {
   const { chainId } = useWeb3React();
 
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
@@ -123,4 +125,4 @@ const TokensToSpend: React.FC<TokensToSpendProps> = ({ onConfirm }) => {
   );
 };
 
-export default TokensToSpend;
+export default ApproveSpendTokens;
