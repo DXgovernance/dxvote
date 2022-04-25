@@ -10,7 +10,7 @@ import GenericCallInfoLine from './GenericCall/GenericCallInfoLine';
 import REPMintEditor from './REPMint/REPMintEditor';
 import REPMintInfoLine from './REPMint/REPMintInfoLine';
 import REPMintSummary from './REPMint/REPMintSummary';
-        
+
 export interface SupportedActionMetadata {
   title: string;
 }
