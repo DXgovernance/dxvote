@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Input } from 'components/Guilds/common/Form/Input';
+import Input from 'components/Guilds/common/Form/Input';
 import Avatar from 'components/Guilds/Avatar';
 import React, { useEffect } from 'react';
 import { ActionEditorProps } from '..';
@@ -7,7 +7,6 @@ import { ethers } from 'ethers';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { Box } from 'components/Guilds/common/Layout';
 import { shortenAddress, MAINNET_ID } from 'utils';
-import { baseInputStyles } from 'components/Guilds/common/Form/Input';
 import { ReactComponent as Info } from '../../../../../assets/images/info.svg';
 import StyledIcon from 'components/Guilds/common/SVG';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
@@ -39,7 +38,6 @@ const ControlRow = styled(Box)`
 `;
 
 const RepMintInput = styled(NumericalInput)`
-  ${baseInputStyles}
   display: flex;
   align-items: center;
   width: 100%;
