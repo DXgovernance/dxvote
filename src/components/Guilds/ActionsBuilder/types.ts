@@ -27,6 +27,10 @@ export interface DecodedAction {
   id: string;
   decodedCall: DecodedCall;
   contract: utils.Interface;
+  approval?: {
+    amount: BigNumber;
+    token: string;
+  };
 }
 
 export interface Option {
