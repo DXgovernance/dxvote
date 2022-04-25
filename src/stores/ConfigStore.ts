@@ -10,26 +10,7 @@ import {
   DEFAULT_CHAIN_ID,
 } from '../utils';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
-
-const arbitrum = require('../configs/arbitrum/config.json');
-const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
-const mainnet = require('../configs/mainnet/config.json');
-const xdai = require('../configs/xdai/config.json');
-const rinkeby = require('../configs/rinkeby/config.json');
-const localhost = require('../configs/localhost/config.json');
-const proposalTitles = require('../configs/proposalTitles.json');
-
-const defaultAppConfigs = {
-  arbitrum,
-  arbitrumTestnet,
-  mainnet,
-  xdai,
-  rinkeby,
-  localhost,
-};
-
-// Use the same content outside src folder in defaultConfigHashes.json or override
-const defaultCacheConfig = require('../configs/default.json');
+import { getDefaultConfigHashes, getAppConfig } from '../utils/cache';
 
 export default class ConfigStore {
   darkMode: boolean;
@@ -51,14 +32,14 @@ export default class ConfigStore {
   }
 
   reset() {
-    this.networkConfig = defaultAppConfigs[this.getActiveChainName()];
+    this.networkConfig = getAppConfig()[this.getActiveChainName()];
     this.networkConfigLoaded = false;
   }
 
   async loadNetworkConfig() {
     const { ensService, ipfsService } = this.context;
 
-    this.networkConfig = defaultAppConfigs[this.getActiveChainName()];
+    this.networkConfig = getAppConfig()[this.getActiveChainName()];
     const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
     if (this.getActiveChainName() !== 'localhost' && !this.networkConfigLoaded)
@@ -76,7 +57,7 @@ export default class ConfigStore {
           );
 
         const configRefs = isTestingEnv
-          ? defaultCacheConfig
+          ? getDefaultConfigHashes()
           : await ipfsService.getContentFromIPFS(metadataHash);
 
         const configContentHash = configRefs[this.getActiveChainName()];
@@ -105,10 +86,6 @@ export default class ConfigStore {
     return this.networkConfig;
   }
 
-  getProposalTitlesInBuild() {
-    return proposalTitles;
-  }
-
   getActiveChainName() {
     return NETWORK_NAMES[
       this.context?.providerStore.getActiveWeb3React().chainId ||
@@ -124,6 +101,7 @@ export default class ConfigStore {
   }
 
   getLocalConfig() {
+    const defaultAppConfigs = getAppConfig();
     const defaultConfig = {
       etherscan: '',
       pinata: '',
@@ -153,6 +131,7 @@ export default class ConfigStore {
   }
 
   resetLocalConfig() {
+    const defaultAppConfigs = getAppConfig();
     localStorage.setItem(
       'dxvote-config',
       JSON.stringify({

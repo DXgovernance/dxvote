@@ -4,6 +4,7 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { isChainIdSupported } from '../provider/connectors';
 import { CacheLoadError } from '../utils/errors';
 import { bnum } from 'utils';
+import { getProposalTitles } from '../utils/cache';
 
 const targetCacheVersion = 1;
 
@@ -127,15 +128,12 @@ export default class BlockchainStore {
             chainId
           );
 
-          const fromBlock = lastCheckedBlockNumber + 1;
           const toBlock = blockNumber;
           const networkContracts = configStore.getNetworkContracts();
 
           networkCache = await cacheService.getUpdatedCache(
-            this.context,
             networkCache,
             networkContracts,
-            fromBlock,
             toBlock,
             library
           );
@@ -144,9 +142,9 @@ export default class BlockchainStore {
             true,
             `Getting proposal titles form ipfs`
           );
-          const proposalTitles = await cacheService.getProposalTitlesFromIPFS(
+          const proposalTitles = await cacheService.updateProposalTitles(
             networkCache,
-            configStore.getProposalTitlesInBuild()
+            getProposalTitles()
           );
 
           Object.keys(networkCache.proposals).map(proposalId => {
