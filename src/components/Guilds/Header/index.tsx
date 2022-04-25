@@ -1,4 +1,5 @@
 import { useWeb3React } from '@web3-react/core';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Box, Container } from '../common/Layout';
 import { Heading } from '../common/Typography';
@@ -35,15 +36,20 @@ const MenuItems = styled(Box)`
   margin-left: auto;
 `;
 
+const ClickableHeading = styled(Heading)`
+  cursor: pointer;
+`;
+
 const Header = () => {
+  const history = useHistory();
   const { active, error } = useWeb3React();
 
   return (
     <HeaderWrapper as="header">
       <HeaderContainer>
-        <Heading size={2}>
-          <strong>DXvote</strong>
-        </Heading>
+        <ClickableHeading onClick={() => history.push('/')} size={2}>
+          <strong>Guilds</strong>
+        </ClickableHeading>
         {active && !error && (
           <MenuItems>
             <NetworkButton />

@@ -19,6 +19,7 @@ import { getChains } from 'provider/connectors';
 import { useWeb3React } from '@web3-react/core';
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
+import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
 
 const configs = {
   arbitrum: require('configs/arbitrum/config.json'),
@@ -118,6 +119,10 @@ const Proposals: React.FC<TitleProps> = ({ guildAddress }) => {
     </ProposalsInformation>
   );
 };
+const Members: React.FC<TitleProps> = ({ guildAddress }) => {
+  const { data: numberOfMembers } = useGuildMemberTotal(guildAddress);
+  return <div>{numberOfMembers?.toString()}</div>;
+};
 
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
@@ -151,6 +156,7 @@ const LandingPage: React.FC = () => {
                 <GuildCardHeader>
                   <MemberWrapper>
                     <MdOutlinePeopleAlt size={24} />
+                    <Members guildAddress={guildAddress} />
                   </MemberWrapper>
                   <Proposals guildAddress={guildAddress} />
                 </GuildCardHeader>
