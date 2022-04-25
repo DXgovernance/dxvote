@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 9234792,
-    "ipfsHash": "QmcQUUNkAy6V7PYH4wksHvhTmJbEiUGT6UyFik1FCAi8rE",
-    "toBlock": "10225316"
+    "ipfsHash": "QmTear8HaHRnNNTAu9RRMpdPdRxqKFmXTkqwGMgu1eKJFj",
+    "toBlock": "10525725"
   },
   "contracts": {
     "avatar": "0x1A639b50D807ce7e61Dc9eeB091e6Cea8EcB1595",
@@ -13,8 +13,8 @@
     "utils": {
       "dxDaoNFT": "0xF7A2f72E8f6aeb884905a1fE515c1BB5752D342f",
       "dxdVestingFactory": "0xB5D42c8cA3B04479200E3782C41D99b46Cf8A6E1",
-      "multicall": "0x1FDD273e0B7E0d921Bda044Ebf64811428A79f15",
-      "guildRegistry": "0xA938DD7AEeF5F46BD9845882EAbA2ebF18e1b273"
+      "guildRegistry": "0xA938DD7AEeF5F46BD9845882EAbA2ebF18e1b273",
+      "multicall": "0x1FDD273e0B7E0d921Bda044Ebf64811428A79f15"
     },
     "votingMachines": {
       "0xBa51391385A6bD5ECA0217d7e843B29227E72508": {

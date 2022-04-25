@@ -57,7 +57,6 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   // parse transfer state from calls
   const parsedData = useMemo<TransferState>(() => {
     if (!decodedCall) return null;
-
     return {
       source: decodedCall.from,
       tokenAddress: decodedCall.to,
