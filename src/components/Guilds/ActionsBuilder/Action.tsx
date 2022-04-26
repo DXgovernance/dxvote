@@ -12,6 +12,8 @@ import { Call, DecodedAction } from './types';
 import Grip from './common/Grip';
 import EditButton from './common/EditButton';
 import { useSortable } from '@dnd-kit/sortable';
+import UndecodableCallInfoLine from './UndecodableCalls/UndecodableCallsInfoLine';
+import UndecodableCallDetails from './UndecodableCalls/UndecodableCallDetails';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
   position: relative;
@@ -113,7 +115,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
 
   const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
 
-  const decodedCall = decodedCallFromCall || decodedAction.decodedCall;
+  const decodedCall = decodedCallFromCall || decodedAction?.decodedCall;
 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -139,6 +141,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
           {isEditable && <GripWithMargin {...listeners} />}
 
           {InfoLine && <InfoLine decodedCall={decodedCall} />}
+          {!decodedCall && <UndecodableCallInfoLine />}
         </CardLabel>
         <CardActions>
           {isEditable && <EditButtonWithMargin>Edit</EditButtonWithMargin>}
@@ -180,7 +183,11 @@ const ActionRow: React.FC<ActionViewProps> = ({
 
           {(!ActionSummary || activeTab === 1) && (
             <DetailWrapper>
-              <CallDetails decodedCall={decodedCall} />
+              {decodedCall ? (
+                <CallDetails decodedCall={decodedCall} />
+              ) : (
+                <UndecodableCallDetails call={call} />
+              )}
             </DetailWrapper>
           )}
         </>
