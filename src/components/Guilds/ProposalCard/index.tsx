@@ -180,20 +180,16 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
             <BorderedIconDetailWrapper>
               {votes
                 .sort((a, b) => b - a)
-                .map((vote, i) => {
-                  if (i < 3 && !(i === votes.length - 1)) {
-                    return (
-                      <>
-                        <Detail>{vote}%</Detail>
-                        <Icon as="div" spaceLeft spaceRight>
-                          <FiCircle />
-                        </Icon>
-                      </>
-                    );
-                  } else {
-                    return <Detail>{vote}%</Detail>;
-                  }
-                })}
+                .map((vote, i) => (
+                  <div key={i}>
+                    <Detail>{vote}%</Detail>
+                    {i < 3 && !(i === votes.length - 1) && (
+                      <Icon as="div" spaceLeft spaceRight>
+                        <FiCircle />
+                      </Icon>
+                    )}
+                  </div>
+                ))}
             </BorderedIconDetailWrapper>
           ) : (
             <Loading
