@@ -137,12 +137,12 @@ const ProposalPage: React.FC = () => {
             </UnstyledLink>
 
             <ProposalStatusWrapper>
+              <ProposalStatus proposalId={proposalId} showRemainingTime />
               {
                 isExecutable ? (
-                  <Button onClick={() => executeProposal}>Execute proposal</Button>
+                  <Button onClick={() => executeProposal()}>Execute</Button>
                 ) : null
               }
-              <ProposalStatus proposalId={proposalId} showRemainingTime />
             </ProposalStatusWrapper>
           </HeaderTopRow>
           <PageTitle>

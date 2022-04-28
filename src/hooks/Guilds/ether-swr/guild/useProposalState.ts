@@ -3,13 +3,20 @@ import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import moment from 'moment';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { ProposalState } from 'types/types.guilds';
 import { useProposal } from './useProposal';
+
+
+
+ enum ProposalState {
+  Active = "Active",
+  Passed = "Passed",
+  Executed = "Executed",
+  Failed = "Failed",
+}
 
 interface useProposalStateReturns {
   isExecutable: boolean;
-  proposalState: ProposalState;
-  executeProposal: void;
+  executeProposal: () => void;
     error: Error
 }
 
@@ -20,23 +27,23 @@ function useProposalState(): useProposalStateReturns {
   const { createTransaction } = useTransactions();
   const guildContract = useERC20Guild(guildId);
 
-  const { isExecutable, proposalState, executeProposal } = useMemo(() => {
+  const { isExecutable, executeProposal } = useMemo(() => {
     const now = moment.unix(moment.now());
-    const executeProposal = createTransaction('Execute Proposal', async () => {
+    const executeProposal = () => createTransaction('Execute Proposal', async () => {
       return guildContract.endProposal(proposalId);
     });
 
+
     return {
-      proposalState: proposal.state,
       isExecutable:
-        proposalState == ProposalState.Active && proposal.endTime < now
+        proposal.state == ProposalState.Active && proposal.endTime < now
           ? true
           : false,
       executeProposal: executeProposal,
     };
   }, [proposal]);
 
-  return { isExecutable, proposalState, error, executeProposal };
+  return { isExecutable, error, executeProposal };
 }
 
 export default useProposalState;
