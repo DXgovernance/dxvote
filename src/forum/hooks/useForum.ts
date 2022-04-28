@@ -64,9 +64,8 @@ export function useUpdate() {
   const client = useClient();
 
   return useAsyncFn(async props => {
-    console.time('updating post');
     if (connection.status === 'connected') {
-      console.time('creating post');
+      console.time('updating post');
 
       props.updated_at = getNow();
       const { id } = props;

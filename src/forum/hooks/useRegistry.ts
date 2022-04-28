@@ -28,7 +28,6 @@ export function useRegistry(query: Query) {
     if (!registry) return null;
 
     console.time('Querying registry');
-    // console.info("Registry query:", query);
     const items = registry
       .query(item =>
         // Compare each key and value in where with the item eg: { type: "post" }
