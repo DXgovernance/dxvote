@@ -29,6 +29,7 @@
                             "type": "address",
                             "component": "address",
                             "name": "beneficiary",
+                            "title": "Beneficiary",
                             "defaultValue": "",
                             "description": "Receiving address of tokens"
                         },
@@ -36,6 +37,7 @@
                             "type": "uint256",
                             "component": "date",
                             "name": "start",
+                            "title": "Start date",
                             "defaultValue": "",
                             "description": "Starting time for contract"
                         },
@@ -43,26 +45,30 @@
                             "type": "uint256",
                             "component": "time",
                             "name": "cliffDuration",
+                            "title": "How long until cliff",
                             "defaultValue": "",
-                            "description": "How long before cliff"
+                            "description": "How long before vesting reaches cliff and tokens are unlocked"
                         },
                         {
                             "type": "uint256",
                             "component": "time",
                             "name": "duration",
+                            "title": "How long until vested",
                             "defaultValue": "",
-                            "description": "How long before contract finishes fully"
+                            "description": "How long before all tokens are fully vested"
                         },
                         {
                             "type": "uint256",
                             "component": "tokenAmount",
                             "name": "value",
+                            "title": "Amount of DXD",
                             "defaultValue": "",
-                            "description": "Number of tokens to vest"
+                            "description": "Number of tokens to lock and vest"
                         }
                     ],
                     "shortDescription": "Creates DXD vesting contracts for worker proposals",
                     "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+                    "templateLiteral": "Create a vesting factory for ${beneficiary} of ${value} DXD for ${duration} with a ${cliffDuration} cliff",
                     "spendsTokens": true
                 }
             ]
@@ -119,11 +125,12 @@
             "$id": "#/properties/networks",
             "type": "object",
             "title": "The networks schema",
-            "description": "An explanation about the purpose of this instance.",
+            "description": "A mapping of chains to addresses, for factory created contracts use 0x0 for all chains",
             "default": {},
             "examples": [
                 {
                     "mainnet": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+                    "mainnet": "0x0",
                     "rinkeby": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
                     "gnosis": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
                     "arbitrum": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
@@ -207,6 +214,7 @@
                                 "type": "address",
                                 "component": "address",
                                 "name": "beneficiary",
+                                "title": "Beneficiary",
                                 "defaultValue": "",
                                 "description": "Receiving address of tokens"
                             },
@@ -214,6 +222,7 @@
                                 "type": "uint256",
                                 "component": "date",
                                 "name": "start",
+                                "title": "Start date",
                                 "defaultValue": "",
                                 "description": "Starting time for contract"
                             },
@@ -221,26 +230,30 @@
                                 "type": "uint256",
                                 "component": "time",
                                 "name": "cliffDuration",
+                                "title": "How long until cliff",
                                 "defaultValue": "",
-                                "description": "How long before cliff"
+                                "description": "How long before vesting reaches cliff and tokens are unlocked"
                             },
                             {
                                 "type": "uint256",
                                 "component": "time",
                                 "name": "duration",
+                                "title": "How long until vested",
                                 "defaultValue": "",
-                                "description": "How long before contract finishes fully"
+                                "description": "How long before all tokens are fully vested"
                             },
                             {
                                 "type": "uint256",
                                 "component": "tokenAmount",
                                 "name": "value",
+                                "title": "Amount of DXD",
                                 "defaultValue": "",
-                                "description": "Number of tokens to vest"
+                                "description": "Number of tokens to lock and vest"
                             }
                         ],
                         "shortDescription": "Creates DXD vesting contracts for worker proposals",
                         "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+                        "templateLiteral": "Create a vesting factory for ${beneficiary} of ${value} DXD for ${duration} with a ${cliffDuration} cliff",
                         "spendsTokens": true
                     }
                 ]
@@ -264,6 +277,7 @@
                                         "type": "address",
                                         "component": "address",
                                         "name": "beneficiary",
+                                        "title": "Beneficiary",
                                         "defaultValue": "",
                                         "description": "Receiving address of tokens"
                                     },
@@ -271,6 +285,7 @@
                                         "type": "uint256",
                                         "component": "date",
                                         "name": "start",
+                                        "title": "Start date",
                                         "defaultValue": "",
                                         "description": "Starting time for contract"
                                     },
@@ -278,26 +293,30 @@
                                         "type": "uint256",
                                         "component": "time",
                                         "name": "cliffDuration",
+                                        "title": "How long until cliff",
                                         "defaultValue": "",
-                                        "description": "How long before cliff"
+                                        "description": "How long before vesting reaches cliff and tokens are unlocked"
                                     },
                                     {
                                         "type": "uint256",
                                         "component": "time",
                                         "name": "duration",
+                                        "title": "How long until vested",
                                         "defaultValue": "",
-                                        "description": "How long before contract finishes fully"
+                                        "description": "How long before all tokens are fully vested"
                                     },
                                     {
                                         "type": "uint256",
                                         "component": "tokenAmount",
                                         "name": "value",
+                                        "title": "Amount of DXD",
                                         "defaultValue": "",
-                                        "description": "Number of tokens to vest"
+                                        "description": "Number of tokens to lock and vest"
                                     }
                                 ],
                                 "shortDescription": "Creates DXD vesting contracts for worker proposals",
                                 "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+                                "templateLiteral": "Create a vesting factory for ${beneficiary} of ${value} DXD for ${duration} with a ${cliffDuration} cliff",
                                 "spendsTokens": true
                             }
                         ],
@@ -307,6 +326,7 @@
                             "params",
                             "shortDescription",
                             "longDescription",
+                            "templateLiteral",
                             "spendsTokens"
                         ],
                         "properties": {
@@ -342,6 +362,7 @@
                                             "type": "address",
                                             "component": "address",
                                             "name": "beneficiary",
+                                            "title": "Beneficiary",
                                             "defaultValue": "",
                                             "description": "Receiving address of tokens"
                                         },
@@ -349,6 +370,7 @@
                                             "type": "uint256",
                                             "component": "date",
                                             "name": "start",
+                                            "title": "Beneficiary",
                                             "defaultValue": "",
                                             "description": "Starting time for contract"
                                         }
@@ -369,6 +391,7 @@
                                                     "type": "address",
                                                     "component": "address",
                                                     "name": "beneficiary",
+                                                    "title": "Beneficiary",
                                                     "defaultValue": "",
                                                     "description": "Receiving address of tokens"
                                                 }
@@ -377,6 +400,7 @@
                                                 "type",
                                                 "component",
                                                 "name",
+                                                "title",
                                                 "defaultValue",
                                                 "description"
                                             ],
@@ -410,6 +434,16 @@
                                                     "default": "",
                                                     "examples": [
                                                         "beneficiary"
+                                                    ]
+                                                },
+                                                "title": {
+                                                    "$id": "#/properties/functions/items/anyOf/0/properties/params/items/anyOf/0/properties/name",
+                                                    "type": "string",
+                                                    "title": "The name schema",
+                                                    "description": "An explanation about the purpose of this instance.",
+                                                    "default": "",
+                                                    "examples": [
+                                                        "Beneficiary"
                                                     ]
                                                 },
                                                 "defaultValue": {
@@ -456,6 +490,16 @@
                                 "default": "",
                                 "examples": [
                                     "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao"
+                                ]
+                            },
+                            "templateLiteral": {
+                                "$id": "#/properties/functions/items/anyOf/0/properties/templateLiteral",
+                                "type": "string",
+                                "title": "The templateLiteral schema",
+                                "description": "A string template with ${} representing values described by parameter names.",
+                                "default": "",
+                                "examples": [
+                                    "Create a vesting factory for ${beneficiary} of ${value} DXD for ${duration} with a ${cliffDuration} cliff"
                                 ]
                             },
                             "spendsTokens": {

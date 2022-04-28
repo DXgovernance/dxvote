@@ -56,3 +56,9 @@ export const FormLabel = styled.div`
   color: ${({ theme }) => theme.colors.proposalText.grey};
   margin-bottom: 0.75rem;
 `;
+
+export const FormError = styled.div`
+  color: ${({ theme }) => theme.colors.red};
+  font-size: ${({ theme }) => theme.fontSizes.label};
+  margin-top: 0.5rem;
+`;

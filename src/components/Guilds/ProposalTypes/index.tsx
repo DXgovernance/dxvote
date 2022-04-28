@@ -5,7 +5,7 @@ import { FiArrowLeft, FiX } from 'react-icons/fi';
 import { Button } from '../common/Button';
 import { Flex } from '../common/Layout';
 import { ContainerText } from '../common/Layout/Text';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import { Heading } from '../common/Typography';
 import StyledIcon from '../common/SVG';
@@ -166,19 +166,20 @@ interface ProposalTypesProps {
   data: ProposalTypeDescriptionProps[];
 }
 const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
+  const { guild_id: guildId, chain_name: chain } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
   const history = useHistory();
   const location = useLocation();
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
   );
+  const [proposalDescription, setProposalDescription] =
+    useState<ProposalTypeDescriptionProps>(data[0]);
 
   const continueUrl = location.pathname.replace(
     '/proposalType',
-    '/create/proposal_type'
+    `/create/${proposalDescription.title}`
   );
-
-  const [proposalDescription, setProposalDescription] =
-    useState<ProposalTypeDescriptionProps>(data[0]);
 
   if (isGuildAvailabilityLoading) return <Loading loading />;
 
@@ -187,7 +188,10 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
       <Wrapper>
         {!isMobile && (
           <Header>
-            <Button variant="secondary" onClick={() => history.push('/')}>
+            <Button
+              variant="secondary"
+              onClick={() => history.push(`/${chain}/${guildId}`)}
+            >
               <StyledIcon margin="0 10px 0 0" src={AiOutlineArrowLeft} />
               Back to overview
             </Button>
@@ -195,7 +199,10 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
         )}
         {isMobile && (
           <>
-            <Header variant="secondary" onClick={() => history.push('/')}>
+            <Header
+              variant="secondary"
+              onClick={() => history.push(`/${chain}/${guildId}`)}
+            >
               <HeaderWrap>
                 <StyledIcon src={FiArrowLeft} />
                 Back to overview

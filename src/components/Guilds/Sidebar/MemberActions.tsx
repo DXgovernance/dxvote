@@ -55,7 +55,7 @@ const IconHolder = styled.span`
 `;
 
 const VotingPower = styled.div`
-  background-color: #000;
+  background-color: #282b30;
   color: #fff;
   border-radius: 32px;
   padding: 2px 8px;

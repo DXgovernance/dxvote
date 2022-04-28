@@ -1,18 +1,30 @@
 import styled, { css } from 'styled-components';
+import { CSS } from '@dnd-kit/utilities';
 import { Box } from 'components/Guilds/common/Layout';
 import { CardWrapper, Header } from 'components/Guilds/common/Card';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { useState } from 'react';
 import { Button } from 'components/Guilds/common/Button';
 import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
-import { getInfoLineView, getSummaryView } from '../SupportedActions';
-import CallDetails from '../CallDetails';
-import { Call, DecodedCall } from '../types';
-import Grip from '../common/Grip';
-import EditButton from '../common/EditButton';
+import { getInfoLineView, getSummaryView } from './SupportedActions';
+import CallDetails from './CallDetails';
+import { Call, DecodedAction } from './types';
+import Grip from './common/Grip';
+import EditButton from './common/EditButton';
+import { useSortable } from '@dnd-kit/sortable';
+import UndecodableCallInfoLine from './UndecodableCalls/UndecodableCallsInfoLine';
+import UndecodableCallDetails from './UndecodableCalls/UndecodableCallDetails';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
+  position: relative;
+  background-color: ${({ theme }) => theme.colors.background};
   margin-top: 0.8rem;
+  border: 1px solid;
+  border-color: ${({ dragging, theme }) =>
+    dragging ? theme.colors.text : theme.colors.muted};
+  z-index: ${({ dragging }) => (dragging ? 999 : 'initial')};
+  box-shadow: ${({ dragging }) =>
+    dragging ? '0px 4px 8px 0px rgba(0, 0, 0, 0.2)' : 'none'};
 `;
 
 const CardHeader = styled(Header)`
@@ -82,19 +94,28 @@ const CardActions = styled.div`
 
 interface ActionViewProps {
   call?: Call;
-  decodedCall?: DecodedCall;
+  decodedAction?: DecodedAction;
   isEditable?: boolean;
-  onEdit?: () => void;
+  onEdit?: (updatedCall: DecodedAction) => void;
 }
 
-const ActionView: React.FC<ActionViewProps> = ({
+const ActionRow: React.FC<ActionViewProps> = ({
   call,
-  decodedCall: decodedCallFromProps,
+  decodedAction,
   isEditable,
 }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: decodedAction?.id, disabled: !isEditable });
+
   const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
 
-  const decodedCall = decodedCallFromCall || decodedCallFromProps;
+  const decodedCall = decodedCallFromCall || decodedAction?.decodedCall;
 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -103,13 +124,24 @@ const ActionView: React.FC<ActionViewProps> = ({
   const InfoLine = getInfoLineView(decodedCall?.callType);
   const ActionSummary = getSummaryView(decodedCall?.callType);
 
+  const dndStyles = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
+
   return (
-    <CardWrapperWithMargin>
+    <CardWrapperWithMargin
+      dragging={isEditable && isDragging}
+      ref={setNodeRef}
+      style={dndStyles}
+      {...attributes}
+    >
       <CardHeader>
         <CardLabel>
-          {isEditable && <GripWithMargin />}
+          {isEditable && <GripWithMargin {...listeners} />}
 
           {InfoLine && <InfoLine decodedCall={decodedCall} />}
+          {!decodedCall && <UndecodableCallInfoLine />}
         </CardLabel>
         <CardActions>
           {isEditable && <EditButtonWithMargin>Edit</EditButtonWithMargin>}
@@ -151,7 +183,11 @@ const ActionView: React.FC<ActionViewProps> = ({
 
           {(!ActionSummary || activeTab === 1) && (
             <DetailWrapper>
-              <CallDetails decodedCall={decodedCall} />
+              {decodedCall ? (
+                <CallDetails decodedCall={decodedCall} />
+              ) : (
+                <UndecodableCallDetails call={call} />
+              )}
             </DetailWrapper>
           )}
         </>
@@ -160,4 +196,4 @@ const ActionView: React.FC<ActionViewProps> = ({
   );
 };
 
-export default ActionView;
+export default ActionRow;

@@ -1,4 +1,4 @@
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -17,7 +17,8 @@ import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import ContractActionsList from './ContractActionsList';
 import ContractsList from './ContractsList';
-import ParamsModal from './ParamsModal';
+import ParamsForm from './ParamsForm';
+import { useWeb3React } from '@web3-react/core';
 
 export const EditorWrapper = styled.div`
   margin: 1.25rem;
@@ -40,7 +41,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
   onAddAction,
 }) => {
   const { guild_id: guildId } = useParams<{ guild_id?: string }>();
-
+  const { account: walletAddress } = useWeb3React();
   // Supported Actions
   const [selectedAction, setSelectedAction] = useState<SupportedAction>(null);
   const [selectedActionContract, setSelectedActionContract] =
@@ -73,11 +74,28 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   function getContent() {
     if (selectedFunction) {
+      const contractInterface = selectedContract.contractInterface;
+      const contractId = selectedContract.contractAddress;
       return (
-        <ParamsModal
+        <ParamsForm
           fn={selectedContract.functions.find(
             fn => fn.functionName === selectedFunction
           )}
+          onSubmit={args => {
+            onAddAction({
+              id: `action-${Math.random()}`,
+              contract: contractInterface,
+              decodedCall: {
+                callType: SupportedAction.GENERIC_CALL,
+                from: guildId,
+                to: contractId,
+                function: contractInterface.getFunction(selectedFunction),
+                value: BigNumber.from(0),
+                args,
+              },
+            });
+            setIsOpen(false);
+          }}
         />
       );
     }
@@ -128,6 +146,11 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
     defaultDecodedAction.decodedCall.from = guildId;
     defaultDecodedAction.decodedCall.callType = action;
+    switch (action) {
+      case SupportedAction.REP_MINT:
+        defaultDecodedAction.decodedCall.args.to = walletAddress;
+        break;
+    }
     setData(defaultDecodedAction.decodedCall);
     setSelectedAction(action);
     setSelectedActionContract(defaultDecodedAction.contract);
@@ -137,6 +160,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
     if (!selectedAction || !data || !setSelectedActionContract) return;
 
     const decodedAction: DecodedAction = {
+      id: `action-${Math.random()}`,
       decodedCall: data,
       contract: selectedActionContract,
     };

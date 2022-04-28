@@ -6,6 +6,7 @@ import Web3 from 'web3';
 import moment from 'moment';
 import styled from 'styled-components';
 import * as serviceWorker from './serviceWorker';
+import './i18n';
 
 import ThemeProvider, { GlobalStyle } from './theme';
 

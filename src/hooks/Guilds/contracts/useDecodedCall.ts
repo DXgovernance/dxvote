@@ -60,19 +60,10 @@ const decodeCallUsingEthersInterface = (
 const getContractInterfaceFromRegistryContract = (
   registryContract: RegistryContract
 ) => {
-  // Construct the interface for the contract.
-  const contractInterface = new utils.Interface(
-    registryContract.functions.map(f => {
-      const name = f.functionName;
-      const params = f.params.reduce(
-        (acc, cur) => acc.concat(`${cur.type} ${cur.name}`),
-        ''
-      );
-      return `function ${name}(${params})`;
-    })
-  );
-
-  return { contractInterface, callType: SupportedAction.GENERIC_CALL };
+  return {
+    contractInterface: registryContract.contractInterface,
+    callType: SupportedAction.GENERIC_CALL,
+  };
 };
 
 const getContractFromKnownSighashes = (data: string) => {
@@ -117,6 +108,7 @@ const decodeCall = (
   );
 
   return {
+    id: `action-${Math.random()}`,
     decodedCall,
     contract: contractInterface,
   };
@@ -143,7 +135,6 @@ export const useDecodedCall = (call: Call) => {
   const { chainId } = useWeb3React();
   const { contracts } = useContractRegistry();
 
-  return call
-    ? decodeCall(call, contracts, chainId)
-    : { decodedCall: null, contract: null };
+  const decodedData = call ? decodeCall(call, contracts, chainId) : null;
+  return decodedData || { decodedCall: null, contract: null };
 };

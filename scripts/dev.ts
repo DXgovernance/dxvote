@@ -9,34 +9,12 @@ import {
 const hre = require('hardhat');
 const moment = require('moment');
 
-const accounts = [
-  '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
-  '0xc73480525e9d1198d448ece4a01daea851f72a9d',
-  '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
-  '0xaf1a6415202453d79b84d8a9d055b8f9141f696b',
-  '0x02803e2cdff171d1910d178dac948c711937bd3f',
-  '0x797c62953ef866a1ece855c4033cc5dc3c11290b',
-  '0x016f70459e4ba98e0d60a5f5855e117e8ff39cae',
-  '0x073f4fdc12f805b8d98e58551fc10d0a71bbc7db',
-  '0x6829556f30899d70403947590ffe8900e8c0d0d7',
-  '0x2b410bcb3b8096164fa8c6a06220a66bfb77058d',
-  '0x309f75c54a57937a7a0c6eb9b36eb1dbca82407e',
-  '0xec9d2d34ad6acda19ab8afe71595051b206e3e4d',
-  '0x40c23c536bad1fe206ce911114f2c70309a7e487',
-  '0x28d254f2ddb522c43a21d338e337fd8d2f820db2',
-  '0xaf7386ce842cc0cffef91361059b0ca9ae48d6a0',
-  '0x46c18451aaead6a2cb888b5bd6193c0f2c402329',
-  '0xc707c8143a6e1274ae7f637946f685870925261f',
-  '0x5b14a88dbbb04abcb6e5bf6384491be8d939cf57',
-  '0x92d356240dda25d050aa441690b92b2fa0011b84',
-  '0x5a485c203d9537095a6be2acc5a7ad83805d301d',
-];
-
 async function main() {
   const web3 = hre.web3;
   const PermissionRegistry = await hre.artifacts.require('PermissionRegistry');
   const ERC20Guild = await hre.artifacts.require('ERC20Guild');
   const SnapshotERC20Guild = await hre.artifacts.require('SnapshotERC20Guild');
+  const accounts = await web3.eth.getAccounts();
 
   const deployconfig = {
     reputation: [
@@ -58,10 +36,11 @@ async function main() {
       {
         name: 'DXDao on localhost',
         symbol: 'DXD',
+        type: 'ERC20',
         distribution: [
           {
             address: accounts[0],
-            amount: web3.utils.toWei('220'),
+            amount: web3.utils.toWei('320'),
           },
           {
             address: accounts[1],
@@ -76,6 +55,7 @@ async function main() {
       {
         name: 'REPGuildToken',
         symbol: 'RGT',
+        type: 'ERC20SnapshotRep',
         distribution: [
           {
             address: accounts[0],
@@ -94,6 +74,7 @@ async function main() {
       {
         name: 'Snapshot Guild Token',
         symbol: 'SGT',
+        type: 'ERC20',
         distribution: [
           {
             address: accounts[0],
@@ -105,7 +86,7 @@ async function main() {
           },
           {
             address: accounts[2],
-            amount: web3.utils.toWei('10'),
+            amount: web3.utils.toWei('100'),
           },
         ],
       },
@@ -541,8 +522,27 @@ async function main() {
       },
 
       {
+        type: 'approve',
+        from: accounts[2],
+        data: {
+          asset: 'SGT',
+          address: 'SnapshotERC20Guild-vault',
+          amount: web3.utils.toWei('2'),
+        },
+      },
+
+      {
+        type: 'guild-lockTokens',
+        from: accounts[2],
+        data: {
+          guildName: 'SnapshotERC20Guild',
+          amount: web3.utils.toWei('1'),
+        },
+      },
+
+      {
         type: 'guild-createProposal',
-        from: accounts[1],
+        from: accounts[2],
         data: {
           guildName: 'SnapshotERC20Guild',
           to: ['SnapshotERC20Guild'],
