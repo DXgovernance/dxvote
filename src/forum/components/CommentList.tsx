@@ -3,9 +3,19 @@ import { useRegistry } from 'forum/hooks/useRegistry';
 import { formatDate } from 'utils';
 import { CommentAvatar, ENSName } from './User';
 import { Box, Text, Flex } from './common/Box';
+import { Loading } from 'components/Guilds/common/Loading';
+
+function ErrorMessage({ error }) {
+  return error ? (
+    <Box p={4}>
+      <Text>{error.toString()}</Text>
+    </Box>
+  ) : null;
+}
 
 function Comment({ id, author, created_at }) {
   const { data, error, loading } = useContent(id);
+
   return (
     <Flex mb={4}>
       <CommentAvatar address={author} />
@@ -15,21 +25,27 @@ function Comment({ id, author, created_at }) {
           <Text>{formatDate(created_at)}</Text>
         </Flex>
 
-        <Box>
-          <Text>{data?.content}</Text>
-        </Box>
+        {loading ? (
+          <Loading loading text skeletonProps={{ width: '100%' }} />
+        ) : error ? (
+          <ErrorMessage error={error} />
+        ) : (
+          <Box>
+            <Text>{data?.content}</Text>
+          </Box>
+        )}
       </Box>
     </Flex>
   );
 }
 
 export default function CommentList({ proposalId }) {
-  const { data, error } = useRegistry({
+  let { data, error } = useRegistry({
     parent: proposalId,
     type: 'comment',
   });
   if (!data && !error) {
-    return <div>Loading comments...</div>;
+    return <Loading text loading skeletonProps={{ count: 3 }} />;
   }
   return (
     <div>
