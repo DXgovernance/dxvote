@@ -9,6 +9,7 @@ import { CommentAvatar, ENSName } from './User';
 import { Loading } from 'components/Guilds/common/Loading';
 
 import { Text, Flex } from './common/Box';
+import ErrorMessage from './common/ErrorMessage';
 
 function ConnectCeramicButton() {
   const { connection, connect } = useConnect();
@@ -44,7 +45,7 @@ export default function CommentCompose({ proposalId }) {
           </Text>
           <ConnectCeramicButton />
         </Flex>
-        <pre>{error?.message}</pre>
+        <ErrorMessage error={error} />
         <form
           onSubmit={async e => {
             e.preventDefault();

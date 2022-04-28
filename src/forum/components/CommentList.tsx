@@ -4,14 +4,7 @@ import { formatDate } from 'utils';
 import { CommentAvatar, ENSName } from './User';
 import { Box, Text, Flex } from './common/Box';
 import { Loading } from 'components/Guilds/common/Loading';
-
-function ErrorMessage({ error }) {
-  return error ? (
-    <Box p={4}>
-      <Text>{error.toString()}</Text>
-    </Box>
-  ) : null;
-}
+import ErrorMessage from './common/ErrorMessage';
 
 function Comment({ id, author, created_at }) {
   const { data, error, loading } = useContent(id);
