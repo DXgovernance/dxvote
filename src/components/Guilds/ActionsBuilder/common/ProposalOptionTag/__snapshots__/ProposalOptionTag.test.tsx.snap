@@ -4,7 +4,8 @@ exports[`ProposalOptionTag Should match snapshot 1`] = `
 <div>
    
   <span
-    class="sc-bczRLJ hLXOsU"
+    class="sc-bczRLJ frTcns"
+    color="blue"
   >
     For
   </span>
