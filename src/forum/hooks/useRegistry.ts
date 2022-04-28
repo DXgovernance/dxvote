@@ -14,8 +14,6 @@ type Query = {
 export function useRegistry(query: Query) {
   const { registry } = useForum();
 
-  console.log('useRegistry', query);
-
   const {
     sortBy = 'created_at',
     sortDirection = 'desc',

@@ -1,16 +1,18 @@
 import { useForum } from 'forum/ForumProvider';
 import { ForumEvent } from 'forum/types/ForumEvent';
 
-import { useAsync, useAsyncFn } from './useAsync';
+import { useAsyncFn } from './useAsync';
 import { useConnect } from './useConnect';
 
 import { useClient } from '@self.id/react';
 import { useWeb3React } from '@web3-react/core';
-import { useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 
 export function useContent(streamID) {
   const client = useClient();
-  return useAsync(async () => client.tileLoader.load(streamID).then(mapId));
+  return useSWR(`/forum/${streamID}`, async () =>
+    client.tileLoader.load(streamID).then(mapId)
+  );
 }
 
 export function useCreate() {
@@ -52,6 +54,48 @@ export function useCreate() {
     },
     [connection]
   );
+}
+
+export function useUpdate() {
+  const { mutate } = useSWRConfig();
+
+  const { connection } = useConnect();
+  const { registry } = useForum();
+  const client = useClient();
+
+  return useAsyncFn(async props => {
+    console.time('updating post');
+    if (connection.status === 'connected') {
+      console.time('creating post');
+
+      props.updated_at = getNow();
+      const { id } = props;
+      if (!id) {
+        throw new Error('No id provided to update entry');
+      }
+      console.log('updating post', id, props);
+
+      const updated = await client.tileLoader.load(id).then(async doc => {
+        // Merge the new data with the existing data
+        const patch = { ...doc.content, ...props };
+        await doc?.update(patch);
+        return patch;
+      });
+
+      console.log('post updated', updated);
+
+      // Update registry
+      await registry.put(toIndex(updated));
+
+      // Update the UI where these queries are used
+      mutate(`forum/${id}`);
+
+      console.timeEnd('updating post');
+      return id;
+    } else {
+      throw new Error('Not connected to Ceramic');
+    }
+  });
 }
 
 const mapId = doc => ({ id: doc.id.toString(), ...doc.content });
