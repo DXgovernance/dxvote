@@ -23,6 +23,7 @@ import useGuildImplementationType from '../../../hooks/Guilds/guild/useGuildImpl
 import { Loading } from '../common/Loading';
 import TokenAmountInput from '../common/Form/TokenAmountInput';
 import { BigNumber } from 'ethers';
+import { MAX_UINT } from 'utils';
 
 const GuestContainer = styled.div`
   display: flex;
@@ -172,7 +173,7 @@ export const StakeTokens = () => {
     if (!isStakeAmountValid) return;
 
     createTransaction(`Approve ${tokenInfo?.symbol} token spending`, async () =>
-      tokenContract.approve(guildConfig?.tokenVault, stakeAmount)
+      tokenContract.approve(guildConfig?.tokenVault, MAX_UINT)
     );
   };
 

@@ -22,6 +22,7 @@ import { useTransactions } from 'contexts/Guilds';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import { VoteConfirmationModal } from './VoteConfirmationModal';
 import { toast } from 'react-toastify';
+import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 
 const ButtonsContainer = styled.div`
   flex-direction: column;
@@ -87,6 +88,8 @@ const ProposalVoteCard = () => {
   const { guild_id: guildId, proposal_id: proposalId } =
     useParams<{ guild_id?: string; proposal_id?: string }>();
   const { data: proposal } = useProposal(guildId, proposalId);
+  const { data: proposalMetadata } = useProposalMetadata(guildId, proposalId);
+
   const voteData = useVotingResults();
 
   const timestamp = useTimedRerender(1000);
@@ -203,8 +206,8 @@ const ProposalVoteCard = () => {
           <ButtonsContainer>
             <VoteOptionsLabel>Options</VoteOptionsLabel>
 
-            {Object.keys(voteData?.options).map(actionKey => {
-              const bItem = BigNumber.from(actionKey);
+            {Object.keys(voteData?.options).map(optionKey => {
+              const bItem = BigNumber.from(optionKey);
 
               return (
                 <VoteOptionButton
@@ -216,7 +219,8 @@ const ProposalVoteCard = () => {
                     );
                   }}
                 >
-                  {'Action ' + actionKey}
+                  {proposalMetadata?.voteOptions?.[optionKey] ||
+                    'Option ' + (optionKey + 1)}
                 </VoteOptionButton>
               );
             })}
