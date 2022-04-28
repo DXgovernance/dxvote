@@ -26,4 +26,3 @@ export function ENSName({ address, ...props }) {
   const user = avatar.ensName || address;
   return <Text {...props}>{user}</Text>;
 }
-

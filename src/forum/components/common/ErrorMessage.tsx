@@ -7,4 +7,3 @@ export default function ErrorMessage({ error }) {
     </Box>
   ) : null;
 }
-

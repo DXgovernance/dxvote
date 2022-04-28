@@ -28,4 +28,3 @@ export const Flex = styled(Box)`
   align-items: ${({ alignItems }) => alignItems || 'initial'};
   justify-content: ${({ justifyContent }) => justifyContent || 'initial'};
 `;
-
