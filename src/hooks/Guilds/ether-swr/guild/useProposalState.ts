@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProposal } from './useProposal';
 
-
 enum ProposalState {
   Active = 'Active',
   Passed = 'Passed',
