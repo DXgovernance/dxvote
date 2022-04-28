@@ -6,18 +6,17 @@ import { useParams } from 'react-router-dom';
 import { useProposal } from './useProposal';
 
 
-
- enum ProposalState {
-  Active = "Active",
-  Passed = "Passed",
-  Executed = "Executed",
-  Failed = "Failed",
+enum ProposalState {
+  Active = 'Active',
+  Passed = 'Passed',
+  Executed = 'Executed',
+  Failed = 'Failed',
 }
 
 interface useProposalStateReturns {
   isExecutable: boolean;
   executeProposal: () => void;
-    error: Error
+  error: Error;
 }
 
 function useProposalState(): useProposalStateReturns {
@@ -29,10 +28,10 @@ function useProposalState(): useProposalStateReturns {
 
   const { isExecutable, executeProposal } = useMemo(() => {
     const now = moment.unix(moment.now());
-    const executeProposal = () => createTransaction('Execute Proposal', async () => {
-      return guildContract.endProposal(proposalId);
-    });
-
+    const executeProposal = () =>
+      createTransaction('Execute Proposal', async () => {
+        return guildContract.endProposal(proposalId);
+      });
 
     return {
       isExecutable:

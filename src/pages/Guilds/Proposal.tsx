@@ -97,7 +97,7 @@ const ProposalPage: React.FC = () => {
   const { data: proposal, error } = useProposal(guildId, proposalId);
   const { options } = useProposalCalls(guildId, proposalId);
 
-  const {  isExecutable, executeProposal} = useProposalState()
+  const { isExecutable, executeProposal } = useProposalState();
   if (!isGuildAvailabilityLoading) {
     if (!proposalIds?.includes(proposalId)) {
       return (
@@ -138,11 +138,9 @@ const ProposalPage: React.FC = () => {
 
             <ProposalStatusWrapper>
               <ProposalStatus proposalId={proposalId} showRemainingTime />
-              {
-                isExecutable ? (
-                  <Button onClick={() => executeProposal()}>Execute</Button>
-                ) : null
-              }
+              {isExecutable ? (
+                <Button onClick={() => executeProposal()}>Execute</Button>
+              ) : null}
             </ProposalStatusWrapper>
           </HeaderTopRow>
           <PageTitle>
