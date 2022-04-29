@@ -97,7 +97,9 @@ const ProposalPage: React.FC = () => {
   const { data: proposal, error } = useProposal(guildId, proposalId);
   const { options } = useProposalCalls(guildId, proposalId);
 
-  const { isExecutable, executeProposal } = useProposalState();
+  const {
+    data: { isExecutable, executeProposal },
+  } = useProposalState();
   if (!isGuildAvailabilityLoading) {
     if (!proposalIds?.includes(proposalId)) {
       return (

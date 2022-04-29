@@ -13,9 +13,12 @@ enum ProposalState {
 }
 
 interface useProposalStateReturns {
-  isExecutable: boolean;
-  executeProposal: () => void;
+  data: {
+    isExecutable: boolean;
+    executeProposal: () => void;
+  };
   error: Error;
+  loading: boolean;
 }
 
 function useProposalState(): useProposalStateReturns {
@@ -25,7 +28,8 @@ function useProposalState(): useProposalStateReturns {
   const { createTransaction } = useTransactions();
   const guildContract = useERC20Guild(guildId);
 
-  const { isExecutable, executeProposal } = useMemo(() => {
+  const { data, loading } = useMemo(() => {
+    if (!proposal) return { loading: true };
     const now = moment.unix(moment.now());
     const executeProposal = () =>
       createTransaction('Execute Proposal', async () => {
@@ -33,15 +37,16 @@ function useProposalState(): useProposalStateReturns {
       });
 
     return {
-      isExecutable:
-        proposal.state == ProposalState.Active && proposal.endTime < now
-          ? true
-          : false,
-      executeProposal: executeProposal,
+      data: {
+        isExecutable:
+          proposal.state == ProposalState.Active && proposal.endTime < now,
+        executeProposal: executeProposal,
+      },
+      loading: false,
     };
   }, [proposal]);
 
-  return { isExecutable, error, executeProposal };
+  return { data, error, loading };
 }
 
 export default useProposalState;
