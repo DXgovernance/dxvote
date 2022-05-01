@@ -122,7 +122,7 @@ const ActionButton = styled(Button)`
 export const StakeTokens = () => {
   const [stakeAmount, setStakeAmount] = useState<BigNumber>(null);
   const { account: userAddress } = useWeb3React();
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { guildId: guildAddress } = useParams();
   const { data: guildConfig } = useGuildConfig(guildAddress);
   const { data: tokenInfo } = useERC20Info(guildConfig?.token);
 

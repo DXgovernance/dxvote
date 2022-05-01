@@ -37,8 +37,7 @@ const ProposalsList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const { chain_name: chainName, guild_id: guildId } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { chainName, guildId } = useParams();
   const { data: proposalIds, error } = useGuildProposalIds(guildId);
   const { isLoading } = useContext(GuildAvailabilityContext);
   const filteredProposalIds = useMemo(() => {

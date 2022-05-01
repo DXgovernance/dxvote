@@ -30,8 +30,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
 }) => {
   const { chainId } = useWeb3React();
   const { contracts } = useContractRegistry(chainId);
-  const { guild_id: guildAddress } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { guildId: guildAddress } = useParams();
   const { isRepGuild } = useGuildImplementationTypeConfig(guildAddress);
   return (
     <Wrapper>

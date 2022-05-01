@@ -40,7 +40,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
   setIsOpen,
   onAddAction,
 }) => {
-  const { guild_id: guildId } = useParams<{ guild_id?: string }>();
+  const { guildId } = useParams();
   const { account: walletAddress } = useWeb3React();
   // Supported Actions
   const [selectedAction, setSelectedAction] = useState<SupportedAction>(null);

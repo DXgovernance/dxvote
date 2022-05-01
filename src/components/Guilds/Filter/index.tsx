@@ -48,8 +48,7 @@ const StyledInputWrapper = styled(Box)`
 `;
 
 export const Filter = () => {
-  const { guild_id: guildId } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { guildId } = useParams();
   const [viewFilter, setViewFilter] = useState(false);
   const { totalFilters } = useFilter();
 

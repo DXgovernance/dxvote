@@ -13,10 +13,7 @@ const ProposalDescriptionWrapper = styled.div`
 `;
 
 const ProposalDescription = () => {
-  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
-    guild_id?: string;
-    proposal_id?: string;
-  }>();
+  const { guildId, proposalId } = useParams();
   const { data: metadata, error } = useProposalMetadata(guildId, proposalId);
 
   if (error) {

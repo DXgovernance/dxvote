@@ -79,15 +79,7 @@ const HeaderTopRow = styled(Box)`
 `;
 
 const ProposalPage: React.FC = () => {
-  const {
-    chain_name: chainName,
-    guild_id: guildId,
-    proposal_id: proposalId,
-  } = useParams<{
-    chain_name: string;
-    guild_id?: string;
-    proposal_id?: string;
-  }>();
+  const { chainName, guildId, proposalId } = useParams();
 
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext

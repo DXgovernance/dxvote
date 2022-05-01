@@ -14,7 +14,7 @@ const StakeTokensModal: React.FC<StakeTokensModalInterface> = ({
   isOpen,
   onDismiss,
 }) => {
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { guildId: guildAddress } = useParams();
   const { data } = useGuildConfig(guildAddress);
   const { data: token } = useERC20Info(data?.token);
 

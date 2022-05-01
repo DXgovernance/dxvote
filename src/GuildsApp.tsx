@@ -40,20 +40,20 @@ const GuildsApp = () => {
                 <Container>
                   <GuildAvailabilityProvider>
                     <Switch>
-                      <Route exact path="/:chain_name">
+                      <Route exact path="/:chainName">
                         <LandingPage />
                       </Route>
 
-                      <Route exact path="/:chain_name/:guild_id">
+                      <Route exact path="/:chainName/:guildId">
                         <GuildsPage />
                       </Route>
-                      <Route path="/:chain_name/:guild_id/proposalType">
+                      <Route path="/:chainName/:guildId/proposalType">
                         <ProposalTypes data={ProposalTypesConfig} />
                       </Route>
-                      <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                      <Route path="/:chainName/:guildId/proposal/:proposalId">
                         <ProposalPage />
                       </Route>
-                      <Route path="/:chain_name/:guild_id/create/:proposal_type">
+                      <Route path="/:chainName/:guildId/create/:proposal_type">
                         <CreateProposalPage />
                       </Route>
 

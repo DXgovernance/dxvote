@@ -33,11 +33,7 @@ export const VoteResultRow: React.FC<ResultRowProps> = ({
   isPercent,
   optionKey,
 }) => {
-  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
-    chain_name: string;
-    guild_id?: string;
-    proposal_id?: string;
-  }>();
+  const { guildId, proposalId } = useParams();
 
   const isReady = optionKey !== undefined;
 

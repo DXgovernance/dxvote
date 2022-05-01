@@ -48,7 +48,7 @@ padding: 0 0.2rem;
 
 interface ProposalStatusProps {
   //optional cause
-  //if not present can { guild_id, proposal_id } = useParams()
+  //if not present can { guildId, proposalId } = useParams()
   proposalId?: string;
   // proposal: Proposal;
   bordered?: boolean;
@@ -62,13 +62,10 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   hideTime,
   showRemainingTime,
 }) => {
-  const { guild_id, proposal_id: paramProposalId } = useParams<{
-    guild_id?: string;
-    proposal_id?: string;
-  }>();
+  const { guildId, proposalId: paramProposalId } = useParams();
 
   const { data: proposal } = useProposal(
-    guild_id,
+    guildId,
     proposalId || paramProposalId
   );
 

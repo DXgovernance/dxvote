@@ -33,8 +33,7 @@ const ColoredLabel = styled(Label)`
 `;
 
 export const SidebarInfoCard = () => {
-  const { guild_id: guildId } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { guildId } = useParams();
   const { data } = useGuildConfig(guildId);
 
   const quorum = useVotingPowerPercent(

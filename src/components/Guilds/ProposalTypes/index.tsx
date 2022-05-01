@@ -166,8 +166,7 @@ interface ProposalTypesProps {
   data: ProposalTypeDescriptionProps[];
 }
 const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
-  const { guild_id: guildId, chain_name: chain } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { guildId, chainName: chain } = useParams();
   const history = useHistory();
   const location = useLocation();
   const { isLoading: isGuildAvailabilityLoading } = useContext(

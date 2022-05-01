@@ -84,8 +84,7 @@ const ProposalVoteCard = () => {
   const [selectedAction, setSelectedAction] = useState<BigNumber>();
   const [modalOpen, setModalOpen] = useState<boolean>();
 
-  const { guild_id: guildId, proposal_id: proposalId } =
-    useParams<{ guild_id?: string; proposal_id?: string }>();
+  const { guildId, proposalId } = useParams();
   const { data: proposal } = useProposal(guildId, proposalId);
   const voteData = useVotingResults();
 
@@ -104,7 +103,7 @@ const ProposalVoteCard = () => {
   const contract = useERC20Guild(guildId, true);
   const { data: snapshotId } = useSnapshotId({
     contractAddress: guildId,
-    proposalId: proposalId,
+    proposalId,
   });
 
   // Get voting power without fallbackSnapshotId

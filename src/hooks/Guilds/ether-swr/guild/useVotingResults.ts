@@ -13,8 +13,7 @@ export interface VoteData {
 }
 
 export const useVotingResults = (): VoteData => {
-  const { guild_id: guildId, proposal_id: proposalId } =
-    useParams<{ guild_id?: string; proposal_id?: string }>();
+  const { guildId, proposalId } = useParams();
 
   // swr hooks
   const { data: proposal } = useProposal(guildId, proposalId);

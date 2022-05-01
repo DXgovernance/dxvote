@@ -80,8 +80,7 @@ const EMPTY_CALL: Call = {
 };
 
 const CreateProposalPage: React.FC = () => {
-  const { guild_id: guildId, chain_name: chain } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { guildId, chainName: chain } = useParams();
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
   );
@@ -121,7 +120,7 @@ const CreateProposalPage: React.FC = () => {
   };
 
   const { createTransaction } = useTransactions();
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { guildId: guildAddress } = useParams();
   const guildContract = useERC20Guild(guildAddress);
   const handleCreateProposal = async () => {
     const contentHash = await uploadToIPFS();

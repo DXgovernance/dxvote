@@ -61,11 +61,7 @@ const SidebarInfoContent = styled.div`
 
 const ProposalInfoCard: React.FC = () => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-  const { guild_id: guildId, proposal_id: proposalId } = useParams<{
-    chain_name: string;
-    guild_id?: string;
-    proposal_id?: string;
-  }>();
+  const { guildId, proposalId } = useParams();
   const { data: proposal, error } = useProposal(guildId, proposalId);
 
   const { data: guildConfig } = useGuildConfig(guildId);

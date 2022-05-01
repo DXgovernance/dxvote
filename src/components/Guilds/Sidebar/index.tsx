@@ -97,7 +97,7 @@ const SidebarMenuItem = styled(MenuItem)`
 
 export const Sidebar = () => {
   const { account: userAddress } = useWeb3React();
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { guildId: guildAddress } = useParams();
   const { data } = useGuildConfig(guildAddress);
   const { data: numberOfMembers } = useGuildMemberTotal(guildAddress);
 

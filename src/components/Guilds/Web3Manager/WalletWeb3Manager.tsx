@@ -8,8 +8,8 @@ import { DEFAULT_CHAIN_ID } from '../../../utils/constants';
 
 const WalletWeb3Manager = ({ children }) => {
   const history = useHistory();
-  const routeMatch = useRouteMatch<{ chain_name?: string }>('/:chain_name');
-  const urlNetworkName = routeMatch?.params?.chain_name;
+  const routeMatch = useRouteMatch<{ chainName?: string }>('/:chainName');
+  const urlNetworkName = routeMatch?.params?.chainName;
 
   const rpcUrls = useRpcUrls();
   const chains = getChains(rpcUrls);

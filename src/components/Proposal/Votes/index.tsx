@@ -498,7 +498,7 @@ const Votes = () => {
             onCancel={() => setDecision(0)}
             voteDetails={{
               votingMachine: votingMachineOfProposal.address,
-              proposalId: proposalId,
+              proposalId,
               voter: account,
               decision: decision.toString(),
               repAmount: totalRepAtProposalCreation

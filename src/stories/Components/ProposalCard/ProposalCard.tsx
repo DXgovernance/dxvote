@@ -108,11 +108,6 @@ interface ProposalCardProps {
 }
 
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
-  const { guildId } = useParams();
-  const { data: proposal } = useProposal(guildId, id);
-  const votes = useVoteSummary(guildId, id);
-  const { imageUrl, ensName } = useENSAvatar(proposal?.creator, MAINNET_ID);
-
   return (
     <UnstyledLink to={href || '#'}>
       <CardWrapper>
@@ -155,54 +150,8 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
           </CardTitle>
         </CardContent>
         <CardFooter>
-          {proposal?.value ? (
-            <BorderedIconDetailWrapper>
-              <Detail>150 ETH</Detail>
-              {isDesktop && (
-                <>
-                  <Icon as="div" spaceLeft spaceRight>
-                    <FiArrowRight />
-                  </Icon>{' '}
-                  <Detail>geronimo.eth</Detail>
-                </>
-              )}
-            </BorderedIconDetailWrapper>
-          ) : (
-            <Loading
-              style={{ margin: 0 }}
-              skeletonProps={{ width: '200px' }}
-              loading
-              text
-            />
-          )}
-
-          {proposal?.totalVotes ? (
-            <BorderedIconDetailWrapper>
-              {votes
-                .sort((a, b) => b - a)
-                .map((vote, i) => {
-                  if (i < 3 && !(i === votes.length - 1)) {
-                    return (
-                      <>
-                        <Detail>{vote}%</Detail>
-                        <Icon as="div" spaceLeft spaceRight>
-                          <FiCircle />
-                        </Icon>
-                      </>
-                    );
-                  } else {
-                    return <Detail>{vote}%</Detail>;
-                  }
-                })}
-            </BorderedIconDetailWrapper>
-          ) : (
-            <Loading
-              style={{ margin: 0 }}
-              loading
-              text
-              skeletonProps={{ width: '200px' }}
-            />
-          )}
+          <ProposalCardActionSummary isLoading={isLoading} />
+          <ProposalCardVotes isLoading={isLoading} />
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>

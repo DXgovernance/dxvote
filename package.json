@@ -15,7 +15,9 @@
     "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run:development",
     "test": "react-app-rewired test --watchAll=false --coverage --verbose",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "engines": {
     "node": "^16.13.0"
@@ -114,6 +116,14 @@
     "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^6.4.22",
+    "@storybook/addon-essentials": "^6.4.22",
+    "@storybook/addon-interactions": "^6.4.22",
+    "@storybook/addon-links": "^6.4.22",
+    "@storybook/node-logger": "^6.4.22",
+    "@storybook/preset-create-react-app": "^3.2.0",
+    "@storybook/react": "^6.4.22",
+    "@storybook/testing-library": "^0.0.11",
     "@testing-library/cypress": "^8.0.2",
     "@types/jest": "^27.4.0",
     "@types/jsonexport": "^3.0.2",
@@ -142,5 +152,17 @@
   },
   "resolutions": {
     "electron": "^17.1.2"
+  },
+  "eslintConfig": {
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
+    ]
   }
 }

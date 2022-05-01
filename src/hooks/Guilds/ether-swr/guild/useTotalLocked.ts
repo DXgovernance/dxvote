@@ -14,7 +14,7 @@ const useTotalLocked = (guildAddress: string, snapshotId?: string) => {
     contractAddress: guildAddress,
   });
 
-  const { proposal_id: proposalId } = useParams<{ proposal_id?: string }>();
+  const { proposalId } = useParams();
   const { data: _snapshotId } = useSnapshotId({
     contractAddress: guildAddress,
     proposalId,
