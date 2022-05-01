@@ -35,7 +35,6 @@
     "@dnd-kit/utilities": "^3.1.0",
     "@nomiclabs/hardhat-truffle5": "^2.0.5",
     "@nomiclabs/hardhat-web3": "^2.0.0",
-    "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@tiptap/extension-focus": "^2.0.0-beta.39",
     "@tiptap/extension-highlight": "^2.0.0-beta.32",
@@ -114,6 +113,7 @@
     "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/cypress": "^8.0.2",
     "@types/jest": "^27.4.0",
     "@types/jsonexport": "^3.0.2",

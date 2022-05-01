@@ -7,9 +7,9 @@ import ERC20TransferEditor from './ERC20Transfer/ERC20TransferEditor';
 import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
 import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
 import GenericCallInfoLine from './GenericCall/GenericCallInfoLine';
-import REPMintEditor from './REPMint/REPMintEditor';
-import REPMintInfoLine from './REPMint/REPMintInfoLine';
-import REPMintSummary from './REPMint/REPMintSummary';
+import RepMintEditor from './RepMint/RepMintEditor';
+import RepMintInfoLine from './RepMint/RepMintInfoLine';
+import RepMintSummary from './RepMint/RepMintSummary';
 
 export interface SupportedActionMetadata {
   title: string;
@@ -43,9 +43,9 @@ export const supportedActions: Record<
   },
   [SupportedAction.REP_MINT]: {
     title: 'Mint Reputation',
-    infoLineView: REPMintInfoLine,
-    summaryView: REPMintSummary,
-    editor: REPMintEditor,
+    infoLineView: RepMintInfoLine,
+    summaryView: RepMintSummary,
+    editor: RepMintEditor,
   },
   [SupportedAction.GENERIC_CALL]: {
     title: 'Generic Call',

@@ -47,7 +47,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
             Transfer & Mint
           </ButtonLabel>
         </ActionsButton>
-        {!isRepGuild ? (
+        {isRepGuild ? (
           <ActionsButton
             onClick={() => onSupportedActionSelect(SupportedAction.REP_MINT)}
           >

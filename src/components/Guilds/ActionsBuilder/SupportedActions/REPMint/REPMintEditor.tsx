@@ -14,9 +14,7 @@ import { useState } from 'react';
 import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
 import { useTotalSupply } from 'hooks/Guilds/guild/useTotalSupply';
 import { useTokenData } from 'hooks/Guilds/guild/useTokenData';
-import { useContractRegistry } from 'hooks/Guilds/contracts/useContractRegistry';
 import { StyledToolTip } from 'components/common/ToolTip';
-// import { useWeb3React } from '@web3-react/core';
 
 const Control = styled(Box)`
   display: flex;
@@ -56,7 +54,10 @@ const StyledInfoIcon = styled(StyledIcon)`
   }
 `;
 
-const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
+export const Mint: React.FC<ActionEditorProps> = ({
+  decodedCall,
+  updateCall,
+}) => {
   // parse transfer state from calls
   const [repPercent, setRepPercent] = useState(0);
   const [repAmount, setRepAmount] = useState(0);
@@ -66,11 +67,6 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   const totalSupply = useBigNumberToNumber(tokenData?.totalSupply, 18);
 
   const { imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
-  // const { chainId } = useWeb3React()
-  const { contracts } = useContractRegistry(42161);
-  const contractParams = contracts?.[0]?.functions?.[0].params;
-  console.log(contracts);
-  console.log(contractParams);
   const setCallDataAmount = (value: string) => {
     const amount = value ? ethers.utils.parseUnits(value) : null;
     updateCall({
@@ -100,14 +96,8 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
         <ControlLabel>
           Recipient
           <StyledInfoIcon src={Info} />
-          <StyledToolTip>
-            {contracts.length > 0
-              ? contractParams.find(
-                  param =>
-                    param.component === 'address' &&
-                    param.name === 'beneficiary'
-                )?.description
-              : null}
+          <StyledToolTip data-testid="rep-address-info">
+            The address that will receive the REP minted.
           </StyledToolTip>
         </ControlLabel>
         <ControlRow>
@@ -129,14 +119,8 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
           <ControlLabel>
             Reputation in %
             <StyledInfoIcon src={Info} />
-            <StyledToolTip>
-              {contracts.length > 0
-                ? contractParams.find(
-                    param =>
-                      param.component === 'address' &&
-                      param.name === 'beneficiary'
-                  )?.description
-                : null}
+            <StyledToolTip data-testid="rep-percentage-info">
+              The percentage of the total reputation supply that will be minted.
             </StyledToolTip>
           </ControlLabel>
           <ControlRow>
@@ -149,14 +133,8 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
           <ControlLabel>
             Reputation Amount
             <StyledInfoIcon src={Info} />
-            <StyledToolTip>
-              {contracts.length > 0
-                ? contractParams.find(
-                    param =>
-                      param.component === 'tokenAmount' &&
-                      param.name === 'value'
-                  )?.description
-                : null}{' '}
+            <StyledToolTip data-testid="rep-amount-info">
+              The amount of REP that will be minted.
             </StyledToolTip>
           </ControlLabel>
           <ControlRow>
