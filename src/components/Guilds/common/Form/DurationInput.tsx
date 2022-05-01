@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { GoTriangleUp, GoTriangleDown } from 'react-icons/go';
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { Modal } from '../Modal';
 import { Flex } from '../Layout/Box';
 import { Button } from '../Button';
-import moment, { Duration, DurationInputArg2 } from 'moment';
 import NumericalInput from './NumericalInput';
 import { DURATION_LIMITS } from 'constants/Duration';
+import { useDuration } from 'hooks/Guilds/useDuration';
 
 const Column = styled(Flex)`
   flex-direction: column;
@@ -36,42 +36,9 @@ interface DurationInputProps {
 }
 
 const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
-  const [duration, setDuration] = useState({
-    years: null,
-    months: null,
-    days: null,
-    hours: null,
-    minutes: null,
-    seconds: null,
-  });
-
-  const increment = (key: string) =>
-    setDuration({ ...duration, [key]: duration[key] + 1 });
-  const decrement = (key: string) =>
-    setDuration({ ...duration, [key]: duration[key] - 1 });
-
-  const handleChange = (e: string, value: string) => {
-    if (e > DURATION_LIMITS[value].max || e < DURATION_LIMITS[value].min)
-      return;
-    return setDuration({ ...duration, [value]: e });
-  };
-
-  const { time } = useMemo(() => {
-    const convertDurationToSeconds = Object.keys(duration).reduce(
-      (acc, curr) => {
-        const result = acc.add(
-          moment.duration(duration[curr], curr as DurationInputArg2)
-        );
-        return result;
-      },
-      moment.duration(0, 'years') as Duration
-    );
-    return {
-      time: convertDurationToSeconds,
-    };
-  }, [duration]);
-
-  console.log('Time: ' + time.asSeconds());
+  const {
+    data: { duration, handleChange, increment, decrement },
+  } = useDuration();
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
