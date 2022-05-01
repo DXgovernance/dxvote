@@ -6,6 +6,7 @@ import { Flex } from '../Layout/Box';
 import { Button } from '../Button';
 import moment, { Duration, DurationInputArg2 } from 'moment';
 import NumericalInput from './NumericalInput';
+import { DURATION_LIMITS } from 'constants/Duration';
 
 const Column = styled(Flex)`
   flex-direction: column;
@@ -34,36 +35,7 @@ interface DurationInputProps {
   onDismiss: () => void;
 }
 
-export const DURATION_LIMITS = {
-  years: {
-    min: 0,
-    max: 10,
-  },
-  months: {
-    min: 0,
-    max: 11,
-  },
-  days: {
-    min: 0,
-    max: 31,
-  },
-  hours: {
-    min: 0,
-    max: 23,
-  },
-  minutes: {
-    min: 0,
-    max: 59,
-  },
-  seconds: {
-    min: 0,
-    max: 59,
-  },
-};
-
 const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
-  // TODO: refactor component
-  // TODO: integrate component into formRender
   const [duration, setDuration] = useState({
     years: null,
     months: null,
@@ -118,7 +90,7 @@ const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
                 value={count}
                 onChange={e => handleChange(e, value)}
                 placeholder={value}
-                textAlign='center'
+                textAlign="center"
               />
               <ColumnButton
                 disabled={count <= DURATION_LIMITS[value].min}

@@ -30,8 +30,7 @@ const InputWrapper = styled.div`
     font-family: ${({ theme }) => theme.fonts.body};
     font-size: ${({ theme }) => theme.fontSizes.body};
     font-weight: ${({ theme }) => theme.fontWeights.regular};
-    text-align: ${({ textAlign }) => textAlign || 'left'}
-
+    text-align: ${({ textAlign }) => textAlign || 'left'};
 
     &::placeholder {
       color: ${({ theme }) => theme.colors.proposalText.grey};
@@ -60,7 +59,7 @@ export interface InputProps<T>
     FormElementProps<T> {
   icon?: React.ReactElement;
   iconRight?: React.ReactElement;
-  textAlign?: string,
+  textAlign?: string;
 }
 
 const Input: React.FC<InputProps<any>> = ({
