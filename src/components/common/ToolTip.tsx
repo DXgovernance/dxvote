@@ -2,9 +2,12 @@ import { Box } from 'components/Guilds/common/Layout';
 import styled from 'styled-components';
 
 export const StyledToolTip = styled(Box)`
+  @media only screen and (min-width: 768px) {
+    transform: translateX(-50%);
+  }
+  transform: translateY(2rem);
   visibility: hidden;
   position: absolute;
-  transform: translate(-50%, 2rem);
   color: ${({ theme }) => theme.colors.text};
   background-color: ${({ theme }) => theme.colors.modalBackground};
   border: 1px solid ${({ theme }) => theme.colors.border.initial};
