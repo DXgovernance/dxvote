@@ -14,6 +14,9 @@ import { useState } from 'react';
 import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
 import { useTotalSupply } from 'hooks/Guilds/guild/useTotalSupply';
 import { useTokenData } from 'hooks/Guilds/guild/useTokenData';
+import { useContractRegistry } from 'hooks/Guilds/contracts/useContractRegistry';
+import { StyledToolTip } from 'components/common/ToolTip';
+// import { useWeb3React } from '@web3-react/core';
 
 const Control = styled(Box)`
   display: flex;
@@ -41,9 +44,15 @@ const RepMintInput = styled(NumericalInput)`
   display: flex;
   align-items: center;
   width: 100%;
-  &:hover,
-  &:focus {
-    border: 0.1rem solid ${({ theme }) => theme.colors.text};
+`;
+
+const StyledInfoIcon = styled(StyledIcon)`
+  &:hover + ${StyledToolTip} {
+    visibility: visible;
+  }
+  &:hover {
+    cursor: pointer;
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
 
@@ -57,7 +66,11 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   const totalSupply = useBigNumberToNumber(tokenData?.totalSupply, 18);
 
   const { imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
-
+  // const { chainId } = useWeb3React()
+  const { contracts } = useContractRegistry(42161);
+  const contractParams = contracts?.[0]?.functions?.[0].params;
+  console.log(contracts);
+  console.log(contractParams);
   const setCallDataAmount = (value: string) => {
     const amount = value ? ethers.utils.parseUnits(value) : null;
     updateCall({
@@ -86,7 +99,16 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
       <Control>
         <ControlLabel>
           Recipient
-          <StyledIcon src={Info} />
+          <StyledInfoIcon src={Info} />
+          <StyledToolTip>
+            {contracts.length > 0
+              ? contractParams.find(
+                  param =>
+                    param.component === 'address' &&
+                    param.name === 'beneficiary'
+                )?.description
+              : null}
+          </StyledToolTip>
         </ControlLabel>
         <ControlRow>
           <Input
@@ -105,22 +127,42 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
       <ControlRow>
         <Control>
           <ControlLabel>
-            Reputation in % <StyledIcon src={Info} />
+            Reputation in %
+            <StyledInfoIcon src={Info} />
+            <StyledToolTip>
+              {contracts.length > 0
+                ? contractParams.find(
+                    param =>
+                      param.component === 'address' &&
+                      param.name === 'beneficiary'
+                  )?.description
+                : null}
+            </StyledToolTip>
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={repPercent} onUserInput={handleRepChange} />
+            <RepMintInput value={repPercent} onChange={handleRepChange} />
           </ControlRow>
         </Control>
       </ControlRow>
       <ControlRow>
         <Control>
           <ControlLabel>
-            Reputation Amount <StyledIcon src={Info} />
+            Reputation Amount
+            <StyledInfoIcon src={Info} />
+            <StyledToolTip>
+              {contracts.length > 0
+                ? contractParams.find(
+                    param =>
+                      param.component === 'tokenAmount' &&
+                      param.name === 'value'
+                  )?.description
+                : null}{' '}
+            </StyledToolTip>
           </ControlLabel>
           <ControlRow>
             <RepMintInput
               value={repAmount}
-              onUserInput={handleRepChange}
+              onChange={handleRepChange}
               readOnly
             />
           </ControlRow>
