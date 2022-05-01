@@ -4,6 +4,7 @@ import { Modal } from '../Modal';
 import { Flex } from '../Layout/Box';
 import { Button } from '../Button';
 import moment, { Duration, DurationInputArg2 } from 'moment';
+import NumericalInput from './NumericalInput';
 
 const Column = styled(Flex)`
   flex-direction: column;
@@ -46,18 +47,24 @@ export const DURATION_LIMITS = {
 
 const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
   const [duration, setDuration] = useState({
-    years: 0,
-    months: 0,
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
+    years: null,
+    months: null,
+    days: null,
+    hours: null,
+    minutes: null,
+    seconds: null,
   });
 
   const increment = (key: string) =>
     setDuration({ ...duration, [key]: duration[key] + 1 });
   const decrement = (key: string) =>
     setDuration({ ...duration, [key]: duration[key] - 1 });
+
+  const handleChange = (e: string, value: string) => {
+    if (e > DURATION_LIMITS[value].max || e < DURATION_LIMITS[value].min)
+      return;
+    return setDuration({ ...duration, [value]: e });
+  };
 
   const { time } = useMemo(() => {
     const convertDurationToSeconds = Object.keys(duration).reduce(
@@ -87,7 +94,11 @@ const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
                 disabled={count >= DURATION_LIMITS[value].max}
                 onClick={() => increment(value)}
               />
-              <div>{count}</div>
+              <NumericalInput
+                value={count}
+                onChange={e => handleChange(e, value)}
+                placeholder={value}
+              />
               <Button
                 disabled={count <= DURATION_LIMITS[value].min}
                 onClick={() => decrement(value)}
