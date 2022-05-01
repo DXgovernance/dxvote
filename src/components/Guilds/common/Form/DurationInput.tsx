@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { GoTriangleUp, GoTriangleDown } from 'react-icons/go';
 import React, { useState, useMemo } from 'react';
 import { Modal } from '../Modal';
 import { Flex } from '../Layout/Box';
@@ -8,9 +9,24 @@ import NumericalInput from './NumericalInput';
 
 const Column = styled(Flex)`
   flex-direction: column;
+  width: 100px;
+  margin: 20px 10px;
 `;
+
 const Container = styled(Flex)`
   flex-direction: row;
+  justify-content: centre;
+`;
+
+const ColumnButton = styled(Button).attrs({
+  variant: 'primary',
+})`
+  background-color: transparent;
+  margin: 0;
+  border: none;
+  :hover:enabled {
+    border-color: none;
+  }
 `;
 
 interface DurationInputProps {
@@ -46,6 +62,8 @@ export const DURATION_LIMITS = {
 };
 
 const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
+  // TODO: refactor component
+  // TODO: integrate component into formRender
   const [duration, setDuration] = useState({
     years: null,
     months: null,
@@ -90,19 +108,24 @@ const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
           const count = duration[value];
           return (
             <Column>
-              <Button
+              <ColumnButton
                 disabled={count >= DURATION_LIMITS[value].max}
                 onClick={() => increment(value)}
-              />
+              >
+                <GoTriangleUp />
+              </ColumnButton>
               <NumericalInput
                 value={count}
                 onChange={e => handleChange(e, value)}
                 placeholder={value}
+                textAlign='center'
               />
-              <Button
+              <ColumnButton
                 disabled={count <= DURATION_LIMITS[value].min}
                 onClick={() => decrement(value)}
-              />
+              >
+                <GoTriangleDown />
+              </ColumnButton>
             </Column>
           );
         })}
