@@ -62,7 +62,8 @@ export const VoteResultRow: React.FC<ResultRowProps> = ({
         </OptionBullet>
 
         {isReady ? (
-          proposalMetadata?.voteOptions?.[optionKey] || 'Action ' + optionKey
+          proposalMetadata?.voteOptions?.[optionKey] ||
+          'Option ' + (optionKey + 1)
         ) : (
           <Loading loading text />
         )}

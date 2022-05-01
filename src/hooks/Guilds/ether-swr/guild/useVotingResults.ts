@@ -23,13 +23,12 @@ export const useVotingResults = (): VoteData => {
   const voteData = useMemo(() => {
     if (!proposal || !data || !tokenInfo) return undefined;
 
-    const options = proposal?.totalVotes.reduce<Record<string, BigNumber>>(
-      (acc, result, i) => {
+    const options = proposal?.totalVotes
+      .slice(1)
+      .reduce<Record<string, BigNumber>>((acc, result, i) => {
         acc[i] = result;
         return acc;
-      },
-      {}
-    );
+      }, {});
 
     return {
       options,
