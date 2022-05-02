@@ -19,17 +19,18 @@ export const useDXDPrice = (
     context: { subgraphService, configStore },
   } = useContext();
 
-  const networkContracts = configStore.getNetworkContracts();
+  const networkContracts = configStore.getTokensOfNetwork();
 
   const getData = async () => {
     setLoading(true);
     setDXDPrice(null);
     const { data } = await subgraphService.dailyTokenPrice(
-      networkContracts.votingMachines.dxd.token,
+      networkContracts.find(({ name }) => name === 'DXdao on xDai').address,
       moment(toDate).subtract(days, 'days'),
       toDate
     );
     let total = 0;
+    console.log({ data });
     Object.values<{ derivedNativeCurrency: string }>(data).forEach(
       ({ derivedNativeCurrency }) =>
         (total = total + parseInt(derivedNativeCurrency))
