@@ -562,6 +562,7 @@ async function main() {
           title: 'Proposal Test #1 to SnapshotERC20Guild',
           description:
             'Allow call any address and function and send a max of 5 ETH per proposal',
+          voteOptions: ['Test Option'],
         },
       },
 

@@ -113,8 +113,13 @@ const CreateProposalPage: React.FC = () => {
   const handleBack = () => history.push(`/${chain}/${guildId}/proposalType`);
 
   const ipfs = useIPFSNode();
+  // @ts-ignore
   const uploadToIPFS = async () => {
-    const content = { description: proposalBodyHTML, url: referenceLink };
+    const content = {
+      description: proposalBodyHTML,
+      url: referenceLink,
+      voteOptions: options.map(({ label }) => label),
+    };
     const cid = await ipfs.add(JSON.stringify(content));
     await ipfs.pin(cid);
     return contentHash.fromIpfs(cid);
@@ -124,7 +129,8 @@ const CreateProposalPage: React.FC = () => {
   const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
   const guildContract = useERC20Guild(guildAddress);
   const handleCreateProposal = async () => {
-    const contentHash = await uploadToIPFS();
+    // const contentHash = await uploadToIPFS();
+    console.log('options', options);
 
     const encodedOptions = bulkEncodeCallsFromOptions(options);
     const totalActions = encodedOptions.length;
