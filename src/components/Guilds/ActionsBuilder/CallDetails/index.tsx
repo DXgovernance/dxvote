@@ -67,26 +67,26 @@ const CallDetails: React.FC<ActionViewProps> = ({
           <ActionParamRow>
             <Box>
               approve ({' '}
-              <ParamTag color={theme?.colors?.params?.[0]}>uint256</ParamTag>
+              <ParamTag color={theme?.colors?.params?.[0]}>address</ParamTag>
               {', '}
-              <ParamTag color={theme?.colors?.params?.[1]}>address</ParamTag> )
+              <ParamTag color={theme?.colors?.params?.[1]}>uint256</ParamTag> )
             </Box>
           </ActionParamRow>
           <ActionParamRow>
             <ParamTitleRow>
               <ParamTitleTag color={theme?.colors?.params?.[0]}>
-                amount <em>(uint256)</em>
+                spender <em>(address)</em>
               </ParamTitleTag>
             </ParamTitleRow>
-            {renderByParamType('uint256', approveSpendTokens.amount)}
+            {renderByParamType('address', decodedCall.from)}
           </ActionParamRow>
           <ActionParamRow>
             <ParamTitleRow>
               <ParamTitleTag color={theme?.colors?.params?.[1]}>
-                token <em>(address)</em>
+                amount <em>(uint256)</em>
               </ParamTitleTag>
             </ParamTitleRow>
-            {renderByParamType('address', approveSpendTokens?.token)}
+            {renderByParamType('uint256', approveSpendTokens?.amount)}
           </ActionParamRow>
           <Divider style={{ marginBottom: '2rem' }} />
         </>
