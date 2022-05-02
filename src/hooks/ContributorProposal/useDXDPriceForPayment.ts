@@ -25,12 +25,11 @@ export const useDXDPrice = (
     setLoading(true);
     setDXDPrice(null);
     const { data } = await subgraphService.dailyTokenPrice(
-      networkContracts.find(({ name }) => name === 'DXdao on xDai').address,
+      networkContracts.find(({ symbol }) => symbol === 'DXD').address,
       moment(toDate).subtract(days, 'days'),
       toDate
     );
     let total = 0;
-    console.log({ data });
     Object.values<{ derivedNativeCurrency: string }>(data).forEach(
       ({ derivedNativeCurrency }) =>
         (total = total + parseInt(derivedNativeCurrency))

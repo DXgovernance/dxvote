@@ -15,7 +15,6 @@ export default class SubgraphService {
 
     const timestamps = getTimestampsFromRange(from, to, oneDay);
     const blocks = await getBlocksFromTimestamps(timestamps);
-    console.log({ blocks });
     if (blocks.length === 0) return [];
 
     const query = `
