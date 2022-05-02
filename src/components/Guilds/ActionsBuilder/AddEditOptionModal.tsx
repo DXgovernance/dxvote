@@ -8,7 +8,7 @@ import Input from 'components/Guilds/common/Form/Input';
 
 interface AddEditOptionModalProps {
   onDismiss: () => void;
-  editableOption: Option;
+  editableOption?: Option;
   onChange: (options: Option[]) => void;
   options: Option[];
 }
@@ -18,6 +18,13 @@ const DeleteButton = styled(Button)`
   &:disabled {
     color: inherit;
   }
+`;
+
+const Dot = styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
+  background: ${({ theme, color }) => color ?? theme.colors.muted};
 `;
 
 const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
@@ -83,16 +90,7 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
           <Input
             value={label}
             placeholder="Option Label"
-            icon={
-              <div
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 5,
-                  background: theme?.colors?.votes?.[options.length],
-                }}
-              ></div>
-            }
+            icon={<Dot color={theme?.colors?.votes?.[options.length]} />}
             onChange={e => setLabel(e.target.value)}
           />
         </Box>
