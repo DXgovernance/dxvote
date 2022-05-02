@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 import { Box } from 'components/Guilds/common/Layout/Box';
 import { Modal } from 'components/Guilds/common/Modal';
@@ -37,6 +38,7 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
   const isEditable = !!editableOption;
   const [label, setLabel] = React.useState<string>(defaultLabel);
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const handleConfirmSave = () => {
     isEditable
@@ -82,14 +84,16 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
     <Modal
       isOpen
       onDismiss={onDismiss}
-      header={!!editableOption ? 'Edit Option' : 'Add Option'}
+      header={t(!!editableOption ? 'guilds.editOption' : 'guilds.addOption')}
       maxWidth={300}
     >
       <Box padding="1rem 2rem">
         <Box padding="0 0 1rem 0">
           <Input
             value={label}
-            placeholder="Option Label"
+            placeholder={t('guilds.optionLabel', {
+              defaultValue: 'Delete Option',
+            })}
             icon={<Dot color={theme?.colors?.votes?.[options.length]} />}
             onChange={e => setLabel(e.target.value)}
           />
@@ -98,7 +102,7 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
         {!!editableOption && (
           <Box padding="0 0 1rem 0">
             <DeleteButton onClick={deleteOption} fullWidth variant="secondary">
-              Delete Option
+              {t('guilds.deleteOption', { defaultValue: 'Delete Option' })}
             </DeleteButton>
           </Box>
         )}
@@ -109,7 +113,7 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
             fullWidth
             onClick={handleConfirmSave}
           >
-            Save
+            {t('save', { defaultValue: 'Save' })}
           </Button>
         </Box>
       </Box>
