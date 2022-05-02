@@ -7,7 +7,6 @@ import { Option } from './types';
 import Input from 'components/Guilds/common/Form/Input';
 
 interface AddEditOptionModalProps {
-  isOpen: boolean;
   onDismiss: () => void;
   editableOption: Option;
   onChange: (options: Option[]) => void;
@@ -22,26 +21,24 @@ const DeleteButton = styled(Button)`
 `;
 
 const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
-  isOpen,
   editableOption,
   options,
   onDismiss,
   onChange,
 }) => {
-  const initialLabel = editableOption?.label ?? '';
+  const defaultLabel = editableOption?.label ?? '';
   const isEditable = !!editableOption;
-  const [label, setLabel] = React.useState<string>(initialLabel);
+  const [label, setLabel] = React.useState<string>(defaultLabel);
   const theme = useTheme();
 
   const handleConfirmSave = () => {
     isEditable
       ? editOption({ ...editableOption, label })
       : saveNewOption(label);
-    setLabel(null);
   };
 
   const saveNewOption = (label: string) => {
-    onChange([
+    const newOptions = [
       ...options,
       {
         id: `option-${options.length}-${label}`,
@@ -49,7 +46,8 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
         color: theme?.colors?.votes?.[options.length],
         decodedActions: [],
       },
-    ]);
+    ];
+    onChange(newOptions);
     onDismiss();
   };
 
@@ -73,10 +71,9 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
     onChange(newOptions);
     onDismiss();
   };
-
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen
       onDismiss={onDismiss}
       header={!!editableOption ? 'Edit Option' : 'Add Option'}
       maxWidth={300}
@@ -86,7 +83,6 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
           <Input
             value={label}
             placeholder="Option Label"
-            defaultValue={!!editableOption ? initialLabel : null}
             icon={
               <div
                 style={{
@@ -103,19 +99,18 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
 
         {!!editableOption && (
           <Box padding="0 0 1rem 0">
-            <DeleteButton
-              disabled={!label}
-              onClick={deleteOption}
-              fullWidth
-              variant="secondary"
-            >
+            <DeleteButton onClick={deleteOption} fullWidth variant="secondary">
               Delete Option
             </DeleteButton>
           </Box>
         )}
 
         <Box>
-          <Button fullWidth onClick={handleConfirmSave}>
+          <Button
+            disabled={defaultLabel === label}
+            fullWidth
+            onClick={handleConfirmSave}
+          >
             Save
           </Button>
         </Box>

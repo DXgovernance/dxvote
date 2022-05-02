@@ -15,7 +15,6 @@ export interface Proposal {
   contentHash: string;
   state: ProposalState;
   totalVotes: BigNumber[];
-  voteOptions:string[]
 }
 
 export enum ProposalState {
@@ -26,6 +25,7 @@ export enum ProposalState {
 }
 export interface ProposalMetadata {
   description: string;
+  voteOptions: string[];
 }
 export interface Transaction {
   hash: string

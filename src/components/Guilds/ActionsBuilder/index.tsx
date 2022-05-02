@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// import { useTheme } from 'styled-components';
 
 import { Header as CardHeader } from '../common/Card';
 import SidebarCard, {
@@ -60,16 +59,17 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
           setShowAddModal(true);
         }}
       />
-      <AddEditOptionModal
-        isOpen={showAddModal}
-        editableOption={editableOption}
-        options={options}
-        onDismiss={() => {
-          setEditableOption(null);
-          setShowAddModal(false);
-        }}
-        onChange={onChange}
-      />
+      {showAddModal && (
+        <AddEditOptionModal
+          editableOption={editableOption}
+          options={options}
+          onDismiss={() => {
+            setEditableOption(null);
+            setShowAddModal(false);
+          }}
+          onChange={onChange}
+        />
+      )}
     </SidebarCard>
   );
 };

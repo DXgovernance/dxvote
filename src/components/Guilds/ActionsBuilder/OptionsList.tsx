@@ -62,19 +62,6 @@ const OptionsList: React.FC<OptionsListProps> = ({
     });
   }, [options]);
 
-  // const theme = useTheme();
-  // function addOption() {
-  //   onChange([
-  //     ...options,
-  //     {
-  //       id: `option-${options.length}`,
-  //       label: `Option ${options.length + 1}`,
-  //       color: theme?.colors?.votes?.[options.length],
-  //       decodedActions: [],
-  //     },
-  //   ]);
-  // }
-
   function updateOption(index: number, option: Option) {
     onChange(options.map((o, i) => (i === index ? option : o)));
   }
