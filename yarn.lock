@@ -3206,9 +3206,9 @@
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
 "@sinclair/typebox@^0.23.3":
-  version "0.23.4"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.23.4.tgz#6ff93fd2585ce44f7481c9ff6af610fbb5de98a4"
-  integrity sha512-0/WqSvpVbCBAV1yPeko7eAczKbs78dNVAaX14quVlwOb2wxfKuXCx91h4NrEfkYK9zEnyVSW4JVI/trP3iS+Qg==
+  version "0.23.5"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.23.5.tgz#93f7b9f4e3285a7a9ade7557d9a8d36809cbc47d"
+  integrity sha512-AFBVi/iT4g20DHoujvMH1aEDn8fGJh4xsRGCP6d8RpLPMqsNPvW01Jcn0QysXTsg++/xj25NmJsGyH9xug/wKg==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -3807,10 +3807,10 @@
   resolved "https://registry.yarnpkg.com/@truffle/blockchain-utils/-/blockchain-utils-0.1.3.tgz#846b64314fc105d1d4af0996f0294111bf17911c"
   integrity sha512-K21Wf10u6VmS12/f9OrLN98f1RCqzrmuM2zlsly4b7BF/Xdh55Iq/jNSOnsNUJa+6Iaqqz6zeidquCYu9nTFng==
 
-"@truffle/codec@^0.12.9":
-  version "0.12.9"
-  resolved "https://registry.yarnpkg.com/@truffle/codec/-/codec-0.12.9.tgz#8db2083be26ada6f4c321b4d1c1b68140e8cc4fd"
-  integrity sha512-lk89f7MXOVDAUZ7stjkG2zK5MvYsxxaTR5m2LcbulMcS5KetBNj5COKQaDoIIfY79a8Bjrlvl5pLhmP/Drb9mw==
+"@truffle/codec@^0.12.10":
+  version "0.12.10"
+  resolved "https://registry.yarnpkg.com/@truffle/codec/-/codec-0.12.10.tgz#2a37438847b658760af86baaf022226ad9528885"
+  integrity sha512-5PEkeBl1z7SyAE1NWnKotHe9sOM+/Rx9O7Lwn/gnOJMD2WrFf9q2oTlxRrOQG6joUDOmGcIejEjqbo+aKyBKrw==
   dependencies:
     "@truffle/abi-utils" "^0.2.13"
     "@truffle/compile-common" "^0.7.31"
@@ -3858,16 +3858,16 @@
     debug "^4.3.1"
 
 "@truffle/contract@^4.0.35":
-  version "4.5.7"
-  resolved "https://registry.yarnpkg.com/@truffle/contract/-/contract-4.5.7.tgz#464ac9a90d76c479ce705a8dbf330dd8dd8de2dd"
-  integrity sha512-OAYebW3SwOpsfobGq4uC6ShI9Lzisg9CUGvKyjnSNO2eq5KbvDn9xVFB0DHS6xCLfQa+2ONWeVMnxLtIcmbUig==
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@truffle/contract/-/contract-4.5.8.tgz#749c113e6776f5ffdeaf11e1824e31f08df821a4"
+  integrity sha512-jqy9CFCw2EmOlyel+XQKK1ckv4m9i5Ag8pM8Mv6J+Xcv9lIE8b+FxVJAUD09Sad2OdOFFHw6f++MVPfygmTZ5w==
   dependencies:
     "@ensdomains/ensjs" "^2.0.1"
     "@truffle/blockchain-utils" "^0.1.3"
     "@truffle/contract-schema" "^3.4.7"
-    "@truffle/debug-utils" "^6.0.19"
+    "@truffle/debug-utils" "^6.0.20"
     "@truffle/error" "^0.1.0"
-    "@truffle/interface-adapter" "^0.5.15"
+    "@truffle/interface-adapter" "^0.5.16"
     bignumber.js "^7.2.1"
     debug "^4.3.1"
     ethers "^4.0.32"
@@ -3889,12 +3889,12 @@
     highlight.js "^9.15.8"
     highlightjs-solidity "^1.0.18"
 
-"@truffle/debug-utils@^6.0.19":
-  version "6.0.19"
-  resolved "https://registry.yarnpkg.com/@truffle/debug-utils/-/debug-utils-6.0.19.tgz#bf0cd1a3ff9c369bb66a4c2c3f32bb3c1176c843"
-  integrity sha512-EUrsCLF/+olOF8a0r0GOVpscNRbvLEhIHKTcHlpgQXoH46LcCbrxH2q5Lwwqmz7qDRTwp6f1UmSN37Rl5Ag5mQ==
+"@truffle/debug-utils@^6.0.20":
+  version "6.0.20"
+  resolved "https://registry.yarnpkg.com/@truffle/debug-utils/-/debug-utils-6.0.20.tgz#3c3efb01bc4c1f87388c437071e7e06d07789307"
+  integrity sha512-mJIVurSZsFNEnMtBgcwkOTIyi1xyuA1eQC5GV1Dgxzut+h0QDBAWdcfMqhGoRNY7AVjw2ZVN6V45DhGc80KtSA==
   dependencies:
-    "@truffle/codec" "^0.12.9"
+    "@truffle/codec" "^0.12.10"
     "@trufflesuite/chromafi" "^3.0.0"
     bn.js "^5.1.3"
     chalk "^2.4.2"
@@ -3934,10 +3934,10 @@
     ethers "^4.0.32"
     web3 "1.3.6"
 
-"@truffle/interface-adapter@^0.5.15":
-  version "0.5.15"
-  resolved "https://registry.yarnpkg.com/@truffle/interface-adapter/-/interface-adapter-0.5.15.tgz#8d006a7f79daf59f3bf996ee93047e4662895a5f"
-  integrity sha512-e6kSlSfn7XovKrrQ4lLUjog/cvwAelRNZLk7sfJ9pigZ+NRTlFmtrcWGUYgNIGuhAb48wYiRBEnkFIpqKGTtBw==
+"@truffle/interface-adapter@^0.5.16":
+  version "0.5.16"
+  resolved "https://registry.yarnpkg.com/@truffle/interface-adapter/-/interface-adapter-0.5.16.tgz#ff53a215e0c6bf7e47ef53dd13298bcb836b15fa"
+  integrity sha512-4L8/TtFSe9eW4KWeXAvi3RrD0rImbLeYB4axPLOCAitUEDCTB/iJjZ1cMkC85LbO9mwz5/AjP0i37YO10rging==
   dependencies:
     bn.js "^5.1.3"
     ethers "^4.0.32"
@@ -4369,9 +4369,9 @@
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
 "@types/node@*", "@types/node@>=10.0.0", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
-  version "17.0.29"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.29.tgz#7f2e1159231d4a077bb660edab0fde373e375a3d"
-  integrity sha512-tx5jMmMFwx7wBwq/V7OohKDVb/JwJU5qCVkeLMh1//xycAJ/ESuw9aJ9SEtlCZDYi2pBfe4JkisSoAtbOsBNAA==
+  version "17.0.30"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.30.tgz#2c6e8512acac70815e8176aa30c38025067880ef"
+  integrity sha512-oNBIZjIqyHYP8VCNAV9uEytXVeXG2oR0w9lgAXro20eugRQfY002qr3CUl6BAe+Yf/z3CRjPdz27Pu6WWtuSRw==
 
 "@types/node@^12.12.6":
   version "12.20.50"
@@ -4384,9 +4384,9 @@
   integrity sha512-X3bUMdK/VmvrWdoTkz+VCn6nwKwrKCFTHtqwBIaQJNx4RUIBBUFXM00bqPz/DsDd+Icjmzm6/tyYZzeGVqb6/Q==
 
 "@types/node@^16.11.7":
-  version "16.11.31"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.31.tgz#1dad8138efee6808809bb80f9e66bbe3e46c9277"
-  integrity sha512-wh/d0pcu/Ie2mqTIqh4tjd0mLAB4JWxOjHQtLN20HS7sjMHiV4Afr+90hITTyZcxowwha5wjv32jGEn1zkEFMg==
+  version "16.11.32"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.32.tgz#ff1a57f7c52dacb3537d22d230654390202774de"
+  integrity sha512-+fnfNvG5JQdC1uGZiTx+0QVtoOHcggy6+epx65JYroPGsE1uhp+vo5kioiGKsAkor6ocwHteU2EvO7N8vtOZtA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -8635,7 +8635,7 @@ duplexer@^0.1.1, duplexer@^0.1.2, duplexer@~0.1.1:
 
 "dxdao-contracts@https://github.com/DXGovernance/dxdao-contracts.git#develop":
   version "0.0.1"
-  resolved "https://github.com/DXGovernance/dxdao-contracts.git#4cfe855155e8ea77eac937edd9ccf82110dbe203"
+  resolved "https://github.com/DXGovernance/dxdao-contracts.git#27ae1287e983be4b3c59cf5a633514cb4a946038"
   dependencies:
     "@maticnetwork/eth-decoder" "^0.0.4"
     "@openzeppelin/contracts" "4.4.0"
@@ -8703,9 +8703,9 @@ electron-fetch@^1.7.2:
     encoding "^0.1.13"
 
 electron-to-chromium@^1.4.118:
-  version "1.4.124"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.124.tgz#e9015e234d8632920dcdf5480351da9e845ed220"
-  integrity sha512-VhaE9VUYU6d2eIb+4xf83CATD+T+3bTzvxvlADkQE+c2hisiw3sZmvEDtsW704+Zky9WZGhBuQXijDVqSriQLA==
+  version "1.4.127"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.127.tgz#4ef19d5d920abe2676d938f4170729b44f7f423a"
+  integrity sha512-nhD6S8nKI0O2MueC6blNOEZio+/PWppE/pevnf3LOlQA/fKPCrDp2Ao4wx4LFwmIkJpVdFdn2763YWLy9ENIZg==
 
 electron-webrtc@^0.3.0:
   version "0.3.0"
@@ -13607,9 +13607,9 @@ joi@^17.2.1, joi@^17.4.0:
     "@sideway/pinpoint" "^2.0.0"
 
 jotai@^1.6.2:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.6.4.tgz#4d9904362c53c4293d32e21fb358d3de34b82912"
-  integrity sha512-XC0ExLhdE6FEBdIjKTe6kMlHaAUV/QiwN7vZond76gNr/WdcdonJOEW79+5t8u38sR41bJXi26B1dRi7cCRz9A==
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.6.5.tgz#989efe63dc65beea23b3a5eab56f689d78e38070"
+  integrity sha512-B+DGV5ALIkIeyA1Bi9yBpdGmcWkmDS/p8C1XFYx9jFBs+lkeOdu0WAozAPCG4Qq1EcQ68vF+07HmPYFN5kf9OQ==
 
 joycon@^2.2.5:
   version "2.2.5"
@@ -21166,9 +21166,9 @@ typescript-memoize@^1.0.0-alpha.4, typescript-memoize@^1.1.0:
   integrity sha512-LQPKVXK8QrBBkL/zclE6YgSWn0I8ew5m0Lf+XL00IwMhlotqRLlzHV+BRrljVQIc+NohUAuQP7mg4HQwrx5Xbg==
 
 typescript@^4.5.5:
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.3.tgz#eefeafa6afdd31d725584c67a0eaba80f6fc6c6c"
-  integrity sha512-yNIatDa5iaofVozS/uQJEl3JRWLKKGJKh6Yaiv0GLGSuhpFJe7P3SbHZ8/yjAHRQwKRoA6YZqlfjXWmVzoVSMw==
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.4.tgz#caa78bbc3a59e6a5c510d35703f6a09877ce45e9"
+  integrity sha512-9ia/jWHIEbo49HfjrLGfKbZSuWo9iTMwXO+Ca3pRsSpbsMbc7/IU8NKdCZVRRBafVPGnoJeFL76ZOAA84I9fEg==
 
 typical@^4.0.0:
   version "4.0.0"
