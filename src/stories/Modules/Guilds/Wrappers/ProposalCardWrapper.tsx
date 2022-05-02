@@ -1,74 +1,14 @@
 import { useParams } from 'react-router';
 
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
-import { MAINNET_ID } from '../../../utils/constants';
+import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
+import { MAINNET_ID } from 'utils/constants';
 import useVoteSummary from 'hooks/Guilds/useVoteSummary';
 
 interface ProposalCardProps {
   id?: string;
   href?: string;
 }
-
-const ProposalCardVotes = ({ isLoading }) => {
-  if (isLoading) {
-    return (
-      <Loading
-        style={{ margin: 0 }}
-        loading
-        text
-        skeletonProps={{ width: '200px' }}
-      />
-    );
-  }
-  return (
-    <BorderedIconDetailWrapper>
-      {votes
-        .sort((a, b) => b - a)
-        .map((vote, i) => {
-          if (i < 3 && !(i === votes.length - 1)) {
-            return (
-              <>
-                <Detail>{vote}%</Detail>
-                <Icon as="div" spaceLeft spaceRight>
-                  <FiCircle />
-                </Icon>
-              </>
-            );
-          } else {
-            return <Detail>{vote}%</Detail>;
-          }
-        })}
-    </BorderedIconDetailWrapper>
-  );
-};
-
-const ProposalCardActionSummary = ({ isLoading }) => {
-  if (isLoading) {
-    return (
-      <Loading
-        style={{ margin: 0 }}
-        loading
-        text
-        skeletonProps={{ width: '200px' }}
-      />
-    );
-  }
-  return (
-    <BorderedIconDetailWrapper>
-      <Detail>150 ETH</Detail>
-      {isDesktop && (
-        <>
-          <Icon as="div" spaceLeft spaceRight>
-            <FiArrowRight />
-          </Icon>{' '}
-          <Detail>geronimo.eth</Detail>
-        </>
-      )}
-    </BorderedIconDetailWrapper>
-  );
-};
-
 const ProposalCardWrapper: React.FC<ProposalCardProps> = ({ id, href }) => {
   const { guildId } = useParams();
   const { data: proposal, error } = useProposal(guildId, id);
