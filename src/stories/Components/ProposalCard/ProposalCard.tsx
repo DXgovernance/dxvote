@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { ProposalCardProps } from "./types";
 import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
@@ -102,10 +103,10 @@ const ProposalStatusWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-interface ProposalCardProps {
-  id?: string;
-  href?: string;
-}
+// interface ProposalCardProps {
+//   id?: string;
+//   href?: string;
+// }
 
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   return (

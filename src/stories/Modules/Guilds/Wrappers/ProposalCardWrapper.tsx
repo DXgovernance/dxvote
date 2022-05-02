@@ -79,50 +79,7 @@ const ProposalCardWrapper: React.FC<ProposalCardProps> = ({ id, href }) => {
 
   return (
     <UnstyledLink to={href || '#'}>
-      <CardWrapper>
-        <CardHeader>
-          <IconDetailWrapper>
-            {proposal?.creator ? (
-              <Avatar src={imageUrl} defaultSeed={proposal.creator} size={24} />
-            ) : (
-              <Loading
-                style={{ margin: 0 }}
-                loading
-                text
-                skeletonProps={{ circle: true, width: '24px', height: '24px' }}
-              />
-            )}
-            <Detail>
-              {ensName ||
-                (proposal?.creator ? (
-                  shortenAddress(proposal.creator)
-                ) : (
-                  <Loading style={{ margin: 0 }} loading text />
-                ))}
-            </Detail>
-          </IconDetailWrapper>
-          <ProposalStatusWrapper>
-            <ProposalStatus
-              proposalId={id}
-              bordered={false}
-              showRemainingTime
-            />
-          </ProposalStatusWrapper>
-        </CardHeader>
-        <CardContent>
-          <CardTitle size={2}>
-            <strong>
-              {proposal?.title || (
-                <Loading style={{ margin: 0 }} loading text />
-              )}
-            </strong>
-          </CardTitle>
-        </CardContent>
-        <CardFooter>
-          <ProposalCardActionSummary isLoading={isLoading} />
-          <ProposalCardVotes isLoading={isLoading} />
-        </CardFooter>
-      </CardWrapper>
+      <ProposalCard  />
     </UnstyledLink>
   );
 };
