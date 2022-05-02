@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ProposalCardProps } from "./types";
+import { ProposalCardProps } from './types';
 import { useParams } from 'react-router';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';

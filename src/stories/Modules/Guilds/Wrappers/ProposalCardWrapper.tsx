@@ -79,7 +79,7 @@ const ProposalCardWrapper: React.FC<ProposalCardProps> = ({ id, href }) => {
 
   return (
     <UnstyledLink to={href || '#'}>
-      <ProposalCard  />
+      <ProposalCard />
     </UnstyledLink>
   );
 };

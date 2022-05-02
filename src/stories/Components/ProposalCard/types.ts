@@ -1,4 +1,4 @@
-import { Proposal, ENSAvatar } from "../../Types"
+import { Proposal, ENSAvatar } from '../../Types';
 
 export interface ProposalCardProps {
   proposal?: Proposal;
