@@ -43,7 +43,7 @@ const Divider = styled.hr`
 `;
 
 const GreyDivider = styled(Divider)`
-  border-top: 1px solid #c4c4c4;
+  border-top: 1px solid ${({ theme }) => theme.colors.muted};
   margin: 0;
 `;
 

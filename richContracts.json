@@ -1,0 +1,155 @@
+[
+  {
+    "title": "Vesting contract for DXD token",
+    "tags": ["DXD", "DXdao", "factory"],
+    "networks": {
+      "1": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+      "4": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+      "100": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+      "42161": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+      "421611": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B",
+      "1337": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+    },
+    "functions": [
+      {
+        "title": "Create vesting contract",
+        "functionName": "create",
+        "params": [
+          {
+            "type": "address",
+            "component": "address",
+            "name": "beneficiary",
+            "defaultValue": "",
+            "description": "Receiving address of tokens"
+          },
+          {
+            "type": "uint256",
+            "component": "date",
+            "name": "start",
+            "defaultValue": "",
+            "description": "Starting time for contract"
+          },
+          {
+            "type": "uint256",
+            "component": "time",
+            "name": "cliffDuration",
+            "defaultValue": "",
+            "description": "How long before cliff"
+          },
+          {
+            "type": "uint256",
+            "component": "time",
+            "name": "duration",
+            "defaultValue": "",
+            "description": "How long before contract finishes fully"
+          },
+          {
+            "type": "uint256",
+            "component": "tokenAmount",
+            "name": "value",
+            "defaultValue": "",
+            "description": "Number of tokens to vest"
+          }
+        ],
+        "shortDescription": "Creates DXD vesting contracts for worker proposals",
+        "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+        "spendsTokens": true
+      }
+    ]
+  },
+
+  {
+    "title": "Global Permission Registry",
+    "tags": ["DXgov", "Guilds", "permissions"],
+    "networks": {
+      "4": "0x7d5Cc70B1d1778B8bEdeaD40283056CDb71E32B2",
+      "1337": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+    },
+    "functions": [
+      {
+        "title": "Set Permission for guild",
+        "functionName": "setPermission",
+        "params": [
+          {
+            "type": "address",
+            "component": "permissionAsset",
+            "name": "asset",
+            "title": "Asset",
+            "defaultValue": "",
+            "description": "Asset of permission"
+          },
+          {
+            "type": "address",
+            "component": "address",
+            "name": "to",
+            "title": "To",
+            "defaultValue": "",
+            "description": "Address of contract / receiver in case of asset"
+          },
+          {
+            "type": "bytes4",
+            "component": "function",
+            "name": "functionSignature",
+            "title": "Function",
+            "defaultValue": "",
+            "description": "Function to be allowed"
+          },
+          {
+            "type": "uint256",
+            "component": "number",
+            "name": "valueAllowed",
+            "title": "Value allowed",
+            "defaultValue": "",
+            "description": "Amount of value allowed to be transferred"
+          },
+          {
+            "type": "bool",
+            "component": "boolean",
+            "name": "allowed",
+            "title": "Allowed?",
+            "defaultValue": "",
+            "description": "Allow this action?"
+          }
+        ],
+        "shortDescription": "Sets permissions for guild",
+        "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+        "spendsTokens": false
+      }
+    ]
+  },
+  {
+    "title": "Swapr fees",
+    "tags": ["DXgov", "Guilds", "permissions"],
+    "networks": {
+      "4": "0x7d5Cc70B1d1778B8bEdeaD40283056CDb71E32B2",
+      "1337": "0x0b17cf48420400e1D71F8231d4a8e43B3566BB5B"
+    },
+    "functions": [
+      {
+        "title": "Set fee for a pool",
+        "functionName": "setSwapFee",
+        "params": [
+          {
+            "type": "address",
+            "component": "address",
+            "name": "pair",
+            "title": "Pool",
+            "defaultValue": "",
+            "description": "Pool pair to set fee on"
+          },
+          {
+            "type": "uint32",
+            "component": "integer",
+            "name": "swapFee",
+            "title": "Swap Fee %",
+            "defaultValue": "",
+            "description": "Address of contract / receiver in case of asset"
+          }
+        ],
+        "shortDescription": "Sets the swap fee for a given pool on swapr",
+        "longDescription": "Factory contract to create new vesting contracts for the ERC20 token DXD with owenership then passed to the DXdao",
+        "spendsTokens": false
+      }
+    ]
+  }
+]

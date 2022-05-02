@@ -14,6 +14,6 @@ export const NotificationDetail = styled.div`
 
   a {
     text-decoration: initial;
-    color: initial;
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
