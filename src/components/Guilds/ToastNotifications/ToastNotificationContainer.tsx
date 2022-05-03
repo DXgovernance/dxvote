@@ -6,7 +6,6 @@ const ToastNotificationContainer = styled(ToastContainer)`
     top: 6em;
   }
   .Toastify__toast {
-    /* border: 1px solid ${({ theme }) => theme.colors.text}; */
     color: ${({ theme }) => theme.colors.text};
     background: ${({ theme }) => theme.colors.modalBackground};
     box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.25);
