@@ -11,12 +11,11 @@ class Guilds {
     this.deployedGuildsAddresses = localhostConfigJSON.guilds;
   }
 
-  goToGuildsPage(
-    network: string = 'localhost',
-    address: string = '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef' // default rinkeby deployed address
-  ) {
+  goToGuildsPage(network: string = 'localhost', address?: string) {
     const baseUrl = Cypress.config('baseUrl');
-    cy.visit(`${baseUrl}/guilds/${network}/${address}`, { timeout: 120000 });
+    cy.visit(`${baseUrl}/guilds/${network}${address ? `/${address}` : ''}`, {
+      timeout: 120000,
+    });
   }
 
   shouldRenderProposalsList() {
@@ -31,3 +30,4 @@ class Guilds {
 const guilds: Guilds = new Guilds();
 
 export default guilds;
+

@@ -71,7 +71,11 @@ const Web3Status = () => {
         />
       );
     } else {
-      return <Button onClick={toggleWalletModal}>Connect Wallet</Button>;
+      return (
+        <Button data-testId="connectWalletBtn" onClick={toggleWalletModal}>
+          Connect Wallet
+        </Button>
+      );
     }
   }
 
