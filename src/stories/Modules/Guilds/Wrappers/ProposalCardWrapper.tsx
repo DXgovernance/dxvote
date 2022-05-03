@@ -1,5 +1,4 @@
 import { useParams } from 'react-router';
-
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { MAINNET_ID } from 'utils/constants';
