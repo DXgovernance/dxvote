@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { FiCode } from 'react-icons/fi';
 import { ActionViewProps } from '..';
+import useBigNumberToString from 'hooks/Guilds/conversions/useBigNumberToString';
+import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import DataTag from '../../common/DataTag';
 import { Segment } from '../common/infoLine';
 
@@ -11,7 +13,15 @@ const FunctionDetailsTag = styled(DataTag)`
   padding: 0.125rem 0.375rem;
 `;
 
-const GenericCallInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
+const GenericCallInfoLine: React.FC<ActionViewProps> = ({
+  decodedCall,
+  approveSpendTokens,
+}) => {
+  const { data: tokenInfo } = useERC20Info(approveSpendTokens?.token);
+  const approvalAmount = useBigNumberToString(
+    approveSpendTokens.amount,
+    tokenInfo.decimals
+  );
   return (
     <>
       <Segment>
@@ -30,6 +40,13 @@ const GenericCallInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
           )
         </FunctionDetailsTag>
       </Segment>
+      {!!approveSpendTokens && (
+        <Segment>
+          <FunctionDetailsTag>
+            approve ({approvalAmount} {tokenInfo?.symbol ?? ''})
+          </FunctionDetailsTag>
+        </Segment>
+      )}
     </>
   );
 };

@@ -19,7 +19,7 @@ import Avatar from '../../Avatar';
 
 const Wrapper = styled.div`
   padding: 1rem;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
   margin: 1.5rem;
 `;
@@ -48,7 +48,8 @@ const ExternalLink = styled.a`
 `;
 
 const ConnectionActionButton = styled(IconButton)`
-  color: ${({ theme }) => theme.colors.muted};
+  color: ${({ theme }) => theme.colors.text};
+  background-color: ${({ theme }) => theme.colors.modalBackground};
   display: flex;
   justify-content: center;
   padding: 0;

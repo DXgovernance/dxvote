@@ -15,7 +15,7 @@ const StyledMintIcon = styled(StyledIcon)`
   margin: 0;
 `;
 
-const REPMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
+const RepMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
   const { parsedData } = useTotalSupply({ decodedCall });
   const { tokenData } = useTokenData();
 
@@ -43,4 +43,4 @@ const REPMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
   );
 };
 
-export default REPMintInfoLine;
+export default RepMintInfoLine;

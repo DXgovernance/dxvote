@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import useIPFSFile from '../ipfs/useIPFSFile';
 
 // TODO: Get the actual token registry hash
-const CONTRACT_REGISTRY = 'QmUTUJRWKLEWAZPGKp92XYsWwEwrBj2BxMTKQbz8hDKTe7';
+const CONTRACT_REGISTRY = 'QmXk294ZQebU6J7yYpAhBqBPaMquCKxGmGoNHLBpvUJ9on';
 
 export interface RegistryContractFunctionParam {
   type: string;

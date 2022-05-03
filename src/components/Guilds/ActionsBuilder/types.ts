@@ -27,6 +27,7 @@ export interface DecodedAction {
   id: string;
   decodedCall: DecodedCall;
   contract: utils.Interface;
+  approval?: ApproveSendTokens;
 }
 
 export interface Option {
@@ -35,4 +36,9 @@ export interface Option {
   color: string;
   actions?: Call[];
   decodedActions?: DecodedAction[];
+}
+
+export interface ApproveSendTokens {
+  amount: BigNumber;
+  token: string;
 }

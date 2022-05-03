@@ -113,8 +113,13 @@ const CreateProposalPage: React.FC = () => {
   const handleBack = () => history.push(`/${chain}/${guildId}/proposalType`);
 
   const ipfs = useIPFSNode();
+
   const uploadToIPFS = async () => {
-    const content = { description: proposalBodyHTML, url: referenceLink };
+    const content = {
+      description: proposalBodyHTML,
+      url: referenceLink,
+      voteOptions: options.map(({ label }) => label),
+    };
     const cid = await ipfs.add(JSON.stringify(content));
     await ipfs.pin(cid);
     return contentHash.fromIpfs(cid);

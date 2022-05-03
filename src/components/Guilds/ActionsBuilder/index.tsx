@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import { Header as CardHeader } from '../common/Card';
 import SidebarCard, {
   SidebarCardHeaderSpaced,
@@ -7,6 +8,7 @@ import OptionsList from './OptionsList';
 import { Option } from './types';
 import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
 import EditButton from './common/EditButton';
+import AddEditOptionModal from './AddEditOptionModal';
 
 interface ActionsBuilderProps {
   options: Option[];
@@ -20,6 +22,8 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
   onChange,
 }) => {
   const [isEditable, setIsEditable] = useState(editable);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editableOption, setEditableOption] = useState(null);
 
   const onEdit = () => setIsEditable(true);
 
@@ -49,7 +53,23 @@ export const ActionsBuilder: React.FC<ActionsBuilderProps> = ({
         isEditable={isEditable}
         options={options}
         onChange={onChange}
+        addOption={() => setShowAddModal(true)}
+        editOption={option => {
+          setEditableOption(option);
+          setShowAddModal(true);
+        }}
       />
+      {showAddModal && (
+        <AddEditOptionModal
+          editableOption={editableOption}
+          options={options}
+          onDismiss={() => {
+            setEditableOption(null);
+            setShowAddModal(false);
+          }}
+          onChange={onChange}
+        />
+      )}
     </SidebarCard>
   );
 };
