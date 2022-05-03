@@ -14,6 +14,7 @@ import { useState } from 'react';
 import NumericalInput from 'components/Guilds/common/Form/NumericalInput';
 import { useTotalSupply } from 'hooks/Guilds/guild/useTotalSupply';
 import { useTokenData } from 'hooks/Guilds/guild/useTokenData';
+import { StyledToolTip } from 'components/common/ToolTip';
 
 const Control = styled(Box)`
   display: flex;
@@ -41,13 +42,22 @@ const RepMintInput = styled(NumericalInput)`
   display: flex;
   align-items: center;
   width: 100%;
-  &:hover,
-  &:focus {
-    border: 0.1rem solid ${({ theme }) => theme.colors.text};
+`;
+
+const StyledInfoIcon = styled(StyledIcon)`
+  &:hover + ${StyledToolTip} {
+    visibility: visible;
+  }
+  &:hover {
+    cursor: pointer;
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
 
-const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
+export const Mint: React.FC<ActionEditorProps> = ({
+  decodedCall,
+  updateCall,
+}) => {
   // parse transfer state from calls
   const [repPercent, setRepPercent] = useState(0);
   const [repAmount, setRepAmount] = useState(0);
@@ -57,7 +67,6 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   const totalSupply = useBigNumberToNumber(tokenData?.totalSupply, 18);
 
   const { imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
-
   const setCallDataAmount = (value: string) => {
     const amount = value ? ethers.utils.parseUnits(value) : null;
     updateCall({
@@ -86,7 +95,10 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
       <Control>
         <ControlLabel>
           Recipient
-          <StyledIcon src={Info} />
+          <StyledInfoIcon src={Info} />
+          <StyledToolTip data-testid="rep-address-info">
+            The address that will receive the REP minted.
+          </StyledToolTip>
         </ControlLabel>
         <ControlRow>
           <Input
@@ -105,22 +117,30 @@ const Mint: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
       <ControlRow>
         <Control>
           <ControlLabel>
-            Reputation in % <StyledIcon src={Info} />
+            Reputation in %
+            <StyledInfoIcon src={Info} />
+            <StyledToolTip data-testid="rep-percentage-info">
+              The percentage of the total reputation supply that will be minted.
+            </StyledToolTip>
           </ControlLabel>
           <ControlRow>
-            <RepMintInput value={repPercent} onUserInput={handleRepChange} />
+            <RepMintInput value={repPercent} onChange={handleRepChange} />
           </ControlRow>
         </Control>
       </ControlRow>
       <ControlRow>
         <Control>
           <ControlLabel>
-            Reputation Amount <StyledIcon src={Info} />
+            Reputation Amount
+            <StyledInfoIcon src={Info} />
+            <StyledToolTip data-testid="rep-amount-info">
+              The amount of REP that will be minted.
+            </StyledToolTip>
           </ControlLabel>
           <ControlRow>
             <RepMintInput
               value={repAmount}
-              onUserInput={handleRepChange}
+              onChange={handleRepChange}
               readOnly
             />
           </ControlRow>
