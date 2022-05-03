@@ -3,8 +3,6 @@ import { utils } from 'ethers';
 import useJsonRpcProvider from '../web3/useJsonRpcProvider';
 import { GuildImplementationType } from '../../../types/types.guilds.d';
 import deployedHashedBytecodes from '../../../bytecodes/config.json';
-import localDeployedHashedByteCodes from '../../../bytecodes/config.local.json';
-import { useWeb3React } from '@web3-react/core';
 
 const defaultImplementation = deployedHashedBytecodes.find(
   ({ type }) => type === GuildImplementationType.IERC20Guild
@@ -49,7 +47,6 @@ export default function useGuildImplementationTypeConfig(
 ): ImplementationTypeConfigReturn {
   const [guildBytecode, setGuildBytecode] = useState<string>('');
   const provider = useJsonRpcProvider();
-  const { chainId } = useWeb3React();
   useEffect(() => {
     const getBytecode = async () => {
       const btcode = await provider.getCode(guildAddress);
@@ -61,19 +58,10 @@ export default function useGuildImplementationTypeConfig(
 
   const implementationTypeConfig: ImplementationTypeConfig = useMemo(() => {
     if (!guildBytecode) return defaultImplementation;
-    let match: ImplementationTypeConfig;
-    switch (chainId) {
-      case 1337: // localhost
-        match = localDeployedHashedByteCodes.find(
-          ({ bytecode_hash }) => bytecode_hash === guildBytecode
-        );
-        break;
-      default:
-        match = deployedHashedBytecodes.find(
-          ({ bytecode_hash }) => guildBytecode === bytecode_hash
-        );
-    }
-    return match ? match : defaultImplementation; // default to IERC20Guild
+    const match = deployedHashedBytecodes.find(
+      ({ bytecode_hash }) => guildBytecode === bytecode_hash
+    );
+    return match ?? defaultImplementation; // default to IERC20Guild
   }, [guildBytecode]);
   return parseConfig(implementationTypeConfig);
 }
