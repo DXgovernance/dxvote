@@ -1,86 +1,30 @@
 import { useParams } from 'react-router';
 
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
-import { MAINNET_ID } from '../../../utils/constants';
+import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
+import { MAINNET_ID } from 'utils/constants';
 import useVoteSummary from 'hooks/Guilds/useVoteSummary';
+import ProposalCard from 'stories/Components/ProposalCard/ProposalCard';
 
-interface ProposalCardProps {
+interface ProposalCardWrapperProps {
   id?: string;
   href?: string;
 }
-
-const ProposalCardVotes = ({ isLoading }) => {
-  if (isLoading) {
-    return (
-      <Loading
-        style={{ margin: 0 }}
-        loading
-        text
-        skeletonProps={{ width: '200px' }}
-      />
-    );
-  }
-  return (
-    <BorderedIconDetailWrapper>
-      {votes
-        .sort((a, b) => b - a)
-        .map((vote, i) => {
-          if (i < 3 && !(i === votes.length - 1)) {
-            return (
-              <>
-                <Detail>{vote}%</Detail>
-                <Icon as="div" spaceLeft spaceRight>
-                  <FiCircle />
-                </Icon>
-              </>
-            );
-          } else {
-            return <Detail>{vote}%</Detail>;
-          }
-        })}
-    </BorderedIconDetailWrapper>
-  );
-};
-
-const ProposalCardActionSummary = ({ isLoading }) => {
-  if (isLoading) {
-    return (
-      <Loading
-        style={{ margin: 0 }}
-        loading
-        text
-        skeletonProps={{ width: '200px' }}
-      />
-    );
-  }
-  return (
-    <BorderedIconDetailWrapper>
-      <Detail>150 ETH</Detail>
-      {isDesktop && (
-        <>
-          <Icon as="div" spaceLeft spaceRight>
-            <FiArrowRight />
-          </Icon>{' '}
-          <Detail>geronimo.eth</Detail>
-        </>
-      )}
-    </BorderedIconDetailWrapper>
-  );
-};
-
-const ProposalCardWrapper: React.FC<ProposalCardProps> = ({ id, href }) => {
-  const { guildId } = useParams();
-  const { data: proposal, error } = useProposal(guildId, id);
+const ProposalCardWrapper: React.FC<ProposalCardWrapperProps> = ({
+  id,
+  href,
+}) => {
+  const { guild_id: guildId } = useParams<{ guild_id: string }>();
+  const { data: proposal } = useProposal(guildId, id);
   const votes = useVoteSummary(guildId, id);
-  const { imageUrl, ensName } = useENSAvatar(proposal?.creator, MAINNET_ID);
-
-  const isLoading = !proposal && !error;
-
+  const ensAvatar = useENSAvatar(proposal?.creator, MAINNET_ID);
   return (
-    <UnstyledLink to={href || '#'}>
-      <ProposalCard />
-    </UnstyledLink>
+    <ProposalCard
+      proposal={proposal}
+      ensAvatar={ensAvatar}
+      votes={votes}
+      href={href}
+    />
   );
 };
 

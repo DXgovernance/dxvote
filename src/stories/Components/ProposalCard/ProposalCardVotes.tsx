@@ -1,13 +1,20 @@
-import { useParams } from 'react-router';
+import styled from 'styled-components';
+import { FiCircle } from 'react-icons/fi';
 
-import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
-import { MAINNET_ID } from '../../../utils/constants';
-import useVoteSummary from 'hooks/Guilds/useVoteSummary';
+import { Box } from 'components/Guilds/common/Layout';
+import { Loading } from 'components/Guilds/common/Loading';
 
 interface ProposalCardVotesProps {
   isLoading?: boolean;
+  votes?: number[];
 }
+
+const IconDetailWrapper = styled(Box)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+`;
 
 const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
   border: 1px solid ${({ theme }) => theme.colors.border.initial};
@@ -17,7 +24,38 @@ const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
   display: flex;
 `;
 
-const ProposalCardVotes = ({ isLoading }) => {
+const Detail = styled(Box)`
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+`;
+
+const Icon = styled.img<{
+  spaceLeft?: boolean;
+  spaceRight?: boolean;
+  bordered: boolean;
+}>`
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ${props => props.spaceLeft && `margin-left: 0.5rem;`}
+  ${props => props.spaceRight && `margin-right: 0.5rem;`}
+
+  ${props =>
+    props.bordered &&
+    `
+    border: 1px solid #000;
+    border-radius: 50%;
+  `}
+`;
+
+const ProposalCardVotes: React.FC<ProposalCardVotesProps> = ({
+  isLoading,
+  votes,
+}) => {
   if (isLoading) {
     return (
       <Loading

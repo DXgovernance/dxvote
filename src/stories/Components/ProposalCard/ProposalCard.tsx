@@ -1,21 +1,15 @@
 import styled from 'styled-components';
 import { ProposalCardProps } from './types';
-import { useParams } from 'react-router';
-import { isDesktop } from 'react-device-detect';
-import { FiArrowRight, FiCircle } from 'react-icons/fi';
-
-import { Box } from '../common/Layout';
-import ProposalStatus from '../ProposalStatus';
-import { Heading } from '../common/Typography';
+import { Box } from '../../../components/Guilds/common/Layout';
+import ProposalStatus from '../../../components/Guilds/ProposalStatus';
+import { Heading } from '../../../components/Guilds/common/Typography';
 import 'react-loading-skeleton/dist/skeleton.css';
-import UnstyledLink from '../common/UnstyledLink';
-import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
-import Avatar from '../Avatar';
-import { MAINNET_ID } from '../../../utils/constants';
+import UnstyledLink from '../../../components/Guilds/common/UnstyledLink';
+import Avatar from '../../../components/Guilds/Avatar';
 import { shortenAddress } from '../../../utils';
-import { Loading } from '../common/Loading';
-import useVoteSummary from 'hooks/Guilds/useVoteSummary';
+import { Loading } from '../../../components/Guilds/common/Loading';
+import ProposalCardVotes from './ProposalCardVotes';
+import ProposalCardActionSummary from './ProposalCardActionSummary';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -67,55 +61,29 @@ const Detail = styled(Box)`
   margin-left: 0.5rem;
 `;
 
-const Icon = styled.img<{
-  spaceLeft?: boolean;
-  spaceRight?: boolean;
-  bordered: boolean;
-}>`
-  width: 1.5rem;
-  height: 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  ${props => props.spaceLeft && `margin-left: 0.5rem;`}
-  ${props => props.spaceRight && `margin-right: 0.5rem;`}
-
-  ${props =>
-    props.bordered &&
-    `
-    border: 1px solid #000;
-    border-radius: 50%;
-  `}
-`;
-
-const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
-  border: 1px solid ${({ theme }) => theme.colors.border.initial};
-  border-radius: 1rem;
-  padding: 0.25rem 0.8rem;
-  flex: none;
-  display: flex;
-`;
-
 const ProposalStatusWrapper = styled.div`
   display: flex;
   flex: 1;
   justify-content: flex-end;
 `;
 
-// interface ProposalCardProps {
-//   id?: string;
-//   href?: string;
-// }
-
-const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
+const ProposalCard: React.FC<ProposalCardProps> = ({
+  proposal,
+  votes,
+  ensAvatar,
+  href,
+}) => {
   return (
     <UnstyledLink to={href || '#'}>
       <CardWrapper>
         <CardHeader>
           <IconDetailWrapper>
             {proposal?.creator ? (
-              <Avatar src={imageUrl} defaultSeed={proposal.creator} size={24} />
+              <Avatar
+                src={ensAvatar.imageUrl}
+                defaultSeed={proposal.creator}
+                size={24}
+              />
             ) : (
               <Loading
                 style={{ margin: 0 }}
@@ -125,7 +93,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
               />
             )}
             <Detail>
-              {ensName ||
+              {ensAvatar?.ensName ||
                 (proposal?.creator ? (
                   shortenAddress(proposal.creator)
                 ) : (
@@ -135,7 +103,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
           </IconDetailWrapper>
           <ProposalStatusWrapper>
             <ProposalStatus
-              proposalId={id}
+              proposalId={proposal.id}
               bordered={false}
               showRemainingTime
             />
@@ -151,8 +119,8 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
           </CardTitle>
         </CardContent>
         <CardFooter>
-          <ProposalCardActionSummary isLoading={isLoading} />
-          <ProposalCardVotes isLoading={isLoading} />
+          <ProposalCardActionSummary isLoading={!proposal} />
+          <ProposalCardVotes isLoading={!proposal} votes={votes} />
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>

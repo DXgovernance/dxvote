@@ -4,4 +4,5 @@ export interface ProposalCardProps {
   proposal?: Proposal;
   votes?: number[];
   ensAvatar?: ENSAvatar;
+  href?: string;
 }
