@@ -10,13 +10,13 @@ const TransactionContainer = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 0.8rem 1.5rem;
-  border-bottom: 1px solid #c4c4c4;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
 `;
 
 const Link = styled.a`
   text-decoration: none;
   font-size: 0.9rem;
-  color: ${({ theme }) => theme.colors.muted};
+  color: ${({ theme }) => theme.colors.proposalText.grey};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
