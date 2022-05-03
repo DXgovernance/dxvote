@@ -189,7 +189,7 @@ const CreateProposalPage: React.FC = () => {
             padding="8px"
             onClick={handleToggleEditMode}
             disabled={!title || !proposalBodyMd}
-            data-testId="create-proposal-editor-toggle-button"
+            data-testid="create-proposal-editor-toggle-button"
           >
             {editMode ? (
               <MdOutlinePreview size={18} />
@@ -203,7 +203,7 @@ const CreateProposalPage: React.FC = () => {
             <>
               <Label>Title</Label>
               <Input
-                data-testId="create-proposal-title"
+                data-testid="create-proposal-title"
                 placeholder="Proposal Title"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
@@ -223,7 +223,7 @@ const CreateProposalPage: React.FC = () => {
                   value={referenceLink}
                   onChange={e => setReferenceLink(e.target.value)}
                   icon={<MdLink size={18} />}
-                  data-testId="create-proposal-link"
+                  data-testid="create-proposal-link"
                 />
                 <StyledButton variant="secondary" marginLeft={'1rem'}>
                   Import
@@ -261,7 +261,7 @@ const CreateProposalPage: React.FC = () => {
             onClick={handleCreateProposal}
             variant="secondary"
             disabled={!isValid}
-            data-testId="create-proposal-action-button"
+            data-testid="create-proposal-action-button"
           >
             Create Proposal
           </StyledButton>

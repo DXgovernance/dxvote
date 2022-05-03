@@ -32,7 +32,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
   const { contracts } = useContractRegistry(chainId);
   const { guild_id: guildAddress } =
     useParams<{ chain_name?: string; guild_id?: string }>();
-  const { isRepGuild } = useGuildImplementationTypeConfig(guildAddress);
+  const { isSnapshotRepGuild } = useGuildImplementationTypeConfig(guildAddress);
   return (
     <Wrapper>
       <SectionWrapper>
@@ -47,7 +47,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
             Transfer & Mint
           </ButtonLabel>
         </ActionsButton>
-        {isRepGuild ? (
+        {isSnapshotRepGuild ? (
           <ActionsButton
             onClick={() => onSupportedActionSelect(SupportedAction.REP_MINT)}
           >
