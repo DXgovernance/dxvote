@@ -25,6 +25,7 @@ export enum ProposalState {
 }
 export interface ProposalMetadata {
   description: string;
+  voteOptions: string[];
 }
 export interface Transaction {
   hash: string
