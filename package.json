@@ -113,7 +113,6 @@
     "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
-    "@cypress/react": "^5.12.4",
     "@synthetixio/synpress": "^1.2.0",
     "@testing-library/cypress": "^8.0.2",
     "@testing-library/jest-dom": "^5.16.2",

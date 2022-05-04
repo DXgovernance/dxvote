@@ -11,10 +11,6 @@ export RPC_URL=http://127.0.0.1:8545/
 export CHAIN_ID=1337
 export IS_TESTNET=true
 
-# Optional synpress environment variables: 
-# SECRET_WORDS="dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao dxdao"
-# export METAMASK_VERSION="latest"
-# export NETWORK_NAME="localhost"
 
 if test -z "$RECORD_KEY" 
 then
