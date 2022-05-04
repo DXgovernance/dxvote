@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 
 function getLocalStorageOrDefault<T>(key: string, defaultValue: T) {
-  const stored = localStorage.getItem(key);
-  if (!stored) return defaultValue;
+  try {
+    const stored = localStorage.getItem(key);
+    if (!stored) return defaultValue;
 
-  return JSON.parse(stored);
+    return JSON.parse(stored);
+  } catch (error) {
+    return {};
+  }
 }
 
 function useLocalStorage<T>(key: string, defaultValue: T) {
