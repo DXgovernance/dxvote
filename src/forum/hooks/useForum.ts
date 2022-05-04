@@ -52,7 +52,7 @@ export function useCreate() {
         throw new Error('Not connected to Ceramic');
       }
     },
-    [connection]
+    [connection, registry]
   );
 }
 
