@@ -70,7 +70,7 @@
     "hardhat": "^2.9.1",
     "hardhat-dependency-compiler": "^1.1.2",
     "i18next": "^21.6.16",
-    "ipfs": "^0.58.0",
+    "ipfs": "^0.62.3",
     "ipfs-only-hash": "^4.0.0",
     "json-keys-sort": "^2.1.0",
     "jsonexport": "^3.2.0",
@@ -119,8 +119,8 @@
   "devDependencies": {
     "@datamodels/identity-profile-basic": "^0.1.2",
     "@glazed/devtools": "^0.1.6",
-    "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/cypress": "^8.0.2",
+    "@testing-library/jest-dom": "^5.16.2",
     "@types/jest": "^27.4.0",
     "@types/jsonexport": "^3.0.2",
     "@types/react-router-dom": "^5.1.2",
