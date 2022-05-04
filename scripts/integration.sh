@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Get record key from env
+export $(cat .env | grep CYPRESS_RECORD_KEY | xargs)
+RECORD_KEY="${CYPRESS_RECORD_KEY}"
+
 export PRIVATE_KEY=0x0054b824c2083e7db09f36edb2ab24eb31f8276fa6cd62e30b42e3a185b37179
 export PASSWORD="TestMetaMask"
 export NETWORK_NAME=localhost
@@ -12,6 +16,9 @@ export IS_TESTNET=true
 # export METAMASK_VERSION="latest"
 # export NETWORK_NAME="localhost"
 
-# TODO: Read vars from env
-
-synpress run --configFile synpress.json -record --key 8616f615-50f6-4da2-afc5-822d4233e695
+if test -z "$RECORD_KEY" 
+then
+     synpress run --configFile synpress.json --record false
+else
+     synpress run --configFile synpress.json --record --key $RECORD_KEY
+fi
