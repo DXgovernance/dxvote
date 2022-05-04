@@ -12,4 +12,6 @@ export IS_TESTNET=true
 # export METAMASK_VERSION="latest"
 # export NETWORK_NAME="localhost"
 
-synpress run --configFile synpress.json 
+# TODO: Read vars from env
+
+synpress run --configFile synpress.json -record --key 8616f615-50f6-4da2-afc5-822d4233e695
