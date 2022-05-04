@@ -5,6 +5,7 @@ import { Button } from 'components/Guilds/common/Button';
 import Input from 'components/Guilds/common/Form/Input';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { Flex, Box } from 'components/Guilds/common/Layout';
+
 import { MdOutlinePeopleAlt } from 'react-icons/md';
 import GuildCard, {
   GuildCardContent,
@@ -20,6 +21,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
 import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
+import { Loading } from 'components/Guilds/common/Loading';
 
 const configs = {
   arbitrum: require('configs/arbitrum/config.json'),
@@ -150,26 +152,63 @@ const LandingPage: React.FC = () => {
         </StyledButton>
       </InputContainer>
       <CardContainer>
-        {allGuilds
-          ? allGuilds.map(guildAddress => (
-              <GuildCard key={guildAddress} guildAddress={guildAddress}>
-                <GuildCardHeader>
-                  <MemberWrapper>
-                    <MdOutlinePeopleAlt size={24} />
-                    <Members guildAddress={guildAddress} />
-                  </MemberWrapper>
-                  <Proposals guildAddress={guildAddress} />
-                </GuildCardHeader>
-                <GuildCardContent>
-                  <DaoIcon src={dxDaoIcon} />
-                  <Title guildAddress={guildAddress} />
-                </GuildCardContent>
-              </GuildCard>
-            ))
-          : null}
+        {allGuilds ? (
+          allGuilds.map(guildAddress => (
+            <GuildCardWithLoader
+              key={guildAddress}
+              guildAddress={guildAddress}
+            />
+          ))
+        ) : (
+          <>
+            <GuildCardWithLoader guildAddress={null} />
+            <GuildCardWithLoader guildAddress={null} />
+            <GuildCardWithLoader guildAddress={null} />
+          </>
+        )}
       </CardContainer>
     </>
   );
 };
+
+function GuildCardWithLoader({ guildAddress }) {
+  return (
+    <GuildCard key={guildAddress} guildAddress={guildAddress}>
+      <GuildCardHeader>
+        <MemberWrapper>
+          <MdOutlinePeopleAlt size={24} />
+          {guildAddress ? (
+            <Members guildAddress={guildAddress} />
+          ) : (
+            <Loading skeletonProps={{ width: 20 }} text loading />
+          )}
+        </MemberWrapper>
+        {guildAddress ? (
+          <Proposals guildAddress={guildAddress} />
+        ) : (
+          <Loading
+            style={{ height: 43, alignItems: 'center', display: 'flex' }}
+            skeletonProps={{ width: 100, height: 22 }}
+            text
+            loading
+          />
+        )}
+      </GuildCardHeader>
+      <GuildCardContent>
+        <DaoIcon src={dxDaoIcon} />
+        {guildAddress ? (
+          <Title guildAddress={guildAddress} />
+        ) : (
+          <Loading
+            skeletonProps={{ width: 100, height: 20 }}
+            style={{ marginTop: 20 }}
+            text
+            loading
+          />
+        )}
+      </GuildCardContent>
+    </GuildCard>
+  );
+}
 
 export default LandingPage;
