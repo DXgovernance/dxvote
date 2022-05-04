@@ -24,7 +24,7 @@ export function useRegistry(query: Query) {
 
   const dirMap = { asc: 1, desc: -1 };
 
-  return useSWR('forum/registry', async () => {
+  return useSWR(registry ? 'forum/registry' : null, async () => {
     if (!registry) return null;
 
     console.time('Querying registry');
