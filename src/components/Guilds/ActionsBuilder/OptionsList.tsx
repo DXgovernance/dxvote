@@ -1,4 +1,4 @@
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import {
   closestCenter,
   CollisionDetection,
@@ -40,12 +40,16 @@ interface OptionsListProps {
   isEditable: boolean;
   options: Option[];
   onChange: (options: Option[]) => void;
+  addOption: () => void;
+  editOption: (option: Option) => void;
 }
 
 const OptionsList: React.FC<OptionsListProps> = ({
   isEditable,
   options,
   onChange,
+  addOption,
+  editOption,
 }) => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const lastOverId = useRef<UniqueIdentifier | null>(null);
@@ -57,19 +61,6 @@ const OptionsList: React.FC<OptionsListProps> = ({
       recentlyMovedToNewContainer.current = false;
     });
   }, [options]);
-
-  const theme = useTheme();
-  function addOption() {
-    onChange([
-      ...options,
-      {
-        id: `option-${options.length}`,
-        label: `Option ${options.length + 1}`,
-        color: theme?.colors?.votes?.[options.length],
-        decodedActions: [],
-      },
-    ]);
-  }
 
   function updateOption(index: number, option: Option) {
     onChange(options.map((o, i) => (i === index ? option : o)));
@@ -319,6 +310,7 @@ const OptionsList: React.FC<OptionsListProps> = ({
                 option={option}
                 onChange={updatedOption => updateOption(idx, updatedOption)}
                 isEditable={isEditable}
+                editOption={editOption}
               />
               {idx !== options.length - 1 && <Divider />}
             </>

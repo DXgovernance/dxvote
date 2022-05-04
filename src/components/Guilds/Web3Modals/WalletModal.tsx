@@ -14,6 +14,7 @@ import WalletInfoBox from './components/WalletInfoBox';
 import Transaction from './components/Transaction';
 import { Button } from '../common/Button';
 import { useTransactions } from '../../../contexts/Guilds';
+import { Divider } from '../common/Divider';
 
 const Container = styled.div`
   margin: 2rem;
@@ -36,15 +37,6 @@ const BackIcon = styled(FiArrowLeft)`
   &:hover {
     color: ${({ theme }) => theme.colors.muted};
   }
-`;
-
-const Divider = styled.hr`
-  border-top: 1px solid ${({ theme }) => theme.colors.muted};
-`;
-
-const GreyDivider = styled(Divider)`
-  border-top: 1px solid #c4c4c4;
-  margin: 0;
 `;
 
 const ButtonContainer = styled.div`
@@ -248,7 +240,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
                 <TransactionsListHeading>
                   Recent Transactions
                 </TransactionsListHeading>
-                <GreyDivider />
+                <Divider />
                 {recentTransactions.map(transaction => (
                   <Transaction transaction={transaction} />
                 ))}

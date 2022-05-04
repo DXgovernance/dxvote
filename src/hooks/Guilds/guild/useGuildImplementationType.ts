@@ -47,7 +47,6 @@ export default function useGuildImplementationTypeConfig(
 ): ImplementationTypeConfigReturn {
   const [guildBytecode, setGuildBytecode] = useState<string>('');
   const provider = useJsonRpcProvider();
-
   useEffect(() => {
     const getBytecode = async () => {
       const btcode = await provider.getCode(guildAddress);
@@ -59,12 +58,10 @@ export default function useGuildImplementationTypeConfig(
 
   const implementationTypeConfig: ImplementationTypeConfig = useMemo(() => {
     if (!guildBytecode) return defaultImplementation;
-
     const match = deployedHashedBytecodes.find(
       ({ bytecode_hash }) => guildBytecode === bytecode_hash
     );
-
-    return match ? match : defaultImplementation; // default to IERC20Guild
+    return match ?? defaultImplementation; // default to IERC20Guild
   }, [guildBytecode]);
   return parseConfig(implementationTypeConfig);
 }

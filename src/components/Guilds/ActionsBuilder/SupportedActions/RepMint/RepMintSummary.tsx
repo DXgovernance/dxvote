@@ -8,7 +8,7 @@ import { DetailCell, DetailHeader, DetailRow } from '../common/summary';
 import { useTotalSupply } from 'hooks/Guilds/guild/useTotalSupply';
 import { useTokenData } from 'hooks/Guilds/guild/useTokenData';
 
-const REPMintSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
+const RepMintSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
   const { parsedData } = useTotalSupply({ decodedCall });
   const { tokenData } = useTokenData();
   const { ensName, imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
@@ -41,4 +41,4 @@ const REPMintSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
   );
 };
 
-export default REPMintSummary;
+export default RepMintSummary;

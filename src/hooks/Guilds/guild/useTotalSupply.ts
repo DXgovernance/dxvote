@@ -1,13 +1,13 @@
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 
-interface REPMintState {
+interface RepMintState {
   toAddress: string;
   amount: BigNumber;
 }
 
 export const useTotalSupply = ({ decodedCall }) => {
-  const parsedData = useMemo<REPMintState>(() => {
+  const parsedData = useMemo<RepMintState>(() => {
     if (!decodedCall) return null;
     return {
       toAddress: decodedCall.args.to,

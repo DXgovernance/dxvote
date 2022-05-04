@@ -119,6 +119,7 @@
   "devDependencies": {
     "@datamodels/identity-profile-basic": "^0.1.2",
     "@glazed/devtools": "^0.1.6",
+    "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/cypress": "^8.0.2",
     "@types/jest": "^27.4.0",
     "@types/jsonexport": "^3.0.2",
