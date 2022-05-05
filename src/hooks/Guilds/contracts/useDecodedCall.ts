@@ -1,5 +1,5 @@
 import { utils } from 'ethers';
-import { RegistryContract, useContractRegistry } from './useContractRegistry';
+import { RichContractData, useRichContractData } from './useRichContractData';
 import ERC20ABI from '../../../abis/ERC20.json';
 import { useWeb3React } from '@web3-react/core';
 import {
@@ -58,7 +58,7 @@ const decodeCallUsingEthersInterface = (
 };
 
 const getContractInterfaceFromRegistryContract = (
-  registryContract: RegistryContract
+  registryContract: RichContractData
 ) => {
   return {
     contractInterface: registryContract.contractInterface,
@@ -83,7 +83,7 @@ const getContractFromKnownSighashes = (data: string) => {
 
 const decodeCall = (
   call: Call,
-  contracts: RegistryContract[],
+  contracts: RichContractData[],
   chainId: number
 ) => {
   let decodedCall: DecodedCall = null;
@@ -116,7 +116,7 @@ const decodeCall = (
 
 export const bulkDecodeCallsFromOptions = (
   options: Option[],
-  contracts: RegistryContract[],
+  contracts: RichContractData[],
   chainId: number
 ) => {
   return options.map(option => {
@@ -133,7 +133,7 @@ export const bulkDecodeCallsFromOptions = (
 
 export const useDecodedCall = (call: Call) => {
   const { chainId } = useWeb3React();
-  const { contracts } = useContractRegistry();
+  const { contracts } = useRichContractData();
 
   const decodedData = call ? decodeCall(call, contracts, chainId) : null;
   return decodedData || { decodedCall: null, contract: null };

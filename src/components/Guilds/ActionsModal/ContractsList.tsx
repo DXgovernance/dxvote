@@ -3,9 +3,9 @@ import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
 import { ReactComponent as Mint } from '../../../assets/images/mint.svg';
 import StyledIcon from '../common/SVG';
 import {
-  RegistryContract,
-  useContractRegistry,
-} from 'hooks/Guilds/contracts/useContractRegistry';
+  RichContractData,
+  useRichContractData,
+} from 'hooks/Guilds/contracts/useRichContractData';
 import { useWeb3React } from '@web3-react/core';
 import { SupportedAction } from '../ActionsBuilder/types';
 import {
@@ -20,7 +20,7 @@ import useGuildImplementationTypeConfig from 'hooks/Guilds/guild/useGuildImpleme
 import { useParams } from 'react-router-dom';
 
 interface ContractsListProps {
-  onSelect: (contract: RegistryContract) => void;
+  onSelect: (contract: RichContractData) => void;
   onSupportedActionSelect: (actionType: SupportedAction) => void;
 }
 
@@ -29,7 +29,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
   onSupportedActionSelect,
 }) => {
   const { chainId } = useWeb3React();
-  const { contracts } = useContractRegistry(chainId);
+  const { contracts } = useRichContractData(chainId);
   const { guild_id: guildAddress } =
     useParams<{ chain_name?: string; guild_id?: string }>();
   const { isRepGuild } = useGuildImplementationTypeConfig(guildAddress);

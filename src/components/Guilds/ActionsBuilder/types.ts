@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { utils } from 'ethers';
+import { RichContractFunction } from 'hooks/Guilds/contracts/useRichContractData';
 
 export enum SupportedAction {
   ERC20_TRANSFER = 'ERC20_TRANSFER',
@@ -21,6 +22,7 @@ export interface DecodedCall {
   value: BigNumber;
   function: utils.FunctionFragment;
   args: Record<string, any>;
+  richData?: RichContractFunction;
 }
 
 export interface DecodedAction {

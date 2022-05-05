@@ -1,5 +1,5 @@
 import { BigNumber, utils } from 'ethers';
-import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
+import { RichContractData } from 'hooks/Guilds/contracts/useRichContractData';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -50,7 +50,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   // Generic calls
   const [selectedContract, setSelectedContract] =
-    useState<RegistryContract>(null);
+    useState<RichContractData>(null);
   const [selectedFunction, setSelectedFunction] = useState<string>(null);
 
   const [data, setData] = useState<DecodedCall>(null);
