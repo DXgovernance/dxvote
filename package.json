@@ -15,6 +15,7 @@
     "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run:development",
     "test": "react-app-rewired test --watchAll=false --coverage --verbose",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
+    "postinstall": "yarn run updateBytecodes",
     "prepare": "husky install"
   },
   "engines": {
@@ -144,3 +145,4 @@
     "electron": "^17.1.2"
   }
 }
+
