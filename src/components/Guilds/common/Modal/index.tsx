@@ -136,6 +136,7 @@ export interface ModalProps {
   backnCross?: boolean;
   prevContent?: () => void;
   leftIcon?: boolean;
+  dataTestId?: string;
 }
 
 export const ModalButton = styled(Button)`
@@ -169,9 +170,10 @@ export const Modal: React.FC<ModalProps> = ({
   backnCross,
   prevContent,
   leftIcon = true,
+  dataTestId,
 }) => {
   const modal = (
-    <div>
+    <div data-testId={dataTestId}>
       <Backdrop onClick={onDismiss} zIndex={zIndex} />
       <Wrapper maxWidth={maxWidth} zIndex={zIndex + 1}>
         <StyledModal>

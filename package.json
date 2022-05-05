@@ -10,9 +10,8 @@
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
     "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
-    "cy:open": "cypress open",
-    "cy:run:development": "cypress run --env configFile=development --browser electron",
-    "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run:development",
+    "cy:run": "./scripts/integration.sh",
+    "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run",
     "test": "react-app-rewired test --watchAll=false --coverage --verbose",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
     "postinstall": "yarn run updateBytecodes",
@@ -114,13 +113,17 @@
     "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.2",
+    "@synthetixio/synpress": "^1.2.0",
     "@testing-library/cypress": "^8.0.2",
+    "@testing-library/jest-dom": "^5.16.2",
     "@types/jest": "^27.4.0",
     "@types/jsonexport": "^3.0.2",
+    "@types/puppeteer-core": "^5.4.0",
     "@types/react-router-dom": "^5.1.2",
     "cra-bundle-analyzer": "^0.1.0",
     "cypress": "^9.5.2",
+    "cypress-react-selector": "^2.3.17",
+    "cypress-wait-until": "^1.7.2",
     "husky": "^6.0.0",
     "prettier": "2.5.0",
     "start-server-and-test": "^1.14.0",
@@ -145,4 +148,3 @@
     "electron": "^17.1.2"
   }
 }
-
