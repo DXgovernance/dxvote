@@ -10,8 +10,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  cypress-run:
-    # TODO: Add some condition if we don't want to trigger this on every pr. (maybe some flag)
+  synpress-run:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -44,13 +43,6 @@ jobs:
         run: |
           echo -e 'pcm.!default {\n type hw\n card 0\n}\n\nctl.!default {\n type hw\n card 0\n}' > ~/.asoundrc
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        env:
-          NODE_ENV: 'development'
-        with:
-          browser: chrome
-          headless: true
-          start: yarn dev
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 300
+      - name: Run Synpress
+        run: yarn run test:e2e
+
