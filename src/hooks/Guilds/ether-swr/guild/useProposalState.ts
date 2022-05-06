@@ -28,13 +28,14 @@ function useProposalState(): useProposalStateReturns {
   const { createTransaction } = useTransactions();
   const guildContract = useERC20Guild(guildId);
 
+  const executeProposal = () =>
+    createTransaction('Execute Proposal', async () => {
+      return guildContract.endProposal(proposalId);
+    });
+
   const { data, loading } = useMemo(() => {
     if (!proposal) return { loading: true };
     const now = moment.unix(moment.now());
-    const executeProposal = () =>
-      createTransaction('Execute Proposal', async () => {
-        return guildContract.endProposal(proposalId);
-      });
 
     return {
       data: {
@@ -43,6 +44,7 @@ function useProposalState(): useProposalStateReturns {
         executeProposal: executeProposal,
       },
       loading: false,
+      error: error,
     };
   }, [proposal]);
 

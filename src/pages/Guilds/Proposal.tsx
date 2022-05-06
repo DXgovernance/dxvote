@@ -4,7 +4,7 @@ import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { Loading } from 'components/Guilds/common/Loading';
-import { Button, IconButton } from '../../components/Guilds/common/Button';
+import { IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
 import ProposalInfoCard from '../../components/Guilds/ProposalPage/ProposalInfoCard';
 import ProposalVoteCard from '../../components/Guilds/ProposalPage/ProposalVoteCard';
@@ -18,7 +18,7 @@ import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import Result, { ResultState } from 'components/Guilds/common/Result';
 import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
 import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
-import useProposalState from 'hooks/Guilds/ether-swr/guild/useProposalState';
+import ExecuteButton from 'components/Guilds/ExecuteButton';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -97,9 +97,6 @@ const ProposalPage: React.FC = () => {
   const { data: proposal, error } = useProposal(guildId, proposalId);
   const { options } = useProposalCalls(guildId, proposalId);
 
-  const {
-    data: { isExecutable, executeProposal },
-  } = useProposalState();
   if (!isGuildAvailabilityLoading) {
     if (!proposalIds?.includes(proposalId)) {
       return (
@@ -140,9 +137,7 @@ const ProposalPage: React.FC = () => {
 
             <ProposalStatusWrapper>
               <ProposalStatus proposalId={proposalId} showRemainingTime />
-              {isExecutable ? (
-                <Button onClick={() => executeProposal()}>Execute</Button>
-              ) : null}
+              <ExecuteButton />
             </ProposalStatusWrapper>
           </HeaderTopRow>
           <PageTitle>
