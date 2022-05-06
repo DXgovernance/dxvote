@@ -1,5 +1,6 @@
 import { Box } from 'old-components/Guilds/common/Layout';
 import { Loading } from 'old-components/Guilds/common/Loading';
+import { Fragment } from 'react';
 import { FiCircle } from 'react-icons/fi';
 import styled from 'styled-components';
 
@@ -72,12 +73,12 @@ const ProposalCardVotes: React.FC<ProposalCardVotesProps> = ({
         .map((vote, i) => {
           if (i < 3 && !(i === votes.length - 1)) {
             return (
-              <>
+              <Fragment>
                 <Detail>{vote}%</Detail>
                 <Icon as="div" spaceLeft spaceRight>
                   <FiCircle />
                 </Icon>
-              </>
+              </Fragment>
             );
           } else {
             return <Detail>{vote}%</Detail>;

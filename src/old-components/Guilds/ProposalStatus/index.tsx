@@ -1,11 +1,11 @@
 import { useProposal } from '../../../hooks/Guilds/ether-swr/guild/useProposal';
-import { ProposalState } from '../../../types/types.guilds';
 import { Box } from '../common/Layout';
 import { Loading } from '../common/Loading';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import moment from 'moment';
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
+import { ProposalState } from 'types/types.guilds';
 
 const Status = styled.div`
   font-size: 0.8rem;

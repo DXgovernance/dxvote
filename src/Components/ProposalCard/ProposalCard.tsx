@@ -1,6 +1,6 @@
-import ProposalCardActionSummary from '@components/ProposalCard/ProposalCardActionSummary';
-import ProposalCardVotes from '@components/ProposalCard/ProposalCardVotes';
-import { ProposalCardProps } from '@components/ProposalCard/types';
+import ProposalCardActionSummary from 'Components/ProposalCard/ProposalCardActionSummary';
+import ProposalCardVotes from 'Components/ProposalCard/ProposalCardVotes';
+import { ProposalCardProps } from 'Components/ProposalCard/types';
 import Avatar from 'old-components/Guilds/Avatar';
 import ProposalStatus from 'old-components/Guilds/ProposalStatus';
 import { Box } from 'old-components/Guilds/common/Layout';

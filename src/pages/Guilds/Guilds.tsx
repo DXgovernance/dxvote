@@ -2,8 +2,8 @@ import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/guild/useGuild
 import { Filter } from '../../old-components/Guilds/Filter';
 import { Sidebar } from '../../old-components/Guilds/Sidebar';
 import { Box } from '../../old-components/Guilds/common/Layout';
-import ProposalCardWrapper from '@guilds/Wrappers/ProposalCardWrapper';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import ProposalCardWrapper from 'Modules/Guilds/Wrappers/ProposalCardWrapper';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import Result, { ResultState } from 'old-components/Guilds/common/Result';
 import React, { useContext, useMemo } from 'react';
