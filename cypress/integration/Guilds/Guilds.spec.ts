@@ -14,9 +14,9 @@ describe('Guilds', () => {
   it('Should redirect to guild page', () => {
     cy.findAllByTestId('guildCard')
       .eq(1)
-      .invoke('attr', 'href')
-      .then(href => {
-        cy.findAllByTestId('guildCard').eq(1).click();
+      .then($el => {
+        const href = $el.attr('href');
+        $el[0].click();
         cy.url().should('include', href);
       });
   });
@@ -29,12 +29,13 @@ describe('Guilds', () => {
   it('Should be able to connect with metamask account', () => {
     Guilds.clickOpenWalletModalBtn();
     cy.findByTestId('wallet-option-MetaMask').eq(0).click();
-    cy.waitFor(null, 1000);
+    cy.wait(1000);
     cy.acceptMetamaskAccess(true);
     clickAnywhereToClose();
   });
 
-  it('Should trigger Create Proposal', () => {
+  it.skip('Should trigger Create Proposal', () => {
+    // TODO: make sure that when creating proposal, it is created in the correct guild and acc[2] has voting power, or first test locking is working.
     cy.findByTestId('create-proposal-button').should('be.visible').click();
     cy.url().should('include', '/proposalType');
     cy.findByTestId('proposal-type-continue-button')
