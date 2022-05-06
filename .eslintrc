@@ -9,7 +9,11 @@
       "jsx": true
     }
   },
+  "rules": {
+    "cypress/no-unnecessary-waiting": "off"
+  },
   "env": {
     "cypress/globals": true
   }
 }
+
