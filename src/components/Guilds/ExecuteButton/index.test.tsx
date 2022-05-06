@@ -1,42 +1,37 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ExecuteButton from '.';
 import { render } from 'utils/tests';
 
 let mockedIsExecutable = true;
-
+let mockedExecuteProposal = jest.fn();
 jest.mock('hooks/Guilds/ether-swr/guild/useProposalState', () => ({
   __esModule: true,
   default: () => ({
     data: {
-      isExecuteable: mockedIsExecutable,
-      executeProposal: jest.fn(),
+      isExecutable: mockedIsExecutable,
+      executeProposal: mockedExecuteProposal,
     },
     loading: false,
     error: null,
   }),
 }));
 
-describe.skip('useProposalState', () => {
+describe('useProposalState', () => {
   beforeAll(() => {
     render(<ExecuteButton />);
   });
-  describe('Button appearance', () => {
-    it('does Button appear', async () => {
-      const button = screen.queryByText('Execute');
-      expect(button).toBeInTheDocument();
+  it('User is able to click button to execute', async () => {
+    const button = screen.queryByTestId('execute-btn');
+    fireEvent.click(button);
+    await waitFor(() => {
+      expect(mockedExecuteProposal).toHaveBeenCalledTimes(1);
     });
-    it('button does not appear when isExecutable is false', async () => {
-      mockedIsExecutable = false;
-      const button = screen.queryByText('Execute');
-      expect(button).toBeNull();
-    });
-    describe('Execute function', () => {
-      it('User is able to click button to execute', async () => {
-        mockedIsExecutable = true;
-        const button = screen.queryByText('Execute');
-        fireEvent.click(button);
-      });
-    });
+  });
+  it(' Button does not appear when isExecutable is false', () => {
+    mockedIsExecutable = false;
+    expect(mockedIsExecutable).toBeFalsy();
+    const button = screen.queryByTestId('execute-btn');
+    expect(button).not.toBeInTheDocument();
   });
 });
