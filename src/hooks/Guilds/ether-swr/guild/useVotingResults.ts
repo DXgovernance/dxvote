@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
-import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
-import { BigNumber } from 'ethers';
 import { ERC20Info, useERC20Info } from '../erc20/useERC20Info';
 import { useGuildConfig } from './useGuildConfig';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import { BigNumber } from 'ethers';
+import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
+import { useMemo } from 'react';
 
 export interface VoteData {
   options: { [name: string]: BigNumber };

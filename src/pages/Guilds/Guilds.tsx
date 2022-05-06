@@ -1,14 +1,14 @@
-import React, { useContext, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
-import { Box } from '../../components/Guilds/common/Layout';
-import { Sidebar } from '../../components/Guilds/Sidebar';
-import { Filter } from '../../components/Guilds/Filter';
-import ProposalCard from '../../components/Guilds/ProposalCard';
-import InView from 'react-intersection-observer';
 import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/guild/useGuildProposalIds';
-import Result, { ResultState } from 'components/Guilds/common/Result';
+import { Filter } from '../../old-components/Guilds/Filter';
+import ProposalCard from '../../old-components/Guilds/ProposalCard';
+import { Sidebar } from '../../old-components/Guilds/Sidebar';
+import { Box } from '../../old-components/Guilds/common/Layout';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
+import Result, { ResultState } from 'old-components/Guilds/common/Result';
+import React, { useContext, useMemo } from 'react';
+import InView from 'react-intersection-observer';
+import styled from 'styled-components';
 
 const PageContainer = styled(Box)`
   display: grid;

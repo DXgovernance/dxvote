@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./build/",
     "noImplicitAny": false,
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2018",
     "jsx": "react-jsx",
@@ -26,7 +26,7 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "allowUnreachableCode": false,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "useDefineForClassFields": true,
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,

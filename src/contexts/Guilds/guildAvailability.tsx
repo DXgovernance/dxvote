@@ -1,16 +1,16 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
-import { useRouteMatch } from 'react-router-dom';
-import { getNetworkById } from 'utils';
-import Result, { ResultState } from 'components/Guilds/common/Result';
-import { ButtonIcon, IconButton } from 'components/Guilds/common/Button';
-import { iconsByChain } from 'components/Guilds/Header/NetworkButton';
-import { Box } from 'components/Guilds/common/Layout';
 import { MultichainContext } from 'contexts/MultichainProvider';
-import UnstyledLink from 'components/Guilds/common/UnstyledLink';
 import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
+import { iconsByChain } from 'old-components/Guilds/Header/NetworkButton';
+import { ButtonIcon, IconButton } from 'old-components/Guilds/common/Button';
+import { Box } from 'old-components/Guilds/common/Layout';
+import Result, { ResultState } from 'old-components/Guilds/common/Result';
+import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
+import { useRouteMatch } from 'react-router-dom';
+import styled from 'styled-components';
+import { getNetworkById } from 'utils';
 
 interface ContractAvailability {
   [chainId: number]: boolean;

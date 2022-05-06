@@ -1,15 +1,14 @@
 // Externals
-import { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { observer } from 'mobx-react';
-import { useHistory } from 'react-router-dom';
-import MDEditor, { commands } from '@uiw/react-md-editor';
-
 import { useContext } from '../contexts';
-import { Button } from '../components/common/Button';
-import { Box } from '../components/common';
-import DiscourseImporter from '../components/DiscourseImporter';
-import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
+import DiscourseImporter from '../old-components/DiscourseImporter';
+import { Box } from '../old-components/common';
+import { Button } from '../old-components/common/Button';
+import MDEditor, { commands } from '@uiw/react-md-editor';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import { observer } from 'mobx-react';
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 
 const ProposalsWrapper = styled.div`
   padding: 10px 0px;

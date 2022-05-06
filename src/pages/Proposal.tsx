@@ -1,14 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
-import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
-
+import { Box, Title } from '../old-components/common';
 import MDEditor from '@uiw/react-md-editor';
-import { useHistory } from 'react-router-dom';
 import contentHash from 'content-hash';
-import { Box, Title } from '../components/common';
-
+import { observer } from 'mobx-react';
 import {
   History,
   Calls,
@@ -16,7 +10,11 @@ import {
   Status,
   Stakes,
   Details,
-} from 'components/Proposal';
+} from 'old-components/Proposal';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 
 const ProposalInformationWrapper = styled.div`
   width: 100%;

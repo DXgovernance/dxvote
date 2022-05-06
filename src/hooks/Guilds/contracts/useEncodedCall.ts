@@ -1,9 +1,9 @@
+import { utils } from 'ethers';
 import {
   Call,
   DecodedCall,
   Option,
-} from 'components/Guilds/ActionsBuilder/types';
-import { utils } from 'ethers';
+} from 'old-components/Guilds/ActionsBuilder/types';
 
 export const encodeCall = (
   decodedCall: DecodedCall,

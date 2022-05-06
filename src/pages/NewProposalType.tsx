@@ -1,11 +1,10 @@
 // Externals
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { observer } from 'mobx-react';
-import { useHistory } from 'react-router-dom';
-
 import { useContext } from '../contexts';
-import { Box } from '../components/common';
+import { Box } from '../old-components/common';
+import { observer } from 'mobx-react';
+import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 
 const VerticalLayout = styled.div`
   display: flex;
