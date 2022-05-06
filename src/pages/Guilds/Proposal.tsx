@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
@@ -18,7 +18,6 @@ import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import Result, { ResultState } from 'components/Guilds/common/Result';
 import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
 import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
-import DurationInput from 'components/Guilds/common/Form/DurationInput';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -90,7 +89,6 @@ const ProposalPage: React.FC = () => {
     proposal_id?: string;
   }>();
 
-  const [open, setOpen] = useState(false);
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
   );
@@ -125,12 +123,8 @@ const ProposalPage: React.FC = () => {
     }
   }
 
-  const handleClose = () => setOpen(false);
-  console.log(open);
-
   return (
     <PageContainer>
-      <DurationInput isOpen={true} onDismiss={handleClose} />
       <PageContent>
         <PageHeader>
           <HeaderTopRow>
