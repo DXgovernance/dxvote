@@ -110,6 +110,7 @@ const ConfigPage = observer(() => {
   async function clearCache() {
     localStorage.clear();
     caches.delete(`dxvote-cache`);
+    window.location.reload();
   }
 
   return (
