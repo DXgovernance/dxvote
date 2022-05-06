@@ -200,29 +200,7 @@ export const decodeProposalStatus = function (
         pendingAction: PendingAction.None,
       };
     case VotingMachineProposalState.Executed:
-      if (
-        proposal.stateInScheme === WalletSchemeProposalState.Rejected &&
-        schemeType === 'ContributionReward'
-      )
-        return {
-          status: 'Passed',
-          boostTime: boostedPhaseTime,
-          finishTime: proposalStateChangeEvents.find(
-            event => Number(event.state) === VotingMachineProposalState.Executed
-          )
-            ? bnum(
-                proposalStateChangeEvents.find(
-                  event =>
-                    Number(event.state) === VotingMachineProposalState.Executed
-                ).timestamp
-              )
-            : bnum(0),
-          pendingAction: PendingAction.Redeem,
-        };
-      else if (
-        proposal.winningVote == '2' ||
-        proposal.stateInScheme === WalletSchemeProposalState.Rejected
-      )
+      if (proposal.stateInScheme === WalletSchemeProposalState.Rejected)
         return {
           status: 'Proposal Rejected',
           boostTime: boostedPhaseTime,
@@ -236,11 +214,7 @@ export const decodeProposalStatus = function (
                 ).timestamp
               )
             : bnum(0),
-          pendingAction:
-            schemeType === 'ContributionReward' &&
-            proposal.stateInVotingMachine < 3
-              ? PendingAction.Redeem
-              : PendingAction.None,
+          pendingAction: PendingAction.None,
         };
       else if (
         proposal.stateInScheme === WalletSchemeProposalState.ExecutionSucceded

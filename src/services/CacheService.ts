@@ -1377,19 +1377,20 @@ export default class UtilsService {
     let decodedProposer;
     let creationLogDecoded;
 
-    if (newProposal && isWalletScheme(schemeOfProposal)) {
-      // @ts-ignore
-      schemeProposalInfo.to = callsResponse.decodedReturnData[6].to;
-      schemeProposalInfo.callData = callsResponse.decodedReturnData[6].callData;
-      schemeProposalInfo.value = callsResponse.decodedReturnData[6].value;
+    if (isWalletScheme(schemeOfProposal)) {
       schemeProposalInfo.state = callsResponse.decodedReturnData[6].state;
-      schemeProposalInfo.title = callsResponse.decodedReturnData[6].title;
-      schemeProposalInfo.descriptionHash =
-        callsResponse.decodedReturnData[6].descriptionHash;
-      schemeProposalInfo.submittedTime =
-        callsResponse.decodedReturnData[6].submittedTime;
-    } else if (isWalletScheme(schemeOfProposal)) {
-      schemeProposalInfo.state = callsResponse.decodedReturnData[6].state;
+
+      if (newProposal) {
+        schemeProposalInfo.to = callsResponse.decodedReturnData[6].to;
+        schemeProposalInfo.callData =
+          callsResponse.decodedReturnData[6].callData;
+        schemeProposalInfo.value = callsResponse.decodedReturnData[6].value;
+        schemeProposalInfo.title = callsResponse.decodedReturnData[6].title;
+        schemeProposalInfo.descriptionHash =
+          callsResponse.decodedReturnData[6].descriptionHash;
+        schemeProposalInfo.submittedTime =
+          callsResponse.decodedReturnData[6].submittedTime;
+      }
     } else {
       // Here we get the events triggered in the GenericMulticall to get their final state
       // When the proposal is executed by the voting machine we get if the proposal was rejected
@@ -1447,6 +1448,11 @@ export default class UtilsService {
         // If any of the values of the redeemPeriods of the contribution reward is higher than zero it means that it executed the reward
       } else if (schemeOfProposal.type === 'ContributionReward') {
         if (
+          callsResponse.decodedReturnData[0].winningVote === '2' &&
+          callsResponse.decodedReturnData[0].state === '2'
+        ) {
+          schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
+        } else if (
           callsResponse.decodedReturnData[6][0] > 0 ||
           callsResponse.decodedReturnData[7][0] > 0 ||
           callsResponse.decodedReturnData[8][0] > 0 ||
@@ -1454,11 +1460,6 @@ export default class UtilsService {
         ) {
           schemeProposalInfo.state =
             WalletSchemeProposalState.ExecutionSucceded;
-        } else if (
-          callsResponse.decodedReturnData[0].state === '1' ||
-          callsResponse.decodedReturnData[0].state === '2'
-        ) {
-          schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
         } else {
           schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
         }
