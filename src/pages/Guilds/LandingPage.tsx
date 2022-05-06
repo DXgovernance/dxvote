@@ -132,9 +132,11 @@ const LandingPage: React.FC = () => {
   const chainName =
     getChains().find(chain => chain.id === chainId)?.name || null;
 
-  const { data: allGuilds } = useGuildRegistry(
+  const { data: allGuilds, error } = useGuildRegistry(
     configs[chainName].contracts.utils.guildRegistry
   );
+
+  const isLoading = !allGuilds && !error;
 
   return (
     <>
@@ -152,19 +154,25 @@ const LandingPage: React.FC = () => {
         </StyledButton>
       </InputContainer>
       <CardContainer>
-        {allGuilds ? (
+        {error ? (
+          <>{/* Render error state */}</>
+        ) : isLoading ? (
+          <>
+            {/* Render loading state */}
+            <GuildCardWithLoader guildAddress={null} />
+            <GuildCardWithLoader guildAddress={null} />
+            <GuildCardWithLoader guildAddress={null} />
+          </>
+        ) : !allGuilds.length ? (
+          <>{/* Render empty state */}</>
+        ) : (
+          /* Render success state */
           allGuilds.map(guildAddress => (
             <GuildCardWithLoader
               key={guildAddress}
               guildAddress={guildAddress}
             />
           ))
-        ) : (
-          <>
-            <GuildCardWithLoader guildAddress={null} />
-            <GuildCardWithLoader guildAddress={null} />
-            <GuildCardWithLoader guildAddress={null} />
-          </>
         )}
       </CardContainer>
     </>
