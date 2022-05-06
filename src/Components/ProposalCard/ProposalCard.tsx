@@ -1,15 +1,15 @@
-import Avatar from '../../old-components/Guilds/Avatar';
-import ProposalStatus from '../../old-components/Guilds/ProposalStatus';
-import { Box } from '../../old-components/Guilds/common/Layout';
-import { Loading } from '../../old-components/Guilds/common/Loading';
-import { Heading } from '../../old-components/Guilds/common/Typography';
-import UnstyledLink from '../../old-components/Guilds/common/UnstyledLink';
-import { shortenAddress } from '../../utils';
-import ProposalCardActionSummary from './ProposalCardActionSummary';
-import ProposalCardVotes from './ProposalCardVotes';
-import { ProposalCardProps } from './types';
+import ProposalCardActionSummary from '@components/ProposalCard/ProposalCardActionSummary';
+import ProposalCardVotes from '@components/ProposalCard/ProposalCardVotes';
+import { ProposalCardProps } from '@components/ProposalCard/types';
+import Avatar from 'old-components/Guilds/Avatar';
+import ProposalStatus from 'old-components/Guilds/ProposalStatus';
+import { Box } from 'old-components/Guilds/common/Layout';
+import { Loading } from 'old-components/Guilds/common/Loading';
+import { Heading } from 'old-components/Guilds/common/Typography';
+import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
 import 'react-loading-skeleton/dist/skeleton.css';
 import styled from 'styled-components';
+import { shortenAddress } from 'utils';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};

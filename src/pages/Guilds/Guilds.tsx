@@ -1,8 +1,8 @@
 import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/guild/useGuildProposalIds';
 import { Filter } from '../../old-components/Guilds/Filter';
-import ProposalCard from '../../old-components/Guilds/ProposalCard';
 import { Sidebar } from '../../old-components/Guilds/Sidebar';
 import { Box } from '../../old-components/Guilds/common/Layout';
+import ProposalCardWrapper from '@guilds/Wrappers/ProposalCardWrapper';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import Result, { ResultState } from 'old-components/Guilds/common/Result';
@@ -37,7 +37,7 @@ const ProposalsList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const { chainName, guildId } = useTypedParams();
+  const { guildId } = useTypedParams();
   const { data: proposalIds, error } = useGuildProposalIds(guildId);
   const { isLoading } = useContext(GuildAvailabilityContext);
   const filteredProposalIds = useMemo(() => {
@@ -75,21 +75,18 @@ const GuildsPage: React.FC = () => {
               <InView key={proposalId}>
                 {({ inView, ref }) => (
                   <div ref={ref}>
-                    <ProposalCard
-                      id={inView ? proposalId : null}
-                      href={`/${chainName}/${guildId}/proposal/${proposalId}`}
-                    />
+                    <ProposalCardWrapper id={inView ? proposalId : null} />
                   </div>
                 )}
               </InView>
             ))
           ) : (
             <>
-              <ProposalCard />
-              <ProposalCard />
-              <ProposalCard />
-              <ProposalCard />
-              <ProposalCard />
+              <ProposalCardWrapper />
+              <ProposalCardWrapper />
+              <ProposalCardWrapper />
+              <ProposalCardWrapper />
+              <ProposalCardWrapper />
             </>
           )}
         </ProposalsList>
