@@ -1197,18 +1197,13 @@ export default class UtilsService {
     );
     const fromBlock = networkCache.blockNumber + 1;
 
-    let schemeEvents = [];
-    for (let i = 0; i < schemeTypeData.newProposalTopics.length; i++) {
-      schemeEvents = schemeEvents.concat(
-        await getRawEvents(
-          web3,
-          schemeAddress,
-          fromBlock,
-          toBlock,
-          schemeTypeData.newProposalTopics[i]
-        )
-      );
-    }
+    let schemeEvents = await getRawEvents(
+      web3,
+      schemeAddress,
+      fromBlock,
+      toBlock,
+      schemeTypeData.newProposalTopics
+    );
 
     await batchPromisesOntarget(
       schemeEvents.map(schemeEvent => {
