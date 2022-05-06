@@ -7,7 +7,7 @@ import SidebarCard, {
   SidebarCardHeader,
 } from 'components/Guilds/SidebarCard';
 import { Flex } from 'components/Guilds/common/Layout';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 
@@ -33,7 +33,7 @@ const ColoredLabel = styled(Label)`
 `;
 
 export const SidebarInfoCard = () => {
-  const { guildId } = useParams();
+  const { guildId } = useTypedParams();
   const { data } = useGuildConfig(guildId);
 
   const quorum = useVotingPowerPercent(

@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { Loading } from '../common/Loading';
 import { Modal } from '../common/Modal';
 import { StakeTokens } from './StakeTokens';
@@ -14,7 +14,7 @@ const StakeTokensModal: React.FC<StakeTokensModalInterface> = ({
   isOpen,
   onDismiss,
 }) => {
-  const { guildId: guildAddress } = useParams();
+  const { guildId: guildAddress } = useTypedParams();
   const { data } = useGuildConfig(guildAddress);
   const { data: token } = useERC20Info(data?.token);
 

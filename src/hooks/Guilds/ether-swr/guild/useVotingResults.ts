@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { BigNumber } from 'ethers';
 import { ERC20Info, useERC20Info } from '../erc20/useERC20Info';
 import { useGuildConfig } from './useGuildConfig';
@@ -13,7 +13,7 @@ export interface VoteData {
 }
 
 export const useVotingResults = (): VoteData => {
-  const { guildId, proposalId } = useParams();
+  const { guildId, proposalId } = useTypedParams();
 
   // swr hooks
   const { data: proposal } = useProposal(guildId, proposalId);

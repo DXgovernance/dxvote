@@ -6,7 +6,7 @@ import { GuestActions } from './GuestActions';
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { Heading } from '../common/Typography';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useWeb3React } from '@web3-react/core';
 import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
@@ -97,7 +97,7 @@ const SidebarMenuItem = styled(MenuItem)`
 
 export const Sidebar = () => {
   const { account: userAddress } = useWeb3React();
-  const { guildId: guildAddress } = useParams();
+  const { guildId: guildAddress } = useTypedParams();
   const { data } = useGuildConfig(guildAddress);
   const { data: numberOfMembers } = useGuildMemberTotal(guildAddress);
 

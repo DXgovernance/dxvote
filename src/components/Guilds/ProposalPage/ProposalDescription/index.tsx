@@ -1,7 +1,7 @@
 import { Loading } from 'components/Guilds/common/Loading';
 import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import Markdown from 'markdown-to-jsx';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import styled from 'styled-components';
 
 const ProposalDescriptionWrapper = styled.div`
@@ -13,7 +13,7 @@ const ProposalDescriptionWrapper = styled.div`
 `;
 
 const ProposalDescription = () => {
-  const { guildId, proposalId } = useParams();
+  const { guildId, proposalId } = useTypedParams();
   const { data: metadata, error } = useProposalMetadata(guildId, proposalId);
 
   if (error) {

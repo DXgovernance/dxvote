@@ -2,13 +2,14 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 
 import { useContext } from '../contexts';
 import { Button } from '../components/common/Button';
 import { Box } from '../components/common';
 import DiscourseImporter from '../components/DiscourseImporter';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 
 const ProposalsWrapper = styled.div`
   padding: 10px 0px;
@@ -91,7 +92,7 @@ export const CreateMetadataPage = observer(() => {
   } = useContext();
 
   const history = useHistory();
-  const { proposalType } = useParams();
+  const { proposalType } = useTypedParams();
 
   const [proposalConfig, setProposalConfig] = useState({});
 

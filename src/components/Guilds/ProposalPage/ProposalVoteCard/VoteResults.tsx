@@ -5,7 +5,7 @@ import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import { Loading } from 'components/Guilds/common/Loading';
 import { formatUnits } from 'ethers/lib/utils';
 import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 
 const VotesRowWrapper = styled.div`
   display: flex;
@@ -33,7 +33,7 @@ export const VoteResultRow: React.FC<ResultRowProps> = ({
   isPercent,
   optionKey,
 }) => {
-  const { guildId, proposalId } = useParams();
+  const { guildId, proposalId } = useTypedParams();
 
   const isReady = optionKey !== undefined;
 

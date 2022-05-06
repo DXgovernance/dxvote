@@ -5,7 +5,7 @@ import { isDesktop } from 'react-device-detect';
 import { Box } from 'components/Guilds/common/Layout';
 import { Loading } from 'components/Guilds/common/Loading';
 
-interface ProposalCardVotesProps {
+interface ProposalCardActionSummaryProps {
   isLoading?: boolean;
 }
 
@@ -52,7 +52,9 @@ const Icon = styled.img<{
   `}
 `;
 
-const ProposalCardActionSummary = ({ isLoading }) => {
+const ProposalCardActionSummary: React.FC<ProposalCardActionSummaryProps> = ({
+  isLoading,
+}) => {
   if (isLoading) {
     return (
       <Loading

@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
 import { useState, useMemo } from 'react';
-import { useParams } from 'react-router';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import styled, { css, useTheme } from 'styled-components';
 import { Button } from '../../common/Button';
 import moment from 'moment';
@@ -85,7 +85,7 @@ const ProposalVoteCard = () => {
   const [selectedAction, setSelectedAction] = useState<BigNumber>();
   const [modalOpen, setModalOpen] = useState<boolean>();
 
-  const { guildId, proposalId } = useParams();
+  const { guildId, proposalId } = useTypedParams();
   const { data: proposal } = useProposal(guildId, proposalId);
   const { data: proposalMetadata } = useProposalMetadata(guildId, proposalId);
 

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { FiArrowRight, FiInfo } from 'react-icons/fi';
 import moment from 'moment';
 import { useHistory, useLocation } from 'react-router';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { useWeb3React } from '@web3-react/core';
 
 import { Heading } from '../common/Typography';
@@ -123,7 +123,7 @@ const ActionButton = styled(Button)`
 export const StakeTokens = () => {
   const [stakeAmount, setStakeAmount] = useState<BigNumber>(null);
   const { account: userAddress } = useWeb3React();
-  const { guildId: guildAddress } = useParams();
+  const { guildId: guildAddress } = useTypedParams();
   const { data: guildConfig } = useGuildConfig(guildAddress);
   const { data: tokenInfo } = useERC20Info(guildConfig?.token);
 

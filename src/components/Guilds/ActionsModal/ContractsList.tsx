@@ -17,7 +17,7 @@ import {
   Wrapper,
 } from './styles';
 import useGuildImplementationTypeConfig from 'hooks/Guilds/guild/useGuildImplementationType';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 
 interface ContractsListProps {
   onSelect: (contract: RegistryContract) => void;
@@ -30,7 +30,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
 }) => {
   const { chainId } = useWeb3React();
   const { contracts } = useContractRegistry(chainId);
-  const { guildId: guildAddress } = useParams();
+  const { guildId: guildAddress } = useTypedParams();
   const { isRepGuild } = useGuildImplementationTypeConfig(guildAddress);
   return (
     <Wrapper>

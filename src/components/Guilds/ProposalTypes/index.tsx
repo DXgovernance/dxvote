@@ -5,13 +5,14 @@ import { FiArrowLeft, FiX } from 'react-icons/fi';
 import { Button } from '../common/Button';
 import { Flex } from '../common/Layout';
 import { ContainerText } from '../common/Layout/Text';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { Heading } from '../common/Typography';
 import StyledIcon from '../common/SVG';
 import { isMobile } from 'react-device-detect';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import { Loading } from '../common/Loading';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 
 const Backdrop = styled(Flex)``;
 const CloseIcon = styled(FiX)`
@@ -166,7 +167,7 @@ interface ProposalTypesProps {
   data: ProposalTypeDescriptionProps[];
 }
 const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
-  const { guildId, chainName: chain } = useParams();
+  const { guildId, chainName: chain } = useTypedParams();
   const history = useHistory();
   const location = useLocation();
   const { isLoading: isGuildAvailabilityLoading } = useContext(

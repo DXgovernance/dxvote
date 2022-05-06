@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import useEtherSWR from '../useEtherSWR';
 import useTotalLockedAt from 'hooks/Guilds/ether-swr/guild/useTotalLockedAt';
@@ -14,7 +14,7 @@ const useTotalLocked = (guildAddress: string, snapshotId?: string) => {
     contractAddress: guildAddress,
   });
 
-  const { proposalId } = useParams();
+  const { proposalId } = useTypedParams();
   const { data: _snapshotId } = useSnapshotId({
     contractAddress: guildAddress,
     proposalId,

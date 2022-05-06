@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import { Box } from '../common/Layout';
 import { ProposalState } from '../../../types/types.guilds.d';
-import { useParams } from 'react-router';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { useProposal } from '../../../hooks/Guilds/ether-swr/guild/useProposal';
 import { Loading } from '../common/Loading';
 
@@ -48,7 +48,7 @@ padding: 0 0.2rem;
 
 interface ProposalStatusProps {
   //optional cause
-  //if not present can { guildId, proposalId } = useParams()
+  //if not present can { guildId, proposalId } = useTypedParams()
   proposalId?: string;
   // proposal: Proposal;
   bordered?: boolean;
@@ -62,7 +62,7 @@ const ProposalStatus: React.FC<ProposalStatusProps> = ({
   hideTime,
   showRemainingTime,
 }) => {
-  const { guildId, proposalId: paramProposalId } = useParams();
+  const { guildId, proposalId: paramProposalId } = useTypedParams();
 
   const { data: proposal } = useProposal(
     guildId,

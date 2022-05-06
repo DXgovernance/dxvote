@@ -1,7 +1,7 @@
 import { BigNumber, utils } from 'ethers';
 import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import styled from 'styled-components';
 import {
   defaultValues,
@@ -40,7 +40,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
   setIsOpen,
   onAddAction,
 }) => {
-  const { guildId } = useParams();
+  const { guildId } = useTypedParams();
   const { account: walletAddress } = useWeb3React();
   // Supported Actions
   const [selectedAction, setSelectedAction] = useState<SupportedAction>(null);

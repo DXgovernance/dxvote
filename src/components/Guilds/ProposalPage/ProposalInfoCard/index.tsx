@@ -3,7 +3,7 @@ import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import moment, { duration } from 'moment';
 import React, { useMemo, useState } from 'react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import styled, { css } from 'styled-components';
 import { useProposal } from '../../../../hooks/Guilds/ether-swr/guild/useProposal';
 import { Box } from '../../common/Layout';
@@ -61,7 +61,7 @@ const SidebarInfoContent = styled.div`
 
 const ProposalInfoCard: React.FC = () => {
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-  const { guildId, proposalId } = useParams();
+  const { guildId, proposalId } = useTypedParams();
   const { data: proposal, error } = useProposal(guildId, proposalId);
 
   const { data: guildConfig } = useGuildConfig(guildId);

@@ -35,7 +35,9 @@ export const GuildAvailabilityContext =
   createContext<GuildAvailabilityContextInterface>({});
 
 const GuildAvailabilityProvider = ({ children }) => {
-  const routeMatch = useRouteMatch('/:chainName/:guildId');
+  const routeMatch = useRouteMatch<{ guildId?: string }>(
+    '/:chain_name/:guild_id'
+  );
   const guildId = routeMatch?.params?.guildId;
   const { providers: multichainProviders } = useContext(MultichainContext);
   const [availability, setAvailability] = useState<ContractAvailability>({});

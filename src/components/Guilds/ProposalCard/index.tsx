@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useParams } from 'react-router';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight, FiCircle } from 'react-icons/fi';
 
@@ -108,7 +108,7 @@ interface ProposalCardProps {
 }
 
 const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
-  const { guildId } = useParams();
+  const { guildId } = useTypedParams();
   const { data: proposal } = useProposal(guildId, id);
   const votes = useVoteSummary(guildId, id);
   const { imageUrl, ensName } = useENSAvatar(proposal?.creator, MAINNET_ID);

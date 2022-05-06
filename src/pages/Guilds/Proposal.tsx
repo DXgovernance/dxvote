@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { Loading } from 'components/Guilds/common/Loading';
 import { IconButton } from '../../components/Guilds/common/Button';
 import { Box } from '../../components/Guilds/common/Layout';
@@ -79,7 +79,7 @@ const HeaderTopRow = styled(Box)`
 `;
 
 const ProposalPage: React.FC = () => {
-  const { chainName, guildId, proposalId } = useParams();
+  const { chainName, guildId, proposalId } = useTypedParams();
 
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext

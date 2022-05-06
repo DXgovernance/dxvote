@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { Box } from '../../components/Guilds/common/Layout';
 import { Sidebar } from '../../components/Guilds/Sidebar';
 import { Filter } from '../../components/Guilds/Filter';
@@ -37,7 +37,7 @@ const ProposalsList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const { chainName, guildId } = useParams();
+  const { chainName, guildId } = useTypedParams();
   const { data: proposalIds, error } = useGuildProposalIds(guildId);
   const { isLoading } = useContext(GuildAvailabilityContext);
   const filteredProposalIds = useMemo(() => {

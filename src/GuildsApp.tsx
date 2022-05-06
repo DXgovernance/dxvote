@@ -53,7 +53,7 @@ const GuildsApp = () => {
                       <Route path="/:chainName/:guildId/proposal/:proposalId">
                         <ProposalPage />
                       </Route>
-                      <Route path="/:chainName/:guildId/create/:proposal_type">
+                      <Route path="/:chainName/:guildId/create/:proposalType">
                         <CreateProposalPage />
                       </Route>
 

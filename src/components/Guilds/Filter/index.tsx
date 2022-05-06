@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { isDesktop, isMobile } from 'react-device-detect';
-import { useParams } from 'react-router';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import { useFilter } from 'contexts/Guilds/filters';
 import { AiOutlineSearch } from 'react-icons/ai';
 import Input from '../common/Form/Input';
@@ -48,7 +48,7 @@ const StyledInputWrapper = styled(Box)`
 `;
 
 export const Filter = () => {
-  const { guildId } = useParams();
+  const { guildId } = useTypedParams();
   const [viewFilter, setViewFilter] = useState(false);
   const { totalFilters } = useFilter();
 

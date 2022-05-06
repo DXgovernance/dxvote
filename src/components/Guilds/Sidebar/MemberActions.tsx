@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { isMobile } from 'react-device-detect';
 import { useWeb3React } from '@web3-react/core';
 import { FiArrowLeft } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 import {
   DropdownMenu,
   DropdownContent,
@@ -83,7 +83,7 @@ const LockButton = styled(Button)`
 export const MemberActions = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showStakeModal, setShowStakeModal] = useState(false);
-  const { guildId: guildAddress } = useParams();
+  const { guildId: guildAddress } = useTypedParams();
   const { account: userAddress } = useWeb3React();
   const { ensName, imageUrl } = useENSAvatar(userAddress, MAINNET_ID);
   const { data: guildConfig } = useGuildConfig(guildAddress);

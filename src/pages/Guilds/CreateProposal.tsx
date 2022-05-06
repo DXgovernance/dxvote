@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import contentHash from 'content-hash';
 import { FiChevronLeft } from 'react-icons/fi';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
 import sanitizeHtml from 'sanitize-html';
 import { Box, Flex } from '../../components/Guilds/common/Layout';
@@ -24,6 +24,7 @@ import { Call, Option } from 'components/Guilds/ActionsBuilder/types';
 import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
 import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
 import { BigNumber } from 'ethers';
+import { useTypedParams } from 'stories/Modules/Guilds/Hooks/useTypedParams';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -80,7 +81,7 @@ const EMPTY_CALL: Call = {
 };
 
 const CreateProposalPage: React.FC = () => {
-  const { guildId, chainName: chain } = useParams();
+  const { guildId, chainName: chain } = useTypedParams();
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
   );
@@ -120,7 +121,7 @@ const CreateProposalPage: React.FC = () => {
   };
 
   const { createTransaction } = useTransactions();
-  const { guildId: guildAddress } = useParams();
+  const { guildId: guildAddress } = useTypedParams();
   const guildContract = useERC20Guild(guildAddress);
   const handleCreateProposal = async () => {
     const contentHash = await uploadToIPFS();
