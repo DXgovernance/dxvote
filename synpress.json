@@ -1,0 +1,24 @@
+{
+  "projectId": "bocbgz",
+  "experimentalStudio": true,
+  "viewportWidth": 1920,
+  "viewportHeight": 1080,
+  "baseUrl": "http://localhost:3000/#",
+  "userAgent": "synpress",
+  "retries": { "runMode": 0, "openMode": 0 },
+  "integrationFolder": "./cypress/integration",
+  "screenshotsFolder": "./cypress/screenshots",
+  "videosFolder": "cypress/videos",
+  "chromeWebSecurity": true,
+  "component": {
+    "componentFolder": "src",
+    "testFiles": "**/*spec.{js,jsx,ts,tsx}"
+  },
+  "env": {
+    "coverage": false
+  },
+  "defaultCommandTimeout": 60000,
+  "pageLoadTimeout": 60000,
+  "requestTimeout": 60000
+}
+

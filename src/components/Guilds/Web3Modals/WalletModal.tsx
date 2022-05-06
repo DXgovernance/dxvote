@@ -182,6 +182,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
             icon={option.icon}
             link={option.href}
             header={option.name}
+            dataTestId={`wallet-option-${option.name}`}
           />
         )
       );
@@ -277,6 +278,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <Modal
+      dataTestId="wallet-modal"
       header={getHeader()}
       isOpen={isOpen}
       onDismiss={onClose}

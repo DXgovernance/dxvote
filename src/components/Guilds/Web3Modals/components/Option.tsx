@@ -58,6 +58,7 @@ export default function Option({
   icon,
   header,
   active = false,
+  dataTestId = '',
 }) {
   const content = (
     <OptionButton
@@ -65,6 +66,7 @@ export default function Option({
       onClick={onClick}
       clickable={clickable && !active}
       active={active}
+      data-testId={dataTestId}
     >
       <OptionButtonText>
         {active && <LiveIndicator />}

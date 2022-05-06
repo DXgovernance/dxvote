@@ -11,12 +11,11 @@ class Guilds {
     this.deployedGuildsAddresses = localhostConfigJSON.guilds;
   }
 
-  goToGuildsPage(
-    network: string = 'localhost',
-    address: string = '0x9cdc16b5f95229b856cba5f38095fd8e00f8edef' // default rinkeby deployed address
-  ) {
+  goToGuildsPage(network: string = 'localhost', address?: string) {
     const baseUrl = Cypress.config('baseUrl');
-    cy.visit(`${baseUrl}/guilds/${network}/${address}`, { timeout: 120000 });
+    cy.visit(`${baseUrl}/guilds/${network}${address ? `/${address}` : ''}`, {
+      timeout: 120000,
+    });
   }
 
   shouldRenderProposalsList() {
@@ -26,8 +25,30 @@ class Guilds {
   shouldRenderSidebar() {
     cy.findByTestId(this.sidebarId).should('be.visible');
   }
+
+  fillCreateProposalForm() {
+    cy.findByTestId('create-proposal-title')
+      .focus()
+      .type('Test automated proposal');
+    cy.findByTestId('create-proposal-link')
+      .focus()
+      .type(
+        'https://daotalk.org/t/test-synpress-proposal-07-02-2022-03-04-2022/4003'
+      );
+    cy.findByTestId('editor-content')
+      .find('div')
+      .type(
+        'Test Contributor proposal{enter}Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        { force: true }
+      );
+  }
+
+  clickOpenWalletModalBtn() {
+    cy.findAllByTestId('connectWalletBtn').eq(0).click();
+  }
 }
 
 const guilds: Guilds = new Guilds();
 
 export default guilds;
+
