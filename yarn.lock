@@ -3757,6 +3757,11 @@
     "@testing-library/dom" "^8.0.0"
     "@types/react-dom" "*"
 
+"@testing-library/user-event@^14.1.1":
+  version "14.1.1"
+  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.1.1.tgz#e1ff6118896e4b22af31e5ea2f9da956adde23d8"
+  integrity sha512-XrjH/iEUqNl9lF2HX9YhPNV7Amntkcnpw0Bo1KkRzowNDcgSN9i0nm4Q8Oi5wupgdfPaJNMAWa61A+voD6Kmwg==
+
 "@tiptap/core@^2.0.0-beta.163":
   version "2.0.0-beta.163"
   resolved "https://registry.yarnpkg.com/@tiptap/core/-/core-2.0.0-beta.163.tgz#f9a64b4bb1597f1ab08a8fd8086cf718545737fa"
