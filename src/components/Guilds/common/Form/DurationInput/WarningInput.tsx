@@ -19,17 +19,9 @@ const WarningInput: React.FC<WarningInputProps> = ({
 }) => {
   if (value > limit.max) {
     return (
-      <WarningContainer>
+      <WarningContainer data-testid="warning-max">
         Please change {value} input for the {timeColumn} column as it is over
         the limit. The maximum value allowed is {limit.max}
-      </WarningContainer>
-    );
-  }
-  if (value < limit.min) {
-    return (
-      <WarningContainer>
-        Please change {value} input for the {timeColumn} column as it is under
-        the limit. The minimum value allowed is {limit.min}
       </WarningContainer>
     );
   }

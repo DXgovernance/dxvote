@@ -3,12 +3,12 @@ import { useMemo, useState } from 'react';
 
 export const useDuration = () => {
   const [duration, setDuration] = useState({
-    years: undefined,
-    months: undefined,
-    days: undefined,
-    hours: undefined,
-    minutes: undefined,
-    seconds: undefined,
+    years: null,
+    months: null,
+    days: null,
+    hours: null,
+    minutes: null,
+    seconds: null,
   });
 
   const increment = (key: string) =>
@@ -17,6 +17,7 @@ export const useDuration = () => {
     setDuration({ ...duration, [key]: duration[key] - 1 });
 
   const handleChange = (e: string, value: string) => {
+    if (!parseInt(e)) return;
     return setDuration({ ...duration, [value]: e });
   };
 
