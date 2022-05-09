@@ -20,7 +20,7 @@ import { useERC20, useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import moment from 'moment';
 import { useMemo, useState } from 'react';
 import { FiArrowRight, FiInfo } from 'react-icons/fi';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { MAX_UINT } from 'utils';
 

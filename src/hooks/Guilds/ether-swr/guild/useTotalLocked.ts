@@ -2,11 +2,12 @@ import useEtherSWR from '../useEtherSWR';
 import useCurrentSnapshotId from './useCurrentSnapshotId';
 import useGuildToken from './useGuildToken';
 import useTotalSupplyAt from './useTotalSupplyAt';
-import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+// import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import useSnapshotId from 'hooks/Guilds/ether-swr/guild/useSnapshotId';
 import useTotalLockedAt from 'hooks/Guilds/ether-swr/guild/useTotalLockedAt';
 import useGuildImplementationType from 'hooks/Guilds/guild/useGuildImplementationType';
+// import { useParams } from 'react-router-dom';
 
 const useTotalLocked = (guildAddress: string, snapshotId?: string) => {
   // Hooks call
@@ -14,10 +15,10 @@ const useTotalLocked = (guildAddress: string, snapshotId?: string) => {
     contractAddress: guildAddress,
   });
 
-  const { proposalId } = useTypedParams();
+  // const { proposalId } = useParams<{ proposalId?: string }>();
   const { data: _snapshotId } = useSnapshotId({
     contractAddress: guildAddress,
-    proposalId,
+    proposalId: '0',
   });
 
   const SNAPSHOT_ID =

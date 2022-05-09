@@ -10,7 +10,7 @@ import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf'
 import { useMemo, useState } from 'react';
 import { isDesktop, isMobile } from 'react-device-detect';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 const FilterContainer = styled(Box)`
