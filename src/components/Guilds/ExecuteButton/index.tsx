@@ -1,4 +1,4 @@
-import useProposalState from 'hooks/Guilds/ether-swr/guild/useProposalState';
+import useProposalState from 'hooks/Guilds/useProposalState';
 import React from 'react';
 import { Button } from '../common/Button';
 

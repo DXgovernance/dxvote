@@ -1,9 +1,9 @@
-import { useTransactions } from 'contexts/Guilds';
+import { useTransactions } from 'contexts/Guilds/transactions';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import moment from 'moment';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useProposal } from './useProposal';
+import { useProposal } from '../ether-swr/guild/useProposal';
 
 enum ProposalState {
   Active = 'Active',
@@ -35,6 +35,7 @@ function useProposalState(): useProposalStateReturns {
 
   const { data, loading } = useMemo(() => {
     if (!proposal) return { loading: true };
+
     const now = moment.unix(moment.now());
 
     return {
