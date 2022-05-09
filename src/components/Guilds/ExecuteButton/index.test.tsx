@@ -5,7 +5,7 @@ import { render } from 'utils/tests';
 
 let mockedIsExecutable = true;
 let mockedExecuteProposal = jest.fn();
-jest.mock('hooks/Guilds/ether-swr/guild/useProposalState', () => ({
+jest.mock('hooks/Guilds/useProposalState', () => ({
   __esModule: true,
   default: () => ({
     data: {
@@ -17,7 +17,7 @@ jest.mock('hooks/Guilds/ether-swr/guild/useProposalState', () => ({
   }),
 }));
 
-describe('useProposalState', () => {
+describe('Execute Button', () => {
   beforeAll(() => {
     render(<ExecuteButton />);
   });
