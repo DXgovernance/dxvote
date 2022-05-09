@@ -34,13 +34,19 @@ function useProposalState(): useProposalStateReturns {
     });
 
   const { data, loading } = useMemo(() => {
-    if (!proposal) return { ...data, loading: true, error: error};
+    if (!proposal)
+      return {
+        data: { isExecutable: false, executeProposal: null },
+        loading: true,
+        error: error,
+      };
     const now = moment.unix(moment.now());
 
     return {
       data: {
         isExecutable:
-        proposal.state == ProposalState.Active && proposal.endTime.isBefore(now),
+          proposal.state == ProposalState.Active &&
+          proposal.endTime.isBefore(now),
         executeProposal: executeProposal,
       },
       loading: false,
