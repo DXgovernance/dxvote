@@ -73,7 +73,6 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
   ensAvatar,
   href,
 }) => {
-  console.log({ proposal });
   return (
     <UnstyledLink to={href || '#'}>
       <CardWrapper>
