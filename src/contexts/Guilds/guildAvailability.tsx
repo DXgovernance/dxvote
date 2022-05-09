@@ -3,7 +3,7 @@ import { MultichainContext } from 'contexts/MultichainProvider';
 import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
 import { iconsByChain } from 'old-components/Guilds/Header/NetworkButton';
 import { ButtonIcon, IconButton } from 'old-components/Guilds/common/Button';
-import { Box } from 'old-components/Guilds/common/Layout';
+import { Box } from 'Components/Primitives/Layout';
 import Result, { ResultState } from 'old-components/Guilds/common/Result';
 import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';

@@ -12,7 +12,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import ActionModal from 'old-components/Guilds/ActionsModal';
-import { Box } from 'old-components/Guilds/common/Layout';
+import { Box } from 'Components/Primitives/Layout';
 import { useState } from 'react';
 import styled from 'styled-components';
 

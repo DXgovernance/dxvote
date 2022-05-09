@@ -1,7 +1,7 @@
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import Markdown from 'markdown-to-jsx';
-import { Loading } from 'old-components/Guilds/common/Loading';
+import { Loading } from 'Components/Primitives/Loading';
 import styled from 'styled-components';
 
 const ProposalDescriptionWrapper = styled.div`

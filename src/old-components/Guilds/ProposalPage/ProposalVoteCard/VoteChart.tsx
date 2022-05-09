@@ -2,7 +2,7 @@ import styled, { useTheme } from 'styled-components';
 import { FaFlagCheckered } from 'react-icons/fa';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
-import { Loading } from '../../common/Loading';
+import { Loading } from '../../../../Components/Primitives/Loading';
 import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
 import { BigNumber } from 'ethers';
 

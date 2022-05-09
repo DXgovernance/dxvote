@@ -1,3 +1,4 @@
+import { ProposalStatusProps } from 'Components/ProposalStatus/types';
 import { Proposal, ENSAvatar } from '../Types';
 
 export interface ProposalCardProps {
@@ -5,4 +6,5 @@ export interface ProposalCardProps {
   votes?: number[];
   ensAvatar?: ENSAvatar;
   href?: string;
+  statusProps: ProposalStatusProps;
 }

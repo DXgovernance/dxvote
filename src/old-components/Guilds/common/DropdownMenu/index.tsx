@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { IconButton } from '../Button';
-import { Box } from '../Layout';
+import { Box } from '../../../../Components/Primitives/Layout';
 
 interface DropdownProps {
   position: DropdownPosition;

@@ -1,5 +1,5 @@
-import { Box } from 'old-components/Guilds/common/Layout';
-import { Loading } from 'old-components/Guilds/common/Loading';
+import { Box } from 'Components/Primitives/Layout';
+import { Loading } from 'Components/Primitives/Loading';
 import { isDesktop } from 'react-device-detect';
 import { FiArrowRight } from 'react-icons/fi';
 import styled from 'styled-components';

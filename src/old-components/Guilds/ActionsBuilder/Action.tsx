@@ -10,7 +10,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
 import { Button } from 'old-components/Guilds/common/Button';
 import { CardWrapper, Header } from 'old-components/Guilds/common/Card';
-import { Box } from 'old-components/Guilds/common/Layout';
+import { Box } from 'Components/Primitives/Layout';
 import { useState } from 'react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import styled, { css } from 'styled-components';

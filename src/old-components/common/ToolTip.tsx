@@ -1,4 +1,4 @@
-import { Box } from 'old-components/Guilds/common/Layout';
+import { Box } from 'Components/Primitives/Layout';
 import styled from 'styled-components';
 
 export const StyledToolTip = styled(Box)`

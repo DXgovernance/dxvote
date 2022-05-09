@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { ActionEditorProps } from '..';
 import { ethers } from 'ethers';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
-import { Box } from 'old-components/Guilds/common/Layout';
+import { Box } from 'Components/Primitives/Layout';
 import { shortenAddress, MAINNET_ID } from 'utils';
 import { ReactComponent as Info } from '../../../../../assets/images/info.svg';
 import StyledIcon from 'old-components/Guilds/common/SVG';

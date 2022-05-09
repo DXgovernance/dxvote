@@ -2,9 +2,9 @@ import ProposalCardActionSummary from 'Components/ProposalCard/ProposalCardActio
 import ProposalCardVotes from 'Components/ProposalCard/ProposalCardVotes';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
 import Avatar from 'old-components/Guilds/Avatar';
-import ProposalStatus from 'old-components/Guilds/ProposalStatus';
-import { Box } from 'old-components/Guilds/common/Layout';
-import { Loading } from 'old-components/Guilds/common/Loading';
+import ProposalStatus from 'Components/ProposalStatus/ProposalStatus';
+import { Box } from 'Components/Primitives/Layout';
+import { Loading } from 'Components/Primitives/Loading';
 import { Heading } from 'old-components/Guilds/common/Typography';
 import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -61,17 +61,12 @@ const Detail = styled(Box)`
   margin-left: 0.5rem;
 `;
 
-const ProposalStatusWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-`;
-
 const ProposalCard: React.FC<ProposalCardProps> = ({
   proposal,
   votes,
   ensAvatar,
   href,
+  statusProps,
 }) => {
   return (
     <UnstyledLink to={href || '#'}>
@@ -101,13 +96,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
                 ))}
             </Detail>
           </IconDetailWrapper>
-          <ProposalStatusWrapper>
-            <ProposalStatus
-              proposalId={proposal?.id}
-              bordered={false}
-              showRemainingTime
-            />
-          </ProposalStatusWrapper>
+          <ProposalStatus {...statusProps} />
         </CardHeader>
         <CardContent>
           <CardTitle size={2}>

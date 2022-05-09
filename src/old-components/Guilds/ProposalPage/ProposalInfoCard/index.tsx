@@ -3,13 +3,13 @@ import SidebarCard, {
   SidebarCardContent,
   SidebarCardHeader,
 } from '../../SidebarCard';
-import { Box } from '../../common/Layout';
+import { Box } from '../../../../Components/Primitives/Layout';
 import InfoItem from './InfoItem';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import moment, { duration } from 'moment';
-import { Loading } from 'old-components/Guilds/common/Loading';
+import { Loading } from 'Components/Primitives/Loading';
 import React, { useMemo, useState } from 'react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import styled, { css } from 'styled-components';

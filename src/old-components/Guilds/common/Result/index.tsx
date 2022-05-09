@@ -6,7 +6,7 @@ import {
   FiXOctagon,
 } from 'react-icons/fi';
 import styled, { useTheme } from 'styled-components';
-import { Box } from '../Layout';
+import { Box } from '../../../../Components/Primitives/Layout';
 import { Heading } from '../Typography';
 
 export enum ResultState {

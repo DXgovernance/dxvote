@@ -19,7 +19,7 @@ import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults'
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import useTimedRerender from 'hooks/Guilds/time/useTimedRerender';
 import moment from 'moment';
-import { Loading } from 'old-components/Guilds/common/Loading';
+import { Loading } from 'Components/Primitives/Loading';
 import { useState, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import styled, { css, useTheme } from 'styled-components';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
-import { Box } from 'old-components/Guilds/common/Layout/Box';
+import { Box } from 'Components/Primitives/Layout/Box';
 import { Modal } from 'old-components/Guilds/common/Modal';
 import { Button } from 'old-components/Guilds/common/Button';
 import { Option } from './types';

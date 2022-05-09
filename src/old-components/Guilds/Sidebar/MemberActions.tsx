@@ -18,7 +18,7 @@ import {
   DropdownContent,
   DropdownHeader,
 } from '../common/DropdownMenu';
-import { Loading } from '../common/Loading';
+import { Loading } from '../../../Components/Primitives/Loading';
 import { useWeb3React } from '@web3-react/core';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import { formatUnits } from 'ethers/lib/utils';

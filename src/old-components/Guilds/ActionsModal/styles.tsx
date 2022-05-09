@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Button } from '../common/Button';
-import { ContainerText } from '../common/Layout/Text';
+import { ContainerText } from '../../../Components/Primitives/Layout/Text';
 
 export const Wrapper = styled.div`
   width: 100%;

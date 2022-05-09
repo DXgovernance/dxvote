@@ -23,6 +23,10 @@ const validProps: ProposalCardProps = {
   votes: [10, 20],
   ensAvatar: { ensName: 'rossdev.eth', imageUrl: '' },
   href: 'testUrl',
+  statusProps: {
+    timeDetail: 'Time',
+    status: ProposalState.Active,
+  },
 };
 
 const invalidProps: ProposalCardProps = {
@@ -30,6 +34,10 @@ const invalidProps: ProposalCardProps = {
   votes: [],
   ensAvatar: null,
   href: null,
+  statusProps: {
+    timeDetail: null,
+    status: null,
+  },
 };
 
 test('ProposalCard Renders properly with data', async () => {

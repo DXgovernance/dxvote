@@ -6,7 +6,7 @@ import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import Avatar from '../Avatar';
 import { shortenAddress } from '../../../utils';
 import { Badge } from '../common/Badge';
-import { Loading } from '../common/Loading';
+import { Loading } from '../../../Components/Primitives/Loading';
 
 const IconHolder = styled.span`
   display: flex;

@@ -5,7 +5,7 @@ import { Button } from '../Button';
 import { FiArrowLeft, FiX } from 'react-icons/fi';
 import { IoIosArrowBack } from 'react-icons/io';
 import { Heading } from '../Typography';
-import { Flex } from '../Layout';
+import { Flex } from '../../../../Components/Primitives/Layout';
 
 export const Wrapper = styled.div`
   position: fixed;

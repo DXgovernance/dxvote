@@ -1,7 +1,7 @@
 import { useWeb3React } from '@web3-react/core';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Box, Container } from '../common/Layout';
+import { Box, Container } from '../../../Components/Primitives/Layout';
 import { Heading } from '../common/Typography';
 import NetworkButton from './NetworkButton';
 import WalletButton from './WalletButton';

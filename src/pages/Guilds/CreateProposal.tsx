@@ -4,7 +4,7 @@ import {
 } from '../../old-components/Guilds/CreateProposalPage';
 import { IconButton } from '../../old-components/Guilds/common/Button';
 import Input from '../../old-components/Guilds/common/Form/Input';
-import { Box, Flex } from '../../old-components/Guilds/common/Layout';
+import { Box, Flex } from '../../Components/Primitives/Layout';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import contentHash from 'content-hash';
 import { useTransactions } from 'contexts/Guilds';
@@ -16,7 +16,7 @@ import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
 import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
 import { Call, Option } from 'old-components/Guilds/ActionsBuilder/types';
 import Editor from 'old-components/Guilds/Editor';
-import { Loading } from 'old-components/Guilds/common/Loading';
+import { Loading } from 'Components/Primitives/Loading';
 import React, { useContext, useMemo, useState } from 'react';
 import { FiChevronLeft } from 'react-icons/fi';
 import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';

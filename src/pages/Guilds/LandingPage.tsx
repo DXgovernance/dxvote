@@ -11,7 +11,7 @@ import GuildCard, {
 } from 'old-components/Guilds/GuildCard';
 import { Button } from 'old-components/Guilds/common/Button';
 import Input from 'old-components/Guilds/common/Form/Input';
-import { Flex, Box } from 'old-components/Guilds/common/Layout';
+import { Flex, Box } from 'Components/Primitives/Layout';
 import { Heading } from 'old-components/Guilds/common/Typography';
 import { getChains } from 'provider/connectors';
 import React from 'react';
@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { MdOutlinePeopleAlt } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { Loading } from 'old-components/Guilds/common/Loading';
+import { Loading } from 'Components/Primitives/Loading';
 
 import styled from 'styled-components';
 

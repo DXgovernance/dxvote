@@ -10,7 +10,7 @@ import useGuildImplementationType from '../../../hooks/Guilds/guild/useGuildImpl
 import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
 import { Button } from '../common/Button';
 import TokenAmountInput from '../common/Form/TokenAmountInput';
-import { Loading } from '../common/Loading';
+import { Loading } from '../../../Components/Primitives/Loading';
 import { Heading } from '../common/Typography';
 import { useWeb3React } from '@web3-react/core';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';

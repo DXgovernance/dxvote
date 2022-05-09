@@ -6,7 +6,7 @@ import SidebarCard, {
   SidebarCardContent,
   SidebarCardHeader,
 } from 'old-components/Guilds/SidebarCard';
-import { Flex } from 'old-components/Guilds/common/Layout';
+import { Flex } from 'Components/Primitives/Layout';
 import Skeleton from 'react-loading-skeleton';
 import styled from 'styled-components';
 

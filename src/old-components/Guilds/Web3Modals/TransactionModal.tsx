@@ -1,8 +1,8 @@
 import { getChains } from '../../../provider/connectors';
 import { getBlockchainLink } from '../../../utils';
 import { Button } from '../common/Button';
-import { Circle, Flex } from '../common/Layout';
-import { ContainerText } from '../common/Layout/Text';
+import { Circle, Flex } from '../../../Components/Primitives/Layout';
+import { ContainerText } from '../../../Components/Primitives/Layout/Text';
 import { Modal, ModalProps } from '../common/Modal';
 import { useWeb3React } from '@web3-react/core';
 import PendingCircle from 'old-components/common/PendingCircle';

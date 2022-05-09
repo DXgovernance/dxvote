@@ -1,7 +1,7 @@
 import { Button } from '../common/Button';
-import { Flex } from '../common/Layout';
-import { ContainerText } from '../common/Layout/Text';
-import { Loading } from '../common/Loading';
+import { Flex } from '../../../Components/Primitives/Layout';
+import { ContainerText } from '../../../Components/Primitives/Layout/Text';
+import { Loading } from '../../../Components/Primitives/Loading';
 import StyledIcon from '../common/SVG';
 import { Heading } from '../common/Typography';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';

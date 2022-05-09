@@ -4,7 +4,7 @@ import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadat
 import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import Bullet from 'old-components/Guilds/common/Bullet';
-import { Loading } from 'old-components/Guilds/common/Loading';
+import { Loading } from 'Components/Primitives/Loading';
 import styled, { useTheme } from 'styled-components';
 
 const VotesRowWrapper = styled.div`

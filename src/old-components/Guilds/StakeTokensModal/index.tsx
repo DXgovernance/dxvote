@@ -1,6 +1,6 @@
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
-import { Loading } from '../common/Loading';
+import { Loading } from '../../../Components/Primitives/Loading';
 import { Modal } from '../common/Modal';
 import { StakeTokens } from './StakeTokens';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';

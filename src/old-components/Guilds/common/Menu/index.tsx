@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Box } from '../Layout';
+import { Box } from '../../../../Components/Primitives/Layout';
 
 export const Menu = styled(Box)`
   display: flex;

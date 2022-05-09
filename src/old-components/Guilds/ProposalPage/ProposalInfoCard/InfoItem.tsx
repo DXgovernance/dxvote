@@ -1,6 +1,6 @@
 import { FiExternalLink } from 'react-icons/fi';
 import styled, { css } from 'styled-components';
-import { Box } from '../../common/Layout';
+import { Box } from '../../../../Components/Primitives/Layout';
 
 const InfoItemWrapper = styled(Box)`
   display: flex;

@@ -8,7 +8,7 @@ import Avatar from 'old-components/Guilds/Avatar';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
 import Input from 'old-components/Guilds/common/Form/Input';
 import TokenAmountInput from 'old-components/Guilds/common/Form/TokenAmountInput';
-import { Box } from 'old-components/Guilds/common/Layout';
+import { Box } from 'Components/Primitives/Layout';
 import { useMemo, useState } from 'react';
 import { FiChevronDown, FiX } from 'react-icons/fi';
 import styled from 'styled-components';

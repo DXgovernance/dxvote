@@ -11,7 +11,7 @@ import {
   useAllERC20Balances,
 } from 'hooks/Guilds/ether-swr/erc20/useAllERC20Balances';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
-import { Loading } from '../common/Loading';
+import { Loading } from '../../../Components/Primitives/Loading';
 import useMiniSearch from 'hooks/useMiniSearch';
 import { useEffect, useMemo, useState } from 'react';
 

@@ -1,7 +1,7 @@
 import dxIcon from '../../../assets/images/dxdao-icon.svg';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
 import { useVotingPowerOf } from '../../../hooks/Guilds/ether-swr/guild/useVotingPowerOf';
-import { Box } from '../common/Layout';
+import { Box } from '../../../Components/Primitives/Layout';
 import { Menu, MenuItem } from '../common/Menu';
 import { Heading } from '../common/Typography';
 import { GuestActions } from './GuestActions';

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Card, CardProps } from '../common/Card';
-import { Box, Flex } from '../common/Layout';
+import { Box, Flex } from '../../../Components/Primitives/Layout';
 import { Link } from 'react-router-dom';
 
 const cardWrapperStyles = css`

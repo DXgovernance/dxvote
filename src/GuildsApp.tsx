@@ -2,7 +2,7 @@ import GlobalErrorBoundary from './old-components/Guilds/ErrorBoundary/GlobalErr
 import Header from './old-components/Guilds/Header';
 import ToastNotificationContainer from './old-components/Guilds/ToastNotifications/ToastNotificationContainer';
 import WalletWeb3Manager from './old-components/Guilds/Web3Manager/WalletWeb3Manager';
-import { Container } from './old-components/Guilds/common/Layout';
+import { Container } from './Components/Primitives/Layout';
 import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
 import GlobalStyle from './theme/GlobalTheme';
