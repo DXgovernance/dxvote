@@ -44,4 +44,3 @@ const RepMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
 };
 
 export default RepMintInfoLine;
-

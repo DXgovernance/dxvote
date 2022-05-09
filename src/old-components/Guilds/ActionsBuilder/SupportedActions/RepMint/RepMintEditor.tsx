@@ -151,4 +151,3 @@ export const Mint: React.FC<ActionEditorProps> = ({
 };
 
 export default Mint;
-
