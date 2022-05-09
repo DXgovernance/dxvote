@@ -5,7 +5,7 @@ import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import moment from 'moment';
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { ProposalState } from 'types/types.guilds';
+import { ProposalState } from 'Components/Types';
 
 const Status = styled.div`
   font-size: 0.8rem;

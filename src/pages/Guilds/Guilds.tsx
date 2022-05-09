@@ -75,7 +75,9 @@ const GuildsPage: React.FC = () => {
               <InView key={proposalId}>
                 {({ inView, ref }) => (
                   <div ref={ref}>
-                    <ProposalCardWrapper id={inView ? proposalId : null} />
+                    <ProposalCardWrapper
+                      proposalId={inView ? proposalId : null}
+                    />
                   </div>
                 )}
               </InView>
