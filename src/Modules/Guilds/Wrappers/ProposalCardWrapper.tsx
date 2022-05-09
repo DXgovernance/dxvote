@@ -15,9 +15,10 @@ const ProposalCardWrapper: React.FC<ProposalCardWrapperProps> = ({
   const { data: proposal } = useProposal(guildId, proposalId);
   const votes = useVoteSummary(guildId, proposalId);
   const ensAvatar = useENSAvatar(proposal?.creator, MAINNET_ID);
+
   return (
     <ProposalCard
-      proposal={proposal}
+      proposal={{ ...proposal, id: proposalId }}
       ensAvatar={ensAvatar}
       votes={votes}
       href={`/${chainName}/${guildId}/proposal/${proposalId}`}

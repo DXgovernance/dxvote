@@ -73,6 +73,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
   ensAvatar,
   href,
 }) => {
+  console.log({ proposal });
   return (
     <UnstyledLink to={href || '#'}>
       <CardWrapper>
@@ -103,7 +104,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
           </IconDetailWrapper>
           <ProposalStatusWrapper>
             <ProposalStatus
-              proposalId={proposal.id}
+              proposalId={proposal?.id}
               bordered={false}
               showRemainingTime
             />
