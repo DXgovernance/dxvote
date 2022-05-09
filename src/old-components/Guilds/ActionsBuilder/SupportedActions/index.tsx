@@ -13,7 +13,7 @@ import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
 import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
 import GenericCallInfoLine from './GenericCall/GenericCallInfoLine';
 import RepMintEditor from './RepMint/RepMintEditor';
-import RepMintInfoLine from './RepMint/RepMintInfoLine.tsx';
+import RepMintInfoLine from './RepMint/RepMintInfoLine';
 import RepMintSummary from './RepMint/RepMintSummary';
 
 export interface SupportedActionMetadata {
