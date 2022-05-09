@@ -183,7 +183,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
                   if (i < 3 && !(i === votes.length - 1)) {
                     return (
                       <>
-                        <Detail>{vote}%</Detail>
+                        <Detail key={i}>{vote}%</Detail>
                         <Icon as="div" spaceLeft spaceRight>
                           <FiCircle />
                         </Icon>

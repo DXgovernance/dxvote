@@ -238,7 +238,7 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
             title={proposalDescription.title}
             description={proposalDescription.description}
             onChainAction={proposalDescription.onChainAction}
-            data-testId="proposal-type-description"
+            data-testid="proposal-type-description"
           />
         </ContentWrapper>
         <Footer>

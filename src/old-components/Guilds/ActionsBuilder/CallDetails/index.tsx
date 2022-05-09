@@ -7,6 +7,7 @@ import { Box } from 'old-components/Guilds/common/Layout';
 import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
 import { FiExternalLink } from 'react-icons/fi';
 import styled, { useTheme } from 'styled-components';
+import { Divider } from 'old-components/Guilds/common/Divider';
 
 const ParamTag = styled(MetadataTag)`
   border-radius: ${({ theme }) => theme.radii.pill};
@@ -33,7 +34,10 @@ const ParamDetail = styled(Box)`
   overflow-wrap: break-word;
 `;
 
-const CallDetails: React.FC<ActionViewProps> = ({ decodedCall }) => {
+const CallDetails: React.FC<ActionViewProps> = ({
+  decodedCall,
+  approveSpendTokens,
+}) => {
   const theme = useTheme();
 
   function renderByParamType(type: string, value: any) {
@@ -58,6 +62,35 @@ const CallDetails: React.FC<ActionViewProps> = ({ decodedCall }) => {
 
   return (
     <>
+      {!!approveSpendTokens && (
+        <>
+          <ActionParamRow>
+            <Box>
+              approve ({' '}
+              <ParamTag color={theme?.colors?.params?.[0]}>address</ParamTag>
+              {', '}
+              <ParamTag color={theme?.colors?.params?.[1]}>uint256</ParamTag> )
+            </Box>
+          </ActionParamRow>
+          <ActionParamRow>
+            <ParamTitleRow>
+              <ParamTitleTag color={theme?.colors?.params?.[0]}>
+                spender <em>(address)</em>
+              </ParamTitleTag>
+            </ParamTitleRow>
+            {renderByParamType('address', decodedCall.from)}
+          </ActionParamRow>
+          <ActionParamRow>
+            <ParamTitleRow>
+              <ParamTitleTag color={theme?.colors?.params?.[1]}>
+                amount <em>(uint256)</em>
+              </ParamTitleTag>
+            </ParamTitleRow>
+            {renderByParamType('uint256', approveSpendTokens?.amount)}
+          </ActionParamRow>
+          <Divider style={{ marginBottom: '2rem' }} />
+        </>
+      )}
       <ActionParamRow>
         <Box>
           {decodedCall?.function?.name} (

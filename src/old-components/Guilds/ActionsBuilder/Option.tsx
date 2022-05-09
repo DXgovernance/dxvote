@@ -49,12 +49,14 @@ interface OptionRowProps {
   option: Option;
   isEditable?: boolean;
   onChange?: (updatedOption: Option) => void;
+  editOption: (option: Option) => void;
 }
 
 const OptionRow: React.FC<OptionRowProps> = ({
   isEditable,
   option,
   onChange,
+  editOption,
 }) => {
   const {
     attributes,
@@ -111,7 +113,7 @@ const OptionRow: React.FC<OptionRowProps> = ({
         </div>
         {isEditable && (
           <div>
-            <EditButton>Edit</EditButton>
+            <EditButton onClick={() => editOption(option)}>Edit</EditButton>
           </div>
         )}
       </DetailWrapper>

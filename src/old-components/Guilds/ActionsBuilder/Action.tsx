@@ -140,7 +140,12 @@ const ActionRow: React.FC<ActionViewProps> = ({
         <CardLabel>
           {isEditable && <GripWithMargin {...listeners} />}
 
-          {InfoLine && <InfoLine decodedCall={decodedCall} />}
+          {InfoLine && (
+            <InfoLine
+              decodedCall={decodedCall}
+              approveSpendTokens={decodedAction.approval}
+            />
+          )}
           {!decodedCall && <UndecodableCallInfoLine />}
         </CardLabel>
         <CardActions>
@@ -184,7 +189,10 @@ const ActionRow: React.FC<ActionViewProps> = ({
           {(!ActionSummary || activeTab === 1) && (
             <DetailWrapper>
               {decodedCall ? (
-                <CallDetails decodedCall={decodedCall} />
+                <CallDetails
+                  decodedCall={decodedCall}
+                  approveSpendTokens={decodedAction.approval}
+                />
               ) : (
                 <UndecodableCallDetails call={call} />
               )}
