@@ -1,4 +1,4 @@
-import styled from 'styled-old-components';
+import styled from 'styled-components';
 import Input from 'old-components/Guilds/common/Form/Input';
 import Avatar from 'old-components/Guilds/Avatar';
 import React, { useEffect } from 'react';
