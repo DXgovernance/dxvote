@@ -31,4 +31,3 @@ test('AddressButton renders properly with partial props', async () => {
   const { container } = render(<AddressButton {...partialProps} />);
   expect(container).toMatchSnapshot();
 });
-
