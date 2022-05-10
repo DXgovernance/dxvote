@@ -1,6 +1,6 @@
 import useProposalState from 'hooks/Guilds/useProposalState';
+import { Button } from 'old-components/common/Button';
 import React from 'react';
-import { Button } from '../common/Button';
 
 const ExecuteButton: React.FC = () => {
   const {

@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
-import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import { useParams } from 'react-router-dom';
-import { BigNumber } from 'ethers';
 import { ERC20Info, useERC20Info } from '../erc20/useERC20Info';
 import { useGuildConfig } from './useGuildConfig';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import { BigNumber } from 'ethers';
+import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
+import { useMemo } from 'react';
 
 export interface VoteData {
   options: { [name: string]: BigNumber };
@@ -13,8 +13,7 @@ export interface VoteData {
 }
 
 export const useVotingResults = (): VoteData => {
-  const { guild_id: guildId, proposal_id: proposalId } =
-    useParams<{ guild_id?: string; proposal_id?: string }>();
+  const { guildId, proposalId } = useTypedParams();
 
   // swr hooks
   const { data: proposal } = useProposal(guildId, proposalId);
@@ -24,13 +23,12 @@ export const useVotingResults = (): VoteData => {
   const voteData = useMemo(() => {
     if (!proposal || !data || !tokenInfo) return undefined;
 
-    const options = proposal?.totalVotes.reduce<Record<string, BigNumber>>(
-      (acc, result, i) => {
+    const options = proposal?.totalVotes
+      .slice(1)
+      .reduce<Record<string, BigNumber>>((acc, result, i) => {
         acc[i] = result;
         return acc;
-      },
-      {}
-    );
+      }, {});
 
     return {
       options,

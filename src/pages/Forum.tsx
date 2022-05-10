@@ -1,7 +1,7 @@
+import { Box } from '../old-components/common';
 import React from 'react';
-import styled from 'styled-components';
-import { Box } from '../components/common';
 import { FiZap } from 'react-icons/fi';
+import styled from 'styled-components';
 
 const ForumPage = () => {
   const LoadingBox = styled.div`

@@ -1,24 +1,25 @@
-import React, { useContext } from 'react';
+import { useProposal } from '../../hooks/Guilds/ether-swr/guild/useProposal';
+import AddressButton from '../../old-components/Guilds/AddressButton';
+import ProposalDescription from '../../old-components/Guilds/ProposalPage/ProposalDescription';
+import ProposalInfoCard from '../../old-components/Guilds/ProposalPage/ProposalInfoCard';
+import ProposalVoteCard from '../../old-components/Guilds/ProposalPage/ProposalVoteCard';
+import ProposalStatus from '../../Components/ProposalStatus/ProposalStatus';
+import { IconButton } from '../../old-components/Guilds/common/Button';
+import { Box } from '../../Components/Primitives/Layout';
+import UnstyledLink from '../../old-components/Guilds/common/UnstyledLink';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
+import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
+import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
+import { ActionsBuilder } from 'old-components/Guilds/CreateProposalPage';
+import { Loading } from 'Components/Primitives/Loading';
+import Result, { ResultState } from 'old-components/Guilds/common/Result';
+import React, { useContext, useMemo } from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
-import { Loading } from 'components/Guilds/common/Loading';
-import { IconButton } from '../../components/Guilds/common/Button';
-import { Box } from '../../components/Guilds/common/Layout';
-import ProposalInfoCard from '../../components/Guilds/ProposalPage/ProposalInfoCard';
-import ProposalVoteCard from '../../components/Guilds/ProposalPage/ProposalVoteCard';
-import ProposalStatus from '../../components/Guilds/ProposalStatus';
-import UnstyledLink from '../../components/Guilds/common/UnstyledLink';
-import AddressButton from '../../components/Guilds/AddressButton';
-import ProposalDescription from '../../components/Guilds/ProposalPage/ProposalDescription';
-import { useProposal } from '../../hooks/Guilds/ether-swr/guild/useProposal';
-import { ActionsBuilder } from 'components/Guilds/CreateProposalPage';
-import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
-import Result, { ResultState } from 'components/Guilds/common/Result';
-import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
-import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
-import ExecuteButton from 'components/Guilds/ExecuteButton';
+import moment from 'moment';
+import { ProposalState } from 'Components/Types';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -67,10 +68,6 @@ const StyledIconButton = styled(IconButton)`
 const ProposalActionsWrapper = styled(Box)`
   margin-top: 2rem;
 `;
-const ProposalStatusWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-`;
 
 const HeaderTopRow = styled(Box)`
   display: flex;
@@ -80,15 +77,7 @@ const HeaderTopRow = styled(Box)`
 `;
 
 const ProposalPage: React.FC = () => {
-  const {
-    chain_name: chainName,
-    guild_id: guildId,
-    proposal_id: proposalId,
-  } = useParams<{
-    chain_name: string;
-    guild_id?: string;
-    proposal_id?: string;
-  }>();
+  const { chainName, guildId, proposalId } = useTypedParams();
 
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
@@ -96,6 +85,40 @@ const ProposalPage: React.FC = () => {
   const { data: proposalIds } = useGuildProposalIds(guildId);
   const { data: proposal, error } = useProposal(guildId, proposalId);
   const { options } = useProposalCalls(guildId, proposalId);
+
+  // TODO These are copied from ProposalCardWrapper and to be replaced
+  const timeDetail = useMemo(() => {
+    if (!proposal?.endTime) return null;
+
+    const currentTime = moment();
+    if (proposal.endTime?.isBefore(currentTime)) {
+      return proposal.endTime.fromNow();
+    } else {
+      return proposal.endTime.toNow();
+    }
+  }, [proposal]);
+
+  // TODO These are copied from ProposalCardWrapper and to be replaced
+  const status = useMemo(() => {
+    if (!proposal?.endTime) return null;
+    switch (proposal.state) {
+      case ProposalState.Active:
+        const currentTime = moment();
+        if (currentTime.isSameOrAfter(proposal.endTime)) {
+          return ProposalState.Failed;
+        } else {
+          return ProposalState.Active;
+        }
+      case ProposalState.Executed:
+        return ProposalState.Executed;
+      case ProposalState.Passed:
+        return ProposalState.Passed;
+      case ProposalState.Failed:
+        return ProposalState.Failed;
+      default:
+        return proposal.state;
+    }
+  }, [proposal]);
 
   if (!isGuildAvailabilityLoading) {
     if (!proposalIds?.includes(proposalId)) {
@@ -135,10 +158,11 @@ const ProposalPage: React.FC = () => {
               </StyledIconButton>
             </UnstyledLink>
 
-            <ProposalStatusWrapper>
-              <ProposalStatus proposalId={proposalId} showRemainingTime />
-              <ExecuteButton />
-            </ProposalStatusWrapper>
+            <ProposalStatus
+              timeDetail={timeDetail}
+              status={status}
+              endTime={proposal?.endTime}
+            />
           </HeaderTopRow>
           <PageTitle>
             {proposal?.title || (

@@ -1,6 +1,12 @@
-import { useHistory, Link } from 'react-router-dom';
-import { observer } from 'mobx-react';
 import { useContext } from '../../contexts';
+import { useFilteredProposals } from '../../hooks/useFilteredProposals';
+import Footer from '../../old-components/Footer';
+import ProposalsExporter from '../../old-components/Proposals/ProposalsExporter';
+import {
+  StatusSearch,
+  SchemeSearch,
+  TitleSearch,
+} from '../../old-components/Proposals/Search';
 import {
   LinkButton,
   Positive,
@@ -11,9 +17,8 @@ import {
   TableBody,
   DataCell,
   TableRow,
-} from '../../components/common';
-import PulsingIcon from '../../components/common/LoadingIcon';
-import Footer from '../../components/Footer';
+} from '../../old-components/common';
+import PulsingIcon from '../../old-components/common/LoadingIcon';
 import {
   formatPercentage,
   normalizeBalance,
@@ -22,17 +27,6 @@ import {
   PendingAction,
   isVoteNo,
 } from '../../utils';
-import {
-  FiFeather,
-  FiCheckCircle,
-  FiCheckSquare,
-  FiAlertTriangle,
-} from 'react-icons/fi';
-import {
-  StatusSearch,
-  SchemeSearch,
-  TitleSearch,
-} from '../../components/Proposals/Search';
 import {
   ProposalsWrapper,
   SidebarWrapper,
@@ -44,9 +38,15 @@ import {
   UnstyledAnchor,
   StyledTableRow,
 } from './styles';
-import { useFilteredProposals } from '../../hooks/useFilteredProposals';
-import ProposalsExporter from '../../components/Proposals/ProposalsExporter';
 import { useRep } from 'hooks/useRep';
+import { observer } from 'mobx-react';
+import {
+  FiFeather,
+  FiCheckCircle,
+  FiCheckSquare,
+  FiAlertTriangle,
+} from 'react-icons/fi';
+import { useHistory, Link } from 'react-router-dom';
 
 const ProposalsPage = observer(() => {
   const {

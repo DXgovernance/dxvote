@@ -1,14 +1,14 @@
-import styled from 'styled-components';
+import { Row, Box, Button } from '../old-components/common';
+import Copy from '../old-components/common/Copy';
 import { useContext } from 'contexts';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 import { observer } from 'mobx-react';
-import { Row, Box, Button } from '../components/common';
+import PulsingIcon from 'old-components/common/LoadingIcon';
 import React from 'react';
 import { FiCheckCircle, FiDownload, FiUpload, FiX } from 'react-icons/fi';
+import styled from 'styled-components';
 import { NETWORKS, toCamelCaseString } from 'utils';
-import PulsingIcon from 'components/common/LoadingIcon';
-import Copy from '../components/common/Copy';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 
 const FormLabel = styled.label`
   padding: 10px 0px;
