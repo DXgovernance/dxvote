@@ -1,27 +1,27 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { Button } from 'components/Guilds/common/Button';
-import Input from 'components/Guilds/common/Form/Input';
-import { AiOutlineSearch } from 'react-icons/ai';
-import { Flex, Box } from 'components/Guilds/common/Layout';
-
-import { MdOutlinePeopleAlt } from 'react-icons/md';
+import dxDaoIcon from '../../assets/images/dxdao-icon.svg';
+import { useWeb3React } from '@web3-react/core';
+import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
+import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
+import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
+import { useGuildRegistry } from 'hooks/Guilds/ether-swr/guild/useGuildRegistry';
 import GuildCard, {
   GuildCardContent,
   GuildCardHeader,
-} from 'components/Guilds/GuildCard';
-import dxDaoIcon from '../../assets/images/dxdao-icon.svg';
-import { Heading } from 'components/Guilds/common/Typography';
-import { useGuildRegistry } from 'hooks/Guilds/ether-swr/guild/useGuildRegistry';
-import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
-import { Link } from 'react-router-dom';
+} from 'old-components/Guilds/GuildCard';
+import { Button } from 'old-components/Guilds/common/Button';
+import Input from 'old-components/Guilds/common/Form/Input';
+import { Flex, Box } from 'Components/Primitives/Layout';
+import { Heading } from 'old-components/Guilds/common/Typography';
 import { getChains } from 'provider/connectors';
-import { useWeb3React } from '@web3-react/core';
-import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
-import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
-import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
-import { Loading } from 'components/Guilds/common/Loading';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { AiOutlineSearch } from 'react-icons/ai';
+import { MdOutlinePeopleAlt } from 'react-icons/md';
+import { Link } from 'react-router-dom';
+import { Loading } from 'Components/Primitives/Loading';
+
+import styled from 'styled-components';
 
 const configs = {
   arbitrum: require('configs/arbitrum/config.json'),

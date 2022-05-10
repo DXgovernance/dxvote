@@ -1837,7 +1837,7 @@ export default class UtilsService {
 
       networkCache.schemes[schemeAddress].proposalIds.push(proposalId);
       networkCache.schemes[schemeAddress].newProposalEvents.push({
-        proposalId: proposalId,
+        proposalId,
         event: creationEvent.event,
         signature: creationEvent.signature,
         address: creationEvent.address,

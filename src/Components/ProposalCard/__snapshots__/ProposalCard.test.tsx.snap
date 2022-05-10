@@ -1,0 +1,369 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProposalCard Renders properly with data 1`] = `
+<div>
+   
+  <a
+    class="sc-hHfuMS zrQax"
+    href="/testUrl"
+  >
+    <div
+      class="sc-bdfBQB sc-dmlqKv bmhbKs ehSMEd"
+    >
+      <div
+        class="sc-bdfBQB sc-kfzBvY bmhbKs cnjfoT"
+      >
+        <div
+          class="sc-bdfBQB sc-cxFLGX bmhbKs fKiXu"
+        >
+          <div
+            class="paper"
+            style="border-radius: 50px; display: inline-block; margin: 0px; overflow: hidden; padding: 0px; background-color: rgb(251, 24, 107); height: 24px; width: 24px;"
+          >
+            <svg
+              height="24"
+              width="24"
+              x="0"
+              xmlns="http://www.w3.org/2000/svg"
+              y="0"
+            >
+              <rect
+                fill="#F93301"
+                height="24"
+                rx="0"
+                ry="0"
+                transform="translate(-3.3540020288113044 -0.24569355652725883) rotate(184.4 12 12)"
+                width="24"
+                x="0"
+                y="0"
+              />
+              <rect
+                fill="#F5B800"
+                height="24"
+                rx="0"
+                ry="0"
+                transform="translate(-14.879522566232806 -1.4785377082910314) rotate(308.7 12 12)"
+                width="24"
+                x="0"
+                y="0"
+              />
+              <rect
+                fill="#03555E"
+                height="24"
+                rx="0"
+                ry="0"
+                transform="translate(21.86674072242258 -1.2091297142613349) rotate(454.0 12 12)"
+                width="24"
+                x="0"
+                y="0"
+              />
+              <rect
+                fill="#C81456"
+                height="24"
+                rx="0"
+                ry="0"
+                transform="translate(-22.985221694835005 -17.58014285250981) rotate(346.4 12 12)"
+                width="24"
+                x="0"
+                y="0"
+              />
+            </svg>
+          </div>
+          <div
+            class="sc-bdfBQB sc-lmoMya bmhbKs entkrt"
+          >
+            rossdev.eth
+          </div>
+        </div>
+        <div
+          class="sc-fodVek gzvzsN"
+        >
+          <div
+            class="sc-fFucqa bhjXFV"
+          >
+            <div
+              class="sc-bdfBQB sc-idOiZg bmhbKs kDfsVD"
+            >
+              <span>
+                Time
+              </span>
+            </div>
+            <div
+              class="sc-bdfBQB sc-bkzYnD bmhbKs bA-dISN"
+            >
+               
+              Active
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-bdfBQB sc-fKFxtB bmhbKs kCeyGE"
+      >
+        <h2
+          class="sc-dIUeWJ sc-iwyWTf jfvGVt fZsUoE"
+          size="2"
+        >
+          <strong>
+            test
+          </strong>
+        </h2>
+      </div>
+      <div
+        class="sc-bdfBQB sc-bBXrwG bmhbKs fqrEXH"
+      >
+        <div
+          class="sc-bdfBQB sc-gKseQn sc-iBPTik bmhbKs itGZVN csCgKV"
+        >
+          <div
+            class="sc-bdfBQB sc-fubCzh bmhbKs FjGpq"
+          >
+            150 ETH
+          </div>
+          <div
+            class="sc-pGacB ffdDft"
+          >
+            <svg
+              fill="none"
+              height="1em"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <line
+                x1="5"
+                x2="19"
+                y1="12"
+                y2="12"
+              />
+              <polyline
+                points="12 5 19 12 12 19"
+              />
+            </svg>
+          </div>
+           
+          <div
+            class="sc-bdfBQB sc-fubCzh bmhbKs FjGpq"
+          >
+            geronimo.eth
+          </div>
+        </div>
+        <div
+          class="sc-bdfBQB sc-jrAFXE sc-kEjbQP bmhbKs blZEPW gALBdj"
+        >
+          <div
+            class="sc-bdfBQB sc-iqHYmW bmhbKs AGzUh"
+          >
+            20
+            %
+          </div>
+          <div
+            class="sc-crrszt ivENJc"
+          >
+            <svg
+              fill="none"
+              height="1em"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+            </svg>
+          </div>
+          <div
+            class="sc-bdfBQB sc-iqHYmW bmhbKs AGzUh"
+          >
+            10
+            %
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;
+
+exports[`ProposalCard loading 1`] = `
+<div>
+   
+  <a
+    class="sc-hHfuMS zrQax"
+    href="/"
+  >
+    <div
+      class="sc-bdfBQB sc-dmlqKv bmhbKs ehSMEd"
+    >
+      <div
+        class="sc-bdfBQB sc-kfzBvY bmhbKs cnjfoT"
+      >
+        <div
+          class="sc-bdfBQB sc-cxFLGX bmhbKs fKiXu"
+        >
+          <div
+            class="sc-eCstlR"
+            style="margin: 0px;"
+          >
+            <span
+              aria-busy="true"
+              aria-live="polite"
+            >
+              <span
+                class="react-loading-skeleton"
+                style="width: 24px; height: 24px; border-radius: 50%; --base-color: #333; --highlight-color: #555;"
+              >
+                ‌
+              </span>
+              <br />
+            </span>
+          </div>
+          <div
+            class="sc-bdfBQB sc-lmoMya bmhbKs entkrt"
+          >
+            <div
+              class="sc-eCstlR"
+              style="margin: 0px;"
+            >
+              <span
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <span
+                  class="react-loading-skeleton"
+                  style="width: 100px; height: 16px; border-radius: 50px; --base-color: #333; --highlight-color: #555;"
+                >
+                  ‌
+                </span>
+                <br />
+              </span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-fodVek gzvzsN"
+        >
+          <div
+            class="sc-fFucqa bhjXFV"
+          >
+            <div
+              class="sc-bdfBQB sc-idOiZg bmhbKs kDfsVD"
+            >
+              <div
+                class="sc-eCstlR"
+              >
+                <span
+                  aria-busy="true"
+                  aria-live="polite"
+                >
+                  <span
+                    class="react-loading-skeleton"
+                    style="width: 50px; --base-color: #333; --highlight-color: #555;"
+                  >
+                    ‌
+                  </span>
+                  <br />
+                </span>
+              </div>
+            </div>
+            <div
+              class="sc-eCstlR"
+            >
+              <span
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <span
+                  class="react-loading-skeleton"
+                  style="width: 50px; --base-color: #333; --highlight-color: #555;"
+                >
+                  ‌
+                </span>
+                <br />
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-bdfBQB sc-fKFxtB bmhbKs kCeyGE"
+      >
+        <h2
+          class="sc-dIUeWJ sc-iwyWTf jfvGVt fZsUoE"
+          size="2"
+        >
+          <strong>
+            <div
+              class="sc-eCstlR"
+              style="margin: 0px;"
+            >
+              <span
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <span
+                  class="react-loading-skeleton"
+                  style="width: 100px; height: 16px; border-radius: 50px; --base-color: #333; --highlight-color: #555;"
+                >
+                  ‌
+                </span>
+                <br />
+              </span>
+            </div>
+          </strong>
+        </h2>
+      </div>
+      <div
+        class="sc-bdfBQB sc-bBXrwG bmhbKs fqrEXH"
+      >
+        <div
+          class="sc-eCstlR"
+          style="margin: 0px;"
+        >
+          <span
+            aria-busy="true"
+            aria-live="polite"
+          >
+            <span
+              class="react-loading-skeleton"
+              style="width: 200px; --base-color: #333; --highlight-color: #555;"
+            >
+              ‌
+            </span>
+            <br />
+          </span>
+        </div>
+        <div
+          class="sc-eCstlR"
+          style="margin: 0px;"
+        >
+          <span
+            aria-busy="true"
+            aria-live="polite"
+          >
+            <span
+              class="react-loading-skeleton"
+              style="width: 200px; --base-color: #333; --highlight-color: #555;"
+            >
+              ‌
+            </span>
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;

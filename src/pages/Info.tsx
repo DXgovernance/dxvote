@@ -1,11 +1,11 @@
-import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
 import { useContext } from '../contexts';
-import { Box, LinkButton } from '../components/common';
-import FinanceInformation from '../components/FinanceInformation';
-import SchemesInformation from '../components/SchemesInformation';
-import GovernanceInformation from '../components/GovernanceInformation';
-import PermissionsInformation from '../components/PermissionsInformation';
+import FinanceInformation from '../old-components/FinanceInformation';
+import GovernanceInformation from '../old-components/GovernanceInformation';
+import PermissionsInformation from '../old-components/PermissionsInformation';
+import SchemesInformation from '../old-components/SchemesInformation';
+import { Box, LinkButton } from '../old-components/common';
+import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
 
 const InfoPageWrapper = styled(Box)`
   width: 100%;

@@ -14,8 +14,10 @@
     "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run",
     "test": "react-app-rewired test --watchAll=false --coverage --verbose",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
-    "postinstall": "yarn run updateBytecodes",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public",
+    "postinstall": "yarn run updateBytecodes"
   },
   "engines": {
     "node": "^16.13.0"
@@ -54,6 +56,7 @@
     "@web3-react/types": "^6.0.7",
     "@web3-react/walletconnect-connector": "^6.0.9",
     "axios": "^0.21.1",
+    "babel-loader": "8.1.0",
     "bignumber.js": "^9.0.2",
     "content-hash": "^2.5.2",
     "copy-to-clipboard": "^3.3.1",
@@ -95,6 +98,7 @@
     "react-intersection-observer": "^8.33.1",
     "react-jazzicon": "^0.1.3",
     "react-loading-skeleton": "^3.0.1",
+    "react-router": "5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^4.0.3",
     "react-string-replace": "^0.4.4",
@@ -113,6 +117,14 @@
     "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^6.4.22",
+    "@storybook/addon-essentials": "^6.4.22",
+    "@storybook/addon-interactions": "^6.4.22",
+    "@storybook/addon-links": "^6.4.22",
+    "@storybook/node-logger": "^6.4.22",
+    "@storybook/preset-create-react-app": "^3.2.0",
+    "@storybook/react": "^6.4.22",
+    "@storybook/testing-library": "^0.0.11",
     "@synthetixio/synpress": "^1.2.0",
     "@testing-library/cypress": "^8.0.2",
     "@testing-library/jest-dom": "^5.16.2",
@@ -146,5 +158,17 @@
   },
   "resolutions": {
     "electron": "^17.1.2"
+  },
+  "eslintConfig": {
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
+    ]
   }
 }
