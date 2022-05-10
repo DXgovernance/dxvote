@@ -3,21 +3,26 @@ import { useMemo, useState } from 'react';
 
 export const useDuration = () => {
   const [duration, setDuration] = useState({
-    years: null,
-    months: null,
-    days: null,
-    hours: null,
-    minutes: null,
-    seconds: null,
+    years: '',
+    months: '',
+    days: '',
+    hours: '',
+    minutes: '',
+    seconds: '',
   });
 
-  const increment = (key: string) =>
-    setDuration({ ...duration, [key]: duration[key] + 1 });
-  const decrement = (key: string) =>
-    setDuration({ ...duration, [key]: duration[key] - 1 });
+  const handleConversion = (value: string) => {
+    if (!value) return 0;
+    return parseInt(value);
+  };
 
+  const increment = (key: string) =>
+    setDuration({ ...duration, [key]: handleConversion(duration[key]) + 1 });
+  const decrement = (key: string) =>
+    setDuration({ ...duration, [key]: handleConversion(duration[key]) - 1 });
+
+  // convert to number form string and then calculate
   const handleChange = (e: string, value: string) => {
-    if (!parseInt(e)) return;
     return setDuration({ ...duration, [value]: e });
   };
 
@@ -32,7 +37,7 @@ export const useDuration = () => {
       moment.duration(0, 'years') as Duration
     );
     return {
-      time: convertDurationToSeconds,
+      time: convertDurationToSeconds.asSeconds(),
     };
   }, [duration]);
 

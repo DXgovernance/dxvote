@@ -55,6 +55,7 @@ const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
                   disabled={count >= DURATION_LIMITS[value].max}
                   onClick={() => increment(value)}
                   key={index}
+                  data-testid={`upper-limit-btn-${value}`}
                 >
                   <GoTriangleUp />
                 </ColumnButton>
@@ -69,6 +70,7 @@ const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
                 <ColumnButton
                   disabled={count <= DURATION_LIMITS[value].min}
                   onClick={() => decrement(value)}
+                  data-testid={`lower-limit-btn-${value}`}
                 >
                   <GoTriangleDown />
                 </ColumnButton>
