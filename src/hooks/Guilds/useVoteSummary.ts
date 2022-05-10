@@ -8,15 +8,16 @@ export default function useVoteSummary(
   guildId: string,
   proposalId: string
 ): number[] {
-  const { data: { totalVotes = null } = {} } = useProposal(guildId, proposalId);
+  const { data: { totalVotes = null, totalActions } = {} } = useProposal(
+    guildId,
+    proposalId
+  );
   const { data: { totalLocked = null } = {} } = useGuildConfig(guildId);
-
   const votes = useMemo(() => {
-    if (totalVotes && totalLocked) {
+    if (totalVotes && totalLocked && totalActions) {
       const newVotes = [];
-      // Set to 2 because totalActions is set to 0 for now
-      // Change loop length to totalActions
-      for (var i = 0; i < 2; i++) {
+
+      for (var i = 0; i < totalActions?.toNumber(); i++) {
         if (totalVotes[i]?.gt(0)) {
           newVotes.push(getBigNumberPercentage(totalVotes[i], totalLocked, 2));
         } else {

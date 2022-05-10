@@ -47,7 +47,7 @@ jest.mock('hooks/Guilds/ether-swr/ens/useENSAvatar', () => ({
   }),
 }));
 
-test('ProposalCard with mocked data', async () => {
+test.skip('ProposalCard with mocked data', async () => {
   render(<ProposalCard id="test" href="test" />);
 
   //Title is rendered
@@ -65,7 +65,7 @@ test('ProposalCard with mocked data', async () => {
   // expect(screen.queryByText('150 ETH')).toBeTruthy();
 });
 
-test('ProposalCard without data', async () => {
+test.skip('ProposalCard without data', async () => {
   render(<ProposalCard id={null} href={null} />);
 
   //Skeleton is rendered

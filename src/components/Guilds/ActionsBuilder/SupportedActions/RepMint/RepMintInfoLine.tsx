@@ -15,7 +15,10 @@ const StyledMintIcon = styled(StyledIcon)`
   margin: 0;
 `;
 
-const RepMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
+const RepMintInfoLine: React.FC<ActionViewProps> = ({
+  decodedCall,
+  compact,
+}) => {
   const { parsedData } = useTotalSupply({ decodedCall });
   const { tokenData } = useTokenData();
 
@@ -31,14 +34,22 @@ const RepMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
       <Segment>
         <StyledMintIcon src={Mint} />
       </Segment>
-      <Segment>Mint {roundedRepPercent} %</Segment>
+      <Segment>
+        {!compact && 'Mint'} {roundedRepPercent} %
+      </Segment>
       <Segment>
         <FiArrowRight />
       </Segment>
       <Segment>
-        <Avatar defaultSeed={parsedData?.toAddress} src={imageUrl} size={24} />
+        <Avatar
+          defaultSeed={parsedData?.toAddress}
+          src={imageUrl}
+          size={compact ? 14 : 24}
+        />
       </Segment>
-      <Segment>{ensName || shortenAddress(parsedData?.toAddress)}</Segment>
+      <Segment>
+        {ensName || shortenAddress(parsedData?.toAddress, compact ? 2 : 2)}
+      </Segment>
     </>
   );
 };

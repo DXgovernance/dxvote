@@ -1,7 +1,12 @@
 import styled from 'styled-components';
 import { useParams } from 'react-router';
-import { isDesktop } from 'react-device-detect';
-import { FiArrowRight, FiCircle } from 'react-icons/fi';
+// import { isDesktop } from 'react-device-detect';
+import {
+  // FiArrowRight,
+  FiCircle,
+} from 'react-icons/fi';
+import { getInfoLineView } from 'components/Guilds/ActionsBuilder/SupportedActions';
+import UndecodableCallInfoLine from 'components/Guilds/ActionsBuilder/UndecodableCalls/UndecodableCallsInfoLine';
 
 import { Box } from '../common/Layout';
 import ProposalStatus from '../ProposalStatus';
@@ -15,6 +20,7 @@ import { MAINNET_ID } from '../../../utils/constants';
 import { shortenAddress } from '../../../utils';
 import { Loading } from '../common/Loading';
 import useVoteSummary from 'hooks/Guilds/useVoteSummary';
+import useFilteredProposalActions from './useFilteredProposalActions';
 
 const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
@@ -42,6 +48,19 @@ const CardFooter = styled(Box)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: flex-end;
+`;
+
+const ActionsWrapper = styled(Box)`
+  display: flex;
+  flex-wrap: wrap;
+  & > div {
+    margin: 4px 2px;
+  }
+`;
+
+const VoteInfoWrapper = styled(Box)`
+  min-width: unset;
 `;
 
 const CardTitle = styled(Heading)`
@@ -94,12 +113,20 @@ const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
   padding: 0.25rem 0.8rem;
   flex: none;
   display: flex;
+  width: fit-content;
 `;
 
 const ProposalStatusWrapper = styled.div`
   display: flex;
   flex: 1;
   justify-content: flex-end;
+`;
+
+const NotFoundActionWrapper = styled.div`
+  display: flex;
+  padding: 4px;
+  border: ${({ theme }) => `1px solid ${theme.colors.red}`};
+  border-radius: 30px;
 `;
 
 interface ProposalCardProps {
@@ -112,6 +139,8 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const { data: proposal } = useProposal(guildId, id);
   const votes = useVoteSummary(guildId, id);
   const { imageUrl, ensName } = useENSAvatar(proposal?.creator, MAINNET_ID);
+
+  const actions = useFilteredProposalActions(guildId, id, 2); //Get only 2 first actions
 
   return (
     <UnstyledLink to={href || '#'}>
@@ -155,54 +184,64 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
           </CardTitle>
         </CardContent>
         <CardFooter>
-          {proposal?.value ? (
-            <BorderedIconDetailWrapper>
-              <Detail>150 ETH</Detail>
-              {isDesktop && (
-                <>
-                  <Icon as="div" spaceLeft spaceRight>
-                    <FiArrowRight />
-                  </Icon>{' '}
-                  <Detail>geronimo.eth</Detail>
-                </>
-              )}
-            </BorderedIconDetailWrapper>
-          ) : (
-            <Loading
-              style={{ margin: 0 }}
-              skeletonProps={{ width: '200px' }}
-              loading
-              text
-            />
-          )}
+          <ActionsWrapper>
+            {proposal?.value ? (
+              actions?.map(action => {
+                if (!action) return null;
+                const InfoLine = getInfoLineView(action?.decodedCall?.callType);
 
-          {proposal?.totalVotes ? (
-            <BorderedIconDetailWrapper>
-              {votes
-                .sort((a, b) => b - a)
-                .map((vote, i) => {
-                  if (i < 3 && !(i === votes.length - 1)) {
-                    return (
-                      <>
-                        <Detail key={i}>{vote}%</Detail>
-                        <Icon as="div" spaceLeft spaceRight>
-                          <FiCircle />
-                        </Icon>
-                      </>
-                    );
-                  } else {
-                    return <Detail>{vote}%</Detail>;
-                  }
-                })}
-            </BorderedIconDetailWrapper>
-          ) : (
-            <Loading
-              style={{ margin: 0 }}
-              loading
-              text
-              skeletonProps={{ width: '200px' }}
-            />
-          )}
+                return !!InfoLine ? (
+                  <BorderedIconDetailWrapper>
+                    <InfoLine
+                      decodedCall={action?.decodedCall}
+                      approveSpendTokens={action?.approval}
+                      compact
+                    />
+                  </BorderedIconDetailWrapper>
+                ) : (
+                  <NotFoundActionWrapper>
+                    <UndecodableCallInfoLine />
+                  </NotFoundActionWrapper>
+                );
+              })
+            ) : (
+              <Loading
+                style={{ margin: 0 }}
+                skeletonProps={{ width: '200px' }}
+                loading
+                text
+              />
+            )}
+          </ActionsWrapper>
+          <VoteInfoWrapper>
+            {proposal?.totalVotes ? (
+              <BorderedIconDetailWrapper>
+                {votes
+                  .sort((a, b) => b - a)
+                  .map((vote, i) => {
+                    if (i < 3 && !(i === votes.length - 1)) {
+                      return (
+                        <>
+                          <Detail key={i}>{vote}%</Detail>
+                          <Icon as="div" spaceLeft spaceRight>
+                            <FiCircle />
+                          </Icon>
+                        </>
+                      );
+                    } else {
+                      return <Detail>{vote}%</Detail>;
+                    }
+                  })}
+              </BorderedIconDetailWrapper>
+            ) : (
+              <Loading
+                style={{ margin: 0 }}
+                loading
+                text
+                skeletonProps={{ width: '200px' }}
+              />
+            )}
+          </VoteInfoWrapper>
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>

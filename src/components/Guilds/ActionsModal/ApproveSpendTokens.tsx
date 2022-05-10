@@ -56,7 +56,6 @@ const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
     return tokens.find(({ address }) => address === token);
   }, [tokens, token]);
 
-  // TODO: tokenInfo not working for devscript
   const { data: tokenInfo } = useERC20Info(token);
 
   const confirm = () => {

@@ -112,8 +112,10 @@ const ActionRow: React.FC<ActionViewProps> = ({
     transition,
     isDragging,
   } = useSortable({ id: decodedAction?.id, disabled: !isEditable });
-
+  // console.log('call', call);
   const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
+  // console.log('decodedCallFromCall', decodedCallFromCall);
+  // console.log('decodedAction', decodedAction);
 
   const decodedCall = decodedCallFromCall || decodedAction?.decodedCall;
 
@@ -143,7 +145,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
           {InfoLine && (
             <InfoLine
               decodedCall={decodedCall}
-              approveSpendTokens={decodedAction.approval}
+              approveSpendTokens={decodedAction?.approval}
             />
           )}
           {!decodedCall && <UndecodableCallInfoLine />}
@@ -191,7 +193,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
               {decodedCall ? (
                 <CallDetails
                   decodedCall={decodedCall}
-                  approveSpendTokens={decodedAction.approval}
+                  approveSpendTokens={decodedAction?.approval}
                 />
               ) : (
                 <UndecodableCallDetails call={call} />

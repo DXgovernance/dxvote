@@ -7,11 +7,13 @@ import { useContractRegistry } from '../contracts/useContractRegistry';
 import { bulkDecodeCallsFromOptions } from '../contracts/useDecodedCall';
 import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import { useProposal } from '../ether-swr/guild/useProposal';
+import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
 
 const useProposalCalls = (guildId: string, proposalId: string) => {
   // Decode calls from existing proposal
   const { data: proposal } = useProposal(guildId, proposalId);
   const { data: metadata } = useProposalMetadata(guildId, proposalId);
+  const votingResults = useVotingResults(guildId, proposalId);
   const { contracts } = useContractRegistry();
   const { chainId } = useWeb3React();
 
@@ -56,6 +58,7 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
       actions: calls.filter(
         call => call.data !== ZERO_HASH || !call.value?.isZero()
       ),
+      totalVotes: votingResults?.options[index],
     }));
 
     return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);

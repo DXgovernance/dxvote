@@ -22,6 +22,7 @@ export interface SupportedActionMetadata {
 export interface ActionViewProps {
   decodedCall: DecodedCall;
   approveSpendTokens?: ApproveSendTokens;
+  compact?: boolean;
 }
 
 export interface ActionEditorProps extends ActionViewProps {

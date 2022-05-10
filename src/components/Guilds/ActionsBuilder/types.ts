@@ -36,6 +36,7 @@ export interface Option {
   color: string;
   actions?: Call[];
   decodedActions?: DecodedAction[];
+  totalVotes?: BigNumber;
 }
 
 export interface ApproveSendTokens {
