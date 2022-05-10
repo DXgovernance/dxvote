@@ -12,7 +12,6 @@ import { useTransactions } from 'contexts/Guilds';
 import { BigNumber } from 'ethers';
 import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import useSnapshotId from 'hooks/Guilds/ether-swr/guild/useSnapshotId';
 import { useVotingPowerOf } from 'hooks/Guilds/ether-swr/guild/useVotingPowerOf';
 import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
@@ -23,6 +22,7 @@ import { Loading } from 'Components/Primitives/Loading';
 import { useState, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import styled, { css, useTheme } from 'styled-components';
+import useProposalMetadata from 'hooks/Guilds/useProposalMetadata';
 
 const ButtonsContainer = styled.div`
   flex-direction: column;

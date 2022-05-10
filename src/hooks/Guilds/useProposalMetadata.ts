@@ -2,7 +2,7 @@ import useIPFSFile from 'hooks/Guilds/ipfs/useIPFSFile';
 import { useMemo } from 'react';
 import { ProposalMetadata } from 'types/types.guilds';
 import contentHash from 'content-hash';
-import { useProposal } from './useProposal';
+import { useProposal } from './ether-swr/guild/useProposal';
 
 function useProposalMetadata(guildId: string, proposalId: string) {
   const { data: proposal, error } = useProposal(guildId, proposalId);

@@ -1,11 +1,11 @@
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import { formatUnits } from 'ethers/lib/utils';
-import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults';
 import useVotingPowerPercent from 'hooks/Guilds/guild/useVotingPowerPercent';
 import Bullet from 'old-components/Guilds/common/Bullet';
 import { Loading } from 'Components/Primitives/Loading';
 import styled, { useTheme } from 'styled-components';
+import useProposalMetadata from 'hooks/Guilds/useProposalMetadata';
 
 const VotesRowWrapper = styled.div`
   display: flex;
