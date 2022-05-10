@@ -1,8 +1,46 @@
 {
-  "_format": "hh-sol-artifact-1",
-  "contractName": "ERC20Guild",
-  "sourceName": "contracts/erc20guild/ERC20Guild.sol",
   "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_proposalTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_votingPowerForProposalExecution",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_votingPowerForProposalCreation",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_lockTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_permissionRegistry",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
     {
       "anonymous": false,
       "inputs": [
@@ -92,10 +130,6 @@
       "type": "event"
     },
     {
-      "stateMutability": "payable",
-      "type": "fallback"
-    },
-    {
       "inputs": [],
       "name": "ANY_SIGNATURE",
       "outputs": [
@@ -103,25 +137,6 @@
           "internalType": "bytes4",
           "name": "",
           "type": "bytes4"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "name": "EIP1271SignedHashes",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -224,30 +239,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "_data",
-          "type": "bytes"
-        }
-      ],
-      "name": "erc20TransferOrApproveDecode",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "getActiveProposalsNow",
       "outputs": [
@@ -255,44 +246,6 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "_hash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "getEIP1271SignedHash",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "data",
-          "type": "bytes"
-        }
-      ],
-      "name": "getFuncSignature",
-      "outputs": [
-        {
-          "internalType": "bytes4",
-          "name": "",
-          "type": "bytes4"
         }
       ],
       "stateMutability": "view",
@@ -374,59 +327,61 @@
       "name": "getProposal",
       "outputs": [
         {
-          "internalType": "address",
-          "name": "creator",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "startTime",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "endTime",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address[]",
-          "name": "to",
-          "type": "address[]"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "data",
-          "type": "bytes[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "value",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256",
-          "name": "totalActions",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "title",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "contentHash",
-          "type": "string"
-        },
-        {
-          "internalType": "enum ERC20Guild.ProposalState",
-          "name": "state",
-          "type": "uint8"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "totalVotes",
-          "type": "uint256[]"
+          "components": [
+            {
+              "internalType": "address",
+              "name": "creator",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "startTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "endTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address[]",
+              "name": "to",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bytes[]",
+              "name": "data",
+              "type": "bytes[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "value",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "string",
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "contentHash",
+              "type": "string"
+            },
+            {
+              "internalType": "enum BaseERC20Guild.ProposalState",
+              "name": "state",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "totalVotes",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct BaseERC20Guild.Proposal",
+          "name": "",
+          "type": "tuple"
         }
       ],
       "stateMutability": "view",
@@ -690,93 +645,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_proposalTime",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_timeForExecution",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_votingPowerForProposalExecution",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_votingPowerForProposalCreation",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_voteGas",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_maxGasPrice",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_maxActiveProposals",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_lockTime",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_permissionRegistry",
-          "type": "address"
-        }
-      ],
-      "name": "initialize",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "hash",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes",
-          "name": "signature",
-          "type": "bytes"
-        }
-      ],
-      "name": "isValidSignature",
-      "outputs": [
-        {
-          "internalType": "bytes4",
-          "name": "magicValue",
-          "type": "bytes4"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "lockTime",
       "outputs": [
@@ -860,6 +728,35 @@
           "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "proposalVotes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "action",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "votingPower",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
         }
       ],
       "name": "proposals",
@@ -890,7 +787,7 @@
           "type": "string"
         },
         {
-          "internalType": "enum ERC20Guild.ProposalState",
+          "internalType": "enum BaseERC20Guild.ProposalState",
           "name": "state",
           "type": "uint8"
         }
@@ -961,24 +858,6 @@
         }
       ],
       "name": "setConfig",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "_hash",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bool",
-          "name": "isValid",
-          "type": "bool"
-        }
-      ],
-      "name": "setEIP1271SignedHash",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1065,39 +944,6 @@
     {
       "inputs": [
         {
-          "internalType": "bytes32[]",
-          "name": "proposalIds",
-          "type": "bytes32[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "actions",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "votingPowers",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "address[]",
-          "name": "voters",
-          "type": "address[]"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "signatures",
-          "type": "bytes[]"
-        }
-      ],
-      "name": "setSignedVotes",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes32",
           "name": "proposalId",
           "type": "bytes32"
@@ -1114,29 +960,6 @@
         }
       ],
       "name": "setVote",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32[]",
-          "name": "proposalIds",
-          "type": "bytes32[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "actions",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "votingPowers",
-          "type": "uint256[]"
-        }
-      ],
-      "name": "setVotes",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1302,25 +1125,6 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address[]",
-          "name": "accounts",
-          "type": "address[]"
-        }
-      ],
-      "name": "votingPowerOfMultiple",
-      "outputs": [
-        {
-          "internalType": "uint256[]",
-          "name": "",
-          "type": "uint256[]"
         }
       ],
       "stateMutability": "view",
