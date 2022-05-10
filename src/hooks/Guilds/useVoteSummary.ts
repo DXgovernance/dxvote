@@ -11,8 +11,6 @@ export default function useVoteSummary(
   const { data: { totalVotes = null } = {} } = useProposal(guildId, proposalId);
   const { data: { totalLocked = null } = {} } = useGuildConfig(guildId);
 
-  console.log(totalVotes?.length);
-
   const votes = useMemo(() => {
     if (totalVotes && totalLocked) {
       const newVotes = [];
