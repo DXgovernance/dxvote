@@ -51,6 +51,10 @@ export default class IPFSService {
   async getContentFromIPFS(hash: string) {
     const response = await Promise.any([
       axios.request({
+        url: 'https://dxgov.mypinata.cloud/' + hash,
+        method: 'GET',
+      }),
+      axios.request({
         url: 'https://ipfs.io/ipfs/' + hash,
         method: 'GET',
       }),
@@ -95,8 +99,10 @@ export default class IPFSService {
     localStorage.setItem('dxvote-newProposal-hash', hash);
 
     if (pinataService.auth) {
-      const pinataPin = await this.pin(hash);
+      const pinataPin = await pinataService.pin(hash);
       console.debug('[PINATA PIN]', pinataPin.toString());
+    } else {
+      console.debug('[PINATA PIN] NOT AUTHENTICATED');
     }
     const ipfsPin = await this.pin(hash);
     console.debug('[IPFS PIN]', ipfsPin);
@@ -115,7 +121,7 @@ export default class IPFSService {
     const hash = await this.add(content);
 
     if (this.context.pinataService.auth) {
-      const pinataPin = await this.pin(hash);
+      const pinataPin = await this.context.pinataService.pin(hash);
       console.debug('[PINATA PIN]', pinataPin.toString());
     }
     const ipfsPin = await this.pin(hash);
