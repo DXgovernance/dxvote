@@ -1,12 +1,12 @@
 import { useTheme } from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
-import { Call, Option } from 'components/Guilds/ActionsBuilder/types';
 import { useMemo } from 'react';
 import { ZERO_HASH } from 'utils';
 import { useRichContractData } from '../contracts/useRichContractData';
 import { bulkDecodeCallsFromOptions } from '../contracts/useDecodedCall';
 import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import { useProposal } from '../ether-swr/guild/useProposal';
+import { Call, Option } from 'old-components/Guilds/ActionsBuilder/types';
 
 const useProposalCalls = (guildId: string, proposalId: string) => {
   // Decode calls from existing proposal

@@ -1,14 +1,14 @@
-import React, { useContext, useMemo } from 'react';
-import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
-import { Box } from '../../components/Guilds/common/Layout';
-import { Sidebar } from '../../components/Guilds/Sidebar';
-import { Filter } from '../../components/Guilds/Filter';
-import ProposalCard from '../../components/Guilds/ProposalCard';
-import InView from 'react-intersection-observer';
 import { useGuildProposalIds } from '../../hooks/Guilds/ether-swr/guild/useGuildProposalIds';
-import Result, { ResultState } from 'components/Guilds/common/Result';
+import { Filter } from '../../old-components/Guilds/Filter';
+import { Sidebar } from '../../old-components/Guilds/Sidebar';
+import { Box } from '../../Components/Primitives/Layout';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import ProposalCardWrapper from 'Modules/Guilds/Wrappers/ProposalCardWrapper';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
+import Result, { ResultState } from 'old-components/Guilds/common/Result';
+import React, { useContext, useMemo } from 'react';
+import InView from 'react-intersection-observer';
+import styled from 'styled-components';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -37,8 +37,7 @@ const ProposalsList = styled(Box)`
 `;
 
 const GuildsPage: React.FC = () => {
-  const { chain_name: chainName, guild_id: guildId } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { guildId } = useTypedParams();
   const { data: proposalIds, error } = useGuildProposalIds(guildId);
   const { isLoading } = useContext(GuildAvailabilityContext);
   const filteredProposalIds = useMemo(() => {
@@ -76,9 +75,8 @@ const GuildsPage: React.FC = () => {
               <InView key={proposalId}>
                 {({ inView, ref }) => (
                   <div ref={ref}>
-                    <ProposalCard
-                      id={inView ? proposalId : null}
-                      href={`/${chainName}/${guildId}/proposal/${proposalId}`}
+                    <ProposalCardWrapper
+                      proposalId={inView ? proposalId : null}
                     />
                   </div>
                 )}
@@ -86,11 +84,11 @@ const GuildsPage: React.FC = () => {
             ))
           ) : (
             <>
-              <ProposalCard />
-              <ProposalCard />
-              <ProposalCard />
-              <ProposalCard />
-              <ProposalCard />
+              <ProposalCardWrapper />
+              <ProposalCardWrapper />
+              <ProposalCardWrapper />
+              <ProposalCardWrapper />
+              <ProposalCardWrapper />
             </>
           )}
         </ProposalsList>

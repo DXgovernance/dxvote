@@ -8,7 +8,6 @@
 // You can read more here:
 // https://on.cypress.io/plugins-guide
 // ***********************************************************
-
 const fs = require('fs-extra');
 const path = require('path');
 

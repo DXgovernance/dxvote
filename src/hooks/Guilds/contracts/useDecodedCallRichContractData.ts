@@ -1,4 +1,4 @@
-import { DecodedCall } from 'components/Guilds/ActionsBuilder/types';
+import { DecodedCall } from 'old-components/Guilds/ActionsBuilder/types';
 import { useMemo } from 'react';
 import { RichContractFunction } from './useRichContractData';
 

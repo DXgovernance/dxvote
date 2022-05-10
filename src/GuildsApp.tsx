@@ -1,23 +1,21 @@
-import { HashRouter, Route, Switch, useHistory } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
-
-import { Container } from './components/Guilds/common/Layout';
-import Header from './components/Guilds/Header';
+import GlobalErrorBoundary from './old-components/Guilds/ErrorBoundary/GlobalErrorBoundary';
+import Header from './old-components/Guilds/Header';
+import ToastNotificationContainer from './old-components/Guilds/ToastNotifications/ToastNotificationContainer';
+import WalletWeb3Manager from './old-components/Guilds/Web3Manager/WalletWeb3Manager';
+import { Container } from './Components/Primitives/Layout';
 import GuildsPage from './pages/Guilds/Guilds';
 import ProposalPage from './pages/Guilds/Proposal';
-import CreateProposalPage from 'pages/Guilds/CreateProposal';
 import GlobalStyle from './theme/GlobalTheme';
 import theme from './theme/dark.json';
-import { GuildsContextProvider, TransactionsProvider } from 'contexts/Guilds';
-import WalletWeb3Manager from './components/Guilds/Web3Manager/WalletWeb3Manager';
-import GlobalErrorBoundary from './components/Guilds/ErrorBoundary/GlobalErrorBoundary';
-
-import ProposalTypes from 'components/Guilds/ProposalTypes';
 import { ProposalTypesConfig } from 'configs/proposalTypes';
-import ToastNotificationContainer from './components/Guilds/ToastNotifications/ToastNotificationContainer';
-import LandingPage from 'pages/Guilds/LandingPage';
+import { GuildsContextProvider, TransactionsProvider } from 'contexts/Guilds';
 import GuildAvailabilityProvider from 'contexts/Guilds/guildAvailability';
+import ProposalTypes from 'old-components/Guilds/ProposalTypes';
+import CreateProposalPage from 'pages/Guilds/CreateProposal';
+import LandingPage from 'pages/Guilds/LandingPage';
 import NotFound from 'pages/Guilds/NotFound';
+import { HashRouter, Route, Switch, useHistory } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 
 const GuildsApp = () => {
   const history = useHistory();
@@ -40,20 +38,20 @@ const GuildsApp = () => {
                 <Container>
                   <GuildAvailabilityProvider>
                     <Switch>
-                      <Route exact path="/:chain_name">
+                      <Route exact path="/:chainName">
                         <LandingPage />
                       </Route>
 
-                      <Route exact path="/:chain_name/:guild_id">
+                      <Route exact path="/:chainName/:guildId">
                         <GuildsPage />
                       </Route>
-                      <Route path="/:chain_name/:guild_id/proposalType">
+                      <Route path="/:chainName/:guildId/proposalType">
                         <ProposalTypes data={ProposalTypesConfig} />
                       </Route>
-                      <Route path="/:chain_name/:guild_id/proposal/:proposal_id">
+                      <Route path="/:chainName/:guildId/proposal/:proposalId">
                         <ProposalPage />
                       </Route>
-                      <Route path="/:chain_name/:guild_id/create/:proposal_type">
+                      <Route path="/:chainName/:guildId/create/:proposalType">
                         <CreateProposalPage />
                       </Route>
 

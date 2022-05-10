@@ -1,4 +1,13 @@
+import useLocalStorage from '../../hooks/Guilds/useLocalStorage';
+import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
+import {
+  TransactionOutcome,
+  TransactionPending,
+} from '../../old-components/Guilds/ToastNotifications/TransactionToasts';
+import TransactionModal from '../../old-components/Guilds/Web3Modals/TransactionModal';
+import { Transaction } from '../../types/types.guilds';
 import { useWeb3React } from '@web3-react/core';
+import { providers } from 'ethers';
 import {
   createContext,
   useCallback,
@@ -7,18 +16,9 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { providers } from 'ethers';
 import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
-
-import { Transaction } from '../../types/types.guilds';
-import useJsonRpcProvider from '../../hooks/Guilds/web3/useJsonRpcProvider';
-import useLocalStorage from '../../hooks/Guilds/useLocalStorage';
-import TransactionModal from '../../components/Guilds/Web3Modals/TransactionModal';
 import { toast } from 'react-toastify';
-import {
-  TransactionOutcome,
-  TransactionPending,
-} from '../../components/Guilds/ToastNotifications/TransactionToasts';
+
 export interface TransactionState {
   [chainId: number]: {
     [txHash: string]: Transaction;

@@ -1,42 +1,37 @@
-import ReactDOM from 'react-dom';
-import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
-import { Web3ReactProvider } from '@web3-react/core';
-import Web3ReactManager from 'components/Web3ReactManager';
-import Web3 from 'web3';
-import moment from 'moment';
-import styled from 'styled-components';
-import * as serviceWorker from './serviceWorker';
-import './i18n';
-
-import ThemeProvider, { GlobalStyle } from './theme';
-
-import Header from './components/Header';
-import Footer from './components/Footer';
-import GlobalErrorBoundary from './components/ErrorBoundary/GlobalErrorBoundary';
+import GuildsApp from './GuildsApp';
 import PageRouter from './PageRouter';
-
-import ProposalsPage from './pages/proposals';
-import { SubmitProposalPage } from './pages/SubmitProposal';
-import { NewProposalTypePage } from './pages/NewProposalType';
-import UserPage from './pages/User';
-import ProposalPage from './pages/Proposal';
-import InfoPage from './pages/Info';
+import { useContext } from './contexts';
+import MultichainProvider from './contexts/MultichainProvider';
+import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
+import './i18n';
+import GlobalErrorBoundary from './old-components/ErrorBoundary/GlobalErrorBoundary';
+import Footer from './old-components/Footer';
+import Header from './old-components/Header';
 import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
+import InfoPage from './pages/Info';
+import { NewProposalTypePage } from './pages/NewProposalType';
+import ProposalPage from './pages/Proposal';
+import { SubmitProposalPage } from './pages/SubmitProposal';
+import UserPage from './pages/User';
+import ProposalsPage from './pages/proposals';
+import * as serviceWorker from './serviceWorker';
+import ThemeProvider, { GlobalStyle } from './theme';
+import { MAINNET_ID } from './utils';
+import { Web3ReactProvider } from '@web3-react/core';
+import moment from 'moment';
+import EtherSWRManager from 'old-components/Guilds/EtherSWRManager';
+import Web3ReactManager from 'old-components/Web3ReactManager';
 import CachePage from 'pages/Cache';
 import { CreateMetadataPage } from 'pages/Metadata';
-import GuildsApp from './GuildsApp';
-
+import { useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import MultichainProvider from './contexts/MultichainProvider';
-import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
-import { useEffect } from 'react';
-import { useContext } from './contexts';
-import { MAINNET_ID } from './utils';
-
-import EtherSWRManager from 'components/Guilds/EtherSWRManager';
+import styled from 'styled-components';
+import Web3 from 'web3';
 
 const Content = styled.div`
   margin: auto;
