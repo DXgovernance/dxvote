@@ -57,11 +57,11 @@ const decodeCallUsingEthersInterface = (
   };
 };
 
-const getContractInterfaceFromRegistryContract = (
-  registryContract: RichContractData
+const getContractInterfaceFromRichContractData = (
+  richContractData: RichContractData
 ) => {
   return {
-    contractInterface: registryContract.contractInterface,
+    contractInterface: richContractData.contractInterface,
     callType: SupportedAction.GENERIC_CALL,
   };
 };
@@ -89,16 +89,15 @@ const decodeCall = (
   let decodedCall: DecodedCall = null;
 
   // Detect using the Guild calls registry.
-  const matchedRegistryContract = contracts?.find(
+  const matchedRichContractData = contracts?.find(
     contract => contract.networks[chainId] === call.to
   );
-  const matchedContractData = matchedRegistryContract
-    ? getContractInterfaceFromRegistryContract(matchedRegistryContract)
+  const matchedContract = matchedRichContractData
+    ? getContractInterfaceFromRichContractData(matchedRichContractData)
     : getContractFromKnownSighashes(call.data);
+  if (!matchedContract) return null;
 
-  if (!matchedContractData) return null;
-
-  const { callType, contractInterface } = matchedContractData;
+  const { callType, contractInterface } = matchedContract;
   if (!contractInterface) return null;
 
   decodedCall = decodeCallUsingEthersInterface(
@@ -106,6 +105,10 @@ const decodeCall = (
     contractInterface,
     callType
   );
+
+  if (decodedCall && matchedRichContractData) {
+    decodedCall.richData = matchedRichContractData;
+  }
 
   return {
     id: `action-${Math.random()}`,

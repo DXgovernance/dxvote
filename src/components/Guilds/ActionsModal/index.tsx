@@ -49,7 +49,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
     useState<utils.Interface>(null);
 
   // Generic calls
-  const [selectedContract, setSelectedContract] =
+  const [richContractData, setRichContractData] =
     useState<RichContractData>(null);
   const [selectedFunction, setSelectedFunction] = useState<string>(null);
 
@@ -58,13 +58,13 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   function getHeader() {
     if (selectedFunction) {
-      return selectedContract.functions.find(
+      return richContractData.functions.find(
         fn => fn.functionName === selectedFunction
       )?.title;
     }
 
-    if (selectedContract) {
-      return selectedContract?.title;
+    if (richContractData) {
+      return richContractData?.title;
     }
 
     if (selectedAction) {
@@ -76,9 +76,9 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   function getContent() {
     if (selectedFunction) {
-      const contractInterface = selectedContract.contractInterface;
-      const contractId = selectedContract.contractAddress;
-      const fn = selectedContract.functions.find(
+      const contractInterface = richContractData.contractInterface;
+      const contractAddress = richContractData.contractAddress;
+      const fn = richContractData.functions.find(
         fn => fn.functionName === selectedFunction
       );
       const isPayable: boolean = fn?.spendsTokens;
@@ -97,10 +97,11 @@ const ActionModal: React.FC<ActionModalProps> = ({
               decodedCall: {
                 callType: SupportedAction.GENERIC_CALL,
                 from: guildId,
-                to: contractId,
+                to: contractAddress,
                 function: contractInterface.getFunction(selectedFunction),
                 value: BigNumber.from(0),
                 args,
+                richData: richContractData,
               },
               approval: payableFnData,
             });
@@ -110,10 +111,10 @@ const ActionModal: React.FC<ActionModalProps> = ({
       );
     }
 
-    if (selectedContract) {
+    if (richContractData) {
       return (
         <ContractActionsList
-          contract={selectedContract}
+          contract={richContractData}
           onSelect={setSelectedFunction}
         />
       );
@@ -131,7 +132,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
     return (
       <ContractsList
-        onSelect={setSelectedContract}
+        onSelect={setRichContractData}
         onSupportedActionSelect={setSupportedAction}
       />
     );
@@ -141,8 +142,8 @@ const ActionModal: React.FC<ActionModalProps> = ({
     if (selectedFunction) {
       setSelectedFunction(null);
       updatePayableFnData(null);
-    } else if (selectedContract) {
-      setSelectedContract(null);
+    } else if (richContractData) {
+      setRichContractData(null);
     } else if (selectedAction) {
       setSelectedAction(null);
       setSelectedActionContract(null);
@@ -182,7 +183,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   const handleClose = () => {
     setSelectedFunction(null);
-    setSelectedContract(null);
+    setRichContractData(null);
     setSelectedAction(null);
     setSelectedActionContract(null);
     updatePayableFnData(null);
@@ -195,7 +196,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
       onDismiss={handleClose}
       header={getHeader()}
       maxWidth={300}
-      backnCross={!!selectedAction || !!selectedContract}
+      backnCross={!!selectedAction || !!richContractData}
       prevContent={goBack}
     >
       {getContent()}
