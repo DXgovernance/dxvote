@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProposalStatus loading 1`] = `
+<div>
+   
+  <div
+    class="sc-gKseQn dTFpnB"
+  >
+    <div
+      class="sc-iBPTik gOtsle"
+    >
+      <div
+        class="sc-bdfBQB sc-pGacB bmhbKs bjIKgW"
+      >
+        <div
+          class="sc-eCstlR"
+        >
+          <span
+            aria-busy="true"
+            aria-live="polite"
+          >
+            <span
+              class="react-loading-skeleton"
+              style="width: 50px; --base-color: #333; --highlight-color: #555;"
+            >
+              ‌
+            </span>
+            <br />
+          </span>
+        </div>
+      </div>
+      <div
+        class="sc-eCstlR"
+      >
+        <span
+          aria-busy="true"
+          aria-live="polite"
+        >
+          <span
+            class="react-loading-skeleton"
+            style="width: 50px; --base-color: #333; --highlight-color: #555;"
+          >
+            ‌
+          </span>
+          <br />
+        </span>
+      </div>
+    </div>
+  </div>
+   
+</div>
+`;
+
+exports[`ProposalStatus votes 1`] = `
+<div>
+   
+  <div
+    class="sc-gKseQn dTFpnB"
+  >
+    <div
+      class="sc-iBPTik gOtsle"
+    >
+      <div
+        class="sc-bdfBQB sc-pGacB bmhbKs bjIKgW"
+      >
+        <span
+          title="May 9th, 2022 - 8:00 am"
+        >
+          Time
+        </span>
+      </div>
+      <div
+        class="sc-bdfBQB sc-fubCzh bmhbKs ktAnLd"
+      >
+         
+        Active
+      </div>
+    </div>
+  </div>
+   
+</div>
+`;

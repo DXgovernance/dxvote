@@ -56,6 +56,7 @@ describe('DurationInput', () => {
       await user.keyboard('50');
       expect(input).toHaveValue('50');
     });
+
     it('seconds accepts inputs', async () => {
       const input = screen.getByTestId('seconds');
       await user.tripleClick(input);

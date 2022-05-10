@@ -1,5 +1,5 @@
+import { Flex } from 'Components/Primitives/Layout';
 import styled from 'styled-components';
-import { Flex } from '../../Layout';
 
 interface WarningInputProps {
   timeColumn: string;

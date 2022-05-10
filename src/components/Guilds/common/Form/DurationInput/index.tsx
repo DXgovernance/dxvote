@@ -3,11 +3,11 @@ import { GoTriangleUp, GoTriangleDown } from 'react-icons/go';
 import React from 'react';
 import { DURATION_LIMITS } from 'constants/Duration';
 import { useDuration } from 'hooks/Guilds/useDuration';
-import { Flex } from '../../Layout';
-import { Button } from '../../Button';
-import { Modal } from '../../Modal';
-import NumericalInput from '../NumericalInput';
 import WarningInput from './WarningInput';
+import { Flex } from 'Components/Primitives/Layout';
+import { Button } from 'old-components/common/Button';
+import { Modal } from 'old-components/Guilds/common/Modal';
+import NumericalInput from 'old-components/Guilds/common/Form/NumericalInput';
 
 const Column = styled(Flex)`
   flex-direction: column;
@@ -59,6 +59,7 @@ const DurationInput: React.FC<DurationInputProps> = ({ isOpen, onDismiss }) => {
                 >
                   <GoTriangleUp />
                 </ColumnButton>
+
                 <NumericalInput
                   value={count}
                   onChange={e => handleChange(e, value)}

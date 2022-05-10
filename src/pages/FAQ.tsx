@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
-import styled from 'styled-components';
-import { observer } from 'mobx-react';
-import { Box } from '../components/common';
 import { useContext } from '../contexts';
-import { useLocation } from 'react-router-dom';
+import { Box } from '../old-components/common';
 import MDEditor from '@uiw/react-md-editor';
+import { observer } from 'mobx-react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
 
 const FAQPage = observer(() => {
   const {
