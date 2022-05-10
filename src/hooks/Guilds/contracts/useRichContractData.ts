@@ -34,7 +34,7 @@ export interface RichContractData {
   contractInterface: utils.Interface;
 }
 
-type IPFSRichContractData = Omit<
+export type IPFSRichContractData = Omit<
   RichContractData,
   'contractAddress' | 'contractInterface'
 >;
