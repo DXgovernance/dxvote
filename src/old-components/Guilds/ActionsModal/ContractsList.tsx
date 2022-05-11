@@ -48,7 +48,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
         </ActionsButton>
         <ActionsButton
           onClick={() => {
-            console.log('click');
+            onSupportedActionSelect(SupportedAction.SET_PERMISSIONS);
           }}
         >
           <ButtonLabel>

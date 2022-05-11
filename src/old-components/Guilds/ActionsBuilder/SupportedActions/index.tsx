@@ -15,6 +15,9 @@ import GenericCallInfoLine from './GenericCall/GenericCallInfoLine';
 import RepMintEditor from './RepMint/RepMintEditor';
 import RepMintInfoLine from './RepMint/RepMintInfoLine';
 import RepMintSummary from './RepMint/RepMintSummary';
+import SetPermissionsEditor from './SetPermissions/SetPermissionsEditor';
+import SetPermissionsInfoLine from './SetPermissions/SetPermissionsInfoLine';
+import SetPermissionsSummary from './SetPermissions/SetPermissionsSummary';
 
 export interface SupportedActionMetadata {
   title: string;
@@ -59,6 +62,12 @@ export const supportedActions: Record<
     infoLineView: GenericCallInfoLine,
     editor: () => <div>Generic Call Editor</div>,
   },
+  [SupportedAction.SET_PERMISSIONS]: {
+    title: 'Set permissions',
+    infoLineView: SetPermissionsInfoLine,
+    summaryView: SetPermissionsSummary,
+    editor: SetPermissionsEditor,
+  },
 };
 const ERC20Contract = new utils.Interface(ERC20ABI);
 const ERC20SnapshotRepContract = new utils.Interface(ERC20SnapshotRep.abi);
@@ -92,6 +101,20 @@ export const defaultValues: Record<
   },
 
   [SupportedAction.GENERIC_CALL]: {},
+
+  [SupportedAction.SET_PERMISSIONS]: {
+    // ! Copied from ERC20_TRANSFER => modify!
+    contract: ERC20Contract,
+    decodedCall: {
+      function: ERC20Contract.getFunction('transfer'),
+      to: '',
+      value: BigNumber.from(0),
+      args: {
+        _to: '',
+        _value: BigNumber.from(0),
+      },
+    },
+  },
 };
 
 export const getInfoLineView = (actionType: SupportedAction) => {
