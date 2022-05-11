@@ -7,4 +7,3 @@ const SetPermissionsSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
 };
 
 export default SetPermissionsSummary;
-

@@ -7,4 +7,3 @@ const SetPermissionsInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
 };
 
 export default SetPermissionsInfoLine;
-
