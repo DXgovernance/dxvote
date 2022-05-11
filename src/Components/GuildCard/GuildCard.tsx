@@ -40,4 +40,3 @@ const GuildCard: React.FC<GuildCardProps> = ({ children, guildAddress }) => {
 };
 
 export default GuildCard;
-

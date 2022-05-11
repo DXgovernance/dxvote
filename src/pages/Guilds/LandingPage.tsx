@@ -5,10 +5,9 @@ import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActivePr
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
 import { useGuildRegistry } from 'hooks/Guilds/ether-swr/guild/useGuildRegistry';
-import GuildCard, {
-  GuildCardContent,
-  GuildCardHeader,
-} from 'old-components/Guilds/GuildCard';
+import GuildCard from 'Components/GuildCard/GuildCard';
+import GuildCardContent from 'Components/GuildCard/GuildCardContent';
+import GuildCardHeader from 'Components/GuildCard/GuildCardHeader';
 import { Button } from 'old-components/Guilds/common/Button';
 import Input from 'old-components/Guilds/common/Form/Input';
 import { Flex, Box } from 'Components/Primitives/Layout';
