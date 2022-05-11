@@ -3,6 +3,7 @@ import { getInfoLineView } from 'old-components/Guilds/ActionsBuilder/SupportedA
 import UndecodableCallInfoLine from 'old-components/Guilds/ActionsBuilder/UndecodableCalls/UndecodableCallsInfoLine';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import useFilteredProposalActions from './useFilteredProposalActions';
+import { Proposal } from 'Components/Types';
 import {
   ActionsWrapper,
   BorderedIconDetailWrapper,
@@ -10,14 +11,15 @@ import {
 } from 'Components/ProposalCard/ProposalCard.styled';
 
 interface ProposalCardActionSummaryProps {
-  isLoading?: boolean;
+  proposal?: Proposal;
 }
 
 const ProposalCardActionSummary: React.FC<ProposalCardActionSummaryProps> = ({
-  isLoading,
+  proposal,
 }) => {
-  const { guildId, proposalId } = useTypedParams();
-  const actions = useFilteredProposalActions(guildId, proposalId);
+  const { guildId } = useTypedParams();
+  const actions = useFilteredProposalActions(guildId, proposal?.id);
+  const isLoading = !proposal;
   if (isLoading) {
     return (
       <Loading

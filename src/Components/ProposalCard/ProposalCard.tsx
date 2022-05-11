@@ -64,7 +64,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
           </CardTitle>
         </CardContent>
         <CardFooter>
-          <ProposalCardActionSummary isLoading={!proposal} />
+          <ProposalCardActionSummary proposal={proposal} />
           <ProposalCardVotes isLoading={!proposal} votes={votes} />
         </CardFooter>
       </CardWrapper>
