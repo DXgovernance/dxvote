@@ -4,7 +4,7 @@ import { SupportedAction } from 'old-components/Guilds/ActionsBuilder/types';
 import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
 import { useDecodedCall } from './useDecodedCall';
 
-const mockChainId = 1337;
+const mockChainId = 123456;
 const contractAddress = '0x0000000000000000000000000000000000000001';
 const erc20TransferData =
   '0xa9059cbb000000000000000000000000f960cec172d9ea3c0233d1caaceace4b597cbccf0000000000000000000000000000000000000000000000000000000077359400';

@@ -4,7 +4,7 @@ import {
   useRichContractRegistry,
 } from './useRichContractRegistry';
 
-const mockChainId = 1337;
+const mockChainId = 123456;
 const contractAddress = '0x0000000000000000000000000000000000000001';
 const mockRichContractData: IPFSRichContractData[] = [
   {
