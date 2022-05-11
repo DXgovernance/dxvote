@@ -6,7 +6,7 @@ import ProposalStatus from 'Components/ProposalStatus/ProposalStatus';
 import { Box } from 'Components/Primitives/Layout';
 import { Loading } from 'Components/Primitives/Loading';
 import { Heading } from 'old-components/Guilds/common/Typography';
-import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
+import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import 'react-loading-skeleton/dist/skeleton.css';
 import styled from 'styled-components';
 import { shortenAddress } from 'utils';

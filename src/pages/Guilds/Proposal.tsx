@@ -6,7 +6,7 @@ import ProposalVoteCard from '../../old-components/Guilds/ProposalPage/ProposalV
 import ProposalStatus from '../../Components/ProposalStatus/ProposalStatus';
 import { IconButton } from '../../old-components/Guilds/common/Button';
 import { Box } from '../../Components/Primitives/Layout';
-import UnstyledLink from '../../old-components/Guilds/common/UnstyledLink';
+import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
 import { useGuildProposalIds } from 'hooks/Guilds/ether-swr/guild/useGuildProposalIds';
