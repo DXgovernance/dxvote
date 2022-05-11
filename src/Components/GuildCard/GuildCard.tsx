@@ -1,6 +1,6 @@
-import styled, { css } from 'styled-components';
-import { Link } from 'react-router-dom';
+import { css } from 'styled-components';
 import { GuildCardProps } from './types';
+import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import { Card } from 'old-components/Guilds/common/Card/index';
 
 const cardWrapperStyles = css`
@@ -16,26 +16,14 @@ const cardWrapperStyles = css`
   }
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: ${({ theme }) => theme.colors.text};
-  &:focus,
-  &:hover,
-  &:visited,
-  &:link,
-  &:active {
-    text-decoration: none;
-  }
-`;
-
 const GuildCard: React.FC<GuildCardProps> = ({ children, guildAddress }) => {
   return (
-    <StyledLink
+    <UnstyledLink
       data-testId="guildCard"
       to={location => `${location.pathname}/${guildAddress}`}
     >
       <Card customStyles={cardWrapperStyles}>{children}</Card>
-    </StyledLink>
+    </UnstyledLink>
   );
 };
 

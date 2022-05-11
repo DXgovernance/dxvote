@@ -4,21 +4,21 @@ exports[`Guild Card renders properly with a guild address 1`] = `
 <div>
    
   <a
-    class="sc-iBPTik cMdTkS"
+    class="sc-bdfBQB hcWJCy"
     data-testid="guildCard"
     href="//0xa47BbE8Dd6dB29D45FE5eeD838c4f136884AEAF3"
   >
     <div
-      class="sc-bdfBQB sc-eCstlR bmhbKs hvvQMx"
+      class="sc-gsTEea sc-jSgvzq couiEk iwIEDV"
     >
       <div
-        class="sc-bdfBQB bmhbKs"
+        class="sc-gsTEea couiEk"
       >
         <div
-          class="sc-dlfnuX sc-fubCzh ghjVNo kcknnR"
+          class="sc-hKgJUU sc-fubCzh dUEGLL kcknnR"
         />
         <div
-          class="sc-bdfBQB sc-pGacB bmhbKs lfrSjv"
+          class="sc-gsTEea sc-pGacB couiEk lfrSjv"
         />
       </div>
     </div>
@@ -31,21 +31,21 @@ exports[`Guild Card renders properly with a null guild address 1`] = `
 <div>
    
   <a
-    class="sc-iBPTik cMdTkS"
+    class="sc-bdfBQB hcWJCy"
     data-testid="guildCard"
     href="//null"
   >
     <div
-      class="sc-bdfBQB sc-eCstlR bmhbKs hvvQMx"
+      class="sc-gsTEea sc-jSgvzq couiEk iwIEDV"
     >
       <div
-        class="sc-bdfBQB bmhbKs"
+        class="sc-gsTEea couiEk"
       >
         <div
-          class="sc-dlfnuX sc-fubCzh ghjVNo kcknnR"
+          class="sc-hKgJUU sc-fubCzh dUEGLL kcknnR"
         />
         <div
-          class="sc-bdfBQB sc-pGacB bmhbKs lfrSjv"
+          class="sc-gsTEea sc-pGacB couiEk lfrSjv"
         />
       </div>
     </div>
