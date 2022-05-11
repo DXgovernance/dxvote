@@ -1,6 +1,6 @@
-import { IconButton } from 'components/Guilds/common/Button';
-import Result, { ResultState } from 'components/Guilds/common/Result';
-import UnstyledLink from 'components/Guilds/common/UnstyledLink';
+import { IconButton } from 'old-components/Guilds/common/Button';
+import Result, { ResultState } from 'old-components/Guilds/common/Result';
+import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
 import { FiArrowLeft } from 'react-icons/fi';
 
 const NotFound: React.FC = () => {

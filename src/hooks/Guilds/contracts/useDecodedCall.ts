@@ -1,13 +1,13 @@
-import { utils } from 'ethers';
-import { RegistryContract, useContractRegistry } from './useContractRegistry';
 import ERC20ABI from '../../../abis/ERC20.json';
+import { RegistryContract, useContractRegistry } from './useContractRegistry';
 import { useWeb3React } from '@web3-react/core';
+import { utils } from 'ethers';
 import {
   Call,
   DecodedCall,
   Option,
   SupportedAction,
-} from 'components/Guilds/ActionsBuilder/types';
+} from 'old-components/Guilds/ActionsBuilder/types';
 
 const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';

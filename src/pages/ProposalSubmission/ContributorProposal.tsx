@@ -1,23 +1,21 @@
 // Externals
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { observer } from 'mobx-react';
-import { useHistory } from 'react-router-dom';
-import moment from 'moment';
-
 import { useContext } from '../../contexts';
 import useMainnetRep from '../../hooks/useMainnetRep';
-import { useDXDPrice } from 'hooks/ContributorProposal/useDXDPriceForPayment';
-
-import { LevelSelect } from '../../components/LevelSelect';
-import { Button } from '../../components/common/Button';
-import PendingCircle from 'components/common/PendingCircle';
-import Toggle from 'components/Toggle';
-import { Modal } from '../../components/Modal';
+import { LevelSelect } from '../../old-components/LevelSelect';
+import { Modal } from '../../old-components/Modal';
+import { Button } from '../../old-components/common/Button';
 import { bnum, normalizeBalance } from '../../utils';
-import { InputDate } from 'components/common';
+import { useDXDPrice } from 'hooks/ContributorProposal/useDXDPriceForPayment';
 import { usePaymentAmounts } from 'hooks/ContributorProposal/usePaymentAmounts';
 import { useSubmitProposal } from 'hooks/ContributorProposal/useSubmitProposal';
+import { observer } from 'mobx-react';
+import moment from 'moment';
+import Toggle from 'old-components/Toggle';
+import { InputDate } from 'old-components/common';
+import PendingCircle from 'old-components/common/PendingCircle';
+import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 
 const VerticalLayout = styled.div`
   display: flex;
