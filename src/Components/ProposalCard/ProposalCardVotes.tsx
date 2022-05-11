@@ -6,7 +6,7 @@ import {
   BorderedIconDetailWrapper,
   Icon,
   VoteInfoWrapper,
-} from 'components/ProposalCard/ProposalCard.styled';
+} from 'Components/ProposalCard/ProposalCard.styled';
 
 interface ProposalCardVotesProps {
   isLoading?: boolean;

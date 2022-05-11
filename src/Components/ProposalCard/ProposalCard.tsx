@@ -15,7 +15,7 @@ import {
   CardContent,
   CardTitle,
   CardFooter,
-} from 'components/ProposalCard/ProposalCard.styled';
+} from 'Components/ProposalCard/ProposalCard.styled';
 
 const ProposalCard: React.FC<ProposalCardProps> = ({
   proposal,

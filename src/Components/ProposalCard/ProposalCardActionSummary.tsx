@@ -7,7 +7,7 @@ import {
   ActionsWrapper,
   BorderedIconDetailWrapper,
   NotFoundActionWrapper,
-} from 'components/ProposalCard/ProposalCard.styled';
+} from 'Components/ProposalCard/ProposalCard.styled';
 
 interface ProposalCardActionSummaryProps {
   isLoading?: boolean;
