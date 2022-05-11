@@ -1,11 +1,11 @@
-import styled from 'styled-components';
 import {
   Table,
   TableHeader,
   HeaderCell,
   TableRow,
   DataCell,
-} from '../../components/common';
+} from '../../old-components/common';
+import styled from 'styled-components';
 
 export const LoadingBox = styled.div`
   display: flex;

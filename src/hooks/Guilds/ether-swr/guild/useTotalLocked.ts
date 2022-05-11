@@ -1,12 +1,12 @@
-import { useParams } from 'react-router-dom';
-import ERC20GuildContract from 'contracts/ERC20Guild.json';
 import useEtherSWR from '../useEtherSWR';
-import useTotalLockedAt from 'hooks/Guilds/ether-swr/guild/useTotalLockedAt';
-import useSnapshotId from 'hooks/Guilds/ether-swr/guild/useSnapshotId';
-import useGuildImplementationType from 'hooks/Guilds/guild/useGuildImplementationType';
-import useGuildToken from './useGuildToken';
 import useCurrentSnapshotId from './useCurrentSnapshotId';
+import useGuildToken from './useGuildToken';
 import useTotalSupplyAt from './useTotalSupplyAt';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import ERC20GuildContract from 'contracts/ERC20Guild.json';
+import useSnapshotId from 'hooks/Guilds/ether-swr/guild/useSnapshotId';
+import useTotalLockedAt from 'hooks/Guilds/ether-swr/guild/useTotalLockedAt';
+import useGuildImplementationType from 'hooks/Guilds/guild/useGuildImplementationType';
 
 const useTotalLocked = (guildAddress: string, snapshotId?: string) => {
   // Hooks call
@@ -14,7 +14,7 @@ const useTotalLocked = (guildAddress: string, snapshotId?: string) => {
     contractAddress: guildAddress,
   });
 
-  const { proposal_id: proposalId } = useParams<{ proposal_id?: string }>();
+  const { proposalId } = useTypedParams();
   const { data: _snapshotId } = useSnapshotId({
     contractAddress: guildAddress,
     proposalId,

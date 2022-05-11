@@ -1,29 +1,29 @@
-import React, { useContext, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import contentHash from 'content-hash';
-import { FiChevronLeft } from 'react-icons/fi';
-import { useHistory, useParams } from 'react-router-dom';
-import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
-import sanitizeHtml from 'sanitize-html';
-import { Box, Flex } from '../../components/Guilds/common/Layout';
-import { IconButton } from '../../components/Guilds/common/Button';
-import Input from '../../components/Guilds/common/Form/Input';
 import {
   ActionsBuilder,
   SidebarInfoCard,
-} from '../../components/Guilds/CreateProposalPage';
-import Editor from 'components/Guilds/Editor';
-
-import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
+} from '../../old-components/Guilds/CreateProposalPage';
+import { IconButton } from '../../old-components/Guilds/common/Button';
+import Input from '../../old-components/Guilds/common/Form/Input';
+import { Box, Flex } from '../../Components/Primitives/Layout';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import contentHash from 'content-hash';
 import { useTransactions } from 'contexts/Guilds';
-import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
-import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
-import { Loading } from 'components/Guilds/common/Loading';
-import { Call, Option } from 'components/Guilds/ActionsBuilder/types';
-import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
-import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
 import { BigNumber } from 'ethers';
+import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
+import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
+import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
+import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
+import { Call, Option } from 'old-components/Guilds/ActionsBuilder/types';
+import Editor from 'old-components/Guilds/Editor';
+import { Loading } from 'Components/Primitives/Loading';
+import React, { useContext, useMemo, useState } from 'react';
+import { FiChevronLeft } from 'react-icons/fi';
+import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
+import sanitizeHtml from 'sanitize-html';
+import styled from 'styled-components';
+import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -80,8 +80,7 @@ const EMPTY_CALL: Call = {
 };
 
 const CreateProposalPage: React.FC = () => {
-  const { guild_id: guildId, chain_name: chain } =
-    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { guildId, chainName: chain } = useTypedParams();
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
   );
@@ -126,7 +125,7 @@ const CreateProposalPage: React.FC = () => {
   };
 
   const { createTransaction } = useTransactions();
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { guildId: guildAddress } = useTypedParams();
   const guildContract = useERC20Guild(guildAddress);
   const handleCreateProposal = async () => {
     const contentHash = await uploadToIPFS();
