@@ -16,8 +16,8 @@ import useGuildImplementationTypeConfig from 'hooks/Guilds/guild/useGuildImpleme
 import React from 'react';
 import {
   RichContractData,
-  useRichContractData,
-} from 'hooks/Guilds/contracts/useRichContractData';
+  useRichContractRegistry,
+} from 'hooks/Guilds/contracts/useRichContractRegistry';
 
 interface ContractsListProps {
   onSelect: (contract: RichContractData) => void;
@@ -29,7 +29,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
   onSupportedActionSelect,
 }) => {
   const { chainId } = useWeb3React();
-  const { contracts } = useRichContractData(chainId);
+  const { contracts } = useRichContractRegistry(chainId);
   const { guildId: guildAddress } = useTypedParams();
   const { isRepGuild } = useGuildImplementationTypeConfig(guildAddress);
   return (

@@ -15,8 +15,8 @@ jest.mock('@web3-react/core', () => ({
   }),
 }));
 
-jest.mock('./useRichContractData', () => ({
-  useRichContractData: () => ({
+jest.mock('./useRichContractRegistry', () => ({
+  useRichContractRegistry: () => ({
     contracts: [],
   }),
 }));

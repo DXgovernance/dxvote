@@ -1,4 +1,4 @@
-import { RichContractData } from 'hooks/Guilds/contracts/useRichContractData';
+import { RichContractData } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import {
   ActionsButton,
   ButtonDetail,

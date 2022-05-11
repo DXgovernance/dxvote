@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { RichContractFunctionParam } from 'hooks/Guilds/contracts/useRichContractData';
+import { RichContractFunctionParam } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import moment, { Moment } from 'moment';
 import { useMemo } from 'react';
 import { RegisterOptions } from 'react-hook-form';

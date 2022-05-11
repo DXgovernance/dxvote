@@ -7,7 +7,7 @@ import {
   FormLabel,
   Wrapper,
 } from './styles';
-import { RichContractFunction } from 'hooks/Guilds/contracts/useRichContractData';
+import { RichContractFunction } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import FormElementRenderer, {
   getDefaultValidationsByFormElement,
 } from './FormElementRenderer';

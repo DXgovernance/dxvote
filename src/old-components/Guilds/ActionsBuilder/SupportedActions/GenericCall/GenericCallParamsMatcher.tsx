@@ -42,12 +42,6 @@ class GenericCallParamsMatcher extends Matcher<{}, MatcherOptions> {
   }
 
   match(string: string): MatchResponse<MatchResult> | null {
-    const params = this.options.params;
-
-    console.log({
-      params,
-    });
-
     const result = string.match(/\$\{([^}]+)\}/);
 
     if (!result) {

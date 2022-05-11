@@ -6,10 +6,10 @@ import useBigNumberToString from 'hooks/Guilds/conversions/useBigNumberToString'
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import DataTag from '../../common/DataTag';
 import { Segment } from '../common/infoLine';
-import useDecodedCallRichContractData from 'hooks/Guilds/contracts/useDecodedCallRichContractData';
+import useRichContractData from 'hooks/Guilds/contracts/useRichContractData';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
-import { RichContractFunctionParam } from 'hooks/Guilds/contracts/useRichContractData';
+import { RichContractFunctionParam } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import GenericCallParamsMatcher from './GenericCallParamsMatcher';
 
 const FunctionDetailsTag = styled(DataTag)`
@@ -32,7 +32,7 @@ const GenericCallInfoLine: React.FC<ActionViewProps> = ({
     approveSpendTokens.amount,
     tokenInfo.decimals
   );
-  const { functionData } = useDecodedCallRichContractData(decodedCall);
+  const { functionData } = useRichContractData(decodedCall);
 
   function getStringForParam(type: string, value: any) {
     if (!type || !value) return null;

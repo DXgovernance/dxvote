@@ -19,7 +19,7 @@ import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import { BigNumber, utils } from 'ethers';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { RichContractData } from 'hooks/Guilds/contracts/useRichContractData';
+import { RichContractData } from 'hooks/Guilds/contracts/useRichContractRegistry';
 
 export const EditorWrapper = styled.div`
   margin: 1.25rem;

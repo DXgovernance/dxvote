@@ -2,7 +2,7 @@ import { useTheme } from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
 import { useMemo } from 'react';
 import { ZERO_HASH } from 'utils';
-import { useRichContractData } from '../contracts/useRichContractData';
+import { useRichContractRegistry } from '../contracts/useRichContractRegistry';
 import { bulkDecodeCallsFromOptions } from '../contracts/useDecodedCall';
 import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import { useProposal } from '../ether-swr/guild/useProposal';
@@ -12,7 +12,7 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
   // Decode calls from existing proposal
   const { data: proposal } = useProposal(guildId, proposalId);
   const { data: metadata } = useProposalMetadata(guildId, proposalId);
-  const { contracts } = useRichContractData();
+  const { contracts } = useRichContractRegistry();
   const { chainId } = useWeb3React();
 
   const theme = useTheme();

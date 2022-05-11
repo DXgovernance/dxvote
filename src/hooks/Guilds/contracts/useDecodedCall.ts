@@ -1,5 +1,8 @@
 import { utils } from 'ethers';
-import { RichContractData, useRichContractData } from './useRichContractData';
+import {
+  RichContractData,
+  useRichContractRegistry,
+} from './useRichContractRegistry';
 import ERC20ABI from '../../../abis/ERC20.json';
 import { useWeb3React } from '@web3-react/core';
 import {
@@ -136,7 +139,7 @@ export const bulkDecodeCallsFromOptions = (
 
 export const useDecodedCall = (call: Call) => {
   const { chainId } = useWeb3React();
-  const { contracts } = useRichContractData();
+  const { contracts } = useRichContractRegistry();
 
   const decodedData = call ? decodeCall(call, contracts, chainId) : null;
   return decodedData || { decodedCall: null, contract: null };
