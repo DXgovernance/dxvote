@@ -1,9 +1,9 @@
 import useEtherSWR from '../useEtherSWR';
 import GuildRegistry from 'contracts/GuildsRegistry.json';
-import useChainConfig from 'hooks/Guilds/useChainConfig';
+import useNetworkConfig from 'hooks/Guilds/useNetworkConfig';
 
 export const useGuildRegistry = (contractAddress?: string) => {
-  const config = useChainConfig();
+  const config = useNetworkConfig();
   const address = contractAddress || config?.contracts?.utils.guildRegistry;
   const { data, error } = useEtherSWR(
     address

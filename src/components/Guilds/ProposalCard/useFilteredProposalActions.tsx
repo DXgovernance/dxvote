@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
 import { DecodedAction } from 'components/Guilds/ActionsBuilder/types';
-
 import { SupportedAction } from 'components/Guilds/ActionsBuilder/types';
-//@ts-ignore
+
 const isApprovalCall = (action: DecodedAction) => {
-  // TODO: improve this with better conditions. At read point decodedAction has no other stuff that I could use.
+  // TODO: improve this with better conditions. At read point decodedAction has no other things to validate than generic call && approval event in contract interface
   const type = action?.decodedCall?.callType;
   return (
     type === SupportedAction.GENERIC_CALL &&
@@ -16,36 +15,36 @@ const isApprovalCall = (action: DecodedAction) => {
 };
 
 /**
+ * Importance:
  * 1. rep minting
  * 2. spending calls
  * 3. transfers.
  * 4. generic calls
  */
+const getActionPoints = (action: DecodedAction): number => {
+  const type = action?.decodedCall?.callType;
+  if (type === SupportedAction.REP_MINT) return 5;
+  if (isApprovalCall(action)) return 4;
+  if (type === SupportedAction.ERC20_TRANSFER) return 3;
+  if (type === SupportedAction.GENERIC_CALL) return 2;
+  return 1;
+};
+
 export interface PointedDecodedAction extends DecodedAction {
   points: number;
 }
-const getActionPoints = (action: DecodedAction): number => {
-  const type = action?.decodedCall?.callType;
-  if (type === SupportedAction.REP_MINT) return 1;
-  if (isApprovalCall(action)) return 2;
-  if (type === SupportedAction.ERC20_TRANSFER) return 3;
-  if (type === SupportedAction.GENERIC_CALL) return 4;
-  return 5;
-};
+/**
+ * @description  Returns a list of proposal actions ordered by importance.
+ * @param guildId Guild id
+ * @param proposalId Proposal id
+ * @param maxActions Maximum number of actions to return
+ **/
 
 const useFilteredProposalActions = (
   guildId: string,
   proposalId: string,
-  maxActions: number
+  maxActions?: number
 ): PointedDecodedAction[] => {
-  // @ts-ignore
-  // const li = (...args) => {
-  //   if (
-  //     proposalId ===
-  //     '0x50683f81a98dca8b4d2d1445c94eb15ed137ea32a9c0f671f7e4580970fe98eb'
-  //   )
-  //     console.log(...args);
-  // };
   const { options } = useProposalCalls(guildId, proposalId);
 
   return useMemo(() => {
@@ -58,31 +57,30 @@ const useFilteredProposalActions = (
       return -1;
     });
 
-    // get list of actions
+    // Get list of actions from ordered options
     const onlyActions = sortedOptionsByWiningVote?.reduce((acc, option) => {
       return [...acc, ...option.decodedActions];
     }, []);
 
+    // Add relevance points to each action;
     const pointedActions = onlyActions?.reduce((acc, action, idx, actions) => {
       const points = action?.points || getActionPoints(action);
       if (isApprovalCall(action) && !!actions[idx + 1]) {
-        // if current action is spending call and nextaction exist we asume that next action is the one that require approval.
-        actions[idx + 1].points = points; // give approval points to next action to order
+        // if current action is spending call and nextaction exist we asume that next action is the one that require current approval.
+        actions[idx + 1].points = points; // give approval points to next action to order next
         actions[idx + 1].approval = {
           amount: action?.decodedCall.args._value,
           token: action?.decodedCall.to,
         };
-        return acc; // skip current actual approval action.
+        return acc; // prevent showing the actual approval action.
       }
       return [...acc, { ...action, points }];
     }, []);
 
     // sort by points
-    const sortedActions = pointedActions?.sort((a, b) => a.points - b.points);
+    const sortedActions = pointedActions?.sort((a, b) => b.points - a.points);
 
-    // li('sortedActions', sortedActions);
-
-    return sortedActions?.slice(0, maxActions);
+    return sortedActions?.slice(0, maxActions || sortedActions.length);
   }, [options, maxActions]);
 };
 

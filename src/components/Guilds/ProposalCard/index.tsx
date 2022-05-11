@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 import { useParams } from 'react-router';
-// import { isDesktop } from 'react-device-detect';
-import {
-  // FiArrowRight,
-  FiCircle,
-} from 'react-icons/fi';
+import { FiCircle } from 'react-icons/fi';
 import { getInfoLineView } from 'components/Guilds/ActionsBuilder/SupportedActions';
 import UndecodableCallInfoLine from 'components/Guilds/ActionsBuilder/UndecodableCalls/UndecodableCallsInfoLine';
 
@@ -49,13 +45,45 @@ const CardFooter = styled(Box)`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
+
+  @media only screen and (max-width: 524px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const ActionsWrapper = styled(Box)`
   display: flex;
-  flex-wrap: wrap;
+  flex: 1;
+  margin-right: 24px;
+  position: relative;
+  overflow-x: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: ${({ theme }) =>
+      `linear-gradient(to right, transparent 89%, ${theme.colors.background} 100%)`};
+  }
   & > div {
     margin: 4px 2px;
+  }
+
+  @media only screen and (max-width: 524px) {
+    flex-wrap: wrap;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    & > div:nth-child(n + 3) {
+      display: none;
+    }
+    &::before {
+      content: none;
+    }
   }
 `;
 
@@ -140,7 +168,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
   const votes = useVoteSummary(guildId, id);
   const { imageUrl, ensName } = useENSAvatar(proposal?.creator, MAINNET_ID);
 
-  const actions = useFilteredProposalActions(guildId, id, 2); //Get only 2 first actions
+  const actions = useFilteredProposalActions(guildId, id);
 
   return (
     <UnstyledLink to={href || '#'}>
@@ -185,7 +213,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ id, href }) => {
         </CardContent>
         <CardFooter>
           <ActionsWrapper>
-            {proposal?.value ? (
+            {proposal?.value && actions ? (
               actions?.map(action => {
                 if (!action) return null;
                 const InfoLine = getInfoLineView(action?.decodedCall?.callType);

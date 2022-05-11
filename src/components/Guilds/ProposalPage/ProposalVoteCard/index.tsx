@@ -238,7 +238,6 @@ const ProposalVoteCard = () => {
         isOpen={modalOpen}
         onDismiss={() => setModalOpen(false)}
         onConfirm={confirmVoteProposal}
-        // selectedAction={selectedAction?.toString()}
         selectedAction={
           proposalMetadata?.voteOptions?.[selectedAction?.toNumber()] ||
           selectedAction?.toString()

@@ -112,10 +112,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
     transition,
     isDragging,
   } = useSortable({ id: decodedAction?.id, disabled: !isEditable });
-  // console.log('call', call);
   const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
-  // console.log('decodedCallFromCall', decodedCallFromCall);
-  // console.log('decodedAction', decodedAction);
 
   const decodedCall = decodedCallFromCall || decodedAction?.decodedCall;
 
