@@ -170,5 +170,16 @@
         }
       }
     ]
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/setupTests.ts"
+    ],
+    "coverageReporters": [
+      "lcov",
+      "text",
+      "text-summary"
+    ]
   }
 }
+

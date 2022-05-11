@@ -4,40 +4,44 @@ exports[`ProposalCard votes 1`] = `
 <div>
    
   <div
-    class="sc-bdfBQB sc-gKseQn sc-iBPTik bmhbKs itGZVN csCgKV"
+    class="sc-dlfnuX sc-fodVek jmIxJI enmJQB"
   >
     <div
-      class="sc-bdfBQB sc-fubCzh bmhbKs FjGpq"
+      class="sc-dlfnuX sc-iqHYmW sc-bqyKOL jmIxJI eOgsPb hdYgXU"
     >
-      20
-      %
-    </div>
-    <div
-      class="sc-pGacB ffdDft"
-    >
-      <svg
-        fill="none"
-        height="1em"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="1em"
-        xmlns="http://www.w3.org/2000/svg"
+      <div
+        class="sc-dlfnuX sc-crrszt jmIxJI xiXTo"
       >
-        <circle
-          cx="12"
-          cy="12"
-          r="10"
-        />
-      </svg>
-    </div>
-    <div
-      class="sc-bdfBQB sc-fubCzh bmhbKs FjGpq"
-    >
-      10
-      %
+        20
+        %
+      </div>
+      <div
+        class="sc-hBEYId bLtNkZ"
+      >
+        <svg
+          fill="none"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+        </svg>
+      </div>
+      <div
+        class="sc-dlfnuX sc-crrszt jmIxJI xiXTo"
+      >
+        10
+        %
+      </div>
     </div>
   </div>
    
@@ -48,7 +52,7 @@ exports[`ProposalCard votes loading 1`] = `
 <div>
    
   <div
-    class="sc-eCstlR"
+    class="sc-bdfBQB"
     style="margin: 0px;"
   >
     <span

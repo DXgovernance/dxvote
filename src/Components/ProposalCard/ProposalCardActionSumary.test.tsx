@@ -1,8 +1,11 @@
 import ProposalCardVotes from './ProposalCardVotes';
 import { render } from '../../utils/tests';
-import '@testing-library/jest-dom';
 
-test.skip('ProposalCard votes', async () => {
+jest.mock('hooks/Guilds/guild/useFilteredProposalActions', () => ({
+  actions: [],
+}));
+
+test('ProposalCard votes', async () => {
   const { container } = render(
     <ProposalCardVotes isLoading={false} votes={[10, 20]} />
   );
@@ -10,7 +13,7 @@ test.skip('ProposalCard votes', async () => {
   expect(container).toMatchSnapshot();
 });
 
-test.skip('ProposalCard votes loading', async () => {
+test('ProposalCard votes loading', async () => {
   const { container } = render(
     <ProposalCardVotes isLoading={true} votes={null} />
   );

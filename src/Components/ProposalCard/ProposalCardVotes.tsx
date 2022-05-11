@@ -35,7 +35,7 @@ const ProposalCardVotes: React.FC<ProposalCardVotesProps> = ({
           .map((vote, i) => {
             if (i < 3 && !(i === votes.length - 1)) {
               return (
-                <Fragment>
+                <Fragment key={i}>
                   <Detail>{vote}%</Detail>
                   <Icon as="div" spaceLeft spaceRight>
                     <FiCircle />
@@ -43,7 +43,7 @@ const ProposalCardVotes: React.FC<ProposalCardVotesProps> = ({
                 </Fragment>
               );
             } else {
-              return <Detail>{vote}%</Detail>;
+              return <Detail key={i}>{vote}%</Detail>;
             }
           })}
       </BorderedIconDetailWrapper>

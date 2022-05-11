@@ -1,11 +1,13 @@
 // import ProposalCard from './ProposalCard';
 // import { render } from '../../utils/tests';
-import '@testing-library/jest-dom';
 // import { ProposalCardProps } from 'Components/ProposalCard/types';
 // import moment from 'moment';
 // import { ProposalState } from 'Components/Types';
 
-// // @ts-ignore
+jest.mock('hooks/Guilds/guild/useFilteredProposalActions', () => ({
+  actions: [],
+}));
+
 // const validProps: ProposalCardProps = {
 //   proposal: {
 //     id: '42',
@@ -27,7 +29,6 @@ import '@testing-library/jest-dom';
 //   statusProps: {
 //     timeDetail: 'Time',
 //     status: ProposalState.Active,
-//     endTime: moment(),
 //   },
 // };
 
@@ -39,20 +40,18 @@ import '@testing-library/jest-dom';
 //   statusProps: {
 //     timeDetail: null,
 //     status: null,
-//     endTime: null,
 //   },
 // };
 
-// test.skip('ProposalCard Renders properly with data', async () => {
-//   const { container } = render(<ProposalCard {...validProps} />);
-
-//   expect(container).toMatchSnapshot();
-// });
-
-// test('ProposalCard loading', async () => {
-//   const { container } = render(<ProposalCard {...invalidProps} />);
-
-//   expect(container).toMatchSnapshot();
-// });
-
-test('ok', () => {});
+describe.skip('ProposalCard', () => {
+  it('is ok for now', () => {});
+  //   it('ProposalCard Renders properly with data', () => {
+  //     const { container } = render(<ProposalCard {...validProps} />);
+  //     expect(container).toMatchSnapshot();
+  //   });
+  //   it('ProposalCard loading', () => {
+  //     const { container } = render(<ProposalCard {...invalidProps} />);
+  //     expect(container).toMatchSnapshot();
+  //   });
+});
+export {};

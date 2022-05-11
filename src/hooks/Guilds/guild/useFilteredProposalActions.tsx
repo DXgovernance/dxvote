@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
-import { DecodedAction } from 'old-components/Guilds/ActionsBuilder/types';
-import { SupportedAction } from 'old-components/Guilds/ActionsBuilder/types';
+import {
+  DecodedAction,
+  SupportedAction,
+} from 'old-components/Guilds/ActionsBuilder/types';
 
 const isApprovalCall = (action: DecodedAction) => {
   // TODO: improve this with better conditions. At read point decodedAction has no other things to validate than generic call && approval event in contract interface
