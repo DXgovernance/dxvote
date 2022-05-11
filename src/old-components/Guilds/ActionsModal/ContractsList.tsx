@@ -46,6 +46,16 @@ const ContractsList: React.FC<ContractsListProps> = ({
             Transfer & Mint
           </ButtonLabel>
         </ActionsButton>
+        <ActionsButton
+          onClick={() => {
+            console.log('click');
+          }}
+        >
+          <ButtonLabel>
+            <StyledIcon src={Vector} />
+            Set Permissions
+          </ButtonLabel>
+        </ActionsButton>
         {isRepGuild ? (
           <ActionsButton
             onClick={() => onSupportedActionSelect(SupportedAction.REP_MINT)}
