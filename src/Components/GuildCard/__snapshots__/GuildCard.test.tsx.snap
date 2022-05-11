@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Guild Card renders properly with a guild address 1`] = `
+<div>
+   
+  <a
+    class="sc-iBPTik cMdTkS"
+    data-testid="guildCard"
+    href="//0xa47BbE8Dd6dB29D45FE5eeD838c4f136884AEAF3"
+  >
+    <div
+      class="sc-bdfBQB sc-eCstlR bmhbKs hvvQMx"
+    >
+      <div
+        class="sc-bdfBQB bmhbKs"
+      >
+        <div
+          class="sc-dlfnuX sc-fubCzh ghjVNo kcknnR"
+        />
+        <div
+          class="sc-bdfBQB sc-pGacB bmhbKs lfrSjv"
+        />
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;
+
+exports[`Guild Card renders properly with a null guild address 1`] = `
+<div>
+   
+  <a
+    class="sc-iBPTik cMdTkS"
+    data-testid="guildCard"
+    href="//null"
+  >
+    <div
+      class="sc-bdfBQB sc-eCstlR bmhbKs hvvQMx"
+    >
+      <div
+        class="sc-bdfBQB bmhbKs"
+      >
+        <div
+          class="sc-dlfnuX sc-fubCzh ghjVNo kcknnR"
+        />
+        <div
+          class="sc-bdfBQB sc-pGacB bmhbKs lfrSjv"
+        />
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;
