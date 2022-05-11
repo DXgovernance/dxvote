@@ -2,7 +2,7 @@ import { Loading } from 'Components/Primitives/Loading';
 import { getInfoLineView } from 'old-components/Guilds/ActionsBuilder/SupportedActions';
 import UndecodableCallInfoLine from 'old-components/Guilds/ActionsBuilder/UndecodableCalls/UndecodableCallsInfoLine';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
-import useFilteredProposalActions from './useFilteredProposalActions';
+import useFilteredProposalActions from 'hooks/Guilds/guild/useFilteredProposalActions';
 import { Proposal } from 'Components/Types';
 import {
   ActionsWrapper,
