@@ -14,7 +14,7 @@ jobs:
       matrix:
         node-version: [16.13.0]
     steps:
-      - name: Get build workflow details
+      - name: Get storybook build workflow details
         uses: potiuk/get-workflow-origin@v1_3
         id: source-run-info
         with:

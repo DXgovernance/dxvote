@@ -2,11 +2,6 @@ name: Storybook Build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-      - develop
-      - v1.1-beta
   pull_request:
     types: [opened, synchronize, reopened]
 
