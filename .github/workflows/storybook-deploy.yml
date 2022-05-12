@@ -44,4 +44,4 @@ jobs:
           body: |
             ✔️ Storybook deployment is ready!
 
-            😎 Browse Storybook: https://${{ steps.web3.outputs.cid }}.ipfs.dweb.link
+            😎 Browse Storybook: https://${{ steps.web3.outputs.cid }}.ipfs.cf-ipfs.com
