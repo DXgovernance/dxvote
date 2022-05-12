@@ -35,6 +35,9 @@ jobs:
         run: yarn
 
       - name: Build dapp
+        run: CI=false yarn build
+
+      - name: Build storybook
         run: CI=false yarn build-storybook
 
       - name: Archive artifacts
