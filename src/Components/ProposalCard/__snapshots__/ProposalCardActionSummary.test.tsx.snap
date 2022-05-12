@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProposalCardActionSummary Should match snapshot without proposal 1`] = `
+<div>
+   
+  <div
+    class="sc-bdfBQB"
+    style="margin: 0px;"
+  >
+    <span
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <span
+        class="react-loading-skeleton"
+        style="width: 200px; --base-color: #333; --highlight-color: #555;"
+      >
+        ‌
+      </span>
+      <br />
+    </span>
+  </div>
+   
+</div>
+`;

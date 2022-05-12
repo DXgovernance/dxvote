@@ -42,7 +42,7 @@ export interface PointedDecodedAction extends DecodedAction {
  * @param maxActions Maximum number of actions to return
  **/
 
-const useFilteredProposalActions = (
+export const useFilteredProposalActions = (
   guildId: string,
   proposalId: string,
   maxActions?: number
@@ -86,4 +86,4 @@ const useFilteredProposalActions = (
   }, [options, maxActions]);
 };
 
-export default useFilteredProposalActions;
+// export default useFilteredProposalActions;

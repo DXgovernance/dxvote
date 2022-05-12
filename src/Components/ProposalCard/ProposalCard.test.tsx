@@ -1,12 +1,18 @@
-import ProposalCard from './ProposalCard';
+import ProposalCard from 'Components/ProposalCard/ProposalCard';
 import { render } from '../../utils/tests';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
 import moment from 'moment';
 import { ProposalState } from 'Components/Types';
 
-jest.mock('hooks/Guilds/guild/useFilteredProposalActions', () => ({
-  actions: [],
-}));
+jest.mock('ipfs', () => jest.fn());
+jest.mock('cids', () => jest.fn());
+jest.mock('axios', () => jest.fn());
+jest.mock('hooks/Guilds/guild/useFilteredProposalActions', () => {
+  return {
+    useFilteredProposalActions: jest.fn(),
+  };
+});
+jest.mock('contexts/index', () => jest.fn());
 
 const validProps: ProposalCardProps = {
   proposal: {
@@ -29,6 +35,7 @@ const validProps: ProposalCardProps = {
   statusProps: {
     timeDetail: 'Time',
     status: ProposalState.Active,
+    endTime: moment('2022-05-09T08:00:00'),
   },
 };
 
@@ -40,9 +47,9 @@ const invalidProps: ProposalCardProps = {
   statusProps: {
     timeDetail: null,
     status: null,
+    endTime: null,
   },
 };
-
 describe('ProposalCard', () => {
   it('ProposalCard Renders properly with data', () => {
     const { container } = render(<ProposalCard {...validProps} />);

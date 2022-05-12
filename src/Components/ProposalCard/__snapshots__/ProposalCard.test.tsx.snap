@@ -1,0 +1,318 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
+<div>
+   
+  <a
+    class="sc-bBXrwG fDAvrC"
+    href="/testUrl"
+  >
+    <div
+      class="sc-dlfnuX sc-iBPTik jmIxJI hyNmzl"
+    >
+      <div
+        class="sc-dlfnuX sc-fubCzh jmIxJI cXVqBt"
+      >
+        <div
+          class="sc-dlfnuX sc-iqHYmW jmIxJI eOgsPb"
+        >
+          <div
+            class="paper"
+            style="border-radius: 50px; display: inline-block; margin: 0px; overflow: hidden; padding: 0px; background-color: rgb(251, 24, 107); height: 24px; width: 24px;"
+          >
+            <svg
+              height="24"
+              width="24"
+              x="0"
+              xmlns="http://www.w3.org/2000/svg"
+              y="0"
+            >
+              <rect
+                fill="#F93301"
+                height="24"
+                rx="0"
+                ry="0"
+                transform="translate(-3.3540020288113044 -0.24569355652725883) rotate(184.4 12 12)"
+                width="24"
+                x="0"
+                y="0"
+              />
+              <rect
+                fill="#F5B800"
+                height="24"
+                rx="0"
+                ry="0"
+                transform="translate(-14.879522566232806 -1.4785377082910314) rotate(308.7 12 12)"
+                width="24"
+                x="0"
+                y="0"
+              />
+              <rect
+                fill="#03555E"
+                height="24"
+                rx="0"
+                ry="0"
+                transform="translate(21.86674072242258 -1.2091297142613349) rotate(454.0 12 12)"
+                width="24"
+                x="0"
+                y="0"
+              />
+              <rect
+                fill="#C81456"
+                height="24"
+                rx="0"
+                ry="0"
+                transform="translate(-22.985221694835005 -17.58014285250981) rotate(346.4 12 12)"
+                width="24"
+                x="0"
+                y="0"
+              />
+            </svg>
+          </div>
+          <div
+            class="sc-dlfnuX sc-crrszt jmIxJI xiXTo"
+          >
+            rossdev.eth
+          </div>
+        </div>
+        <div
+          class="sc-hHfuMS cMWNCN"
+        >
+          <div
+            class="sc-dmlqKv hjvFsS"
+          >
+            <div
+              class="sc-dlfnuX sc-fKFxtB jmIxJI eZHbZU"
+            >
+              <span
+                title="May 9th, 2022 - 8:00 am"
+              >
+                Time
+              </span>
+            </div>
+            <div
+              class="sc-dlfnuX sc-kfzBvY jmIxJI jgJnFX"
+            >
+               
+              Active
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-dlfnuX sc-pGacB jmIxJI jwWloK"
+      >
+        <h2
+          class="sc-gKseQn sc-kEjbQP fMfHRo eUCyLV"
+          size="2"
+        >
+          <strong>
+            test
+          </strong>
+        </h2>
+      </div>
+      <div
+        class="sc-dlfnuX sc-jrAFXE jmIxJI gIuaJs"
+      >
+        <div
+          class="sc-dlfnuX sc-fodVek jmIxJI enmJQB"
+        >
+          <div
+            class="sc-dlfnuX sc-iqHYmW sc-bqyKOL jmIxJI eOgsPb hdYgXU"
+          >
+            <div
+              class="sc-dlfnuX sc-crrszt jmIxJI xiXTo"
+            >
+              20
+              %
+            </div>
+            <div
+              class="sc-hBEYId bLtNkZ"
+            >
+              <svg
+                fill="none"
+                height="1em"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                />
+              </svg>
+            </div>
+            <div
+              class="sc-dlfnuX sc-crrszt jmIxJI xiXTo"
+            >
+              10
+              %
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;
+
+exports[`ProposalCard ProposalCard loading 1`] = `
+<div>
+   
+  <a
+    class="sc-bBXrwG fDAvrC"
+    href="/"
+  >
+    <div
+      class="sc-dlfnuX sc-iBPTik jmIxJI hyNmzl"
+    >
+      <div
+        class="sc-dlfnuX sc-fubCzh jmIxJI cXVqBt"
+      >
+        <div
+          class="sc-dlfnuX sc-iqHYmW jmIxJI eOgsPb"
+        >
+          <div
+            class="sc-bdfBQB"
+            style="margin: 0px;"
+          >
+            <span
+              aria-busy="true"
+              aria-live="polite"
+            >
+              <span
+                class="react-loading-skeleton"
+                style="width: 24px; height: 24px; border-radius: 50%; --base-color: #333; --highlight-color: #555;"
+              >
+                ‌
+              </span>
+              <br />
+            </span>
+          </div>
+          <div
+            class="sc-dlfnuX sc-crrszt jmIxJI xiXTo"
+          >
+            <div
+              class="sc-bdfBQB"
+              style="margin: 0px;"
+            >
+              <span
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <span
+                  class="react-loading-skeleton"
+                  style="width: 100px; height: 16px; border-radius: 50px; --base-color: #333; --highlight-color: #555;"
+                >
+                  ‌
+                </span>
+                <br />
+              </span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-hHfuMS cMWNCN"
+        >
+          <div
+            class="sc-dmlqKv hjvFsS"
+          >
+            <div
+              class="sc-dlfnuX sc-fKFxtB jmIxJI eZHbZU"
+            >
+              <div
+                class="sc-bdfBQB"
+              >
+                <span
+                  aria-busy="true"
+                  aria-live="polite"
+                >
+                  <span
+                    class="react-loading-skeleton"
+                    style="width: 50px; --base-color: #333; --highlight-color: #555;"
+                  >
+                    ‌
+                  </span>
+                  <br />
+                </span>
+              </div>
+            </div>
+            <div
+              class="sc-bdfBQB"
+            >
+              <span
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <span
+                  class="react-loading-skeleton"
+                  style="width: 50px; --base-color: #333; --highlight-color: #555;"
+                >
+                  ‌
+                </span>
+                <br />
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-dlfnuX sc-pGacB jmIxJI jwWloK"
+      >
+        <h2
+          class="sc-gKseQn sc-kEjbQP fMfHRo eUCyLV"
+          size="2"
+        >
+          <strong>
+            <div
+              class="sc-bdfBQB"
+              style="margin: 0px;"
+            >
+              <span
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <span
+                  class="react-loading-skeleton"
+                  style="width: 100px; height: 16px; border-radius: 50px; --base-color: #333; --highlight-color: #555;"
+                >
+                  ‌
+                </span>
+                <br />
+              </span>
+            </div>
+          </strong>
+        </h2>
+      </div>
+      <div
+        class="sc-dlfnuX sc-jrAFXE jmIxJI gIuaJs"
+      >
+        <div
+          class="sc-bdfBQB"
+          style="margin: 0px;"
+        >
+          <span
+            aria-busy="true"
+            aria-live="polite"
+          >
+            <span
+              class="react-loading-skeleton"
+              style="width: 200px; --base-color: #333; --highlight-color: #555;"
+            >
+              ‌
+            </span>
+            <br />
+          </span>
+        </div>
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;
