@@ -1,4 +1,4 @@
-// import ProposalCardActionSummary from 'Components/ProposalCard/ProposalCardActionSummary';
+import ProposalCardActionSummary from 'Components/ProposalCard/ProposalCardActionSummary';
 import ProposalCardVotes from 'Components/ProposalCard/ProposalCardVotes';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
 import Avatar from 'old-components/Guilds/Avatar';
@@ -64,7 +64,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
           </CardTitle>
         </CardContent>
         <CardFooter>
-          {/* <ProposalCardActionSummary proposal={proposal} /> */}
+          <ProposalCardActionSummary proposal={proposal} />
           <ProposalCardVotes isLoading={!proposal} votes={votes} />
         </CardFooter>
       </CardWrapper>
