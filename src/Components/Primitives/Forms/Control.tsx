@@ -17,4 +17,3 @@ export const ControlRow = styled(Box)`
   align-items: stretch;
   height: 100%;
 `;
-

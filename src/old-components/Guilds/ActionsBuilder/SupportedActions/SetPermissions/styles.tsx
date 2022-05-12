@@ -12,4 +12,3 @@ export const OneLineButton = styled(Button)`
   margin-left: 1rem;
   white-space: nowrap;
 `;
-
