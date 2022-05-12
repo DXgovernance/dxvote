@@ -145,6 +145,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
           setTransferAddress={setTransferAddress}
         />
       )}
+      {/* //! There's a bug while showing the token picker: it doesn't dissappear when clicked outside  */}
       <TokenPicker
         walletAddress={parsedData?.source || ''}
         isOpen={isTokenPickerOpen}
