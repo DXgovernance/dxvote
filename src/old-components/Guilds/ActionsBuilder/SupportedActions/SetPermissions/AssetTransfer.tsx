@@ -22,7 +22,6 @@ const AssetTransfer = ({
 }) => {
   return (
     <div>
-      Asset transfer permissions
       <Control>
         <ControlLabel>Recipient</ControlLabel>
         <ControlRow>

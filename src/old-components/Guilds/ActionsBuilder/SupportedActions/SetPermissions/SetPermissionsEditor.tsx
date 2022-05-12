@@ -9,6 +9,30 @@ import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
 import AssetTransfer from './AssetTransfer';
 import FunctionCall from './FunctionCall';
+import styled, { css } from 'styled-components';
+import { Button } from 'old-components/Guilds/common/Button';
+import { Box } from 'Components/Primitives/Layout';
+
+const DetailWrapper = styled(Box)`
+  /* border-top: 1px solid ${({ theme }) => theme.colors.border.initial}; */
+  margin: 1.25rem 0rem;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.card.grey}; ;
+`;
+
+const TabButton = styled(Button)`
+  background-color: transparent;
+  color: ${({ theme }) => theme.colors.text};
+  margin-bottom: -1px;
+  border-radius: 10px 10px 0px 0px;
+  color: ${({ theme }) => theme.colors.proposalText.grey};
+
+  ${({ active }) =>
+    active &&
+    css`
+      border: 2px solid ${({ theme }) => theme.colors.card.grey};
+      color: ${({ theme }) => theme.colors.text};
+    `}
+`;
 
 interface PermissionState {
   source: string;
@@ -22,6 +46,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
   decodedCall,
   updateCall,
 }) => {
+  const [activeTab, setActiveTab] = useState(0);
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
 
   const { chainId } = useWeb3React();
@@ -92,23 +117,34 @@ const Permissions: React.FC<ActionEditorProps> = ({
 
   return (
     <div>
-      Toggle type
-      <AssetTransfer
-        validations={validations}
-        destinationAvatarUrl={destinationAvatarUrl}
-        parsedData={parsedData}
-        setTransferAddress={setTransferAddress}
-        tokenInfo={tokenInfo}
-        setAmount={setAmount}
-        setIsTokenPickerOpen={setIsTokenPickerOpen}
-        token={token}
-      />
-      <FunctionCall
-        validations={validations}
-        destinationAvatarUrl={destinationAvatarUrl}
-        parsedData={parsedData}
-        setTransferAddress={setTransferAddress}
-      />
+      <DetailWrapper>
+        <TabButton active={activeTab === 0} onClick={() => setActiveTab(0)}>
+          Assets transfer
+        </TabButton>
+        <TabButton active={activeTab === 1} onClick={() => setActiveTab(1)}>
+          Functions call
+        </TabButton>
+      </DetailWrapper>
+      {activeTab === 0 && (
+        <AssetTransfer
+          validations={validations}
+          destinationAvatarUrl={destinationAvatarUrl}
+          parsedData={parsedData}
+          setTransferAddress={setTransferAddress}
+          tokenInfo={tokenInfo}
+          setAmount={setAmount}
+          setIsTokenPickerOpen={setIsTokenPickerOpen}
+          token={token}
+        />
+      )}
+      {activeTab === 1 && (
+        <FunctionCall
+          validations={validations}
+          destinationAvatarUrl={destinationAvatarUrl}
+          parsedData={parsedData}
+          setTransferAddress={setTransferAddress}
+        />
+      )}
       <TokenPicker
         walletAddress={parsedData?.source || ''}
         isOpen={isTokenPickerOpen}

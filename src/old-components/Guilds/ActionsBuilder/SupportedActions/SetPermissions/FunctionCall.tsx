@@ -16,7 +16,6 @@ function FunctionCall({
 }) {
   return (
     <div>
-      Function call permissions
       <Control>
         <ControlLabel>Recipient</ControlLabel>
         <ControlRow>
