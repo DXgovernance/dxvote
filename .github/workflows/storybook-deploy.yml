@@ -21,17 +21,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           sourceRunId: ${{ github.event.workflow_run.id }}
 
-      - name: Start Deployment
-        uses: bobheadxi/deployments@v0.6.0
-        id: deployment
-        if: steps.source-run-info.outputs.sourceHeadRepo == 'DXgovernance/dxvote'
-        with:
-          step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: ${{ steps.source-run-info.outputs.sourceHeadBranch }}
-          no_override: false
-          ref: ${{ steps.source-run-info.outputs.sourceHeadBranch }}
-
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
         with:
