@@ -21,10 +21,10 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
     if (!guildId || !proposalId || !proposal) return null;
 
     const {
-      totalActions: totalOptions,
       to: toArray,
       data: dataArray,
       value: valuesArray,
+      totalVotes,
     } = proposal;
 
     const calls: Call[] = toArray.map((to, index) => ({
@@ -34,7 +34,7 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
       value: valuesArray[index],
     }));
 
-    const totalOptionsNum = totalOptions.toNumber();
+    const totalOptionsNum = totalVotes.length - 1;
 
     const callsPerOption = toArray.length / totalOptionsNum;
     const splitCalls: Call[][] = [];
