@@ -35,7 +35,7 @@ jobs:
         run: yarn
 
       - name: Build dapp
-        run: CI=false yarn build
+        run: CI=false yarn build-storybook
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
