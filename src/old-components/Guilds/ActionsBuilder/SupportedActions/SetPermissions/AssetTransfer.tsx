@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Input from 'old-components/Guilds/common/Form/Input';
 import Avatar from 'old-components/Guilds/Avatar';
 import { FiChevronDown, FiX } from 'react-icons/fi';
@@ -8,7 +9,34 @@ import {
   ControlLabel,
   ControlRow,
 } from 'Components/Primitives/Forms/Control';
-import { ClickableIcon, OneLineButton } from './styles';
+import { ClickableIcon } from './styles';
+import Toggle from 'old-components/Guilds/common/Form/Toggle';
+import { MAX_UINT } from 'utils';
+import styled, { css } from 'styled-components';
+
+const StyledTokenAmount = styled(TokenAmountInput)`
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      color: ${({ theme }) => theme.colors.proposalText.grey} !important;
+    `}
+`;
+
+const ToggleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+`;
+
+const ToggleLabel = styled.div`
+  white-space: nowrap;
+
+  ${({ selected }) =>
+    !selected &&
+    css`
+      color: ${({ theme }) => theme.colors.proposalText.grey} !important;
+    `}
+`;
 
 const AssetTransfer = ({
   validations,
@@ -20,6 +48,22 @@ const AssetTransfer = ({
   setIsTokenPickerOpen,
   token,
 }) => {
+  const [customAmountValue, setCustomAmountValue] = useState(
+    parsedData?.amount
+  );
+  // This function was implemented to avoid the amount input to
+  // change to MAX_UINT toggling to "Max value"
+  const handleTokenAmountInputChange = e => {
+    setAmount(e);
+    setCustomAmountValue(e);
+  };
+
+  const [maxValueToggled, setMaxValueToggled] = useState(false);
+  const handleToggleChange = () => {
+    if (!maxValueToggled) setAmount(MAX_UINT);
+    setMaxValueToggled(!maxValueToggled);
+  };
+
   return (
     <div>
       <Control>
@@ -53,12 +97,17 @@ const AssetTransfer = ({
       <Control>
         <ControlLabel>Amount</ControlLabel>
         <ControlRow>
-          <TokenAmountInput
+          <StyledTokenAmount
             decimals={tokenInfo?.decimals}
-            value={parsedData?.amount}
-            onChange={setAmount}
+            value={customAmountValue}
+            onChange={handleTokenAmountInputChange}
+            disabled={maxValueToggled}
           />
-          <OneLineButton>Max Value</OneLineButton>
+          <ToggleWrapper>
+            <ToggleLabel selected={!maxValueToggled}>Custom</ToggleLabel>
+            <Toggle value={maxValueToggled} onChange={handleToggleChange} />
+            <ToggleLabel selected={maxValueToggled}>Max value</ToggleLabel>
+          </ToggleWrapper>
         </ControlRow>
       </Control>
       <Control>
