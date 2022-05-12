@@ -51,6 +51,10 @@ export default class IPFSService {
   async getContentFromIPFS(hash: string) {
     const response = await Promise.any([
       axios.request({
+        url: 'https://dxgov.mypinata.cloud/' + hash,
+        method: 'GET',
+      }),
+      axios.request({
         url: 'https://ipfs.io/ipfs/' + hash,
         method: 'GET',
       }),
