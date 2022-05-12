@@ -85,5 +85,3 @@ export const useFilteredProposalActions = (
     return sortedActions?.slice(0, maxActions || sortedActions.length);
   }, [options, maxActions]);
 };
-
-// export default useFilteredProposalActions;
