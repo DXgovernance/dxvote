@@ -6,5 +6,5 @@ export interface ProposalCardProps {
   votes?: number[];
   ensAvatar?: ENSAvatar;
   href?: string;
-  statusProps: ProposalStatusProps;
+  statusProps?: ProposalStatusProps;
 }
