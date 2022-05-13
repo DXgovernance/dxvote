@@ -1,7 +1,10 @@
-import ERC20ABI from '../../../abis/ERC20.json';
-import { RegistryContract, useContractRegistry } from './useContractRegistry';
-import { useWeb3React } from '@web3-react/core';
 import { utils } from 'ethers';
+import {
+  RichContractData,
+  useRichContractRegistry,
+} from './useRichContractRegistry';
+import ERC20ABI from '../../../abis/ERC20.json';
+import { useWeb3React } from '@web3-react/core';
 import {
   Call,
   DecodedCall,
@@ -57,11 +60,11 @@ const decodeCallUsingEthersInterface = (
   };
 };
 
-const getContractInterfaceFromRegistryContract = (
-  registryContract: RegistryContract
+const getContractInterfaceFromRichContractData = (
+  richContractData: RichContractData
 ) => {
   return {
-    contractInterface: registryContract.contractInterface,
+    contractInterface: richContractData.contractInterface,
     callType: SupportedAction.GENERIC_CALL,
   };
 };
@@ -83,22 +86,21 @@ const getContractFromKnownSighashes = (data: string) => {
 
 const decodeCall = (
   call: Call,
-  contracts: RegistryContract[],
+  contracts: RichContractData[],
   chainId: number
 ) => {
   let decodedCall: DecodedCall = null;
 
   // Detect using the Guild calls registry.
-  const matchedRegistryContract = contracts?.find(
+  const matchedRichContractData = contracts?.find(
     contract => contract.networks[chainId] === call.to
   );
-  const matchedContractData = matchedRegistryContract
-    ? getContractInterfaceFromRegistryContract(matchedRegistryContract)
+  const matchedContract = matchedRichContractData
+    ? getContractInterfaceFromRichContractData(matchedRichContractData)
     : getContractFromKnownSighashes(call.data);
+  if (!matchedContract) return null;
 
-  if (!matchedContractData) return null;
-
-  const { callType, contractInterface } = matchedContractData;
+  const { callType, contractInterface } = matchedContract;
   if (!contractInterface) return null;
 
   decodedCall = decodeCallUsingEthersInterface(
@@ -106,6 +108,10 @@ const decodeCall = (
     contractInterface,
     callType
   );
+
+  if (decodedCall && matchedRichContractData) {
+    decodedCall.richData = matchedRichContractData;
+  }
 
   return {
     id: `action-${Math.random()}`,
@@ -116,7 +122,7 @@ const decodeCall = (
 
 export const bulkDecodeCallsFromOptions = (
   options: Option[],
-  contracts: RegistryContract[],
+  contracts: RichContractData[],
   chainId: number
 ) => {
   return options.map(option => {
@@ -133,7 +139,7 @@ export const bulkDecodeCallsFromOptions = (
 
 export const useDecodedCall = (call: Call) => {
   const { chainId } = useWeb3React();
-  const { contracts } = useContractRegistry();
+  const { contracts } = useRichContractRegistry();
 
   const decodedData = call ? decodeCall(call, contracts, chainId) : null;
   return decodedData || { decodedCall: null, contract: null };

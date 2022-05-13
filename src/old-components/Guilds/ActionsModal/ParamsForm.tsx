@@ -7,7 +7,7 @@ import {
   FormLabel,
   Wrapper,
 } from './styles';
-import { RegistryContractFunction } from 'hooks/Guilds/contracts/useContractRegistry';
+import { RichContractFunction } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import FormElementRenderer, {
   getDefaultValidationsByFormElement,
 } from './FormElementRenderer';
@@ -20,7 +20,7 @@ const SubmitButton = styled(ActionsButton).attrs(() => ({
 `;
 
 interface ParamsFormProps {
-  fn: RegistryContractFunction;
+  fn: RichContractFunction;
   onSubmit: (args: Record<string, any>) => void;
 }
 

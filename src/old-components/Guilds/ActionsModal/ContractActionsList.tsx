@@ -1,4 +1,4 @@
-import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
+import { RichContractData } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import {
   ActionsButton,
   ButtonDetail,
@@ -8,7 +8,7 @@ import {
   Wrapper,
 } from './styles';
 interface ContractActionsListProps {
-  contract: RegistryContract;
+  contract: RichContractData;
   onSelect: (functionName: string) => void;
 }
 

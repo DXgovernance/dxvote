@@ -17,9 +17,9 @@ import ParamsForm from './ParamsForm';
 import { useWeb3React } from '@web3-react/core';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import { BigNumber, utils } from 'ethers';
-import { RegistryContract } from 'hooks/Guilds/contracts/useContractRegistry';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { RichContractData } from 'hooks/Guilds/contracts/useRichContractRegistry';
 
 export const EditorWrapper = styled.div`
   margin: 1.25rem;
@@ -50,7 +50,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
 
   // Generic calls
   const [selectedContract, setSelectedContract] =
-    useState<RegistryContract>(null);
+    useState<RichContractData>(null);
   const [selectedFunction, setSelectedFunction] = useState<string>(null);
 
   const [data, setData] = useState<DecodedCall>(null);
