@@ -11,8 +11,8 @@ import {
 } from 'Components/Primitives/Forms/Control';
 import { ClickableIcon } from './styles';
 import Toggle from 'old-components/Guilds/common/Form/Toggle';
-import { MAX_UINT } from 'utils';
 import styled, { css } from 'styled-components';
+import TokenPicker from 'old-components/Guilds/TokenPicker';
 
 const StyledTokenAmount = styled(TokenAmountInput)`
   ${({ disabled }) =>
@@ -39,29 +39,25 @@ const ToggleLabel = styled.div`
 `;
 
 const AssetTransfer = ({
+  updateCall,
+  decodedCall,
   validations,
   destinationAvatarUrl,
   parsedData,
   setTransferAddress,
   tokenInfo,
-  setAmount,
-  setIsTokenPickerOpen,
   token,
+  customAmountValue,
+  handleTokenAmountInputChange,
+  maxValueToggled,
+  handleToggleChange,
 }) => {
-  const [customAmountValue, setCustomAmountValue] = useState(
-    parsedData?.amount
-  );
-  // This function was implemented to avoid the amount input to
-  // change to MAX_UINT toggling to "Max value"
-  const handleTokenAmountInputChange = e => {
-    setAmount(e);
-    setCustomAmountValue(e);
-  };
-
-  const [maxValueToggled, setMaxValueToggled] = useState(false);
-  const handleToggleChange = () => {
-    if (!maxValueToggled) setAmount(MAX_UINT);
-    setMaxValueToggled(!maxValueToggled);
+  const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
+  const setToken = (tokenAddress: string) => {
+    updateCall({
+      ...decodedCall,
+      to: tokenAddress,
+    });
   };
 
   return (
@@ -131,6 +127,16 @@ const AssetTransfer = ({
             readOnly
           />
         </ControlRow>
+        {/* //! There's a bug while showing the token picker: it doesn't dissappear when clicked outside  */}
+        <TokenPicker
+          walletAddress={parsedData?.source || ''}
+          isOpen={isTokenPickerOpen}
+          onClose={() => setIsTokenPickerOpen(false)}
+          onSelect={tokenAddress => {
+            setToken(tokenAddress);
+            setIsTokenPickerOpen(false);
+          }}
+        />
       </Control>
     </div>
   );

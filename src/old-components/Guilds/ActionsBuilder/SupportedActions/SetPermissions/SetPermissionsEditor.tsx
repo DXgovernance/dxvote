@@ -6,15 +6,14 @@ import { ActionEditorProps } from '..';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
-import TokenPicker from 'old-components/Guilds/TokenPicker';
 import AssetTransfer from './AssetTransfer';
 import FunctionCall from './FunctionCall';
 import styled, { css } from 'styled-components';
 import { Button } from 'old-components/Guilds/common/Button';
 import { Box } from 'Components/Primitives/Layout';
+import { MAX_UINT } from 'utils';
 
 const DetailWrapper = styled(Box)`
-  /* border-top: 1px solid ${({ theme }) => theme.colors.border.initial}; */
   margin: 1.25rem 0rem;
   border-bottom: 2px solid ${({ theme }) => theme.colors.card.grey}; ;
 `;
@@ -47,7 +46,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
   updateCall,
 }) => {
   const [activeTab, setActiveTab] = useState(0);
-  const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
 
   const { chainId } = useWeb3React();
 
@@ -98,13 +96,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
     });
   };
 
-  const setToken = (tokenAddress: string) => {
-    updateCall({
-      ...decodedCall,
-      to: tokenAddress,
-    });
-  };
-
   const setAmount = (value: BigNumber) => {
     updateCall({
       ...decodedCall,
@@ -113,6 +104,23 @@ const Permissions: React.FC<ActionEditorProps> = ({
         _value: value,
       },
     });
+  };
+
+  const [customAmountValue, setCustomAmountValue] = useState(
+    parsedData?.amount
+  );
+  // This function was implemented to avoid the amount input to
+  // change to MAX_UINT toggling to "Max value"
+  const handleTokenAmountInputChange = e => {
+    setAmount(e);
+    setCustomAmountValue(e);
+  };
+
+  const [maxValueToggled, setMaxValueToggled] = useState(false);
+  const bigNumberMaxUINT = BigNumber.from(MAX_UINT);
+  const handleToggleChange = () => {
+    if (!maxValueToggled) setAmount(bigNumberMaxUINT);
+    setMaxValueToggled(!maxValueToggled);
   };
 
   return (
@@ -127,14 +135,18 @@ const Permissions: React.FC<ActionEditorProps> = ({
       </DetailWrapper>
       {activeTab === 0 && (
         <AssetTransfer
+          updateCall={updateCall}
+          decodedCall={decodedCall}
           validations={validations}
           destinationAvatarUrl={destinationAvatarUrl}
           parsedData={parsedData}
           setTransferAddress={setTransferAddress}
           tokenInfo={tokenInfo}
-          setAmount={setAmount}
-          setIsTokenPickerOpen={setIsTokenPickerOpen}
           token={token}
+          customAmountValue={customAmountValue}
+          handleTokenAmountInputChange={handleTokenAmountInputChange}
+          maxValueToggled={maxValueToggled}
+          handleToggleChange={handleToggleChange}
         />
       )}
       {activeTab === 1 && (
@@ -145,16 +157,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
           setTransferAddress={setTransferAddress}
         />
       )}
-      {/* //! There's a bug while showing the token picker: it doesn't dissappear when clicked outside  */}
-      <TokenPicker
-        walletAddress={parsedData?.source || ''}
-        isOpen={isTokenPickerOpen}
-        onClose={() => setIsTokenPickerOpen(false)}
-        onSelect={tokenAddress => {
-          setToken(tokenAddress);
-          setIsTokenPickerOpen(false);
-        }}
-      />
     </div>
   );
 };
