@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { Box } from 'Components/Primitives/Layout';
 import { Heading } from 'old-components/Guilds/common/Typography';
 
+// TODO: base these components on a generic Card component
 export const CardWrapper = styled(Box)`
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};

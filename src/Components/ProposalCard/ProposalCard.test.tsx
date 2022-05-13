@@ -1,8 +1,11 @@
 import ProposalCard from 'Components/ProposalCard/ProposalCard';
 import { render } from '../../utils/tests';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
-import moment from 'moment';
-import { ProposalState } from 'Components/Types';
+import {
+  ensAvatarMock,
+  proposalMock,
+  proposalStatusPropsMock,
+} from '../Fixtures';
 
 jest.mock('ipfs', () => jest.fn());
 jest.mock('cids', () => jest.fn());
@@ -15,28 +18,11 @@ jest.mock('hooks/Guilds/guild/useProposalSummaryActions', () => {
 jest.mock('contexts/index', () => jest.fn());
 
 const validProps: ProposalCardProps = {
-  proposal: {
-    id: '42',
-    creator: '0x0b17cf48420400e1d71f8231d4a8e43b3566bb5b',
-    startTime: moment(),
-    endTime: moment(),
-    to: [''],
-    data: [''],
-    value: [],
-    totalActions: null,
-    title: 'test',
-    contentHash: '0x0',
-    state: ProposalState.Active,
-    totalVotes: [],
-  },
+  proposal: proposalMock,
   votes: [10, 20],
-  ensAvatar: { ensName: 'rossdev.eth', imageUrl: '' },
+  ensAvatar: ensAvatarMock,
   href: 'testUrl',
-  statusProps: {
-    timeDetail: 'Time',
-    status: ProposalState.Active,
-    endTime: moment('2022-05-09T08:00:00'),
-  },
+  statusProps: proposalStatusPropsMock,
   summaryActions: [],
 };
 
