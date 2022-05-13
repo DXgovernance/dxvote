@@ -1,5 +1,7 @@
 import { BigNumber, utils } from 'ethers';
+import { ANY_ADDRESS, ANY_FUNC_SIGNATURE } from 'utils';
 import { DeepPartial } from 'utils/types';
+
 import {
   DecodedAction,
   DecodedCall,
@@ -8,6 +10,7 @@ import {
 } from '../types';
 import ERC20ABI from '../../../../abis/ERC20.json';
 import ERC20SnapshotRep from '../../../../contracts/ERC20SnapshotRep.json';
+import ERC20Guild from '../../../../contracts/ERC20Guild.json';
 import ERC20TransferEditor from './ERC20Transfer/ERC20TransferEditor';
 import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
 import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
@@ -71,6 +74,7 @@ export const supportedActions: Record<
 };
 const ERC20Contract = new utils.Interface(ERC20ABI);
 const ERC20SnapshotRepContract = new utils.Interface(ERC20SnapshotRep.abi);
+const ERC20GuildContract = new utils.Interface(ERC20Guild.abi);
 export const defaultValues: Record<
   SupportedAction,
   DeepPartial<DecodedAction>
@@ -103,15 +107,17 @@ export const defaultValues: Record<
   [SupportedAction.GENERIC_CALL]: {},
 
   [SupportedAction.SET_PERMISSIONS]: {
-    // ! Copied from ERC20_TRANSFER => modify!
-    contract: ERC20Contract,
+    contract: ERC20GuildContract,
     decodedCall: {
-      function: ERC20Contract.getFunction('transfer'),
+      function: ERC20GuildContract.getFunction('setPermission'),
       to: '',
       value: BigNumber.from(0),
       args: {
-        _to: '',
-        _value: BigNumber.from(0),
+        asset: '',
+        to: ANY_ADDRESS,
+        functionSignature: ANY_FUNC_SIGNATURE,
+        valueAllowed: BigNumber.from(0),
+        allowance: true,
       },
     },
   },

@@ -13,6 +13,8 @@ import { ClickableIcon } from './styles';
 import Toggle from 'old-components/Guilds/common/Form/Toggle';
 import styled, { css } from 'styled-components';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
+import { ParsedDataInterface, ValidationsInterface } from './types';
+import { BigNumber } from 'ethers';
 
 const StyledTokenAmount = styled(TokenAmountInput)`
   ${({ disabled }) =>
@@ -30,6 +32,7 @@ const ToggleWrapper = styled.div`
 
 const ToggleLabel = styled.div`
   white-space: nowrap;
+  margin-left: 1rem;
 
   ${({ selected }) =>
     !selected &&
@@ -38,55 +41,97 @@ const ToggleLabel = styled.div`
     `}
 `;
 
-const AssetTransfer = ({
-  updateCall,
-  decodedCall,
+interface AssetTransferProps {
+  validations: ValidationsInterface;
+  destinationAvatarUrl: any;
+  parsedData: ParsedDataInterface;
+  tokenInfo: any;
+  token: any;
+  customAmountValue: BigNumber;
+  handleTokenAmountInputChange: (e: string) => void;
+  maxValueToggled: boolean;
+  handleToggleChange: () => void;
+  setAsset: (asset: string) => void;
+  customToAddress: string;
+  handleCustomAddress: (value: string) => void;
+}
+
+const AssetTransfer: React.FC<AssetTransferProps> = ({
   validations,
   destinationAvatarUrl,
   parsedData,
-  setTransferAddress,
   tokenInfo,
   token,
   customAmountValue,
   handleTokenAmountInputChange,
   maxValueToggled,
   handleToggleChange,
+  setAsset,
+  customToAddress,
+  handleCustomAddress,
 }) => {
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
-  const setToken = (tokenAddress: string) => {
-    updateCall({
-      ...decodedCall,
-      to: tokenAddress,
-    });
-  };
 
   return (
     <div>
       <Control>
-        <ControlLabel>Recipient</ControlLabel>
-        <ControlRow>
+        <ControlLabel>Asset</ControlLabel>
+        <ControlRow onClick={() => setIsTokenPickerOpen(true)}>
           <Input
-            value={''}
+            value={tokenInfo?.symbol || ''}
+            placeholder="Token"
             icon={
               <div>
-                {validations.destination && (
+                {parsedData?.asset && (
+                  <Avatar
+                    src={resolveUri(token?.logoURI)}
+                    defaultSeed={parsedData?.asset}
+                    size={18}
+                  />
+                )}
+              </div>
+            }
+            iconRight={<FiChevronDown size={24} />}
+            readOnly
+          />
+        </ControlRow>
+        {/* //! There's a bug while showing the token picker: it doesn't dissappear when clicked outside  */}
+        <TokenPicker
+          walletAddress={parsedData?.to || ''} //? see token picker
+          isOpen={isTokenPickerOpen}
+          onClose={() => setIsTokenPickerOpen(false)}
+          onSelect={asset => {
+            setAsset(asset);
+            setIsTokenPickerOpen(false);
+          }}
+        />
+      </Control>
+
+      <Control>
+        <ControlLabel>To address</ControlLabel>
+        <ControlRow>
+          <Input
+            value={customToAddress}
+            icon={
+              <div>
+                {validations.to && (
                   <Avatar
                     src={destinationAvatarUrl}
-                    defaultSeed={parsedData.destination}
+                    defaultSeed={parsedData.to}
                     size={24}
                   />
                 )}
               </div>
             }
             iconRight={
-              parsedData?.destination ? (
-                <ClickableIcon onClick={() => setTransferAddress('')}>
+              parsedData?.to ? (
+                <ClickableIcon onClick={() => handleCustomAddress('')}>
                   <FiX size={18} />
                 </ClickableIcon>
               ) : null
             }
             placeholder="Ethereum address"
-            onChange={e => setTransferAddress(e.target.value)}
+            onChange={e => handleCustomAddress(e.target.value)}
           />
         </ControlRow>
       </Control>
@@ -100,43 +145,10 @@ const AssetTransfer = ({
             disabled={maxValueToggled}
           />
           <ToggleWrapper>
-            <ToggleLabel selected={!maxValueToggled}>Custom</ToggleLabel>
             <Toggle value={maxValueToggled} onChange={handleToggleChange} />
             <ToggleLabel selected={maxValueToggled}>Max value</ToggleLabel>
           </ToggleWrapper>
         </ControlRow>
-      </Control>
-      <Control>
-        <ControlLabel>Asset</ControlLabel>
-        <ControlRow onClick={() => setIsTokenPickerOpen(true)}>
-          <Input
-            value={tokenInfo?.symbol || ''}
-            placeholder="Token"
-            icon={
-              <div>
-                {parsedData?.tokenAddress && (
-                  <Avatar
-                    src={resolveUri(token?.logoURI)}
-                    defaultSeed={parsedData?.tokenAddress}
-                    size={18}
-                  />
-                )}
-              </div>
-            }
-            iconRight={<FiChevronDown size={24} />}
-            readOnly
-          />
-        </ControlRow>
-        {/* //! There's a bug while showing the token picker: it doesn't dissappear when clicked outside  */}
-        <TokenPicker
-          walletAddress={parsedData?.source || ''}
-          isOpen={isTokenPickerOpen}
-          onClose={() => setIsTokenPickerOpen(false)}
-          onSelect={tokenAddress => {
-            setToken(tokenAddress);
-            setIsTokenPickerOpen(false);
-          }}
-        />
       </Control>
     </div>
   );
