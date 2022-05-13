@@ -73,7 +73,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
       <CardWrapper>
         <CardHeader>
           <IconDetailWrapper>
-            {proposal?.creator ? (
+            {proposal?.creator && ensAvatar ? (
               <Avatar
                 src={ensAvatar.imageUrl}
                 defaultSeed={proposal.creator}
@@ -109,7 +109,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
         </CardContent>
         <CardFooter>
           <ProposalCardActionSummary isLoading={!proposal} />
-          <ProposalCardVotes isLoading={!proposal} votes={votes} />
+          {votes && <ProposalCardVotes isLoading={!proposal} votes={votes} />}
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>

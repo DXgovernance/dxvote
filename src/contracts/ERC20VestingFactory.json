@@ -1,13 +1,15 @@
 {
-  "_format": "hh-sol-artifact-1",
-  "contractName": "DXDVestingFactory",
-  "sourceName": "contracts/dxvote/utils/DXDVestingFactory.sol",
   "abi": [
     {
       "inputs": [
         {
           "internalType": "address",
-          "name": "_DXD",
+          "name": "_erc20Token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_vestingOwner",
           "type": "address"
         }
       ],
@@ -27,21 +29,6 @@
       ],
       "name": "VestingCreated",
       "type": "event"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "DXD",
-      "outputs": [
-        {
-          "internalType": "contract IERC20",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
     },
     {
       "constant": false,
@@ -76,6 +63,36 @@
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "erc20Token",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "vestingOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     }
   ]

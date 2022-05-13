@@ -56,11 +56,12 @@
     "@web3-react/types": "^6.0.7",
     "@web3-react/walletconnect-connector": "^6.0.9",
     "axios": "^0.21.1",
+    "babel-jest": "^26.6.0",
     "babel-loader": "8.1.0",
     "bignumber.js": "^9.0.2",
     "content-hash": "^2.5.2",
     "copy-to-clipboard": "^3.3.1",
-    "dxdao-contracts": "https://github.com/DXGovernance/dxdao-contracts.git#develop",
+    "dxdao-contracts": "https://github.com/DXGovernance/dxdao-contracts.git#v1.0.0",
     "eslint-plugin-cypress": "^2.12.1",
     "ether-swr": "^2.0.1",
     "ethers": "^5.5.2",
@@ -69,6 +70,7 @@
     "hardhat": "^2.9.1",
     "hardhat-dependency-compiler": "^1.1.2",
     "i18next": "^21.6.16",
+    "interweave": "^13.0.0",
     "ipfs": "^0.58.0",
     "ipfs-only-hash": "^4.0.0",
     "json-keys-sort": "^2.1.0",
@@ -127,7 +129,9 @@
     "@storybook/testing-library": "^0.0.11",
     "@synthetixio/synpress": "^1.2.0",
     "@testing-library/cypress": "^8.0.2",
+    "@testing-library/cypress": "^8.0.2",
     "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react-hooks": "^8.0.0",
     "@types/jest": "^27.4.0",
     "@types/jsonexport": "^3.0.2",
     "@types/puppeteer-core": "^5.4.0",
@@ -161,6 +165,14 @@
   },
   "eslintConfig": {
     "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      },
       {
         "files": [
           "**/*.stories.*"

@@ -16,9 +16,13 @@ const AvatarIcon = styled(ButtonIcon)`
 
 const Avatar: React.FC<AvatarProps> = ({ src, defaultSeed, size = 24 }) => {
   return src ? (
-    <AvatarIcon data-testid="avatarSrc" src={src} alt={'Avatar'} size={size} />
+    <AvatarIcon data-testid="avatar" src={src} alt={'Avatar'} size={size} />
   ) : (
-    <Jazzicon diameter={size} seed={jsNumberForAddress(defaultSeed)} />
+    <Jazzicon
+      data-testid="jazzicon"
+      diameter={size}
+      seed={jsNumberForAddress(defaultSeed)}
+    />
   );
 };
 

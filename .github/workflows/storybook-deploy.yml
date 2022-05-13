@@ -1,0 +1,47 @@
+name: Storybook Deploy
+
+on:
+  workflow_run:
+    workflows: ["Storybook Build"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.13.0]
+    steps:
+      - name: Get storybook build workflow details
+        uses: potiuk/get-workflow-origin@v1_3
+        id: source-run-info
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: storybook-build.yml
+          workflow_conclusion: success
+          name: storybook-${{ steps.source-run-info.outputs.targetCommitSha }}
+          path: 'storybook-static'
+
+      - name: Deploy to IPFS
+        uses: web3-storage/add-to-web3@v1
+        id: web3
+        with:
+          web3_token: ${{ secrets.WEB3_STORAGE_TOKEN }}
+          path_to_add: 'storybook-static'
+
+      - name: Create comment with status
+        uses: peter-evans/create-or-update-comment@v1
+        if: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+        with:
+          issue-number: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+          body: |
+            ✔️ Storybook deployment is ready!
+
+            😎 Browse Storybook: https://${{ steps.web3.outputs.cid }}.ipfs.cf-ipfs.com
