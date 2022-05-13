@@ -8,8 +8,10 @@ import {
   Option,
   SupportedAction,
 } from 'components/Guilds/ActionsBuilder/types';
+import { useEffect, useState } from 'react';
 
 const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
+
 const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
 
 const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
@@ -31,7 +33,6 @@ const decodeCallUsingEthersInterface = (
 ): DecodedCall => {
   // Get the first 10 characters of Tx data, which is the Function Selector (SigHash).
   const sigHash = call.data.substring(0, 10);
-
   // Find the ABI function fragment for the sighash.
   const functionFragment = contractInterface.getFunction(sigHash);
   if (!functionFragment) return null;
@@ -41,7 +42,6 @@ const decodeCallUsingEthersInterface = (
     functionFragment,
     call.data
   );
-
   const paramsJson = functionFragment.inputs.reduce((acc, input) => {
     acc[input.name] = params[input.name];
     return acc;
@@ -81,7 +81,7 @@ const getContractFromKnownSighashes = (data: string) => {
   };
 };
 
-const decodeCall = (
+const decodeCall = async (
   call: Call,
   contracts: RegistryContract[],
   chainId: number
@@ -92,21 +92,25 @@ const decodeCall = (
   const matchedRegistryContract = contracts?.find(
     contract => contract.networks[chainId] === call.to
   );
-  const matchedContractData = matchedRegistryContract
+
+  let matchedContractData = matchedRegistryContract
     ? getContractInterfaceFromRegistryContract(matchedRegistryContract)
     : getContractFromKnownSighashes(call.data);
 
-  if (!matchedContractData) return null;
-
+  if (!matchedContractData) {
+    const abi = await lookUpContractWithSourcify({ chainId, address: call.to });
+    matchedContractData = {
+      contractInterface: new utils.Interface(abi),
+      callType: SupportedAction.GENERIC_CALL,
+    };
+  }
   const { callType, contractInterface } = matchedContractData;
   if (!contractInterface) return null;
-
   decodedCall = decodeCallUsingEthersInterface(
     call,
     contractInterface,
     callType
   );
-
   return {
     id: `action-${Math.random()}`,
     decodedCall,
@@ -119,22 +123,45 @@ export const bulkDecodeCallsFromOptions = (
   contracts: RegistryContract[],
   chainId: number
 ) => {
-  return options.map(option => {
-    const { actions } = option;
-    const decodedCalls = actions?.map(call =>
-      decodeCall(call, contracts, chainId)
-    );
-    return {
-      ...option,
-      decodedActions: decodedCalls,
-    };
-  });
+  return Promise.all(
+    options.map(async option => {
+      const { actions } = option;
+      const actionPromisesArray = actions.map(
+        async action => await decodeCall(action, contracts, chainId)
+      );
+      const decodedActions = await Promise.all(actionPromisesArray);
+      return {
+        ...option,
+        decodedActions,
+      };
+    })
+  );
+};
+
+const lookUpContractWithSourcify = async ({ chainId, address }) => {
+  const baseUrl = `https://sourcify.dev/server/files/any`;
+  const url = `${baseUrl}/1/0xca2ad74003502af6B727e846Fab40D6cb8Da0035`;
+  const response = await fetch(url);
+  if (!response.ok) return null;
+  const json = await response.json();
+  if (!json.files) return null;
+  return JSON.parse(json.files.find(f => f.name === 'metadata.json').content)
+    .output.abi;
 };
 
 export const useDecodedCall = (call: Call) => {
+  const [decodedCall, setDecodedCall] = useState<any>(null);
   const { chainId } = useWeb3React();
   const { contracts } = useContractRegistry();
+  useEffect(() => {
+    if (call) {
+      decodeCall(call, contracts, chainId).then(decodedData =>
+        setDecodedCall(decodedData)
+      );
+    } else {
+      setDecodedCall(null);
+    }
+  }, [call, contracts, chainId]);
 
-  const decodedData = call ? decodeCall(call, contracts, chainId) : null;
-  return decodedData || { decodedCall: null, contract: null };
+  return decodedCall || { decodedCall: null, contract: null };
 };

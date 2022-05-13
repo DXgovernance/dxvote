@@ -11,6 +11,7 @@ import { RegistryContractFunction } from 'hooks/Guilds/contracts/useContractRegi
 import FormElementRenderer, {
   getDefaultValidationsByFormElement,
 } from './FormElementRenderer';
+// import { StyledToolTip } from 'components/common/ToolTip';
 
 const SubmitButton = styled(ActionsButton).attrs(() => ({
   variant: 'primary',
@@ -32,6 +33,7 @@ const ParamsForm: React.FC<ParamsFormProps> = ({ fn, onSubmit }) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         {fn.params.map(param => (
           <FormElement key={param.name}>
+            {console.log(param)}
             <FormLabel>{param.description}</FormLabel>
             <Controller
               name={param.name}

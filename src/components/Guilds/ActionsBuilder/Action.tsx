@@ -143,7 +143,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
           {InfoLine && (
             <InfoLine
               decodedCall={decodedCall}
-              approveSpendTokens={decodedAction.approval}
+              approveSpendTokens={decodedAction?.approval}
             />
           )}
           {!decodedCall && <UndecodableCallInfoLine />}
@@ -191,7 +191,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
               {decodedCall ? (
                 <CallDetails
                   decodedCall={decodedCall}
-                  approveSpendTokens={decodedAction.approval}
+                  approveSpendTokens={decodedAction?.approval}
                 />
               ) : (
                 <UndecodableCallDetails call={call} />

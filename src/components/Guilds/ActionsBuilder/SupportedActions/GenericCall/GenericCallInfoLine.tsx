@@ -19,8 +19,8 @@ const GenericCallInfoLine: React.FC<ActionViewProps> = ({
 }) => {
   const { data: tokenInfo } = useERC20Info(approveSpendTokens?.token);
   const approvalAmount = useBigNumberToString(
-    approveSpendTokens.amount,
-    tokenInfo.decimals
+    approveSpendTokens?.amount,
+    tokenInfo?.decimals
   );
   return (
     <>
