@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber, utils } from 'ethers';
-import { MAINNET_ID } from 'utils';
+import { ANY_FUNC_SIGNATURE, MAINNET_ID } from 'utils';
 import { ActionEditorProps } from '..';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
@@ -11,7 +11,8 @@ import FunctionCall from './FunctionCall';
 import styled, { css } from 'styled-components';
 import { Button } from 'old-components/Guilds/common/Button';
 import { Box } from 'Components/Primitives/Layout';
-import { MAX_UINT } from 'utils';
+import { MAX_UINT, ANY_ADDRESS } from 'utils';
+import { ParsedDataInterface, ValidationsInterface } from './types';
 
 const DetailWrapper = styled(Box)`
   margin: 1.25rem 0rem;
@@ -33,14 +34,6 @@ const TabButton = styled(Button)`
     `}
 `;
 
-interface PermissionState {
-  source: string;
-  tokenAddress: string;
-  destination: string;
-  amount: BigNumber;
-  functionSignature: string;
-}
-
 const Permissions: React.FC<ActionEditorProps> = ({
   decodedCall,
   updateCall,
@@ -49,65 +42,90 @@ const Permissions: React.FC<ActionEditorProps> = ({
 
   const { chainId } = useWeb3React();
 
-  // Decoded call: decode information while reading
   // parse transfer state from calls
-  //! Refactor inputs when decoded call is implemented
-  // ! Most likely wrong. Added just to deploy the component
-  const parsedData = useMemo<PermissionState>(() => {
+  const parsedData = useMemo<ParsedDataInterface>(() => {
     if (!decodedCall) return null;
+    const { asset, to, functionSignature, valueAllowed, allowance } =
+      decodedCall.args;
     return {
-      source: decodedCall.from, // ?
-      tokenAddress: decodedCall.to,
-      destination: decodedCall.args._to,
-      amount: decodedCall.args._value,
-      functionSignature: decodedCall.args._functionSignature,
+      asset,
+      to,
+      functionSignature,
+      valueAllowed,
+      allowance,
     };
   }, [decodedCall]);
 
-  const validations = useMemo(() => {
+  const validations = useMemo<ValidationsInterface>(() => {
     return {
-      tokenAddress: utils.isAddress(parsedData?.tokenAddress),
-      amount: BigNumber.isBigNumber(parsedData?.amount),
-      destination: utils.isAddress(parsedData?.destination),
+      asset: utils.isAddress(parsedData?.asset),
+      to: utils.isAddress(parsedData?.to),
+      valueAllowed: BigNumber.isBigNumber(parsedData?.valueAllowed),
     };
   }, [parsedData]);
 
   // Get token details from the token address
   const { tokens } = useTokenList(chainId);
   const token = useMemo(() => {
-    if (!parsedData?.tokenAddress || !tokens) return null;
+    if (!parsedData?.asset || !tokens) return null;
 
-    return tokens.find(({ address }) => address === parsedData.tokenAddress);
+    return tokens.find(({ address }) => address === parsedData.asset);
   }, [tokens, parsedData]);
 
-  const { data: tokenInfo } = useERC20Info(parsedData?.tokenAddress);
+  const { data: tokenInfo } = useERC20Info(parsedData?.asset);
   const { imageUrl: destinationAvatarUrl } = useENSAvatar(
-    parsedData?.destination,
+    parsedData?.to,
     MAINNET_ID
   );
 
-  const setTransferAddress = (walletAddress: string) => {
+  // functions to set contract arguments
+
+  // asset
+  const setAsset = (asset: string) => {
     updateCall({
       ...decodedCall,
       args: {
         ...decodedCall.args,
-        _to: walletAddress,
+        asset,
       },
     });
   };
 
-  const setAmount = (value: BigNumber) => {
+  // valueAllowed
+  const setAmount = (valueAllowed: BigNumber) => {
     updateCall({
       ...decodedCall,
       args: {
         ...decodedCall.args,
-        _value: value,
+        valueAllowed,
+      },
+    });
+  };
+
+  // to address
+  const setToAddress = (to: string) => {
+    updateCall({
+      ...decodedCall,
+      args: {
+        ...decodedCall.args,
+        to,
+      },
+    });
+  };
+
+  // function signature
+  const setFunctionSignature = (functionSignature: string) => {
+    updateCall({
+      ...decodedCall,
+      args: {
+        ...decodedCall.args,
+        functionSignature: functionSignature,
       },
     });
   };
 
   const [customAmountValue, setCustomAmountValue] = useState(
-    parsedData?.amount
+    parsedData?.valueAllowed
   );
   // This function was implemented to avoid the amount input to
   // change to MAX_UINT toggling to "Max value"
@@ -123,6 +141,36 @@ const Permissions: React.FC<ActionEditorProps> = ({
     setMaxValueToggled(!maxValueToggled);
   };
 
+  const [customToAddress, setCustomToAddress] = useState(parsedData?.to);
+  const handleCustomAddress = value => {
+    setCustomToAddress(value);
+    if (value === '') {
+      setToAddress(ANY_ADDRESS);
+    } else {
+      setToAddress(value);
+    }
+  };
+  // If the 'to' address is ANY_ADDRESS, set customAmount to '', to
+  // show the address input empty, instead of the long 0xAaaAaaa address
+  useEffect(() => {
+    if (parsedData?.to === ANY_ADDRESS) handleCustomAddress('');
+  }, []);
+
+  // It has two values for functionSignature: a custom whan that is set and modified
+  // when the input is modified in FunctionCall compoent
+  // and the ANY_FUNC_SIGNATURE that is switched when in AssetTransfer component
+  const [customFunctionSignature, setCustomFunctionSignature] = useState('');
+  const handleCustomFunctionSignature = value => {
+    setCustomFunctionSignature(value);
+    setFunctionSignature(value);
+  };
+  useEffect(() => {
+    if (activeTab === 0) setFunctionSignature(ANY_FUNC_SIGNATURE);
+    if (activeTab === 1) setFunctionSignature(customFunctionSignature);
+    console.log('custom: ', customFunctionSignature);
+    console.log('called: ', parsedData.functionSignature);
+  }, [activeTab]);
+
   return (
     <div>
       <DetailWrapper>
@@ -135,18 +183,18 @@ const Permissions: React.FC<ActionEditorProps> = ({
       </DetailWrapper>
       {activeTab === 0 && (
         <AssetTransfer
-          updateCall={updateCall}
-          decodedCall={decodedCall}
           validations={validations}
           destinationAvatarUrl={destinationAvatarUrl}
           parsedData={parsedData}
-          setTransferAddress={setTransferAddress}
           tokenInfo={tokenInfo}
           token={token}
           customAmountValue={customAmountValue}
           handleTokenAmountInputChange={handleTokenAmountInputChange}
           maxValueToggled={maxValueToggled}
           handleToggleChange={handleToggleChange}
+          setAsset={setAsset}
+          customToAddress={customToAddress}
+          handleCustomAddress={handleCustomAddress}
         />
       )}
       {activeTab === 1 && (
@@ -154,7 +202,9 @@ const Permissions: React.FC<ActionEditorProps> = ({
           validations={validations}
           destinationAvatarUrl={destinationAvatarUrl}
           parsedData={parsedData}
-          setTransferAddress={setTransferAddress}
+          handleCustomFunctionSignature={handleCustomFunctionSignature}
+          customToAddress={customToAddress}
+          handleCustomAddress={handleCustomAddress}
         />
       )}
     </div>
