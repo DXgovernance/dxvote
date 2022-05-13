@@ -7,9 +7,9 @@ import { ProposalState } from 'Components/Types';
 jest.mock('ipfs', () => jest.fn());
 jest.mock('cids', () => jest.fn());
 jest.mock('axios', () => jest.fn());
-jest.mock('hooks/Guilds/guild/useFilteredProposalActions', () => {
+jest.mock('hooks/Guilds/guild/useProposalSummaryActions', () => {
   return {
-    useFilteredProposalActions: jest.fn(),
+    useProposalSummaryActions: jest.fn(),
   };
 });
 jest.mock('contexts/index', () => jest.fn());
@@ -37,6 +37,7 @@ const validProps: ProposalCardProps = {
     status: ProposalState.Active,
     endTime: moment('2022-05-09T08:00:00'),
   },
+  summaryActions: [],
 };
 
 const invalidProps: ProposalCardProps = {
@@ -49,6 +50,7 @@ const invalidProps: ProposalCardProps = {
     status: null,
     endTime: null,
   },
+  summaryActions: [],
 };
 describe('ProposalCard', () => {
   it('ProposalCard Renders properly with data', () => {

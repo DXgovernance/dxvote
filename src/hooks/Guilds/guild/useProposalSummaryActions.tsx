@@ -35,7 +35,7 @@ export interface PointedDecodedAction extends DecodedAction {
  * @param maxActions Maximum number of actions to return
  **/
 
-export const useFilteredProposalActions = (
+export const useProposalSummaryActions = (
   guildId: string,
   proposalId: string,
   maxActions?: number

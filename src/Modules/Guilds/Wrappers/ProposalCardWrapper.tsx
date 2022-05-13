@@ -6,6 +6,7 @@ import useVoteSummary from 'hooks/Guilds/useVoteSummary';
 import { MAINNET_ID } from 'utils/constants';
 import { useMemo } from 'react';
 import { ProposalState } from 'Components/Types';
+import { useProposalSummaryActions } from 'hooks/Guilds/guild/useProposalSummaryActions';
 import moment from 'moment';
 
 interface ProposalCardWrapperProps {
@@ -17,6 +18,7 @@ const ProposalCardWrapper: React.FC<ProposalCardWrapperProps> = ({
   const { guildId, chainName } = useTypedParams();
   const { data: proposal } = useProposal(guildId, proposalId);
   const votes = useVoteSummary(guildId, proposalId);
+  const summaryActions = useProposalSummaryActions(guildId, proposalId);
 
   const ensAvatar = useENSAvatar(proposal?.creator, MAINNET_ID);
 
@@ -61,6 +63,7 @@ const ProposalCardWrapper: React.FC<ProposalCardWrapperProps> = ({
       votes={votes}
       href={`/${chainName}/${guildId}/proposal/${proposalId}`}
       statusProps={{ timeDetail, status, endTime: proposal?.endTime }}
+      summaryActions={summaryActions}
     />
   );
 };

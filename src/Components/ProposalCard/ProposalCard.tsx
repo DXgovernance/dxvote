@@ -23,6 +23,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
   ensAvatar,
   href,
   statusProps,
+  summaryActions,
 }) => {
   return (
     <UnstyledLink to={href || '#'}>
@@ -64,7 +65,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
           </CardTitle>
         </CardContent>
         <CardFooter>
-          <ProposalCardActionSummary proposal={proposal} />
+          <ProposalCardActionSummary actions={summaryActions} />
           {votes && <ProposalCardVotes isLoading={!proposal} votes={votes} />}
         </CardFooter>
       </CardWrapper>
