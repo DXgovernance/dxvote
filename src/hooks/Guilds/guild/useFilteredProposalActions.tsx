@@ -6,14 +6,7 @@ import {
 } from 'old-components/Guilds/ActionsBuilder/types';
 
 const isApprovalCall = (action: DecodedAction) => {
-  // TODO: improve this with better conditions. At read point decodedAction has no other things to validate than generic call && approval event in contract interface
-  const type = action?.decodedCall?.callType;
-  return (
-    type === SupportedAction.GENERIC_CALL &&
-    Object.keys(action?.contract?.events ?? {}).some(key =>
-      key.includes('Approval')
-    )
-  );
+  return !!action?.approval;
 };
 
 /**
@@ -67,15 +60,15 @@ export const useFilteredProposalActions = (
     // Add relevance points to each action;
     const pointedActions = onlyActions?.reduce((acc, action, idx, actions) => {
       const points = action?.points || getActionPoints(action);
-      if (isApprovalCall(action) && !!actions[idx + 1]) {
-        // if current action is spending call and nextaction exist we asume that next action is the one that require current approval.
-        actions[idx + 1].points = points; // give approval points to next action to order next
-        actions[idx + 1].approval = {
-          amount: action?.decodedCall.args._value,
-          token: action?.decodedCall.to,
-        };
-        return acc; // prevent showing the actual approval action.
-      }
+      // if (isApprovalCall(action) && !!actions[idx + 1]) {
+      //   // if current action is spending call and nextaction exist we asume that next action is the one that require current approval.
+      //   actions[idx + 1].points = points; // give approval points to next action to order next
+      //   actions[idx + 1].approval = {
+      //     amount: action?.decodedCall.args._value,
+      //     token: action?.decodedCall.to,
+      //   };
+      //   return acc; // prevent showing the actual approval action.
+      // }
       return [...acc, { ...action, points }];
     }, []);
 

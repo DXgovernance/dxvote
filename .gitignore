@@ -31,7 +31,7 @@ yarn-debug.log*
 yarn-error.log*
 .release.md
 
-#editor 
+#editor
 .vscode/
 
 #logs
@@ -45,3 +45,6 @@ src/types/*
 # cypress
 cypress/screenshots
 cypress/videos
+
+# storybook
+storybook-static

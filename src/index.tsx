@@ -116,8 +116,12 @@ const Routes = () => {
 const SplitApp = () => {
   // This split between DXvote and Guilds frontends are temporary.
   // We'll eventually converge changes on the Guilds side to DXvote.
-  const location = useLocation();
-  const isGuilds = location.pathname.startsWith('/guilds');
+
+  // const location = useLocation();
+  // const isGuilds = location.pathname.startsWith('/guilds');
+
+  // Set to true while refactoring and testing guilds
+  const isGuilds = true;
 
   const {
     context: { ensService },

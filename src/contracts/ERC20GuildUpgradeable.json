@@ -1,47 +1,6 @@
 {
   "abi": [
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_proposalTime",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_votingPowerForProposalExecution",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_votingPowerForProposalCreation",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_lockTime",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_permissionRegistry",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
       "anonymous": false,
       "inputs": [
         {
@@ -642,6 +601,69 @@
         }
       ],
       "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_proposalTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_timeForExecution",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_votingPowerForProposalExecution",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_votingPowerForProposalCreation",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_voteGas",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxGasPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxActiveProposals",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_lockTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_permissionRegistry",
+          "type": "address"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

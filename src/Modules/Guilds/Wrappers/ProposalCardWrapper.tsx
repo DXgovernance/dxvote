@@ -17,6 +17,7 @@ const ProposalCardWrapper: React.FC<ProposalCardWrapperProps> = ({
   const { guildId, chainName } = useTypedParams();
   const { data: proposal } = useProposal(guildId, proposalId);
   const votes = useVoteSummary(guildId, proposalId);
+
   const ensAvatar = useENSAvatar(proposal?.creator, MAINNET_ID);
 
   // Make into hooks

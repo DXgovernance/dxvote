@@ -4,9 +4,10 @@ import { useMemo } from 'react';
 import useIPFSFile from '../ipfs/useIPFSFile';
 
 // TODO: Get the actual token registry hash
-const CONTRACT_REGISTRY = 'QmXk294ZQebU6J7yYpAhBqBPaMquCKxGmGoNHLBpvUJ9on';
+const RICH_CONTRACT_DATA_REGISTRY =
+  'QmT9ZNjZ1JNDmnLQPkFYRGzXRTAHZXeue5QVRq4V6VmAk2';
 
-export interface RegistryContractFunctionParam {
+export interface RichContractFunctionParam {
   type: string;
   component: string;
   name: string;
@@ -14,36 +15,38 @@ export interface RegistryContractFunctionParam {
   description: string;
 }
 
-export interface RegistryContractFunction {
+export interface RichContractFunction {
   title: string;
   functionName: string;
-  params: RegistryContractFunctionParam[];
+  params: RichContractFunctionParam[];
   shortDescription: string;
   longDescription: string;
+  templateLiteral: string;
   spendsTokens: boolean;
 }
 
-export interface RegistryContract {
+export interface RichContractData {
   title: string;
   tags: string[];
   networks: { [chainId: number]: string };
-  functions: RegistryContractFunction[];
+  functions: RichContractFunction[];
   contractAddress: string;
   contractInterface: utils.Interface;
 }
 
-type IPFSRegistryContract = Omit<
-  RegistryContract,
+export type IPFSRichContractData = Omit<
+  RichContractData,
   'contractAddress' | 'contractInterface'
 >;
 
-export const useContractRegistry = (chainId?: number) => {
+export const useRichContractRegistry = (chainId?: number) => {
   const { chainId: activeChainId } = useWeb3React();
 
-  const { data, error } =
-    useIPFSFile<IPFSRegistryContract[]>(CONTRACT_REGISTRY);
+  const { data, error } = useIPFSFile<IPFSRichContractData[]>(
+    RICH_CONTRACT_DATA_REGISTRY
+  );
 
-  const registryContracts: RegistryContract[] = useMemo(() => {
+  const registryContracts: RichContractData[] = useMemo(() => {
     if (error || !data) return null;
 
     return data

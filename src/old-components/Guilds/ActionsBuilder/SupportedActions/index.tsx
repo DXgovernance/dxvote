@@ -15,6 +15,7 @@ import GenericCallInfoLine from './GenericCall/GenericCallInfoLine';
 import RepMintEditor from './RepMint/RepMintEditor';
 import RepMintInfoLine from './RepMint/RepMintInfoLine';
 import RepMintSummary from './RepMint/RepMintSummary';
+// import ApprovalCallInfoLine from './ApprovalCall/ApprovalCallInfoLine';
 
 export interface SupportedActionMetadata {
   title: string;
@@ -59,6 +60,11 @@ export const supportedActions: Record<
     infoLineView: GenericCallInfoLine,
     editor: () => <div>Generic Call Editor</div>,
   },
+  // [SupportedAction.APPROVAL_CALL]: {
+  //   title: 'Approval Call',
+  //   infoLineView: GenericCallInfoLine,
+  //   editor: () => <div>Approval Call Editor</div>,
+  // },
 };
 const ERC20Contract = new utils.Interface(ERC20ABI);
 const ERC20SnapshotRepContract = new utils.Interface(ERC20SnapshotRep.abi);
@@ -92,6 +98,7 @@ export const defaultValues: Record<
   },
 
   [SupportedAction.GENERIC_CALL]: {},
+  // [SupportedAction.APPROVAL_CALL]: {},
 };
 
 export const getInfoLineView = (actionType: SupportedAction) => {

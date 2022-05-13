@@ -4,17 +4,17 @@ exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
 <div>
    
   <a
-    class="sc-aemIz bQXHrC"
+    class="sc-jHVedQ cdndkM"
     href="/testUrl"
   >
     <div
-      class="sc-jrAFXE sc-laRQdt jLAWlL hvEyYe"
+      class="sc-jrAFXE sc-gTgzoy jLAWlL etJgsI"
     >
       <div
-        class="sc-jrAFXE sc-iNqMzA jLAWlL imrruV"
+        class="sc-jrAFXE sc-laRQdt jLAWlL cvOqxf"
       >
         <div
-          class="sc-jrAFXE sc-higWrZ jLAWlL eKebZt"
+          class="sc-jrAFXE sc-nFqVA jLAWlL iYtQGO"
         >
           <div
             class="paper"
@@ -70,19 +70,19 @@ exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
             </svg>
           </div>
           <div
-            class="sc-jrAFXE sc-ehSDrC jLAWlL ezdynt"
+            class="sc-jrAFXE sc-higWrZ jLAWlL jiUNxj"
           >
             rossdev.eth
           </div>
         </div>
         <div
-          class="sc-fWSDcn kYXVTn"
+          class="sc-GqePz kqOhzV"
         >
           <div
-            class="sc-dwfUuu juyvCT"
+            class="sc-fWSDcn ePZHeg"
           >
             <div
-              class="sc-jrAFXE sc-jHVedQ jLAWlL hqRNnN"
+              class="sc-jrAFXE sc-TmdmN jLAWlL jzZwYz"
             >
               <span
                 title="May 9th, 2022 - 8:00 am"
@@ -91,7 +91,7 @@ exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
               </span>
             </div>
             <div
-              class="sc-jrAFXE sc-TmdmN jLAWlL eyKvyz"
+              class="sc-jrAFXE sc-dwfUuu jLAWlL bvOhHt"
             >
                
               Active
@@ -100,10 +100,10 @@ exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
         </div>
       </div>
       <div
-        class="sc-jrAFXE sc-jeGTLq jLAWlL jeQKKQ"
+        class="sc-jrAFXE sc-iNqMzA jLAWlL lbvpvN"
       >
         <h2
-          class="sc-pGacB sc-nFqVA eGiNre cAjeSQ"
+          class="sc-pGacB sc-eJMPIT eGiNre ULFaR"
           size="2"
         >
           <strong>
@@ -112,25 +112,25 @@ exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
         </h2>
       </div>
       <div
-        class="sc-jrAFXE sc-eJMPIT jLAWlL LYmWd"
+        class="sc-jrAFXE sc-jeGTLq jLAWlL gZqqmD"
       >
         <div
-          class="sc-jrAFXE sc-lcuiOb jLAWlL iucwPY"
+          class="sc-jrAFXE sc-ehSDrC jLAWlL cclvjV"
         />
         <div
-          class="sc-jrAFXE sc-GqePz jLAWlL ggsRLl"
+          class="sc-jrAFXE sc-fbkiRW jLAWlL gOutAT"
         >
           <div
-            class="sc-jrAFXE sc-higWrZ sc-gGmKaI jLAWlL eKebZt fCtUSE"
+            class="sc-jrAFXE sc-nFqVA sc-lcuiOb jLAWlL iYtQGO drYbkg"
           >
             <div
-              class="sc-jrAFXE sc-ehSDrC jLAWlL ezdynt"
+              class="sc-jrAFXE sc-higWrZ jLAWlL jiUNxj"
             >
               20
               %
             </div>
             <div
-              class="sc-fbkiRW geXCgB"
+              class="sc-clsFYl cWQCUh"
             >
               <svg
                 fill="none"
@@ -151,7 +151,7 @@ exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
               </svg>
             </div>
             <div
-              class="sc-jrAFXE sc-ehSDrC jLAWlL ezdynt"
+              class="sc-jrAFXE sc-higWrZ jLAWlL jiUNxj"
             >
               10
               %
@@ -169,17 +169,17 @@ exports[`ProposalCard ProposalCard loading 1`] = `
 <div>
    
   <a
-    class="sc-aemIz bQXHrC"
+    class="sc-jHVedQ cdndkM"
     href="/"
   >
     <div
-      class="sc-jrAFXE sc-laRQdt jLAWlL hvEyYe"
+      class="sc-jrAFXE sc-gTgzoy jLAWlL etJgsI"
     >
       <div
-        class="sc-jrAFXE sc-iNqMzA jLAWlL imrruV"
+        class="sc-jrAFXE sc-laRQdt jLAWlL cvOqxf"
       >
         <div
-          class="sc-jrAFXE sc-higWrZ jLAWlL eKebZt"
+          class="sc-jrAFXE sc-nFqVA jLAWlL iYtQGO"
         >
           <div
             class="sc-bdfBQB"
@@ -199,7 +199,7 @@ exports[`ProposalCard ProposalCard loading 1`] = `
             </span>
           </div>
           <div
-            class="sc-jrAFXE sc-ehSDrC jLAWlL ezdynt"
+            class="sc-jrAFXE sc-higWrZ jLAWlL jiUNxj"
           >
             <div
               class="sc-bdfBQB"
@@ -221,13 +221,13 @@ exports[`ProposalCard ProposalCard loading 1`] = `
           </div>
         </div>
         <div
-          class="sc-fWSDcn kYXVTn"
+          class="sc-GqePz kqOhzV"
         >
           <div
-            class="sc-dwfUuu juyvCT"
+            class="sc-fWSDcn ePZHeg"
           >
             <div
-              class="sc-jrAFXE sc-jHVedQ jLAWlL hqRNnN"
+              class="sc-jrAFXE sc-TmdmN jLAWlL jzZwYz"
             >
               <div
                 class="sc-bdfBQB"
@@ -266,10 +266,10 @@ exports[`ProposalCard ProposalCard loading 1`] = `
         </div>
       </div>
       <div
-        class="sc-jrAFXE sc-jeGTLq jLAWlL jeQKKQ"
+        class="sc-jrAFXE sc-iNqMzA jLAWlL lbvpvN"
       >
         <h2
-          class="sc-pGacB sc-nFqVA eGiNre cAjeSQ"
+          class="sc-pGacB sc-eJMPIT eGiNre ULFaR"
           size="2"
         >
           <strong>
@@ -294,7 +294,7 @@ exports[`ProposalCard ProposalCard loading 1`] = `
         </h2>
       </div>
       <div
-        class="sc-jrAFXE sc-eJMPIT jLAWlL LYmWd"
+        class="sc-jrAFXE sc-jeGTLq jLAWlL gZqqmD"
       >
         <div
           class="sc-bdfBQB"
