@@ -86,7 +86,6 @@ const OptionRow: React.FC<OptionRowProps> = ({
     transform: CSS.Translate.toString(transform),
     transition,
   };
-  // console.log('action', option.actions);
   return (
     <OptionWrapper
       dragging={isDragging}

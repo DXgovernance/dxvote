@@ -9,8 +9,8 @@ import { useVotingResults } from 'hooks/Guilds/ether-swr/guild/useVotingResults'
 import { Call, Option } from 'old-components/Guilds/ActionsBuilder/types';
 import { ZERO_HASH } from 'utils';
 import { useRichContractRegistry } from '../contracts/useRichContractRegistry';
+import { ERC20_APPROVE_SIGNATURE } from 'utils';
 
-const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
 const isApprovalCall = (call: Call) =>
   call.data.substring(0, 10) === ERC20_APPROVE_SIGNATURE;
 

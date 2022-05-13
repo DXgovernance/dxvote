@@ -1,6 +1,7 @@
 import { Loading } from 'Components/Primitives/Loading';
 import { getInfoLineView } from 'old-components/Guilds/ActionsBuilder/SupportedActions';
 import UndecodableCallInfoLine from 'old-components/Guilds/ActionsBuilder/UndecodableCalls/UndecodableCallsInfoLine';
+import { DecodedAction } from 'old-components/Guilds/ActionsBuilder/types';
 import {
   ActionsWrapper,
   BorderedIconDetailWrapper,
@@ -8,7 +9,7 @@ import {
 } from 'Components/ProposalCard/ProposalCard.styled';
 
 interface ProposalCardActionSummaryProps {
-  actions?: any[];
+  actions?: DecodedAction[];
 }
 
 const ProposalCardActionSummary: React.FC<ProposalCardActionSummaryProps> = ({

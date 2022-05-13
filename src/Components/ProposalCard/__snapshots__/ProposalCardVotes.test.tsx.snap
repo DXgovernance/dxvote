@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProposalCard votes 1`] = `
+exports[`ProposalCardVotes.test Should match snapshot with votes 1`] = `
 <div>
    
   <div
@@ -48,7 +48,7 @@ exports[`ProposalCard votes 1`] = `
 </div>
 `;
 
-exports[`ProposalCard votes loading 1`] = `
+exports[`ProposalCardVotes.test Should match snapshot without votes 1`] = `
 <div>
    
   <div

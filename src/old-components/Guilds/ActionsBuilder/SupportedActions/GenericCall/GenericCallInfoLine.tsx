@@ -1,4 +1,3 @@
-// import styled from 'styled-components';
 import { FiCode, FiArrowRight } from 'react-icons/fi';
 import { Interweave } from 'interweave';
 import { ActionViewProps } from '..';

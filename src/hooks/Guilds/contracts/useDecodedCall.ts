@@ -11,10 +11,7 @@ import {
   Option,
   SupportedAction,
 } from 'old-components/Guilds/ActionsBuilder/types';
-
-const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
-const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
-// const isApprovalCall = (call: Call) => call.data.substring(0, 10) === ERC20_APPROVE_SIGNATURE;
+import { ERC20_APPROVE_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from 'utils';
 
 const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
   {
@@ -28,7 +25,7 @@ const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
     },
   };
 
-export const decodeCallUsingEthersInterface = (
+const decodeCallUsingEthersInterface = (
   call: Call,
   contractInterface: utils.Interface,
   callType?: SupportedAction

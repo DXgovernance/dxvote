@@ -6,7 +6,6 @@ export enum SupportedAction {
   ERC20_TRANSFER = 'ERC20_TRANSFER',
   REP_MINT = 'REP_MINT',
   GENERIC_CALL = 'GENERIC_CALL',
-  // APPROVAL_CALL = 'APPROVAL_CALL',
 }
 
 export interface Call {
