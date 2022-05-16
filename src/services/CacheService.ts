@@ -41,6 +41,18 @@ export default class UtilsService {
     this.context = context;
   }
 
+  async getCacheFromIPFS(ipfsHash: string): Promise<DaoNetworkCache> {
+    let jsonCache = await this.context.ipfsService.getContentFromIPFS(ipfsHash);
+
+    while (typeof jsonCache === 'string') {
+      console.log('Trying to get cache from ipfs again');
+      await sleep(100);
+      jsonCache = await this.context.ipfsService.getContentFromIPFS(ipfsHash);
+    }
+
+    return jsonCache;
+  }
+
   async getUpdatedCacheConfig(
     networksConfig: {
       [netwokId: number]: {
