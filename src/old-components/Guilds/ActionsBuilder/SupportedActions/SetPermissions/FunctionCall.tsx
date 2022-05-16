@@ -16,6 +16,7 @@ interface FunctionCallProps {
   handleCustomFunctionSignature: (value: string) => void;
   customToAddress: string;
   handleCustomAddress: (value: string) => void;
+  customFunctionSignature: string;
 }
 
 const FunctionCall: React.FC<FunctionCallProps> = ({
@@ -25,6 +26,7 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
   handleCustomFunctionSignature,
   customToAddress,
   handleCustomAddress,
+  customFunctionSignature,
 }) => {
   return (
     <div>
@@ -62,7 +64,7 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
         <ControlLabel>Function signature</ControlLabel>
         <ControlRow>
           <Input
-            value={parsedData?.functionSignature || ''}
+            value={customFunctionSignature || ''}
             placeholder="Function signature"
             onChange={e => handleCustomFunctionSignature(e.target.value)}
           />
