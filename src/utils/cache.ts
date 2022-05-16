@@ -270,7 +270,7 @@ export const getSchemeConfig = function (networkContracts, schemeAddress) {
       newProposalTopics: [
         [
           Web3.utils.soliditySha3('ProposalStateChange(bytes32,uint256)'),
-          null,
+          '0x0000000000000000000000000000000000000000000000000000000000000000',
           '0x0000000000000000000000000000000000000000000000000000000000000001',
         ],
       ],
