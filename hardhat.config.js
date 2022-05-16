@@ -1,7 +1,7 @@
 const moment = require('moment');
 require('@nomiclabs/hardhat-truffle5');
 require('hardhat-dependency-compiler');
-require('./node_modules/dxdao-contracts/scripts/deploy-dxvote');
+require('./node_modules/dxdao-contracts/scripts/deploy-dxdao-contracts');
 require('@typechain/hardhat');
 
 const MNEMONIC =

@@ -560,9 +560,12 @@ async function main() {
     ],
   };
 
-  const { networkContracts, addresses } = await hre.run('deploy-dxvote', {
-    deployconfig: JSON.stringify(deployconfig),
-  });
+  const { networkContracts, addresses } = await hre.run(
+    'deploy-dxdao-develop',
+    {
+      deployconfig: JSON.stringify(deployconfig),
+    }
+  );
 
   const developConfig = {
     cache: {

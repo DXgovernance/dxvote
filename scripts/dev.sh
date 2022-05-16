@@ -115,7 +115,7 @@ echo "${contents}" > tsconfig.json
 node scripts/beforeBuild.js
 
 # Deploy local contracts
-yarn hardhat run --network localhost scripts/dev.ts
+yarn hardhat run --network localhost scripts/dev.js
 
 # Enable isolatedModules and use esnext as module in tsconfig
 contents="$(jq '.compilerOptions.isolatedModules = true' tsconfig.json)" && \
