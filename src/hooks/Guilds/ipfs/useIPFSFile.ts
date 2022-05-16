@@ -11,7 +11,6 @@ async function ipfsContentFetcher<T>(hash: string) {
       throw new Error('Unable to get content.');
     }
   }
-
   const response = await Promise.any([
     fetcher('https://ipfs.io/ipfs/' + hash),
     fetcher('https://gateway.ipfs.io/ipfs/' + hash),
@@ -20,13 +19,12 @@ async function ipfsContentFetcher<T>(hash: string) {
     fetcher('https://dweb.link/ipfs/' + hash),
     fetcher('https://infura-ipfs.io/ipfs/' + hash),
   ]);
-
+  console.log({ response }, 'inhere');
   return response;
 }
 
 export default function useIPFSFile<T>(contentHash: string) {
   const { data, error } = useSWRImmutable<T>(contentHash, ipfsContentFetcher);
-
   if (!contentHash) return {};
   return { data, error };
 }

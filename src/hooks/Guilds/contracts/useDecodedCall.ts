@@ -34,6 +34,7 @@ const decodeCallUsingEthersInterface = (
   // Get the first 10 characters of Tx data, which is the Function Selector (SigHash).
   const sigHash = call.data.substring(0, 10);
   // Find the ABI function fragment for the sighash.
+  console.log({ sigHash });
   const functionFragment = contractInterface.getFunction(sigHash);
   if (!functionFragment) return null;
 
@@ -87,7 +88,9 @@ const decodeCall = async (
   chainId: number
 ) => {
   let decodedCall: DecodedCall = null;
-
+  if (chainId === 1337) {
+    return null;
+  }
   // Detect using the Guild calls registry.
   const matchedRegistryContract = contracts?.find(
     contract => contract.networks[chainId] === call.to
@@ -97,13 +100,15 @@ const decodeCall = async (
     ? getContractInterfaceFromRegistryContract(matchedRegistryContract)
     : getContractFromKnownSighashes(call.data);
 
-  if (!matchedContractData) {
+  if (!matchedContractData && chainId !== 1337) {
     const abi = await lookUpContractWithSourcify({ chainId, address: call.to });
+
     matchedContractData = {
       contractInterface: new utils.Interface(abi),
       callType: SupportedAction.GENERIC_CALL,
     };
   }
+  console.log({ matchedContractData });
   const { callType, contractInterface } = matchedContractData;
   if (!contractInterface) return null;
   decodedCall = decodeCallUsingEthersInterface(
@@ -123,6 +128,7 @@ export const bulkDecodeCallsFromOptions = (
   contracts: RegistryContract[],
   chainId: number
 ) => {
+  console.log('gets called');
   return Promise.all(
     options.map(async option => {
       const { actions } = option;
@@ -140,7 +146,7 @@ export const bulkDecodeCallsFromOptions = (
 
 const lookUpContractWithSourcify = async ({ chainId, address }) => {
   const baseUrl = `https://sourcify.dev/server/files/any`;
-  const url = `${baseUrl}/1/0xca2ad74003502af6B727e846Fab40D6cb8Da0035`;
+  const url = `${baseUrl}/4/0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D`;
   const response = await fetch(url);
   if (!response.ok) return null;
   const json = await response.json();

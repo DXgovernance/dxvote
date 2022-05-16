@@ -26,7 +26,7 @@ function useProposalMetadata(guildId: string, proposalId: string) {
   } else if (!proposal || !metadata) {
     return { error: undefined, data: undefined };
   }
-
+  console.log({ proposal, metadata });
   return { data: metadata };
 }
 

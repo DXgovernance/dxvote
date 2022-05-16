@@ -6,7 +6,7 @@ import { useContractRegistry } from '../contracts/useContractRegistry';
 import { bulkDecodeCallsFromOptions } from '../contracts/useDecodedCall';
 import useProposalMetadata from 'hooks/Guilds/ether-swr/guild/useProposalMetadata';
 import { useProposal } from '../ether-swr/guild/useProposal';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 const useProposalCalls = (guildId: string, proposalId: string) => {
   // Decode calls from existing proposal
@@ -18,13 +18,21 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
   const theme = useTheme();
 
   const [options, setOptions] = useState<Option[]>([]);
-
+  const memoized = useMemo(
+    () => ({
+      proposal,
+      metadata,
+      contracts,
+      chainId,
+      theme,
+    }),
+    []
+  );
   useEffect(() => {
     if (!guildId || !proposalId || !proposal) {
       setOptions([]);
       return;
     }
-
     async function decodeOptions() {
       const {
         totalActions: totalOptions,
@@ -65,9 +73,10 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
 
       return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);
     }
-
     decodeOptions().then(options => setOptions(options));
-  }, [theme, proposalId, proposal, guildId, chainId, contracts]);
+  }, [memoized]);
+
+  //theme, proposalId, proposal, guildId, chainId, contracts
 
   return {
     options,

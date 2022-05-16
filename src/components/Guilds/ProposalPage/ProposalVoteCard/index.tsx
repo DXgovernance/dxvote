@@ -92,7 +92,7 @@ const ProposalVoteCard = () => {
 
   const voteData = useVotingResults();
 
-  const timestamp = useTimedRerender(1000);
+  const timestamp = useTimedRerender(10000);
 
   const isOpen = useMemo(
     () => proposal?.endTime.isAfter(moment(timestamp)),
