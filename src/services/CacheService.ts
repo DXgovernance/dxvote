@@ -248,22 +248,14 @@ export default class UtilsService {
 
     // The first promise round:
     // - Reputation Events
-    // - Voting Machine Events
     // - Permission Registry
     // - Vesting Contracts
-    // - Update schemes
 
     networkCache = await batchPromisesOntarget(
       [
         this.updateReputationEvents(
           networkCache,
           networkWeb3Contracts.reputation,
-          toBlock,
-          web3
-        ),
-        this.updateVotingMachineEvents(
-          networkCache,
-          networkContracts,
           toBlock,
           web3
         ),
@@ -279,9 +271,26 @@ export default class UtilsService {
           toBlock,
           web3
         ),
-        this.updateSchemes(networkCache, networkContracts, toBlock, web3),
       ],
       networkCache
+    );
+
+    // The second promise round:
+    // - Voting Machine Events
+    // - Update schemes
+    networkCache = await batchPromisesOntarget(
+      [
+        this.updateVotingMachineEvents(
+          networkCache,
+          networkContracts,
+          toBlock,
+          web3
+        ),
+        this.updateSchemes(networkCache, networkContracts, toBlock, web3),
+      ],
+      networkCache,
+      0,
+      1000
     );
 
     this.context.notificationStore.setGlobalLoading(
@@ -289,10 +298,13 @@ export default class UtilsService {
       `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
     );
 
-    // The second promise round is just to update the proposals that needs the schemes udpated.
+    // The third promise round is just to update the proposals that needs the schemes udpated.
     networkCache = await batchPromisesOntarget(
       [this.updateProposals(networkCache, networkContracts, toBlock, web3)],
-      networkCache
+      networkCache,
+      0,
+      1000,
+      500
     );
 
     networkCache.blockNumber = Number(toBlock);
@@ -860,7 +872,9 @@ export default class UtilsService {
           );
         }),
       networkCache,
-      5
+      5,
+      1000,
+      500
     );
 
     return networkCache;
