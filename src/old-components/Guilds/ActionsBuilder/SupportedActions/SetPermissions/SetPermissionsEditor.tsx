@@ -14,6 +14,9 @@ import { Box } from 'Components/Primitives/Layout';
 import { MAX_UINT, ANY_ADDRESS } from 'utils';
 import { ParsedDataInterface, ValidationsInterface } from './types';
 
+const Web3 = require('web3');
+const web3 = new Web3();
+
 const DetailWrapper = styled(Box)`
   margin: 1.25rem 0rem;
   border-bottom: 2px solid ${({ theme }) => theme.colors.card.grey}; ;
@@ -156,19 +159,24 @@ const Permissions: React.FC<ActionEditorProps> = ({
     if (parsedData?.to === ANY_ADDRESS) handleCustomAddress('');
   }, []);
 
-  // It has two values for functionSignature: a custom whan that is set and modified
-  // when the input is modified in FunctionCall compoent
+  // It has two values for functionSignature: a custom one that is set and modified
+  // when the input is modified in FunctionCall component
   // and the ANY_FUNC_SIGNATURE that is switched when in AssetTransfer component
   const [customFunctionSignature, setCustomFunctionSignature] = useState('');
   const handleCustomFunctionSignature = value => {
     setCustomFunctionSignature(value);
-    setFunctionSignature(value);
+
+    if (value) {
+      const encodedFunctionSignature =
+        web3.eth.abi.encodeFunctionSignature(value);
+      setFunctionSignature(encodedFunctionSignature);
+    } else {
+      setFunctionSignature(ANY_FUNC_SIGNATURE);
+    }
   };
   useEffect(() => {
     if (activeTab === 0) setFunctionSignature(ANY_FUNC_SIGNATURE);
     if (activeTab === 1) setFunctionSignature(customFunctionSignature);
-    console.log('custom: ', customFunctionSignature);
-    console.log('called: ', parsedData.functionSignature);
   }, [activeTab]);
 
   return (
@@ -205,6 +213,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
           handleCustomFunctionSignature={handleCustomFunctionSignature}
           customToAddress={customToAddress}
           handleCustomAddress={handleCustomAddress}
+          customFunctionSignature={customFunctionSignature}
         />
       )}
     </div>
