@@ -1439,7 +1439,6 @@ export default class UtilsService {
                 10000000
               )
             : [];
-
         if (
           votingMachineExecutionEvent.length > 0 &&
           votingMachineExecutionEvent[0].data !==

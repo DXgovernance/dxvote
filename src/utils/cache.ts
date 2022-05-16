@@ -131,7 +131,13 @@ export const getRawEvents = async function (
     from = fromBlock;
   while (from < to) {
     console.debug(
-      `Fetching logs of ${contractAddress} from blocks ${from} -> ${to}`
+      `Fetching logs of ${contractAddress} from blocks ${from} -> ${to}`,
+      {
+        address: contractAddress,
+        fromBlock: from,
+        toBlock: to,
+        topics: topicsToGet,
+      }
     );
     try {
       let eventsFetched = await web3.eth.getPastLogs({
