@@ -139,7 +139,6 @@ export const bulkDecodeCallsFromOptions = (
 export const useDecodedCall = (call: Call) => {
   const { chainId } = useWeb3React();
   const { contracts } = useRichContractRegistry();
-
   const decodedData = call ? decodeCall(call, contracts, chainId) : null;
-  return decodedData || { decodedCall: null, contract: null };
+  return decodedData || { decodedCall: null, contract: null, approval: null };
 };
