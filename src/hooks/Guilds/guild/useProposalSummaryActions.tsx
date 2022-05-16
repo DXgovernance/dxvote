@@ -1,29 +1,7 @@
 import { useMemo } from 'react';
 import useProposalCalls from 'hooks/Guilds/guild/useProposalCalls';
-import {
-  DecodedAction,
-  SupportedAction,
-} from 'old-components/Guilds/ActionsBuilder/types';
-
-const isApprovalCall = (action: DecodedAction) => {
-  return !!action?.approval;
-};
-
-/**
- * Importance:
- * 1. rep minting
- * 2. spending calls
- * 3. transfers.
- * 4. generic calls
- */
-const getActionPoints = (action: DecodedAction): number => {
-  const type = action?.decodedCall?.callType;
-  if (type === SupportedAction.REP_MINT) return 5;
-  if (isApprovalCall(action)) return 4;
-  if (type === SupportedAction.ERC20_TRANSFER) return 3;
-  if (type === SupportedAction.GENERIC_CALL) return 2;
-  return 1;
-};
+import { DecodedAction } from 'old-components/Guilds/ActionsBuilder/types';
+import { getActionPoints } from 'old-components/Guilds/ActionsBuilder/SupportedActions';
 
 export interface PointedDecodedAction extends DecodedAction {
   points: number;
@@ -53,15 +31,21 @@ export const useProposalSummaryActions = (
     });
 
     // Get list of actions from ordered options
-    const onlyActions = sortedOptionsByWiningVote?.reduce((acc, option) => {
-      return [...acc, ...option.decodedActions];
-    }, []);
+    const onlyActions: DecodedAction[] = sortedOptionsByWiningVote?.reduce(
+      (acc, option) => {
+        return [...acc, ...option.decodedActions];
+      },
+      []
+    );
 
     // Add relevance points to each action;
-    const pointedActions = onlyActions?.reduce((acc, action) => {
-      const points = action?.points || getActionPoints(action);
-      return [...acc, { ...action, points }];
-    }, []);
+    const pointedActions: PointedDecodedAction[] = onlyActions?.reduce(
+      (acc, action) => {
+        const points = getActionPoints(action);
+        return [...acc, { ...action, points }];
+      },
+      []
+    );
 
     // sort by points
     const sortedActions = pointedActions?.sort((a, b) => b.points - a.points);
