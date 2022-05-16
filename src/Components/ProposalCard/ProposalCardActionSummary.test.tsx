@@ -1,19 +1,19 @@
-import ProposalCardVotes from './ProposalCardVotes';
+import ProposalCardActionSummary from './ProposalCardActionSummary';
 import { render } from '../../utils/tests';
-import '@testing-library/jest-dom';
 
-test('ProposalCard votes', async () => {
-  const { container } = render(
-    <ProposalCardVotes isLoading={false} votes={[10, 20]} />
-  );
-
-  expect(container).toMatchSnapshot();
+jest.mock('ipfs', () => jest.fn());
+jest.mock('cids', () => jest.fn());
+jest.mock('axios', () => jest.fn());
+jest.mock('hooks/Guilds/guild/useProposalSummaryActions', () => {
+  return {
+    useProposalSummaryActions: jest.fn(),
+  };
 });
+jest.mock('contexts/index', () => jest.fn());
 
-test('ProposalCard votes loading', async () => {
-  const { container } = render(
-    <ProposalCardVotes isLoading={true} votes={null} />
-  );
-
-  expect(container).toMatchSnapshot();
+describe('ProposalCardActionSummary', () => {
+  it('Should match snapshot without proposal', async () => {
+    const { container } = render(<ProposalCardActionSummary actions={[]} />);
+    expect(container).toMatchSnapshot();
+  });
 });

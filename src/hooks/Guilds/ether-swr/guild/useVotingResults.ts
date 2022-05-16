@@ -12,19 +12,24 @@ export interface VoteData {
   token: ERC20Info;
 }
 
-export const useVotingResults = (): VoteData => {
+export const useVotingResults = (
+  optionalGuildId?: string,
+  optionalProposalId?: string
+): VoteData => {
   const { guildId, proposalId } = useTypedParams();
 
   // swr hooks
-  const { data: proposal } = useProposal(guildId, proposalId);
-  const { data } = useGuildConfig(guildId);
+  const { data: proposal } = useProposal(
+    optionalGuildId || guildId,
+    optionalProposalId || proposalId
+  );
+  const { data } = useGuildConfig(optionalGuildId || guildId);
   const { data: tokenInfo } = useERC20Info(data?.token);
 
   const voteData = useMemo(() => {
     if (!proposal || !data || !tokenInfo) return undefined;
-
     const options = proposal?.totalVotes
-      .slice(1)
+      .slice(0, proposal?.totalVotes?.length - 1) // TODO: it was removing the first, but need to remove the last. investigate why?.
       .reduce<Record<string, BigNumber>>((acc, result, i) => {
         acc[i] = result;
         return acc;

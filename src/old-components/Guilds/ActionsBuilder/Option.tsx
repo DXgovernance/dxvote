@@ -86,7 +86,6 @@ const OptionRow: React.FC<OptionRowProps> = ({
     transform: CSS.Translate.toString(transform),
     transition,
   };
-
   return (
     <OptionWrapper
       dragging={isDragging}
@@ -129,14 +128,16 @@ const OptionRow: React.FC<OptionRowProps> = ({
             items={option?.decodedActions?.map(action => action.id)}
             strategy={verticalListSortingStrategy}
           >
-            {option?.decodedActions?.map((action, index) => (
-              <ActionRow
-                key={index}
-                isEditable={true}
-                decodedAction={action}
-                onEdit={updatedAction => updateAction(index, updatedAction)}
-              />
-            ))}
+            {option?.decodedActions?.map((action, index) => {
+              return (
+                <ActionRow
+                  key={index}
+                  isEditable={true}
+                  decodedAction={action}
+                  onEdit={updatedAction => updateAction(index, updatedAction)}
+                />
+              );
+            })}
           </SortableContext>
         )}
 

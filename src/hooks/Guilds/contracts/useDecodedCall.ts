@@ -11,9 +11,7 @@ import {
   Option,
   SupportedAction,
 } from 'old-components/Guilds/ActionsBuilder/types';
-
-const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
-const ERC20_APPROVE_SIGNATURE = '0x095ea7b3';
+import { ERC20_APPROVE_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from 'utils';
 
 const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
   {
@@ -84,7 +82,7 @@ const getContractFromKnownSighashes = (data: string) => {
   };
 };
 
-const decodeCall = (
+export const decodeCall = (
   call: Call,
   contracts: RichContractData[],
   chainId: number
@@ -117,6 +115,7 @@ const decodeCall = (
     id: `action-${Math.random()}`,
     decodedCall,
     contract: contractInterface,
+    approval: call.approval || null,
   };
 };
 
@@ -140,7 +139,6 @@ export const bulkDecodeCallsFromOptions = (
 export const useDecodedCall = (call: Call) => {
   const { chainId } = useWeb3React();
   const { contracts } = useRichContractRegistry();
-
   const decodedData = call ? decodeCall(call, contracts, chainId) : null;
-  return decodedData || { decodedCall: null, contract: null };
+  return decodedData || { decodedCall: null, contract: null, approval: null };
 };

@@ -284,6 +284,7 @@ declare global {
       fetchPrice: boolean;
       logoURI?: string;
     }[];
+    guilds: string[];
   }
 
   interface AppConfig {

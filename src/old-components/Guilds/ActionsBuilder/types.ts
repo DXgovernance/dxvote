@@ -13,6 +13,7 @@ export interface Call {
   to: string;
   data: string;
   value: BigNumber;
+  approval?: ApproveSendTokens;
 }
 
 export interface DecodedCall {
@@ -38,6 +39,7 @@ export interface Option {
   color: string;
   actions?: Call[];
   decodedActions?: DecodedAction[];
+  totalVotes?: BigNumber;
 }
 
 export interface ApproveSendTokens {

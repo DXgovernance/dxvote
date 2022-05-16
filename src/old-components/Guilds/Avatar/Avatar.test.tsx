@@ -1,6 +1,5 @@
-import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
 import { render } from '../../../utils/tests';
+import { screen } from '@testing-library/react';
 
 import Avatar from './';
 

@@ -21,3 +21,9 @@ export const proposalMock: Proposal = {
 export const ensAvatarMock: ENSAvatar = {
   ensName: 'venky0x.eth',
 };
+
+export const proposalStatusPropsMock = {
+  timeDetail: 'Time',
+  status: ProposalState.Active,
+  endTime: moment('2022-05-09T08:00:00'),
+};
