@@ -78,6 +78,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         <ControlLabel>Asset</ControlLabel>
         <ControlRow onClick={() => setIsTokenPickerOpen(true)}>
           <Input
+            name="asset"
             value={tokenInfo?.symbol || ''}
             placeholder="Token"
             icon={
@@ -111,6 +112,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         <ControlLabel>To address</ControlLabel>
         <ControlRow>
           <Input
+            name="to-address"
             value={customToAddress}
             icon={
               <div>
@@ -139,13 +141,18 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         <ControlLabel>Amount</ControlLabel>
         <ControlRow>
           <StyledTokenAmount
+            name="amount"
             decimals={tokenInfo?.decimals}
             value={customAmountValue}
             onChange={handleTokenAmountInputChange}
             disabled={maxValueToggled}
           />
           <ToggleWrapper>
-            <Toggle value={maxValueToggled} onChange={handleToggleChange} />
+            <Toggle
+              name="toggle-max-value"
+              value={maxValueToggled}
+              onChange={handleToggleChange}
+            />
             <ToggleLabel selected={maxValueToggled}>Max value</ToggleLabel>
           </ToggleWrapper>
         </ControlRow>

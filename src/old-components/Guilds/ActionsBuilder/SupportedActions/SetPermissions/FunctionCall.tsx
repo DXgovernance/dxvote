@@ -34,6 +34,7 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
         <ControlLabel>To address</ControlLabel>
         <ControlRow>
           <Input
+            name="to-address"
             value={customToAddress}
             icon={
               <div>
@@ -64,6 +65,7 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
         <ControlLabel>Function signature</ControlLabel>
         <ControlRow>
           <Input
+            name="function-signature"
             value={customFunctionSignature || ''}
             placeholder="Function signature"
             onChange={e => handleCustomFunctionSignature(e.target.value)}
