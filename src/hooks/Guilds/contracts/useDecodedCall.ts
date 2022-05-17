@@ -12,6 +12,8 @@ import {
   SupportedAction,
 } from 'old-components/Guilds/ActionsBuilder/types';
 import { ERC20_APPROVE_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from 'utils';
+import { useEffect, useState } from "react";
+import { lookUpContractWithSourcify } from 'utils/sourcify';
 
 const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
   {
@@ -82,7 +84,7 @@ const getContractFromKnownSighashes = (data: string) => {
   };
 };
 
-export const decodeCall = (
+export const decodeCall = async (
   call: Call,
   contracts: RichContractData[],
   chainId: number
@@ -93,11 +95,16 @@ export const decodeCall = (
   const matchedRichContractData = contracts?.find(
     contract => contract.networks[chainId] === call.to
   );
-  const matchedContract = matchedRichContractData
+  let matchedContract = matchedRichContractData
     ? getContractInterfaceFromRichContractData(matchedRichContractData)
     : getContractFromKnownSighashes(call.data);
-  if (!matchedContract) return null;
-
+    if (!matchedContract) {
+      const abi = await lookUpContractWithSourcify({ chainId, address: call.to });
+      matchedContract = {
+        contractInterface: new utils.Interface(abi),
+        callType: SupportedAction.GENERIC_CALL,
+      };
+    }
   const { callType, contractInterface } = matchedContract;
   if (!contractInterface) return null;
 
@@ -124,21 +131,35 @@ export const bulkDecodeCallsFromOptions = (
   contracts: RichContractData[],
   chainId: number
 ) => {
-  return options.map(option => {
-    const { actions } = option;
-    const decodedCalls = actions?.map(call =>
-      decodeCall(call, contracts, chainId)
-    );
-    return {
-      ...option,
-      decodedActions: decodedCalls,
-    };
-  });
+  return Promise.all(
+    options.map(async option => {
+      const { actions } = option;
+      const actionPromisesArray = actions.map(
+        async action => await decodeCall(action, contracts, chainId)
+      );
+      const decodedActions = await Promise.all(actionPromisesArray);
+      return {
+        ...option,
+        decodedActions,
+      };
+    })
+  );
 };
 
 export const useDecodedCall = (call: Call) => {
+  const [decodedCall, setDecodedCall] = useState<any>(null);
   const { chainId } = useWeb3React();
   const { contracts } = useRichContractRegistry();
-  const decodedData = call ? decodeCall(call, contracts, chainId) : null;
-  return decodedData || { decodedCall: null, contract: null, approval: null };
+
+  useEffect(() => {
+    if (call) {
+      decodeCall(call, contracts, chainId).then(decodedData =>
+        setDecodedCall(decodedData)
+      );
+    } else {
+      setDecodedCall(null);
+    }
+  }, [call, contracts, chainId]);
+
+  return decodedCall || { decodedCall: null, contract: null };
 };

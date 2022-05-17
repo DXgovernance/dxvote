@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
 import { bulkDecodeCallsFromOptions } from '../contracts/useDecodedCall';
@@ -23,25 +23,27 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
   const { chainId } = useWeb3React();
 
   const theme = useTheme();
+  const [options, setOptions] = useState<Option[]>([]);
+  useEffect(() => {
+    if (!guildId || !proposalId || !proposal) {
+      setOptions([]);
+      return;
+    }
+    async function decodeOptions() {
+      const {
+        totalActions: totalOptions,
+        to: toArray,
+        data: dataArray,
+        value: valuesArray,
+      } = proposal;
 
-  const options: Option[] = useMemo(() => {
-    if (!guildId || !proposalId || !proposal) return null;
-
-    const {
-      to: toArray,
-      data: dataArray,
-      value: valuesArray,
-      totalVotes,
-    } = proposal;
-
-    const calls: Call[] = toArray.map((to, index) => ({
-      from: guildId,
-      to: to,
-      data: dataArray[index],
-      value: valuesArray[index],
-    }));
-
-    const totalOptionsNum = totalVotes.length - 1;
+      const calls: Call[] = toArray.map((to, index) => ({
+        from: guildId,
+        to: to,
+        data: dataArray[index],
+        value: valuesArray[index],
+      }));
+      const totalOptionsNum = totalOptions?.toNumber();
 
     const callsPerOption = toArray.length / totalOptionsNum;
     const splitCalls: Call[][] = [];
@@ -53,34 +55,46 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
 
     const voteOptions = metadata?.voteOptions;
 
-    const encodedOptions: Option[] = splitCalls.map((calls, index) => {
-      const actions = calls
-        .filter(call => call.data !== ZERO_HASH || !call.value?.isZero())
-        .reduce((acc, call, index, allCalls) => {
-          if (isApprovalCall(call)) {
-            allCalls[index + 1].approval = {
-              amount: decodeCall(call, contracts, chainId)?.decodedCall?.args
-                ?._value,
-              token: call.to,
-            };
-            return acc;
-          }
-          return [...acc, call];
-        }, []);
-      return {
-        id: `option-${index}`,
-        label:
-          voteOptions && voteOptions[index]
-            ? voteOptions[index]
-            : `Option ${index + 1}`,
-        color: theme?.colors?.votes?.[index],
-        actions,
-        totalVotes: votingResults?.options[index],
-      };
-    });
+    const encodedOptions: Option[] = await Promise.all(
+      splitCalls.map(async (calls, index) => {
+        const filteredActions = calls.filter(
+          call => call.data !== ZERO_HASH || !call.value?.isZero()
+        );
+
+        const actions = await Promise.all(
+          filteredActions.map(async (call, index, allCalls) => {
+            if (isApprovalCall(call)) {
+              const { decodedCall } = await decodeCall(
+                call,
+                contracts,
+                chainId
+              );
+              allCalls[index + 1].approval = {
+                amount: decodedCall?.args?._value,
+                token: call.to,
+              };
+            }
+            return call;
+          })
+        );
+
+        return {
+          id: `option-${index}`,
+          label:
+            voteOptions && voteOptions[index]
+              ? voteOptions[index]
+              : `Option ${index + 1}`,
+          color: theme?.colors?.votes?.[index],
+          actions,
+          totalVotes: votingResults?.options[index],
+        };
+      })
+    );
 
     return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);
-  }, [theme, proposal, proposalId, guildId, chainId, contracts]);
+  }
+  decodeOptions().then(options => setOptions(options));
+  }, [theme?.colors?.votes, contracts, chainId, guildId, proposalId]);
 
   return {
     options,
