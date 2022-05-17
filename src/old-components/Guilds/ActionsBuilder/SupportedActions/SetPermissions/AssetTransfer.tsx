@@ -79,7 +79,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         <ControlRow onClick={() => setIsTokenPickerOpen(true)}>
           <Input
             name="asset"
-            aria-label="asset input"
+            aria-label="asset picker"
             value={tokenInfo?.symbol || ''}
             placeholder="Token"
             icon={
@@ -99,7 +99,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         </ControlRow>
         {/* //! There's a bug while showing the token picker: it doesn't dissappear when clicked outside  */}
         <TokenPicker
-          walletAddress={parsedData?.to || ''} //? see token picker
+          walletAddress={parsedData?.to || ''}
           isOpen={isTokenPickerOpen}
           onClose={() => setIsTokenPickerOpen(false)}
           onSelect={asset => {

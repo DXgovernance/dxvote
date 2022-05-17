@@ -50,6 +50,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
     if (!decodedCall) return null;
     const { asset, to, functionSignature, valueAllowed, allowance } =
       decodedCall.args;
+
     return {
       asset,
       to,
@@ -72,7 +73,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
   const token = useMemo(() => {
     if (!parsedData?.asset || !tokens) return null;
 
-    return tokens.find(({ address }) => address === parsedData.asset);
+    return tokens.find(({ address }) => address === parsedData?.asset);
   }, [tokens, parsedData]);
 
   const { data: tokenInfo } = useERC20Info(parsedData?.asset);
@@ -182,10 +183,18 @@ const Permissions: React.FC<ActionEditorProps> = ({
   return (
     <div>
       <DetailWrapper>
-        <TabButton active={activeTab === 0} onClick={() => setActiveTab(0)}>
+        <TabButton
+          aria-label="assets transfer tab"
+          active={activeTab === 0}
+          onClick={() => setActiveTab(0)}
+        >
           Assets transfer
         </TabButton>
-        <TabButton active={activeTab === 1} onClick={() => setActiveTab(1)}>
+        <TabButton
+          aria-label="functions call tab"
+          active={activeTab === 1}
+          onClick={() => setActiveTab(1)}
+        >
           Functions call
         </TabButton>
       </DetailWrapper>
