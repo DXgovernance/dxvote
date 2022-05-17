@@ -101,6 +101,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
                 function: contractInterface.getFunction(selectedFunction),
                 value: BigNumber.from(0),
                 args,
+                richData: selectedContract,
               },
               approval: payableFnData,
             });
