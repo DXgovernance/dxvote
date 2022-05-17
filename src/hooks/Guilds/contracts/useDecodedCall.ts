@@ -144,9 +144,15 @@ export const bulkDecodeCallsFromOptions = (
   );
 };
 
-const lookUpContractWithSourcify = async ({ chainId, address }) => {
+export const lookUpContractWithSourcify = async ({
+  chainId,
+  address,
+}: {
+  chainId: number;
+  address: string;
+}) => {
   const baseUrl = `https://sourcify.dev/server/files/any`;
-  const url = `${baseUrl}/4/0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D`;
+  const url = `${baseUrl}/${chainId}/${address}`;
   const response = await fetch(url);
   if (!response.ok) return null;
   const json = await response.json();
