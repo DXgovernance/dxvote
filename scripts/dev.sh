@@ -20,6 +20,8 @@ hardhat_running() {
 
 start-hardhat_node() {
 
+  yarn hardhat compile
+  
   npx hardhat node > /dev/null &
   
   # Account #0: 0x79706c8e413cdaee9e63f282507287b9ea9c0928 (10000 ETH)

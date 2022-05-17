@@ -37,7 +37,6 @@ import {
   verifySignedVote,
 } from 'utils';
 import { utils } from 'ethers';
-import useJsonRpcProvider from 'hooks/Guilds/web3/useJsonRpcProvider';
 
 const Votes = () => {
   const {
@@ -46,7 +45,6 @@ const Votes = () => {
       daoStore,
       providerStore,
       daoService,
-      messageLoggerService,
       orbitDBService,
     },
   } = useContext();
@@ -56,8 +54,6 @@ const Votes = () => {
   const [decision, setDecision] = useState(0);
   const [votePercentage, setVotePercentage] = useState(0);
   const [signedVotesOfProposal, setSignedVotesOfProposal] = useState([]);
-  const [loadingSignedRinkebyVotes, setLoadingSignedRinkebyVotes] =
-    useState(true);
   const [loadingSignedOrbitDBVotes, setLoadingSignedOrbitDBVotes] =
     useState(true);
 
@@ -76,57 +72,6 @@ const Votes = () => {
     configStore.getNetworkContracts().votingMachines[
       votingMachineOfProposal.address
     ].type == 'DXDVotingMachine';
-
-  const rinkebyProvider = useJsonRpcProvider(4);
-
-  messageLoggerService
-    .getMessages(signedVoteMessageId, rinkebyProvider)
-    .then(messagesEvents => {
-      console.debug('[Rinkeby Proposal messages]', messagesEvents);
-      messagesEvents.map(messagesEvent => {
-        if (
-          messagesEvent.args &&
-          messagesEvent.args.message.length > 0 &&
-          messagesEvent.args.message.split(':').length > 6
-        ) {
-          const signedVote = messagesEvent.args.message.split(':');
-          const validSignature = verifySignedVote(
-            signedVote[1],
-            signedVote[2],
-            signedVote[3],
-            signedVote[4],
-            signedVote[5],
-            signedVote[6]
-          );
-
-          const alreadyAdded =
-            signedVotesOfProposal.findIndex(s => s.voter == signedVote[3]) >
-              -1 ||
-            proposalEvents.votes.findIndex(s => s.voter == signedVote[3]) > -1;
-
-          const repOfVoterForProposal = daoStore.getRepAt(
-            signedVote[3],
-            proposal.creationEvent.blockNumber
-          ).userRep;
-
-          if (
-            validSignature &&
-            !alreadyAdded &&
-            repOfVoterForProposal >= bnum(signedVote[5])
-          ) {
-            signedVotesOfProposal.push({
-              voter: signedVote[3],
-              vote: signedVote[4],
-              amount: bnum(signedVote[5]),
-              signature: signedVote[6],
-              source: 'rinkeby',
-            });
-          }
-        }
-      });
-      setSignedVotesOfProposal(signedVotesOfProposal);
-      setLoadingSignedRinkebyVotes(false);
-    });
 
   orbitDBService.getLogs(signedVoteMessageId).then(signedVoteMessages => {
     console.debug('[OrbitDB messages]', signedVoteMessages);
@@ -272,12 +217,6 @@ const Votes = () => {
             utils.id(`dxvote:${proposalId}`),
             `signedVote:${voteDetails.votingMachine}:${voteDetails.proposalId}:${voteDetails.voter}:${voteDetails.decision}:${voteDetails.repAmount}:${voteSignature}`
           );
-        if (voteDetails.networks[1])
-          messageLoggerService.broadcast(
-            utils.id(`dxvote:${proposalId}`),
-            `signedVote:${voteDetails.votingMachine}:${voteDetails.proposalId}:${voteDetails.voter}:${voteDetails.decision}:${voteDetails.repAmount}:${voteSignature}`,
-            rinkebyProvider
-          );
       }
     } else {
       daoService.vote(
@@ -358,7 +297,7 @@ const Votes = () => {
         </NegativeSummary>
       </SpaceAroundRow>
 
-      {!loadingSignedRinkebyVotes && !loadingSignedOrbitDBVotes && (
+      {!loadingSignedOrbitDBVotes && (
         <div>
           <SpaceAroundRow>
             <strong>
