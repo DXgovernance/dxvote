@@ -79,6 +79,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         <ControlRow onClick={() => setIsTokenPickerOpen(true)}>
           <Input
             name="asset"
+            aria-label="asset input"
             value={tokenInfo?.symbol || ''}
             placeholder="Token"
             icon={
@@ -113,6 +114,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         <ControlRow>
           <Input
             name="to-address"
+            aria-label="to address input"
             value={customToAddress}
             icon={
               <div>
@@ -127,7 +129,10 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
             }
             iconRight={
               parsedData?.to ? (
-                <ClickableIcon onClick={() => handleCustomAddress('')}>
+                <ClickableIcon
+                  aria-label="clear field to address"
+                  onClick={() => handleCustomAddress('')}
+                >
                   <FiX size={18} />
                 </ClickableIcon>
               ) : null
@@ -142,6 +147,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         <ControlRow>
           <StyledTokenAmount
             name="amount"
+            aria-label="amount input"
             decimals={tokenInfo?.decimals}
             value={customAmountValue}
             onChange={handleTokenAmountInputChange}
@@ -150,6 +156,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
           <ToggleWrapper>
             <Toggle
               name="toggle-max-value"
+              aria-label="toggle max value"
               value={maxValueToggled}
               onChange={handleToggleChange}
             />
