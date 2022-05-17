@@ -35,10 +35,11 @@ jest.mock('hooks/Guilds/useNetworkConfig.ts', () => ({
 
 const ERC20GuildContract = new utils.Interface(ERC20Guild.abi);
 
-const decodedFunctionSignatureMock = 'test';
+const functionSignatureMock = 'test';
 const encodedFunctionSignatureMock = '0x9c22ff5f';
 const toAddressMock = '0x79706C8e413CDaeE9E63f282507287b9Ea9C0928';
-const customAmountMock = 150;
+const customAmountMock = 111;
+const tokenAddresMock = '0xD899Be87df2076e0Be28486b60dA406Be6757AfC';
 
 const emptyDecodedCallMock: DecodedCall = {
   from: '',
@@ -62,10 +63,10 @@ const completeDecodedCallMock: DecodedCall = {
   to: '',
   value: BigNumber.from(0),
   args: {
-    asset: '',
+    asset: tokenAddresMock,
     to: toAddressMock,
     functionSignature: encodedFunctionSignatureMock,
-    valueAllowed: BigNumber.from(customAmountMock),
+    valueAllowed: BigNumber.from('111000000000000000000'),
     allowance: true,
   },
 };
@@ -82,7 +83,7 @@ describe(`Set Permissions editor`, () => {
       );
 
       expect(
-        screen.getByRole('textbox', { name: /asset input/i })
+        screen.getByRole('textbox', { name: /asset picker/i })
       ).toBeInTheDocument();
 
       expect(
@@ -122,7 +123,7 @@ describe(`Set Permissions editor`, () => {
       });
 
       expect(toAddressElement.value).toBe(toAddressMock);
-      expect(customAmountElement.value).toBe('150.0');
+      expect(customAmountElement.value).toBe('111.0');
     });
 
     it(`Clicking the X clears the to address`, () => {
@@ -152,29 +153,121 @@ describe(`Set Permissions editor`, () => {
         />
       );
 
+      // ! Token picker decoding not working correctly
+
       const toAddressElement: HTMLInputElement = screen.getByRole('textbox', {
         name: /to address input/i,
       });
 
-      const amountInput: HTMLInputElement = screen.getByRole('textbox', {
+      const amountInputElement: HTMLInputElement = screen.getByRole('textbox', {
         name: /amount input/i,
       });
 
-      console.log(amountInput.value);
-
       expect(toAddressElement.value).toBe(completeDecodedCallMock.args.to);
-      // expect(amountInput.value).toBe(completeDecodedCallMock.args.valueAllowed);
+      expect(amountInputElement.value).toBe('111.0');
     });
 
-    it(`Toggling max amount disables the 'amount' input`, () => {});
-    it(`Toggling max amount doesn't modifies the amount input`, () => {});
-    it(`PENDING: asset interaction`, () => {});
+    it(`Toggling max amount disables the 'amount' input`, () => {
+      render(
+        <Permissions
+          decodedCall={emptyDecodedCallMock}
+          updateCall={jest.fn()}
+        />
+      );
+
+      const amountInput: HTMLInputElement = screen.getByRole('textbox', {
+        name: /amount input/i,
+      });
+      const toggleMaxValueElement = screen.getByRole('switch', {
+        name: /toggle max value/i,
+      });
+
+      fireEvent.click(toggleMaxValueElement);
+      expect(amountInput).toBeDisabled();
+    });
+
+    it(`Toggling max amount doesn't modifies the amount input`, () => {
+      render(
+        <Permissions
+          decodedCall={emptyDecodedCallMock}
+          updateCall={jest.fn()}
+        />
+      );
+
+      const customAmountElement: HTMLInputElement = screen.getByRole(
+        'textbox',
+        {
+          name: /amount input/i,
+        }
+      );
+      fireEvent.change(customAmountElement, {
+        target: { value: customAmountMock },
+      });
+
+      const toggleMaxValueElement = screen.getByRole('switch', {
+        name: /toggle max value/i,
+      });
+
+      // Asserts value is maintaned when disabled and enabled again
+      fireEvent.click(toggleMaxValueElement);
+      expect(customAmountElement.value).toBe('111.0');
+      fireEvent.click(toggleMaxValueElement);
+      expect(customAmountElement.value).toBe('111.0');
+    });
   });
 
   describe(`Function calls tests`, () => {
-    it(`Can fill the to address and function signature`, () => {});
-    it(`Function signature is properly encoded to bytes4`, () => {});
-    it(`Displays decodedCall information properly`, () => {});
+    it(`Can fill the 'to address' and 'function signature'`, () => {
+      render(
+        <Permissions
+          decodedCall={emptyDecodedCallMock}
+          updateCall={jest.fn()}
+        />
+      );
+      const functionsCallTab = screen.getByLabelText(`functions call tab`);
+      fireEvent.click(functionsCallTab);
+
+      const toAddressElement: HTMLInputElement = screen.getByRole('textbox', {
+        name: /to address input/i,
+      });
+      fireEvent.change(toAddressElement, {
+        target: { value: toAddressMock },
+      });
+
+      const functionSignatureElement: HTMLInputElement = screen.getByRole(
+        'textbox',
+        { name: /function signature input/i }
+      );
+      fireEvent.change(functionSignatureElement, {
+        target: { value: functionSignatureMock },
+      });
+
+      expect(toAddressElement.value).toBe(toAddressMock);
+      expect(functionSignatureElement.value).toBe(functionSignatureMock);
+    });
+
+    it(`Displays decodedCall information properly`, () => {
+      render(
+        <Permissions
+          decodedCall={completeDecodedCallMock}
+          updateCall={jest.fn()}
+        />
+      );
+      const functionsCallTab = screen.getByLabelText(`functions call tab`);
+      fireEvent.click(functionsCallTab);
+
+      const toAddressElement: HTMLInputElement = screen.getByRole('textbox', {
+        name: /to address input/i,
+      });
+
+      const functionSignatureElement: HTMLInputElement = screen.getByRole(
+        'textbox',
+        { name: /function signature input/i }
+      );
+
+      expect(toAddressElement.value).toBe(completeDecodedCallMock.args.to);
+      // expect(functionSignatureElement.value).toBe(decodedFunctionSignatureMock);
+    });
   });
 
   describe(`Tab interaction`, () => {
@@ -186,7 +279,7 @@ describe(`Set Permissions editor`, () => {
         />
       );
 
-      const functionsCallTab = screen.getByText(`Functions call`);
+      const functionsCallTab = screen.getByLabelText(`functions call tab`);
       fireEvent.click(functionsCallTab);
       expect(screen.getByText(`Functions call`));
       expect(screen.getByText(`To address`));
