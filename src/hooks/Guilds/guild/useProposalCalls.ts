@@ -10,6 +10,7 @@ import { Call, Option } from 'old-components/Guilds/ActionsBuilder/types';
 import { ZERO_HASH } from 'utils';
 import { useRichContractRegistry } from '../contracts/useRichContractRegistry';
 import { ERC20_APPROVE_SIGNATURE } from 'utils';
+import useGuildImplementationTypeConfig from './useGuildImplementationType';
 
 const isApprovalCall = (call: Call) =>
   call.data.substring(0, 10) === ERC20_APPROVE_SIGNATURE;
@@ -21,6 +22,7 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
   const votingResults = useVotingResults(guildId, proposalId);
   const { contracts } = useRichContractRegistry();
   const { chainId } = useWeb3React();
+  const { isEnforcedBinaryGuild } = useGuildImplementationTypeConfig(guildId);
 
   const theme = useTheme();
 
@@ -51,7 +53,7 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
       );
     }
 
-    const voteOptions = metadata?.voteOptions;
+    const optionLabels = metadata?.voteOptions;
 
     const encodedOptions: Option[] = splitCalls.map((calls, index) => {
       const actions = calls
@@ -67,12 +69,14 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
           }
           return [...acc, call];
         }, []);
+
+      const isEnforcedBinaryLastOption =
+        isEnforcedBinaryGuild && index === totalOptionsNum - 1;
+      const optionLabel =
+        optionLabels?.[index] || isEnforcedBinaryLastOption ? 'Against' : null;
       return {
         id: `option-${index}`,
-        label:
-          voteOptions && voteOptions[index]
-            ? voteOptions[index]
-            : `Option ${index + 1}`,
+        label: optionLabel || `Option ${index + 1}`,
         color: theme?.colors?.votes?.[index],
         actions,
         totalVotes: votingResults?.options[index],
@@ -80,7 +84,15 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
     });
 
     return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);
-  }, [theme, proposal, proposalId, guildId, chainId, contracts]);
+  }, [
+    theme,
+    proposal,
+    proposalId,
+    guildId,
+    chainId,
+    contracts,
+    isEnforcedBinaryGuild,
+  ]);
 
   return {
     options,

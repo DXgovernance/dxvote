@@ -23,5 +23,12 @@
     "type": "DXDGuild",
     "bytecode_hash": "0x80aefea2ccff22449ddf830d6a298eaff1a52dd1394d645cf7c95f630c9426c4",
     "features": []
+  },
+  {
+    "type": "EnforcedBinaryGuild",
+    "bytecode_hash": "0x88b9a7fe995f98f27a4a8134b045cc98a1ee099204b877e0aa2f24cabd86d9a8",
+    "features": [
+      "ENFORCED_BINARY"
+    ]
   }
 ]

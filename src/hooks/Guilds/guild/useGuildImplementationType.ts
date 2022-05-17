@@ -22,6 +22,7 @@ interface ImplementationTypeConfigReturn extends ImplementationTypeConfig {
   isRepGuild: boolean;
   isSnapshotGuild: boolean;
   isSnapshotRepGuild: boolean;
+  isEnforcedBinaryGuild: boolean;
 }
 const parseConfig = (
   config: ImplementationTypeConfig
@@ -34,13 +35,14 @@ const parseConfig = (
       config.features.includes('SNAPSHOT') && !config.features.includes('REP'),
     isSnapshotRepGuild:
       config.features.includes('SNAPSHOT') && config.features.includes('REP'),
+    isEnforcedBinaryGuild: config.features.includes('ENFORCED_BINARY'),
   };
 };
 
 /**
  * @function useGuildImplementationType
  * @param {string} guildAddress
- * @returns {string} GuildImplementationType. 'SnapshotRepERC20Guild' | 'DXDGuild' | 'ERC20Guild' | 'IERC20Guild'
+ * @returns {ImplementationTypeConfigReturn}
  */
 export default function useGuildImplementationTypeConfig(
   guildAddress: string
