@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProposalCardActionSummary Should match snapshot without proposal 1`] = `
+<div>
+   
+  <div
+    class="sc-jrAFXE sc-TmdmN jLAWlL bCJInI"
+  />
+   
+</div>
+`;

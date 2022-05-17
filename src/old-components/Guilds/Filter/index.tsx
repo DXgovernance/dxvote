@@ -1,6 +1,6 @@
 import { Button, IconButton } from '../common/Button';
 import Input from '../common/Form/Input';
-import { Flex, Box } from '../../../Components/Primitives/Layout/Box';
+import { Flex, Box } from 'Components/Primitives/Layout/Box';
 import { FilterMenu, FilterButton, FilterBadge } from './FilterMenu';
 import { useWeb3React } from '@web3-react/core';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';

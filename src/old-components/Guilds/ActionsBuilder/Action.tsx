@@ -112,10 +112,10 @@ const ActionRow: React.FC<ActionViewProps> = ({
     transition,
     isDragging,
   } = useSortable({ id: decodedAction?.id, disabled: !isEditable });
+  const action = useDecodedCall(call);
 
-  const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
-
-  const decodedCall = decodedCallFromCall || decodedAction?.decodedCall;
+  const decodedCall = action.decodedCall || decodedAction?.decodedCall;
+  const approval = action.approval || decodedAction?.approval;
 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -141,10 +141,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
           {isEditable && <GripWithMargin {...listeners} />}
 
           {InfoLine && (
-            <InfoLine
-              decodedCall={decodedCall}
-              approveSpendTokens={decodedAction.approval}
-            />
+            <InfoLine decodedCall={decodedCall} approveSpendTokens={approval} />
           )}
           {!decodedCall && <UndecodableCallInfoLine />}
         </CardLabel>
@@ -191,7 +188,7 @@ const ActionRow: React.FC<ActionViewProps> = ({
               {decodedCall ? (
                 <CallDetails
                   decodedCall={decodedCall}
-                  approveSpendTokens={decodedAction.approval}
+                  approveSpendTokens={approval}
                 />
               ) : (
                 <UndecodableCallDetails call={call} />

@@ -23,6 +23,7 @@ export interface Proposal {
   totalVotes: BigNumber[];
 }
 
+// TODO: Move this to the ENSAvatar types file once that's refactored
 export interface ENSAvatar {
   imageUrl?: string;
   ensName?: string;

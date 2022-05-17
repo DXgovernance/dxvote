@@ -1,0 +1,42 @@
+name: Storybook Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.13.0]
+    steps:
+      - name: Inject workflow information
+        uses: potiuk/get-workflow-origin@v1_3
+        id: workflow-run-info
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build dapp
+        run: CI=false yarn build
+
+      - name: Build storybook
+        run: CI=false yarn build-storybook
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: storybook-${{ steps.workflow-run-info.outputs.targetCommitSha }}
+          path: storybook-static/

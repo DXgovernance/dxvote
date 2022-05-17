@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ENSAvatar Should render avatar when address is given 1`] = `
+<div>
+   
+  <span
+    class="sc-gKseQn hvLGCr"
+  >
+    <div
+      class="paper"
+      style="border-radius: 50px; display: inline-block; margin: 0px; overflow: hidden; padding: 0px; background-color: rgb(24, 151, 242); height: 24px; width: 24px;"
+    >
+      <svg
+        height="24"
+        width="24"
+        x="0"
+        xmlns="http://www.w3.org/2000/svg"
+        y="0"
+      >
+        <rect
+          fill="#2362E1"
+          height="24"
+          rx="0"
+          ry="0"
+          transform="translate(2.6919976385943882 -4.000732967425142) rotate(458.4 12 12)"
+          width="24"
+          x="0"
+          y="0"
+        />
+        <rect
+          fill="#F94301"
+          height="24"
+          rx="0"
+          ry="0"
+          transform="translate(-11.522594467237658 5.994263726614974) rotate(268.8 12 12)"
+          width="24"
+          x="0"
+          y="0"
+        />
+        <rect
+          fill="#FA7900"
+          height="24"
+          rx="0"
+          ry="0"
+          transform="translate(-6.8071905594760675 22.110011910512533) rotate(117.3 12 12)"
+          width="24"
+          x="0"
+          y="0"
+        />
+        <rect
+          fill="#C8144A"
+          height="24"
+          rx="0"
+          ry="0"
+          transform="translate(-20.687920456547104 18.602038690110742) rotate(280.5 12 12)"
+          width="24"
+          x="0"
+          y="0"
+        />
+      </svg>
+    </div>
+  </span>
+   
+</div>
+`;
+
+exports[`ENSAvatar Should render skeleton when address is not given 1`] = `
+<div>
+   
+  <span
+    class="sc-gKseQn hvLGCr"
+  >
+    <div
+      class="sc-eCstlR"
+    >
+      <span
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <span
+          class="react-loading-skeleton"
+          style="width: 24px; height: 24px; border-radius: 50%; --base-color: #333; --highlight-color: #555;"
+        >
+          ‌
+        </span>
+        <br />
+      </span>
+    </div>
+  </span>
+   
+</div>
+`;

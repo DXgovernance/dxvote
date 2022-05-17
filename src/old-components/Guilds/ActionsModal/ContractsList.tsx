@@ -12,15 +12,15 @@ import {
 } from './styles';
 import { useWeb3React } from '@web3-react/core';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
-import {
-  RegistryContract,
-  useContractRegistry,
-} from 'hooks/Guilds/contracts/useContractRegistry';
 import useGuildImplementationTypeConfig from 'hooks/Guilds/guild/useGuildImplementationType';
 import React from 'react';
+import {
+  RichContractData,
+  useRichContractRegistry,
+} from 'hooks/Guilds/contracts/useRichContractRegistry';
 
 interface ContractsListProps {
-  onSelect: (contract: RegistryContract) => void;
+  onSelect: (contract: RichContractData) => void;
   onSupportedActionSelect: (actionType: SupportedAction) => void;
 }
 
@@ -29,7 +29,7 @@ const ContractsList: React.FC<ContractsListProps> = ({
   onSupportedActionSelect,
 }) => {
   const { chainId } = useWeb3React();
-  const { contracts } = useContractRegistry(chainId);
+  const { contracts } = useRichContractRegistry(chainId);
   const { guildId: guildAddress } = useTypedParams();
   const { isRepGuild } = useGuildImplementationTypeConfig(guildAddress);
   return (

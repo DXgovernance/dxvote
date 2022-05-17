@@ -1,59 +1,21 @@
-import { Box } from 'Components/Primitives/Layout';
 import { Loading } from 'Components/Primitives/Loading';
-import { isDesktop } from 'react-device-detect';
-import { FiArrowRight } from 'react-icons/fi';
-import styled from 'styled-components';
+import { getInfoLineView } from 'old-components/Guilds/ActionsBuilder/SupportedActions';
+import UndecodableCallInfoLine from 'old-components/Guilds/ActionsBuilder/UndecodableCalls/UndecodableCallsInfoLine';
+import { DecodedAction } from 'old-components/Guilds/ActionsBuilder/types';
+import {
+  ActionsWrapper,
+  BorderedIconDetailWrapper,
+  NotFoundActionWrapper,
+} from 'Components/ProposalCard/ProposalCard.styled';
 
 interface ProposalCardActionSummaryProps {
-  isLoading?: boolean;
+  actions?: DecodedAction[];
 }
 
-const IconDetailWrapper = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-`;
-
-const BorderedIconDetailWrapper = styled(IconDetailWrapper)`
-  border: 1px solid ${({ theme }) => theme.colors.border.initial};
-  border-radius: 1rem;
-  padding: 0.25rem 0.8rem;
-  flex: none;
-  display: flex;
-`;
-
-const Detail = styled(Box)`
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-left: 0.5rem;
-`;
-
-const Icon = styled.img<{
-  spaceLeft?: boolean;
-  spaceRight?: boolean;
-  bordered: boolean;
-}>`
-  width: 1.5rem;
-  height: 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  ${props => props.spaceLeft && `margin-left: 0.5rem;`}
-  ${props => props.spaceRight && `margin-right: 0.5rem;`}
-
-  ${props =>
-    props.bordered &&
-    `
-    border: 1px solid #000;
-    border-radius: 50%;
-  `}
-`;
-
 const ProposalCardActionSummary: React.FC<ProposalCardActionSummaryProps> = ({
-  isLoading,
+  actions,
 }) => {
+  const isLoading = !actions;
   if (isLoading) {
     return (
       <Loading
@@ -65,17 +27,26 @@ const ProposalCardActionSummary: React.FC<ProposalCardActionSummaryProps> = ({
     );
   }
   return (
-    <BorderedIconDetailWrapper>
-      <Detail>150 ETH</Detail>
-      {isDesktop && (
-        <>
-          <Icon as="div" spaceLeft spaceRight>
-            <FiArrowRight />
-          </Icon>{' '}
-          <Detail>geronimo.eth</Detail>
-        </>
-      )}
-    </BorderedIconDetailWrapper>
+    <ActionsWrapper>
+      {actions?.map(action => {
+        if (!action) return null;
+        const InfoLine = getInfoLineView(action?.decodedCall?.callType);
+
+        return !!InfoLine ? (
+          <BorderedIconDetailWrapper>
+            <InfoLine
+              decodedCall={action?.decodedCall}
+              approveSpendTokens={action?.approval}
+              compact
+            />
+          </BorderedIconDetailWrapper>
+        ) : (
+          <NotFoundActionWrapper>
+            <UndecodableCallInfoLine />
+          </NotFoundActionWrapper>
+        );
+      })}
+    </ActionsWrapper>
   );
 };
 
