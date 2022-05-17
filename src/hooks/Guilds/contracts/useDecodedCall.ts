@@ -1,5 +1,8 @@
 import { utils } from 'ethers';
-import { RegistryContract, useContractRegistry } from './useContractRegistry';
+import {
+  RichContractData,
+  useRichContractRegistry,
+} from './useRichContractRegistry';
 import ERC20ABI from '../../../abis/ERC20.json';
 import { useWeb3React } from '@web3-react/core';
 import {
@@ -7,8 +10,9 @@ import {
   DecodedCall,
   Option,
   SupportedAction,
-} from 'components/Guilds/ActionsBuilder/types';
+} from 'old-components/Guilds/ActionsBuilder/types';
 import { useEffect, useState } from 'react';
+import { lookUpContractWithSourcify } from 'utils/sourcify';
 
 const ERC20_TRANSFER_SIGNATURE = '0xa9059cbb';
 
@@ -58,11 +62,11 @@ const decodeCallUsingEthersInterface = (
   };
 };
 
-const getContractInterfaceFromRegistryContract = (
-  registryContract: RegistryContract
+const getContractInterfaceFromRichContractData = (
+  richContractData: RichContractData
 ) => {
   return {
-    contractInterface: registryContract.contractInterface,
+    contractInterface: richContractData.contractInterface,
     callType: SupportedAction.GENERIC_CALL,
   };
 };
@@ -82,9 +86,9 @@ const getContractFromKnownSighashes = (data: string) => {
   };
 };
 
-const decodeCall = async (
+export const decodeCall = async (
   call: Call,
-  contracts: RegistryContract[],
+  contracts: RichContractData[],
   chainId: number
 ) => {
   let decodedCall: DecodedCall = null;
@@ -92,43 +96,46 @@ const decodeCall = async (
     return null;
   }
   // Detect using the Guild calls registry.
-  const matchedRegistryContract = contracts?.find(
+  const matchedRichContractData = contracts?.find(
     contract => contract.networks[chainId] === call.to
   );
-
-  let matchedContractData = matchedRegistryContract
-    ? getContractInterfaceFromRegistryContract(matchedRegistryContract)
+  let matchedContract = matchedRichContractData
+    ? getContractInterfaceFromRichContractData(matchedRichContractData)
     : getContractFromKnownSighashes(call.data);
 
-  if (!matchedContractData && chainId !== 1337) {
+  if (!matchedContract && chainId !== 1337) {
     const abi = await lookUpContractWithSourcify({ chainId, address: call.to });
 
-    matchedContractData = {
+    matchedContract = {
       contractInterface: new utils.Interface(abi),
       callType: SupportedAction.GENERIC_CALL,
     };
   }
-  console.log({ matchedContractData });
-  const { callType, contractInterface } = matchedContractData;
+  const { callType, contractInterface } = matchedContract;
   if (!contractInterface) return null;
   decodedCall = decodeCallUsingEthersInterface(
     call,
     contractInterface,
     callType
   );
+
+  if (decodedCall && matchedRichContractData) {
+    decodedCall.richData = matchedRichContractData;
+  }
+
   return {
     id: `action-${Math.random()}`,
     decodedCall,
     contract: contractInterface,
+    approval: call.approval || null,
   };
 };
 
 export const bulkDecodeCallsFromOptions = (
   options: Option[],
-  contracts: RegistryContract[],
+  contracts: RichContractData[],
   chainId: number
 ) => {
-  console.log('gets called');
   return Promise.all(
     options.map(async option => {
       const { actions } = option;
@@ -144,27 +151,10 @@ export const bulkDecodeCallsFromOptions = (
   );
 };
 
-export const lookUpContractWithSourcify = async ({
-  chainId,
-  address,
-}: {
-  chainId: number;
-  address: string;
-}) => {
-  const baseUrl = `https://sourcify.dev/server/files/any`;
-  const url = `${baseUrl}/${chainId}/${address}`;
-  const response = await fetch(url);
-  if (!response.ok) return null;
-  const json = await response.json();
-  if (!json.files) return null;
-  return JSON.parse(json.files.find(f => f.name === 'metadata.json').content)
-    .output.abi;
-};
-
 export const useDecodedCall = (call: Call) => {
   const [decodedCall, setDecodedCall] = useState<any>(null);
   const { chainId } = useWeb3React();
-  const { contracts } = useContractRegistry();
+  const { contracts } = useRichContractRegistry();
   useEffect(() => {
     if (call) {
       decodeCall(call, contracts, chainId).then(decodedData =>
