@@ -165,5 +165,5 @@ export const useDecodedCall = (call: Call) => {
     };
   }, [call, contracts, chainId]);
 
-  return decodedCall || { decodedCall: null, contract: null };
+  return decodedCall || { decodedCall: null, contract: null, approval: null};
 };
