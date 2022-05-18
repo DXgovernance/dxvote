@@ -84,10 +84,10 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
             placeholder="Token"
             icon={
               <div>
-                {parsedData?.asset && (
+                {parsedData?.asset[0] && (
                   <Avatar
                     src={resolveUri(token?.logoURI)}
-                    defaultSeed={parsedData?.asset}
+                    defaultSeed={parsedData?.asset[0]}
                     size={18}
                   />
                 )}
@@ -99,7 +99,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         </ControlRow>
         {/* //! There's a bug while showing the token picker: it doesn't dissappear when clicked outside  */}
         <TokenPicker
-          walletAddress={parsedData?.to || ''}
+          walletAddress={parsedData?.to[0] || ''}
           isOpen={isTokenPickerOpen}
           onClose={() => setIsTokenPickerOpen(false)}
           onSelect={asset => {
@@ -121,14 +121,14 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
                 {validations.to && (
                   <Avatar
                     src={destinationAvatarUrl}
-                    defaultSeed={parsedData.to}
+                    defaultSeed={parsedData.to[0]}
                     size={24}
                   />
                 )}
               </div>
             }
             iconRight={
-              parsedData?.to ? (
+              parsedData?.to[0] ? (
                 <ClickableIcon
                   aria-label="clear field to address"
                   onClick={() => handleCustomAddress('')}
