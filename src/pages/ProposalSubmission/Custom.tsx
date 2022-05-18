@@ -1,11 +1,7 @@
-import { useReducer, useState } from 'react';
-import styled from 'styled-components';
-import { observer } from 'mobx-react';
 import { useContext } from '../../contexts';
-import { Box, Question, LinkButton } from '../../components/common';
-import MDEditor, { commands } from '@uiw/react-md-editor';
-import contentHash from 'content-hash';
-
+import DiscourseImporter from '../../old-components/DiscourseImporter';
+import { Preview } from '../../old-components/ProposalSubmission/Custom/Preview';
+import { Box, Question, LinkButton } from '../../old-components/common';
 import {
   NETWORK_ASSET_SYMBOL,
   ZERO_ADDRESS,
@@ -17,10 +13,14 @@ import {
   TXEvents,
   isWalletScheme,
 } from '../../utils';
-import { LinkedButtons } from 'components/LinkedButtons';
-import DiscourseImporter from '../../components/DiscourseImporter';
-import { Calls } from 'components/ProposalSubmission/Custom/Calls';
-import { Preview } from '../../components/ProposalSubmission/Custom/Preview';
+import MDEditor, { commands } from '@uiw/react-md-editor';
+import contentHash from 'content-hash';
+import { observer } from 'mobx-react';
+import { LinkedButtons } from 'old-components/LinkedButtons';
+import { Calls } from 'old-components/ProposalSubmission/Custom/Calls';
+import { useReducer, useState } from 'react';
+import styled from 'styled-components';
+
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
   display: flex;

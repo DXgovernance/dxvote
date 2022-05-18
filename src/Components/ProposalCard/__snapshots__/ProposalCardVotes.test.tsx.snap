@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProposalCardVotes.test Should match snapshot with votes 1`] = `
+<div>
+   
+  <div
+    class="sc-dlfnuX sc-fodVek jmIxJI enmJQB"
+  >
+    <div
+      class="sc-dlfnuX sc-iqHYmW sc-bqyKOL jmIxJI eOgsPb hdYgXU"
+    >
+      <div
+        class="sc-dlfnuX sc-crrszt jmIxJI xiXTo"
+      >
+        20
+        %
+      </div>
+      <div
+        class="sc-hBEYId bLtNkZ"
+      >
+        <svg
+          fill="none"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+        </svg>
+      </div>
+      <div
+        class="sc-dlfnuX sc-crrszt jmIxJI xiXTo"
+      >
+        10
+        %
+      </div>
+    </div>
+  </div>
+   
+</div>
+`;
+
+exports[`ProposalCardVotes.test Should match snapshot without votes 1`] = `
+<div>
+   
+  <div
+    class="sc-bdfBQB"
+    style="margin: 0px;"
+  >
+    <span
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <span
+        class="react-loading-skeleton"
+        style="width: 200px; --base-color: #333; --highlight-color: #555;"
+      >
+        ‌
+      </span>
+      <br />
+    </span>
+  </div>
+   
+</div>
+`;

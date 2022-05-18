@@ -13,7 +13,9 @@ async function main() {
   const web3 = hre.web3;
   const PermissionRegistry = await hre.artifacts.require('PermissionRegistry');
   const ERC20Guild = await hre.artifacts.require('ERC20Guild');
-  const SnapshotERC20Guild = await hre.artifacts.require('SnapshotERC20Guild');
+  const EnforcedBinaryGuild = await hre.artifacts.require(
+    'EnforcedBinaryGuild'
+  );
   const accounts = await web3.eth.getAccounts();
 
   const deployconfig = {
@@ -173,7 +175,7 @@ async function main() {
         distribution: [
           {
             address: accounts[0],
-            amount: web3.utils.toWei('220'),
+            amount: web3.utils.toWei('320'),
           },
           {
             address: accounts[1],
@@ -206,8 +208,8 @@ async function main() {
         ],
       },
       {
-        name: 'Snapshot Guild Token',
-        symbol: 'SGT',
+        name: 'SWAPR Token',
+        symbol: 'SWPR',
         type: 'ERC20',
         decimals: 18,
         distribution: [
@@ -221,7 +223,7 @@ async function main() {
           },
           {
             address: accounts[2],
-            amount: web3.utils.toWei('10'),
+            amount: web3.utils.toWei('100'),
           },
         ],
       },
@@ -260,16 +262,16 @@ async function main() {
         lockTime: moment.duration(5, 'minutes').asSeconds(),
       },
       {
-        token: 'SGT',
-        contractName: 'SnapshotERC20Guild',
-        name: 'SnapshotERC20Guild',
-        proposalTime: moment.duration(5, 'minutes').asSeconds(),
+        token: 'SWPR',
+        contractName: 'EnforcedBinaryGuild',
+        name: 'SwaprGuild',
+        proposalTime: moment.duration(3, 'minutes').asSeconds(),
         timeForExecution: moment.duration(2, 'minutes').asSeconds(),
-        votingPowerForProposalExecution: '50',
+        votingPowerForProposalExecution: '30',
         votingPowerForProposalCreation: '5',
         voteGas: '0',
         maxGasPrice: '0',
-        maxActiveProposals: '5',
+        maxActiveProposals: '999',
         lockTime: moment.duration(5, 'minutes').asSeconds(),
       },
     ],
@@ -319,7 +321,7 @@ async function main() {
         from: accounts[1],
         data: {
           asset: ZERO_ADDRESS,
-          address: 'SnapshotERC20Guild',
+          address: 'SwaprGuild',
           amount: web3.utils.toWei('10'),
         },
       },
@@ -327,8 +329,8 @@ async function main() {
         type: 'transfer',
         from: accounts[1],
         data: {
-          asset: 'SGT',
-          address: 'SnapshotERC20Guild',
+          asset: 'SWPR',
+          address: 'SwaprGuild',
           amount: web3.utils.toWei('10'),
         },
       },
@@ -548,13 +550,32 @@ async function main() {
       },
 
       {
-        type: 'guild-createProposal',
-        from: accounts[1],
+        type: 'approve',
+        from: accounts[2],
         data: {
-          guildName: 'SnapshotERC20Guild',
-          to: ['SnapshotERC20Guild'],
+          asset: 'SWPR',
+          address: 'SwaprGuild-vault',
+          amount: web3.utils.toWei('2'),
+        },
+      },
+
+      {
+        type: 'guild-lockTokens',
+        from: accounts[2],
+        data: {
+          guildName: 'SwaprGuild',
+          amount: web3.utils.toWei('1'),
+        },
+      },
+
+      {
+        type: 'guild-createProposal',
+        from: accounts[2],
+        data: {
+          guildName: 'SwaprGuild',
+          to: ['SwaprGuild'],
           callData: [
-            new web3.eth.Contract(SnapshotERC20Guild.abi).methods
+            new web3.eth.Contract(EnforcedBinaryGuild.abi).methods
               .setPermission(
                 [ZERO_ADDRESS],
                 [ANY_ADDRESS],
@@ -566,9 +587,10 @@ async function main() {
           ],
           value: ['0'],
           totalActions: '1',
-          title: 'Proposal Test #1 to SnapshotERC20Guild',
+          title: 'Proposal Test #1 to SwaprGuild',
           description:
             'Allow call any address and function and send a max of 5 ETH per proposal',
+          voteOptions: ['Test Option'],
         },
       },
 
@@ -666,20 +688,16 @@ async function main() {
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
       {
-        address: networkContracts.addresses.SGT,
-        name: 'Snapshot Guild Token on Localhost',
+        address: networkContracts.addresses.SWPR,
+        name: 'SWAPR Guild',
         decimals: 18,
-        symbol: 'SGT',
+        symbol: 'SWPR',
         fetchPrice: true,
         logoURI:
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
     ],
-    guilds: [
-      networkContracts.addresses.DXDGuild,
-      networkContracts.addresses.REPGuild,
-      networkContracts.addresses.SnapshotGuild,
-    ],
+    guilds: [networkContracts.addresses.DXDGuild, networkContracts.addresses.REPGuild, networkContracts.addresses.SwaprGuild],
   };
 
   mkdirSync(path.resolve(__dirname, '../src/configs/localhost'), {

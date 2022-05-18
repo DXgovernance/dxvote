@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
-import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
-import { useParams } from 'react-router-dom';
-import { BigNumber } from 'ethers';
 import { ERC20Info, useERC20Info } from '../erc20/useERC20Info';
 import { useGuildConfig } from './useGuildConfig';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import { BigNumber } from 'ethers';
+import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
+import { useMemo } from 'react';
 
 export interface VoteData {
   options: { [name: string]: BigNumber };
@@ -12,25 +12,28 @@ export interface VoteData {
   token: ERC20Info;
 }
 
-export const useVotingResults = (): VoteData => {
-  const { guild_id: guildId, proposal_id: proposalId } =
-    useParams<{ guild_id?: string; proposal_id?: string }>();
+export const useVotingResults = (
+  optionalGuildId?: string,
+  optionalProposalId?: string
+): VoteData => {
+  const { guildId, proposalId } = useTypedParams();
 
   // swr hooks
-  const { data: proposal } = useProposal(guildId, proposalId);
-  const { data } = useGuildConfig(guildId);
+  const { data: proposal } = useProposal(
+    optionalGuildId || guildId,
+    optionalProposalId || proposalId
+  );
+  const { data } = useGuildConfig(optionalGuildId || guildId);
   const { data: tokenInfo } = useERC20Info(data?.token);
 
   const voteData = useMemo(() => {
     if (!proposal || !data || !tokenInfo) return undefined;
-
-    const options = proposal?.totalVotes.reduce<Record<string, BigNumber>>(
-      (acc, result, i) => {
+    const options = proposal?.totalVotes
+      .slice(0, proposal?.totalVotes?.length - 1) // TODO: it was removing the first, but need to remove the last. investigate why?.
+      .reduce<Record<string, BigNumber>>((acc, result, i) => {
         acc[i] = result;
         return acc;
-      },
-      {}
-    );
+      }, {});
 
     return {
       options,

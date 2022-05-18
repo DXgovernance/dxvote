@@ -722,7 +722,7 @@ export default class DaoStore {
       history.push({
         text: `Proposal ${proposalId} created`,
         event: {
-          proposalId: proposalId,
+          proposalId,
           tx: cache.proposals[proposalId].creationEvent.tx,
           block: cache.proposals[proposalId].creationEvent.blockNumber,
           transactionIndex:
@@ -732,7 +732,7 @@ export default class DaoStore {
         },
       });
       return Object.assign(
-        { proposalId: proposalId },
+        { proposalId },
         cache.proposals[proposalId].creationEvent
       );
     });

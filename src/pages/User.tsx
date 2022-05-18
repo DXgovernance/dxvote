@@ -1,7 +1,5 @@
-import { observer } from 'mobx-react';
-import { useHistory } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import moment from 'moment';
+import { useContext } from '../contexts';
+import useExporters from '../hooks/useExporters';
 import {
   BlockchainLink,
   Row,
@@ -9,15 +7,17 @@ import {
   InfoBox,
   Subtitle,
   Button,
-} from '../components/common';
+} from '../old-components/common';
 import { formatBalance } from '../utils';
-import { useContext } from '../contexts';
-import useExporters from '../hooks/useExporters';
+import { observer } from 'mobx-react';
+import moment from 'moment';
 import {
   TitleRow,
   ListRow,
   VestingContractsSection,
-} from 'components/UserPage';
+} from 'old-components/UserPage';
+import { useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const UserPage = observer(() => {
   let history = useHistory();

@@ -1,0 +1,12 @@
+{
+  "guilds": {
+    "create": "Create Guild",
+    "addOption": "Add Option",
+    "editOption": "Edit Option",
+    "deleteOption": "Delete Option",
+    "optionLabel": "Option Label"
+  },
+  "proposals_one": "{{count}} proposal",
+  "proposals_other": "{{count}} proposals",
+  "save": "Save"
+}

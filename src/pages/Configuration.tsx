@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
+import { Row, Box, Question, Button } from '../old-components/common';
+import { observer } from 'mobx-react';
+import React from 'react';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
-import { Row, Box, Question, Button } from '../components/common';
+import styled from 'styled-components';
 
 const FormLabel = styled.label`
   padding: 10px 0px;

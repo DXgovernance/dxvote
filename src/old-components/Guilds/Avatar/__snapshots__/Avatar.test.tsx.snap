@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Avatar Should render Jazzicon when no src is given 1`] = `
+<div>
+   
+  <div
+    class="paper"
+    style="border-radius: 50px; display: inline-block; margin: 0px; overflow: hidden; padding: 0px; background-color: rgb(24, 151, 242); height: 24px; width: 24px;"
+  >
+    <svg
+      height="24"
+      width="24"
+      x="0"
+      xmlns="http://www.w3.org/2000/svg"
+      y="0"
+    >
+      <rect
+        fill="#2362E1"
+        height="24"
+        rx="0"
+        ry="0"
+        transform="translate(2.6919976385943882 -4.000732967425142) rotate(458.4 12 12)"
+        width="24"
+        x="0"
+        y="0"
+      />
+      <rect
+        fill="#F94301"
+        height="24"
+        rx="0"
+        ry="0"
+        transform="translate(-11.522594467237658 5.994263726614974) rotate(268.8 12 12)"
+        width="24"
+        x="0"
+        y="0"
+      />
+      <rect
+        fill="#FA7900"
+        height="24"
+        rx="0"
+        ry="0"
+        transform="translate(-6.8071905594760675 22.110011910512533) rotate(117.3 12 12)"
+        width="24"
+        x="0"
+        y="0"
+      />
+      <rect
+        fill="#C8144A"
+        height="24"
+        rx="0"
+        ry="0"
+        transform="translate(-20.687920456547104 18.602038690110742) rotate(280.5 12 12)"
+        width="24"
+        x="0"
+        y="0"
+      />
+    </svg>
+  </div>
+   
+</div>
+`;
+
+exports[`Avatar Should render image when src is given 1`] = `
+<div>
+   
+  <img
+    alt="Avatar"
+    class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
+    data-testid="avatar"
+    size="24"
+    src="/test/image.png"
+  />
+   
+</div>
+`;

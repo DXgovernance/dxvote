@@ -1,29 +1,29 @@
-import React, { useContext, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import contentHash from 'content-hash';
-import { FiChevronLeft } from 'react-icons/fi';
-import { useHistory, useParams } from 'react-router-dom';
-import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
-import sanitizeHtml from 'sanitize-html';
-import { Box, Flex } from '../../components/Guilds/common/Layout';
-import { IconButton } from '../../components/Guilds/common/Button';
-import { Input } from '../../components/Guilds/common/Form';
 import {
   ActionsBuilder,
   SidebarInfoCard,
-} from '../../components/Guilds/CreateProposalPage';
-import Editor from 'components/Guilds/Editor';
-
-import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
+} from '../../old-components/Guilds/CreateProposalPage';
+import { IconButton } from '../../old-components/Guilds/common/Button';
+import Input from '../../old-components/Guilds/common/Form/Input';
+import { Box, Flex } from '../../Components/Primitives/Layout';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import contentHash from 'content-hash';
 import { useTransactions } from 'contexts/Guilds';
-import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
-import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
 import { GuildAvailabilityContext } from 'contexts/Guilds/guildAvailability';
-import { Loading } from 'components/Guilds/common/Loading';
-import { Call, Option } from 'components/Guilds/ActionsBuilder/types';
-import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
-import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
 import { BigNumber } from 'ethers';
+import { useERC20Guild } from 'hooks/Guilds/contracts/useContract';
+import { bulkEncodeCallsFromOptions } from 'hooks/Guilds/contracts/useEncodedCall';
+import useIPFSNode from 'hooks/Guilds/ipfs/useIPFSNode';
+import useLocalStorageWithExpiry from 'hooks/Guilds/useLocalStorageWithExpiry';
+import { Call, Option } from 'old-components/Guilds/ActionsBuilder/types';
+import Editor from 'old-components/Guilds/Editor';
+import { Loading } from 'Components/Primitives/Loading';
+import React, { useContext, useMemo, useState } from 'react';
+import { FiChevronLeft } from 'react-icons/fi';
+import { MdOutlinePreview, MdOutlineModeEdit, MdLink } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
+import sanitizeHtml from 'sanitize-html';
+import styled from 'styled-components';
+import { ZERO_ADDRESS, ZERO_HASH } from 'utils';
 
 const PageContainer = styled(Box)`
   display: grid;
@@ -80,6 +80,7 @@ const EMPTY_CALL: Call = {
 };
 
 const CreateProposalPage: React.FC = () => {
+  const { guildId, chainName: chain } = useTypedParams();
   const { isLoading: isGuildAvailabilityLoading } = useContext(
     GuildAvailabilityContext
   );
@@ -108,18 +109,23 @@ const CreateProposalPage: React.FC = () => {
     setEditMode(v => !v);
   };
 
-  const handleBack = () => history.push('/');
+  const handleBack = () => history.push(`/${chain}/${guildId}/proposalType`);
 
   const ipfs = useIPFSNode();
+
   const uploadToIPFS = async () => {
-    const content = { description: proposalBodyHTML, url: referenceLink };
+    const content = {
+      description: proposalBodyHTML,
+      url: referenceLink,
+      voteOptions: options.map(({ label }) => label),
+    };
     const cid = await ipfs.add(JSON.stringify(content));
     await ipfs.pin(cid);
     return contentHash.fromIpfs(cid);
   };
 
   const { createTransaction } = useTransactions();
-  const { guild_id: guildAddress } = useParams<{ guild_id?: string }>();
+  const { guildId: guildAddress } = useTypedParams();
   const guildContract = useERC20Guild(guildAddress);
   const handleCreateProposal = async () => {
     const contentHash = await uploadToIPFS();
@@ -187,7 +193,7 @@ const CreateProposalPage: React.FC = () => {
             padding="8px"
             onClick={handleToggleEditMode}
             disabled={!title || !proposalBodyMd}
-            data-testId="create-proposal-editor-toggle-button"
+            data-testid="create-proposal-editor-toggle-button"
           >
             {editMode ? (
               <MdOutlinePreview size={18} />
@@ -201,7 +207,7 @@ const CreateProposalPage: React.FC = () => {
             <>
               <Label>Title</Label>
               <Input
-                data-testId="create-proposal-title"
+                data-testid="create-proposal-title"
                 placeholder="Proposal Title"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
@@ -221,7 +227,7 @@ const CreateProposalPage: React.FC = () => {
                   value={referenceLink}
                   onChange={e => setReferenceLink(e.target.value)}
                   icon={<MdLink size={18} />}
-                  data-testId="create-proposal-link"
+                  data-testid="create-proposal-link"
                 />
                 <StyledButton variant="secondary" marginLeft={'1rem'}>
                   Import
@@ -259,7 +265,7 @@ const CreateProposalPage: React.FC = () => {
             onClick={handleCreateProposal}
             variant="secondary"
             disabled={!isValid}
-            data-testId="create-proposal-action-button"
+            data-testid="create-proposal-action-button"
           >
             Create Proposal
           </StyledButton>
