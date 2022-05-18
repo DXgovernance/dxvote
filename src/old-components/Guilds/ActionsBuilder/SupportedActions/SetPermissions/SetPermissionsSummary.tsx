@@ -25,14 +25,14 @@ const SetPermissionsSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
     };
   }, [decodedCall]);
 
-  const { data: tokenInfo } = useERC20Info(parsedData?.asset);
+  const { data: tokenInfo } = useERC20Info(parsedData?.asset[0]);
   const roundedBalance = useBigNumberToNumber(
-    parsedData?.valueAllowed,
+    parsedData?.valueAllowed[0],
     tokenInfo?.decimals,
     4
   );
 
-  const { ensName, imageUrl } = useENSAvatar(parsedData?.to, MAINNET_ID);
+  const { ensName, imageUrl } = useENSAvatar(parsedData?.to[0], MAINNET_ID);
 
   return (
     <>
@@ -44,9 +44,9 @@ const SetPermissionsSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
       <DetailRow>
         <DetailCell>
           <Segment>
-            <Avatar defaultSeed={parsedData?.to} src={imageUrl} size={24} />
+            <Avatar defaultSeed={parsedData?.to[0]} src={imageUrl} size={24} />
           </Segment>
-          <Segment>{ensName || shortenAddress(parsedData?.to)}</Segment>
+          <Segment>{ensName || shortenAddress(parsedData?.to[0])}</Segment>
         </DetailCell>
         <DetailCell>
           {roundedBalance} {tokenInfo?.symbol}

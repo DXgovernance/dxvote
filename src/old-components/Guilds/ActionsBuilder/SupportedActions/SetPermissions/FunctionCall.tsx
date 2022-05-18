@@ -42,14 +42,14 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
                 {validations.to && (
                   <Avatar
                     src={destinationAvatarUrl}
-                    defaultSeed={parsedData.to}
+                    defaultSeed={parsedData.to[0]}
                     size={24}
                   />
                 )}
               </div>
             }
             iconRight={
-              parsedData?.to ? (
+              parsedData?.to[0] ? (
                 <ClickableIcon onClick={() => handleCustomAddress('')}>
                   <FiX size={18} />
                 </ClickableIcon>

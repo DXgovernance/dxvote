@@ -62,23 +62,23 @@ const Permissions: React.FC<ActionEditorProps> = ({
 
   const validations = useMemo<ValidationsInterface>(() => {
     return {
-      asset: utils.isAddress(parsedData?.asset),
-      to: utils.isAddress(parsedData?.to),
-      valueAllowed: BigNumber.isBigNumber(parsedData?.valueAllowed),
+      asset: utils.isAddress(parsedData?.asset[0]),
+      to: utils.isAddress(parsedData?.to[0]),
+      valueAllowed: BigNumber.isBigNumber(parsedData?.valueAllowed[0]),
     };
   }, [parsedData]);
 
   // Get token details from the token address
   const { tokens } = useTokenList(chainId);
   const token = useMemo(() => {
-    if (!parsedData?.asset || !tokens) return null;
+    if (!parsedData?.asset[0] || !tokens) return null;
 
-    return tokens.find(({ address }) => address === parsedData?.asset);
+    return tokens.find(({ address }) => address === parsedData?.asset[0]);
   }, [tokens, parsedData]);
 
-  const { data: tokenInfo } = useERC20Info(parsedData?.asset);
+  const { data: tokenInfo } = useERC20Info(parsedData?.asset[0]);
   const { imageUrl: destinationAvatarUrl } = useENSAvatar(
-    parsedData?.to,
+    parsedData?.to[0],
     MAINNET_ID
   );
 
@@ -90,7 +90,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
       ...decodedCall,
       args: {
         ...decodedCall.args,
-        asset,
+        asset: [asset],
       },
     });
   };
@@ -101,7 +101,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
       ...decodedCall,
       args: {
         ...decodedCall.args,
-        valueAllowed,
+        valueAllowed: [valueAllowed],
       },
     });
   };
@@ -112,7 +112,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
       ...decodedCall,
       args: {
         ...decodedCall.args,
-        to,
+        to: [to],
       },
     });
   };
@@ -123,13 +123,13 @@ const Permissions: React.FC<ActionEditorProps> = ({
       ...decodedCall,
       args: {
         ...decodedCall.args,
-        functionSignature: functionSignature,
+        functionSignature: [functionSignature],
       },
     });
   };
 
   const [customAmountValue, setCustomAmountValue] = useState(
-    parsedData?.valueAllowed
+    parsedData?.valueAllowed[0]
   );
   // This function was implemented to avoid the amount input to
   // change to MAX_UINT toggling to "Max value"
@@ -145,7 +145,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
     setMaxValueToggled(!maxValueToggled);
   };
 
-  const [customToAddress, setCustomToAddress] = useState(parsedData?.to);
+  const [customToAddress, setCustomToAddress] = useState(parsedData?.to[0]);
   const handleCustomAddress = value => {
     setCustomToAddress(value);
     if (value === '') {
@@ -157,7 +157,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
   // If the 'to' address is ANY_ADDRESS, set customAmount to '', to
   // show the address input empty, instead of the long 0xAaaAaaa address
   useEffect(() => {
-    if (parsedData?.to === ANY_ADDRESS) handleCustomAddress('');
+    if (parsedData?.to[0] === ANY_ADDRESS) handleCustomAddress('');
   }, []);
 
   // It has two values for functionSignature: a custom one that is set and modified

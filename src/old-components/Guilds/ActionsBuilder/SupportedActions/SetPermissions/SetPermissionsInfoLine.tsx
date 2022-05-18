@@ -23,7 +23,7 @@ const SetPermissionsInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
     };
   }, [decodedCall]);
 
-  const { ensName, imageUrl } = useENSAvatar(parsedData?.to, MAINNET_ID);
+  const { ensName, imageUrl } = useENSAvatar(parsedData?.to[0], MAINNET_ID);
 
   return (
     <>
@@ -35,10 +35,10 @@ const SetPermissionsInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
         <FiArrowRight />
       </Segment>
       <Segment>
-        <Avatar defaultSeed={parsedData?.to} src={imageUrl} size={24} />
+        <Avatar defaultSeed={parsedData?.to[0]} src={imageUrl} size={24} />
       </Segment>
       <Segment>
-        {ensName || parsedData?.to ? shortenAddress(parsedData?.to) : ''}
+        {ensName || parsedData?.to[0] ? shortenAddress(parsedData?.to[0]) : ''}
       </Segment>
     </>
   );

@@ -1,11 +1,11 @@
 import { BigNumber } from 'ethers';
 
 export interface ParsedDataInterface {
-  asset: string;
-  to: string;
-  functionSignature: string;
-  valueAllowed: BigNumber;
-  allowance: boolean;
+  asset: string[];
+  to: string[];
+  functionSignature: string[];
+  valueAllowed: BigNumber[];
+  allowance: boolean[];
 }
 
 export interface ValidationsInterface {
