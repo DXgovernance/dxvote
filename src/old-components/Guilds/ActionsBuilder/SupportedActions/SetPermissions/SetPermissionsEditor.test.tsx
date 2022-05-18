@@ -40,14 +40,14 @@ const emptyDecodedCallMock: DecodedCall = {
   from: '',
   callType: SupportedAction.REP_MINT,
   function: ERC20GuildContract.getFunction('setPermission'),
-  to: '',
+  to: '0xD899Be87df2076e0Be28486b60dA406Be6757AfC',
   value: BigNumber.from(0),
   args: {
-    asset: '',
-    to: ANY_ADDRESS,
-    functionSignature: ANY_FUNC_SIGNATURE,
-    valueAllowed: BigNumber.from(0),
-    allowance: true,
+    asset: [''],
+    to: [ANY_ADDRESS],
+    functionSignature: [ANY_FUNC_SIGNATURE],
+    valueAllowed: [BigNumber.from(0)],
+    allowance: ['true'],
   },
 };
 
@@ -55,14 +55,14 @@ const completeDecodedCallMock: DecodedCall = {
   from: '',
   callType: SupportedAction.REP_MINT,
   function: ERC20GuildContract.getFunction('setPermission'),
-  to: '',
+  to: '0xD899Be87df2076e0Be28486b60dA406Be6757AfC',
   value: BigNumber.from(0),
   args: {
-    asset: tokenAddresMock,
-    to: toAddressMock,
-    functionSignature: encodedFunctionSignatureMock,
-    valueAllowed: BigNumber.from('111000000000000000000'),
-    allowance: true,
+    asset: [tokenAddresMock],
+    to: [toAddressMock],
+    functionSignature: [encodedFunctionSignatureMock],
+    valueAllowed: [BigNumber.from('111000000000000000000')],
+    allowance: ['true'],
   },
 };
 
@@ -101,7 +101,6 @@ describe(`Set Permissions editor`, () => {
           updateCall={jest.fn()}
         />
       );
-
       const toAddressElement: HTMLInputElement = screen.getByRole('textbox', {
         name: /to address input/i,
       });
@@ -158,7 +157,7 @@ describe(`Set Permissions editor`, () => {
         name: /amount input/i,
       });
 
-      expect(toAddressElement.value).toBe(completeDecodedCallMock.args.to);
+      expect(toAddressElement.value).toBe(completeDecodedCallMock.args.to[0]);
       expect(amountInputElement.value).toBe('111.0');
     });
 
@@ -260,7 +259,7 @@ describe(`Set Permissions editor`, () => {
         { name: /function signature input/i }
       );
 
-      expect(toAddressElement.value).toBe(completeDecodedCallMock.args.to);
+      expect(toAddressElement.value).toBe(completeDecodedCallMock.args.to[0]);
       // expect(functionSignatureElement.value).toBe(decodedFunctionSignatureMock);
     });
   });
