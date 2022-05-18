@@ -1,7 +1,7 @@
 const moment = require('moment');
 require('@nomiclabs/hardhat-truffle5');
 require('hardhat-dependency-compiler');
-require('./node_modules/dxdao-contracts/scripts/deploy-dxvote');
+require('./node_modules/dxdao-contracts/scripts/deploy-dxdao-contracts');
 require('@typechain/hardhat');
 
 const MNEMONIC =
@@ -21,8 +21,8 @@ module.exports = {
       'dxdao-contracts/contracts/dxdao/DxToken.sol',
       'dxdao-contracts/contracts/dxvote/DXDVotingMachine.sol',
       'dxdao-contracts/contracts/dxvote/WalletScheme.sol',
-      'dxdao-contracts/contracts/dxvote/utils/DXDVestingFactory.sol',
-      'dxdao-contracts/contracts/dxvote/utils/DXdaoNFT.sol',
+      'dxdao-contracts/contracts/dxvote/utils/ERC20VestingFactory.sol',
+      'dxdao-contracts/contracts/dxvote/utils/ERC721Factory.sol',
       'dxdao-contracts/contracts/utils/PermissionRegistry.sol',
       'dxdao-contracts/contracts/utils/Multicall.sol',
       'dxdao-contracts/contracts/test/ERC20Mock.sol',

@@ -17,25 +17,159 @@ async function main() {
   const accounts = await web3.eth.getAccounts();
 
   const deployconfig = {
-    reputation: [
-      {
-        address: accounts[0],
-        amount: 6000,
+    dao: {
+      reputation: [
+        {
+          address: accounts[0],
+          amount: 6000,
+        },
+        {
+          address: accounts[1],
+          amount: 4000,
+        },
+        {
+          address: accounts[2],
+          amount: 1000,
+        },
+      ],
+      contributionReward: {
+        queuedVoteRequiredPercentage: 50,
+        queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
+        boostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
+        preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
+        thresholdConst: 2000,
+        quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
+        proposingRepReward: 10,
+        votersReputationLossRatio: 100,
+        minimumDaoBounty: web3.utils.toWei('1'),
+        daoBountyConst: 100,
       },
-      {
-        address: accounts[1],
-        amount: 4000,
-      },
-      {
-        address: accounts[2],
-        amount: 1000,
-      },
-    ],
+
+      walletSchemes: [
+        {
+          name: 'RegistrarWalletScheme',
+          doAvatarGenericCalls: true,
+          maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
+          maxRepPercentageChange: 0,
+          controllerPermissions: {
+            canGenericCall: true,
+            canUpgrade: true,
+            canRegisterSchemes: true,
+          },
+          permissions: [],
+          queuedVoteRequiredPercentage: 75,
+          boostedVoteRequiredPercentage: 5 * 100,
+          queuedVotePeriodLimit: moment.duration(15, 'minutes').asSeconds(),
+          boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
+          preBoostedVotePeriodLimit: moment.duration(2, 'minutes').asSeconds(),
+          thresholdConst: 2000,
+          quietEndingPeriod: moment.duration(1, 'minutes').asSeconds(),
+          proposingRepReward: 0,
+          votersReputationLossRatio: 100,
+          minimumDaoBounty: web3.utils.toWei('10'),
+          daoBountyConst: 100,
+        },
+        {
+          name: 'MasterWalletScheme',
+          doAvatarGenericCalls: true,
+          maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
+          maxRepPercentageChange: 40,
+          controllerPermissions: {
+            canGenericCall: true,
+            canUpgrade: false,
+            canChangeConstraints: false,
+            canRegisterSchemes: false,
+          },
+          permissions: [
+            {
+              asset: '0x0000000000000000000000000000000000000000',
+              to: 'DXDVotingMachine',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+            {
+              asset: '0x0000000000000000000000000000000000000000',
+              to: 'RegistrarWalletScheme',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+            {
+              asset: '0x0000000000000000000000000000000000000000',
+              to: 'ITSELF',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+          ],
+          queuedVoteRequiredPercentage: 50,
+          boostedVoteRequiredPercentage: 2 * 100,
+          queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
+          boostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
+          preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
+          thresholdConst: 1500,
+          quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
+          proposingRepReward: 0,
+          votersReputationLossRatio: 5,
+          minimumDaoBounty: web3.utils.toWei('1'),
+          daoBountyConst: 10,
+        },
+        {
+          name: 'QuickWalletScheme',
+          doAvatarGenericCalls: false,
+          maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
+          maxRepPercentageChange: 1,
+          controllerPermissions: {
+            canGenericCall: false,
+            canUpgrade: false,
+            canChangeConstraints: false,
+            canRegisterSchemes: false,
+          },
+          permissions: [
+            {
+              asset: '0x0000000000000000000000000000000000000000',
+              to: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+            {
+              asset: 'DXD',
+              to: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+          ],
+          queuedVoteRequiredPercentage: 50,
+          boostedVoteRequiredPercentage: 10 * 100,
+          queuedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
+          boostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
+          preBoostedVotePeriodLimit: moment
+            .duration(0.5, 'minutes')
+            .asSeconds(),
+          thresholdConst: 1300,
+          quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
+          proposingRepReward: 0,
+          votersReputationLossRatio: 10,
+          minimumDaoBounty: web3.utils.toWei('0.1'),
+          daoBountyConst: 10,
+        },
+      ],
+    },
 
     tokens: [
       {
         name: 'DXDao on localhost',
         symbol: 'DXD',
+        type: 'ERC20',
+        decimals: 18,
         distribution: [
           {
             address: accounts[0],
@@ -54,6 +188,8 @@ async function main() {
       {
         name: 'REPGuildToken',
         symbol: 'RGT',
+        type: 'ERC20SnapshotRep',
+        decimals: 18,
         distribution: [
           {
             address: accounts[0],
@@ -72,6 +208,8 @@ async function main() {
       {
         name: 'Snapshot Guild Token',
         symbol: 'SGT',
+        type: 'ERC20',
+        decimals: 18,
         distribution: [
           {
             address: accounts[0],
@@ -89,136 +227,10 @@ async function main() {
       },
     ],
 
-    permissionRegistryDelay: moment.duration(10, 'minutes').asSeconds(),
-
-    contributionReward: {
-      queuedVoteRequiredPercentage: 50,
-      queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
-      thresholdConst: 2000,
-      quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
-      proposingRepReward: 10,
-      votersReputationLossRatio: 100,
-      minimumDaoBounty: web3.utils.toWei('1'),
-      daoBountyConst: 100,
+    guildRegistry: {
+      address: ZERO_ADDRESS,
+      owner: 'Avatar',
     },
-
-    walletSchemes: [
-      {
-        name: 'RegistrarWalletScheme',
-        doAvatarGenericCalls: true,
-        maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
-        maxRepPercentageChange: 0,
-        controllerPermissions: {
-          canGenericCall: true,
-          canUpgrade: true,
-          canRegisterSchemes: true,
-        },
-        permissions: [],
-        queuedVoteRequiredPercentage: 75,
-        boostedVoteRequiredPercentage: 5 * 100,
-        queuedVotePeriodLimit: moment.duration(15, 'minutes').asSeconds(),
-        boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-        preBoostedVotePeriodLimit: moment.duration(2, 'minutes').asSeconds(),
-        thresholdConst: 2000,
-        quietEndingPeriod: moment.duration(1, 'minutes').asSeconds(),
-        proposingRepReward: 0,
-        votersReputationLossRatio: 100,
-        minimumDaoBounty: web3.utils.toWei('10'),
-        daoBountyConst: 100,
-      },
-      {
-        name: 'MasterWalletScheme',
-        doAvatarGenericCalls: true,
-        maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
-        maxRepPercentageChange: 40,
-        controllerPermissions: {
-          canGenericCall: true,
-          canUpgrade: false,
-          canChangeConstraints: false,
-          canRegisterSchemes: false,
-        },
-        permissions: [
-          {
-            asset: '0x0000000000000000000000000000000000000000',
-            to: 'DXDVotingMachine',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-          {
-            asset: '0x0000000000000000000000000000000000000000',
-            to: 'RegistrarWalletScheme',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-          {
-            asset: '0x0000000000000000000000000000000000000000',
-            to: 'ITSELF',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-        ],
-        queuedVoteRequiredPercentage: 50,
-        boostedVoteRequiredPercentage: 2 * 100,
-        queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-        boostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
-        preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
-        thresholdConst: 1500,
-        quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
-        proposingRepReward: 0,
-        votersReputationLossRatio: 5,
-        minimumDaoBounty: web3.utils.toWei('1'),
-        daoBountyConst: 10,
-      },
-      {
-        name: 'QuickWalletScheme',
-        doAvatarGenericCalls: false,
-        maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
-        maxRepPercentageChange: 1,
-        controllerPermissions: {
-          canGenericCall: false,
-          canUpgrade: false,
-          canChangeConstraints: false,
-          canRegisterSchemes: false,
-        },
-        permissions: [
-          {
-            asset: '0x0000000000000000000000000000000000000000',
-            to: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-          {
-            asset: 'DXD',
-            to: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-        ],
-        queuedVoteRequiredPercentage: 50,
-        boostedVoteRequiredPercentage: 10 * 100,
-        queuedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-        boostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
-        preBoostedVotePeriodLimit: moment.duration(0.5, 'minutes').asSeconds(),
-        thresholdConst: 1300,
-        quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
-        proposingRepReward: 0,
-        votersReputationLossRatio: 10,
-        minimumDaoBounty: web3.utils.toWei('0.1'),
-        daoBountyConst: 10,
-      },
-    ],
 
     guilds: [
       {
@@ -262,10 +274,9 @@ async function main() {
       },
     ],
 
-    startTimestampForActions: moment().subtract(26, 'minutes').unix(),
-
     actions: [
       {
+        timestamp: moment().subtract(26, 'minutes').unix(),
         type: 'transfer',
         from: accounts[0],
         data: {
@@ -357,6 +368,15 @@ async function main() {
         },
       },
       {
+        type: 'approve',
+        from: accounts[2],
+        data: {
+          asset: 'DXD',
+          address: 'DXDVotingMachine',
+          amount: web3.utils.toWei('101'),
+        },
+      },
+      {
         type: 'stake',
         from: accounts[2],
         data: {
@@ -367,7 +387,7 @@ async function main() {
       },
       {
         type: 'vote',
-        time: moment.duration(1, 'minutes').asSeconds(),
+        increaseTime: moment.duration(1, 'minutes').asSeconds(),
         from: accounts[2],
         data: {
           proposal: '0',
@@ -377,7 +397,7 @@ async function main() {
       },
       {
         type: 'execute',
-        time: moment.duration(3, 'minutes').asSeconds(),
+        increaseTime: moment.duration(3, 'minutes').asSeconds(),
         from: accounts[2],
         data: {
           proposal: '0',
@@ -405,6 +425,15 @@ async function main() {
         },
       },
       {
+        type: 'approve',
+        from: accounts[2],
+        data: {
+          asset: 'DXD',
+          address: 'DXDVotingMachine',
+          amount: web3.utils.toWei('101'),
+        },
+      },
+      {
         type: 'stake',
         from: accounts[2],
         data: {
@@ -415,7 +444,7 @@ async function main() {
       },
       {
         type: 'vote',
-        time: moment.duration(1, 'minutes').asSeconds(),
+        increaseTime: moment.duration(1, 'minutes').asSeconds(),
         from: accounts[2],
         data: {
           proposal: '1',
@@ -467,12 +496,12 @@ async function main() {
       },
       {
         type: 'guild-withdrawTokens',
+        increaseTime: moment.duration(10, 'minutes').asSeconds() + 1,
         from: accounts[0],
         data: {
           guildName: 'DXDGuild',
           amount: web3.utils.toWei('10'),
         },
-        time: moment.duration(10, 'minutes').asSeconds() + 1,
       },
       {
         type: 'guild-createProposal',
@@ -509,8 +538,8 @@ async function main() {
         },
       },
       {
-        time: moment.duration(10, 'minutes').asSeconds(),
         type: 'guild-endProposal',
+        increaseTime: moment.duration(10, 'minutes').asSeconds(),
         from: accounts[1],
         data: {
           guildName: 'DXDGuild',
@@ -560,7 +589,7 @@ async function main() {
     ],
   };
 
-  const { networkContracts, addresses } = await hre.run('deploy-dxvote', {
+  const networkContracts = await hre.run('deploy-dxdao-contracts', {
     deployconfig: JSON.stringify(deployconfig),
   });
 
@@ -619,7 +648,7 @@ async function main() {
     ],
     tokens: [
       {
-        address: addresses.DXD,
+        address: networkContracts.addresses.DXD,
         name: 'DXdao on Localhost',
         decimals: 18,
         symbol: 'DXD',
@@ -628,7 +657,7 @@ async function main() {
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
       {
-        address: addresses.RGT,
+        address: networkContracts.addresses.RGT,
         name: 'REP Guild Token on Localhost',
         decimals: 18,
         symbol: 'RGT',
@@ -637,7 +666,7 @@ async function main() {
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
       {
-        address: addresses.SGT,
+        address: networkContracts.addresses.SGT,
         name: 'Snapshot Guild Token on Localhost',
         decimals: 18,
         symbol: 'SGT',
@@ -646,7 +675,11 @@ async function main() {
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
     ],
-    guilds: [addresses.DXDGuild, addresses.REPGuild, addresses.SnapshotGuild],
+    guilds: [
+      networkContracts.addresses.DXDGuild,
+      networkContracts.addresses.REPGuild,
+      networkContracts.addresses.SnapshotGuild,
+    ],
   };
 
   mkdirSync(path.resolve(__dirname, '../src/configs/localhost'), {
