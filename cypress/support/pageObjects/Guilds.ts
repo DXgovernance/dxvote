@@ -3,19 +3,30 @@ import localhostConfigJSON from '../../../src/configs/localhost/config.json';
 class Guilds {
   public proposalsListId: string;
   public sidebarId: string;
-  public deployedGuildsAddresses: string[];
+  public createProposalTitleId: string;
+  public createProposalLinkId: string;
+  public createProposalEditorId: string;
+  public connectWalletId: string;
+  public guildCardId: string;
+  public deployedGuilds: any[];
 
   constructor() {
     this.proposalsListId = 'proposals-list';
     this.sidebarId = 'sidebar';
-    this.deployedGuildsAddresses = localhostConfigJSON.guilds;
+    this.createProposalTitleId = 'create-proposal-title';
+    this.createProposalLinkId = 'create-proposal-link';
+    this.createProposalEditorId = 'editor-content';
+    this.connectWalletId = 'connectWalletBtn';
+    this.guildCardId = 'guildCard';
+    this.deployedGuilds = localhostConfigJSON.guilds;
   }
 
-  goToGuildsPage(network: string = 'localhost', address?: string) {
+  goToGuildsPage(address?: string) {
     const baseUrl = Cypress.config('baseUrl');
+    const network = Cypress.env('network');
     cy.visit(`${baseUrl}/guilds/${network}${address ? `/${address}` : ''}`, {
       timeout: 120000,
-    });
+    }).wait(1000);
   }
 
   shouldRenderProposalsList() {
@@ -27,15 +38,15 @@ class Guilds {
   }
 
   fillCreateProposalForm() {
-    cy.findByTestId('create-proposal-title')
+    cy.findByTestId(this.createProposalTitleId)
       .focus()
       .type('Test automated proposal');
-    cy.findByTestId('create-proposal-link')
+    cy.findByTestId(this.createProposalLinkId)
       .focus()
       .type(
         'https://daotalk.org/t/test-synpress-proposal-07-02-2022-03-04-2022/4003'
       );
-    cy.findByTestId('editor-content')
+    cy.findByTestId(this.createProposalEditorId)
       .find('div')
       .type(
         'Test Contributor proposal{enter}Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
@@ -44,7 +55,18 @@ class Guilds {
   }
 
   clickOpenWalletModalBtn() {
-    cy.findAllByTestId('connectWalletBtn').eq(0).click();
+    cy.findByTestId(this.connectWalletId).click();
+  }
+
+  getGuildByName(name: string) {
+    return this.deployedGuilds.find(guild => guild.name === name);
+  }
+
+  clickOnGuildCard(guildName: string) {
+    const network = Cypress.env('network');
+    const guildAddress = this.getGuildByName(guildName).address;
+    cy.findAllByTestId(this.guildCardId).contains(guildName).first().click();
+    cy.url().should('include', `guilds/${network}/${guildAddress}`);
   }
 }
 
