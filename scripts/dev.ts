@@ -671,7 +671,20 @@ async function main() {
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
     ],
-    guilds: [addresses.DXDGuild, addresses.REPGuild, addresses.SwaprGuild],
+    guilds: [
+      {
+        name: 'DXDGuild',
+        address: addresses.DXDGuild,
+      },
+      {
+        name: 'REPGuild',
+        address: addresses.REPGuild,
+      },
+      {
+        name: 'SwaprGuild',
+        address: addresses.SwaprGuild,
+      },
+    ],
   };
 
   mkdirSync(path.resolve(__dirname, '../src/configs/localhost'), {
