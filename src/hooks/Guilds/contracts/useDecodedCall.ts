@@ -4,6 +4,7 @@ import {
   useRichContractRegistry,
 } from './useRichContractRegistry';
 import ERC20ABI from '../../../abis/ERC20.json';
+import ERC20Guild from '../../../contracts/ERC20Guild.json';
 import { useWeb3React } from '@web3-react/core';
 import {
   Call,
@@ -22,6 +23,10 @@ const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
     [ERC20_APPROVE_SIGNATURE]: {
       callType: SupportedAction.GENERIC_CALL,
       ABI: ERC20ABI,
+    },
+    '0xa5234bce': {
+      callType: SupportedAction.SET_PERMISSIONS,
+      ABI: ERC20Guild.abi,
     },
   };
 
