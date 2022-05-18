@@ -12,7 +12,7 @@ import {
   SupportedAction,
 } from 'old-components/Guilds/ActionsBuilder/types';
 import { ERC20_APPROVE_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from 'utils';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import { lookUpContractWithSourcify } from 'utils/sourcify';
 
 const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
@@ -98,13 +98,13 @@ export const decodeCall = async (
   let matchedContract = matchedRichContractData
     ? getContractInterfaceFromRichContractData(matchedRichContractData)
     : getContractFromKnownSighashes(call.data);
-    if (!matchedContract) {
-      const abi = await lookUpContractWithSourcify({ chainId, address: call.to });
-      matchedContract = {
-        contractInterface: new utils.Interface(abi),
-        callType: SupportedAction.GENERIC_CALL,
-      };
-    }
+  if (!matchedContract) {
+    const abi = await lookUpContractWithSourcify({ chainId, address: call.to });
+    matchedContract = {
+      contractInterface: new utils.Interface(abi),
+      callType: SupportedAction.GENERIC_CALL,
+    };
+  }
   const { callType, contractInterface } = matchedContract;
   if (!contractInterface) return null;
 
@@ -148,17 +148,21 @@ export const bulkDecodeCallsFromOptions = (
 
 export const useDecodedCall = (call: Call) => {
   const [decodedCall, setDecodedCall] = useState<any>(null);
+  const isCancelled = useRef(false);
   const { chainId } = useWeb3React();
   const { contracts } = useRichContractRegistry();
 
   useEffect(() => {
-    if (call) {
+    if (call && !isCancelled.current) {
       decodeCall(call, contracts, chainId).then(decodedData =>
         setDecodedCall(decodedData)
       );
     } else {
       setDecodedCall(null);
     }
+    return () => {
+      isCancelled.current = true;
+    };
   }, [call, contracts, chainId]);
 
   return decodedCall || { decodedCall: null, contract: null };

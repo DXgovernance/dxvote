@@ -45,55 +45,55 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
       }));
       const totalOptionsNum = totalOptions?.toNumber();
 
-    const callsPerOption = toArray.length / totalOptionsNum;
-    const splitCalls: Call[][] = [];
-    for (let i = 0; i < totalOptionsNum; i++) {
-      splitCalls.push(
-        calls.slice(i * callsPerOption, (i + 1) * callsPerOption)
+      const callsPerOption = toArray.length / totalOptionsNum;
+      const splitCalls: Call[][] = [];
+      for (let i = 0; i < totalOptionsNum; i++) {
+        splitCalls.push(
+          calls.slice(i * callsPerOption, (i + 1) * callsPerOption)
+        );
+      }
+
+      const voteOptions = metadata?.voteOptions;
+
+      const encodedOptions: Option[] = await Promise.all(
+        splitCalls.map(async (calls, index) => {
+          const filteredActions = calls.filter(
+            call => call.data !== ZERO_HASH || !call.value?.isZero()
+          );
+
+          const actions = await Promise.all(
+            filteredActions.map(async (call, index, allCalls) => {
+              if (isApprovalCall(call)) {
+                const { decodedCall } = await decodeCall(
+                  call,
+                  contracts,
+                  chainId
+                );
+                allCalls[index + 1].approval = {
+                  amount: decodedCall?.args?._value,
+                  token: call.to,
+                };
+              }
+              return call;
+            })
+          );
+
+          return {
+            id: `option-${index}`,
+            label:
+              voteOptions && voteOptions[index]
+                ? voteOptions[index]
+                : `Option ${index + 1}`,
+            color: theme?.colors?.votes?.[index],
+            actions,
+            totalVotes: votingResults?.options[index],
+          };
+        })
       );
+
+      return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);
     }
-
-    const voteOptions = metadata?.voteOptions;
-
-    const encodedOptions: Option[] = await Promise.all(
-      splitCalls.map(async (calls, index) => {
-        const filteredActions = calls.filter(
-          call => call.data !== ZERO_HASH || !call.value?.isZero()
-        );
-
-        const actions = await Promise.all(
-          filteredActions.map(async (call, index, allCalls) => {
-            if (isApprovalCall(call)) {
-              const { decodedCall } = await decodeCall(
-                call,
-                contracts,
-                chainId
-              );
-              allCalls[index + 1].approval = {
-                amount: decodedCall?.args?._value,
-                token: call.to,
-              };
-            }
-            return call;
-          })
-        );
-
-        return {
-          id: `option-${index}`,
-          label:
-            voteOptions && voteOptions[index]
-              ? voteOptions[index]
-              : `Option ${index + 1}`,
-          color: theme?.colors?.votes?.[index],
-          actions,
-          totalVotes: votingResults?.options[index],
-        };
-      })
-    );
-
-    return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);
-  }
-  decodeOptions().then(options => setOptions(options));
+    decodeOptions().then(options => setOptions(options));
   }, [theme?.colors?.votes, contracts, chainId, guildId, proposalId]);
 
   return {
