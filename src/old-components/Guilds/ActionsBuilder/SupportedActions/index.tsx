@@ -20,7 +20,7 @@ import RepMintInfoLine from './RepMint/RepMintInfoLine';
 import RepMintSummary from './RepMint/RepMintSummary';
 import SetPermissionsEditor from './SetPermissions/SetPermissionsEditor';
 import SetPermissionsInfoLine from './SetPermissions/SetPermissionsInfoLine';
-import SetPermissionsSummary from './SetPermissions/SetPermissionsSummary';
+// import SetPermissionsSummary from './SetPermissions/SetPermissionsSummary';
 
 export interface SupportedActionMetadata {
   title: string;
@@ -68,7 +68,7 @@ export const supportedActions: Record<
   [SupportedAction.SET_PERMISSIONS]: {
     title: 'Set permissions',
     infoLineView: SetPermissionsInfoLine,
-    summaryView: SetPermissionsSummary,
+    // summaryView: SetPermissionsSummary,
     editor: SetPermissionsEditor,
   },
 };
