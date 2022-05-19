@@ -51,28 +51,34 @@ export default class IPFSService {
   async getContentFromIPFS(hash: string) {
     const response = await Promise.any([
       axios.request({
+        url: 'https://dxgov.mypinata.cloud/ipfs/' + hash,
+        method: 'GET',
+        timeout: 60000,
+      }),
+      axios.request({
         url: 'https://ipfs.io/ipfs/' + hash,
         method: 'GET',
+        timeout: 60000,
       }),
       axios.request({
         url: 'https://gateway.ipfs.io/ipfs/' + hash,
         method: 'GET',
+        timeout: 60000,
       }),
       axios.request({
         url: 'https://cloudflare-ipfs.com/ipfs/' + hash,
         method: 'GET',
-      }),
-      axios.request({
-        url: 'https://gateway.pinata.cloud/ipfs/' + hash,
-        method: 'GET',
+        timeout: 60000,
       }),
       axios.request({
         url: 'https://dweb.link/ipfs/' + hash,
         method: 'GET',
+        timeout: 60000,
       }),
       axios.request({
         url: 'https://infura-ipfs.io/ipfs/' + hash,
         method: 'GET',
+        timeout: 60000,
       }),
     ]);
     return response.data;

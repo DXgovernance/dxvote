@@ -8,7 +8,7 @@ class Guilds {
   public createProposalEditorId: string;
   public connectWalletId: string;
   public guildCardId: string;
-  public deployedGuilds: any[];
+  public deployedGuilds: string[];
 
   constructor() {
     this.proposalsListId = 'proposals-list';
@@ -58,15 +58,14 @@ class Guilds {
     cy.findByTestId(this.connectWalletId).click();
   }
 
-  getGuildByName(name: string) {
-    return this.deployedGuilds.find(guild => guild.name === name);
-  }
-
   clickOnGuildCard(guildName: string) {
     const network = Cypress.env('network');
-    const guildAddress = this.getGuildByName(guildName).address;
     cy.findAllByTestId(this.guildCardId).contains(guildName).first().click();
-    cy.url().should('include', `guilds/${network}/${guildAddress}`);
+    cy.url().then(url =>
+      this.deployedGuilds.some(address =>
+        url.includes(`guilds/${network}/${address}`)
+      )
+    );
   }
 }
 
