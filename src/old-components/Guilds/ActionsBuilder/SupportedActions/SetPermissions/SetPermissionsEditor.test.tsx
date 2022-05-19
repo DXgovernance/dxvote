@@ -30,8 +30,8 @@ jest.mock('hooks/Guilds/ether-swr/useEtherSWR.ts', () => ({
 
 const ERC20GuildContract = new utils.Interface(ERC20Guild.abi);
 
-const functionSignatureMock = 'test';
-const encodedFunctionSignatureMock = '0x9c22ff5f';
+const functionNameMock = 'test';
+const functionSignatureMock = '0x9c22ff5f';
 const toAddressMock = '0x79706C8e413CDaeE9E63f282507287b9Ea9C0928';
 const customAmountMock = 111;
 const tokenAddresMock = '0xD899Be87df2076e0Be28486b60dA406Be6757AfC';
@@ -42,6 +42,7 @@ const emptyDecodedCallMock: DecodedCall = {
   function: ERC20GuildContract.getFunction('setPermission'),
   to: '0xD899Be87df2076e0Be28486b60dA406Be6757AfC',
   value: BigNumber.from(0),
+  functionName: '',
   args: {
     asset: [''],
     to: [ANY_ADDRESS],
@@ -57,10 +58,11 @@ const completeDecodedCallMock: DecodedCall = {
   function: ERC20GuildContract.getFunction('setPermission'),
   to: '0xD899Be87df2076e0Be28486b60dA406Be6757AfC',
   value: BigNumber.from(0),
+  functionName: functionNameMock,
   args: {
     asset: [tokenAddresMock],
     to: [toAddressMock],
-    functionSignature: [encodedFunctionSignatureMock],
+    functionSignature: [functionSignatureMock],
     valueAllowed: [BigNumber.from('111000000000000000000')],
     allowance: ['true'],
   },
@@ -147,8 +149,6 @@ describe(`Set Permissions editor`, () => {
         />
       );
 
-      // ! Token picker decoding not working correctly
-
       const toAddressElement: HTMLInputElement = screen.getByRole('textbox', {
         name: /to address input/i,
       });
@@ -233,11 +233,11 @@ describe(`Set Permissions editor`, () => {
         { name: /function signature input/i }
       );
       fireEvent.change(functionSignatureElement, {
-        target: { value: functionSignatureMock },
+        target: { value: functionNameMock },
       });
 
       expect(toAddressElement.value).toBe(toAddressMock);
-      expect(functionSignatureElement.value).toBe(functionSignatureMock);
+      expect(functionSignatureElement.value).toBe(functionNameMock);
     });
 
     it(`Displays decodedCall information properly`, () => {
@@ -254,13 +254,13 @@ describe(`Set Permissions editor`, () => {
         name: /to address input/i,
       });
 
-      const functionSignatureElement: HTMLInputElement = screen.getByRole(
+      const functionNameElement: HTMLInputElement = screen.getByRole(
         'textbox',
         { name: /function signature input/i }
       );
 
       expect(toAddressElement.value).toBe(completeDecodedCallMock.args.to[0]);
-      // expect(functionSignatureElement.value).toBe(decodedFunctionSignatureMock);
+      expect(functionNameElement.value).toBe(functionNameMock);
     });
   });
 
@@ -277,7 +277,7 @@ describe(`Set Permissions editor`, () => {
       fireEvent.click(functionsCallTab);
       expect(screen.getByText(`Functions call`));
       expect(screen.getByText(`To address`));
-      expect(screen.getByText(`Function signature`));
+      expect(screen.getByText(`Function name`));
     });
 
     it(`'To address' persists when changing tabs`, () => {});
