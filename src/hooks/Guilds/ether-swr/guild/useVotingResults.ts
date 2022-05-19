@@ -29,7 +29,7 @@ export const useVotingResults = (
   const voteData = useMemo(() => {
     if (!proposal || !data || !tokenInfo) return undefined;
     const options = proposal?.totalVotes
-      .slice(0, proposal?.totalVotes?.length - 1) // TODO: it was removing the first, but need to remove the last. investigate why?.
+      .slice(1) // TODO: it was removing the first, but need to remove the last. investigate why?.
       .reduce<Record<string, BigNumber>>((acc, result, i) => {
         acc[i] = result;
         return acc;
