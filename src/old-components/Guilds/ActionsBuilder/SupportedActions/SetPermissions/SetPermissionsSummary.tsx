@@ -14,6 +14,8 @@ import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber'
 const SetPermissionsSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
   const parsedData = useMemo<ParsedDataInterface>(() => {
     if (!decodedCall) return null;
+
+    const { functionName } = decodedCall;
     const { asset, to, functionSignature, valueAllowed, allowance } =
       decodedCall.args;
     return {
@@ -22,6 +24,7 @@ const SetPermissionsSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
       functionSignature,
       valueAllowed,
       allowance,
+      functionName,
     };
   }, [decodedCall]);
 

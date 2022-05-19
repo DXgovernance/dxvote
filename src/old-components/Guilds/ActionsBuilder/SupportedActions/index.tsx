@@ -112,6 +112,7 @@ export const defaultValues: Record<
       function: ERC20GuildContract.getFunction('setPermission'),
       to: '0xD899Be87df2076e0Be28486b60dA406Be6757AfC',
       value: BigNumber.from(0),
+      functionName: '',
       args: {
         asset: [''],
         to: [ANY_ADDRESS],

@@ -15,6 +15,7 @@ export interface Call {
   data: string;
   value: BigNumber;
   approval?: ApproveSendTokens;
+  functionName?: string;
 }
 
 export interface DecodedCall {
@@ -25,6 +26,7 @@ export interface DecodedCall {
   function: utils.FunctionFragment;
   args: Record<string, any>;
   richData?: RichContractData;
+  functionName?: string;
 }
 
 export interface DecodedAction {

@@ -8,6 +8,13 @@ import Avatar from 'old-components/Guilds/Avatar';
 import { ClickableIcon } from './styles';
 import { FiX } from 'react-icons/fi';
 import { ParsedDataInterface, ValidationsInterface } from './types';
+import styled from 'styled-components';
+
+const FunctionSignatureWrapper = styled.div`
+  color: ${({ theme }) => theme.colors.proposalText.grey};
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+`;
 
 interface FunctionCallProps {
   validations: ValidationsInterface;
@@ -16,7 +23,7 @@ interface FunctionCallProps {
   handleCustomFunctionSignature: (value: string) => void;
   customToAddress: string;
   handleCustomAddress: (value: string) => void;
-  customFunctionSignature: string;
+  customFunctionName: string;
 }
 
 const FunctionCall: React.FC<FunctionCallProps> = ({
@@ -26,8 +33,10 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
   handleCustomFunctionSignature,
   customToAddress,
   handleCustomAddress,
-  customFunctionSignature,
+  customFunctionName,
 }) => {
+  // ? maybe change the input validation so it doesn't validates until blur?
+
   return (
     <div>
       <Control>
@@ -63,15 +72,23 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
         </ControlRow>
       </Control>
       <Control>
-        <ControlLabel>Function signature</ControlLabel>
+        <ControlLabel>Function name</ControlLabel>
         <ControlRow>
           <Input
+            isInvalid={!validations.functionName}
             name="function-signature"
             aria-label="function signature input"
-            value={customFunctionSignature || ''}
-            placeholder="Function signature"
+            value={customFunctionName || ''}
+            placeholder="Function name"
             onChange={e => handleCustomFunctionSignature(e.target.value)}
           />
+        </ControlRow>
+        <ControlRow>
+          {customFunctionName.substring(0, 2) !== '0x' && (
+            <FunctionSignatureWrapper>
+              Function signature: {parsedData?.functionSignature}
+            </FunctionSignatureWrapper>
+          )}
         </ControlRow>
       </Control>
     </div>
