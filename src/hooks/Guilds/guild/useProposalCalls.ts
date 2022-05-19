@@ -92,7 +92,7 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
       return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);
     }
     decodeOptions().then(options => setOptions(options));
-  }, [theme?.colors?.votes, contracts, chainId, guildId, proposalId]);
+  }, [theme?.colors?.votes, contracts, chainId, guildId, proposalId, proposal]);
 
   return {
     options,
