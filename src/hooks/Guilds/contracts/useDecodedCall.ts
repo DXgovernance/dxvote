@@ -100,13 +100,16 @@ export const decodeCall = async (
     : getContractFromKnownSighashes(call.data);
   if (!matchedContract) {
     const abi = await lookUpContractWithSourcify({ chainId, address: call.to });
-    matchedContract = {
-      contractInterface: new utils.Interface(abi),
-      callType: SupportedAction.GENERIC_CALL,
-    };
+    if (abi)
+      matchedContract = {
+        contractInterface: new utils.Interface(abi),
+        callType: SupportedAction.GENERIC_CALL,
+      };
+  }
+  if (!matchedContract) {
+    return null;
   }
   const { callType, contractInterface } = matchedContract;
-  if (!contractInterface) return null;
 
   decodedCall = decodeCallUsingEthersInterface(
     call,

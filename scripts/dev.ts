@@ -650,6 +650,43 @@ async function main() {
           amount: web3.utils.toWei('100'),
         },
       },
+
+      {
+        type: 'approve',
+        from: accounts[1],
+        data: {
+          asset: 'DXD',
+          address: 'DXDGuild-vault',
+          amount: MAX_UINT,
+        },
+      },
+      {
+        type: 'guild-lockTokens',
+        from: accounts[1],
+        data: {
+          guildName: 'DXDGuild',
+          amount: web3.utils.toWei('50'),
+        },
+      },
+
+      {
+        type: 'approve',
+        from: accounts[2],
+        data: {
+          asset: 'DXD',
+          address: 'DXDGuild-vault',
+          amount: MAX_UINT,
+        },
+      },
+      {
+        type: 'guild-lockTokens',
+        from: accounts[2],
+        data: {
+          guildName: 'DXDGuild',
+          amount: web3.utils.toWei('5'),
+        },
+      },
+
       {
         type: 'guild-withdrawTokens',
         increaseTime: moment.duration(10, 'minutes').asSeconds() + 1,
