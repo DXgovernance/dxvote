@@ -31,23 +31,21 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
     }
     async function decodeOptions() {
       const {
-        totalActions: totalOptions,
+        totalVotes,
         to: toArray,
         data: dataArray,
         value: valuesArray,
       } = proposal;
-
-      const calls: Call[] = toArray.map((to, index) => ({
+      const totalOptions = totalVotes?.length - 1 || 0;
+      const calls: Call[] = toArray?.map((to, index) => ({
         from: guildId,
         to: to,
         data: dataArray[index],
         value: valuesArray[index],
       }));
-      const totalOptionsNum = totalOptions?.toNumber();
-
-      const callsPerOption = toArray.length / totalOptionsNum;
+      const callsPerOption = toArray?.length / totalOptions;
       const splitCalls: Call[][] = [];
-      for (let i = 0; i < totalOptionsNum; i++) {
+      for (let i = 0; i < totalOptions; i++) {
         splitCalls.push(
           calls.slice(i * callsPerOption, (i + 1) * callsPerOption)
         );
