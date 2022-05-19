@@ -48,6 +48,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
   // parse transfer state from calls
   const parsedData = useMemo<ParsedDataInterface>(() => {
     if (!decodedCall) return null;
+    const { functionName } = decodedCall;
     const { asset, to, functionSignature, valueAllowed, allowance } =
       decodedCall.args;
 
@@ -57,14 +58,25 @@ const Permissions: React.FC<ActionEditorProps> = ({
       functionSignature,
       valueAllowed,
       allowance,
+      functionName,
     };
   }, [decodedCall]);
 
   const validations = useMemo<ValidationsInterface>(() => {
+    function isFunctionNameValid(value: string): boolean {
+      const regexFunctionName = /(\w+)[(]{1}(\w*)[)]{1}/g;
+      if (!value || value === '') return true;
+      if (value.substring(0, 2) === '0x' && value.length === 10) return true;
+      if (value.match(regexFunctionName)) return true;
+
+      return false;
+    }
+
     return {
       asset: utils.isAddress(parsedData?.asset[0]),
       to: utils.isAddress(parsedData?.to[0]),
       valueAllowed: BigNumber.isBigNumber(parsedData?.valueAllowed[0]),
+      functionName: isFunctionNameValid(parsedData?.functionName),
     };
   }, [parsedData]);
 
@@ -118,15 +130,59 @@ const Permissions: React.FC<ActionEditorProps> = ({
   };
 
   // function signature
-  const setFunctionSignature = (functionSignature: string) => {
-    updateCall({
-      ...decodedCall,
-      args: {
-        ...decodedCall.args,
-        functionSignature: [functionSignature],
-      },
-    });
+  const setFunctionSignature = (value: string) => {
+    // If value is empty
+    if (!value || value === '') {
+      updateCall({
+        ...decodedCall,
+        functionName: '',
+        args: {
+          ...decodedCall.args,
+          functionSignature: [ANY_FUNC_SIGNATURE],
+        },
+      });
+    }
+
+    // If the value already is encoded
+    else if (value.substring(0, 2) === '0x') {
+      updateCall({
+        ...decodedCall,
+        functionName: value,
+        args: {
+          ...decodedCall.args,
+          functionSignature: [value],
+        },
+      });
+    }
+
+    // if the value is the name of the function
+    else {
+      const functionSignature = web3.eth.abi.encodeFunctionSignature(value);
+      updateCall({
+        ...decodedCall,
+        functionName: value,
+        args: {
+          ...decodedCall.args,
+          functionSignature: [functionSignature],
+        },
+      });
+    }
   };
+
+  // It has two values for functionSignature: a custom one that is set and modified
+  // when the input is modified in FunctionCall component
+  // and the ANY_FUNC_SIGNATURE that is switched when in AssetTransfer component
+  const [customFunctionName, setCustomFunctionName] = useState(
+    parsedData?.functionName
+  );
+  const handleCustomFunctionSignature = value => {
+    setCustomFunctionName(value);
+    setFunctionSignature(value);
+  };
+  useEffect(() => {
+    if (activeTab === 0) setFunctionSignature(ANY_FUNC_SIGNATURE);
+    if (activeTab === 1) setFunctionSignature(customFunctionName);
+  }, [activeTab]);
 
   const [customAmountValue, setCustomAmountValue] = useState(
     parsedData?.valueAllowed[0]
@@ -159,26 +215,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
   useEffect(() => {
     if (parsedData?.to[0] === ANY_ADDRESS) handleCustomAddress('');
   }, []);
-
-  // It has two values for functionSignature: a custom one that is set and modified
-  // when the input is modified in FunctionCall component
-  // and the ANY_FUNC_SIGNATURE that is switched when in AssetTransfer component
-  const [customFunctionSignature, setCustomFunctionSignature] = useState('');
-  const handleCustomFunctionSignature = value => {
-    setCustomFunctionSignature(value);
-
-    if (value) {
-      const encodedFunctionSignature =
-        web3.eth.abi.encodeFunctionSignature(value);
-      setFunctionSignature(encodedFunctionSignature);
-    } else {
-      setFunctionSignature(ANY_FUNC_SIGNATURE);
-    }
-  };
-  useEffect(() => {
-    if (activeTab === 0) setFunctionSignature(ANY_FUNC_SIGNATURE);
-    if (activeTab === 1) setFunctionSignature(customFunctionSignature);
-  }, [activeTab]);
 
   return (
     <div>
@@ -222,7 +258,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
           handleCustomFunctionSignature={handleCustomFunctionSignature}
           customToAddress={customToAddress}
           handleCustomAddress={handleCustomAddress}
-          customFunctionSignature={customFunctionSignature}
+          customFunctionName={customFunctionName}
         />
       )}
     </div>

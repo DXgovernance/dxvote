@@ -12,6 +12,8 @@ import { ParsedDataInterface } from './types';
 const SetPermissionsInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
   const parsedData = useMemo<ParsedDataInterface>(() => {
     if (!decodedCall) return null;
+
+    const { functionName } = decodedCall;
     const { asset, to, functionSignature, valueAllowed, allowance } =
       decodedCall.args;
     return {
@@ -20,6 +22,7 @@ const SetPermissionsInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
       functionSignature,
       valueAllowed,
       allowance,
+      functionName,
     };
   }, [decodedCall]);
 
