@@ -4,6 +4,7 @@ import {
   ANY_FUNC_SIGNATURE,
   ZERO_ADDRESS,
   ANY_ADDRESS,
+  MAX_UINT,
 } from '../src/utils/constants';
 
 const hre = require('hardhat');
@@ -14,6 +15,7 @@ async function main() {
   const PermissionRegistry = await hre.artifacts.require('PermissionRegistry');
   const GuildRegistry = await hre.artifacts.require('GuildRegistry');
   const ERC20Guild = await hre.artifacts.require('ERC20Guild');
+  const ERC20SnapshotRep = await hre.artifacts.require('ERC20SnapshotRep');
   const EnforcedBinaryGuild = await hre.artifacts.require(
     'EnforcedBinaryGuild'
   );
@@ -196,7 +198,7 @@ async function main() {
         distribution: [
           {
             address: accounts[0],
-            amount: web3.utils.toWei('200'),
+            amount: web3.utils.toWei('100'),
           },
           {
             address: accounts[1],
@@ -386,7 +388,7 @@ async function main() {
         data: {
           asset: 'DXD',
           address: 'DXDVotingMachine',
-          amount: web3.utils.toWei('101'),
+          amount: MAX_UINT,
         },
       },
       {
@@ -501,7 +503,7 @@ async function main() {
         data: {
           asset: 'DXD',
           address: 'DXDVotingMachine',
-          amount: web3.utils.toWei('101'),
+          amount: MAX_UINT,
         },
       },
       {
@@ -549,12 +551,95 @@ async function main() {
       },
 
       {
+        type: 'guild-createProposal',
+        from: accounts[0],
+        data: {
+          guildName: 'REPGuild',
+          to: ['REPGuild'],
+          callData: [
+            new web3.eth.Contract(ERC20Guild.abi).methods
+              .setPermission(
+                [ZERO_ADDRESS],
+                [ANY_ADDRESS],
+                [ANY_FUNC_SIGNATURE],
+                [MAX_UINT],
+                [true]
+              )
+              .encodeABI(),
+          ],
+          value: ['0'],
+          totalActions: '1',
+          title: '#0 Set Permissions',
+          description: 'Allow call any address',
+        },
+      },
+      {
+        type: 'guild-voteProposal',
+        from: accounts[0],
+        data: {
+          guildName: 'REPGuild',
+          proposal: 0,
+          action: '1',
+          votingPower: web3.utils.toWei('100').toString(),
+        },
+      },
+      {
+        type: 'guild-endProposal',
+        increaseTime: moment.duration(10, 'minutes').asSeconds(),
+        from: accounts[1],
+        data: {
+          guildName: 'REPGuild',
+          proposal: 0,
+        },
+      },
+
+      {
+        type: 'guild-createProposal',
+        from: accounts[0],
+        data: {
+          guildName: 'REPGuild',
+          to: ['RGT', 'RGT'],
+          callData: [
+            new web3.eth.Contract(ERC20SnapshotRep.abi).methods
+              .burn(accounts[0], web3.utils.toWei('50'))
+              .encodeABI(),
+            new web3.eth.Contract(ERC20SnapshotRep.abi).methods
+              .mint(accounts[2], web3.utils.toWei('40'))
+              .encodeABI(),
+          ],
+          value: ['0', '0'],
+          totalActions: '1',
+          title: '#1 Mint to equal all address REP',
+          description: `Mint and burn REP to address ${accounts[0]} and ${accounts[2]} so all rep holders have 50 REP`,
+        },
+      },
+      {
+        type: 'guild-voteProposal',
+        from: accounts[0],
+        data: {
+          guildName: 'REPGuild',
+          proposal: 1,
+          action: '1',
+          votingPower: web3.utils.toWei('100').toString(),
+        },
+      },
+      {
+        type: 'guild-endProposal',
+        increaseTime: moment.duration(10, 'minutes').asSeconds(),
+        from: accounts[1],
+        data: {
+          guildName: 'REPGuild',
+          proposal: 1,
+        },
+      },
+
+      {
         type: 'approve',
         from: accounts[0],
         data: {
           asset: 'DXD',
           address: 'DXDGuild-vault',
-          amount: web3.utils.toWei('101'),
+          amount: MAX_UINT,
         },
       },
       {
@@ -624,7 +709,7 @@ async function main() {
         data: {
           asset: 'SWPR',
           address: 'SwaprGuild-vault',
-          amount: web3.utils.toWei('2'),
+          amount: MAX_UINT,
         },
       },
 
