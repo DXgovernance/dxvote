@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber, utils } from 'ethers';
-import { ANY_FUNC_SIGNATURE, MAINNET_ID } from 'utils';
+import { ANY_FUNC_SIGNATURE, MAINNET_ID, ZERO_ADDRESS } from 'utils';
 import { ActionEditorProps } from '..';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
@@ -80,15 +80,17 @@ const Permissions: React.FC<ActionEditorProps> = ({
     };
   }, [parsedData]);
 
+  const [pickedAsset, setPickedAsset] = useState(parsedData?.asset[0]);
+
   // Get token details from the token address
   const { tokens } = useTokenList(chainId);
   const token = useMemo(() => {
-    if (!parsedData?.asset[0] || !tokens) return null;
+    if (!pickedAsset || !tokens) return null;
 
-    return tokens.find(({ address }) => address === parsedData?.asset[0]);
+    return tokens.find(({ address }) => address === pickedAsset);
   }, [tokens, parsedData]);
 
-  const { data: tokenInfo } = useERC20Info(parsedData?.asset[0]);
+  const { data: tokenInfo } = useERC20Info(pickedAsset);
   const { imageUrl: destinationAvatarUrl } = useENSAvatar(
     parsedData?.to[0],
     MAINNET_ID
@@ -98,14 +100,18 @@ const Permissions: React.FC<ActionEditorProps> = ({
 
   // asset
   const setAsset = (asset: string) => {
-    updateCall({
-      ...decodedCall,
-      args: {
-        ...decodedCall.args,
-        asset: [asset],
-      },
-    });
+    decodedCall.args.asset = [asset];
+    updateCall(decodedCall);
+    debugger;
   };
+  const handleAssetChange = (asset: string) => {
+    setAsset(asset);
+    setPickedAsset(asset);
+  };
+  useEffect(() => {
+    if (activeTab === 0) setAsset(pickedAsset);
+    if (activeTab === 1) setAsset(ZERO_ADDRESS);
+  }, [activeTab]);
 
   // valueAllowed
   const setAmount = (valueAllowed: BigNumber) => {
@@ -245,9 +251,10 @@ const Permissions: React.FC<ActionEditorProps> = ({
           handleTokenAmountInputChange={handleTokenAmountInputChange}
           maxValueToggled={maxValueToggled}
           handleToggleChange={handleToggleChange}
-          setAsset={setAsset}
+          handleAssetChange={handleAssetChange}
           customToAddress={customToAddress}
           handleCustomAddress={handleCustomAddress}
+          pickedAsset={pickedAsset}
         />
       )}
       {activeTab === 1 && (
@@ -259,6 +266,12 @@ const Permissions: React.FC<ActionEditorProps> = ({
           customToAddress={customToAddress}
           handleCustomAddress={handleCustomAddress}
           customFunctionName={customFunctionName}
+          tokenInfo={tokenInfo}
+          customAmountValue={customAmountValue}
+          handleTokenAmountInputChange={handleTokenAmountInputChange}
+          maxValueToggled={maxValueToggled}
+          handleToggleChange={handleToggleChange}
+          setAsset={setAsset}
         />
       )}
     </div>
