@@ -100,7 +100,6 @@ describe('Guilds', () => {
       cy.contains('Transaction Submitted').should('be.visible');
       clickAnywhereToClose();
       clickAnywhereToClose();
-      cy.wait(15000);
     });
 
     it('Should show member actions dropdown after locking tokens', () => {
