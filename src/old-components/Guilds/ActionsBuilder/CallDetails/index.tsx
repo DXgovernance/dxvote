@@ -54,7 +54,7 @@ const CallDetails: React.FC<ActionViewProps> = ({
     }
 
     if (type.startsWith('uint') || type.startsWith('int')) {
-      if (value.length) {
+      if (Array.isArray(value)) {
         return <ParamDetail>{BigNumber.from(value[0]).toString()}</ParamDetail>;
       }
 
