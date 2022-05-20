@@ -74,11 +74,11 @@ describe('Guilds', () => {
         .should('be.visible')
         .click();
       cy.confirmMetamaskPermissionToSpend();
-      cy.wait(500);
+      cy.wait(100);
       cy.contains('Transaction Submitted').should('be.visible');
       clickAnywhereToClose();
       clickAnywhereToClose();
-      cy.wait(3000);
+      cy.wait(15000); // wait for transaction
     });
 
     it('Should open lock modal and lock tokens', () => {
@@ -96,11 +96,11 @@ describe('Guilds', () => {
         .should('be.visible')
         .click();
       cy.confirmMetamaskPermissionToSpend();
-      cy.wait(500);
+      cy.wait(100);
       cy.contains('Transaction Submitted').should('be.visible');
       clickAnywhereToClose();
       clickAnywhereToClose();
-      cy.wait(5000);
+      cy.wait(15000);
     });
 
     it('Should show member actions dropdown after locking tokens', () => {

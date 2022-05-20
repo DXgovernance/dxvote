@@ -6,7 +6,7 @@
   },
   {
     "type": "SnapshotRepERC20Guild",
-    "bytecode_hash": "0x5d97c71486c35f99c15106827d80c697cdd629d646e288a7950299b353e980da",
+    "bytecode_hash": "0xccffdbd231a220e4c8999c5725b73dc43448799830af936e1e45a762e5348ca7",
     "features": [
       "REP",
       "SNAPSHOT"
