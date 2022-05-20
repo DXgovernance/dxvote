@@ -86,6 +86,7 @@ const NewProposalPage = observer(() => {
     },
   } = useContext();
 
+  const networkName = configStore.getActiveChainName();
   const schemes = daoStore.getAllSchemes();
   const networkContracts = configStore.getNetworkContracts();
   const schemeInLocalStorage = localStorage.getItem(
@@ -720,7 +721,9 @@ const NewProposalPage = observer(() => {
             active={submitionState}
           />
         ) : (
-          <LinkButton route="/">Back to Proposals</LinkButton>
+          <LinkButton route={`/${networkName}/proposals`}>
+            Back to Proposals
+          </LinkButton>
         )}
         {submitionState > 1 ? (
           <TextActions>
