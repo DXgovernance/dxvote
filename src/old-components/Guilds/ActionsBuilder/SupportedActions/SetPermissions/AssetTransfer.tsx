@@ -2,44 +2,22 @@ import { useState } from 'react';
 import Input from 'old-components/Guilds/common/Form/Input';
 import Avatar from 'old-components/Guilds/Avatar';
 import { FiChevronDown, FiX } from 'react-icons/fi';
-import TokenAmountInput from 'old-components/Guilds/common/Form/TokenAmountInput';
 import { resolveUri } from 'utils/url';
 import {
   Control,
   ControlLabel,
   ControlRow,
 } from 'Components/Primitives/Forms/Control';
-import { ClickableIcon } from './styles';
+import {
+  ClickableIcon,
+  StyledTokenAmount,
+  ToggleWrapper,
+  ToggleLabel,
+} from './styles';
 import Toggle from 'old-components/Guilds/common/Form/Toggle';
-import styled, { css } from 'styled-components';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
 import { ParsedDataInterface, ValidationsInterface } from './types';
 import { BigNumber } from 'ethers';
-
-const StyledTokenAmount = styled(TokenAmountInput)`
-  ${({ disabled }) =>
-    disabled &&
-    css`
-      color: ${({ theme }) => theme.colors.proposalText.grey} !important;
-    `}
-`;
-
-const ToggleWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: 1rem;
-`;
-
-const ToggleLabel = styled.div`
-  white-space: nowrap;
-  margin-left: 1rem;
-
-  ${({ selected }) =>
-    !selected &&
-    css`
-      color: ${({ theme }) => theme.colors.proposalText.grey} !important;
-    `}
-`;
 
 interface AssetTransferProps {
   validations: ValidationsInterface;
@@ -51,9 +29,10 @@ interface AssetTransferProps {
   handleTokenAmountInputChange: (e: string) => void;
   maxValueToggled: boolean;
   handleToggleChange: () => void;
-  setAsset: (asset: string) => void;
+  handleAssetChange: (asset: string) => void;
   customToAddress: string;
   handleCustomAddress: (value: string) => void;
+  pickedAsset: string;
 }
 
 const AssetTransfer: React.FC<AssetTransferProps> = ({
@@ -66,9 +45,10 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
   handleTokenAmountInputChange,
   maxValueToggled,
   handleToggleChange,
-  setAsset,
+  handleAssetChange,
   customToAddress,
   handleCustomAddress,
+  pickedAsset,
 }) => {
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
 
@@ -84,10 +64,10 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
             placeholder="Token"
             icon={
               <div>
-                {parsedData?.asset[0] && (
+                {pickedAsset && (
                   <Avatar
                     src={resolveUri(token?.logoURI)}
-                    defaultSeed={parsedData?.asset[0]}
+                    defaultSeed={pickedAsset}
                     size={18}
                   />
                 )}
@@ -97,13 +77,12 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
             readOnly
           />
         </ControlRow>
-        {/* //! There's a bug while showing the token picker: it doesn't dissappear when clicked outside  */}
         <TokenPicker
           walletAddress={parsedData?.to[0] || ''}
           isOpen={isTokenPickerOpen}
           onClose={() => setIsTokenPickerOpen(false)}
           onSelect={asset => {
-            setAsset(asset);
+            handleAssetChange(asset);
             setIsTokenPickerOpen(false);
           }}
         />

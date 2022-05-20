@@ -1,5 +1,5 @@
 import { BigNumber, utils } from 'ethers';
-import { ANY_ADDRESS, ANY_FUNC_SIGNATURE } from 'utils';
+import { ANY_ADDRESS, ANY_FUNC_SIGNATURE, ZERO_ADDRESS } from 'utils';
 import { DeepPartial } from 'utils/types';
 
 import {
@@ -114,7 +114,7 @@ export const defaultValues: Record<
       value: BigNumber.from(0),
       functionName: '',
       args: {
-        asset: [''],
+        asset: [ZERO_ADDRESS],
         to: [ANY_ADDRESS],
         functionSignature: [ANY_FUNC_SIGNATURE],
         valueAllowed: [BigNumber.from(0)],

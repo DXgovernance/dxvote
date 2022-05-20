@@ -5,10 +5,17 @@ import {
 } from 'Components/Primitives/Forms/Control';
 import Input from 'old-components/Guilds/common/Form/Input';
 import Avatar from 'old-components/Guilds/Avatar';
-import { ClickableIcon } from './styles';
+import {
+  ClickableIcon,
+  StyledTokenAmount,
+  ToggleWrapper,
+  ToggleLabel,
+} from './styles';
 import { FiX } from 'react-icons/fi';
 import { ParsedDataInterface, ValidationsInterface } from './types';
 import styled from 'styled-components';
+import Toggle from 'old-components/Guilds/common/Form/Toggle';
+import { BigNumber } from 'ethers';
 
 const FunctionSignatureWrapper = styled.div`
   color: ${({ theme }) => theme.colors.proposalText.grey};
@@ -24,6 +31,12 @@ interface FunctionCallProps {
   customToAddress: string;
   handleCustomAddress: (value: string) => void;
   customFunctionName: string;
+  tokenInfo: any;
+  customAmountValue: BigNumber;
+  handleTokenAmountInputChange: (e: string) => void;
+  maxValueToggled: boolean;
+  handleToggleChange: () => void;
+  setAsset: (asset: string) => void;
 }
 
 const FunctionCall: React.FC<FunctionCallProps> = ({
@@ -34,6 +47,12 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
   customToAddress,
   handleCustomAddress,
   customFunctionName,
+  tokenInfo,
+  customAmountValue,
+  handleTokenAmountInputChange,
+  maxValueToggled,
+  handleToggleChange,
+  setAsset,
 }) => {
   // ? maybe change the input validation so it doesn't validates until blur?
 
@@ -89,6 +108,28 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
               Function signature: {parsedData?.functionSignature}
             </FunctionSignatureWrapper>
           )}
+        </ControlRow>
+      </Control>
+      <Control>
+        <ControlLabel>Amount</ControlLabel>
+        <ControlRow>
+          <StyledTokenAmount
+            name="amount"
+            aria-label="amount input"
+            decimals={tokenInfo?.decimals}
+            value={customAmountValue}
+            onChange={handleTokenAmountInputChange}
+            disabled={maxValueToggled}
+          />
+          <ToggleWrapper>
+            <Toggle
+              name="toggle-max-value"
+              aria-label="toggle max value"
+              value={maxValueToggled}
+              onChange={handleToggleChange}
+            />
+            <ToggleLabel selected={maxValueToggled}>Max value</ToggleLabel>
+          </ToggleWrapper>
         </ControlRow>
       </Control>
     </div>
