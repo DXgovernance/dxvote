@@ -216,7 +216,7 @@ describe(`Set Permissions editor`, () => {
   });
 
   describe(`Function calls tests`, () => {
-    it(`Can fill the 'to address' and 'function signature'`, () => {
+    it(`Can fill the 'to address', 'function signature' and amount`, () => {
       render(
         <Permissions
           decodedCall={emptyDecodedCallMock}
@@ -241,8 +241,16 @@ describe(`Set Permissions editor`, () => {
         target: { value: functionNameMock },
       });
 
+      const amountElement: HTMLInputElement = screen.getByRole('textbox', {
+        name: /amount input/i,
+      });
+      fireEvent.change(amountElement, {
+        target: { value: customAmountMock },
+      });
+
       expect(toAddressElement.value).toBe(toAddressMock);
       expect(functionSignatureElement.value).toBe(functionNameMock);
+      expect(amountElement.value).toBe('111.0');
     });
 
     it(`Displays decodedCall information properly`, () => {
@@ -283,6 +291,7 @@ describe(`Set Permissions editor`, () => {
       expect(screen.getByText(`Functions call`));
       expect(screen.getByText(`To address`));
       expect(screen.getByText(`Function name`));
+      expect(screen.getByText(`Amount`));
     });
 
     it(`'To address' persists when changing tabs`, () => {});
