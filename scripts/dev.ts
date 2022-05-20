@@ -7,6 +7,7 @@ import {
   MAX_UINT,
 } from '../src/utils/constants';
 
+require('dotenv').config();
 const hre = require('hardhat');
 const moment = require('moment');
 
@@ -278,7 +279,6 @@ async function main() {
         lockTime: moment.duration(5, 'minutes').asSeconds(),
       },
     ],
-
   };
 
   const networkContracts = await hre.run('deploy-dxdao-contracts', {
@@ -292,11 +292,9 @@ async function main() {
         to: networkContracts.addresses.RGT,
         from: accounts[0],
         data: new web3.eth.Contract(PermissionRegistry.abi).methods
-          .transferOwnership(
-            networkContracts.addresses.REPGuild
-          )
+          .transferOwnership(networkContracts.addresses.REPGuild)
           .encodeABI(),
-      }
+      },
     },
     {
       type: 'transfer',
@@ -943,6 +941,74 @@ async function main() {
       networkContracts.addresses.SWPRGuild,
     ],
   };
+
+  await hre.run('actions-dxdao-contracts', {
+    actions: JSON.stringify(actions),
+    networkContracts: JSON.stringify(networkContracts),
+  });
+
+  if (process.env.ETHERNAL_CONTRACTS) {
+    await hre.ethernal.push({
+      name: 'Avatar',
+      address: networkContracts.addresses.Avatar,
+    });
+    await hre.ethernal.push({
+      name: 'Reputation',
+      address: networkContracts.addresses.Reputation,
+    });
+    await hre.ethernal.push({
+      name: 'Controller',
+      address: networkContracts.addresses.Controller,
+    });
+    await hre.ethernal.push({
+      name: 'DXDVotingMachine',
+      address: networkContracts.addresses.DXDVotingMachine,
+    });
+    await hre.ethernal.push({
+      name: 'PermissionRegistry',
+      address: networkContracts.addresses.PermissionRegistry,
+    });
+    await hre.ethernal.push({
+      name: 'GuildRegistry',
+      address: networkContracts.addresses.GuildRegistry,
+    });
+    await hre.ethernal.push({
+      name: 'ERC20',
+      address: networkContracts.addresses.DXD,
+    });
+    await hre.ethernal.push({
+      name: 'ERC20',
+      address: networkContracts.addresses.SWPR,
+    });
+    await hre.ethernal.push({
+      name: 'ERC20SnapshotRep',
+      address: networkContracts.addresses.RGT,
+    });
+    await hre.ethernal.push({
+      name: 'DXDGuild',
+      address: networkContracts.addresses.DXDGuild,
+    });
+    await hre.ethernal.push({
+      name: 'EnforcedBinaryGuild',
+      address: networkContracts.addresses.SWPRGuild,
+    });
+    await hre.ethernal.push({
+      name: 'SnapshotRepERC20Guild',
+      address: networkContracts.addresses.REPGuild,
+    });
+    await hre.ethernal.push({
+      name: 'WalletScheme',
+      address: networkContracts.addresses.RegistrarWalletScheme,
+    });
+    await hre.ethernal.push({
+      name: 'WalletScheme',
+      address: networkContracts.addresses.MasterWalletScheme,
+    });
+    await hre.ethernal.push({
+      name: 'WalletScheme',
+      address: networkContracts.addresses.QuickWalletScheme,
+    });
+  }
 
   networkContracts.utils.guildRegistry =
     networkContracts.addresses.GuildRegistry;
