@@ -84,7 +84,7 @@ describe('Guilds', () => {
     it('Should open lock modal and lock tokens', () => {
       cy.findByTestId(Guilds.openStakeTokensModalBtn)
         .should('be.visible')
-        .click();
+        .click({ force: true });
       cy.findByTestId(Guilds.stakeAmountMaxButton)
         .should('be.visible')
         .click({ force: true });
@@ -94,7 +94,7 @@ describe('Guilds', () => {
       );
       cy.findByTestId(Guilds.lockTokenPendingButton)
         .should('be.visible')
-        .click();
+        .click({ force: true });
       cy.confirmMetamaskPermissionToSpend();
       cy.wait(100);
       cy.contains('Transaction Submitted').should('be.visible');
