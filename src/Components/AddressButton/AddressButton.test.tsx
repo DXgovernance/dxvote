@@ -22,12 +22,13 @@ const partialProps: AddressButtonProps = {
   address: '0x79706C8e413CDaeE9E63f282507287b9Ea9C0928',
 };
 
-test('AddressButton renders properly with full props', async () => {
-  const { container } = render(<AddressButton {...fullProps} />);
-  expect(container).toMatchSnapshot();
-});
-
-test('AddressButton renders properly with partial props', async () => {
-  const { container } = render(<AddressButton {...partialProps} />);
-  expect(container).toMatchSnapshot();
+describe('AddressButton', () => {
+  it('Should render properly with full props', async () => {
+    const { container } = render(<AddressButton {...fullProps} />);
+    expect(container).toMatchSnapshot();
+  });
+  it('Should render properly with partial props', async () => {
+    const { container } = render(<AddressButton {...partialProps} />);
+    expect(container).toMatchSnapshot();
+  });
 });
