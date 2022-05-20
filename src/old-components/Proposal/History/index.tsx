@@ -52,7 +52,7 @@ const renderEvents = ({ text, textParams }) => {
 
 const History = ({ proposalEvents }) => (
   <ProposalInfoBox style={{ marginTop: '15px' }}>
-    <Title noMargins> History </Title>
+    <Title noMargin> History </Title>
     {proposalEvents.history.map((historyEvent, i) => (
       <ProposalHistoryEvent key={'historyEvent' + i}>
         <HistoryEventText>{renderEvents(historyEvent)}</HistoryEventText>

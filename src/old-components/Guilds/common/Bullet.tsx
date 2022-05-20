@@ -5,7 +5,7 @@ interface ButtonProps {
   color?: string;
 }
 
-const Bullet: React.FC<ButtonProps> = styled.span`
+const Bullet: React.FC<ButtonProps> = styled.span<{ size: number }>`
   display: inline-flex;
   height: ${props => `${props.size}px`};
   width: ${props => `${props.size}px`};

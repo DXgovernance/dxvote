@@ -316,7 +316,9 @@ export const ContributorProposalPage = observer(() => {
               <TextInput
                 placeholder="Override Amount"
                 type="number"
-                onChange={event => setStableOverride(event.target.value)}
+                onChange={event =>
+                  setStableOverride(Number(event.target.value))
+                }
                 value={stableOverride}
               />
             </InputWrapper>

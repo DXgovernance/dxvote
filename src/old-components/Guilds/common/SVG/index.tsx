@@ -7,7 +7,7 @@ export type StyledIconProps = {
   size?: number;
 };
 
-const StyledIconWrapper = styled.div<StyledIconProps>`
+const StyledIconWrapper = styled.div<Omit<StyledIconProps, 'src'>>`
   margin: ${({ margin }) => margin || '0 8px'};
   width: ${({ size }) => size + 'px'};
   height: ${({ size }) => size + 'px'};

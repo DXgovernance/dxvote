@@ -16,7 +16,7 @@ import { Box } from 'Components/Primitives/Layout';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-export const OptionWrapper = styled(Box)`
+export const OptionWrapper = styled(Box)<{ dragging: boolean }>`
   position: relative;
   background-color: ${({ theme }) => theme.colors.background};
   padding: 1rem;
@@ -41,7 +41,7 @@ export const Detail = styled(Box)`
   margin-right: 0.75rem;
 `;
 
-const ActionsWrapper = styled.div`
+const ActionsWrapper = styled.div<{ indented?: boolean }>`
   margin-left: ${({ indented }) => (indented ? '1.75rem' : '0')};
 `;
 

@@ -10,7 +10,7 @@ const ProposalStatusWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-const Status = styled.div`
+const Status = styled.div<{ bordered?: boolean }>`
   font-size: 0.8rem;
   font-weight: 600;
   display: flex;
@@ -25,7 +25,7 @@ const Status = styled.div`
     `}
 `;
 
-const ProposalStatusDetail = styled(Box)`
+const ProposalStatusDetail = styled(Box)<{ statusDetail?: ProposalState }>`
   display: inline-flex;
   justify-content: center;
   align-items: center;

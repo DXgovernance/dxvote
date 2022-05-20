@@ -169,12 +169,7 @@ const ProposalsPage = observer(() => {
                   }
                   key={`row-${i}`}
                 >
-                  <DataCell
-                    weight="800"
-                    wrapText="true"
-                    fontSize="inherit"
-                    align="left"
-                  >
+                  <DataCell weight="800" wrapText={true} align="left">
                     <Link
                       to={`/${networkName}/proposal/${proposal.id}`}
                       component={UnstyledAnchor}

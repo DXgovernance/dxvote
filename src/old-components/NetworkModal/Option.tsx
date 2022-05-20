@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { transparentize } from 'polished';
 import Link from '../common/Link';
 
-const InfoCard = styled.button`
+const InfoCard = styled.button<{ active?: boolean; clickable?: boolean }>`
   background-color: ${({ theme, active }) =>
     active ? theme.activeGray : theme.backgroundColor};
   padding: 1rem;
@@ -78,7 +78,7 @@ const SubHeader = styled.div`
   font-size: 12px;
 `;
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.div<{ size?: number }>`
   ${({ theme }) => theme.flexColumnNoWrap};
   align-items: center;
   justify-content: center;
@@ -124,7 +124,7 @@ export default function Option({
         </HeaderText>
         {subheader && <SubHeader>{subheader}</SubHeader>}
       </OptionCardLeft>
-      <IconWrapper size={size} active={active}>
+      <IconWrapper size={size}>
         {icon && <img src={icon} alt={'Icon'} />}
       </IconWrapper>
     </OptionCardClickable>

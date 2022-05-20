@@ -4,7 +4,10 @@ interface PendingCircleType {
   width: string;
   color?: string;
 }
-const SpinningCircle = styled.div`
+const SpinningCircle = styled.div<{
+  width?: number | string;
+  height: number | string;
+}>`
   height: ${props => props.height || '16px'};
   width: ${props => props.width || '16px'};
   color: white;
