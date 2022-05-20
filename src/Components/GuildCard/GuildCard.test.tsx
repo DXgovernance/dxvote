@@ -13,24 +13,26 @@ const nullAddress: GuildCardProps = {
   guildAddress: null,
 };
 
-test('Guild Card renders properly with a guild address', async () => {
-  const { container } = render(
-    <GuildCard {...validAddress}>
-      <GuildCardHeader></GuildCardHeader>
-      <GuildCardContent></GuildCardContent>
-    </GuildCard>
-  );
+describe('GuildCard', () => {
+  it('Should render properly with a guild address', async () => {
+    const { container } = render(
+      <GuildCard {...validAddress}>
+        <GuildCardHeader></GuildCardHeader>
+        <GuildCardContent></GuildCardContent>
+      </GuildCard>
+    );
 
-  expect(container).toMatchSnapshot();
-});
+    expect(container).toMatchSnapshot();
+  });
 
-test('Guild Card renders properly with a null guild address', async () => {
-  const { container } = render(
-    <GuildCard {...nullAddress}>
-      <GuildCardHeader></GuildCardHeader>
-      <GuildCardContent></GuildCardContent>
-    </GuildCard>
-  );
+  it('Should render properly with a null guild address', async () => {
+    const { container } = render(
+      <GuildCard {...nullAddress}>
+        <GuildCardHeader></GuildCardHeader>
+        <GuildCardContent></GuildCardContent>
+      </GuildCard>
+    );
 
-  expect(container).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
+  });
 });

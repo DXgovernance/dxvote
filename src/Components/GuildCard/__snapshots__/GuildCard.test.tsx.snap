@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Guild Card renders properly with a guild address 1`] = `
+exports[`GuildCard Should render properly with a guild address 1`] = `
 <div>
    
   <a
@@ -27,7 +27,7 @@ exports[`Guild Card renders properly with a guild address 1`] = `
 </div>
 `;
 
-exports[`Guild Card renders properly with a null guild address 1`] = `
+exports[`GuildCard Should render properly with a null guild address 1`] = `
 <div>
    
   <a
