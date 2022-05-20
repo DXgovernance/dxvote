@@ -3,63 +3,19 @@ import ProposalCardVotes from 'Components/ProposalCard/ProposalCardVotes';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
 import Avatar from 'old-components/Guilds/Avatar';
 import ProposalStatus from 'Components/ProposalStatus/ProposalStatus';
-import { Box } from 'Components/Primitives/Layout';
 import { Loading } from 'Components/Primitives/Loading';
-import { Heading } from 'old-components/Guilds/common/Typography';
 import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
 import 'react-loading-skeleton/dist/skeleton.css';
-import styled from 'styled-components';
 import { shortenAddress } from 'utils';
-
-const CardWrapper = styled(Box)`
-  border: 1px solid ${({ theme }) => theme.colors.muted};
-  border-radius: ${({ theme }) => theme.radii.curved};
-  margin-bottom: 1rem;
-  padding: 1rem;
-  color: ${({ theme }) => theme.colors.proposalText.lightGrey};
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.border.hover};
-    color: ${({ theme }) => theme.colors.text};
-  }
-`;
-
-const CardHeader = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const CardContent = styled(Box)`
-  margin: 1rem 0;
-`;
-
-const CardFooter = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const CardTitle = styled(Heading)`
-  font-size: 1rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.text};
-  @media only screen and (min-width: 768px) {
-    font-size: 1.25rem;
-  }
-`;
-
-const IconDetailWrapper = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-`;
-
-const Detail = styled(Box)`
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-left: 0.5rem;
-`;
+import {
+  CardWrapper,
+  CardHeader,
+  IconDetailWrapper,
+  Detail,
+  CardContent,
+  CardTitle,
+  CardFooter,
+} from 'Components/ProposalCard/ProposalCard.styled';
 
 const ProposalCard: React.FC<ProposalCardProps> = ({
   proposal,
@@ -67,13 +23,14 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
   ensAvatar,
   href,
   statusProps,
+  summaryActions,
 }) => {
   return (
     <UnstyledLink to={href || '#'}>
       <CardWrapper>
         <CardHeader>
           <IconDetailWrapper>
-            {proposal?.creator ? (
+            {proposal?.creator && ensAvatar ? (
               <Avatar
                 src={ensAvatar.imageUrl}
                 defaultSeed={proposal.creator}
@@ -108,8 +65,8 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
           </CardTitle>
         </CardContent>
         <CardFooter>
-          <ProposalCardActionSummary isLoading={!proposal} />
-          <ProposalCardVotes isLoading={!proposal} votes={votes} />
+          <ProposalCardActionSummary actions={summaryActions} />
+          {votes && <ProposalCardVotes isLoading={!proposal} votes={votes} />}
         </CardFooter>
       </CardWrapper>
     </UnstyledLink>

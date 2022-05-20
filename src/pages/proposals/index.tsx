@@ -26,6 +26,7 @@ import {
   formatNumberValue,
   PendingAction,
   isVoteNo,
+  VotingMachineProposalState,
 } from '../../utils';
 import {
   ProposalsWrapper,
@@ -71,6 +72,12 @@ const ProposalsPage = observer(() => {
     setSchemesFilter,
   } = useFilteredProposals();
 
+  const allProposals = daoStore.getAllProposals();
+  const activeProposalsCount = allProposals.filter(
+    proposal =>
+      proposal.stateInVotingMachine > VotingMachineProposalState.Executed
+  ).length;
+
   const history = useHistory();
   return (
     <ProposalsWrapper>
@@ -84,6 +91,12 @@ const ProposalsPage = observer(() => {
           <TitleSearch value={titleFilter} onFilter={setTitleFilter} />
           <StatusSearch value={stateFilter} onFilter={setStateFilter} />
           <SchemeSearch value={schemesFilter} onFilter={setSchemesFilter} />
+          <strong style={{ alignSelf: 'center' }}>
+            {allProposals.length} Total Proposals
+          </strong>
+          <strong style={{ alignSelf: 'center' }}>
+            {activeProposalsCount} Active Proposals
+          </strong>
         </ProposalTableHeaderActions>
         <FooterWrap>
           <ProposalsExporter />

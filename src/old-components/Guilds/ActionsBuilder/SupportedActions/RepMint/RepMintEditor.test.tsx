@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import { BigNumber, utils } from 'ethers';
 import { render } from '../../../../../utils/tests';
