@@ -78,13 +78,14 @@ describe('Guilds', () => {
       cy.contains('Transaction Submitted').should('be.visible');
       clickAnywhereToClose();
       clickAnywhereToClose();
-      cy.wait(15000); // wait for transaction
+      cy.wait(20000); // wait for transaction
     });
 
     it('Should open lock modal and lock tokens', () => {
       cy.findByTestId(Guilds.openStakeTokensModalBtn)
         .should('be.visible')
         .click({ force: true });
+      cy.wait(2000);
       cy.findByTestId(Guilds.stakeAmountMaxButton)
         .should('be.visible')
         .click({ force: true });
@@ -100,6 +101,7 @@ describe('Guilds', () => {
       cy.contains('Transaction Submitted').should('be.visible');
       clickAnywhereToClose();
       clickAnywhereToClose();
+      cy.wait(15000); // wait for transaction
     });
 
     it('Should show member actions dropdown after locking tokens', () => {
