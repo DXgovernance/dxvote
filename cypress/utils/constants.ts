@@ -1,4 +1,8 @@
-export const DEPLOYED_GUILDS_NAMES = ['DXDGuild', 'REPGuild', 'SwaprGuild'];
+export const DEPLOYED_GUILDS_NAMES = {
+  DXDGuild: 'DXDGuild',
+  REPGuild: 'REPGuild',
+  SwaprGuild: 'SwaprGuild',
+};
 
 export const ACCOUNTS = [
   { name: 'Account 1', address: '0x9578e973bba0cc33bdbc93c7f77bb3fe6d47d68a' },

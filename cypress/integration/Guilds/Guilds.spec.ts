@@ -17,25 +17,19 @@ describe('Guilds', () => {
   describe('Landing page', () => {
     it('Should show deployed guilds in LandingPage', () => {
       Guilds.goToGuildsPage();
-      cy.findAllByTestId('guildCard').should(
+      cy.findAllByTestId(Guilds.guildCardId).should(
         'have.length',
         Guilds.deployedGuilds.length
       );
-      DEPLOYED_GUILDS_NAMES.forEach(name => {
+      Object.values(DEPLOYED_GUILDS_NAMES).forEach(name => {
         cy.contains(name).should('be.visible');
       });
     });
-    it('Should redirect to DXDGuild page', () => {
-      Guilds.goToGuildsPage();
-      Guilds.clickOnGuildCard('DXDGuild');
-    });
-    it('Should redirect to SwaprGuild page', () => {
-      Guilds.goToGuildsPage();
-      Guilds.clickOnGuildCard('SwaprGuild');
-    });
-    it('Should redirect to REPGuild page', () => {
-      Guilds.goToGuildsPage();
-      Guilds.clickOnGuildCard('REPGuild');
+    Object.values(DEPLOYED_GUILDS_NAMES).forEach(name => {
+      it(`Should redirect to ${name} page`, () => {
+        Guilds.goToGuildsPage();
+        Guilds.clickOnGuildCard(name);
+      });
     });
   });
 
@@ -55,7 +49,7 @@ describe('Guilds', () => {
 
     it('Should be able to connect with metamask account', () => {
       Guilds.goToGuildsPage();
-      Guilds.clickOnGuildCard('DXDGuild');
+      Guilds.clickOnGuildCard(DEPLOYED_GUILDS_NAMES.DXDGuild);
       Guilds.connectToMetamask(testAcccount.name);
     });
 
@@ -63,17 +57,22 @@ describe('Guilds', () => {
       cy.findByTestId(Guilds.openStakeTokensModalBtn)
         .should('be.visible')
         .click();
-      cy.findByTestId('stake-tokens-modal').should('be.visible');
+      cy.findByTestId(Guilds.stakeTokensModal).should('be.visible');
       cy.findByText('Stake DXDao on localhost tokens').should('be.visible');
     });
 
     it('Should set max amount, approve spending and close modal', () => {
       cy.wait(2000);
-      cy.findByTestId('stake-amount-max-button')
+      cy.findByTestId(Guilds.stakeAmountMaxButton)
         .should('be.visible')
         .click({ force: true });
-      cy.findByTestId('stake-amount-input').should('have.value', '50.0');
-      cy.findByTestId('approve-token-spending').should('be.visible').click();
+      cy.findByTestId(Guilds.stakeModalAmountInput).should(
+        'have.value',
+        '50.0'
+      );
+      cy.findByTestId(Guilds.approveTokenSpendingButton)
+        .should('be.visible')
+        .click();
       cy.confirmMetamaskPermissionToSpend();
       cy.wait(500);
       cy.contains('Transaction Submitted').should('be.visible');
@@ -86,11 +85,16 @@ describe('Guilds', () => {
       cy.findByTestId(Guilds.openStakeTokensModalBtn)
         .should('be.visible')
         .click();
-      cy.findByTestId('stake-amount-max-button')
+      cy.findByTestId(Guilds.stakeAmountMaxButton)
         .should('be.visible')
         .click({ force: true });
-      cy.findByTestId('stake-amount-input').should('have.value', '50.0');
-      cy.findByTestId('lock-token-spending').should('be.visible').click();
+      cy.findByTestId(Guilds.stakeModalAmountInput).should(
+        'have.value',
+        '50.0'
+      );
+      cy.findByTestId(Guilds.lockTokenPendingButton)
+        .should('be.visible')
+        .click();
       cy.confirmMetamaskPermissionToSpend();
       cy.wait(500);
       cy.contains('Transaction Submitted').should('be.visible');
@@ -101,14 +105,14 @@ describe('Guilds', () => {
 
     it('Should show member actions dropdown after locking tokens', () => {
       Guilds.goToGuildsPage();
-      Guilds.clickOnGuildCard('DXDGuild');
+      Guilds.clickOnGuildCard(DEPLOYED_GUILDS_NAMES.DXDGuild);
       cy.findByTestId('member-actions-button').should('be.visible');
     });
   });
 
   it.skip('Should trigger Create Proposal', () => {
     Guilds.goToGuildsPage();
-    Guilds.clickOnGuildCard('DXDGuild');
+    Guilds.clickOnGuildCard(DEPLOYED_GUILDS_NAMES.DXDGuild);
     Guilds.connectToMetamask(ACCOUNTS[0].name);
     cy.findByTestId(Guilds.createProposalBtn).should('be.visible').click();
     cy.url().should('include', '/proposalType');
@@ -120,7 +124,7 @@ describe('Guilds', () => {
     cy.findByTestId(Guilds.actionBuilderCreateProposalBtn).click();
     cy.wait(3000);
     Guilds.goToGuildsPage();
-    Guilds.clickOnGuildCard('DXDGuild');
+    Guilds.clickOnGuildCard(DEPLOYED_GUILDS_NAMES.DXDGuild);
     // Guilds.goToGuildsPage(DXDGuildAddress);
     // cy.contains('Test automated proposal').should('be.visible');
     /// verify that proposal is created

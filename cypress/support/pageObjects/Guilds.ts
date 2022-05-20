@@ -14,6 +14,12 @@ class Guilds {
   public proposalTypeContinueBtn: string;
   public actionBuilderCreateProposalBtn: string;
   public openStakeTokensModalBtn: string;
+  public stakeTokensModal: string;
+  public stakeAmountMaxButton: string;
+  public stakeModalAmountInput: string;
+  public approveTokenSpendingButton: string;
+  public lockTokenPendingButton: string;
+  public memberActionsButton: string;
   public deployedGuilds: string[];
 
   constructor() {
@@ -29,6 +35,12 @@ class Guilds {
     this.proposalTypeContinueBtn = 'proposal-type-continue-button';
     this.actionBuilderCreateProposalBtn = 'create-proposal-action-button';
     this.openStakeTokensModalBtn = 'open-stake-tokens-modal-btn';
+    this.stakeTokensModal = 'stake-tokens-modal';
+    this.stakeAmountMaxButton = 'stake-amount-max-button';
+    this.stakeModalAmountInput = 'stake-amount-input';
+    this.approveTokenSpendingButton = 'approve-token-spending';
+    this.lockTokenPendingButton = 'lock-token-spending';
+    this.memberActionsButton = 'member-actions-button';
     this.deployedGuilds = localhostConfigJSON.guilds;
   }
 
