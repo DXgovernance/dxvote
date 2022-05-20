@@ -92,7 +92,7 @@ describe('Guilds', () => {
         'have.value',
         '50.0'
       );
-      cy.findByTestId(Guilds.lockTokenPendingButton)
+      cy.findByTestId(Guilds.lockTokenSpendingButton)
         .should('be.visible')
         .click({ force: true });
       cy.confirmMetamaskPermissionToSpend();
@@ -124,10 +124,8 @@ describe('Guilds', () => {
     cy.wait(3000);
     Guilds.goToGuildsPage();
     Guilds.clickOnGuildCard(DEPLOYED_GUILDS_NAMES.DXDGuild);
-    // Guilds.goToGuildsPage(DXDGuildAddress);
-    // cy.contains('Test automated proposal').should('be.visible');
-    /// verify that proposal is created
     cy.disconnectMetamaskWalletFromAllDapps();
+    /// verify that proposal is created
   });
 });
 

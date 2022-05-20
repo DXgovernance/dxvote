@@ -18,7 +18,7 @@ class Guilds {
   public stakeAmountMaxButton: string;
   public stakeModalAmountInput: string;
   public approveTokenSpendingButton: string;
-  public lockTokenPendingButton: string;
+  public lockTokenSpendingButton: string;
   public memberActionsButton: string;
   public deployedGuilds: string[];
 
@@ -39,7 +39,7 @@ class Guilds {
     this.stakeAmountMaxButton = 'stake-amount-max-button';
     this.stakeModalAmountInput = 'stake-amount-input';
     this.approveTokenSpendingButton = 'approve-token-spending';
-    this.lockTokenPendingButton = 'lock-token-spending';
+    this.lockTokenSpendingButton = 'lock-token-spending';
     this.memberActionsButton = 'member-actions-button';
     this.deployedGuilds = localhostConfigJSON.guilds;
   }
