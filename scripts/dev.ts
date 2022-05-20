@@ -267,7 +267,7 @@ async function main() {
       {
         token: 'SWPR',
         contractName: 'EnforcedBinaryGuild',
-        name: 'SwaprGuild',
+        name: 'SWPRGuild',
         proposalTime: moment.duration(3, 'minutes').asSeconds(),
         timeForExecution: moment.duration(2, 'minutes').asSeconds(),
         votingPowerForProposalExecution: '30',
@@ -279,532 +279,581 @@ async function main() {
       },
     ],
 
-    actions: [
-      {
-        timestamp: moment().subtract(26, 'minutes').unix(),
-        type: 'transfer',
-        from: accounts[0],
-        data: {
-          asset: ZERO_ADDRESS,
-          address: 'Avatar',
-          amount: web3.utils.toWei('50'),
-        },
-      },
-      {
-        type: 'transfer',
-        from: accounts[0],
-        data: {
-          asset: 'DXD',
-          address: 'Avatar',
-          amount: web3.utils.toWei('20'),
-        },
-      },
-
-      {
-        type: 'transfer',
-        from: accounts[0],
-        data: {
-          asset: ZERO_ADDRESS,
-          address: 'DXDGuild',
-          amount: web3.utils.toWei('10'),
-        },
-      },
-      {
-        type: 'transfer',
-        from: accounts[0],
-        data: {
-          asset: 'DXD',
-          address: 'DXDGuild',
-          amount: web3.utils.toWei('100'),
-        },
-      },
-
-      {
-        type: 'transfer',
-        from: accounts[1],
-        data: {
-          asset: ZERO_ADDRESS,
-          address: 'SwaprGuild',
-          amount: web3.utils.toWei('10'),
-        },
-      },
-      {
-        type: 'transfer',
-        from: accounts[1],
-        data: {
-          asset: 'SWPR',
-          address: 'SwaprGuild',
-          amount: web3.utils.toWei('10'),
-        },
-      },
-
-      {
-        type: 'transfer',
-        from: accounts[0],
-        data: {
-          asset: ZERO_ADDRESS,
-          address: 'REPGuild',
-          amount: web3.utils.toWei('12'),
-        },
-      },
-
-      {
-        type: 'proposal',
-        from: accounts[2],
-        data: {
-          to: ['PermissionRegistry', 'PermissionRegistry'],
-          callData: [
-            new web3.eth.Contract(PermissionRegistry.abi).methods
-              .setPermission(
-                ZERO_ADDRESS,
-                '0x169027Ca344aC1C77c02110e738B393d2368f4b4',
-                '0x1A0370A6f5b6cE96B1386B208a8519552eb714D9',
-                ANY_FUNC_SIGNATURE,
-                web3.utils.toWei('10'),
-                true
-              )
-              .encodeABI(),
-            new web3.eth.Contract(PermissionRegistry.abi).methods
-              .setPermission(
-                ZERO_ADDRESS,
-                '0x169027Ca344aC1C77c02110e738B393d2368f4b4',
-                '0xEb579C2E9bd3AC6Fd17de7bB55ab344f83735356',
-                ANY_FUNC_SIGNATURE,
-                web3.utils.toWei('10'),
-                true
-              )
-              .encodeABI(),
-          ],
-          value: ['0', '0'],
-          title: '#0 Set Permissions Proposal',
-          description: 'Allow sending up to 10 ETH to QuickWalletScheme',
-          tags: ['dxvote'],
-          scheme: 'MasterWalletScheme',
-        },
-      },
-      {
-        type: 'approve',
-        from: accounts[2],
-        data: {
-          asset: 'DXD',
-          address: 'DXDVotingMachine',
-          amount: MAX_UINT,
-        },
-      },
-      {
-        type: 'stake',
-        from: accounts[2],
-        data: {
-          proposal: '0',
-          decision: '1',
-          amount: web3.utils.toWei('1.01'),
-        },
-      },
-      {
-        type: 'vote',
-        increaseTime: moment.duration(1, 'minutes').asSeconds(),
-        from: accounts[2],
-        data: {
-          proposal: '0',
-          decision: '1',
-          amount: '0',
-        },
-      },
-      {
-        type: 'execute',
-        increaseTime: moment.duration(3, 'minutes').asSeconds(),
-        from: accounts[2],
-        data: {
-          proposal: '0',
-        },
-      },
-      {
-        type: 'redeem',
-        from: accounts[2],
-        data: {
-          proposal: '0',
-        },
-      },
-
-      {
-        type: 'proposal',
-        from: accounts[2],
-        data: {
-          to: ['GuildRegistry', 'GuildRegistry', 'GuildRegistry'],
-          callData: [
-            new web3.eth.Contract(GuildRegistry.abi).methods
-              .addGuild('0x5778817a78BF1e89f5Ff0a0dFe976C56c78175d3')
-              .encodeABI(),
-            new web3.eth.Contract(GuildRegistry.abi).methods
-              .addGuild('0x4031eBEf80Fccad2b20fafCE9Cdb28587121aD61')
-              .encodeABI(),
-            new web3.eth.Contract(GuildRegistry.abi).methods
-              .addGuild('0x140d68e4E3f80cdCf7036De007b3bCEC54D38b1f')
-              .encodeABI(),
-          ],
-          value: ['0', '0', '0'],
-          title: '#1 Add Guilds Proposal',
-          description: 'Add guilds',
-          tags: ['dxvote'],
-          scheme: 'MasterWalletScheme',
-        },
-      },
-      {
-        type: 'stake',
-        from: accounts[2],
-        data: {
-          proposal: '1',
-          decision: '1',
-          amount: web3.utils.toWei('1.01'),
-        },
-      },
-      {
-        type: 'vote',
-        increaseTime: moment.duration(1, 'minutes').asSeconds(),
-        from: accounts[2],
-        data: {
-          proposal: '1',
-          decision: '1',
-          amount: '0',
-        },
-      },
-      {
-        type: 'execute',
-        increaseTime: moment.duration(3, 'minutes').asSeconds(),
-        from: accounts[2],
-        data: {
-          proposal: '1',
-        },
-      },
-      {
-        type: 'redeem',
-        from: accounts[2],
-        data: {
-          proposal: '1',
-        },
-      },
-
-      {
-        type: 'proposal',
-        from: accounts[2],
-        data: {
-          to: ['QuickWalletScheme'],
-          callData: ['0x0'],
-          value: [web3.utils.toWei('10')],
-          title: '#2 Proposal Test',
-          description: 'Send 10 ETH to QuickWalletScheme',
-          tags: ['dxvote'],
-          scheme: 'MasterWalletScheme',
-        },
-      },
-      {
-        type: 'approve',
-        from: accounts[2],
-        data: {
-          asset: 'DXD',
-          address: 'DXDVotingMachine',
-          amount: MAX_UINT,
-        },
-      },
-      {
-        type: 'stake',
-        from: accounts[2],
-        data: {
-          proposal: '2',
-          decision: '1',
-          amount: web3.utils.toWei('1.01'),
-        },
-      },
-      {
-        type: 'vote',
-        increaseTime: moment.duration(1, 'minutes').asSeconds(),
-        from: accounts[2],
-        data: {
-          proposal: '2',
-          decision: '1',
-          amount: '0',
-        },
-      },
-      {
-        type: 'vote',
-        from: accounts[1],
-        data: {
-          proposal: '2',
-          decision: '2',
-          amount: '0',
-        },
-      },
-
-      {
-        type: 'proposal',
-        from: accounts[2],
-        data: {
-          to: [accounts[2]],
-          callData: ['0x0'],
-          value: [web3.utils.toWei('1.5')],
-          title: '#3 Proposal Test',
-          description:
-            'Send 1.5 ETH to 0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
-          tags: ['dxvote'],
-          scheme: 'QuickWalletScheme',
-        },
-      },
-
-      {
-        type: 'guild-createProposal',
-        from: accounts[0],
-        data: {
-          guildName: 'REPGuild',
-          to: ['REPGuild'],
-          callData: [
-            new web3.eth.Contract(ERC20Guild.abi).methods
-              .setPermission(
-                [ZERO_ADDRESS],
-                [ANY_ADDRESS],
-                [ANY_FUNC_SIGNATURE],
-                [MAX_UINT],
-                [true]
-              )
-              .encodeABI(),
-          ],
-          value: ['0'],
-          totalActions: '1',
-          title: '#0 Set Permissions',
-          description: 'Allow call any address',
-        },
-      },
-      {
-        type: 'guild-voteProposal',
-        from: accounts[0],
-        data: {
-          guildName: 'REPGuild',
-          proposal: 0,
-          action: '1',
-          votingPower: web3.utils.toWei('100').toString(),
-        },
-      },
-      {
-        type: 'guild-endProposal',
-        increaseTime: moment.duration(10, 'minutes').asSeconds(),
-        from: accounts[1],
-        data: {
-          guildName: 'REPGuild',
-          proposal: 0,
-        },
-      },
-
-      {
-        type: 'guild-createProposal',
-        from: accounts[0],
-        data: {
-          guildName: 'REPGuild',
-          to: ['RGT', 'RGT'],
-          callData: [
-            new web3.eth.Contract(ERC20SnapshotRep.abi).methods
-              .burn(accounts[0], web3.utils.toWei('50'))
-              .encodeABI(),
-            new web3.eth.Contract(ERC20SnapshotRep.abi).methods
-              .mint(accounts[2], web3.utils.toWei('40'))
-              .encodeABI(),
-          ],
-          value: ['0', '0'],
-          totalActions: '1',
-          title: '#1 Mint to equal all address REP',
-          description: `Mint and burn REP to address ${accounts[0]} and ${accounts[2]} so all rep holders have 50 REP`,
-        },
-      },
-      {
-        type: 'guild-voteProposal',
-        from: accounts[0],
-        data: {
-          guildName: 'REPGuild',
-          proposal: 1,
-          action: '1',
-          votingPower: web3.utils.toWei('100').toString(),
-        },
-      },
-      {
-        type: 'guild-endProposal',
-        increaseTime: moment.duration(10, 'minutes').asSeconds(),
-        from: accounts[1],
-        data: {
-          guildName: 'REPGuild',
-          proposal: 1,
-        },
-      },
-
-      {
-        type: 'approve',
-        from: accounts[0],
-        data: {
-          asset: 'DXD',
-          address: 'DXDGuild-vault',
-          amount: MAX_UINT,
-        },
-      },
-      {
-        type: 'guild-lockTokens',
-        from: accounts[0],
-        data: {
-          guildName: 'DXDGuild',
-          amount: web3.utils.toWei('100'),
-        },
-      },
-
-      {
-        type: 'approve',
-        from: accounts[1],
-        data: {
-          asset: 'DXD',
-          address: 'DXDGuild-vault',
-          amount: MAX_UINT,
-        },
-      },
-      {
-        type: 'guild-lockTokens',
-        from: accounts[1],
-        data: {
-          guildName: 'DXDGuild',
-          amount: web3.utils.toWei('50'),
-        },
-      },
-
-      {
-        type: 'approve',
-        from: accounts[2],
-        data: {
-          asset: 'DXD',
-          address: 'DXDGuild-vault',
-          amount: MAX_UINT,
-        },
-      },
-      {
-        type: 'guild-lockTokens',
-        from: accounts[2],
-        data: {
-          guildName: 'DXDGuild',
-          amount: web3.utils.toWei('5'),
-        },
-      },
-
-      {
-        type: 'guild-withdrawTokens',
-        increaseTime: moment.duration(10, 'minutes').asSeconds() + 1,
-        from: accounts[0],
-        data: {
-          guildName: 'DXDGuild',
-          amount: web3.utils.toWei('10'),
-        },
-      },
-      {
-        type: 'guild-createProposal',
-        from: accounts[0],
-        data: {
-          guildName: 'DXDGuild',
-          to: ['DXDGuild'],
-          callData: [
-            new web3.eth.Contract(ERC20Guild.abi).methods
-              .setPermission(
-                [ZERO_ADDRESS],
-                [ANY_ADDRESS],
-                [ANY_FUNC_SIGNATURE],
-                [web3.utils.toWei('5').toString()],
-                [true]
-              )
-              .encodeABI(),
-          ],
-          value: ['0'],
-          totalActions: '1',
-          title: 'Proposal Test #0',
-          description:
-            'Allow call any address and function and send a max of 5 ETH per proposal',
-        },
-      },
-      {
-        type: 'guild-voteProposal',
-        from: accounts[1],
-        data: {
-          guildName: 'DXDGuild',
-          proposal: 0,
-          action: '1',
-          votingPower: web3.utils.toWei('90').toString(),
-        },
-      },
-      {
-        type: 'guild-endProposal',
-        increaseTime: moment.duration(10, 'minutes').asSeconds(),
-        from: accounts[1],
-        data: {
-          guildName: 'DXDGuild',
-          proposal: 0,
-        },
-      },
-
-      {
-        type: 'approve',
-        from: accounts[2],
-        data: {
-          asset: 'SWPR',
-          address: 'SwaprGuild-vault',
-          amount: MAX_UINT,
-        },
-      },
-
-      {
-        type: 'guild-lockTokens',
-        from: accounts[2],
-        data: {
-          guildName: 'SwaprGuild',
-          amount: web3.utils.toWei('1'),
-        },
-      },
-
-      {
-        type: 'guild-createProposal',
-        from: accounts[2],
-        data: {
-          guildName: 'SwaprGuild',
-          to: ['SwaprGuild'],
-          callData: [
-            new web3.eth.Contract(EnforcedBinaryGuild.abi).methods
-              .setPermission(
-                [ZERO_ADDRESS],
-                [ANY_ADDRESS],
-                [ANY_FUNC_SIGNATURE],
-                [web3.utils.toWei('5').toString()],
-                [true]
-              )
-              .encodeABI(),
-          ],
-          value: ['0'],
-          totalActions: '1',
-          title: 'Proposal Test #1 to SwaprGuild',
-          description:
-            'Allow call any address and function and send a max of 5 ETH per proposal',
-          voteOptions: ['Test Option'],
-        },
-      },
-
-      {
-        type: 'proposal',
-        from: accounts[2],
-        data: {
-          to: [accounts[2]],
-          callData: ['0x0'],
-          value: [web3.utils.toWei('1.5')],
-          title: 'Proposal Test #3',
-          description:
-            'Send 1.5 ETH to 0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
-          tags: ['dxvote'],
-          scheme: 'QuickWalletScheme',
-        },
-      },
-    ],
   };
 
   const networkContracts = await hre.run('deploy-dxdao-contracts', {
     deployconfig: JSON.stringify(deployconfig),
   });
+
+  const actions = [
+    {
+      type: 'raw',
+      transaction: {
+        to: networkContracts.addresses.RGT,
+        from: accounts[0],
+        data: new web3.eth.Contract(PermissionRegistry.abi).methods
+          .transferOwnership(
+            networkContracts.addresses.REPGuild
+          )
+          .encodeABI(),
+      }
+    },
+    {
+      type: 'transfer',
+      timestamp: moment().subtract(26, 'minutes').unix(),
+      from: accounts[0],
+      data: {
+        asset: ZERO_ADDRESS,
+        address: 'Avatar',
+        amount: web3.utils.toWei('50'),
+      },
+    },
+    {
+      type: 'transfer',
+      from: accounts[0],
+      data: {
+        asset: 'DXD',
+        address: 'Avatar',
+        amount: web3.utils.toWei('20'),
+      },
+    },
+
+    {
+      type: 'transfer',
+      from: accounts[0],
+      data: {
+        asset: ZERO_ADDRESS,
+        address: 'DXDGuild',
+        amount: web3.utils.toWei('10'),
+      },
+    },
+    {
+      type: 'transfer',
+      from: accounts[0],
+      data: {
+        asset: 'DXD',
+        address: 'DXDGuild',
+        amount: web3.utils.toWei('100'),
+      },
+    },
+
+    {
+      type: 'transfer',
+      from: accounts[1],
+      data: {
+        asset: ZERO_ADDRESS,
+        address: 'SWPRGuild',
+        amount: web3.utils.toWei('10'),
+      },
+    },
+    {
+      type: 'transfer',
+      from: accounts[1],
+      data: {
+        asset: 'SWPR',
+        address: 'SWPRGuild',
+        amount: web3.utils.toWei('10'),
+      },
+    },
+
+    {
+      type: 'transfer',
+      from: accounts[0],
+      data: {
+        asset: ZERO_ADDRESS,
+        address: 'REPGuild',
+        amount: web3.utils.toWei('12'),
+      },
+    },
+
+    {
+      type: 'proposal',
+      from: accounts[2],
+      data: {
+        to: ['PermissionRegistry', 'PermissionRegistry'],
+        callData: [
+          new web3.eth.Contract(PermissionRegistry.abi).methods
+            .setPermission(
+              ZERO_ADDRESS,
+              networkContracts.addresses['Avatar'],
+              networkContracts.addresses['QuickWalletScheme'],
+              ANY_FUNC_SIGNATURE,
+              web3.utils.toWei('10'),
+              true
+            )
+            .encodeABI(),
+          new web3.eth.Contract(PermissionRegistry.abi).methods
+            .setPermission(
+              ZERO_ADDRESS,
+              networkContracts.addresses['Avatar'],
+              '0xEb579C2E9bd3AC6Fd17de7bB55ab344f83735356',
+              ANY_FUNC_SIGNATURE,
+              web3.utils.toWei('10'),
+              true
+            )
+            .encodeABI(),
+        ],
+        value: ['0', '0'],
+        title: '#0 Set Permissions Proposal',
+        description: 'Allow sending up to 10 ETH to QuickWalletScheme',
+        tags: ['dxvote'],
+        scheme: 'MasterWalletScheme',
+      },
+    },
+    {
+      type: 'approve',
+      from: accounts[2],
+      data: {
+        asset: 'DXD',
+        address: 'DXDVotingMachine',
+        amount: MAX_UINT,
+      },
+    },
+    {
+      type: 'stake',
+      from: accounts[2],
+      data: {
+        proposal: '0',
+        decision: '1',
+        amount: web3.utils.toWei('1.01'),
+      },
+    },
+    {
+      type: 'vote',
+      increaseTime: moment.duration(1, 'minutes').asSeconds(),
+      from: accounts[2],
+      data: {
+        proposal: '0',
+        decision: '1',
+        amount: '0',
+      },
+    },
+    {
+      type: 'execute',
+      increaseTime: moment.duration(3, 'minutes').asSeconds(),
+      from: accounts[2],
+      data: {
+        proposal: '0',
+      },
+    },
+    {
+      type: 'redeem',
+      from: accounts[2],
+      data: {
+        proposal: '0',
+      },
+    },
+
+    {
+      type: 'proposal',
+      from: accounts[2],
+      data: {
+        to: ['GuildRegistry', 'GuildRegistry', 'GuildRegistry'],
+        callData: [
+          new web3.eth.Contract(GuildRegistry.abi).methods
+            .addGuild(networkContracts.addresses.REPGuild)
+            .encodeABI(),
+          new web3.eth.Contract(GuildRegistry.abi).methods
+            .addGuild(networkContracts.addresses.DXDGuild)
+            .encodeABI(),
+          new web3.eth.Contract(GuildRegistry.abi).methods
+            .addGuild(networkContracts.addresses.SWPRGuild)
+            .encodeABI(),
+        ],
+        value: ['0', '0', '0'],
+        title: '#1 Add Guilds Proposal',
+        description: 'Add guilds',
+        tags: ['dxvote'],
+        scheme: 'MasterWalletScheme',
+      },
+    },
+    {
+      type: 'stake',
+      from: accounts[2],
+      data: {
+        proposal: '1',
+        decision: '1',
+        amount: web3.utils.toWei('1.01'),
+      },
+    },
+    {
+      type: 'vote',
+      increaseTime: moment.duration(1, 'minutes').asSeconds(),
+      from: accounts[2],
+      data: {
+        proposal: '1',
+        decision: '1',
+        amount: '0',
+      },
+    },
+    {
+      type: 'execute',
+      increaseTime: moment.duration(3, 'minutes').asSeconds(),
+      from: accounts[2],
+      data: {
+        proposal: '1',
+      },
+    },
+    {
+      type: 'redeem',
+      from: accounts[2],
+      data: {
+        proposal: '1',
+      },
+    },
+
+    {
+      type: 'proposal',
+      from: accounts[2],
+      data: {
+        to: ['QuickWalletScheme'],
+        callData: ['0x0'],
+        value: [web3.utils.toWei('10')],
+        title: '#2 Proposal Test',
+        description: 'Send 10 ETH to QuickWalletScheme',
+        tags: ['dxvote'],
+        scheme: 'MasterWalletScheme',
+      },
+    },
+    {
+      type: 'approve',
+      from: accounts[2],
+      data: {
+        asset: 'DXD',
+        address: 'DXDVotingMachine',
+        amount: MAX_UINT,
+      },
+    },
+    {
+      type: 'stake',
+      from: accounts[2],
+      data: {
+        proposal: '2',
+        decision: '1',
+        amount: web3.utils.toWei('1.01'),
+      },
+    },
+    {
+      type: 'vote',
+      increaseTime: moment.duration(1, 'minutes').asSeconds(),
+      from: accounts[2],
+      data: {
+        proposal: '2',
+        decision: '1',
+        amount: '0',
+      },
+    },
+    {
+      type: 'vote',
+      from: accounts[1],
+      data: {
+        proposal: '2',
+        decision: '2',
+        amount: '0',
+      },
+    },
+
+    {
+      type: 'proposal',
+      from: accounts[2],
+      data: {
+        to: [accounts[2]],
+        callData: ['0x0'],
+        value: [web3.utils.toWei('1.5')],
+        title: '#3 Proposal Test',
+        description:
+          'Send 1.5 ETH to 0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        tags: ['dxvote'],
+        scheme: 'QuickWalletScheme',
+      },
+    },
+
+    {
+      type: 'guild-createProposal',
+      from: accounts[0],
+      data: {
+        guildName: 'REPGuild',
+        to: ['REPGuild'],
+        callData: [
+          new web3.eth.Contract(ERC20Guild.abi).methods
+            .setPermission(
+              [ZERO_ADDRESS],
+              [ANY_ADDRESS],
+              [ANY_FUNC_SIGNATURE],
+              [MAX_UINT],
+              [true]
+            )
+            .encodeABI(),
+        ],
+        value: ['0'],
+        totalActions: '1',
+        title: '#0 Set Permissions',
+        description: 'Allow call any address',
+      },
+    },
+    {
+      type: 'guild-voteProposal',
+      from: accounts[0],
+      data: {
+        guildName: 'REPGuild',
+        proposal: 0,
+        action: '1',
+        votingPower: web3.utils.toWei('100').toString(),
+      },
+    },
+    {
+      type: 'guild-endProposal',
+      increaseTime: moment.duration(5, 'minutes').asSeconds(),
+      from: accounts[1],
+      data: {
+        guildName: 'REPGuild',
+        proposal: 0,
+      },
+    },
+
+    {
+      type: 'guild-createProposal',
+      from: accounts[0],
+      data: {
+        guildName: 'REPGuild',
+        to: ['RGT', 'RGT'],
+        callData: [
+          new web3.eth.Contract(ERC20SnapshotRep.abi).methods
+            .burn(accounts[0], web3.utils.toWei('50'))
+            .encodeABI(),
+          new web3.eth.Contract(ERC20SnapshotRep.abi).methods
+            .mint(accounts[2], web3.utils.toWei('40'))
+            .encodeABI(),
+        ],
+        value: ['0', '0'],
+        totalActions: '1',
+        title: '#1 Mint to equal all address REP',
+        description: `Mint and burn REP to address ${accounts[0]} and ${accounts[2]} so all rep holders have 50 REP`,
+      },
+    },
+    {
+      type: 'guild-voteProposal',
+      from: accounts[0],
+      data: {
+        guildName: 'REPGuild',
+        proposal: 1,
+        action: '1',
+        votingPower: web3.utils.toWei('100').toString(),
+      },
+    },
+    {
+      type: 'guild-endProposal',
+      increaseTime: moment.duration(5, 'minutes').asSeconds(),
+      from: accounts[1],
+      data: {
+        guildName: 'REPGuild',
+        proposal: 1,
+      },
+    },
+
+    {
+      type: 'guild-createProposal',
+      from: accounts[0],
+      data: {
+        guildName: 'REPGuild',
+        to: ['RGT'],
+        callData: [
+          new web3.eth.Contract(ERC20SnapshotRep.abi).methods
+            .mint(accounts[0], web3.utils.toWei('1000'))
+            .encodeABI(),
+        ],
+        value: ['0'],
+        totalActions: '1',
+        title: '#1 Mint to me and take control',
+        description: ``,
+      },
+    },
+    {
+      type: 'guild-voteProposal',
+      from: accounts[0],
+      data: {
+        guildName: 'REPGuild',
+        proposal: 2,
+        action: '1',
+        votingPower: web3.utils.toWei('50').toString(),
+      },
+    },
+    {
+      type: 'guild-endProposal',
+      increaseTime: moment.duration(5, 'minutes').asSeconds(),
+      from: accounts[1],
+      data: {
+        guildName: 'REPGuild',
+        proposal: 2,
+      },
+    },
+
+    {
+      type: 'approve',
+      from: accounts[0],
+      data: {
+        asset: 'DXD',
+        address: 'DXDGuild-vault',
+        amount: MAX_UINT,
+      },
+    },
+    {
+      type: 'guild-lockTokens',
+      from: accounts[0],
+      data: {
+        guildName: 'DXDGuild',
+        amount: web3.utils.toWei('100'),
+      },
+    },
+
+    {
+      type: 'approve',
+      from: accounts[1],
+      data: {
+        asset: 'DXD',
+        address: 'DXDGuild-vault',
+        amount: MAX_UINT,
+      },
+    },
+    {
+      type: 'guild-lockTokens',
+      from: accounts[1],
+      data: {
+        guildName: 'DXDGuild',
+        amount: web3.utils.toWei('50'),
+      },
+    },
+
+    {
+      type: 'approve',
+      from: accounts[2],
+      data: {
+        asset: 'DXD',
+        address: 'DXDGuild-vault',
+        amount: MAX_UINT,
+      },
+    },
+    {
+      type: 'guild-lockTokens',
+      from: accounts[2],
+      data: {
+        guildName: 'DXDGuild',
+        amount: web3.utils.toWei('5'),
+      },
+    },
+
+    {
+      type: 'guild-withdrawTokens',
+      increaseTime: moment.duration(10, 'minutes').asSeconds() + 1,
+      from: accounts[0],
+      data: {
+        guildName: 'DXDGuild',
+        amount: web3.utils.toWei('10'),
+      },
+    },
+    {
+      type: 'guild-createProposal',
+      from: accounts[0],
+      data: {
+        guildName: 'DXDGuild',
+        to: ['DXDGuild'],
+        callData: [
+          new web3.eth.Contract(ERC20Guild.abi).methods
+            .setPermission(
+              [ZERO_ADDRESS],
+              [ANY_ADDRESS],
+              [ANY_FUNC_SIGNATURE],
+              [web3.utils.toWei('5').toString()],
+              [true]
+            )
+            .encodeABI(),
+        ],
+        value: ['0'],
+        totalActions: '1',
+        title: 'Proposal Test #0',
+        description:
+          'Allow call any address and function and send a max of 5 ETH per proposal',
+      },
+    },
+    {
+      type: 'guild-voteProposal',
+      from: accounts[1],
+      data: {
+        guildName: 'DXDGuild',
+        proposal: 0,
+        action: '1',
+        votingPower: web3.utils.toWei('90').toString(),
+      },
+    },
+    {
+      type: 'guild-endProposal',
+      increaseTime: moment.duration(10, 'minutes').asSeconds(),
+      from: accounts[1],
+      data: {
+        guildName: 'DXDGuild',
+        proposal: 0,
+      },
+    },
+
+    {
+      type: 'approve',
+      from: accounts[2],
+      data: {
+        asset: 'SWPR',
+        address: 'SWPRGuild-vault',
+        amount: MAX_UINT,
+      },
+    },
+    {
+      type: 'guild-lockTokens',
+      from: accounts[2],
+      data: {
+        guildName: 'SWPRGuild',
+        amount: web3.utils.toWei('1'),
+      },
+    },
+
+    {
+      type: 'guild-createProposal',
+      from: accounts[2],
+      data: {
+        guildName: 'SWPRGuild',
+        to: ['SWPRGuild'],
+        callData: [
+          new web3.eth.Contract(EnforcedBinaryGuild.abi).methods
+            .setPermission(
+              [ZERO_ADDRESS],
+              [ANY_ADDRESS],
+              [ANY_FUNC_SIGNATURE],
+              [web3.utils.toWei('5').toString()],
+              [true]
+            )
+            .encodeABI(),
+        ],
+        value: ['0'],
+        totalActions: '1',
+        title: 'Proposal Test #1 to SWPRGuild',
+        description:
+          'Allow call any address and function and send a max of 5 ETH per proposal',
+        voteOptions: ['Test Option'],
+      },
+    },
+
+    {
+      type: 'proposal',
+      from: accounts[2],
+      data: {
+        to: [accounts[2]],
+        callData: ['0x0'],
+        value: [web3.utils.toWei('1.5')],
+        title: 'Proposal Test #3',
+        description:
+          'Send 1.5 ETH to 0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        tags: ['dxvote'],
+        scheme: 'QuickWalletScheme',
+      },
+    },
+  ];
 
   const developConfig = {
     cache: {
@@ -891,7 +940,7 @@ async function main() {
     guilds: [
       networkContracts.addresses.DXDGuild,
       networkContracts.addresses.REPGuild,
-      networkContracts.addresses.SwaprGuild,
+      networkContracts.addresses.SWPRGuild,
     ],
   };
 
