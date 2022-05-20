@@ -26,6 +26,11 @@ jest.mock('hooks/Guilds/ether-swr/useEtherSWR.ts', () => ({
   }),
 }));
 
+jest.mock('hooks/Guilds/useNetworkConfig.ts', () => ({
+  __esModule: true,
+  default: () => ({}),
+}));
+
 // Mocked variables
 
 const ERC20GuildContract = new utils.Interface(ERC20Guild.abi);

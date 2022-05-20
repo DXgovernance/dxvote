@@ -4,11 +4,7 @@ exports[`ProposalCardActionSummary Should match snapshot without proposal 1`] = 
 <div>
    
   <div
-<<<<<<< HEAD
-    class="sc-jrAFXE sc-ehSDrC jLAWlL cclvjV"
-=======
     class="sc-jrAFXE sc-jHVedQ jLAWlL esuTjy"
->>>>>>> 523c2cd8c... test: modified tests to reflect changes
   />
    
 </div>

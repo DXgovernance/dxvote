@@ -15,6 +15,11 @@ import {
 import { ERC20_APPROVE_SIGNATURE, ERC20_TRANSFER_SIGNATURE } from 'utils';
 import { useEffect, useRef, useState } from 'react';
 import { lookUpContractWithSourcify } from 'utils/sourcify';
+import Web3 from 'web3';
+const web3 = new Web3();
+const SET_PERMISSION_SIGNATURE = web3.eth.abi.encodeFunctionSignature(
+  'setPermission(address,address,address,bytes4,uint256,bool)'
+);
 
 const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
   {
@@ -26,7 +31,7 @@ const knownSigHashes: Record<string, { callType: SupportedAction; ABI: any }> =
       callType: SupportedAction.GENERIC_CALL,
       ABI: ERC20ABI,
     },
-    '0xa5234bce': {
+    [SET_PERMISSION_SIGNATURE]: {
       callType: SupportedAction.SET_PERMISSIONS,
       ABI: ERC20Guild.abi,
     },
