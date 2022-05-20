@@ -1,6 +1,5 @@
 import ProposalStatus from './ProposalStatus';
 import { render } from '../../utils/tests';
-import '@testing-library/jest-dom';
 import { ProposalStatusProps } from './types';
 import { ProposalState } from 'Components/Types';
 import moment from 'moment';

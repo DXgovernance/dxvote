@@ -9,7 +9,10 @@ import { useMemo } from 'react';
 import { FiArrowRight, FiNavigation } from 'react-icons/fi';
 import { MAINNET_ID, shortenAddress } from 'utils';
 
-const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
+const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({
+  decodedCall,
+  compact,
+}) => {
   const parsedData = useMemo(() => {
     if (!decodedCall) return null;
 
@@ -38,7 +41,7 @@ const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
         <FiNavigation size={16} />
       </Segment>
       <Segment>
-        Transfer {roundedBalance} {tokenInfo?.symbol}
+        {!compact && 'Transfer'} {roundedBalance} {tokenInfo?.symbol}
       </Segment>
       <Segment>
         <FiArrowRight />
@@ -47,12 +50,12 @@ const ERC20TransferInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
         <Avatar
           defaultSeed={parsedData?.destination}
           src={imageUrl}
-          size={24}
+          size={compact ? 14 : 24}
         />
       </Segment>
       <Segment>
         {ensName || parsedData?.destination
-          ? shortenAddress(parsedData?.destination)
+          ? shortenAddress(parsedData?.destination, compact ? 2 : 4)
           : ''}
       </Segment>
     </>

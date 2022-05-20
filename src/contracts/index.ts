@@ -6,7 +6,7 @@ const DXDVotingMachine = require('./DXDVotingMachine');
 const GenesisProtocol = require('./GenesisProtocol');
 const ERC20 = require('./ERC20');
 const Multicall = require('./Multicall');
-const VestingFactory = require('./DXDVestingFactory');
+const VestingFactory = require('./ERC20VestingFactory');
 
 export const getContracts = async function (
   networkConfig: NetworkContracts,

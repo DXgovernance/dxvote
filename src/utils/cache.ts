@@ -131,7 +131,13 @@ export const getRawEvents = async function (
     from = fromBlock;
   while (from < to) {
     console.debug(
-      `Fetching logs of ${contractAddress} from blocks ${from} -> ${to}`
+      `Fetching logs of ${contractAddress} from blocks ${from} -> ${to}`,
+      {
+        address: contractAddress,
+        fromBlock: from,
+        toBlock: to,
+        topics: topicsToGet,
+      }
     );
     try {
       let eventsFetched = await web3.eth.getPastLogs({
@@ -166,7 +172,7 @@ export const getRawEvents = async function (
         (error as Error).message.indexOf('Relay attempts exhausted') === -1 &&
         Math.trunc((to - from) / 2) > 10000
       ) {
-        console.error('Error fetching blocks:', (error as Error).message);
+        console.error('Error fetching blocks:', error);
         const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
         to = to - blocksToLower;
@@ -177,50 +183,21 @@ export const getRawEvents = async function (
 };
 
 export const getTimestampOfEvents = async function (web3, events) {
-  //// TODO:  See how can we batch requests can be implemented
-  // async function batchRequest(blocks) {
-  //   const batch = new web3.BatchRequest();
-  //   let requests = [];
-  //   for (let i = 0; i < blocks.length; i++) {
-  //     const request = new Promise((resolve, reject) => {
-  //       batch.add(web3.eth.getBlock.request(blocks[i], (err, data) => {
-  //         console.log(1)
-  //         if (err) return reject(err);
-  //         resolve(data);
-  //       }));
-  //     });
-  //     requests.push(request);
-  //   }
-  //   batch.execute();
-  //   console.log(batch)
-  //   await Promise.all(requests);
-  //   return batch;
-  // };
-
-  let blocksToFetch = [];
-  let timestamps = [];
-  events.map(event => {
-    if (blocksToFetch.indexOf(event.blockNumber) < 0)
-      blocksToFetch.push(event.blockNumber);
-  });
-  const totalLength = blocksToFetch.length;
-  while (blocksToFetch.length > 0 && totalLength > timestamps.length) {
-    // timestamps = (await batchRequest(blocksToFetch)).map((blockResult) => {
-    //   return blockResult.timestamp;
-    // });
-    const blocksToFetchBatch = blocksToFetch.splice(0, 500);
-    await Promise.all(
-      blocksToFetchBatch.map(async block => {
-        const blockInfo = await web3.eth.getBlock(block);
-        for (let i = 0; i < events.length; i++) {
-          if (events[i].blockNumber === blockInfo.number)
-            events[i].timestamp = blockInfo.timestamp;
-          if (blockInfo.l2BlockNumber)
-            events[i].blockNumber = Number(blockInfo.l2BlockNumber);
-        }
-      })
-    );
-  }
+  await batchPromises(
+    events.map(async (event, i) => {
+      const blockInfo = await web3.eth.getBlock(event.blockNumber);
+      if (!blockInfo) console.log(event.blockNumber);
+      for (let i = 0; i < events.length; i++) {
+        if (events[i].blockNumber === blockInfo.number)
+          events[i].timestamp = blockInfo.timestamp;
+        if (blockInfo.l2BlockNumber)
+          events[i].blockNumber = Number(blockInfo.l2BlockNumber);
+      }
+    }),
+    100,
+    1000,
+    500
+  );
   return events;
 };
 
@@ -299,7 +276,7 @@ export const getSchemeConfig = function (networkContracts, schemeAddress) {
       newProposalTopics: [
         [
           Web3.utils.soliditySha3('ProposalStateChange(bytes32,uint256)'),
-          null,
+          '0x0000000000000000000000000000000000000000000000000000000000000000',
           '0x0000000000000000000000000000000000000000000000000000000000000001',
         ],
       ],
@@ -328,7 +305,8 @@ export async function batchPromisesOntarget(
   promises,
   targetObject,
   maxPromisesPerTry = 0,
-  maxTries = 10
+  maxTries = 10,
+  sleepTimeBetweenRetries = 100
 ) {
   let promisesBatch = maxPromisesPerTry === 0 ? [promises] : [];
   let promisesBatchIndex = 0;
@@ -348,11 +326,38 @@ export async function batchPromisesOntarget(
     } catch (e) {
       console.error(e);
       maxTries--;
-    } finally {
+      await sleep(sleepTimeBetweenRetries);
       if (maxTries === 0)
         console.error('[BATCH PROMISES] (max errors reached)');
-      else maxTries = 0;
     }
   }
   return targetObject;
+}
+
+export async function batchPromises(
+  promises,
+  maxPromisesPerTry = 0,
+  maxTries = 10,
+  sleepTimeBetweenRetries = 100
+) {
+  let promisesBatch = maxPromisesPerTry === 0 ? [promises] : [];
+  let promisesBatchIndex = 0;
+
+  if (maxPromisesPerTry > 0)
+    for (var i = 0; i < promises.length; i += maxPromisesPerTry)
+      promisesBatch.push(promises.slice(i, i + maxPromisesPerTry));
+
+  while (promisesBatchIndex < promisesBatch.length && maxTries > 0) {
+    try {
+      await Promise.all(promisesBatch[promisesBatchIndex]);
+      promisesBatchIndex++;
+    } catch (e) {
+      console.error(e);
+      maxTries--;
+      await sleep(sleepTimeBetweenRetries);
+      if (maxTries === 0)
+        console.error('[BATCH PROMISES] (max errors reached)');
+    }
+  }
+  return;
 }

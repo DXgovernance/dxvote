@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { RegistryContractFunctionParam } from 'hooks/Guilds/contracts/useContractRegistry';
+import { RichContractFunctionParam } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import moment, { Moment } from 'moment';
 import { useMemo } from 'react';
 import { RegisterOptions } from 'react-hook-form';
@@ -13,7 +13,7 @@ import Toggle from '../common/Form/Toggle';
 import TokenAmountInput from '../common/Form/TokenAmountInput';
 
 interface FormElementRendererProps extends FormElementProps<any> {
-  param: RegistryContractFunctionParam;
+  param: RichContractFunctionParam;
 }
 
 const FormElementRenderer: React.FC<FormElementRendererProps> = ({
@@ -84,7 +84,7 @@ type Validations = Omit<
 >;
 
 export const getDefaultValidationsByFormElement = (
-  param: RegistryContractFunctionParam
+  param: RichContractFunctionParam
 ) => {
   const validations: Validations = { required: 'This field is required.' };
 

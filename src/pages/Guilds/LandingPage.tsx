@@ -1,5 +1,9 @@
-import dxDaoIcon from '../../assets/images/dxdao-icon.svg';
-import { useWeb3React } from '@web3-react/core';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { AiOutlineSearch } from 'react-icons/ai';
+import { MdOutlinePeopleAlt } from 'react-icons/md';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
 import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
 import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
@@ -12,24 +16,8 @@ import { Button } from 'old-components/Guilds/common/Button';
 import Input from 'old-components/Guilds/common/Form/Input';
 import { Flex, Box } from 'Components/Primitives/Layout';
 import { Heading } from 'old-components/Guilds/common/Typography';
-import { getChains } from 'provider/connectors';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { AiOutlineSearch } from 'react-icons/ai';
-import { MdOutlinePeopleAlt } from 'react-icons/md';
-import { Link } from 'react-router-dom';
 import { Loading } from 'Components/Primitives/Loading';
-
-import styled from 'styled-components';
-
-const configs = {
-  arbitrum: require('configs/arbitrum/config.json'),
-  arbitrumTestnet: require('configs/arbitrumTestnet/config.json'),
-  mainnet: require('configs/mainnet/config.json'),
-  xdai: require('configs/xdai/config.json'),
-  rinkeby: require('configs/rinkeby/config.json'),
-  localhost: require('configs/localhost/config.json'),
-};
+import dxDaoIcon from '../../assets/images/dxdao-icon.svg';
 
 const InputContainer = styled(Flex)`
   flex-direction: row;
@@ -127,13 +115,7 @@ const Members: React.FC<TitleProps> = ({ guildAddress }) => {
 
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
-  const { chainId } = useWeb3React();
-  const chainName =
-    getChains().find(chain => chain.id === chainId)?.name || null;
-
-  const { data: allGuilds, error } = useGuildRegistry(
-    configs[chainName].contracts.utils.guildRegistry
-  );
+  const { data: allGuilds, error } = useGuildRegistry();
 
   const isLoading = !allGuilds && !error;
 

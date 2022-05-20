@@ -91,7 +91,7 @@ const ProposalVoteCard = () => {
 
   const voteData = useVotingResults();
 
-  const timestamp = useTimedRerender(1000);
+  const timestamp = useTimedRerender(10000);
 
   const isOpen = useMemo(
     () => proposal?.endTime.isAfter(moment(timestamp)),
@@ -237,7 +237,10 @@ const ProposalVoteCard = () => {
         isOpen={modalOpen}
         onDismiss={() => setModalOpen(false)}
         onConfirm={confirmVoteProposal}
-        selectedAction={selectedAction?.toString()}
+        selectedAction={
+          proposalMetadata?.voteOptions?.[selectedAction?.toNumber()] ||
+          selectedAction?.toString()
+        }
         votingPower={votingPowerPercent}
         totalLocked={currentLockedPercent}
       />

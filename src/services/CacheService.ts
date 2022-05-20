@@ -41,6 +41,18 @@ export default class UtilsService {
     this.context = context;
   }
 
+  async getCacheFromIPFS(ipfsHash: string): Promise<DaoNetworkCache> {
+    let jsonCache = await this.context.ipfsService.getContentFromIPFS(ipfsHash);
+
+    while (typeof jsonCache === 'string') {
+      console.log('Trying to get cache from ipfs again');
+      await sleep(100);
+      jsonCache = await this.context.ipfsService.getContentFromIPFS(ipfsHash);
+    }
+
+    return jsonCache;
+  }
+
   async getUpdatedCacheConfig(
     networksConfig: {
       [netwokId: number]: {
@@ -236,22 +248,14 @@ export default class UtilsService {
 
     // The first promise round:
     // - Reputation Events
-    // - Voting Machine Events
     // - Permission Registry
     // - Vesting Contracts
-    // - Update schemes
 
     networkCache = await batchPromisesOntarget(
       [
         this.updateReputationEvents(
           networkCache,
           networkWeb3Contracts.reputation,
-          toBlock,
-          web3
-        ),
-        this.updateVotingMachineEvents(
-          networkCache,
-          networkContracts,
           toBlock,
           web3
         ),
@@ -267,9 +271,26 @@ export default class UtilsService {
           toBlock,
           web3
         ),
-        this.updateSchemes(networkCache, networkContracts, toBlock, web3),
       ],
       networkCache
+    );
+
+    // The second promise round:
+    // - Voting Machine Events
+    // - Update schemes
+    networkCache = await batchPromisesOntarget(
+      [
+        this.updateVotingMachineEvents(
+          networkCache,
+          networkContracts,
+          toBlock,
+          web3
+        ),
+        this.updateSchemes(networkCache, networkContracts, toBlock, web3),
+      ],
+      networkCache,
+      0,
+      1000
     );
 
     this.context.notificationStore.setGlobalLoading(
@@ -277,10 +298,13 @@ export default class UtilsService {
       `Collecting proposals in blocks ${fromBlock} - ${toBlock}`
     );
 
-    // The second promise round is just to update the proposals that needs the schemes udpated.
+    // The third promise round is just to update the proposals that needs the schemes udpated.
     networkCache = await batchPromisesOntarget(
       [this.updateProposals(networkCache, networkContracts, toBlock, web3)],
-      networkCache
+      networkCache,
+      0,
+      1000,
+      500
     );
 
     networkCache.blockNumber = Number(toBlock);
@@ -848,7 +872,9 @@ export default class UtilsService {
           );
         }),
       networkCache,
-      5
+      5,
+      1000,
+      500
     );
 
     return networkCache;
@@ -1197,18 +1223,13 @@ export default class UtilsService {
     );
     const fromBlock = networkCache.blockNumber + 1;
 
-    let schemeEvents = [];
-    for (let i = 0; i < schemeTypeData.newProposalTopics.length; i++) {
-      schemeEvents = schemeEvents.concat(
-        await getRawEvents(
-          web3,
-          schemeAddress,
-          fromBlock,
-          toBlock,
-          schemeTypeData.newProposalTopics[i]
-        )
-      );
-    }
+    let schemeEvents = await getRawEvents(
+      web3,
+      schemeAddress,
+      fromBlock,
+      toBlock,
+      schemeTypeData.newProposalTopics
+    );
 
     await batchPromisesOntarget(
       schemeEvents.map(schemeEvent => {
@@ -1382,19 +1403,20 @@ export default class UtilsService {
     let decodedProposer;
     let creationLogDecoded;
 
-    if (newProposal && isWalletScheme(schemeOfProposal)) {
-      // @ts-ignore
-      schemeProposalInfo.to = callsResponse.decodedReturnData[6].to;
-      schemeProposalInfo.callData = callsResponse.decodedReturnData[6].callData;
-      schemeProposalInfo.value = callsResponse.decodedReturnData[6].value;
+    if (isWalletScheme(schemeOfProposal)) {
       schemeProposalInfo.state = callsResponse.decodedReturnData[6].state;
-      schemeProposalInfo.title = callsResponse.decodedReturnData[6].title;
-      schemeProposalInfo.descriptionHash =
-        callsResponse.decodedReturnData[6].descriptionHash;
-      schemeProposalInfo.submittedTime =
-        callsResponse.decodedReturnData[6].submittedTime;
-    } else if (isWalletScheme(schemeOfProposal)) {
-      schemeProposalInfo.state = callsResponse.decodedReturnData[6].state;
+
+      if (newProposal) {
+        schemeProposalInfo.to = callsResponse.decodedReturnData[6].to;
+        schemeProposalInfo.callData =
+          callsResponse.decodedReturnData[6].callData;
+        schemeProposalInfo.value = callsResponse.decodedReturnData[6].value;
+        schemeProposalInfo.title = callsResponse.decodedReturnData[6].title;
+        schemeProposalInfo.descriptionHash =
+          callsResponse.decodedReturnData[6].descriptionHash;
+        schemeProposalInfo.submittedTime =
+          callsResponse.decodedReturnData[6].submittedTime;
+      }
     } else {
       // Here we get the events triggered in the GenericMulticall to get their final state
       // When the proposal is executed by the voting machine we get if the proposal was rejected
@@ -1417,7 +1439,6 @@ export default class UtilsService {
                 10000000
               )
             : [];
-
         if (
           votingMachineExecutionEvent.length > 0 &&
           votingMachineExecutionEvent[0].data !==
@@ -1452,6 +1473,11 @@ export default class UtilsService {
         // If any of the values of the redeemPeriods of the contribution reward is higher than zero it means that it executed the reward
       } else if (schemeOfProposal.type === 'ContributionReward') {
         if (
+          callsResponse.decodedReturnData[0].winningVote === '2' &&
+          callsResponse.decodedReturnData[0].state === '2'
+        ) {
+          schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
+        } else if (
           callsResponse.decodedReturnData[6][0] > 0 ||
           callsResponse.decodedReturnData[7][0] > 0 ||
           callsResponse.decodedReturnData[8][0] > 0 ||
@@ -1459,11 +1485,6 @@ export default class UtilsService {
         ) {
           schemeProposalInfo.state =
             WalletSchemeProposalState.ExecutionSucceded;
-        } else if (
-          callsResponse.decodedReturnData[0].state === '1' ||
-          callsResponse.decodedReturnData[0].state === '2'
-        ) {
-          schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
         } else {
           schemeProposalInfo.state = WalletSchemeProposalState.Submitted;
         }

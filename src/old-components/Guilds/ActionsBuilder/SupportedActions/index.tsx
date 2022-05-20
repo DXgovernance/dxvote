@@ -22,6 +22,7 @@ export interface SupportedActionMetadata {
 export interface ActionViewProps {
   decodedCall: DecodedCall;
   approveSpendTokens?: ApproveSendTokens;
+  compact?: boolean;
 }
 
 export interface ActionEditorProps extends ActionViewProps {
@@ -109,4 +110,24 @@ export const getEditor = (actionType: SupportedAction) => {
   if (actionType == null) return null;
 
   return supportedActions[actionType].editor;
+};
+
+const isApprovalCall = (action: DecodedAction) => {
+  return !!action?.approval;
+};
+
+/**
+ * Importance:
+ * 1. rep minting
+ * 2. spending calls
+ * 3. transfers.
+ * 4. generic calls
+ */
+export const getActionPoints = (action: DecodedAction): number => {
+  const type = action?.decodedCall?.callType;
+  if (type === SupportedAction.REP_MINT) return 5;
+  if (isApprovalCall(action)) return 4;
+  if (type === SupportedAction.ERC20_TRANSFER) return 3;
+  if (type === SupportedAction.GENERIC_CALL) return 2;
+  return 1;
 };

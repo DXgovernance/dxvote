@@ -46,7 +46,7 @@ jobs:
         with:
           web3_token: ${{ secrets.WEB3_STORAGE_TOKEN }}
           path_to_add: 'build'
- 
+
       - name: Update DNS record for Develop branch
         run: npx dnslink-cloudflare --domain dxvote.dev --record _dnslink.develop --link /ipfs/${{ steps.web3.outputs.cid }}
         env:
@@ -73,7 +73,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: 'https://${{ steps.web3.outputs.cid }}.ipfs.dweb.link'
+          env_url: 'https://${{ steps.web3.outputs.cid }}.ipfs.cf-ipfs.com'
 
       - name: Create comment with status
         uses: peter-evans/create-or-update-comment@v1
@@ -85,4 +85,4 @@ jobs:
 
             🔨 Explore the source changes: ${{ steps.source-run-info.outputs.mergeCommitSha }}
 
-            😎 Browse the preview: https://${{ steps.web3.outputs.cid }}.ipfs.dweb.link
+            😎 Browse the preview: https://${{ steps.web3.outputs.cid }}.ipfs.cf-ipfs.com
