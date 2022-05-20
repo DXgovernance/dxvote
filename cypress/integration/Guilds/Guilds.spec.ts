@@ -74,7 +74,7 @@ describe('Guilds', () => {
         .should('be.visible')
         .click();
       cy.confirmMetamaskPermissionToSpend();
-      cy.wait(100);
+      cy.wait(2000);
       cy.contains('Transaction Submitted').should('be.visible');
       clickAnywhereToClose();
       clickAnywhereToClose();
@@ -82,20 +82,14 @@ describe('Guilds', () => {
     });
 
     it('Should open lock modal and lock tokens', () => {
-      cy.findByTestId(Guilds.openStakeTokensModalBtn)
-        .should('be.visible')
-        .click({ force: true });
+      cy.findByTestId(Guilds.openStakeTokensModalBtn).click({ force: true });
       cy.wait(2000);
-      cy.findByTestId(Guilds.stakeAmountMaxButton)
-        .should('be.visible')
-        .click({ force: true });
+      cy.findByTestId(Guilds.stakeAmountMaxButton).click({ force: true });
       cy.findByTestId(Guilds.stakeModalAmountInput).should(
         'have.value',
         '50.0'
       );
-      cy.findByTestId(Guilds.lockTokenSpendingButton)
-        .should('be.visible')
-        .click({ force: true });
+      cy.findByTestId(Guilds.lockTokenSpendingButton).click({ force: true });
       cy.confirmMetamaskPermissionToSpend();
       cy.wait(100);
       cy.contains('Transaction Submitted').should('be.visible');
