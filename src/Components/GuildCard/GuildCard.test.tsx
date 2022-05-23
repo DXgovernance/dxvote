@@ -3,15 +3,7 @@ import GuildCardHeader from './GuildCardHeader';
 import GuildCardContent from './GuildCardContent';
 import { render } from '../../utils/tests';
 import '@testing-library/jest-dom';
-import { GuildCardProps } from './types';
-
-const validAddress: GuildCardProps = {
-  guildAddress: '0xa47BbE8Dd6dB29D45FE5eeD838c4f136884AEAF3',
-};
-
-const nullAddress: GuildCardProps = {
-  guildAddress: null,
-};
+import { validAddress, nullAddress } from './fixture';
 
 describe('GuildCard', () => {
   it('Should render properly with a guild address', async () => {
