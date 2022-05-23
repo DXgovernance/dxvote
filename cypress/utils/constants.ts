@@ -1,1 +1,1 @@
-export const DEPLOYED_GUILDS_NAMES = ['DXDGuild', 'REPGuild', 'SwaprGuild'];
+export const DEPLOYED_GUILDS_NAMES = ['DXDGuild', 'REPGuild', 'SWPRGuild'];
