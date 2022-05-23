@@ -4,4 +4,3 @@ export const DaoIcon = styled.img`
   height: 4rem;
   width: 4rem;
 `;
-
