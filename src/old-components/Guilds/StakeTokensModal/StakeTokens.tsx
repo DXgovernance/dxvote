@@ -190,7 +190,7 @@ export const StakeTokens = () => {
   const location = useLocation();
   const { isRepGuild } = useGuildImplementationType(guildAddress);
   return (
-    <GuestContainer>
+    <GuestContainer data-testid="stake-tokens-modal">
       <DaoBrand>
         <DaoIcon src={dxIcon} alt={'DXdao Logo'} />
         <DaoTitle>
@@ -231,8 +231,14 @@ export const StakeTokens = () => {
               value={stakeAmount}
               onChange={setStakeAmount}
               decimals={tokenInfo?.decimals}
+              data-testid="stake-amount-input"
             />
-            <Button onClick={() => setStakeAmount(tokenBalance)}>Max</Button>
+            <Button
+              data-testid="stake-amount-max-button"
+              onClick={() => setStakeAmount(tokenBalance)}
+            >
+              Max
+            </Button>
           </InfoRow>
         </BalanceWidget>
       )}
@@ -298,7 +304,11 @@ export const StakeTokens = () => {
       )}
       {!isRepGuild ? (
         stakeAmount && tokenAllowance?.gte(stakeAmount) ? (
-          <ActionButton disabled={!isStakeAmountValid} onClick={lockTokens}>
+          <ActionButton
+            data-testid="lock-token-spending"
+            disabled={!isStakeAmountValid}
+            onClick={lockTokens}
+          >
             Lock{' '}
             {tokenInfo?.symbol || (
               <Loading loading text skeletonProps={{ width: 10 }} />
@@ -308,6 +318,7 @@ export const StakeTokens = () => {
           <ActionButton
             disabled={!isStakeAmountValid}
             onClick={approveTokenSpending}
+            data-testid="approve-token-spending"
           >
             Approve{' '}
             {tokenInfo?.symbol || (

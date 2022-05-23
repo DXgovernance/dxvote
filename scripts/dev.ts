@@ -188,6 +188,11 @@ async function main() {
             address: accounts[2],
             amount: web3.utils.toWei('10'),
           },
+          // TODO: Give to acc3
+          // {
+          //   address: accounts[3],
+          //   amount: 100,
+          // },
         ],
       },
       {
@@ -287,6 +292,15 @@ async function main() {
         data: {
           asset: ZERO_ADDRESS,
           address: 'Avatar',
+          amount: web3.utils.toWei('50'),
+        },
+      },
+      {
+        type: 'transfer',
+        from: accounts[0],
+        data: {
+          asset: 'DXD',
+          address: accounts[3],
           amount: web3.utils.toWei('50'),
         },
       },
