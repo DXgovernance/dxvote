@@ -21,4 +21,3 @@ ValidAddress.args = validAddress;
 
 export const NullAddress = Template.bind({});
 NullAddress.args = nullAddress;
-

@@ -7,4 +7,3 @@ export const validAddress: GuildCardProps = {
 export const nullAddress: GuildCardProps = {
   guildAddress: null,
 };
-
