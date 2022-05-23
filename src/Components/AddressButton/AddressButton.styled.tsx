@@ -39,4 +39,3 @@ export const AddressText = styled.span`
   margin-left: 0.2rem;
   margin-right: 0.3rem;
 `;
-
