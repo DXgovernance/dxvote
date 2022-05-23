@@ -5,6 +5,7 @@ exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
    
   <a
     class="sc-jHVedQ flKzpr"
+    data-testid="proposal-card"
     href="/testUrl"
   >
     <div
@@ -170,6 +171,7 @@ exports[`ProposalCard ProposalCard loading 1`] = `
    
   <a
     class="sc-jHVedQ flKzpr"
+    data-testid="proposal-card"
     href="/"
   >
     <div

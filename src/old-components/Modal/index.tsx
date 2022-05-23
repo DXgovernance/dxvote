@@ -5,7 +5,7 @@ import { Button } from '../common';
 
 import { ReactComponent as Close } from '../../assets/images/x.svg';
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ maxWidth?: number }>`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -126,7 +126,6 @@ export const Modal: React.FC<ModalProps> = ({
           <Footer>
             {onCancel && (
               <ModalButton
-                variant="secondary"
                 onClick={() => {
                   onCancel();
                   onDismiss();

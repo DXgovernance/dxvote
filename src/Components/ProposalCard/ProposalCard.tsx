@@ -26,7 +26,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
   summaryActions,
 }) => {
   return (
-    <UnstyledLink to={href || '#'}>
+    <UnstyledLink to={href || '#'} data-testid="proposal-card">
       <CardWrapper>
         <CardHeader>
           <IconDetailWrapper>

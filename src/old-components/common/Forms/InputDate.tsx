@@ -9,13 +9,13 @@ import { Moment } from 'moment';
 // https://www.npmjs.com/package/react-datetime API here
 // for example: onChange, onClose, onNavigate, etc.
 
-const Label = styled.div`
+const Label = styled.div<{ width: number }>`
   text-align: left;
   font-size: smaller;
   width: ${props => `${props.width}px`};
   margin: auto;
 `;
-const Date = styled(Datetime)`
+const Date = styled(Datetime)<{ width: number }>`
   input {
     background-color: white;
     border-radius: 6px;

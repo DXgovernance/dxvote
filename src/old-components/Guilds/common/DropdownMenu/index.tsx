@@ -3,7 +3,7 @@ import { IconButton } from '../Button';
 import { Box } from '../../../../Components/Primitives/Layout';
 
 interface DropdownProps {
-  position: DropdownPosition;
+  position?: DropdownPosition;
 }
 
 export enum DropdownPosition {
@@ -32,7 +32,7 @@ export const DropdownHeader = styled.div`
 
 // DropdownContent renders a floating absolute box under the button that opens it.
 // In mobile, if fullScreenMobile is true it renders an absolute full screen menu.
-export const DropdownContent = styled<DropdownContentProps>(Box)`
+export const DropdownContent = styled(Box)<DropdownContentProps>`
   display: ${({ show }) => (show ? 'block' : 'none')};
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
@@ -45,7 +45,7 @@ export const DropdownContent = styled<DropdownContentProps>(Box)`
 
   ${({ fullScreenMobile }) =>
     fullScreenMobile &&
-    css`
+    css<{ show?: boolean }>`
       @media only screen and (max-width: 768px) {
         height: 100vh;
         width: 100%;
@@ -60,7 +60,7 @@ export const DropdownContent = styled<DropdownContentProps>(Box)`
     `}
 `;
 
-export const DropdownMenu = styled<DropdownProps>(Box)`
+export const DropdownMenu = styled(Box)<DropdownProps>`
   position: relative;
   width: 100%;
 

@@ -30,7 +30,7 @@ const InfoDetailMuted = styled.span`
   color: ${({ theme }) => theme.colors.proposalText.grey};
 `;
 
-const ProposalHistoryIcon = styled.span`
+const ProposalHistoryIcon = styled.span<{ active?: boolean }>`
   cursor: pointer;
   height: 1.25rem;
   width: 1.25rem;

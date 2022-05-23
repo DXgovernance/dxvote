@@ -34,7 +34,7 @@ const UndecodableCallDetails: React.FC<{ call: Call }> = ({ call }) => {
 
     if (key === 'to' || key === 'from') {
       return (
-        <UnstyledLink href="#">
+        <UnstyledLink to="#">
           <ParamDetail>
             {value} <FiExternalLink size={16} />
           </ParamDetail>

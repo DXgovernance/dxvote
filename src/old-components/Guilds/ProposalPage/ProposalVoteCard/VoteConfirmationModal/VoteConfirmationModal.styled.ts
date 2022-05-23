@@ -45,7 +45,7 @@ export const InfoLabel = styled.span`
   ${BaseFont}
   color: ${({ theme }) => theme.colors.card.grey};
 `;
-export const InfoValue = styled.span`
+export const InfoValue = styled.span<{ grey?: boolean }>`
   ${BaseFont}
   font-weight: bold;
   flex-wrap: wrap;

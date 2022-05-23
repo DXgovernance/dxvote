@@ -12,7 +12,7 @@ export const ColumnWrapper = styled.div`
   align-self: center;
 `;
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ size: number }>`
   width: ${props => `${props.size + 4}%`};
   outline: 0;
   display: flex;
@@ -31,7 +31,7 @@ export const LineWrapper = styled.div`
   margin: 10px auto;
 `;
 
-export const Dot = styled.div`
+export const Dot = styled.div<{ active?: boolean }>`
   min-width: 30px;
   min-height: 30px;
   border-radius: 50%;
@@ -44,7 +44,7 @@ export const Dot = styled.div`
   cursor: pointer;
 `;
 
-export const Line = styled.div`
+export const Line = styled.div<{ active?: boolean; complete?: boolean }>`
   width: 100%;
   background: ${props =>
     props.active
@@ -55,7 +55,7 @@ export const Line = styled.div`
   height: 2px;
 `;
 
-export const StyledButton = styled(Button)`
+export const StyledButton = styled(Button)<{ buttonSize: number | string }>`
   width: ${props => props.buttonSize};
   display: flex;
   align-items: center;
@@ -83,7 +83,6 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
       optionsArray.push(
         <Dot
           active={selected === index}
-          value={index}
           onClick={() => {
             onSelect(index);
           }}
@@ -99,5 +98,5 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
 
   buildLevels();
 
-  return <LineWrapper size={100}>{optionsArray}</LineWrapper>;
+  return <LineWrapper>{optionsArray}</LineWrapper>;
 };

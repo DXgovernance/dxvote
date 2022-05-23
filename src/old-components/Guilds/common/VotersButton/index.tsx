@@ -5,7 +5,7 @@ import styled from 'styled-components';
 // TODO: interface Voter is coming form ProposalVotes, may be there is a better place for reuse.
 
 // TODO: Avatar is already defined for ENS resolution, discuss what this should be.
-const Avatar = styled.img`
+const Avatar = styled.img<{ index: number }>`
   width: 20px;
   height: 20px;
   margin-right: -10px;

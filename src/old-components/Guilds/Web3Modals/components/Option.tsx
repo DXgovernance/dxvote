@@ -36,7 +36,7 @@ const OptionButtonText = styled.div`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.div<{ size?: number }>`
   ${({ theme }) => theme.flexColumnNoWrap};
   align-items: center;
   justify-content: center;
@@ -64,7 +64,6 @@ export default function Option({
     <OptionButton
       variant="secondary"
       onClick={onClick}
-      clickable={clickable && !active}
       active={active}
       data-testId={dataTestId}
     >
@@ -72,7 +71,7 @@ export default function Option({
         {active && <LiveIndicator />}
         {header}
       </OptionButtonText>
-      <IconWrapper size={size} active={active}>
+      <IconWrapper size={size}>
         {icon && <img src={icon} alt={'Icon'} />}
       </IconWrapper>
     </OptionButton>
