@@ -1,8 +1,6 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import GuildCard from 'Components/GuildCard/GuildCard';
 import { validAddress, nullAddress } from './fixture';
-import GuildCardHeader from './GuildCardHeader';
-import GuildCardContent from './GuildCardContent';
 
 export default {
   title: 'GuildCard',
@@ -10,10 +8,7 @@ export default {
 } as ComponentMeta<typeof GuildCard>;
 
 const Template: ComponentStory<typeof GuildCard> = args => (
-  <GuildCard {...args}>
-    <GuildCardHeader {...args}>Guild Card Header</GuildCardHeader>
-    <GuildCardContent>Guild Card Content</GuildCardContent>
-  </GuildCard>
+  <GuildCard {...args} />
 );
 
 export const ValidAddress = Template.bind({});

@@ -2,6 +2,8 @@ import { css } from 'styled-components';
 import { GuildCardProps } from './types';
 import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import { Card } from 'old-components/Guilds/common/Card/index';
+import GuildCardHeader from './GuildCardHeader';
+import GuildCardContent from './GuildCardContent';
 
 const cardWrapperStyles = css`
   margin-bottom: 1rem;
@@ -19,10 +21,13 @@ const cardWrapperStyles = css`
 const GuildCard: React.FC<GuildCardProps> = ({ children, guildAddress }) => {
   return (
     <UnstyledLink
-      data-testId="guildCard"
+      data-testid="guildCard"
       to={location => `${location.pathname}/${guildAddress}`}
     >
-      <Card customStyles={cardWrapperStyles}>{children}</Card>
+      <Card customStyles={cardWrapperStyles}>
+        <GuildCardHeader guildAddress={guildAddress} />
+        <GuildCardContent guildAddress={guildAddress} />
+      </Card>
     </UnstyledLink>
   );
 };
