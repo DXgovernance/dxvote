@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import AddressButton from './AddressButton';
 import { render } from '../../utils/tests';
 import { fullProps, partialProps } from './fixtures';
