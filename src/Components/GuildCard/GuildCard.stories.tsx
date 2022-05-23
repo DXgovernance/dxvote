@@ -11,7 +11,7 @@ export default {
 
 const Template: ComponentStory<typeof GuildCard> = args => (
   <GuildCard {...args}>
-    <GuildCardHeader>Guild Card Header</GuildCardHeader>
+    <GuildCardHeader {...args}>Guild Card Header</GuildCardHeader>
     <GuildCardContent>Guild Card Content</GuildCardContent>
   </GuildCard>
 );
