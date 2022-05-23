@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
+import { GuildsTheme } from 'Components/theme';
 
-const GlobalStyle = createGlobalStyle`
+const GlobalStyle = createGlobalStyle<{ theme: GuildsTheme }>`
   body {
     margin: 0;
     padding: 0;

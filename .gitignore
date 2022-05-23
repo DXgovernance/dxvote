@@ -39,6 +39,7 @@ yarn-error.log*
 
 #typechain
 src/types/*
+!src/types/styled-components.d.ts
 !src/types/types.d.ts
 !src/types/types.guilds.d.ts
 

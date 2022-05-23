@@ -198,10 +198,7 @@ const ProposalTypes: React.FC<ProposalTypesProps> = ({ data }) => {
         )}
         {isMobile && (
           <>
-            <Header
-              variant="secondary"
-              onClick={() => history.push(`/${chain}/${guildId}`)}
-            >
+            <Header onClick={() => history.push(`/${chain}/${guildId}`)}>
               <HeaderWrap>
                 <StyledIcon src={FiArrowLeft} />
                 Back to overview

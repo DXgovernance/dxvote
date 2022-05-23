@@ -62,7 +62,10 @@ const VoteActionButton = styled(Button)`
   }
 `;
 
-const VoteOptionButton = styled(VoteActionButton)`
+const VoteOptionButton = styled(VoteActionButton)<{
+  active?: boolean;
+  selected?: boolean;
+}>`
   margin-bottom: 1rem;
   background-color: ${({ theme }) => theme.colors.muted};
 
@@ -91,7 +94,7 @@ const ProposalVoteCard = () => {
 
   const voteData = useVotingResults();
 
-  const timestamp = useTimedRerender(1000);
+  const timestamp = useTimedRerender(10000);
 
   const isOpen = useMemo(
     () => proposal?.endTime.isAfter(moment(timestamp)),

@@ -1,11 +1,11 @@
 import { ReactElement, ReactNode } from 'react';
-import styled from 'styled-components';
+import styled, { FlattenSimpleInterpolation } from 'styled-components';
 import { Box } from '../../../../Components/Primitives/Layout';
 
 interface CardWrapperProps {
-  customStyles?: string;
+  customStyles?: string | FlattenSimpleInterpolation;
 }
-export const CardWrapper = styled<CardWrapperProps>(Box)`
+export const CardWrapper = styled(Box)<CardWrapperProps>`
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ theme }) => theme.radii.curved};
   ${({ customStyles }) => customStyles}
@@ -15,7 +15,7 @@ const CardHeader = styled(Box)`
   border-bottom: 1px solid ${({ theme }) => theme.colors.muted};
   padding: 8px 16px;
 `;
-export const Header = styled.h3`
+export const Header = styled.h3<{ headerStyles?: any }>`
   font-family: Inter;
   font-style: normal;
   font-weight: 600;
@@ -29,7 +29,7 @@ export const Header = styled.h3`
 export interface CardProps extends CardWrapperProps {
   header?: ReactElement | ReactElement[] | ReactNode;
   children?: ReactElement | ReactElement[] | ReactNode;
-  headerStyles?: string;
+  headerStyles?: string | FlattenSimpleInterpolation;
 }
 
 export const Card: React.FC<CardProps> = ({

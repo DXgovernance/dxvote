@@ -5,7 +5,10 @@ export const TitleRow = styled.div`
   justify-content: space-between;
 `;
 
-export const ListRow = styled.div`
+export const ListRow = styled.div<{
+  borderBottom?: boolean;
+  clickable?: boolean;
+}>`
   display: flex;
   align-items: center;
   padding: 6px 0px;

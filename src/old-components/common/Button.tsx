@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 
-export const Button = styled.button`
+export const Button = styled.button<{ width?: number | string }>`
   background-color: ${({ theme }) => theme.activeButtonBackground};
   border-radius: 4px;
   color: white;

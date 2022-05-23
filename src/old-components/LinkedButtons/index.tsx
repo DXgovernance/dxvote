@@ -15,7 +15,7 @@ export const ColumnWrapper = styled.div`
   align-self: center;
 `;
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ size?: number }>`
   width: ${props => `${props.size + 4}%`};
   outline: 0;
   display: flex;
@@ -24,7 +24,7 @@ export const Wrapper = styled.div`
   align-items: center;
 `;
 
-export const ProgressLineWrapper = styled.div`
+export const ProgressLineWrapper = styled.div<{ size?: number }>`
   width: ${props => `${props.size + 4}%`};
   outline: 0;
   display: flex;
@@ -34,7 +34,7 @@ export const ProgressLineWrapper = styled.div`
   margin: 10px auto;
 `;
 
-export const Dot = styled.div`
+export const Dot = styled.div<{ active?: boolean }>`
   min-width: 20px;
   min-height: 20px;
   border-radius: 50%;
@@ -47,7 +47,7 @@ export const Dot = styled.div`
   font-size: 12px;
 `;
 
-export const Line = styled.div`
+export const Line = styled.div<{ active?: boolean; complete?: boolean }>`
   width: 100%;
   background: ${props =>
     props.active
@@ -58,7 +58,7 @@ export const Line = styled.div`
   height: 2px;
 `;
 
-export const StyledButton = styled(Button)`
+export const StyledButton = styled(Button)<{ buttonSize: number | string }>`
   width: ${props => props.buttonSize};
   display: flex;
   align-items: center;

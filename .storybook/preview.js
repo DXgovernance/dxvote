@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import theme from 'theme/dark.json';
+import GuildsDarkTheme from 'Components/theme';
 import GlobalStyle from 'theme/GlobalTheme';
 
 export const parameters = {
@@ -15,7 +15,7 @@ export const parameters = {
 };
 
 const ComponentContainer = ({ children }) => (
-  <ThemeProvider theme={theme}>
+  <ThemeProvider theme={GuildsDarkTheme}>
     <HashRouter basename="/">
       {children}
       <GlobalStyle />

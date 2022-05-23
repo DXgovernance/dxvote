@@ -6,7 +6,7 @@ interface ProposalActionTagProps {
   option: Option;
 }
 
-const Tag = styled.span<ProposalActionTagProps>`
+const Tag = styled.span<{ color: string }>`
   margin: 0;
   border-radius: 0.375rem;
   padding: 0.25rem 0.5rem;

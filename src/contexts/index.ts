@@ -14,7 +14,6 @@ import CustomRpcService from '../services/CustomRpcService';
 import ENSService from '../services/ENSService';
 import TokenVestingService from '../services/TokenVestingService';
 import SubgraphService from '../services/SubgraphService';
-import MessageLoggerService from '../services/MessageLoggerService';
 import OrbitDBService from '../services/OrbitDBService';
 
 import ProviderStore from '../stores/Provider';
@@ -62,7 +61,6 @@ export default class RootContext {
   ensService: ENSService;
   tokenVestingService: TokenVestingService;
   subgraphService: SubgraphService;
-  messageLoggerService: MessageLoggerService;
   orbitDBService: OrbitDBService;
   cacheService: CacheService;
 
@@ -89,7 +87,6 @@ export default class RootContext {
     this.ensService = new ENSService(this);
     this.tokenVestingService = new TokenVestingService(this);
     this.subgraphService = new SubgraphService(this);
-    this.messageLoggerService = new MessageLoggerService(this);
     this.orbitDBService = new OrbitDBService(this);
     this.cacheService = new CacheService(this);
   }

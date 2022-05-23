@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Box = styled.div`
+export const Box = styled.div<{ noPadding?: boolean; centered?: boolean }>`
   border: 1px solid #e1e3e7;
   padding: ${({ noPadding }) => (noPadding ? '0px' : '10px 20px')};
   background: white;

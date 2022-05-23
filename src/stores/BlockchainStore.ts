@@ -38,7 +38,6 @@ export default class BlockchainStore {
       const {
         providerStore,
         configStore,
-        ipfsService,
         daoStore,
         notificationStore,
         cacheService,
@@ -113,9 +112,10 @@ export default class BlockchainStore {
             true,
             'Fetching cached data from IPFS'
           );
-          networkCache = daoStore.parseCache(
-            await ipfsService.getContentFromIPFS(newestCacheIpfsHash)
+          const ipfsCache = await cacheService.getCacheFromIPFS(
+            newestCacheIpfsHash
           );
+          networkCache = daoStore.parseCache(ipfsCache);
           networkCache.baseCacheIpfsHash = newestCacheIpfsHash;
         }
 

@@ -39,11 +39,7 @@ const NetworkButton = () => {
         </IconButton>
       );
     } else {
-      return (
-        <Button onClick={toggleNetworkModal} active={true}>
-          Not Connected
-        </Button>
-      );
+      return <Button onClick={toggleNetworkModal}>Not Connected</Button>;
     }
   }
 

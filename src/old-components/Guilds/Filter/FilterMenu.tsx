@@ -99,7 +99,6 @@ export const FilterMenu = () => {
           onClick={() => {
             setShowState(!showState);
           }}
-          active={countStateSelected > 0}
         >
           State <FiChevronDown />
         </FilterButton>
@@ -131,11 +130,7 @@ export const FilterMenu = () => {
         </DropdownContent>
       </DropdownMenu>
       <DropdownMenu ref={typeRef} position={DropdownPosition.BottomRight}>
-        <FilterButton
-          iconRight
-          onClick={() => setShowType(!showType)}
-          active={countTypeSelected > 0}
-        >
+        <FilterButton iconRight onClick={() => setShowType(!showType)}>
           Type <FiChevronDown />
         </FilterButton>
         <DropdownContent fullScreenMobile={true} show={showType}>
@@ -166,11 +161,7 @@ export const FilterMenu = () => {
       </DropdownMenu>
 
       <DropdownMenu ref={currencyRef} position={DropdownPosition.BottomRight}>
-        <FilterButton
-          iconRight
-          onClick={() => setShowCurrency(!showCurrency)}
-          active={countCurrencySelected > 0}
-        >
+        <FilterButton iconRight onClick={() => setShowCurrency(!showCurrency)}>
           Currency <FiChevronDown />
         </FilterButton>
         <DropdownContent fullScreenMobile={true} show={showCurrency}>

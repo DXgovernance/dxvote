@@ -12,7 +12,7 @@
     "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
     "cy:run": "./scripts/integration.sh",
     "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run",
-    "test": "react-app-rewired test --watchAll=false --coverage --verbose",
+    "test": "react-app-rewired test --watchAll=false --coverage --verbose --testTimeout=10000",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s public",
@@ -48,6 +48,7 @@
     "@types/node": "^16.11.7",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.5",
+    "@types/styled-components": "^5.1.25",
     "@uiw/react-md-editor": "1.14.0",
     "@uniswap/token-lists": "^1.0.0-beta.27",
     "@web3-react/core": "^6.0.7",
@@ -61,7 +62,7 @@
     "bignumber.js": "^9.0.2",
     "content-hash": "^2.5.2",
     "copy-to-clipboard": "^3.3.1",
-    "dxdao-contracts": "https://github.com/DXGovernance/dxdao-contracts.git#v1.0.0",
+    "dxdao-contracts": "https://github.com/DXGovernance/dxdao-contracts.git#12ea7f4e1ea070699d148d8c4ced4aaa88f08627",
     "eslint-plugin-cypress": "^2.12.1",
     "ether-swr": "^2.0.1",
     "ethers": "^5.5.2",
@@ -129,7 +130,6 @@
     "@storybook/testing-library": "^0.0.11",
     "@synthetixio/synpress": "^1.2.0",
     "@testing-library/cypress": "^8.0.2",
-    "@testing-library/cypress": "^8.0.2",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react-hooks": "^8.0.0",
     "@types/jest": "^27.4.0",
@@ -194,4 +194,3 @@
     ]
   }
 }
-

@@ -8,7 +8,7 @@ interface AvatarProps {
   size?: number;
 }
 
-const AvatarIcon = styled(ButtonIcon)`
+const AvatarIcon = styled(ButtonIcon)<{ size: number }>`
   border-radius: 50%;
   height: ${props => props.size}px;
   width: ${props => props.size}px;

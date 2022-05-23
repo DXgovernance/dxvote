@@ -153,7 +153,7 @@ export const MemberActions = () => {
         </UserActionButton>
         <DropdownContent fullScreenMobile={true} show={showMenu}>
           {isMobile && (
-            <DropdownHeader noTopPadding onClick={() => setShowMenu(false)}>
+            <DropdownHeader onClick={() => setShowMenu(false)}>
               <FiArrowLeft /> <span>Membership</span>
             </DropdownHeader>
           )}
