@@ -87,7 +87,7 @@ export enum InputType {
   DATETIME,
 }
 
-export interface DateInputProps extends InputProps<Moment> {
+export interface DateInputProps extends InputProps<string | Moment> {
   isUTC?: boolean;
   inputType?: InputType;
   isValidDate?: (date: Moment) => boolean;

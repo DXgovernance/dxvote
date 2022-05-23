@@ -36,7 +36,10 @@ const ButtonContainer = styled(Flex)`
   width: 57%;
 `;
 
-const StyledIconButton = styled(IconButton)`
+const StyledIconButton = styled(IconButton)<{
+  padding?: string | number;
+  marginLeft?: string | number;
+}>`
   border-radius: 20px;
   padding: ${props => props.padding || '0.7rem 1.2rem'};
   margin: ${props => props.marginLeft};
@@ -75,10 +78,7 @@ export const Filter = () => {
     <FilterContainer>
       <FilterRow>
         {isMobile && !isProposalCreationAllowed && (
-          <FilterButton
-            onClick={() => setViewFilter(!viewFilter)}
-            active={viewFilter || totalFilters > 0}
-          >
+          <FilterButton onClick={() => setViewFilter(!viewFilter)}>
             Filter
             {totalFilters > 0 && <FilterBadge>{totalFilters}</FilterBadge>}
           </FilterButton>

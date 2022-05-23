@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-export const Badge = styled.div`
+export const Badge = styled.div<{ size?: number; reverse?: boolean }>`
   border-radius: ${({ theme }) => theme.radii.rounded};
   background-color: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.background};

@@ -1,3 +1,4 @@
+import { GuildsTheme } from 'Components/theme';
 import { createElement } from 'react';
 import {
   FiAlertTriangle,
@@ -32,13 +33,13 @@ const ResultWrapper = styled(Box)`
   margin: 2rem 0;
 `;
 
-const Title = styled(Heading).attrs(() => ({
+const Title = styled(Heading).attrs<any>(() => ({
   size: '2',
-}))`
+}))<any>`
   margin-bottom: 0;
 `;
 
-const Subtitle = styled(Heading).attrs(() => ({
+const Subtitle = styled(Heading).attrs<{ theme: GuildsTheme }>(() => ({
   size: '1',
 }))`
   color: ${({ theme }) => theme.colors.proposalText.lightGrey};

@@ -52,7 +52,7 @@ const MemberWrapper = styled(Flex)`
   color: ${({ theme }) => theme.colors.card.grey};
 `;
 
-const ProposalsInformation = styled(Box)`
+const ProposalsInformation = styled(Box)<{ proposals?: string }>`
   display: inline-flex;
   justify-content: center;
   align-items: center;

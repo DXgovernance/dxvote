@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import styled, { css } from 'styled-components';
 
-const CardWrapperWithMargin = styled(CardWrapper)`
+const CardWrapperWithMargin = styled(CardWrapper)<{ dragging?: boolean }>`
   position: relative;
   background-color: ${({ theme }) => theme.colors.background};
   margin-top: 0.8rem;
@@ -41,7 +41,7 @@ const CardLabel = styled(Box)`
   font-weight: 500;
 `;
 
-const ChevronIcon = styled.span`
+const ChevronIcon = styled.span<{ active?: boolean }>`
   cursor: pointer;
   height: 1.4rem;
   width: 1.4rem;
@@ -67,7 +67,7 @@ const DetailWrapper = styled(Box)`
   border-top: 1px solid ${({ theme }) => theme.colors.border.initial};
 `;
 
-const TabButton = styled(Button)`
+const TabButton = styled(Button)<{ active?: boolean }>`
   background-color: transparent;
   color: ${({ theme }) => theme.colors.text};
 

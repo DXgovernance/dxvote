@@ -7,7 +7,12 @@ type ButtonProps = {
 
 const variantStyles = (variant = 'primary') =>
   ({
-    primary: css`
+    primary: css<{
+      padding?: string;
+      margin?: string;
+      active?: boolean;
+      selected?: boolean;
+    }>`
       border: 1px solid ${({ theme }) => theme.colors.border.initial};
       background-color: ${({ theme }) => theme.colors.button.primary};
       color: ${({ theme }) => theme.colors.text};
@@ -30,7 +35,12 @@ const variantStyles = (variant = 'primary') =>
           color: ${({ theme }) => theme.colors.background};
         `}
     `,
-    secondary: css`
+    secondary: css<{
+      padding?: string;
+      margin?: string;
+      active?: boolean;
+      selected?: boolean;
+    }>`
       border: 1px solid ${({ theme }) => theme.colors.border.initial};
       background-color: ${({ theme }) => theme.colors.background};
       color: ${({ theme }) => theme.colors.text};
