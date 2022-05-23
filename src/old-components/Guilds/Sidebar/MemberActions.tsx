@@ -135,7 +135,7 @@ export const MemberActions = () => {
   const { isRepGuild } = useGuildImplementationType(guildAddress);
   return (
     <>
-      <DropdownMenu ref={memberMenuRef}>
+      <DropdownMenu data-testid="member-actions-button" ref={memberMenuRef}>
         <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
           <div>
             <IconHolder>

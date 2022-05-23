@@ -1,4 +1,5 @@
 import localhostConfigJSON from '../../../src/configs/localhost/config.json';
+import { clickAnywhereToClose } from '../../utils';
 
 class Guilds {
   public proposalsListId: string;
@@ -8,6 +9,17 @@ class Guilds {
   public createProposalEditorId: string;
   public connectWalletId: string;
   public guildCardId: string;
+  public proposalCard: string;
+  public createProposalBtn: string;
+  public proposalTypeContinueBtn: string;
+  public actionBuilderCreateProposalBtn: string;
+  public openStakeTokensModalBtn: string;
+  public stakeTokensModal: string;
+  public stakeAmountMaxButton: string;
+  public stakeModalAmountInput: string;
+  public approveTokenSpendingButton: string;
+  public lockTokenSpendingButton: string;
+  public memberActionsButton: string;
   public deployedGuilds: string[];
 
   constructor() {
@@ -18,6 +30,17 @@ class Guilds {
     this.createProposalEditorId = 'editor-content';
     this.connectWalletId = 'connectWalletBtn';
     this.guildCardId = 'guildCard';
+    this.proposalCard = 'proposal-card';
+    this.createProposalBtn = 'create-proposal-button';
+    this.proposalTypeContinueBtn = 'proposal-type-continue-button';
+    this.actionBuilderCreateProposalBtn = 'create-proposal-action-button';
+    this.openStakeTokensModalBtn = 'open-stake-tokens-modal-btn';
+    this.stakeTokensModal = 'stake-tokens-modal';
+    this.stakeAmountMaxButton = 'stake-amount-max-button';
+    this.stakeModalAmountInput = 'stake-amount-input';
+    this.approveTokenSpendingButton = 'approve-token-spending';
+    this.lockTokenSpendingButton = 'lock-token-spending';
+    this.memberActionsButton = 'member-actions-button';
     this.deployedGuilds = localhostConfigJSON.guilds;
   }
 
@@ -26,7 +49,7 @@ class Guilds {
     const network = Cypress.env('network');
     cy.visit(`${baseUrl}/guilds/${network}${address ? `/${address}` : ''}`, {
       timeout: 120000,
-    }).wait(1000);
+    }).wait(2000);
   }
 
   shouldRenderProposalsList() {
@@ -61,12 +84,23 @@ class Guilds {
   clickOnGuildCard(guildName: string) {
     const network = Cypress.env('network');
     cy.findAllByTestId(this.guildCardId).contains(guildName).first().click();
+    cy.wait(2000);
     cy.url().then(url =>
       this.deployedGuilds.some(address =>
         url.includes(`guilds/${network}/${address}`)
       )
     );
   }
+
+  connectToMetamask = accountName => {
+    cy.switchMetamaskAccount(accountName);
+    this.clickOpenWalletModalBtn();
+    cy.findByTestId('wallet-option-MetaMask').eq(0).click();
+    cy.wait(2000);
+    cy.acceptMetamaskAccess(true);
+    clickAnywhereToClose();
+    cy.wait(500);
+  };
 }
 
 const guilds: Guilds = new Guilds();
