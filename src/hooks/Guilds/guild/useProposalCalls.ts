@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTheme } from 'styled-components';
 import { useWeb3React } from '@web3-react/core';
 import { bulkDecodeCallsFromOptions } from '../contracts/useDecodedCall';
@@ -10,6 +10,7 @@ import { Call, Option } from 'old-components/Guilds/ActionsBuilder/types';
 import { ZERO_HASH } from 'utils';
 import { useRichContractRegistry } from '../contracts/useRichContractRegistry';
 import { ERC20_APPROVE_SIGNATURE } from 'utils';
+import useGuildImplementationTypeConfig from './useGuildImplementationType';
 
 const isApprovalCall = (call: Call) =>
   call.data.substring(0, 10) === ERC20_APPROVE_SIGNATURE;
@@ -21,38 +22,51 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
   const votingResults = useVotingResults(guildId, proposalId);
   const { contracts } = useRichContractRegistry();
   const { chainId } = useWeb3React();
+  const { isEnforcedBinaryGuild } = useGuildImplementationTypeConfig(guildId);
 
   const theme = useTheme();
   const [options, setOptions] = useState<Option[]>([]);
+
+  const {
+    totalVotes,
+    to: toArray,
+    data: dataArray,
+    value: valuesArray,
+  } = proposal || {};
+
+  const totalOptionsNum = totalVotes?.length - 1 || 0;
+  const callsPerOption = totalOptionsNum
+    ? toArray?.length / totalOptionsNum
+    : 0;
+  const optionLabels = metadata?.voteOptions;
+
+  const calls: Call[] = useMemo(() => {
+    return toArray?.map((to, index) => ({
+      from: guildId,
+      to: to,
+      data: dataArray[index],
+      value: valuesArray[index],
+    }));
+  }, [guildId, dataArray, valuesArray, toArray]);
+
+  const splitCalls = useMemo(() => {
+    if (!calls) return null;
+
+    const splitCalls: Call[][] = [];
+    for (let i = 0; i < totalOptionsNum; i++) {
+      splitCalls.push(
+        calls.slice(i * callsPerOption, (i + 1) * callsPerOption)
+      );
+    }
+    return splitCalls;
+  }, [calls, callsPerOption, totalOptionsNum]);
+
   useEffect(() => {
-    if (!guildId || !proposalId || !proposal) {
+    if (!guildId || !proposalId || !splitCalls) {
       setOptions([]);
       return;
     }
     async function decodeOptions() {
-      const {
-        totalVotes,
-        to: toArray,
-        data: dataArray,
-        value: valuesArray,
-      } = proposal;
-      const totalOptions = totalVotes?.length - 1 || 0;
-      const calls: Call[] = toArray?.map((to, index) => ({
-        from: guildId,
-        to: to,
-        data: dataArray[index],
-        value: valuesArray[index],
-      }));
-      const callsPerOption = toArray?.length / totalOptions;
-      const splitCalls: Call[][] = [];
-      for (let i = 0; i < totalOptions; i++) {
-        splitCalls.push(
-          calls.slice(i * callsPerOption, (i + 1) * callsPerOption)
-        );
-      }
-
-      const voteOptions = metadata?.voteOptions;
-
       const encodedOptions: Option[] = await Promise.all(
         splitCalls.map(async (calls, index) => {
           const filteredActions = calls.filter(
@@ -76,12 +90,16 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
             })
           );
 
+          const isEnforcedBinaryLastOption =
+            isEnforcedBinaryGuild && index === totalOptionsNum - 1;
+          const optionLabel =
+            optionLabels?.[index] || isEnforcedBinaryLastOption
+              ? 'Against'
+              : null;
+
           return {
             id: `option-${index}`,
-            label:
-              voteOptions && voteOptions[index]
-                ? voteOptions[index]
-                : `Option ${index + 1}`,
+            label: optionLabel || `Option ${index + 1}`,
             color: theme?.colors?.votes?.[index],
             actions,
             totalVotes: votingResults?.options[index],
@@ -92,7 +110,17 @@ const useProposalCalls = (guildId: string, proposalId: string) => {
       return bulkDecodeCallsFromOptions(encodedOptions, contracts, chainId);
     }
     decodeOptions().then(options => setOptions(options));
-  }, [theme?.colors?.votes, contracts, chainId, guildId, proposalId, proposal]);
+  }, [
+    guildId,
+    proposalId,
+    contracts,
+    chainId,
+    splitCalls,
+    theme,
+    optionLabels,
+    isEnforcedBinaryGuild,
+    totalOptionsNum,
+  ]);
 
   return {
     options,

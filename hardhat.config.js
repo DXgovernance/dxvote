@@ -73,7 +73,7 @@ module.exports = {
       'dxdao-contracts/contracts/erc20guild/utils/GuildRegistry.sol',
       'dxdao-contracts/contracts/erc20guild/implementations/SnapshotERC20Guild.sol',
       'dxdao-contracts/contracts/erc20guild/implementations/EnforcedBinaryGuild.sol',
-      // 'dxdao-contracts/contracts/erc20guild/implementations/EnforcedBinarySnapshotERC20Guild.sol',
+      'dxdao-contracts/contracts/erc20guild/implementations/EnforcedBinarySnapshotERC20Guild.sol',
     ],
   },
   solidity: {
