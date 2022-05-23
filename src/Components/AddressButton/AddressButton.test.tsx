@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import AddressButton from './AddressButton';
-import { AddressButtonProps } from 'Components/AddressButton/types';
 import { render } from '../../utils/tests';
+import { fullProps, partialProps } from './fixtures';
 
 jest.mock('hooks/Guilds/ether-swr/ens/useENSAvatar', () => ({
   __esModule: true,
@@ -11,16 +11,6 @@ jest.mock('hooks/Guilds/ether-swr/ens/useENSAvatar', () => ({
     ensName: 'test.eth',
   }),
 }));
-
-const fullProps: AddressButtonProps = {
-  address: '0x79706C8e413CDaeE9E63f282507287b9Ea9C0928',
-  transactionsCounter: 0,
-  onClick: jest.fn(),
-};
-
-const partialProps: AddressButtonProps = {
-  address: '0x79706C8e413CDaeE9E63f282507287b9Ea9C0928',
-};
 
 describe('AddressButton', () => {
   it('Should render properly with full props', async () => {
