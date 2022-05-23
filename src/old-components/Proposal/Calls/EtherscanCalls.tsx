@@ -3,7 +3,11 @@ import styled from 'styled-components';
 import { ProposalCalls } from '../../../types/types';
 import { BlockchainLink } from '../../common';
 
-const CallParams = styled.span`
+const CallParams = styled.span<{
+  fontStyle?: string;
+  fontSize?: string | number;
+  fontWeight?: number;
+}>`
   color: black;
   font-style: ${props => props.fontStyle || 'normal'};
   font-size: ${props => props.fontSize || '14px'};

@@ -111,7 +111,7 @@ export const NotFoundActionWrapper = styled.div`
 export const Icon = styled.img<{
   spaceLeft?: boolean;
   spaceRight?: boolean;
-  bordered: boolean;
+  bordered?: boolean;
 }>`
   width: 1.5rem;
   height: 1.5rem;

@@ -7,7 +7,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { Heading } from '../Typography';
 import { Flex } from '../../../../Components/Primitives/Layout';
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ zIndex: number; maxWidth: number }>`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -19,7 +19,7 @@ export const Wrapper = styled.div`
   outline: 0;
 `;
 
-export const Backdrop = styled.div`
+export const Backdrop = styled.div<{ zIndex: number }>`
   position: fixed;
   width: 100%;
   height: 100%;
@@ -87,7 +87,7 @@ const SecondaryCloseIcon = styled(CloseIcon)`
   top: 25px;
 `;
 
-export const Content = styled.div`
+export const Content = styled.div<{ modal?: boolean }>`
   color: ${({ theme }) => theme.colors.text};
   max-height: 80vh;
   overflow-x: hidden;
@@ -103,7 +103,7 @@ export const Content = styled.div`
     `}
 `;
 
-export const Footer = styled.div`
+export const Footer = styled.div<{ modal?: boolean }>`
   display: flex;
   justify-content: space-around;
   padding: 0 1.5rem 1.5rem 1.5rem;

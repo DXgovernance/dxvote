@@ -1,3 +1,4 @@
+import { GuildsTheme } from 'Components/theme';
 import { useEffect } from 'react';
 import {
   createGlobalStyle,
@@ -19,9 +20,12 @@ const MEDIA_WIDTHS = {
 
 const mediaWidthTemplates = Object.keys(MEDIA_WIDTHS).reduce(
   (accumulator, size) => {
-    accumulator[size] = (...args) => css`
+    accumulator[size] = (...args: any[]) => css`
       @media (max-width: ${MEDIA_WIDTHS[size]}px) {
-        ${css(...args)}
+        ${
+          // @ts-ignore
+          css(...args)
+        }
       }
     `;
     return accumulator;
@@ -151,7 +155,7 @@ const theme = darkMode => ({
   `,
 });
 
-export const GlobalStyle = createGlobalStyle`
+export const GlobalStyle = createGlobalStyle<{ theme: GuildsTheme }>`
   html {
     font-size: 16px;
     font-variant: none;

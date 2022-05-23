@@ -48,6 +48,7 @@
     "@types/node": "^16.11.7",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.5",
+    "@types/styled-components": "^5.1.25",
     "@uiw/react-md-editor": "1.14.0",
     "@uniswap/token-lists": "^1.0.0-beta.27",
     "@web3-react/core": "^6.0.7",
@@ -129,7 +130,6 @@
     "@storybook/testing-library": "^0.0.11",
     "@synthetixio/synpress": "^1.2.0",
     "@testing-library/cypress": "^8.0.2",
-    "@testing-library/cypress": "^8.0.2",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react-hooks": "^8.0.0",
     "@types/jest": "^27.4.0",
@@ -194,4 +194,3 @@
     ]
   }
 }
-

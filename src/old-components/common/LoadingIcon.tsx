@@ -14,7 +14,7 @@ const pulseKeyframes = keyframes`
   }
 `;
 
-const RotatingImage = styled.image`
+const RotatingImage = styled.image<{ inactive?: boolean }>`
   filter: ${props => (props.inactive ? 'grayscale(100%)' : 'none')};
 `;
 

@@ -101,7 +101,7 @@ const Web3ConnectStatus = observer(props => {
         chains.find(chain => chain.id == chainId) || chains[0];
       const isMetamask = window.ethereum && window.ethereum.isMetaMask;
       return (
-        <ConnectButton onClick={() => switchNetwork(activeChain)} active={true}>
+        <ConnectButton onClick={() => switchNetwork(activeChain)}>
           Switch {isMetamask ? 'MetaMask' : 'Wallet'} to{' '}
           {activeChain.displayName}
         </ConnectButton>
@@ -114,9 +114,7 @@ const Web3ConnectStatus = observer(props => {
       );
     } else {
       return (
-        <ConnectButton onClick={toggleWalletModal} active={true}>
-          {props.text}
-        </ConnectButton>
+        <ConnectButton onClick={toggleWalletModal}>{props.text}</ConnectButton>
       );
     }
   }
@@ -139,7 +137,7 @@ const Web3ConnectStatus = observer(props => {
       );
     } else {
       return (
-        <ConnectButton onClick={toggleNetworkModal} active={true}>
+        <ConnectButton onClick={toggleNetworkModal}>
           Not Connected
         </ConnectButton>
       );
