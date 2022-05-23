@@ -10,7 +10,7 @@ import {
   IconHolder,
   StyledAddressButton,
   AddressText,
-} from './AddressButton.styled';
+} from 'Components/AddressButton/AddressButton.styled';
 
 const AddressButton: React.FC<AddressButtonProps> = ({
   address,
@@ -42,7 +42,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({
         </AddressText>
       )}
       {transactionsCounter ? (
-        <Badge size="25">{transactionsCounter}</Badge>
+        <Badge size={25}>{transactionsCounter}</Badge>
       ) : null}
     </StyledAddressButton>
   );
