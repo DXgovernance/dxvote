@@ -12,6 +12,8 @@ jest.mock('hooks/Guilds/ether-swr/ens/useENSAvatar', () => ({
   }),
 }));
 
+fullProps.onClick = jest.fn();
+
 describe('AddressButton', () => {
   it('Should render properly with full props', async () => {
     const { container } = render(<AddressButton {...fullProps} />);

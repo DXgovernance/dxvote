@@ -22,6 +22,12 @@ exports[`AddressButton Should render properly with full props 1`] = `
     >
       0x7970...0928
     </span>
+    <div
+      class="sc-eCstlR rHMeD"
+      size="25"
+    >
+      5
+    </div>
   </button>
    
 </div>

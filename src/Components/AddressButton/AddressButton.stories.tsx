@@ -1,6 +1,5 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import AddressButton from 'Components/AddressButton/AddressButton';
-import '@testing-library/jest-dom';
 import { fullProps, partialProps } from './fixtures';
 
 export default {
