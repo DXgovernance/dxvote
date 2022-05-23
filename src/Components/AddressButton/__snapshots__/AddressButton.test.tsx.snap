@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddressButton Should render properly with full props 1`] = `
+<div>
+   
+  <button
+    class="sc-bdfBQB sc-gsTEea sc-fubCzh cAORUT hqMJhH eLNaRf"
+  >
+    <span
+      class="sc-iBPTik lkybgw"
+    >
+      <img
+        alt="Avatar"
+        class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
+        data-testid="avatar"
+        size="24"
+        src="test"
+      />
+    </span>
+    <span
+      class="sc-pGacB hgMCTu"
+    >
+      0x7970...0928
+    </span>
+    <div
+      class="sc-eCstlR rHMeD"
+      size="25"
+    >
+      5
+    </div>
+  </button>
+   
+</div>
+`;
+
+exports[`AddressButton Should render properly with partial props 1`] = `
+<div>
+   
+  <button
+    class="sc-bdfBQB sc-gsTEea sc-fubCzh cAORUT hqMJhH eLNaRf"
+  >
+    <span
+      class="sc-iBPTik lkybgw"
+    >
+      <img
+        alt="Avatar"
+        class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
+        data-testid="avatar"
+        size="24"
+        src="test"
+      />
+    </span>
+    <span
+      class="sc-pGacB hgMCTu"
+    >
+      0x7970...0928
+    </span>
+  </button>
+   
+</div>
+`;

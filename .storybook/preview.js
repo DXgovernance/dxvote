@@ -3,6 +3,7 @@ import { HashRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import GuildsDarkTheme from 'Components/theme';
 import GlobalStyle from 'theme/GlobalTheme';
+import MultichainProvider from 'contexts/MultichainProvider/index';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -17,8 +18,10 @@ export const parameters = {
 const ComponentContainer = ({ children }) => (
   <ThemeProvider theme={GuildsDarkTheme}>
     <HashRouter basename="/">
-      {children}
-      <GlobalStyle />
+      <MultichainProvider>
+        {children}
+        <GlobalStyle />
+      </MultichainProvider>
     </HashRouter>
   </ThemeProvider>
 );
@@ -30,3 +33,4 @@ export const decorators = [
     </ComponentContainer>
   ),
 ];
+
