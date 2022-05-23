@@ -28,4 +28,3 @@ WithoutTransactions.args = partialProps;
 
 export const Loading = Template.bind({});
 Loading.args = {};
-
