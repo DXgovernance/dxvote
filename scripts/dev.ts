@@ -947,7 +947,7 @@ async function main() {
     networkContracts: JSON.stringify(networkContracts),
   });
 
-  if (process.env.ETHERNAL_CONTRACTS) {
+  if (process.env.ETHERNAL_CONTRACTS === 'true') {
     await hre.ethernal.push({
       name: 'Avatar',
       address: networkContracts.addresses.Avatar,
