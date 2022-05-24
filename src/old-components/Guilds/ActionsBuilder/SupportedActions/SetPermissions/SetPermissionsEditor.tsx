@@ -17,12 +17,16 @@ import { ParsedDataInterface, ValidationsInterface } from './types';
 const Web3 = require('web3');
 const web3 = new Web3();
 
+interface TabButtonProps {
+  active: boolean;
+}
+
 const DetailWrapper = styled(Box)`
   margin: 1.25rem 0rem;
   border-bottom: 2px solid ${({ theme }) => theme.colors.card.grey}; ;
 `;
 
-const TabButton = styled(Button)`
+const TabButton = styled(Button)<TabButtonProps>`
   background-color: transparent;
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: -1px;
