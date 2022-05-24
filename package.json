@@ -12,7 +12,7 @@
     "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
     "cy:run": "./scripts/integration.sh",
     "test:e2e": "ETHERNAL_CONTRACTS=false start-server-and-test 'yarn dev --no-browser' 3000 cy:run",
-    "test": "react-app-rewired test --watchAll=false --coverage --verbose --testTimeout=10000",
+    "test": "react-app-rewired test --watchAll=false --coverage --verbose --testTimeout=10000 --detectOpenHandles",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s public",

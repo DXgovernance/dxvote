@@ -173,7 +173,7 @@ export const Modal: React.FC<ModalProps> = ({
   dataTestId,
 }) => {
   const modal = (
-    <div data-testId={dataTestId}>
+    <div data-testid={dataTestId}>
       <Backdrop onClick={onDismiss} zIndex={zIndex} />
       <Wrapper maxWidth={maxWidth} zIndex={zIndex + 1}>
         <StyledModal>
