@@ -1,7 +1,7 @@
 import { render } from '../../../utils/tests';
 import { screen } from '@testing-library/react';
 
-import Avatar from './';
+import Avatar from './Avatar';
 
 describe('Avatar', () => {
   it('Should render image when src is given', () => {

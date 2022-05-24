@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Input from '../common/Form/Input';
 import { Modal } from '../common/Modal';
 import { useWeb3React } from '@web3-react/core';
-import Avatar from '../Avatar';
+import Avatar from '../../../Components/Primitives/Avatar/Avatar';
 import { TokenInfo } from '@uniswap/token-lists';
 import { resolveUri } from 'utils/url';
 import {

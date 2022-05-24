@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
-import Avatar from 'old-components/Guilds/Avatar';
+import Avatar from 'Components/Primitives/Avatar';
 import { useMemo } from 'react';
 import { MAINNET_ID, shortenAddress } from 'utils';
 

@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'ethers';
 
 import Input from 'old-components/Guilds/common/Form/Input';
-import Avatar from 'old-components/Guilds/Avatar';
+import Avatar from 'Components/Primitives/Avatar';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
 import { Box } from 'Components/Primitives/Layout';
 import TokenAmountInput from 'old-components/Guilds/common/Form/TokenAmountInput';

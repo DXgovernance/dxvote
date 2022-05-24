@@ -1,6 +1,6 @@
 import Input, { InputProps } from './Input';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
-import Avatar from 'old-components/Guilds/Avatar';
+import Avatar from 'Components/Primitives/Avatar';
 import { isAddress, MAINNET_ID } from 'utils';
 
 const AddressInput: React.FC<InputProps<string>> = ({

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Input from 'old-components/Guilds/common/Form/Input';
-import Avatar from 'old-components/Guilds/Avatar';
+import Avatar from 'Components/Primitives/Avatar';
 import React, { useEffect } from 'react';
 import { ActionEditorProps } from '..';
 import { ethers } from 'ethers';

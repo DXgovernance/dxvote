@@ -10,7 +10,7 @@ import useGuildImplementationType from '../../../hooks/Guilds/guild/useGuildImpl
 import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
 import { shortenAddress } from '../../../utils';
 import { MAINNET_ID } from '../../../utils/constants';
-import Avatar from '../Avatar';
+import Avatar from '../../../Components/Primitives/Avatar/Avatar';
 import StakeTokensModal from '../StakeTokensModal';
 import { IconButton, Button } from '../common/Button';
 import {

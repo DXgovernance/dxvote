@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
-import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
-import Avatar from '.';
+import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
+import Avatar from '../Primitives/Avatar';
 import { Loading } from 'Components/Primitives/Loading';
 
 const ENSAvatarContainer = styled.span`

@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { ChildrenNode, Matcher, MatchResponse, Node } from 'interweave';
 import moment from 'moment';
-import ENSAvatar from 'old-components/Guilds/Avatar/ENSAvatar';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
 import { FunctionParamWithValue } from './GenericCallInfoLine';
 
 interface MatcherOptions {

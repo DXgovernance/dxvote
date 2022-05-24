@@ -10,7 +10,6 @@ exports[`AddressButton Should render properly with full props 1`] = `
       class="sc-iBPTik lkybgw"
     >
       <img
-        alt="Avatar"
         class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
         data-testid="avatar"
         size="24"
@@ -43,7 +42,6 @@ exports[`AddressButton Should render properly with partial props 1`] = `
       class="sc-iBPTik lkybgw"
     >
       <img
-        alt="Avatar"
         class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
         data-testid="avatar"
         size="24"

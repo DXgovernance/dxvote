@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { ZERO_ADDRESS } from 'utils';
-import { render } from '../../../utils/tests';
+import { render } from '../../utils/tests';
 
 import ENSAvatar from './ENSAvatar';
 

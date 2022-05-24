@@ -64,7 +64,6 @@ exports[`Avatar Should render image when src is given 1`] = `
 <div>
    
   <img
-    alt="Avatar"
     class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
     data-testid="avatar"
     size="24"

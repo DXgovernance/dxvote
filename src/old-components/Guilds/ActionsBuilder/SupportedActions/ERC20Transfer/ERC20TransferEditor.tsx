@@ -4,7 +4,7 @@ import { BigNumber, utils } from 'ethers';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
-import Avatar from 'old-components/Guilds/Avatar';
+import Avatar from 'Components/Primitives/Avatar';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
 import Input from 'old-components/Guilds/common/Form/Input';
 import TokenAmountInput from 'old-components/Guilds/common/Form/TokenAmountInput';

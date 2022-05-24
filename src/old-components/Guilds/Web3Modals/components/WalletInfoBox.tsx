@@ -15,7 +15,7 @@ import { findWalletType } from '../../../../provider/connectors';
 
 import LiveIndicator from './LiveIndicator';
 import { Button, IconButton } from '../../common/Button';
-import Avatar from '../../Avatar';
+import Avatar from '../../../../Components/Primitives/Avatar/Avatar';
 
 const Wrapper = styled.div`
   padding: 1rem;

@@ -1,7 +1,7 @@
 import ProposalCardActionSummary from 'Components/ProposalCard/ProposalCardActionSummary';
 import ProposalCardVotes from 'Components/ProposalCard/ProposalCardVotes';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
-import Avatar from 'old-components/Guilds/Avatar';
+import Avatar from 'Components/Primitives/Avatar';
 import ProposalStatus from 'Components/ProposalStatus/ProposalStatus';
 import { Loading } from 'Components/Primitives/Loading';
 import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
