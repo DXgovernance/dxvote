@@ -2,7 +2,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import ProposalCard from 'Components/ProposalCard/ProposalCard';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
 import { proposalStatusMock } from 'Components/ProposalStatus/fixtures';
-import { ensAvatarMock, proposalMock } from '../Fixtures';
+import { proposalMock } from '../Fixtures';
 
 export default {
   title: 'Proposals/ProposalCard',
@@ -19,10 +19,10 @@ export default {
 
 const proposalCardArgs: ProposalCardProps = {
   proposal: proposalMock,
-  ensAvatar: ensAvatarMock,
   href: '/',
   votes: [11, 1],
   statusProps: proposalStatusMock,
+  summaryActions: [],
 };
 
 const Template: ComponentStory<typeof ProposalCard> = args => (

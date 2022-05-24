@@ -1,12 +1,10 @@
 import styled from 'styled-components';
 import Input from 'old-components/Guilds/common/Form/Input';
-import Avatar from 'Components/Primitives/Avatar';
 import React, { useEffect } from 'react';
 import { ActionEditorProps } from '..';
 import { ethers } from 'ethers';
-import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { Box } from 'Components/Primitives/Layout';
-import { shortenAddress, MAINNET_ID } from 'utils';
+import { shortenAddress } from 'utils';
 import { ReactComponent as Info } from '../../../../../assets/images/info.svg';
 import StyledIcon from 'old-components/Guilds/common/SVG';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
@@ -15,6 +13,7 @@ import NumericalInput from 'old-components/Guilds/common/Form/NumericalInput';
 import { useTotalSupply } from 'hooks/Guilds/guild/useTotalSupply';
 import { useTokenData } from 'hooks/Guilds/guild/useTokenData';
 import { StyledToolTip } from 'old-components/common/ToolTip';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
 
 const Control = styled(Box)`
   display: flex;
@@ -66,7 +65,6 @@ export const Mint: React.FC<ActionEditorProps> = ({
 
   const totalSupply = useBigNumberToNumber(tokenData?.totalSupply, 18);
 
-  const { imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
   const setCallDataAmount = (value: string) => {
     const amount = value ? ethers.utils.parseUnits(value) : null;
     updateCall({
@@ -103,13 +101,7 @@ export const Mint: React.FC<ActionEditorProps> = ({
         <ControlRow>
           <Input
             value={shortenAddress(parsedData?.toAddress)}
-            icon={
-              <Avatar
-                src={imageUrl}
-                defaultSeed={parsedData?.toAddress}
-                size={18}
-              />
-            }
+            icon={<ENSAvatar address={parsedData?.toAddress} size={18} />}
             readOnly
           />
         </ControlRow>

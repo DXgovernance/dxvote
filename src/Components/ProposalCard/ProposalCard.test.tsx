@@ -1,11 +1,7 @@
 import ProposalCard from 'Components/ProposalCard/ProposalCard';
 import { render } from '../../utils/tests';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
-import {
-  ensAvatarMock,
-  proposalMock,
-  proposalStatusPropsMock,
-} from '../Fixtures';
+import { proposalMock, proposalStatusPropsMock } from '../Fixtures';
 
 jest.mock('ipfs', () => jest.fn());
 jest.mock('cids', () => jest.fn());
@@ -16,11 +12,25 @@ jest.mock('hooks/Guilds/guild/useProposalSummaryActions', () => {
   };
 });
 jest.mock('contexts/index', () => jest.fn());
+jest.mock('hooks/Guilds/ether-swr/ens/useENS', () => ({
+  __esModule: true,
+  default: () => ({
+    address: 'test',
+    name: 'test.eth',
+  }),
+}));
+jest.mock('hooks/Guilds/ether-swr/ens/useENSAvatar', () => ({
+  __esModule: true,
+  default: () => ({
+    avatarUri: 'test',
+    imageUrl: 'test',
+    ensName: 'test.eth',
+  }),
+}));
 
 const validProps: ProposalCardProps = {
   proposal: proposalMock,
   votes: [10, 20],
-  ensAvatar: ensAvatarMock,
   href: 'testUrl',
   statusProps: proposalStatusPropsMock,
   summaryActions: [],
@@ -29,7 +39,6 @@ const validProps: ProposalCardProps = {
 const invalidProps: ProposalCardProps = {
   proposal: null,
   votes: [],
-  ensAvatar: null,
   href: null,
   statusProps: {
     timeDetail: null,

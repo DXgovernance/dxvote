@@ -1,7 +1,6 @@
 import { useTransactions } from '../../../contexts/Guilds';
 import { useERC20Guild } from '../../../hooks/Guilds/contracts/useContract';
 import useBigNumberToNumber from '../../../hooks/Guilds/conversions/useBigNumberToNumber';
-import useENSAvatar from '../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useERC20Info } from '../../../hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useGuildConfig } from '../../../hooks/Guilds/ether-swr/guild/useGuildConfig';
 import { useVoterLockTimestamp } from '../../../hooks/Guilds/ether-swr/guild/useVoterLockTimestamp';
@@ -10,7 +9,6 @@ import useGuildImplementationType from '../../../hooks/Guilds/guild/useGuildImpl
 import useVotingPowerPercent from '../../../hooks/Guilds/guild/useVotingPowerPercent';
 import { shortenAddress } from '../../../utils';
 import { MAINNET_ID } from '../../../utils/constants';
-import Avatar from '../../../Components/Primitives/Avatar/Avatar';
 import StakeTokensModal from '../StakeTokensModal';
 import { IconButton, Button } from '../common/Button';
 import {
@@ -28,6 +26,8 @@ import { useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import { FiArrowLeft } from 'react-icons/fi';
 import styled from 'styled-components';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
+import useENS from 'hooks/Guilds/ether-swr/ens/useENS';
 
 const UserActionButton = styled(IconButton)`
   border-radius: 50px;
@@ -85,7 +85,7 @@ export const MemberActions = () => {
   const [showStakeModal, setShowStakeModal] = useState(false);
   const { guildId: guildAddress } = useTypedParams();
   const { account: userAddress } = useWeb3React();
-  const { ensName, imageUrl } = useENSAvatar(userAddress, MAINNET_ID);
+  const { name: ensName } = useENS(userAddress, MAINNET_ID);
   const { data: guildConfig } = useGuildConfig(guildAddress);
   const { data: tokenInfo } = useERC20Info(guildConfig?.token);
   const { data: userVotingPower } = useVotingPowerOf({
@@ -139,7 +139,7 @@ export const MemberActions = () => {
         <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
           <div>
             <IconHolder>
-              <Avatar src={imageUrl} defaultSeed={userAddress} size={18} />
+              <ENSAvatar address={userAddress} size={18} />
             </IconHolder>
             <span>{ensName || shortenAddress(userAddress)}</span>
           </div>

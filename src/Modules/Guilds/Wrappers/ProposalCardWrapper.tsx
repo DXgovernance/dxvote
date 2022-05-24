@@ -1,9 +1,7 @@
 import { useTypedParams } from '../Hooks/useTypedParams';
 import ProposalCard from 'Components/ProposalCard/ProposalCard';
-import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useProposal } from 'hooks/Guilds/ether-swr/guild/useProposal';
 import useVoteSummary from 'hooks/Guilds/useVoteSummary';
-import { MAINNET_ID } from 'utils/constants';
 import { useMemo } from 'react';
 import { ProposalState } from 'Components/Types';
 import { useProposalSummaryActions } from 'hooks/Guilds/guild/useProposalSummaryActions';
@@ -19,8 +17,6 @@ const ProposalCardWrapper: React.FC<ProposalCardWrapperProps> = ({
   const { data: proposal } = useProposal(guildId, proposalId);
   const votes = useVoteSummary(guildId, proposalId);
   const summaryActions = useProposalSummaryActions(guildId, proposalId);
-
-  const ensAvatar = useENSAvatar(proposal?.creator, MAINNET_ID);
 
   // Make into hooks
   const timeDetail = useMemo(() => {
@@ -59,7 +55,6 @@ const ProposalCardWrapper: React.FC<ProposalCardWrapperProps> = ({
   return (
     <ProposalCard
       proposal={{ ...proposal, id: proposalId }}
-      ensAvatar={ensAvatar}
       votes={votes}
       href={`/${chainName}/${guildId}/proposal/${proposalId}`}
       statusProps={{ timeDetail, status, endTime: proposal?.endTime }}

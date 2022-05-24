@@ -1,7 +1,6 @@
 import { ActionEditorProps } from '..';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber, utils } from 'ethers';
-import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
 import Avatar from 'Components/Primitives/Avatar';
@@ -12,8 +11,8 @@ import { Box } from 'Components/Primitives/Layout';
 import { useMemo, useState } from 'react';
 import { FiChevronDown, FiX } from 'react-icons/fi';
 import styled from 'styled-components';
-import { MAINNET_ID } from 'utils';
 import { resolveUri } from 'utils/url';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
 
 const Control = styled(Box)`
   display: flex;
@@ -82,10 +81,6 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
   }, [tokens, parsedData]);
 
   const { data: tokenInfo } = useERC20Info(parsedData?.tokenAddress);
-  const { imageUrl: destinationAvatarUrl } = useENSAvatar(
-    parsedData?.destination,
-    MAINNET_ID
-  );
 
   const setTransferAddress = (walletAddress: string) => {
     updateCall({
@@ -124,11 +119,7 @@ const Transfer: React.FC<ActionEditorProps> = ({ decodedCall, updateCall }) => {
             icon={
               <div>
                 {validations.destination && (
-                  <Avatar
-                    src={destinationAvatarUrl}
-                    defaultSeed={parsedData.destination}
-                    size={24}
-                  />
+                  <ENSAvatar address={parsedData.destination} />
                 )}
               </div>
             }

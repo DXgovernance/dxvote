@@ -1,5 +1,3 @@
-import Avatar from 'Components/Primitives/Avatar';
-import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { FiArrowRight } from 'react-icons/fi';
 import { MAINNET_ID, shortenAddress } from 'utils';
 import { ActionViewProps } from '..';
@@ -10,6 +8,8 @@ import styled from 'styled-components';
 import useBigNumberToNumber from 'hooks/Guilds/conversions/useBigNumberToNumber';
 import { useTotalSupply } from 'hooks/Guilds/guild/useTotalSupply';
 import { useTokenData } from 'hooks/Guilds/guild/useTokenData';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
+import useENS from 'hooks/Guilds/ether-swr/ens/useENS';
 
 const StyledMintIcon = styled(StyledIcon)`
   margin: 0;
@@ -21,7 +21,7 @@ const RepMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
 
   const totalSupply = useBigNumberToNumber(tokenData?.totalSupply, 18);
 
-  const { ensName, imageUrl } = useENSAvatar(parsedData?.toAddress, MAINNET_ID);
+  const { name: ensName } = useENS(parsedData?.toAddress, MAINNET_ID);
 
   const roundedRepAmount = useBigNumberToNumber(parsedData?.amount, 16, 3);
   const roundedRepPercent = roundedRepAmount / totalSupply;
@@ -36,7 +36,7 @@ const RepMintInfoLine: React.FC<ActionViewProps> = ({ decodedCall }) => {
         <FiArrowRight />
       </Segment>
       <Segment>
-        <Avatar defaultSeed={parsedData?.toAddress} src={imageUrl} size={24} />
+        <ENSAvatar address={parsedData?.toAddress} />
       </Segment>
       <Segment>{ensName || shortenAddress(parsedData?.toAddress)}</Segment>
     </>

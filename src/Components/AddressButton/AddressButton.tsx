@@ -1,7 +1,5 @@
 import { isDesktop } from 'react-device-detect';
 import React from 'react';
-import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
-import Avatar from 'Components/Primitives/Avatar';
 import { shortenAddress } from 'utils';
 import { Badge } from 'old-components/Guilds/common/Badge';
 import { Loading } from 'Components/Primitives/Loading';
@@ -11,31 +9,25 @@ import {
   StyledAddressButton,
   AddressText,
 } from 'Components/AddressButton/AddressButton.styled';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
+import useENS from 'hooks/Guilds/ether-swr/ens/useENS';
 
 const AddressButton: React.FC<AddressButtonProps> = ({
   address,
   transactionsCounter,
   onClick,
 }) => {
-  const { ensName, imageUrl } = useENSAvatar(address, 1);
+  const { name: ensName } = useENS(address, 1);
 
   return (
     <StyledAddressButton variant="secondary" onClick={onClick} iconLeft>
       <IconHolder>
-        {address ? (
-          <Avatar src={imageUrl} defaultSeed={address} size={24} />
-        ) : (
-          <Loading
-            loading
-            text
-            skeletonProps={{ circle: true, width: '24px', height: '24px' }}
-          />
-        )}
+        <ENSAvatar address={address} />
       </IconHolder>
       {isDesktop && (
         <AddressText>
-          {ensName || address ? (
-            shortenAddress(address)
+          {address ? (
+            ensName || shortenAddress(address)
           ) : (
             <Loading loading text />
           )}

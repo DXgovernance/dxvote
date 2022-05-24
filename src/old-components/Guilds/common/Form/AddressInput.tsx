@@ -1,7 +1,6 @@
 import Input, { InputProps } from './Input';
-import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
-import Avatar from 'Components/Primitives/Avatar';
-import { isAddress, MAINNET_ID } from 'utils';
+import { isAddress } from 'utils';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
 
 const AddressInput: React.FC<InputProps<string>> = ({
   value,
@@ -9,7 +8,6 @@ const AddressInput: React.FC<InputProps<string>> = ({
   isInvalid,
   ...rest
 }) => {
-  const { imageUrl } = useENSAvatar(value, MAINNET_ID);
   const shouldShowAvatar = !!isAddress(value) || value?.endsWith('.eth');
 
   return (
@@ -18,9 +16,7 @@ const AddressInput: React.FC<InputProps<string>> = ({
       value={value}
       icon={
         <div>
-          {shouldShowAvatar && !isInvalid && (
-            <Avatar src={imageUrl} defaultSeed={value} size={24} />
-          )}
+          {shouldShowAvatar && !isInvalid && <ENSAvatar address={value} />}
         </div>
       }
       onChange={e => onChange(e.target.value)}

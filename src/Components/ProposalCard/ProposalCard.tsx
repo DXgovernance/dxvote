@@ -1,7 +1,6 @@
 import ProposalCardActionSummary from 'Components/ProposalCard/ProposalCardActionSummary';
 import ProposalCardVotes from 'Components/ProposalCard/ProposalCardVotes';
 import { ProposalCardProps } from 'Components/ProposalCard/types';
-import Avatar from 'Components/Primitives/Avatar';
 import ProposalStatus from 'Components/ProposalStatus/ProposalStatus';
 import { Loading } from 'Components/Primitives/Loading';
 import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
@@ -16,41 +15,32 @@ import {
   CardTitle,
   CardFooter,
 } from 'Components/ProposalCard/ProposalCard.styled';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
+import useENS from 'hooks/Guilds/ether-swr/ens/useENS';
 
 const ProposalCard: React.FC<ProposalCardProps> = ({
   proposal,
   votes,
-  ensAvatar,
   href,
   statusProps,
   summaryActions,
 }) => {
+  const { name: ensName } = useENS(proposal?.creator, 1);
+
+  console.log({ proposal, votes, href, statusProps, summaryActions });
   return (
     <UnstyledLink to={href || '#'} data-testid="proposal-card">
       <CardWrapper>
         <CardHeader>
           <IconDetailWrapper>
-            {proposal?.creator && ensAvatar ? (
-              <Avatar
-                src={ensAvatar.imageUrl}
-                defaultSeed={proposal.creator}
-                size={24}
-              />
-            ) : (
-              <Loading
-                style={{ margin: 0 }}
-                loading
-                text
-                skeletonProps={{ circle: true, width: '24px', height: '24px' }}
-              />
-            )}
+            <ENSAvatar address={proposal?.creator} />
+
             <Detail>
-              {ensAvatar?.ensName ||
-                (proposal?.creator ? (
-                  shortenAddress(proposal.creator)
-                ) : (
-                  <Loading style={{ margin: 0 }} loading text />
-                ))}
+              {proposal?.creator ? (
+                ensName || shortenAddress(proposal.creator)
+              ) : (
+                <Loading style={{ margin: 0 }} loading text />
+              )}
             </Detail>
           </IconDetailWrapper>
           <ProposalStatus {...statusProps} />

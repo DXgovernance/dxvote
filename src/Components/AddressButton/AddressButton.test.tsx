@@ -11,6 +11,14 @@ jest.mock('hooks/Guilds/ether-swr/ens/useENSAvatar', () => ({
   }),
 }));
 
+jest.mock('hooks/Guilds/ether-swr/ens/useENS', () => ({
+  __esModule: true,
+  default: () => ({
+    address: 'test',
+    name: 'test.eth',
+  }),
+}));
+
 fullProps.onClick = jest.fn();
 
 describe('AddressButton', () => {

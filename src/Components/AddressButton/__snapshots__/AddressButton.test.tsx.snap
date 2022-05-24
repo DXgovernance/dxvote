@@ -4,25 +4,29 @@ exports[`AddressButton Should render properly with full props 1`] = `
 <div>
    
   <button
-    class="sc-bdfBQB sc-gsTEea sc-fubCzh cAORUT hqMJhH eLNaRf"
+    class="sc-hKgJUU sc-eCstlR sc-iBPTik yNXFo fJzGbV KMmoQ"
   >
     <span
-      class="sc-iBPTik lkybgw"
+      class="sc-gKseQn fTGEco"
     >
-      <img
-        class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
-        data-testid="avatar"
-        size="24"
-        src="test"
-      />
+      <span
+        class="sc-jrAFXE fkvRJA"
+      >
+        <img
+          class="sc-jSgvzq sc-pGacB iUxzmp ghyxMf"
+          data-testid="avatar"
+          size="24"
+          src="test"
+        />
+      </span>
     </span>
     <span
-      class="sc-pGacB hgMCTu"
+      class="sc-fubCzh ePKPqF"
     >
-      0x7970...0928
+      test.eth
     </span>
     <div
-      class="sc-eCstlR rHMeD"
+      class="sc-bdfBQB bfxPFN"
       size="25"
     >
       5
@@ -36,22 +40,26 @@ exports[`AddressButton Should render properly with partial props 1`] = `
 <div>
    
   <button
-    class="sc-bdfBQB sc-gsTEea sc-fubCzh cAORUT hqMJhH eLNaRf"
+    class="sc-hKgJUU sc-eCstlR sc-iBPTik yNXFo fJzGbV KMmoQ"
   >
     <span
-      class="sc-iBPTik lkybgw"
+      class="sc-gKseQn fTGEco"
     >
-      <img
-        class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
-        data-testid="avatar"
-        size="24"
-        src="test"
-      />
+      <span
+        class="sc-jrAFXE fkvRJA"
+      >
+        <img
+          class="sc-jSgvzq sc-pGacB iUxzmp ghyxMf"
+          data-testid="avatar"
+          size="24"
+          src="test"
+        />
+      </span>
     </span>
     <span
-      class="sc-pGacB hgMCTu"
+      class="sc-fubCzh ePKPqF"
     >
-      0x7970...0928
+      test.eth
     </span>
   </button>
    

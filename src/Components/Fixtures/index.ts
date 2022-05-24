@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 import moment from 'moment';
-import { Proposal, ENSAvatar, ProposalState } from '../Types';
+import { Proposal, ProposalState } from '../Types';
 
 export const proposalMock: Proposal = {
   id: '0x1234567890123456789012345678901234567890',
@@ -15,11 +15,6 @@ export const proposalMock: Proposal = {
   state: ProposalState.Active,
   totalActions: BigNumber.from(0),
   totalVotes: [],
-};
-
-// TODO: Move this to the ENSAvatar fixture file once that's refactored
-export const ensAvatarMock: ENSAvatar = {
-  ensName: 'venky0x.eth',
 };
 
 export const proposalStatusPropsMock = {

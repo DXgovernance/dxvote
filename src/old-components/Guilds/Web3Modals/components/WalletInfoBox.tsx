@@ -9,13 +9,13 @@ import {
   shortenAddress,
   MAINNET_ID,
 } from '../../../../utils';
-import useENSAvatar from '../../../../hooks/Guilds/ether-swr/ens/useENSAvatar';
 import useClipboard from '../../../../hooks/Guilds/useClipboard';
 import { findWalletType } from '../../../../provider/connectors';
 
 import LiveIndicator from './LiveIndicator';
 import { Button, IconButton } from '../../common/Button';
-import Avatar from '../../../../Components/Primitives/Avatar/Avatar';
+import ENSAvatar from 'Components/ENSAvatar/ENSAvatar';
+import useENS from 'hooks/Guilds/ether-swr/ens/useENS';
 
 const Wrapper = styled.div`
   padding: 1rem;
@@ -87,7 +87,7 @@ interface Props {
 
 export default function WalletInfoBox({ openOptions }: Props) {
   const { account, connector, chainId } = useWeb3React();
-  const { ensName, imageUrl } = useENSAvatar(account, MAINNET_ID);
+  const { name: ensName } = useENS(account, MAINNET_ID);
   const [isCopied, copyAddress] = useClipboard(account, 3000);
 
   const networkName = NETWORK_NAMES[chainId];
@@ -108,7 +108,7 @@ export default function WalletInfoBox({ openOptions }: Props) {
 
       <WalletAddressRow>
         <IconHolder>
-          <Avatar src={imageUrl} defaultSeed={account} size={24} />
+          <ENSAvatar address={account} />
         </IconHolder>
         <AddressText>{ensName || shortenAddress(account)}</AddressText>
       </WalletAddressRow>
