@@ -65,6 +65,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
   const validations = useMemo<ValidationsInterface>(() => {
     function isFunctionNameValid(value: string): boolean {
       const regexFunctionName = /(\w+)[(]{1}([a-zA-Z0-9,]*)[)]{1}/g;
+
       if (!value || value === '') return true;
       if (value.substring(0, 2) === '0x' && value.length === 10) return true;
       if (value.match(regexFunctionName)) return true;
@@ -244,8 +245,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
   useEffect(() => {
     if (parsedData?.to[0] === ANY_ADDRESS) handleCustomAddress('');
   }, []);
-
-  // TODO: Disable clicking on "X" on input address when disabled
 
   return (
     <div>
