@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import GuildsDarkTheme from 'Components/theme';
+import { GuildsDarkTheme } from 'Components/theme';
 import GlobalStyle from 'theme/GlobalTheme';
 import MultichainProvider from 'contexts/MultichainProvider/index';
 

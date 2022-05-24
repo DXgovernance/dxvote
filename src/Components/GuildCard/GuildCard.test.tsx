@@ -56,7 +56,7 @@ describe('GuildCard', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('Should render properly with a null guild address', async () => {
+  it('Should render loading when the address is null', async () => {
     const { container } = render(<GuildCard {...nullAddress} />);
 
     expect(container).toMatchSnapshot();

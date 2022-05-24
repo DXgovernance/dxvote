@@ -11,8 +11,16 @@ const Template: ComponentStory<typeof GuildCard> = args => (
   <GuildCard {...args} />
 );
 
-export const ValidAddress = Template.bind({});
-ValidAddress.args = validAddress;
+const TemplateLoading: ComponentStory<typeof GuildCard> = args => (
+  <>
+    <GuildCard {...args} />
+    <GuildCard {...args} />
+    <GuildCard {...args} />
+  </>
+);
 
-export const NullAddress = Template.bind({});
-NullAddress.args = nullAddress;
+export const Simple = Template.bind({});
+Simple.args = validAddress;
+
+export const Loading = TemplateLoading.bind({});
+Loading.args = nullAddress;
