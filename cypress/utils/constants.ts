@@ -1,7 +1,7 @@
 export const DEPLOYED_GUILDS_NAMES = {
   DXDGuild: 'DXDGuild',
   REPGuild: 'REPGuild',
-  SwaprGuild: 'SwaprGuild',
+  SwaprGuild: 'SWPRGuild',
 };
 
 export const ACCOUNTS = [
@@ -34,5 +34,3 @@ export const ACCOUNTS = [
 ];
 
 export const DXDGuildAddress = '0x140d68e4E3f80cdCf7036De007b3bCEC54D38b1f';
-// This is not correct. Dev script guilds addresses are not fixed. Find a way to be sure to have each guild address here.
-
