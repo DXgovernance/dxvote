@@ -16,7 +16,7 @@ const InputRow = styled.div`
   flex-direction: row;
 `;
 
-const LinkInput = styled.input`
+const LinkInput = styled.input<{ invalid?: boolean }>`
   margin-top: 5px;
   width: 100%;
   height: 32px;

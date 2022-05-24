@@ -132,9 +132,7 @@ const UserVestingInfoModal: React.FC<UserVestingInfoModalProps> = ({
           <>
             <Row>
               <span>Contract Address: </span>
-              <StyledLink text={contract.address} toCopy>
-                {contract.address}↗
-              </StyledLink>
+              <StyledLink text={contract.address} toCopy />
             </Row>
             <Row>
               Start: {moment.unix(Number(contract.start)).format('LLL')}

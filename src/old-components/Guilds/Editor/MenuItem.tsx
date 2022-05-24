@@ -7,7 +7,7 @@ interface Props {
   isActive?: any;
 }
 
-const Item = styled.button`
+const Item = styled.button<{ active?: boolean }>`
   background-color: ${props =>
     props.active ? 'white' : ({ theme }) => theme.colors.background};
   border: none;

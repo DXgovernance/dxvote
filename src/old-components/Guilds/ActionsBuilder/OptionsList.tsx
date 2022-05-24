@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import {
   closestCenter,
   CollisionDetection,
@@ -31,6 +31,9 @@ import {
   restrictToVerticalAxis,
   restrictToFirstScrollableAncestor,
 } from '@dnd-kit/modifiers';
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import useGuildImplementationTypeConfig from 'hooks/Guilds/guild/useGuildImplementationType';
+import { BigNumber } from 'ethers';
 
 const AddOptionWrapper = styled(Box)`
   padding: 1rem;
@@ -55,6 +58,12 @@ const OptionsList: React.FC<OptionsListProps> = ({
   const lastOverId = useRef<UniqueIdentifier | null>(null);
   const [clonedOptions, setClonedOptions] = useState<Option[]>(null);
   const recentlyMovedToNewContainer = useRef(false);
+
+  const { guildId: guildAddress } = useTypedParams();
+  const { isEnforcedBinaryGuild } =
+    useGuildImplementationTypeConfig(guildAddress);
+
+  const theme = useTheme();
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -316,6 +325,27 @@ const OptionsList: React.FC<OptionsListProps> = ({
             </>
           ))}
         </SortableContext>
+      )}
+
+      {/* Show a placeholder No option when editing EnforcedBinaryGuilds */}
+      {isEnforcedBinaryGuild && isEditable && (
+        <>
+          <Divider />
+          <OptionRow
+            key={options.length}
+            option={{
+              id: 'option-Against',
+              color: theme.colors.red,
+              label: 'Against',
+              actions: [],
+              decodedActions: [],
+              totalVotes: BigNumber.from(0),
+            }}
+            isEditable={false}
+            onChange={() => {}}
+            editOption={() => {}}
+          />
+        </>
       )}
 
       {isEditable && (

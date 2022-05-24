@@ -12,7 +12,7 @@ const UnstyledInput = styled.input`
   outline: none;
 `;
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div<{ isInvalid?: boolean }>`
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -50,7 +50,7 @@ const InputWrapper = styled.div`
   }
 `;
 
-const IconContainer = styled.div`
+const IconContainer = styled.div<{ right?: boolean }>`
   margin-${({ right }) => (right ? 'left' : 'right')}: 0.3rem;
 `;
 

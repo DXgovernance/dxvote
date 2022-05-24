@@ -36,6 +36,7 @@
     "@dnd-kit/modifiers": "^5.0.0",
     "@dnd-kit/sortable": "^6.0.1",
     "@dnd-kit/utilities": "^3.1.0",
+    "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-truffle5": "^2.0.5",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@testing-library/react": "^12.1.4",
@@ -49,6 +50,7 @@
     "@types/node": "^16.11.7",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.5",
+    "@types/styled-components": "^5.1.25",
     "@uiw/react-md-editor": "1.14.0",
     "@uniswap/token-lists": "^1.0.0-beta.27",
     "@web3-react/core": "^6.0.7",
@@ -62,7 +64,7 @@
     "bignumber.js": "^9.0.2",
     "content-hash": "^2.5.2",
     "copy-to-clipboard": "^3.3.1",
-    "dxdao-contracts": "https://github.com/DXGovernance/dxdao-contracts.git#12ea7f4e1ea070699d148d8c4ced4aaa88f08627",
+    "dxdao-contracts": "https://github.com/DXGovernance/dxdao-contracts.git#64f96542c530c7b2c567c69c1fdca2eb383535ed",
     "eslint-plugin-cypress": "^2.12.1",
     "ether-swr": "^2.0.1",
     "ethers": "^5.5.2",
@@ -120,6 +122,7 @@
     "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
+    "hardhat-ethernal": "^1.0.0",
     "@storybook/addon-actions": "^6.4.22",
     "@storybook/addon-essentials": "^6.4.22",
     "@storybook/addon-interactions": "^6.4.22",
@@ -129,7 +132,6 @@
     "@storybook/react": "^6.4.22",
     "@storybook/testing-library": "^0.0.11",
     "@synthetixio/synpress": "^1.2.0",
-    "@testing-library/cypress": "^8.0.2",
     "@testing-library/cypress": "^8.0.2",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react-hooks": "^8.0.0",
@@ -195,4 +197,3 @@
     ]
   }
 }
-

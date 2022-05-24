@@ -2,7 +2,7 @@ import { FiExternalLink } from 'react-icons/fi';
 import styled, { css } from 'styled-components';
 import { Box } from '../../../../Components/Primitives/Layout';
 
-const InfoItemWrapper = styled(Box)`
+const InfoItemWrapper = styled(Box)<{ clickable?: boolean }>`
   display: flex;
   flex: 1;
   justify-content: space-between;
@@ -50,7 +50,7 @@ interface InfoItemProps {
 
 const InfoItem: React.FC<InfoItemProps> = ({ title, description, link }) => {
   return (
-    <InfoItemWrapper clickable={link}>
+    <InfoItemWrapper clickable={!!link}>
       <InfoItemText>
         <InfoItemTitle>{title}</InfoItemTitle>
         <InfoItemDescription>{description}</InfoItemDescription>

@@ -49,13 +49,19 @@ const PageContent = styled(Box)`
   }
 `;
 
-const StyledButton = styled(IconButton)`
+const StyledButton = styled(IconButton)<{
+  marginLeft?: string;
+  size?: number | string;
+}>`
   margin: 0;
   padding: 0.5rem 0.8rem;
   margin-left: ${props => props.marginLeft}; || 0
 `;
 
-const Label = styled.span`
+const Label = styled.span<{
+  color?: string;
+  size?: number | string;
+}>`
   font-family: Inter;
   font-style: normal;
   font-weight: 500;
@@ -190,7 +196,6 @@ const CreateProposalPage: React.FC = () => {
           </StyledButton>
 
           <StyledButton
-            padding="8px"
             onClick={handleToggleEditMode}
             disabled={!title || !proposalBodyMd}
             data-testid="create-proposal-editor-toggle-button"
