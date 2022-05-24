@@ -9,6 +9,11 @@ import { Button } from 'old-components/Guilds/common/Button';
 import Input from 'old-components/Guilds/common/Form/Input';
 import { Flex } from 'Components/Primitives/Layout';
 
+import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
+import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
+import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
+
 const InputContainer = styled(Flex)`
   flex-direction: row;
   /* Medium devices (landscape tablets, 768px and up) */
@@ -47,6 +52,27 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const GuildCardWrapper = ({ guildAddress }) => {
+  const { data: numberOfMembers } = useGuildMemberTotal(guildAddress);
+  const { t } = useTranslation();
+  const { data: numberOfActiveProposals } = useActiveProposalsNow(guildAddress);
+  const ensName = useENSNameFromAddress(guildAddress)?.split('.')[0];
+  const { data } = useGuildConfig(guildAddress);
+
+  return (
+    <CardContainer>
+      <GuildCard
+        guildAddress={guildAddress}
+        numberOfMembers={numberOfMembers}
+        t={t}
+        numberOfActiveProposals={numberOfActiveProposals}
+        ensName={ensName}
+        data={data}
+      />
+    </CardContainer>
+  );
+};
+
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
   const { data: allGuilds, error } = useGuildRegistry();
@@ -74,16 +100,16 @@ const LandingPage: React.FC = () => {
         ) : isLoading ? (
           <>
             {/* Render loading state */}
-            <GuildCard guildAddress={null} />
-            <GuildCard guildAddress={null} />
-            <GuildCard guildAddress={null} />
+            <GuildCardWrapper guildAddress={null} />
+            <GuildCardWrapper guildAddress={null} />
+            <GuildCardWrapper guildAddress={null} />
           </>
         ) : !allGuilds.length ? (
           <>{/* Render empty state */}</>
         ) : (
           /* Render success state */
           allGuilds.map(guildAddress => (
-            <GuildCard key={guildAddress} guildAddress={guildAddress} />
+            <GuildCardWrapper key={guildAddress} guildAddress={guildAddress} />
           ))
         )}
       </CardContainer>
