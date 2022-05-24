@@ -135,6 +135,11 @@ describe(`Set Permissions editor`, () => {
         />
       );
 
+      const addressToggle = screen.getByRole('switch', {
+        name: /toggle any address/i,
+      });
+      fireEvent.click(addressToggle);
+
       const toAddressElement: HTMLInputElement = screen.getByRole('textbox', {
         name: /to address input/i,
       });

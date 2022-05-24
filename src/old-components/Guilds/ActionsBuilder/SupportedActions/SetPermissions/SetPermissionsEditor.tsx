@@ -96,13 +96,13 @@ const Permissions: React.FC<ActionEditorProps> = ({
     MAINNET_ID
   );
 
-  // functions to set contract arguments
+  //
+  // Asset-related functions
+  //
 
-  // asset
   const setAsset = (asset: string) => {
     decodedCall.args.asset = [asset];
     updateCall(decodedCall);
-    debugger;
   };
   const handleAssetChange = (asset: string) => {
     setAsset(asset);
@@ -113,27 +113,9 @@ const Permissions: React.FC<ActionEditorProps> = ({
     if (activeTab === 1) setAsset(ZERO_ADDRESS);
   }, [activeTab]);
 
-  // valueAllowed
-  const setAmount = (valueAllowed: BigNumber) => {
-    updateCall({
-      ...decodedCall,
-      args: {
-        ...decodedCall.args,
-        valueAllowed: [valueAllowed],
-      },
-    });
-  };
-
-  // to address
-  const setToAddress = (to: string) => {
-    updateCall({
-      ...decodedCall,
-      args: {
-        ...decodedCall.args,
-        to: [to],
-      },
-    });
-  };
+  //
+  // Function and function signature related functions
+  //
 
   // function signature
   const setFunctionSignature = (value: string) => {
@@ -190,6 +172,21 @@ const Permissions: React.FC<ActionEditorProps> = ({
     if (activeTab === 1) setFunctionSignature(customFunctionName);
   }, [activeTab]);
 
+  //
+  // Amount related functions
+  //
+
+  // valueAllowed
+  const setAmount = (valueAllowed: BigNumber) => {
+    updateCall({
+      ...decodedCall,
+      args: {
+        ...decodedCall.args,
+        valueAllowed: [valueAllowed],
+      },
+    });
+  };
+
   const [customAmountValue, setCustomAmountValue] = useState(
     parsedData?.valueAllowed[0]
   );
@@ -202,12 +199,37 @@ const Permissions: React.FC<ActionEditorProps> = ({
 
   const [maxValueToggled, setMaxValueToggled] = useState(false);
   const bigNumberMaxUINT = BigNumber.from(MAX_UINT);
-  const handleToggleChange = () => {
+  const handleToggleMaxValueChange = () => {
     if (!maxValueToggled) setAmount(bigNumberMaxUINT);
+    else setAmount(customAmountValue);
     setMaxValueToggled(!maxValueToggled);
   };
 
+  //
+  // To-Address related functions
+  //
+
   const [customToAddress, setCustomToAddress] = useState(parsedData?.to[0]);
+  const [anyAddressToggled, setAnyAddressToggled] = useState(
+    parsedData?.to[0] === ANY_ADDRESS
+  );
+  // to address
+  const setToAddress = (to: string) => {
+    updateCall({
+      ...decodedCall,
+      args: {
+        ...decodedCall.args,
+        to: [to],
+      },
+    });
+  };
+
+  const handleToggleAnyAddressChange = () => {
+    if (!anyAddressToggled) setToAddress(ANY_ADDRESS);
+    else setToAddress(customToAddress);
+    setAnyAddressToggled(!anyAddressToggled);
+  };
+
   const handleCustomAddress = value => {
     setCustomToAddress(value);
     if (value === '') {
@@ -216,11 +238,14 @@ const Permissions: React.FC<ActionEditorProps> = ({
       setToAddress(value);
     }
   };
+
   // If the 'to' address is ANY_ADDRESS, set customAmount to '', to
   // show the address input empty, instead of the long 0xAaaAaaa address
   useEffect(() => {
     if (parsedData?.to[0] === ANY_ADDRESS) handleCustomAddress('');
   }, []);
+
+  // TODO: Disable clicking on "X" on input address when disabled
 
   return (
     <div>
@@ -250,11 +275,13 @@ const Permissions: React.FC<ActionEditorProps> = ({
           customAmountValue={customAmountValue}
           handleTokenAmountInputChange={handleTokenAmountInputChange}
           maxValueToggled={maxValueToggled}
-          handleToggleChange={handleToggleChange}
+          handleToggleMaxValueChange={handleToggleMaxValueChange}
           handleAssetChange={handleAssetChange}
           customToAddress={customToAddress}
           handleCustomAddress={handleCustomAddress}
           pickedAsset={pickedAsset}
+          anyAddressToggled={anyAddressToggled}
+          handleToggleAnyAddressChange={handleToggleAnyAddressChange}
         />
       )}
       {activeTab === 1 && (
@@ -270,8 +297,10 @@ const Permissions: React.FC<ActionEditorProps> = ({
           customAmountValue={customAmountValue}
           handleTokenAmountInputChange={handleTokenAmountInputChange}
           maxValueToggled={maxValueToggled}
-          handleToggleChange={handleToggleChange}
+          handleToggleMaxValueChange={handleToggleMaxValueChange}
           setAsset={setAsset}
+          anyAddressToggled={anyAddressToggled}
+          handleToggleAnyAddressChange={handleToggleAnyAddressChange}
         />
       )}
     </div>

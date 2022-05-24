@@ -4,18 +4,12 @@ import {
   ControlRow,
 } from 'Components/Primitives/Forms/Control';
 import Input from 'old-components/Guilds/common/Form/Input';
-import Avatar from 'old-components/Guilds/Avatar';
-import {
-  ClickableIcon,
-  StyledTokenAmount,
-  ToggleWrapper,
-  ToggleLabel,
-} from './styles';
-import { FiX } from 'react-icons/fi';
+import { StyledTokenAmount, ToggleWrapper, ToggleLabel } from './styles';
 import { ParsedDataInterface, ValidationsInterface } from './types';
 import styled from 'styled-components';
 import Toggle from 'old-components/Guilds/common/Form/Toggle';
 import { BigNumber } from 'ethers';
+import AddressInput from './AddressInput';
 
 const FunctionSignatureWrapper = styled.div`
   color: ${({ theme }) => theme.colors.proposalText.grey};
@@ -35,8 +29,10 @@ interface FunctionCallProps {
   customAmountValue: BigNumber;
   handleTokenAmountInputChange: (e: string) => void;
   maxValueToggled: boolean;
-  handleToggleChange: () => void;
+  handleToggleMaxValueChange: () => void;
   setAsset: (asset: string) => void;
+  anyAddressToggled: boolean;
+  handleToggleAnyAddressChange: () => void;
 }
 
 const FunctionCall: React.FC<FunctionCallProps> = ({
@@ -51,8 +47,10 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
   customAmountValue,
   handleTokenAmountInputChange,
   maxValueToggled,
-  handleToggleChange,
+  handleToggleMaxValueChange,
   setAsset,
+  anyAddressToggled,
+  handleToggleAnyAddressChange,
 }) => {
   // ? maybe change the input validation so it doesn't validates until blur?
 
@@ -61,33 +59,23 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
       <Control>
         <ControlLabel>To address</ControlLabel>
         <ControlRow>
-          <Input
-            name="to-address"
-            aria-label="to address input"
-            value={customToAddress}
-            icon={
-              <div>
-                {validations.to && (
-                  <Avatar
-                    src={destinationAvatarUrl}
-                    defaultSeed={parsedData.to[0]}
-                    size={24}
-                  />
-                )}
-              </div>
-            }
-            iconRight={
-              parsedData?.to[0] ? (
-                <ClickableIcon onClick={() => handleCustomAddress('')}>
-                  <FiX size={18} />
-                </ClickableIcon>
-              ) : null
-            }
-            placeholder="Ethereum address"
-            onChange={e => {
-              handleCustomAddress(e.target.value);
-            }}
+          <AddressInput
+            customToAddress={customToAddress}
+            anyAddressToggled={anyAddressToggled}
+            validations={validations}
+            destinationAvatarUrl={destinationAvatarUrl}
+            parsedData={parsedData}
+            handleCustomAddress={handleCustomAddress}
           />
+          <ToggleWrapper>
+            <Toggle
+              name="toggle-any-address"
+              aria-label="toggle any address"
+              value={anyAddressToggled}
+              onChange={handleToggleAnyAddressChange}
+            />
+            <ToggleLabel selected={anyAddressToggled}>Any address</ToggleLabel>
+          </ToggleWrapper>
         </ControlRow>
       </Control>
       <Control>
@@ -126,7 +114,7 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
               name="toggle-max-value"
               aria-label="toggle max value"
               value={maxValueToggled}
-              onChange={handleToggleChange}
+              onChange={handleToggleMaxValueChange}
             />
             <ToggleLabel selected={maxValueToggled}>Max value</ToggleLabel>
           </ToggleWrapper>

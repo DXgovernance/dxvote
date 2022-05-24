@@ -1,23 +1,19 @@
 import { useState } from 'react';
 import Input from 'old-components/Guilds/common/Form/Input';
 import Avatar from 'old-components/Guilds/Avatar';
-import { FiChevronDown, FiX } from 'react-icons/fi';
+import { FiChevronDown } from 'react-icons/fi';
 import { resolveUri } from 'utils/url';
 import {
   Control,
   ControlLabel,
   ControlRow,
 } from 'Components/Primitives/Forms/Control';
-import {
-  ClickableIcon,
-  StyledTokenAmount,
-  ToggleWrapper,
-  ToggleLabel,
-} from './styles';
+import { StyledTokenAmount, ToggleWrapper, ToggleLabel } from './styles';
 import Toggle from 'old-components/Guilds/common/Form/Toggle';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
 import { ParsedDataInterface, ValidationsInterface } from './types';
 import { BigNumber } from 'ethers';
+import AddressInput from './AddressInput';
 
 interface AssetTransferProps {
   validations: ValidationsInterface;
@@ -28,11 +24,13 @@ interface AssetTransferProps {
   customAmountValue: BigNumber;
   handleTokenAmountInputChange: (e: string) => void;
   maxValueToggled: boolean;
-  handleToggleChange: () => void;
+  handleToggleMaxValueChange: () => void;
   handleAssetChange: (asset: string) => void;
   customToAddress: string;
   handleCustomAddress: (value: string) => void;
   pickedAsset: string;
+  anyAddressToggled: boolean;
+  handleToggleAnyAddressChange: () => void;
 }
 
 const AssetTransfer: React.FC<AssetTransferProps> = ({
@@ -44,11 +42,13 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
   customAmountValue,
   handleTokenAmountInputChange,
   maxValueToggled,
-  handleToggleChange,
+  handleToggleMaxValueChange,
   handleAssetChange,
   customToAddress,
   handleCustomAddress,
   pickedAsset,
+  anyAddressToggled,
+  handleToggleAnyAddressChange,
 }) => {
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
 
@@ -91,34 +91,23 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
       <Control>
         <ControlLabel>To address</ControlLabel>
         <ControlRow>
-          <Input
-            name="to-address"
-            aria-label="to address input"
-            value={customToAddress}
-            icon={
-              <div>
-                {validations.to && (
-                  <Avatar
-                    src={destinationAvatarUrl}
-                    defaultSeed={parsedData.to[0]}
-                    size={24}
-                  />
-                )}
-              </div>
-            }
-            iconRight={
-              parsedData?.to[0] ? (
-                <ClickableIcon
-                  aria-label="clear field to address"
-                  onClick={() => handleCustomAddress('')}
-                >
-                  <FiX size={18} />
-                </ClickableIcon>
-              ) : null
-            }
-            placeholder="Ethereum address"
-            onChange={e => handleCustomAddress(e.target.value)}
+          <AddressInput
+            customToAddress={customToAddress}
+            anyAddressToggled={anyAddressToggled}
+            validations={validations}
+            destinationAvatarUrl={destinationAvatarUrl}
+            parsedData={parsedData}
+            handleCustomAddress={handleCustomAddress}
           />
+          <ToggleWrapper>
+            <Toggle
+              name="toggle-any-address"
+              aria-label="toggle any address"
+              value={anyAddressToggled}
+              onChange={handleToggleAnyAddressChange}
+            />
+            <ToggleLabel selected={anyAddressToggled}>Any address</ToggleLabel>
+          </ToggleWrapper>
         </ControlRow>
       </Control>
       <Control>
@@ -137,7 +126,7 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
               name="toggle-max-value"
               aria-label="toggle max value"
               value={maxValueToggled}
-              onChange={handleToggleChange}
+              onChange={handleToggleMaxValueChange}
             />
             <ToggleLabel selected={maxValueToggled}>Max value</ToggleLabel>
           </ToggleWrapper>
