@@ -66,4 +66,6 @@ export interface GuildsTheme extends ThemeBase {
   };
 }
 
+console.log({ theme });
+
 export const GuildsDarkTheme: GuildsTheme = theme;

@@ -3,14 +3,14 @@ import AddressButton from 'Components/AddressButton/AddressButton';
 import { fullProps, partialProps } from './fixtures';
 
 export default {
-  title: 'Components/AddressButton',
+  title: 'Addresses/AddressButton',
   component: AddressButton,
   argTypes: {
     address: {
-      description: 'Proposal creator address',
+      description: 'Ethereum address',
     },
     transactionsCounter: {
-      description: 'Number of transactions of the proposal',
+      description: 'Number of transactions for the address',
     },
   },
 } as ComponentMeta<typeof AddressButton>;

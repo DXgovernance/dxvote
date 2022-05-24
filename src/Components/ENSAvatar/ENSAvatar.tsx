@@ -3,6 +3,7 @@ import React from 'react';
 import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import Avatar from '../Primitives/Avatar';
 import { Loading } from 'Components/Primitives/Loading';
+import { ENSAvatarProps } from './types';
 
 const ENSAvatarContainer = styled.span`
   display: inline-flex;
@@ -12,11 +13,6 @@ const ENSAvatarContainer = styled.span`
   border-radius: 50%;
   line-height: 0;
 `;
-
-interface ENSAvatarProps {
-  address?: string;
-  size?: number;
-}
 
 const ENSAvatar: React.FC<ENSAvatarProps> = ({ address, size = 24 }) => {
   const { imageUrl } = useENSAvatar(address, 1);
