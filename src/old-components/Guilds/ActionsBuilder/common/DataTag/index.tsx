@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 interface DataTagProps {
-  children: React.ReactElement;
+  children: React.ReactNode;
 }
 
 const DataTag = styled.span<DataTagProps>`

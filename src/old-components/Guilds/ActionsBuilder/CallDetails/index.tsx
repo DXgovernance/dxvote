@@ -45,7 +45,7 @@ const CallDetails: React.FC<ActionViewProps> = ({
 
     if (type === 'address') {
       return (
-        <UnstyledLink href="#">
+        <UnstyledLink to="#">
           <ParamDetail>
             {value} <FiExternalLink size={16} />
           </ParamDetail>

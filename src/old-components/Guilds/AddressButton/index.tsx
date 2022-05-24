@@ -82,7 +82,7 @@ const AddressButton: React.FC<AddressButtonProps> = ({
         </AddressText>
       )}
       {transactionsCounter ? (
-        <Badge size="25">{transactionsCounter}</Badge>
+        <Badge size={25}>{transactionsCounter}</Badge>
       ) : null}
     </StyledAddressButton>
   );

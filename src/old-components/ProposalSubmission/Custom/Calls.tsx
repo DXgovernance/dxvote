@@ -47,7 +47,7 @@ const TextInput = styled.input`
   margin-right: 5px;
 `;
 
-const SelectInput = styled.select`
+const SelectInput = styled.select<{ width?: string | number }>`
   width: ${props => props.width || '25%'};
   height: 38px;
   border-radius: 3px;
@@ -100,9 +100,6 @@ export const Calls = ({
                   onChange={e => {
                     onToSelectChange(i, e.target.value);
                   }}
-                  onClick={e => {
-                    onToSelectChange(i, e.target.value);
-                  }}
                   width={'20%'}
                 >
                   {allowedToCall.map((allowedCall, allowedCallIndex) => {
@@ -122,9 +119,6 @@ export const Calls = ({
                     onChange={e => {
                       onToSelectChange(i, e.target.value);
                     }}
-                    onClick={e => {
-                      onToSelectChange(i, e.target.value);
-                    }}
                     width={'20%'}
                   />
                 )
@@ -140,20 +134,6 @@ export const Calls = ({
                   <SelectInput
                     value={calls[i].functionName || ''}
                     onChange={event => {
-                      const selectedFunction = calls[i].allowedFunctions.find(
-                        allowedFunction => {
-                          return (
-                            allowedFunction.functionName === event.target.value
-                          );
-                        }
-                      );
-                      onFunctionSelectChange(
-                        i,
-                        event.target.value,
-                        selectedFunction ? selectedFunction.params : ''
-                      );
-                    }}
-                    onClick={event => {
                       const selectedFunction = calls[i].allowedFunctions.find(
                         allowedFunction => {
                           return (
@@ -244,9 +224,7 @@ export const Calls = ({
                 value={calls[i].value || ''}
                 width="10%"
                 placeholder={
-                  calls[i].callType === 'advanced'
-                    ? 'WEI'
-                    : { networkAssetSymbol }
+                  calls[i].callType === 'advanced' ? 'WEI' : networkAssetSymbol
                 }
               />
 

@@ -59,8 +59,8 @@ export const Mint: React.FC<ActionEditorProps> = ({
   updateCall,
 }) => {
   // parse transfer state from calls
-  const [repPercent, setRepPercent] = useState(0);
-  const [repAmount, setRepAmount] = useState(0);
+  const [repPercent, setRepPercent] = useState<string>('0');
+  const [repAmount, setRepAmount] = useState<string>('0');
   const { parsedData } = useTotalSupply({ decodedCall });
   const { tokenData } = useTokenData();
 
@@ -79,13 +79,13 @@ export const Mint: React.FC<ActionEditorProps> = ({
   };
 
   useEffect(() => {
-    setRepAmount((repPercent / 100) * totalSupply);
+    setRepAmount(String((Number(repPercent) / 100) * totalSupply));
     if (repAmount) {
       setCallDataAmount(repAmount.toString());
     }
   }, [repPercent, repAmount, totalSupply]);
 
-  const handleRepChange = (e: number) => {
+  const handleRepChange = (e: string) => {
     if (e) {
       setRepPercent(e);
     }

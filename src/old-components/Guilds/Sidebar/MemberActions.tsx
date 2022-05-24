@@ -135,7 +135,7 @@ export const MemberActions = () => {
   const { isRepGuild } = useGuildImplementationType(guildAddress);
   return (
     <>
-      <DropdownMenu ref={memberMenuRef}>
+      <DropdownMenu data-testid="member-actions-button" ref={memberMenuRef}>
         <UserActionButton iconLeft onClick={() => setShowMenu(!showMenu)}>
           <div>
             <IconHolder>
@@ -153,7 +153,7 @@ export const MemberActions = () => {
         </UserActionButton>
         <DropdownContent fullScreenMobile={true} show={showMenu}>
           {isMobile && (
-            <DropdownHeader noTopPadding onClick={() => setShowMenu(false)}>
+            <DropdownHeader onClick={() => setShowMenu(false)}>
               <FiArrowLeft /> <span>Membership</span>
             </DropdownHeader>
           )}

@@ -4,7 +4,7 @@ import { useRpcUrls } from 'provider/providerHooks';
 import { Button } from '../common/Button';
 import { useWeb3React } from '@web3-react/core';
 import WalletModal from '../Web3Modals/WalletModal';
-import AddressButton from '../AddressButton';
+import AddressButton from 'Components/AddressButton/AddressButton';
 import { useTransactions } from '../../../contexts/Guilds';
 
 const Web3Status = () => {

@@ -24,7 +24,7 @@ const VotesChartRow = styled.div`
   overflow: hidden;
 `;
 
-const ChartBar = styled.div`
+const ChartBar = styled.div<{ percent?: number; color: string }>`
   width: ${({ percent }) => (percent ? `${percent}%` : '')};
   background: ${({ color }) => color};
   height: 0.75rem;
@@ -33,7 +33,7 @@ const ChartBar = styled.div`
 
 // The margin top and height are different when quorum 0 or 100,
 // becase the border radious of the container, the marker needs to touch the curved line.
-const VoteQuorumMarker = styled.div`
+const VoteQuorumMarker = styled.div<{ quorum: number }>`
   height: ${({ quorum }) => (quorum === 0 || quorum === 100 ? '18px' : '14px')};
   margin-top: ${({ quorum }) =>
     quorum === 0 || quorum === 100 ? '10px' : '14px'};
@@ -41,7 +41,7 @@ const VoteQuorumMarker = styled.div`
   background: ${({ theme }) => theme.colors.muted};
 `;
 
-const VoteQuorumLabel = styled.div`
+const VoteQuorumLabel = styled.div<{ quorum: number }>`
   padding: 4px 8px;
   border: 1px solid ${({ theme }) => theme.colors.muted};
   border-radius: ${({ quorum, theme }) =>
@@ -63,7 +63,7 @@ const VoteQuorumLabel = styled.div`
 // If quorum <10, we align to left the marker and label, and left position of container is quorum.
 // if 10 < quorum < 90, we left position the container at the quorum - the half of the width of the label, centered flex.
 // quorum > 90, we align the container at the quorum - the full width of the label, right alignment label and marker.
-const VoteQuorumContainer = styled.div`
+const VoteQuorumContainer = styled.div<{ quorum: number }>`
   width: 65px;
   position: absolute;
   display: flex;

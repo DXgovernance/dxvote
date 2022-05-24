@@ -1,5 +1,5 @@
 import { useProposal } from '../../hooks/Guilds/ether-swr/guild/useProposal';
-import AddressButton from '../../old-components/Guilds/AddressButton';
+import AddressButton from 'Components/AddressButton/AddressButton';
 import ProposalDescription from '../../old-components/Guilds/ProposalPage/ProposalDescription';
 import ProposalInfoCard from '../../old-components/Guilds/ProposalPage/ProposalInfoCard';
 import ProposalVoteCard from '../../old-components/Guilds/ProposalPage/ProposalVoteCard';
