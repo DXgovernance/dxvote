@@ -3,6 +3,10 @@ import { Box } from 'Components/Primitives/Layout';
 import { Button } from 'old-components/Guilds/common/Button';
 import TokenAmountInput from 'old-components/Guilds/common/Form/TokenAmountInput';
 
+interface ToggleLabelProps {
+  selected: boolean;
+}
+
 export const ClickableIcon = styled(Box)`
   display: flex;
   align-items: center;
@@ -28,7 +32,7 @@ export const ToggleWrapper = styled.div`
   margin-left: 1rem;
 `;
 
-export const ToggleLabel = styled.div`
+export const ToggleLabel = styled.div<ToggleLabelProps>`
   white-space: nowrap;
   margin-left: 1rem;
 
