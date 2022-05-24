@@ -27,7 +27,7 @@ interface FunctionCallProps {
   customFunctionName: string;
   tokenInfo: any;
   customAmountValue: BigNumber;
-  handleTokenAmountInputChange: (e: string) => void;
+  handleTokenAmountInputChange: (e: BigNumber) => void;
   maxValueToggled: boolean;
   handleToggleMaxValueChange: () => void;
   setAsset: (asset: string) => void;

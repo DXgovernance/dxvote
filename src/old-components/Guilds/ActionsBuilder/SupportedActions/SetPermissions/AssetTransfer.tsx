@@ -22,7 +22,7 @@ interface AssetTransferProps {
   tokenInfo: any;
   token: any;
   customAmountValue: BigNumber;
-  handleTokenAmountInputChange: (e: string) => void;
+  handleTokenAmountInputChange: (e: BigNumber) => void;
   maxValueToggled: boolean;
   handleToggleMaxValueChange: () => void;
   handleAssetChange: (asset: string) => void;

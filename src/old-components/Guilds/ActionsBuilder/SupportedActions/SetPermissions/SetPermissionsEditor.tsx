@@ -164,7 +164,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
   const [customFunctionName, setCustomFunctionName] = useState(
     parsedData?.functionName
   );
-  const handleCustomFunctionSignature = value => {
+  const handleCustomFunctionSignature = (value: string) => {
     setCustomFunctionName(value);
     setFunctionSignature(value);
   };
@@ -193,7 +193,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
   );
   // This function was implemented to avoid the amount input to
   // change to MAX_UINT toggling to "Max value"
-  const handleTokenAmountInputChange = e => {
+  const handleTokenAmountInputChange = (e: BigNumber) => {
     setAmount(e);
     setCustomAmountValue(e);
   };
@@ -231,7 +231,7 @@ const Permissions: React.FC<ActionEditorProps> = ({
     setAnyAddressToggled(!anyAddressToggled);
   };
 
-  const handleCustomAddress = value => {
+  const handleCustomAddress = (value: string) => {
     setCustomToAddress(value);
     if (value === '') {
       setToAddress(ANY_ADDRESS);
