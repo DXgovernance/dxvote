@@ -105,7 +105,11 @@ const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
           }}
         />
 
-        <BlockButton primary onClick={confirm} disabled={!amount || !token}>
+        <BlockButton
+          variant="primary"
+          onClick={confirm}
+          disabled={!amount || !token}
+        >
           {t('approve')}
         </BlockButton>
       </SectionWrapper>

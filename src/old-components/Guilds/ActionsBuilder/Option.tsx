@@ -11,7 +11,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import ActionModal from 'old-components/Guilds/ActionsModal';
+import { ActionModal } from 'Components/ActionsModal';
 import { Box } from 'Components/Primitives/Layout';
 import { useState } from 'react';
 import styled from 'styled-components';

@@ -21,7 +21,7 @@ export const SectionWrapper = styled.div`
 
 export const ActionsButton = styled(Button).attrs(() => ({
   variant: 'secondary',
-}))`
+}))<{ vertical?: boolean }>`
   background-color: transparent;
   padding: ${({ vertical }) => (vertical ? '1rem' : '0.75rem 1rem')};
   width: 100%;
@@ -52,7 +52,7 @@ export const ButtonLabel = styled.div`
 
 export const ButtonDetail = styled(ContainerText).attrs(() => ({
   variant: 'medium',
-}))`
+}))<{ vertical?: boolean }>`
   margin: ${({ vertical }) => (vertical ? '0.5rem 0 0 0' : '0')};
   color: ${({ theme }) => theme.colors.proposalText.grey};
 `;
