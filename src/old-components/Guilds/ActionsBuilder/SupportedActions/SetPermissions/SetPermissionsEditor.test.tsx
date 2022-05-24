@@ -92,6 +92,8 @@ describe(`Set Permissions editor`, () => {
         screen.getByRole('textbox', { name: /to address input/i })
       ).toBeInTheDocument();
 
+      expect(screen.getByRole('switch', { name: /toggle any address/i }));
+
       expect(
         screen.getByRole('textbox', { name: /amount input/i })
       ).toBeInTheDocument();
@@ -293,10 +295,26 @@ describe(`Set Permissions editor`, () => {
 
       const functionsCallTab = screen.getByLabelText(`functions call tab`);
       fireEvent.click(functionsCallTab);
-      expect(screen.getByText(`Functions call`));
-      expect(screen.getByText(`To address`));
-      expect(screen.getByText(`Function name`));
-      expect(screen.getByText(`Amount`));
+
+      expect(
+        screen.getByRole('textbox', { name: /to address input/i })
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('switch', { name: /toggle any address/i })
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('textbox', { name: /function signature input/i })
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('textbox', { name: /amount input/i })
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('switch', { name: /toggle max value/i })
+      ).toBeInTheDocument();
     });
 
     it(`'To address' persists when changing tabs`, () => {});
