@@ -6,6 +6,7 @@
     "deleteOption": "Delete Option",
     "optionLabel": "Option Label"
   },
+  "proposals_zero": "No proposals",
   "proposals_one": "{{count}} proposal",
   "proposals_other": "{{count}} proposals",
   "save": "Save"

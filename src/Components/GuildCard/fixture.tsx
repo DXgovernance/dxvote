@@ -1,6 +1,6 @@
 import { GuildCardProps } from './types';
 
-export const validAddress: GuildCardProps = {
+export const fullParameters: GuildCardProps = {
   guildAddress: '0xa47BbE8Dd6dB29D45FE5eeD838c4f136884AEAF3',
   numberOfMembers: 5,
   t: null,
@@ -9,7 +9,7 @@ export const validAddress: GuildCardProps = {
   data: { name: 'REPGuild' },
 };
 
-export const nullAddress: GuildCardProps = {
+export const loadingParameters: GuildCardProps = {
   isLoading: true,
   guildAddress: null,
   numberOfMembers: null,
@@ -17,4 +17,13 @@ export const nullAddress: GuildCardProps = {
   numberOfActiveProposals: null,
   ensName: null,
   data: null,
+};
+
+export const noProposals: GuildCardProps = {
+  guildAddress: '0xa47BbE8Dd6dB29D45FE5eeD838c4f136884AEAF3',
+  numberOfMembers: 5,
+  t: null,
+  numberOfActiveProposals: 0,
+  ensName: 'REPGuild',
+  data: { name: 'REPGuild' },
 };

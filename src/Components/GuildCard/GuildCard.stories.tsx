@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import GuildCard from 'Components/GuildCard/GuildCard';
-import { validAddress, nullAddress } from './fixture';
+import { fullParameters, loadingParameters, noProposals } from './fixture';
 import { useTranslation } from 'react-i18next';
 import 'i18n';
 
@@ -42,7 +42,7 @@ const TranslationWrapper = ({ args }) => {
 };
 
 const Template: ComponentStory<typeof GuildCard> = args => (
-  <TranslationWrapper args={validAddress} />
+  <TranslationWrapper args={args} />
 );
 
 const TemplateLoading: ComponentStory<typeof GuildCard> = args => (
@@ -54,7 +54,10 @@ const TemplateLoading: ComponentStory<typeof GuildCard> = args => (
 );
 
 export const Simple = Template.bind({});
-Simple.args = validAddress;
+Simple.args = fullParameters;
+
+export const NoProposals = Template.bind({});
+NoProposals.args = noProposals;
 
 export const Loading = TemplateLoading.bind({});
-Loading.args = nullAddress;
+Loading.args = loadingParameters;

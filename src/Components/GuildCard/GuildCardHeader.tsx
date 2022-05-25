@@ -15,7 +15,7 @@ const Members = ({ numberOfMembers }) => {
 
 const Proposals = ({ t, numberOfActiveProposals }) => {
   return (
-    <ProposalsInformation proposals={'active'}>
+    <ProposalsInformation proposals={numberOfActiveProposals >= 1 && 'active'}>
       {t('proposals', {
         count: parseInt(numberOfActiveProposals),
       })}
