@@ -3,16 +3,7 @@ import { Card } from 'old-components/Guilds/common/Card/index';
 import GuildCardHeader from './GuildCardHeader';
 import GuildCardContent from './GuildCardContent';
 import { cardWrapperStyles } from './GuildCard.styled';
-
-interface GuildCardProps {
-  isLoading?: boolean;
-  guildAddress: string;
-  numberOfMembers: any;
-  t: any;
-  numberOfActiveProposals: any;
-  ensName: string;
-  data: any;
-}
+import { GuildCardProps } from './types';
 
 const GuildCard: React.FC<GuildCardProps> = ({
   isLoading,
