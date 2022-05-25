@@ -52,9 +52,24 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const GuildCardWrapper = ({ guildAddress }) => {
+const GuildCardLoader = () => {
+  return (
+    <CardContainer>
+      <GuildCard
+        isLoading={true}
+        guildAddress={null}
+        numberOfMembers={null}
+        t={null}
+        numberOfActiveProposals={null}
+        ensName={null}
+        data={null}
+      />
+    </CardContainer>
+  );
+};
+
+const GuildCardWithContent = ({ guildAddress, t }) => {
   const { data: numberOfMembers } = useGuildMemberTotal(guildAddress);
-  const { t } = useTranslation();
   const { data: numberOfActiveProposals } = useActiveProposalsNow(guildAddress);
   const ensName = useENSNameFromAddress(guildAddress)?.split('.')[0];
   const { data } = useGuildConfig(guildAddress);
@@ -100,16 +115,20 @@ const LandingPage: React.FC = () => {
         ) : isLoading ? (
           <>
             {/* Render loading state */}
-            <GuildCardWrapper guildAddress={null} />
-            <GuildCardWrapper guildAddress={null} />
-            <GuildCardWrapper guildAddress={null} />
+            <GuildCardLoader />
+            <GuildCardLoader />
+            <GuildCardLoader />
           </>
         ) : !allGuilds.length ? (
           <>{/* Render empty state */}</>
         ) : (
           /* Render success state */
           allGuilds.map(guildAddress => (
-            <GuildCardWrapper key={guildAddress} guildAddress={guildAddress} />
+            <GuildCardWithContent
+              key={guildAddress}
+              guildAddress={guildAddress}
+              t={t}
+            />
           ))
         )}
       </CardContainer>

@@ -6,6 +6,10 @@ import {
   ProposalsInformation,
 } from './GuildCardHeader.styled';
 
+const Members = ({ numberOfMembers }) => {
+  return <div>{numberOfMembers?.toString()}</div>;
+};
+
 const Proposals = ({ t, numberOfActiveProposals }) => {
   return (
     <ProposalsInformation proposals={'active'}>
@@ -17,38 +21,37 @@ const Proposals = ({ t, numberOfActiveProposals }) => {
 };
 
 interface GuildCardHeaderProps {
-  guildAddress: string;
+  isLoading?: boolean;
   t: any;
   numberOfActiveProposals: any;
   numberOfMembers: any;
 }
 
 const GuildCardHeader: React.FC<GuildCardHeaderProps> = ({
-  guildAddress,
+  isLoading,
   t,
   numberOfActiveProposals,
   numberOfMembers,
 }) => {
-  console.log(t);
   return (
     <Header>
       <MemberWrapper>
         <MdOutlinePeopleAlt size={24} />
-        {guildAddress ? (
-          <div>{numberOfMembers?.toString()}</div>
-        ) : (
+        {isLoading ? (
           <Loading skeletonProps={{ width: 20 }} text loading />
+        ) : (
+          <Members numberOfMembers={numberOfMembers} />
         )}
       </MemberWrapper>
-      {guildAddress ? (
-        <Proposals t={t} numberOfActiveProposals={numberOfActiveProposals} />
-      ) : (
+      {isLoading ? (
         <Loading
           style={{ height: 43, alignItems: 'center', display: 'flex' }}
           skeletonProps={{ width: 100, height: 22 }}
           text
           loading
         />
+      ) : (
+        <Proposals t={t} numberOfActiveProposals={numberOfActiveProposals} />
       )}
     </Header>
   );

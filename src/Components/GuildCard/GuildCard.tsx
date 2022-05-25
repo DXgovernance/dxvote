@@ -1,11 +1,11 @@
 import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import { Card } from 'old-components/Guilds/common/Card/index';
-// import { GuildCardProps } from './types';
 import GuildCardHeader from './GuildCardHeader';
 import GuildCardContent from './GuildCardContent';
 import { cardWrapperStyles } from './GuildCard.styled';
 
 interface GuildCardProps {
+  isLoading?: boolean;
   guildAddress: string;
   numberOfMembers: any;
   t: any;
@@ -15,6 +15,7 @@ interface GuildCardProps {
 }
 
 const GuildCard: React.FC<GuildCardProps> = ({
+  isLoading,
   guildAddress,
   numberOfMembers,
   t,
@@ -29,16 +30,12 @@ const GuildCard: React.FC<GuildCardProps> = ({
     >
       <Card customStyles={cardWrapperStyles}>
         <GuildCardHeader
-          guildAddress={guildAddress}
+          isLoading={isLoading}
           numberOfMembers={numberOfMembers}
           t={t}
           numberOfActiveProposals={numberOfActiveProposals}
         />
-        <GuildCardContent
-          guildAddress={guildAddress}
-          ensName={ensName}
-          data={data}
-        />
+        <GuildCardContent isLoading={isLoading} ensName={ensName} data={data} />
       </Card>
     </UnstyledLink>
   );

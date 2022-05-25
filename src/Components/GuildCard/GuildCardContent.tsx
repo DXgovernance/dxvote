@@ -17,28 +17,28 @@ const DaoTitle = styled(Heading)`
 `;
 
 interface GuildCardContentProps {
-  guildAddress: string;
+  isLoading?: boolean;
   ensName: string;
   data: any;
 }
 
 const GuildCardContent: React.FC<GuildCardContentProps> = ({
-  guildAddress,
+  isLoading,
   ensName,
   data,
 }) => {
   return (
     <Content>
       <DaoIcon src={dxDaoIcon} />
-      {guildAddress ? (
-        <DaoTitle size={2}>{ensName ?? data?.name}</DaoTitle>
-      ) : (
+      {isLoading ? (
         <Loading
           skeletonProps={{ width: 100, height: 20 }}
           style={{ marginTop: 20 }}
           text
           loading
         />
+      ) : (
+        <DaoTitle size={2}>{ensName ?? data?.name}</DaoTitle>
       )}
     </Content>
   );
