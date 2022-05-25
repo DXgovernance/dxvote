@@ -3,11 +3,14 @@ import { Loading } from 'Components/Primitives/Loading';
 import {
   Header,
   MemberWrapper,
+  MemberNumberWrapper,
   ProposalsInformation,
 } from './GuildCardHeader.styled';
 
 const Members = ({ numberOfMembers }) => {
-  return <div>{numberOfMembers?.toString()}</div>;
+  return (
+    <MemberNumberWrapper>{numberOfMembers?.toString()}</MemberNumberWrapper>
+  );
 };
 
 const Proposals = ({ t, numberOfActiveProposals }) => {

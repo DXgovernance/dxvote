@@ -31,7 +31,7 @@ const StyledButton = styled(Button).attrs(() => ({
   color: ${({ theme }) => theme.colors.text};
 `;
 
-const CardContainer = styled(Flex)`
+const CardsContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -54,17 +54,15 @@ const StyledLink = styled(Link)`
 
 const GuildCardLoader = () => {
   return (
-    <CardContainer>
-      <GuildCard
-        isLoading={true}
-        guildAddress={null}
-        numberOfMembers={null}
-        t={null}
-        numberOfActiveProposals={null}
-        ensName={null}
-        data={null}
-      />
-    </CardContainer>
+    <GuildCard
+      isLoading={true}
+      guildAddress={null}
+      numberOfMembers={null}
+      t={null}
+      numberOfActiveProposals={null}
+      ensName={null}
+      data={null}
+    />
   );
 };
 
@@ -75,16 +73,14 @@ const GuildCardWithContent = ({ guildAddress, t }) => {
   const { data } = useGuildConfig(guildAddress);
 
   return (
-    <CardContainer>
-      <GuildCard
-        guildAddress={guildAddress}
-        numberOfMembers={numberOfMembers}
-        t={t}
-        numberOfActiveProposals={numberOfActiveProposals}
-        ensName={ensName}
-        data={data}
-      />
-    </CardContainer>
+    <GuildCard
+      guildAddress={guildAddress}
+      numberOfMembers={numberOfMembers}
+      t={t}
+      numberOfActiveProposals={numberOfActiveProposals}
+      ensName={ensName}
+      data={data}
+    />
   );
 };
 
@@ -109,7 +105,7 @@ const LandingPage: React.FC = () => {
           </StyledLink>
         </StyledButton>
       </InputContainer>
-      <CardContainer>
+      <CardsContainer>
         {error ? (
           <>{/* Render error state */}</>
         ) : isLoading ? (
@@ -131,7 +127,7 @@ const LandingPage: React.FC = () => {
             />
           ))
         )}
-      </CardContainer>
+      </CardsContainer>
     </>
   );
 };

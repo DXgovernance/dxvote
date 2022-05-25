@@ -15,6 +15,10 @@ export const MemberWrapper = styled(Flex)`
   color: ${({ theme }) => theme.colors.card.grey};
 `;
 
+export const MemberNumberWrapper = styled.div`
+  padding-left: 7px;
+`;
+
 export const ProposalsInformation = styled(Box)<{ proposals?: string }>`
   display: inline-flex;
   justify-content: center;

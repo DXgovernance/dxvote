@@ -4,6 +4,7 @@ import GuildCardHeader from './GuildCardHeader';
 import GuildCardContent from './GuildCardContent';
 import { cardWrapperStyles } from './GuildCard.styled';
 import { GuildCardProps } from './types';
+import { Flex } from 'Components/Primitives/Layout';
 
 const GuildCard: React.FC<GuildCardProps> = ({
   isLoading,
@@ -19,15 +20,21 @@ const GuildCard: React.FC<GuildCardProps> = ({
       data-testid="guildCard"
       to={location => `${location.pathname}/${guildAddress}`}
     >
-      <Card customStyles={cardWrapperStyles}>
-        <GuildCardHeader
-          isLoading={isLoading}
-          numberOfMembers={numberOfMembers}
-          t={t}
-          numberOfActiveProposals={numberOfActiveProposals}
-        />
-        <GuildCardContent isLoading={isLoading} ensName={ensName} data={data} />
-      </Card>
+      <Flex>
+        <Card customStyles={cardWrapperStyles}>
+          <GuildCardHeader
+            isLoading={isLoading}
+            numberOfMembers={numberOfMembers}
+            t={t}
+            numberOfActiveProposals={numberOfActiveProposals}
+          />
+          <GuildCardContent
+            isLoading={isLoading}
+            ensName={ensName}
+            data={data}
+          />
+        </Card>
+      </Flex>
     </UnstyledLink>
   );
 };
