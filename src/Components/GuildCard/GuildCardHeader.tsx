@@ -5,7 +5,7 @@ import {
   MemberWrapper,
   MemberNumberWrapper,
   ProposalsInformation,
-} from './GuildCardHeader.styled';
+} from './styles';
 
 const Members = ({ numberOfMembers }) => {
   return (

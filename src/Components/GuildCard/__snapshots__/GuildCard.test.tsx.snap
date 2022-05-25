@@ -18,10 +18,10 @@ exports[`GuildCard Should render 'No proposals' when there are zero proposals' 1
           class="sc-gsTEea couiEk"
         >
           <div
-            class="sc-hKgJUU sc-jrAFXE dUEGLL cxzhcf"
+            class="sc-hKgJUU sc-kEjbQP dUEGLL hpHCuO"
           >
             <div
-              class="sc-hKgJUU sc-kEjbQP dUEGLL dpBbdF"
+              class="sc-hKgJUU sc-iqHYmW dUEGLL jYBUCp"
             >
               <svg
                 fill="currentColor"
@@ -41,13 +41,13 @@ exports[`GuildCard Should render 'No proposals' when there are zero proposals' 1
                 />
               </svg>
               <div
-                class="sc-iqHYmW iPHtXr"
+                class="sc-crrszt eKuTZS"
               >
                 5
               </div>
             </div>
             <div
-              class="sc-gsTEea sc-crrszt couiEk kcFopD"
+              class="sc-gsTEea sc-dQoVA couiEk jaYorM"
             >
               proposals
             </div>
@@ -56,11 +56,11 @@ exports[`GuildCard Should render 'No proposals' when there are zero proposals' 1
             class="sc-gsTEea sc-kstqJO couiEk iYcgDI"
           >
             <img
-              class="sc-dQoVA inywmr"
+              class="sc-bqyKOL RFBtI"
               src="dxdao-icon.svg"
             />
             <h2
-              class="sc-bqyKOL sc-hBEYId fHLOYv eSVrEG"
+              class="sc-jrAFXE sc-hBEYId dNMen eSVrEG"
               size="2"
             >
               REPGuild
@@ -92,10 +92,10 @@ exports[`GuildCard Should render loading state skeleton 1`] = `
           class="sc-gsTEea couiEk"
         >
           <div
-            class="sc-hKgJUU sc-jrAFXE dUEGLL cxzhcf"
+            class="sc-hKgJUU sc-kEjbQP dUEGLL hpHCuO"
           >
             <div
-              class="sc-hKgJUU sc-kEjbQP dUEGLL dpBbdF"
+              class="sc-hKgJUU sc-iqHYmW dUEGLL jYBUCp"
             >
               <svg
                 fill="currentColor"
@@ -153,7 +153,7 @@ exports[`GuildCard Should render loading state skeleton 1`] = `
             class="sc-gsTEea sc-kstqJO couiEk iYcgDI"
           >
             <img
-              class="sc-dQoVA inywmr"
+              class="sc-bqyKOL RFBtI"
               src="dxdao-icon.svg"
             />
             <div
@@ -200,10 +200,10 @@ exports[`GuildCard Should render with full parameters 1`] = `
           class="sc-gsTEea couiEk"
         >
           <div
-            class="sc-hKgJUU sc-jrAFXE dUEGLL cxzhcf"
+            class="sc-hKgJUU sc-kEjbQP dUEGLL hpHCuO"
           >
             <div
-              class="sc-hKgJUU sc-kEjbQP dUEGLL dpBbdF"
+              class="sc-hKgJUU sc-iqHYmW dUEGLL jYBUCp"
             >
               <svg
                 fill="currentColor"
@@ -223,13 +223,13 @@ exports[`GuildCard Should render with full parameters 1`] = `
                 />
               </svg>
               <div
-                class="sc-iqHYmW iPHtXr"
+                class="sc-crrszt eKuTZS"
               >
                 5
               </div>
             </div>
             <div
-              class="sc-gsTEea sc-crrszt couiEk kptTXf"
+              class="sc-gsTEea sc-dQoVA couiEk clybEs"
             >
               proposals
             </div>
@@ -238,11 +238,11 @@ exports[`GuildCard Should render with full parameters 1`] = `
             class="sc-gsTEea sc-kstqJO couiEk iYcgDI"
           >
             <img
-              class="sc-dQoVA inywmr"
+              class="sc-bqyKOL RFBtI"
               src="dxdao-icon.svg"
             />
             <h2
-              class="sc-bqyKOL sc-hBEYId fHLOYv eSVrEG"
+              class="sc-jrAFXE sc-hBEYId dNMen eSVrEG"
               size="2"
             >
               REPGuild

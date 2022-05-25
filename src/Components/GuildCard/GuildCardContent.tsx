@@ -1,26 +1,7 @@
-import styled from 'styled-components';
-import { Box } from 'Components/Primitives/Layout/index';
-import { DaoIcon } from './GuildCardContent.styled';
+import { DaoIcon, Content, DaoTitle } from './styles';
 import dxDaoIcon from 'assets/images/dxdao-icon.svg';
-// import { GuildCardProps } from './types';
-import { Heading } from 'old-components/Guilds/common/Typography';
 import { Loading } from 'Components/Primitives/Loading';
-
-const Content = styled(Box)`
-  margin-top: 2rem;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const DaoTitle = styled(Heading)`
-  margin-left: 4px;
-  line-height: 24px;
-`;
-
-interface GuildCardContentProps {
-  isLoading?: boolean;
-  ensName: string;
-  data: any;
-}
+import { GuildCardContentProps } from './types';
 
 const GuildCardContent: React.FC<GuildCardContentProps> = ({
   isLoading,

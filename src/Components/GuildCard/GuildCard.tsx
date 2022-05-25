@@ -2,7 +2,7 @@ import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import { Card } from 'old-components/Guilds/common/Card/index';
 import GuildCardHeader from './GuildCardHeader';
 import GuildCardContent from './GuildCardContent';
-import { cardWrapperStyles } from './GuildCard.styled';
+import { cardWrapperStyles } from './styles';
 import { GuildCardProps } from './types';
 import { Flex } from 'Components/Primitives/Layout';
 
