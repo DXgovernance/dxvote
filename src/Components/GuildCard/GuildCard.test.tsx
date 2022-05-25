@@ -1,62 +1,21 @@
 import GuildCard from './GuildCard';
 import { render } from '../../utils/tests';
 import '@testing-library/jest-dom';
-import { validAddress, nullAddress } from './fixture';
-
-jest.mock('hooks/Guilds/ether-swr/ens/useENSNameFromAddress', () => ({
-  __esModule: true,
-  default: () => 'test.eth',
-}));
-
-jest.mock('hooks/Guilds/ether-swr/guild/useGuildConfig', () => ({
-  useGuildConfig: function () {
-    return {
-      data: {
-        name: 'REPGuild',
-      },
-    };
-  },
-}));
-
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: key => key,
-    i18n: { changeLanguage: jest.fn() },
-  }),
-}));
-
-jest.mock('hooks/Guilds/ether-swr/guild/useGuildActiveProposals', () => ({
-  __esModule: true,
-  default: function () {
-    return {
-      data: {
-        _hex: '0x01',
-        _isBigNumber: true,
-      },
-    };
-  },
-}));
-
-jest.mock('hooks/Guilds/ether-swr/guild/useGuildMemberTotal', () => ({
-  __esModule: true,
-  default: function () {
-    return {
-      data: {
-        _hex: '0x01',
-        _isBigNumber: true,
-      },
-    };
-  },
-}));
+import { fullParameters, loadingParameters, noProposals } from './fixture';
 
 describe('GuildCard', () => {
-  it('Should render properly with a guild address', async () => {
-    // const { container } = render(<GuildCard {...validAddress} />);
-    // expect(container).toMatchSnapshot();
+  it(`Should render with full parameters`, async () => {
+    const { container } = render(<GuildCard {...fullParameters} />);
+    expect(container).toMatchSnapshot();
   });
 
-  it('Should render loading when the address is null', async () => {
-    // const { container } = render(<GuildCard {...nullAddress} />);
-    // expect(container).toMatchSnapshot();
+  it(`Should render 'No proposals' when there are zero proposals'`, async () => {
+    const { container } = render(<GuildCard {...noProposals} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it(`Should render loading state skeleton`, async () => {
+    const { container } = render(<GuildCard {...loadingParameters} />);
+    expect(container).toMatchSnapshot();
   });
 });
