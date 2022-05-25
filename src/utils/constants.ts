@@ -116,7 +116,7 @@ export const NETWORKS: ChainConfig[] =
           id: 1,
           name: 'mainnet',
           displayName: 'Ethereum Mainnet',
-          defaultRpc: POKT_NETWORK_URLS['1'],
+          defaultRpc: `https://eth-mainnet.alchemyapi.io/v2/${defaultAlchemyKey}`,
           nativeAsset: {
             name: 'Ethereum',
             symbol: 'ETH',
