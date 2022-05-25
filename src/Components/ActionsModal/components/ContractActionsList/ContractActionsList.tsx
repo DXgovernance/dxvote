@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { RichContractData } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import {
   ActionsButton,
@@ -6,7 +8,8 @@ import {
   SectionTitle,
   SectionWrapper,
   Wrapper,
-} from './styles';
+} from '../../ActionsModal.styled';
+
 interface ContractActionsListProps {
   contract: RichContractData;
   onSelect: (functionName: string) => void;
@@ -16,12 +19,15 @@ const ContractActionsList: React.FC<ContractActionsListProps> = ({
   contract,
   onSelect,
 }) => {
+  const { t } = useTranslation();
   return (
     <Wrapper>
       <SectionWrapper>
         <SectionTitle>
           {contract.functions.length}{' '}
-          {contract.functions.length >= 2 ? 'Actions' : 'Action'}
+          {t('actions', {
+            count: contract.functions.length,
+          })}
         </SectionTitle>
         {contract.functions.map(contractFunction => (
           <ActionsButton

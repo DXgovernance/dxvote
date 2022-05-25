@@ -1,6 +1,15 @@
 import styled from 'styled-components';
-import { Button } from '../common/Button';
-import { ContainerText } from '../../../Components/Primitives/Layout/Text';
+import { Button } from 'old-components/Guilds/common/Button';
+import { ContainerText } from 'Components/Primitives/Layout/Text';
+
+export const EditorWrapper = styled.div`
+  margin: 1.25rem;
+`;
+
+export const BlockButton = styled(Button)`
+  margin-top: 1rem;
+  width: 100%;
+`;
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -10,11 +19,9 @@ export const SectionWrapper = styled.div`
   margin: 1.5rem;
 `;
 
-export const ActionsButton = styled(Button).attrs<{ vertical?: boolean }>(
-  () => ({
-    variant: 'secondary',
-  })
-)<{ vertical?: boolean }>`
+export const ActionsButton = styled(Button).attrs(() => ({
+  variant: 'secondary',
+}))<{ vertical?: boolean }>`
   background-color: transparent;
   padding: ${({ vertical }) => (vertical ? '1rem' : '0.75rem 1rem')};
   width: 100%;

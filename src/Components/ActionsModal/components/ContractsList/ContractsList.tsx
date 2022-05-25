@@ -1,7 +1,10 @@
-import { ReactComponent as Mint } from '../../../assets/images/mint.svg';
-import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
-import { SupportedAction } from '../ActionsBuilder/types';
-import StyledIcon from '../common/SVG';
+import { useWeb3React } from '@web3-react/core';
+import { useTranslation } from 'react-i18next';
+
+import { ReactComponent as Mint } from 'assets/images/mint.svg';
+import { ReactComponent as Vector } from 'assets/images/vector.svg';
+import { SupportedAction } from 'old-components/Guilds/ActionsBuilder/types';
+import StyledIcon from 'old-components/Guilds/common/SVG';
 import {
   ActionsButton,
   ButtonDetail,
@@ -9,8 +12,7 @@ import {
   SectionTitle,
   SectionWrapper,
   Wrapper,
-} from './styles';
-import { useWeb3React } from '@web3-react/core';
+} from '../../ActionsModal.styled';
 import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
 import useGuildImplementationTypeConfig from 'hooks/Guilds/guild/useGuildImplementationType';
 import React from 'react';
@@ -28,22 +30,24 @@ const ContractsList: React.FC<ContractsListProps> = ({
   onSelect,
   onSupportedActionSelect,
 }) => {
+  const { t } = useTranslation();
   const { chainId } = useWeb3React();
   const { contracts } = useRichContractRegistry(chainId);
   const { guildId: guildAddress } = useTypedParams();
   const { isRepGuild } = useGuildImplementationTypeConfig(guildAddress);
   return (
-    <Wrapper>
+    <Wrapper data-testid="actions-modal-contract-list">
       <SectionWrapper>
-        <SectionTitle>Core</SectionTitle>
+        <SectionTitle>{t('core')}</SectionTitle>
         <ActionsButton
+          data-testid="supported-action-erc20transfer"
           onClick={() =>
             onSupportedActionSelect(SupportedAction.ERC20_TRANSFER)
           }
         >
           <ButtonLabel>
             <StyledIcon src={Vector} />
-            Transfer & Mint
+            {t('guilds.createProposal.transferAndMint')}
           </ButtonLabel>
         </ActionsButton>
         {isRepGuild ? (
@@ -52,13 +56,15 @@ const ContractsList: React.FC<ContractsListProps> = ({
           >
             <ButtonLabel>
               <StyledIcon src={Mint} />
-              Mint REP
+              {t('guilds.createProposal.mintRep')}
             </ButtonLabel>
           </ActionsButton>
         ) : null}
       </SectionWrapper>
       <SectionWrapper>
-        <SectionTitle>External Contracts</SectionTitle>
+        <SectionTitle>
+          {t('guilds.createProposal.externalContracts')}
+        </SectionTitle>
         {contracts?.map(contract => (
           <ActionsButton
             key={contract.title}
@@ -67,7 +73,9 @@ const ContractsList: React.FC<ContractsListProps> = ({
             <ButtonLabel>{contract.title}</ButtonLabel>
             <ButtonDetail>
               {contract.functions?.length}{' '}
-              {contract.functions?.length > 1 ? 'Actions' : 'Action'}
+              {t('actions', {
+                count: contract.functions.length,
+              })}
             </ButtonDetail>
           </ActionsButton>
         ))}
