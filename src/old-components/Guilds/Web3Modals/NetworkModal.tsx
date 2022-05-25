@@ -5,7 +5,7 @@ import { getChains } from 'provider/connectors';
 import { Modal } from '../common/Modal';
 import Option from './components/Option';
 import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
-import iconsByChain from '../common/ChainIcons';
+import { getChainIcon } from 'utils';
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -75,7 +75,7 @@ const NetworkModal: React.FC<NetworkModalProps> = ({ isOpen, onClose }) => {
                   <Option
                     onClick={() => trySwitching(chain).then(onClose)}
                     key={chain.name}
-                    icon={iconsByChain[chain.id] || null}
+                    icon={getChainIcon(chain.id)}
                     active={chain.id === chainId}
                     header={chain.displayName}
                   />

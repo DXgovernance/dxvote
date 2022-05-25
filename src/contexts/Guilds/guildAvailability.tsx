@@ -1,7 +1,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { MultichainContext } from 'contexts/MultichainProvider';
 import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
-import { iconsByChain } from 'old-components/Guilds/Header/NetworkButton';
 import { ButtonIcon, IconButton } from 'old-components/Guilds/common/Button';
 import { Box } from 'Components/Primitives/Layout';
 import Result, { ResultState } from 'old-components/Guilds/common/Result';
@@ -10,7 +9,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
-import { getNetworkById } from 'utils';
+import { getNetworkById, getChainIcon } from 'utils';
 
 interface ContractAvailability {
   [chainId: number]: boolean;
@@ -105,7 +104,7 @@ const GuildAvailabilityProvider = ({ children }) => {
                         onClick={() => trySwitching(chainConfig)}
                       >
                         <ButtonIcon
-                          src={iconsByChain[chainConfig?.id]}
+                          src={getChainIcon(chainConfig?.id)}
                           alt={chainConfig?.name}
                         />{' '}
                         {chainConfig?.displayName}

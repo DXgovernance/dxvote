@@ -1,13 +1,16 @@
-import { getChains, injected } from 'provider/connectors';
 import { useEffect, useState } from 'react';
-import { useRpcUrls } from 'provider/providerHooks';
-import { Button } from '../common/Button';
-import { useWeb3React } from '@web3-react/core';
-import WalletModal from '../Web3Modals/WalletModal';
-import AddressButton from 'Components/AddressButton/AddressButton';
-import { useTransactions } from '../../../contexts/Guilds';
+import { useTranslation } from 'react-i18next';
 
-const Web3Status = () => {
+import { getChains, injected } from 'provider/connectors';
+import { useRpcUrls } from 'provider/providerHooks';
+import { Button } from 'old-components/Guilds/common/Button';
+import { useWeb3React } from '@web3-react/core';
+import WalletModal from 'old-components/Guilds/Web3Modals/WalletModal';
+import AddressButton from 'Components/AddressButton/AddressButton';
+import { useTransactions } from 'contexts/Guilds';
+
+const WalletButton = () => {
+  const { t } = useTranslation();
   const { account, chainId } = useWeb3React();
   const { transactions } = useTransactions();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
@@ -33,7 +36,7 @@ const Web3Status = () => {
         { chainId: chainIdHex },
       ]);
     } catch (e: any) {
-      if (e?.code == 4902) {
+      if (e?.code === 4902) {
         window.ethereum?.send('wallet_addEthereumChain', [
           {
             chainId: chainIdHex,
@@ -51,12 +54,13 @@ const Web3Status = () => {
     if (injectedWalletAuthorized && !account) {
       const chains = getChains(rpcUrls);
       const activeChain =
-        chains.find(chain => chain.id == chainId) || chains[0];
+        chains.find(chain => chain.id === chainId) || chains[0];
+
       const isMetamask = window.ethereum && window.ethereum.isMetaMask;
 
       return (
         <Button variant="secondary" onClick={() => switchNetwork(activeChain)}>
-          Switch {isMetamask ? 'MetaMask' : 'Wallet'} to{' '}
+          {t('switch')} {isMetamask ? 'MetaMask' : t('wallet')} {t('to')}{' '}
           {activeChain.displayName}
         </Button>
       );
@@ -65,15 +69,16 @@ const Web3Status = () => {
         <AddressButton
           address={account}
           transactionsCounter={
-            transactions.filter(transaction => !transaction.receipt).length
+            transactions?.filter(transaction => !transaction.receipt)?.length ??
+            0
           }
           onClick={toggleWalletModal}
         />
       );
     } else {
       return (
-        <Button data-testId="connectWalletBtn" onClick={toggleWalletModal}>
-          Connect Wallet
+        <Button data-testid="connectWalletBtn" onClick={toggleWalletModal}>
+          {t('connectWallet')}
         </Button>
       );
     }
@@ -87,4 +92,4 @@ const Web3Status = () => {
   );
 };
 
-export default Web3Status;
+export default WalletButton;

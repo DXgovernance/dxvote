@@ -8,19 +8,8 @@ import Option from './Option';
 import { useContext } from 'contexts';
 import { useRpcUrls } from 'provider/providerHooks';
 import { getChains } from 'provider/connectors';
+import { getChainIcon } from 'utils';
 
-import arbitrumIcon from '../../assets/images/arbitrum.png';
-import ethereumIcon from '../../assets/images/ethereum.svg';
-import gnosisIcon from '../../assets/images/gnosis-icon-green.svg';
-
-const iconsByChain = {
-  1: ethereumIcon,
-  4: ethereumIcon,
-  100: gnosisIcon,
-  42161: arbitrumIcon,
-  421611: arbitrumIcon,
-  1337: ethereumIcon,
-};
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
@@ -122,7 +111,7 @@ const NetworkModal = observer(() => {
         <Option
           onClick={() => trySwitching(chain)}
           key={chain.name}
-          icon={iconsByChain[chain.id] || null}
+          icon={getChainIcon(chain.id)}
           active={chain.id === chainId}
           header={chain.displayName}
         />

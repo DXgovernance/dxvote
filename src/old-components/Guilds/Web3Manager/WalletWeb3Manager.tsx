@@ -60,12 +60,12 @@ const WalletWeb3Manager = ({ children }) => {
 
     const handleChainChange = (chainId: string) => {
       const chain = chains.find(
-        chain => `0x${chain.id.toString(16)}` == chainId
+        chain => `0x${chain.id.toString(16)}` === chainId
       );
 
       // If currently connected to an injected wallet, keep synced with it
       if (connector instanceof NetworkConnector) {
-        if (urlNetworkName === chain.name) {
+        if (urlNetworkName === chain?.name) {
           tryConnecting();
         }
       }

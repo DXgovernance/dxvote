@@ -10,6 +10,9 @@
     "amount": "Amount",
     "asset": "Asset",
     "approve": "Approve",
+    "guilds": "Guilds",
+    "unsupportedNetwork": "Unsupported Network",
+    "notConnected": "Not Connected",
     "createProposal": {
       "selectTokensToSpend": "Select tokens to spend",
       "transferAndMint": "Transfer & Mint",
@@ -22,5 +25,9 @@
   "actions_one": "Action",
   "actions_other": "Actions",
   "save": "Save",
-  "core": "Core"
+  "core": "Core",
+  "switch": "Switch",
+  "wallet": "Wallet",
+  "to": "To",
+  "connectWallet": "Connect Wallet"
 }
