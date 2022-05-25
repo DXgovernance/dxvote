@@ -15,4 +15,3 @@ export const getChainIcon = (chainId: number) => {
   if (!chainId) return null;
   return iconsByChain[chainId] ?? null;
 };
-

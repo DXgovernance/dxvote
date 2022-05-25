@@ -39,4 +39,3 @@ describe('NetworkButton', () => {
     expect(getByText('Ethereum Mainnet')).toBeInTheDocument();
   });
 });
-

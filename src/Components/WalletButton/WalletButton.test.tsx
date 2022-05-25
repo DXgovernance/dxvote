@@ -57,4 +57,3 @@ describe('WalletButton', () => {
     expect(getByText(shortenAddress(ANY_ADDRESS))).toBeInTheDocument();
   });
 });
-

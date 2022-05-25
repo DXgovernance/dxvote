@@ -9,4 +9,3 @@ describe('Header', () => {
     expect(container).toMatchSnapshot();
   });
 });
-
