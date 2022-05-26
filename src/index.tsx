@@ -123,7 +123,7 @@ const SplitApp = () => {
   // const isGuilds = location.pathname.startsWith('/guilds');
 
   // Set to true while refactoring and testing guilds
-  const isGuilds = true;
+  const isGuilds = false;
 
   const {
     context: { ensService },

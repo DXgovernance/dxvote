@@ -112,9 +112,7 @@ const Header = observer(() => {
         <NavSection>
           <Web3ConnectStatus text="Connect Wallet" />
           <NavItem route={`/config`}>
-            <a>
-              <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
-            </a>
+            <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
           </NavItem>
         </NavSection>
       ) : blockchainStore.initialLoadComplete ? (
@@ -145,20 +143,14 @@ const Header = observer(() => {
           )}
           <Web3ConnectStatus text="Connect Wallet" />
           <NavItem route={`/${networkName}/info`}>
-            <a>
-              <FiBarChart2 style={{ margin: '0px 10px', color: '#616161' }} />
-            </a>
+            <FiBarChart2 style={{ margin: '0px 10px', color: '#616161' }} />
           </NavItem>
           <NavItem route={`/config`}>
-            <a>
-              <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
-            </a>
+            <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
           </NavItem>
           {account && (
             <NavItem route={`/${networkName}/user/${account}`}>
-              <a>
-                <FiUser style={{ margin: '0px 10px', color: '#616161' }} />
-              </a>
+              <FiUser style={{ margin: '0px 10px', color: '#616161' }} />
             </NavItem>
           )}
         </NavSection>
@@ -166,9 +158,7 @@ const Header = observer(() => {
         <NavSection>
           <Web3ConnectStatus text="Connect Wallet" />
           <NavItem route={`/config`}>
-            <a>
-              <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
-            </a>
+            <FiSettings style={{ margin: '0px 10px', color: '#616161' }} />
           </NavItem>
         </NavSection>
       )}

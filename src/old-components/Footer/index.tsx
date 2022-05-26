@@ -53,6 +53,8 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
+          {/* //TODO: fix this warning */}
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a
             onClick={() => {
               history.push('/forum');
@@ -76,6 +78,8 @@ const Footer = () => {
         </FooterItem>
         <FooterDivider></FooterDivider>
         <FooterItem>
+          {/* //TODO: fix this warning */}
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a
             onClick={() => {
               history.push('/faq');
