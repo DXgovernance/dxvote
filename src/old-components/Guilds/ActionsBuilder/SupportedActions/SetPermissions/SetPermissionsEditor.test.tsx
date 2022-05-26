@@ -230,7 +230,7 @@ describe(`Set Permissions editor`, () => {
           updateCall={jest.fn()}
         />
       );
-      const functionsCallTab = screen.getByLabelText(`functions call tab`);
+      const functionsCallTab = screen.getByLabelText(`Functions call tab`);
       fireEvent.click(functionsCallTab);
 
       const toAddressElement: HTMLInputElement = screen.getByRole('textbox', {
@@ -267,7 +267,7 @@ describe(`Set Permissions editor`, () => {
           updateCall={jest.fn()}
         />
       );
-      const functionsCallTab = screen.getByLabelText(`functions call tab`);
+      const functionsCallTab = screen.getByLabelText(`Functions call tab`);
       fireEvent.click(functionsCallTab);
 
       const toAddressElement: HTMLInputElement = screen.getByRole('textbox', {
@@ -293,7 +293,7 @@ describe(`Set Permissions editor`, () => {
         />
       );
 
-      const functionsCallTab = screen.getByLabelText(`functions call tab`);
+      const functionsCallTab = screen.getByLabelText(`Functions call tab`);
       fireEvent.click(functionsCallTab);
 
       expect(

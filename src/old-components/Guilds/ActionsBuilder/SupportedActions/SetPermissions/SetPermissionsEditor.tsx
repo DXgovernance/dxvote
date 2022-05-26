@@ -245,25 +245,10 @@ const Permissions: React.FC<ActionEditorProps> = ({
     if (parsedData?.to[0] === ANY_ADDRESS) handleCustomAddress('');
   }, []);
 
-  return (
-    <div>
-      <DetailWrapper>
-        <TabButton
-          aria-label="assets transfer tab"
-          active={activeTab === 0}
-          onClick={() => setActiveTab(0)}
-        >
-          Assets transfer
-        </TabButton>
-        <TabButton
-          aria-label="functions call tab"
-          active={activeTab === 1}
-          onClick={() => setActiveTab(1)}
-        >
-          Functions call
-        </TabButton>
-      </DetailWrapper>
-      {activeTab === 0 && (
+  const tabArray = [
+    {
+      title: 'Assets transfer',
+      component: () => (
         <AssetTransfer
           validations={validations}
           parsedData={parsedData}
@@ -280,8 +265,11 @@ const Permissions: React.FC<ActionEditorProps> = ({
           anyAddressToggled={anyAddressToggled}
           handleToggleAnyAddressChange={handleToggleAnyAddressChange}
         />
-      )}
-      {activeTab === 1 && (
+      ),
+    },
+    {
+      title: 'Functions call',
+      component: () => (
         <FunctionCall
           validations={validations}
           parsedData={parsedData}
@@ -297,7 +285,25 @@ const Permissions: React.FC<ActionEditorProps> = ({
           anyAddressToggled={anyAddressToggled}
           handleToggleAnyAddressChange={handleToggleAnyAddressChange}
         />
-      )}
+      ),
+    },
+  ];
+
+  return (
+    <div>
+      <DetailWrapper>
+        {tabArray.map((tab, index) => (
+          <TabButton
+            aria-label={`${tab.title} tab`}
+            active={activeTab === index}
+            onClick={() => setActiveTab(index)}
+            key={index}
+          >
+            {tab.title}
+          </TabButton>
+        ))}
+      </DetailWrapper>
+      {tabArray[activeTab].component()}
     </div>
   );
 };
