@@ -30,13 +30,5 @@
     "features": [
       "ENFORCED_BINARY"
     ]
-  },
-  {
-    "type": "EnforcedBinarySnapshotERC20Guild",
-    "bytecode_hash": "0x588a4ce6f4a8791e3c07a2b4f4af8041a04c5beb890bd04bd636d1db5eee11f5",
-    "features": [
-      "ENFORCED_BINARY",
-      "SNAPSHOT"
-    ]
   }
 ]

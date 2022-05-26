@@ -3,7 +3,7 @@ import PageRouter from './PageRouter';
 import { useContext } from './contexts';
 import MultichainProvider from './contexts/MultichainProvider';
 import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
-import './i18n';
+import initializeI18Next from './i18n';
 import GlobalErrorBoundary from './old-components/ErrorBoundary/GlobalErrorBoundary';
 import Footer from './old-components/Footer';
 import Header from './old-components/Header';
@@ -32,6 +32,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 import Web3 from 'web3';
+
+initializeI18Next();
 
 const Content = styled.div`
   margin: auto;

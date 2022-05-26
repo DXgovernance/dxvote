@@ -1,16 +1,19 @@
 import { BigNumber } from 'ethers';
-import { RichContractFunctionParam } from 'hooks/Guilds/contracts/useRichContractRegistry';
-import moment, { Moment } from 'moment';
 import { useMemo } from 'react';
+import moment, { Moment } from 'moment';
 import { RegisterOptions } from 'react-hook-form';
+
+import { RichContractFunctionParam } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import { isAddress } from 'utils';
-import AddressInput from '../common/Form/AddressInput';
-import { FormElementProps } from '../common/Form/common';
-import DateInput, { InputType } from '../common/Form/DateInput';
-import Input from '../common/Form/Input';
-import NumericalInput from '../common/Form/NumericalInput';
-import Toggle from '../common/Form/Toggle';
-import TokenAmountInput from '../common/Form/TokenAmountInput';
+import AddressInput from 'old-components/Guilds/common/Form/AddressInput';
+import { FormElementProps } from 'old-components/Guilds/common/Form/common';
+import DateInput, {
+  InputType,
+} from 'old-components/Guilds/common/Form/DateInput';
+import Input from 'old-components/Guilds/common/Form/Input';
+import NumericalInput from 'old-components/Guilds/common/Form/NumericalInput';
+import Toggle from 'old-components/Guilds/common/Form/Toggle';
+import TokenAmountInput from 'old-components/Guilds/common/Form/TokenAmountInput';
 
 interface FormElementRendererProps extends FormElementProps<any> {
   param: RichContractFunctionParam;
