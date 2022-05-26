@@ -55,7 +55,18 @@ const CallDetails: React.FC<ActionViewProps> = ({
 
     if (type.startsWith('uint') || type.startsWith('int')) {
       if (Array.isArray(value)) {
-        return <ParamDetail>{BigNumber.from(value[0]).toString()}</ParamDetail>;
+        let valuesStringFromArray: string = '[';
+
+        value.forEach((element, index) => {
+          let separator = ', ';
+          if (index === 0) separator = '';
+
+          const elementBigNumber = BigNumber.from(element).toString();
+          return (valuesStringFromArray += separator += elementBigNumber);
+        });
+        valuesStringFromArray += ']';
+
+        return <ParamDetail>{valuesStringFromArray}</ParamDetail>;
       }
 
       return <ParamDetail>{BigNumber.from(value).toString()}</ParamDetail>;
