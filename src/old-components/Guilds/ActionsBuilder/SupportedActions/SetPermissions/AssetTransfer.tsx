@@ -13,11 +13,10 @@ import Toggle from 'old-components/Guilds/common/Form/Toggle';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
 import { ParsedDataInterface, ValidationsInterface } from './types';
 import { BigNumber } from 'ethers';
-import AddressInput from './AddressInput';
+import AddressInput from 'old-components/Guilds/common/Form/AddressInput';
 
 interface AssetTransferProps {
   validations: ValidationsInterface;
-  destinationAvatarUrl: any;
   parsedData: ParsedDataInterface;
   tokenInfo: any;
   token: any;
@@ -35,7 +34,6 @@ interface AssetTransferProps {
 
 const AssetTransfer: React.FC<AssetTransferProps> = ({
   validations,
-  destinationAvatarUrl,
   parsedData,
   tokenInfo,
   token,
@@ -92,12 +90,13 @@ const AssetTransfer: React.FC<AssetTransferProps> = ({
         <ControlLabel>To address</ControlLabel>
         <ControlRow>
           <AddressInput
-            customToAddress={customToAddress}
-            anyAddressToggled={anyAddressToggled}
-            validations={validations}
-            destinationAvatarUrl={destinationAvatarUrl}
-            parsedData={parsedData}
-            handleCustomAddress={handleCustomAddress}
+            value={customToAddress}
+            onChange={handleCustomAddress}
+            isInvalid={!validations.to}
+            name="to-address"
+            aria-label="to address input"
+            disabled={anyAddressToggled}
+            placeholder="Ethereum address"
           />
           <ToggleWrapper>
             <Toggle

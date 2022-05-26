@@ -9,7 +9,7 @@ import { ParsedDataInterface, ValidationsInterface } from './types';
 import styled from 'styled-components';
 import Toggle from 'old-components/Guilds/common/Form/Toggle';
 import { BigNumber } from 'ethers';
-import AddressInput from './AddressInput';
+import AddressInput from 'old-components/Guilds/common/Form/AddressInput';
 
 const FunctionSignatureWrapper = styled.div`
   color: ${({ theme }) => theme.colors.proposalText.grey};
@@ -19,7 +19,6 @@ const FunctionSignatureWrapper = styled.div`
 
 interface FunctionCallProps {
   validations: ValidationsInterface;
-  destinationAvatarUrl: any;
   parsedData: ParsedDataInterface;
   handleCustomFunctionSignature: (value: string) => void;
   customToAddress: string;
@@ -30,14 +29,12 @@ interface FunctionCallProps {
   handleTokenAmountInputChange: (e: BigNumber) => void;
   maxValueToggled: boolean;
   handleToggleMaxValueChange: () => void;
-  setAsset: (asset: string) => void;
   anyAddressToggled: boolean;
   handleToggleAnyAddressChange: () => void;
 }
 
 const FunctionCall: React.FC<FunctionCallProps> = ({
   validations,
-  destinationAvatarUrl,
   parsedData,
   handleCustomFunctionSignature,
   customToAddress,
@@ -48,7 +45,6 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
   handleTokenAmountInputChange,
   maxValueToggled,
   handleToggleMaxValueChange,
-  setAsset,
   anyAddressToggled,
   handleToggleAnyAddressChange,
 }) => {
@@ -60,12 +56,13 @@ const FunctionCall: React.FC<FunctionCallProps> = ({
         <ControlLabel>To address</ControlLabel>
         <ControlRow>
           <AddressInput
-            customToAddress={customToAddress}
-            anyAddressToggled={anyAddressToggled}
-            validations={validations}
-            destinationAvatarUrl={destinationAvatarUrl}
-            parsedData={parsedData}
-            handleCustomAddress={handleCustomAddress}
+            value={customToAddress}
+            onChange={handleCustomAddress}
+            isInvalid={!validations.to}
+            name="to-address"
+            aria-label="to address input"
+            disabled={anyAddressToggled}
+            placeholder="Ethereum address"
           />
           <ToggleWrapper>
             <Toggle
