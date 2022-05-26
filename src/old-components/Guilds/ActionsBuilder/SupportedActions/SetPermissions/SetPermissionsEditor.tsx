@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber, utils } from 'ethers';
-import { ANY_FUNC_SIGNATURE, MAINNET_ID, ZERO_ADDRESS } from 'utils';
+import { ANY_FUNC_SIGNATURE, ZERO_ADDRESS } from 'utils';
 import { ActionEditorProps } from '..';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
-import useENSAvatar from 'hooks/Guilds/ether-swr/ens/useENSAvatar';
 import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
 import AssetTransfer from './AssetTransfer';
 import FunctionCall from './FunctionCall';
@@ -96,10 +95,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
   }, [tokens, parsedData]);
 
   const { data: tokenInfo } = useERC20Info(pickedAsset);
-  const { imageUrl: destinationAvatarUrl } = useENSAvatar(
-    parsedData?.to[0],
-    MAINNET_ID
-  );
 
   //
   // Asset-related functions
