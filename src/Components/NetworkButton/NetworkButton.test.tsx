@@ -27,7 +27,7 @@ describe('NetworkButton', () => {
     }));
     const { container, getByText } = render(<NetworkButton />);
     expect(container).toMatchSnapshot();
-    expect(getByText('guilds.notConnected')).toBeInTheDocument();
+    expect(getByText('notConnected')).toBeInTheDocument();
   });
   it('Should match snapshot and display network', () => {
     mockedUseWeb3React.mockImplementation(() => ({

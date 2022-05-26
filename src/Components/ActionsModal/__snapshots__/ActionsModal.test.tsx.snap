@@ -86,7 +86,7 @@ exports[`ActionsModal Should match snapshot 2 1`] = `
             <button
               class="sc-bdfBQB sc-laRQdt cnzpap erdehE"
             >
-              guilds.saveAction
+              saveAction
             </button>
           </div>
         </div>

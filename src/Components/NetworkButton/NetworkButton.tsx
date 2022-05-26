@@ -25,9 +25,7 @@ const NetworkButton = () => {
   function getNetworkStatus() {
     if ((chainId && !isChainIdSupported(chainId)) || error) {
       return (
-        <Button onClick={toggleNetworkModal}>
-          {t('guilds.unsupportedNetwork')}
-        </Button>
+        <Button onClick={toggleNetworkModal}>{t('unsupportedNetwork')}</Button>
       );
     } else if (chainId) {
       return (
@@ -37,9 +35,7 @@ const NetworkButton = () => {
         </IconButton>
       );
     } else {
-      return (
-        <Button onClick={toggleNetworkModal}>{t('guilds.notConnected')}</Button>
-      );
+      return <Button onClick={toggleNetworkModal}>{t('notConnected')}</Button>;
     }
   }
 

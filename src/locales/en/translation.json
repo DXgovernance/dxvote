@@ -1,24 +1,7 @@
 {
   "guilds": {
     "create": "Create Guild",
-    "addOption": "Add Option",
-    "editOption": "Edit Option",
-    "deleteOption": "Delete Option",
-    "optionLabel": "Option Label",
-    "addAction": "Add Action",
-    "saveAction": "Save Action",
-    "amount": "Amount",
-    "asset": "Asset",
-    "approve": "Approve",
-    "guilds": "Guilds",
-    "unsupportedNetwork": "Unsupported Network",
-    "notConnected": "Not Connected",
-    "createProposal": {
-      "selectTokensToSpend": "Select tokens to spend",
-      "transferAndMint": "Transfer & Mint",
-      "mintRep": "Mint REP",
-      "externalContracts": "External Contracts"
-    }
+    "guilds": "Guilds"
   },
   "proposals_one": "{{count}} proposal",
   "proposals_other": "{{count}} proposals",
@@ -29,5 +12,20 @@
   "switch": "Switch",
   "wallet": "Wallet",
   "to": "To",
-  "connectWallet": "Connect Wallet"
+  "connectWallet": "Connect Wallet",
+  "selectTokensToSpend": "Select tokens to spend",
+  "transferAndMint": "Transfer & Mint",
+  "mintRep": "Mint REP",
+  "externalContracts": "External Contracts",
+  "addOption": "Add Option",
+  "editOption": "Edit Option",
+  "deleteOption": "Delete Option",
+  "optionLabel": "Option Label",
+  "addAction": "Add Action",
+  "saveAction": "Save Action",
+  "amount": "Amount",
+  "asset": "Asset",
+  "approve": "Approve",
+  "unsupportedNetwork": "Unsupported Network",
+  "notConnected": "Not Connected"
 }

@@ -23,7 +23,7 @@ exports[`NetworkButton Should match snapshot and display not connected status 1`
   <button
     class="sc-bdfBQB cnzpap"
   >
-    guilds.notConnected
+    notConnected
   </button>
    
 </div>

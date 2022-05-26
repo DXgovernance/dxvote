@@ -62,7 +62,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
       return supportedActions[selectedAction].title;
     }
 
-    return t('guilds.addAction');
+    return t('addAction');
   }
 
   function getContent() {
@@ -117,7 +117,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
         <EditorWrapper data-testid="actions-modal-editor">
           <Editor decodedCall={data} updateCall={setData} />
           <BlockButton onClick={saveSupportedAction}>
-            {t('guilds.saveAction')}
+            {t('saveAction')}
           </BlockButton>
         </EditorWrapper>
       );
