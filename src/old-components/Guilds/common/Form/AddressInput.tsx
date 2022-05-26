@@ -16,7 +16,7 @@ const AddressInput: React.FC<InputProps<string>> = ({
   value,
   onChange,
   isInvalid,
-  disabled,
+  disabled = false,
   ...rest
 }) => {
   const { imageUrl } = useENSAvatar(value, MAINNET_ID);
@@ -36,7 +36,7 @@ const AddressInput: React.FC<InputProps<string>> = ({
       }
       iconRight={
         <>
-          {!disabled && (
+          {!disabled && value && (
             <ClickableIcon
               aria-label="clear address"
               onClick={() => onChange('')}
