@@ -18,7 +18,7 @@ export function useEagerConnect() {
   const tryConnecting = async () => {
     const chains = getChains();
     const urlNetworkName = location.pathname.split('/')[1];
-    const urlChainId = chains.find(chain => chain.name == urlNetworkName)?.id;
+    const urlChainId = chains.find(chain => chain.name === urlNetworkName)?.id;
     const urlChainIdHex = urlChainId ? `0x${urlChainId.toString(16)}` : null;
 
     const isAuthorized = await injected.isAuthorized();
@@ -29,7 +29,7 @@ export function useEagerConnect() {
 
     try {
       const injectedChainId = await injected.getChainId();
-      if (injectedChainId != urlChainIdHex) {
+      if (injectedChainId !== urlChainIdHex) {
         setTried(true);
         return;
       }

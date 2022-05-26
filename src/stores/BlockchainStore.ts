@@ -147,7 +147,7 @@ export default class BlockchainStore {
             getProposalTitles()
           );
 
-          Object.keys(networkCache.proposals).map(proposalId => {
+          Object.keys(networkCache.proposals).forEach(proposalId => {
             networkCache.proposals[proposalId].title =
               networkCache.proposals[proposalId].title ||
               proposalTitles[proposalId] ||

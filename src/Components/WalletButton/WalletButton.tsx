@@ -55,7 +55,6 @@ const WalletButton = () => {
       const chains = getChains(rpcUrls);
       const activeChain =
         chains.find(chain => chain.id === chainId) || chains[0];
-
       const isMetamask = window.ethereum && window.ethereum.isMetaMask;
 
       return (

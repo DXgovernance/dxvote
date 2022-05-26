@@ -3,7 +3,6 @@ import { bnum } from '../../utils';
 import Web3ConnectStatus from '../Web3ConnectStatus';
 import { Box } from '../common';
 import dxdaoIcon from 'assets/images/DXdao.svg';
-import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { FiSettings, FiUser, FiBarChart2 } from 'react-icons/fi';
 import { RouteComponentProps, withRouter } from 'react-router-dom';

@@ -534,7 +534,7 @@ export default class ConfigStore {
         this.networkConfig.recommendedCalls
       );
 
-    networkTokens.map(networkToken => {
+    networkTokens.forEach(networkToken => {
       recommendedCalls.push({
         asset: networkToken.address,
         from: ANY_ADDRESS,

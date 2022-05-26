@@ -17,7 +17,7 @@ export default function useMiniSearch<T extends SearchItem>(config: Options) {
 
   const query = (query: Query, searchOptions?: SearchOptions) => {
     const hits = miniSearchRef.current.search(query, searchOptions);
-    return hits.map(hit => searchItems.find(item => item.id == hit.id));
+    return hits.map(hit => searchItems.find(item => item.id === hit.id));
   };
 
   return {

@@ -82,7 +82,7 @@ const FinanceInformation = observer(() => {
       },
     ],
   };
-  tokens.map(token => {
+  tokens.forEach(token => {
     assets.avatar.push({
       address: token.address,
       name: token.name,
@@ -97,7 +97,7 @@ const FinanceInformation = observer(() => {
     });
   });
 
-  schemes.map(scheme => {
+  schemes.forEach(scheme => {
     if (scheme.controllerAddress !== ZERO_ADDRESS) return;
 
     if (!assets[scheme.name])
@@ -110,7 +110,7 @@ const FinanceInformation = observer(() => {
         },
       ];
 
-    tokens.map(token => {
+    tokens.forEach(token => {
       assets[scheme.name].push({
         address: token.address,
         name: token.name,
@@ -185,7 +185,7 @@ const FinanceInformation = observer(() => {
                         <DataCell align="left" weight="500">
                           <CenteredRow>
                             {asset.name}{' '}
-                            {asset.address != ZERO_ADDRESS && (
+                            {asset.address !== ZERO_ADDRESS && (
                               <BlockchainLink
                                 size="long"
                                 type="address"

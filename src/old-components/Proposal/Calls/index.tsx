@@ -38,7 +38,7 @@ const Calls = observer(() => {
     const result = await Promise.all(
       proposal.to.map(item => getContractABI(item))
     );
-    result.map((abi, i) => {
+    result.forEach((abi, i) => {
       proposalCallArray.push(
         decodedCallData(
           isWalletScheme(scheme) &&

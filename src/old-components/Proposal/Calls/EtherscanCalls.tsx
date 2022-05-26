@@ -45,7 +45,7 @@ export const EtherscanCalls = ({
           <small>{abi?.function?.signature}</small>
         </p>
         {Object.keys(abi.args)
-          .filter(item => item != '__length__')
+          .filter(item => item !== '__length__')
           .map((item, i) => {
             const check = abi.function.inputs[item];
             const functionName = check

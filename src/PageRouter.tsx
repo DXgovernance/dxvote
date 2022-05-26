@@ -55,7 +55,7 @@ const PageRouter = observer(({ children }) => {
   const { active: providerActive } = useWeb3React();
 
   useEffect(() => {
-    if (location.pathname == '/' && networkName) {
+    if (location.pathname === '/' && networkName) {
       history.push(`/${networkName}/proposals`);
     }
   }, [networkName]);
@@ -80,10 +80,10 @@ const PageRouter = observer(({ children }) => {
   } else {
     if (
       !notificationStore.firstLoadComplete ||
-      notificationStore.globalLoadingState == GlobalLoadingState.ERROR
+      notificationStore.globalLoadingState === GlobalLoadingState.ERROR
     ) {
       const hasError =
-        notificationStore.globalLoadingState == GlobalLoadingState.ERROR;
+        notificationStore.globalLoadingState === GlobalLoadingState.ERROR;
       return (
         <PageRouterWrapper>
           <LoadingBox>

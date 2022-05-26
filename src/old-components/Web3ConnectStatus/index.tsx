@@ -80,7 +80,7 @@ const Web3ConnectStatus = observer(props => {
         { chainId: chainIdHex },
       ]);
     } catch (e: any) {
-      if (e?.code == 4902) {
+      if (e?.code === 4902) {
         window.ethereum?.send('wallet_addEthereumChain', [
           {
             chainId: chainIdHex,
@@ -98,7 +98,7 @@ const Web3ConnectStatus = observer(props => {
     if (injectedWalletAuthorized && !account) {
       const chains = getChains(rpcUrls);
       const activeChain =
-        chains.find(chain => chain.id == chainId) || chains[0];
+        chains.find(chain => chain.id === chainId) || chains[0];
       const isMetamask = window.ethereum && window.ethereum.isMetaMask;
       return (
         <ConnectButton onClick={() => switchNetwork(activeChain)}>

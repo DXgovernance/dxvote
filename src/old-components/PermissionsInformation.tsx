@@ -93,15 +93,15 @@ const PermissionsInformation = observer(() => {
 
   functionNames[ERC20_TRANSFER_SIGNATURE] = 'ERC20 Transfer';
   functionNames[ERC20_APPROVE_SIGNATURE] = 'ERC20 Approve';
-  recommendedCalls.map(recommendedCall => {
+  recommendedCalls.forEach(recommendedCall => {
     functionNames[
       web3.eth.abi.encodeFunctionSignature(recommendedCall.functionName)
     ] = recommendedCall.functionName;
   });
-  schemes.map(scheme => {
+  schemes.forEach(scheme => {
     addressesNames[scheme.address] = scheme.name;
   });
-  tokens.map(token => {
+  tokens.forEach(token => {
     addressesNames[token.address] = token.symbol;
   });
 

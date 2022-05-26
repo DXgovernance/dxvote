@@ -43,7 +43,7 @@ export const getContracts = async function (
 
   for (const votingMachineAddress in networkConfig.votingMachines) {
     if (
-      networkConfig.votingMachines[votingMachineAddress].type ==
+      networkConfig.votingMachines[votingMachineAddress].type ===
       'GenesisProtocol'
     )
       votingMachines[votingMachineAddress] = {
@@ -58,7 +58,7 @@ export const getContracts = async function (
         ),
       };
     else if (
-      networkConfig.votingMachines[votingMachineAddress].type ==
+      networkConfig.votingMachines[votingMachineAddress].type ===
       'DXDVotingMachine'
     )
       votingMachines[votingMachineAddress] = {

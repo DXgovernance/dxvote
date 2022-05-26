@@ -167,7 +167,7 @@ const NewProposalPage = observer(() => {
 
   let allowedToCall = [];
 
-  recommendedCalls.map(recommendedCall => {
+  recommendedCalls.forEach(recommendedCall => {
     if (
       recommendedCall.fromTime > 0 &&
       allowedToCall.findIndex(
@@ -265,7 +265,7 @@ const NewProposalPage = observer(() => {
             }
 
             if (call.dataValues.length > 0) {
-              call.functionParams.map((functionParam, i) => {
+              call.functionParams.forEach((functionParam, i) => {
                 if (functionParam.type.indexOf('[]') > 0) {
                   call.dataValues[i] = call.dataValues[i]
                     .slice(1, -1)
@@ -456,7 +456,7 @@ const NewProposalPage = observer(() => {
       calls[callIndex].functionParams = [];
       calls[callIndex].dataValues = [];
       calls[callIndex].value = '0';
-      recommendedCalls.map(recommendedCall => {
+      recommendedCalls.forEach(recommendedCall => {
         if (recommendedCall.to === toAddress && recommendedCall.fromTime > 0) {
           calls[callIndex].allowedFunctions.push(recommendedCall);
         }

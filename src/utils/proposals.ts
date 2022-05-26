@@ -101,7 +101,7 @@ export const getProposalMutableData = function (
     finishTimestamp: bnum(0),
   };
 
-  votingMachineEvents.votes.map(voteEvent => {
+  votingMachineEvents.votes.forEach(voteEvent => {
     if (!proposalMutableData.votes[voteEvent.vote])
       proposalMutableData.votes[voteEvent.vote] = bnum(voteEvent.amount);
     else
@@ -109,7 +109,7 @@ export const getProposalMutableData = function (
         voteEvent.vote
       ].plus(voteEvent.amount);
   });
-  votingMachineEvents.stakes.map(stake => {
+  votingMachineEvents.stakes.forEach(stake => {
     if (!proposalMutableData.stakes[stake.vote])
       proposalMutableData.stakes[stake.vote] = bnum(stake.amount);
     else
@@ -137,8 +137,8 @@ export const getProposalMutableData = function (
   proposalMutableData.preBoostTimestamp = bnum(
     votingMachineEvents.proposalStateChanges.find(
       votingMachineEvent =>
-        votingMachineEvent.proposalId == proposalId &&
-        Number(votingMachineEvent.state) ==
+        votingMachineEvent.proposalId === proposalId &&
+        Number(votingMachineEvent.state) ===
           VotingMachineProposalState.PreBoosted
     )?.timestamp || '0'
   );
@@ -148,7 +148,7 @@ export const getProposalMutableData = function (
     VotingMachineProposalState[
       votingMachineEvents.proposalStateChanges
         .filter(
-          votingMachineEvent => votingMachineEvent.proposalId == proposalId
+          votingMachineEvent => votingMachineEvent.proposalId === proposalId
         )
         .at(-1)?.state
     ];

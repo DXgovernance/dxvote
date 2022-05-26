@@ -5,6 +5,7 @@ export type StyledIconProps = {
   src: React.FC<React.SVGProps<SVGSVGElement>> | string;
   margin?: string;
   size?: number;
+  alt?: string;
 };
 
 const StyledIconWrapper = styled.div<Omit<StyledIconProps, 'src'>>`
@@ -19,13 +20,13 @@ const StyledIconWrapper = styled.div<Omit<StyledIconProps, 'src'>>`
 `;
 
 const StyledIcon = React.memo((props: StyledIconProps) => {
-  const { src, ...rest } = props;
+  const { src, alt, ...rest } = props;
   const Icon = src;
 
   if (typeof Icon === 'string') {
     return (
       <StyledIconWrapper {...rest}>
-        <img src={Icon} />
+        <img src={Icon} alt={alt} />
       </StyledIconWrapper>
     );
   }

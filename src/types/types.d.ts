@@ -1,4 +1,3 @@
-import { ContractType } from 'stores/Provider';
 import {
   BigNumber,
   WalletSchemeProposalState,

@@ -70,19 +70,19 @@ const Votes = () => {
   const isDXDVotingMachine =
     configStore.getNetworkContracts().votingMachines[
       votingMachineOfProposal.address
-    ].type == 'DXDVotingMachine';
+    ].type === 'DXDVotingMachine';
 
   orbitDBService.getLogs(signedVoteMessageId).then(signedVoteMessages => {
     console.debug('[OrbitDB messages]', signedVoteMessages);
-    signedVoteMessages.map(signedVoteMessageRaw => {
+    signedVoteMessages.forEach(signedVoteMessageRaw => {
       const signedVoteMessage = parseSignedVoteMessage(signedVoteMessageRaw);
       if (signedVoteMessage.valid) {
         const alreadyAdded =
           signedVotesOfProposal.findIndex(
-            s => s.voter == signedVoteMessage.voter
+            s => s.voter === signedVoteMessage.voter
           ) > -1 ||
           proposalEvents.votes.findIndex(
-            s => s.voter == signedVoteMessage.voter
+            s => s.voter === signedVoteMessage.voter
           ) > -1;
 
         const repOfVoterForProposal = daoStore.getRepAt(
@@ -110,7 +110,7 @@ const Votes = () => {
 
   let votedAmount = bnum(0);
 
-  proposalEvents.votes.map(vote => {
+  proposalEvents.votes.forEach(vote => {
     if (vote.voter === account) {
       votedAmount = bnum(vote.amount);
     }

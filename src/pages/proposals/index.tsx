@@ -150,7 +150,7 @@ const ProposalsPage = observer(() => {
               const votingMachineTokenName =
                 votingMachines[
                   daoStore.getVotingMachineOfProposal(proposal.id).address
-                ].type == 'DXDVotingMachine'
+                ].type === 'DXDVotingMachine'
                   ? 'DXD'
                   : 'GEN';
 

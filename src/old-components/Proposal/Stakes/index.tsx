@@ -59,7 +59,7 @@ const Stakes = () => {
     daoStore.getVotingMachineOfProposal(proposalId);
 
   const votingMachineTokenName =
-    votingMachines[votingMachineOfProposal.address].type == 'DXDVotingMachine'
+    votingMachines[votingMachineOfProposal.address].type === 'DXDVotingMachine'
       ? 'DXD'
       : 'GEN';
 
@@ -76,7 +76,7 @@ const Stakes = () => {
   const votingParameters =
     daoStore.getVotingMachineOfProposal(proposalId).params;
 
-  proposalEvents.stakes.map(stake => {
+  proposalEvents.stakes.forEach(stake => {
     if (stake.staker === account && stake.vote.toString() === '1') {
       stakedAmount = stakedAmount.plus(stake.amount);
     } else if (stake.staker === account && stake.vote.toString() === '2') {

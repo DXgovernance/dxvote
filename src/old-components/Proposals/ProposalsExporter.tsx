@@ -121,10 +121,10 @@ const ProposalsExporter = () => {
     const urlNetworkName = location.pathname.split('/')[1];
 
     const chainName =
-      getChains().find(chain => chain.name == urlNetworkName)?.name || null;
+      getChains().find(chain => chain.name === urlNetworkName)?.name || null;
 
     let markdown = `**${chainName}**\n\n`;
-    filteredProposals.map(proposal => {
+    filteredProposals.forEach(proposal => {
       markdown += `- [${proposal.title}](${window.location.origin}/#/${urlNetworkName}/proposal/${proposal.id})\n`;
     });
 

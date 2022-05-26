@@ -63,7 +63,7 @@ const Web3ReactManager = ({ children }) => {
       const chains = getChains(rpcUrls);
       const urlNetworkName = location.pathname.split('/')[1];
       const chainId =
-        chains.find(chain => chain.name == urlNetworkName)?.id ||
+        chains.find(chain => chain.name === urlNetworkName)?.id ||
         DEFAULT_CHAIN_ID;
       const networkConnector = getNetworkConnector(rpcUrls, chainId);
 
@@ -101,7 +101,7 @@ const Web3ReactManager = ({ children }) => {
     const handleChainChange = (chainId: string) => {
       const chains = getChains();
       const chain = chains.find(
-        chain => `0x${chain.id.toString(16)}` == chainId
+        chain => `0x${chain.id.toString(16)}` === chainId
       );
 
       // If currently connected to an injected wallet, keep synced with it
@@ -109,7 +109,7 @@ const Web3ReactManager = ({ children }) => {
         history.push(`/${chain.name}/proposals`);
       } else if (connector instanceof NetworkConnector) {
         const urlNetworkName = location.pathname.split('/')[1];
-        if (urlNetworkName == chain.name) {
+        if (urlNetworkName === chain.name) {
           tryConnecting();
         }
       }

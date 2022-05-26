@@ -82,7 +82,7 @@ const NetworkModal = observer(() => {
           { chainId: chainIdHex },
         ]);
       } catch (e: any) {
-        if (e?.code == 4902) {
+        if (e?.code === 4902) {
           window.ethereum?.send('wallet_addEthereumChain', [
             {
               chainId: chainIdHex,

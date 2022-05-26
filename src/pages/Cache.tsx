@@ -201,7 +201,7 @@ const CachePage = observer(() => {
       JSON.stringify(updatedCacheHash.proposalTitles, null, 2)
     );
 
-    NETWORKS.map((network, i) => {
+    NETWORKS.forEach((network, i) => {
       cache.file(
         network.name + '.json',
         JSON.stringify(updatedCacheHash.caches[network.name], null, 2)
@@ -221,7 +221,7 @@ const CachePage = observer(() => {
   if (window.location.hash.length > 7) {
     const searchParams = new URLSearchParams(window.location.hash.substring(7));
     setUpdateProposalTitles(searchParams.get('proposalTitles') ? true : false);
-    NETWORKS.map((network, i) => {
+    NETWORKS.forEach((network, i) => {
       const networkName = network.name;
       if (searchParams.get(networkName + '_toBlock'))
         localConfig[networkName + '_toBlock'] = searchParams.get(
@@ -247,7 +247,7 @@ const CachePage = observer(() => {
       window.location.origin + '/' + window.location.hash + '?';
     if (updateProposalTitles)
       optionsLinkUrl = optionsLinkUrl = 'proposalTitles=1&';
-    NETWORKS.map((network, i) => {
+    NETWORKS.forEach((network, i) => {
       const networkName = network.name;
       if (localConfig[networkName + '_toBlock'])
         optionsLinkUrl =
@@ -378,7 +378,7 @@ const CachePage = observer(() => {
                     {updatedCacheHash.configHashes[networkName]}
                     {'  '}
                     <FormLabel>
-                      {updatedCacheHash.configHashes[networkName] ==
+                      {updatedCacheHash.configHashes[networkName] ===
                       localConfig[networkName + '_targetHash'] ? (
                         <FiCheckCircle />
                       ) : (

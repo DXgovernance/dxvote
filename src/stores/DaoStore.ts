@@ -45,14 +45,14 @@ export default class DaoStore {
   // Parse bignnumbers
   parseCache(unparsedCache: DaoNetworkCache): DaoNetworkCache {
     if (unparsedCache.reputation.events)
-      unparsedCache.reputation.events.map((repEvent, i) => {
+      unparsedCache.reputation.events.forEach((repEvent, i) => {
         unparsedCache.reputation.events[i].amount = bnum(repEvent.amount);
       });
 
-    Object.keys(unparsedCache.callPermissions).map(asset => {
-      Object.keys(unparsedCache.callPermissions[asset]).map(from => {
-        Object.keys(unparsedCache.callPermissions[asset][from]).map(to => {
-          Object.keys(unparsedCache.callPermissions[asset][from][to]).map(
+    Object.keys(unparsedCache.callPermissions).forEach(asset => {
+      Object.keys(unparsedCache.callPermissions[asset]).forEach(from => {
+        Object.keys(unparsedCache.callPermissions[asset][from]).forEach(to => {
+          Object.keys(unparsedCache.callPermissions[asset][from][to]).forEach(
             functionSignature => {
               unparsedCache.callPermissions[asset][from][to][
                 functionSignature
@@ -66,7 +66,7 @@ export default class DaoStore {
         });
       });
     });
-    Object.keys(unparsedCache.proposals).map(proposalId => {
+    Object.keys(unparsedCache.proposals).forEach(proposalId => {
       unparsedCache.proposals[proposalId].values = unparsedCache.proposals[
         proposalId
       ].values.map(value => {
@@ -122,10 +122,10 @@ export default class DaoStore {
       }
     });
 
-    Object.keys(unparsedCache.votingMachines).map(votingMachineAddress => {
+    Object.keys(unparsedCache.votingMachines).forEach(votingMachineAddress => {
       Object.keys(
         unparsedCache.votingMachines[votingMachineAddress].votingParameters
-      ).map(paramsHash => {
+      ).forEach(paramsHash => {
         const unparsedParams =
           unparsedCache.votingMachines[votingMachineAddress].votingParameters[
             paramsHash
@@ -234,8 +234,8 @@ export default class DaoStore {
     rep.unshift(['User Address', 'REP %']);
     repEvents.unshift(['Block', 'Total Rep']);
 
-    Object.keys(cache.votingMachines).map(votingMachineAddress => {
-      cache.votingMachines[votingMachineAddress].events.votes.map(vote => {
+    Object.keys(cache.votingMachines).forEach(votingMachineAddress => {
+      cache.votingMachines[votingMachineAddress].events.votes.forEach(vote => {
         if (!users[vote.voter])
           users[vote.voter] = {
             correctVotes: 0,
@@ -277,51 +277,53 @@ export default class DaoStore {
           }
         }
       });
-      cache.votingMachines[votingMachineAddress].events.stakes.map(stake => {
-        if (!users[stake.staker])
-          users[stake.staker] = {
-            correctVotes: 0,
-            wrongVotes: 0,
-            correctStakes: 0,
-            wrongStakes: 0,
-            proposals: 0,
-            totalVoted: bnum(0),
-            totalStaked: bnum(0),
-            score: 0,
-          };
+      cache.votingMachines[votingMachineAddress].events.stakes.forEach(
+        stake => {
+          if (!users[stake.staker])
+            users[stake.staker] = {
+              correctVotes: 0,
+              wrongVotes: 0,
+              correctStakes: 0,
+              wrongStakes: 0,
+              proposals: 0,
+              totalVoted: bnum(0),
+              totalStaked: bnum(0),
+              score: 0,
+            };
 
-        if (!cache.proposals[stake.proposalId]) {
-          console.debug('MISSING PROPOSAL', stake.proposalId);
-        } else {
-          if (stake.vote === 1) {
-            totalPositiveStakes++;
-            totalPositiveStakesAmount = totalPositiveStakesAmount.plus(
-              bnum(stake.amount)
-            );
+          if (!cache.proposals[stake.proposalId]) {
+            console.debug('MISSING PROPOSAL', stake.proposalId);
           } else {
-            totalNegativeStakes++;
-            totalNegativeStakesAmount = totalNegativeStakesAmount.plus(
-              bnum(stake.amount)
-            );
-          }
+            if (stake.vote === 1) {
+              totalPositiveStakes++;
+              totalPositiveStakesAmount = totalPositiveStakesAmount.plus(
+                bnum(stake.amount)
+              );
+            } else {
+              totalNegativeStakes++;
+              totalNegativeStakesAmount = totalNegativeStakesAmount.plus(
+                bnum(stake.amount)
+              );
+            }
 
-          if (cache.proposals[stake.proposalId].winningVote === stake.vote) {
-            users[stake.staker].correctStakes++;
-            users[stake.staker].totalStaked = users[
-              stake.staker
-            ].totalStaked.plus(bnum(stake.amount));
-            users[stake.staker].score += 1;
-          } else {
-            users[stake.staker].wrongStakes++;
-            users[stake.staker].totalStaked = users[
-              stake.staker
-            ].totalStaked.plus(bnum(stake.amount));
+            if (cache.proposals[stake.proposalId].winningVote === stake.vote) {
+              users[stake.staker].correctStakes++;
+              users[stake.staker].totalStaked = users[
+                stake.staker
+              ].totalStaked.plus(bnum(stake.amount));
+              users[stake.staker].score += 1;
+            } else {
+              users[stake.staker].wrongStakes++;
+              users[stake.staker].totalStaked = users[
+                stake.staker
+              ].totalStaked.plus(bnum(stake.amount));
+            }
           }
         }
-      });
+      );
     });
 
-    Object.keys(cache.proposals).map(proposalId => {
+    Object.keys(cache.proposals).forEach(proposalId => {
       const proposalCreator = cache.proposals[proposalId].proposer;
 
       if (proposalCreator !== '0x0000000000000000000000000000000000000000') {
@@ -684,7 +686,7 @@ export default class DaoStore {
       redeemsDaoBounty: [],
     };
 
-    Object.keys(cache.votingMachines).map(votingMachine => {
+    Object.keys(cache.votingMachines).forEach(votingMachine => {
       proposalEvents.votes = proposalEvents.votes.concat(
         cache.votingMachines[votingMachine].events.votes.filter(vote => {
           return userAddress === vote.voter;
@@ -854,7 +856,7 @@ export default class DaoStore {
     };
 
     // Adds user created proposals that have ended
-    userEvents.newProposal.map(newProposal => {
+    userEvents.newProposal.forEach(newProposal => {
       const proposal = this.getProposal(newProposal.proposalId);
       const votingParameters = this.getVotingMachineOfProposal(
         newProposal.proposalId
@@ -870,7 +872,7 @@ export default class DaoStore {
     });
 
     // Add possible redeems
-    userEvents.votes.map(vote => {
+    userEvents.votes.forEach(vote => {
       const proposal = this.getProposal(vote.proposalId);
       const voteParameters = this.getVotingMachineOfProposal(
         vote.proposalId
@@ -886,7 +888,7 @@ export default class DaoStore {
         redeemsLeft.rep.push(vote.proposalId);
       }
     });
-    userEvents.stakes.map(stake => {
+    userEvents.stakes.forEach(stake => {
       const proposal = this.getProposal(stake.proposalId);
       if (
         proposal.stateInVotingMachine ===
@@ -923,21 +925,21 @@ export default class DaoStore {
       }
     });
     // Remove already redeemed
-    userEvents.redeemsRep.map(redeemRep => {
+    userEvents.redeemsRep.forEach(redeemRep => {
       if (redeemsLeft.rep.indexOf(redeemRep.proposalId) > -1)
         redeemsLeft.rep.splice(
           redeemsLeft.rep.indexOf(redeemRep.proposalId),
           1
         );
     });
-    userEvents.redeems.map(redeem => {
+    userEvents.redeems.forEach(redeem => {
       if (redeemsLeft.stake.indexOf(redeem.proposalId) > -1)
         redeemsLeft.stake.splice(
           redeemsLeft.stake.indexOf(redeem.proposalId),
           1
         );
     });
-    userEvents.redeemsDaoBounty.map(redeemDaoBounty => {
+    userEvents.redeemsDaoBounty.forEach(redeemDaoBounty => {
       redeemsLeft.bounty[redeemDaoBounty.proposalId] = bnum(
         redeemsLeft.bounty[redeemDaoBounty.proposalId]
       )
@@ -1031,7 +1033,7 @@ export default class DaoStore {
         : schemeAddress;
     let recommendedCalls = this.context.configStore.getRecommendedCalls();
 
-    Object.keys(callPermissions).map(assetAddress => {
+    Object.keys(callPermissions).forEach(assetAddress => {
       const callAllowance = this.getCallAllowance(
         assetAddress,
         from,
@@ -1059,8 +1061,8 @@ export default class DaoStore {
       recommendedCalls[i]['fromTime'] = callAllowance.fromTime;
 
       if (
-        recommendedCalls[i].to == networkContracts.permissionRegistry &&
-        recommendedCalls[i].functionName ==
+        recommendedCalls[i].to === networkContracts.permissionRegistry &&
+        recommendedCalls[i].functionName ===
           'setPermission(address,address,bytes4,uint256,bool)'
       )
         recommendedCalls[i]['fromTime'] = 1;

@@ -21,7 +21,7 @@ export default class CoingeckoService {
 
     if (networkName === 'ethereum' || networkName === 'xdai') {
       let tokenAddresses = '';
-      tokens.map((token, i) => {
+      tokens.forEach((token, i) => {
         if (i === tokens.length - 1) tokenAddresses += token.address;
         else tokenAddresses += token.address + '%2C';
       });
@@ -42,7 +42,7 @@ export default class CoingeckoService {
       ) {
         this.prices = pricesResponse[0].data;
 
-        Object.keys(this.prices).map(tokenAddress => {
+        Object.keys(this.prices).forEach(tokenAddress => {
           this.prices[web3.utils.toChecksumAddress(tokenAddress)] =
             this.prices[tokenAddress];
           delete this.prices[tokenAddress];

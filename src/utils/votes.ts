@@ -33,7 +33,7 @@ export const verifySignedVote = function (
       ),
       signature
     );
-    return signer == voter;
+    return signer === voter;
   } catch (error) {
     console.error('Error verifying vote signature', error);
     return false;
@@ -85,9 +85,9 @@ export const parseSignedVoteMessage = function (signedVoteMessage: string): {
 };
 
 export const isVoteYes = function (vote) {
-  return vote && vote.toString() == '1';
+  return vote && vote.toString() === '1';
 };
 
 export const isVoteNo = function (vote) {
-  return vote && vote.toString() == '2';
+  return vote && vote.toString() === '2';
 };
