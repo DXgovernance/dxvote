@@ -9,20 +9,17 @@ import { ActionViewProps } from '..';
 import { Segment } from '../common/infoLine';
 import { DetailCell, DetailHeader, DetailRow } from '../common/summary';
 
-const ERC20TransferSummary: React.FC<ActionViewProps> = ({
-  call,
-  decodedCall,
-}) => {
+const ERC20TransferSummary: React.FC<ActionViewProps> = ({ decodedCall }) => {
   const parsedData = useMemo(() => {
-    if (!call || !decodedCall) return null;
+    if (!decodedCall) return null;
 
     return {
-      tokenAddress: call.to,
+      tokenAddress: decodedCall.to,
       amount: BigNumber.from(decodedCall.args._value),
-      source: call.from,
+      source: decodedCall.from,
       destination: decodedCall.args._to,
     };
-  }, [call, decodedCall]);
+  }, [decodedCall]);
 
   const { data: tokenInfo } = useERC20Info(parsedData?.tokenAddress);
   const roundedBalance = useBigNumberToNumber(

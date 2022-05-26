@@ -1,16 +1,28 @@
 import styled, { css } from 'styled-components';
+import { CSS } from '@dnd-kit/utilities';
 import { Box } from 'components/Guilds/common/Layout';
 import { CardWrapper, Header } from 'components/Guilds/common/Card';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { useState } from 'react';
 import { Button } from 'components/Guilds/common/Button';
 import { useDecodedCall } from 'hooks/Guilds/contracts/useDecodedCall';
-import { getInfoLineView, getSummaryView } from '../SupportedActions';
-import CallDetails from '../CallDetails';
-import { Call } from '../types';
+import { getInfoLineView, getSummaryView } from './SupportedActions';
+import CallDetails from './CallDetails';
+import { Call, DecodedAction } from './types';
+import Grip from './common/Grip';
+import EditButton from './common/EditButton';
+import { useSortable } from '@dnd-kit/sortable';
 
 const CardWrapperWithMargin = styled(CardWrapper)`
+  position: relative;
+  background-color: ${({ theme }) => theme.colors.background};
   margin-top: 0.8rem;
+  border: 1px solid;
+  border-color: ${({ dragging, theme }) =>
+    dragging ? theme.colors.text : theme.colors.muted};
+  z-index: ${({ dragging }) => (dragging ? 999 : 'initial')};
+  box-shadow: ${({ dragging }) =>
+    dragging ? '0px 4px 8px 0px rgba(0, 0, 0, 0.2)' : 'none'};
 `;
 
 const CardHeader = styled(Header)`
@@ -29,10 +41,10 @@ const CardLabel = styled(Box)`
 
 const ChevronIcon = styled.span`
   cursor: pointer;
-  height: 1.25rem;
-  width: 1.25rem;
+  height: 1.4rem;
+  width: 1.4rem;
   border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.proposalText.grey};
+  border: 1px solid ${({ theme }) => theme.colors.muted};
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -64,12 +76,44 @@ const TabButton = styled(Button)`
     `}
 `;
 
+const GripWithMargin = styled(Grip)`
+  margin-right: 1rem;
+`;
+
+const EditButtonWithMargin = styled(EditButton)`
+  margin-right: 0.625rem;
+`;
+
+const CardActions = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 interface ActionViewProps {
-  call: Call;
+  call?: Call;
+  decodedAction?: DecodedAction;
+  isEditable?: boolean;
+  onEdit?: (updatedCall: DecodedAction) => void;
 }
 
-const ActionView: React.FC<ActionViewProps> = ({ call }) => {
-  const { decodedCall } = useDecodedCall(call);
+const ActionRow: React.FC<ActionViewProps> = ({
+  call,
+  decodedAction,
+  isEditable,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: decodedAction?.id, disabled: !isEditable });
+
+  const { decodedCall: decodedCallFromCall } = useDecodedCall(call);
+
+  const decodedCall = decodedCallFromCall || decodedAction.decodedCall;
 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -78,19 +122,34 @@ const ActionView: React.FC<ActionViewProps> = ({ call }) => {
   const InfoLine = getInfoLineView(decodedCall?.callType);
   const ActionSummary = getSummaryView(decodedCall?.callType);
 
+  const dndStyles = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
+
   return (
-    <CardWrapperWithMargin>
+    <CardWrapperWithMargin
+      dragging={isEditable && isDragging}
+      ref={setNodeRef}
+      style={dndStyles}
+      {...attributes}
+    >
       <CardHeader>
         <CardLabel>
-          {InfoLine && <InfoLine call={call} decodedCall={decodedCall} />}
+          {isEditable && <GripWithMargin {...listeners} />}
+
+          {InfoLine && <InfoLine decodedCall={decodedCall} />}
         </CardLabel>
-        <ChevronIcon onClick={() => setExpanded(!expanded)}>
-          {expanded ? (
-            <FiChevronUp height={16} />
-          ) : (
-            <FiChevronDown height={16} />
-          )}
-        </ChevronIcon>
+        <CardActions>
+          {isEditable && <EditButtonWithMargin>Edit</EditButtonWithMargin>}
+          <ChevronIcon onClick={() => setExpanded(!expanded)}>
+            {expanded ? (
+              <FiChevronUp height={16} />
+            ) : (
+              <FiChevronDown height={16} />
+            )}
+          </ChevronIcon>
+        </CardActions>
       </CardHeader>
 
       {expanded && (
@@ -115,13 +174,13 @@ const ActionView: React.FC<ActionViewProps> = ({ call }) => {
 
           {ActionSummary && activeTab === 0 && (
             <DetailWrapper>
-              <ActionSummary call={call} decodedCall={decodedCall} />
+              <ActionSummary decodedCall={decodedCall} />
             </DetailWrapper>
           )}
 
           {(!ActionSummary || activeTab === 1) && (
             <DetailWrapper>
-              <CallDetails call={call} decodedCall={decodedCall} />
+              <CallDetails decodedCall={decodedCall} />
             </DetailWrapper>
           )}
         </>
@@ -130,4 +189,4 @@ const ActionView: React.FC<ActionViewProps> = ({ call }) => {
   );
 };
 
-export default ActionView;
+export default ActionRow;

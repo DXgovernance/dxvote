@@ -13,38 +13,174 @@ async function main() {
   const web3 = hre.web3;
   const PermissionRegistry = await hre.artifacts.require('PermissionRegistry');
   const ERC20Guild = await hre.artifacts.require('ERC20Guild');
+  const SnapshotERC20Guild = await hre.artifacts.require('SnapshotERC20Guild');
+  const accounts = await web3.eth.getAccounts();
 
   const deployconfig = {
-    reputation: [
-      {
-        address: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
-        amount: 6000,
+    dao: {
+      reputation: [
+        {
+          address: accounts[0],
+          amount: 6000,
+        },
+        {
+          address: accounts[1],
+          amount: 4000,
+        },
+        {
+          address: accounts[2],
+          amount: 1000,
+        },
+      ],
+      contributionReward: {
+        queuedVoteRequiredPercentage: 50,
+        queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
+        boostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
+        preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
+        thresholdConst: 2000,
+        quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
+        proposingRepReward: 10,
+        votersReputationLossRatio: 100,
+        minimumDaoBounty: web3.utils.toWei('1'),
+        daoBountyConst: 100,
       },
-      {
-        address: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
-        amount: 4000,
-      },
-      {
-        address: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
-        amount: 1000,
-      },
-    ],
+
+      walletSchemes: [
+        {
+          name: 'RegistrarWalletScheme',
+          doAvatarGenericCalls: true,
+          maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
+          maxRepPercentageChange: 0,
+          controllerPermissions: {
+            canGenericCall: true,
+            canUpgrade: true,
+            canRegisterSchemes: true,
+          },
+          permissions: [],
+          queuedVoteRequiredPercentage: 75,
+          boostedVoteRequiredPercentage: 5 * 100,
+          queuedVotePeriodLimit: moment.duration(15, 'minutes').asSeconds(),
+          boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
+          preBoostedVotePeriodLimit: moment.duration(2, 'minutes').asSeconds(),
+          thresholdConst: 2000,
+          quietEndingPeriod: moment.duration(1, 'minutes').asSeconds(),
+          proposingRepReward: 0,
+          votersReputationLossRatio: 100,
+          minimumDaoBounty: web3.utils.toWei('10'),
+          daoBountyConst: 100,
+        },
+        {
+          name: 'MasterWalletScheme',
+          doAvatarGenericCalls: true,
+          maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
+          maxRepPercentageChange: 40,
+          controllerPermissions: {
+            canGenericCall: true,
+            canUpgrade: false,
+            canChangeConstraints: false,
+            canRegisterSchemes: false,
+          },
+          permissions: [
+            {
+              asset: '0x0000000000000000000000000000000000000000',
+              to: 'DXDVotingMachine',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+            {
+              asset: '0x0000000000000000000000000000000000000000',
+              to: 'RegistrarWalletScheme',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+            {
+              asset: '0x0000000000000000000000000000000000000000',
+              to: 'ITSELF',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+          ],
+          queuedVoteRequiredPercentage: 50,
+          boostedVoteRequiredPercentage: 2 * 100,
+          queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
+          boostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
+          preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
+          thresholdConst: 1500,
+          quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
+          proposingRepReward: 0,
+          votersReputationLossRatio: 5,
+          minimumDaoBounty: web3.utils.toWei('1'),
+          daoBountyConst: 10,
+        },
+        {
+          name: 'QuickWalletScheme',
+          doAvatarGenericCalls: false,
+          maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
+          maxRepPercentageChange: 1,
+          controllerPermissions: {
+            canGenericCall: false,
+            canUpgrade: false,
+            canChangeConstraints: false,
+            canRegisterSchemes: false,
+          },
+          permissions: [
+            {
+              asset: '0x0000000000000000000000000000000000000000',
+              to: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+            {
+              asset: 'DXD',
+              to: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
+              functionSignature: '0xaaaaaaaa',
+              value:
+                '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+              allowed: true,
+            },
+          ],
+          queuedVoteRequiredPercentage: 50,
+          boostedVoteRequiredPercentage: 10 * 100,
+          queuedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
+          boostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
+          preBoostedVotePeriodLimit: moment
+            .duration(0.5, 'minutes')
+            .asSeconds(),
+          thresholdConst: 1300,
+          quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
+          proposingRepReward: 0,
+          votersReputationLossRatio: 10,
+          minimumDaoBounty: web3.utils.toWei('0.1'),
+          daoBountyConst: 10,
+        },
+      ],
+    },
 
     tokens: [
       {
         name: 'DXDao on localhost',
         symbol: 'DXD',
+        type: 'ERC20',
+        decimals: 18,
         distribution: [
           {
-            address: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+            address: accounts[0],
             amount: web3.utils.toWei('220'),
           },
           {
-            address: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
+            address: accounts[1],
             amount: web3.utils.toWei('50'),
           },
           {
-            address: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+            address: accounts[2],
             amount: web3.utils.toWei('10'),
           },
         ],
@@ -52,171 +188,49 @@ async function main() {
       {
         name: 'REPGuildToken',
         symbol: 'RGT',
+        type: 'ERC20SnapshotRep',
+        decimals: 18,
         distribution: [
           {
-            address: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
-            amount: 1000,
+            address: accounts[0],
+            amount: web3.utils.toWei('200'),
           },
           {
-            address: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
-            amount: 4000,
+            address: accounts[1],
+            amount: web3.utils.toWei('50'),
           },
           {
-            address: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
-            amount: 10000,
+            address: accounts[2],
+            amount: web3.utils.toWei('10'),
           },
         ],
       },
       {
         name: 'Snapshot Guild Token',
         symbol: 'SGT',
+        type: 'ERC20',
+        decimals: 18,
         distribution: [
           {
-            address: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
-            amount: 1000,
+            address: accounts[0],
+            amount: web3.utils.toWei('200'),
           },
           {
-            address: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
-            amount: 4000,
+            address: accounts[1],
+            amount: web3.utils.toWei('40'),
           },
           {
-            address: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
-            amount: 10000,
+            address: accounts[2],
+            amount: web3.utils.toWei('10'),
           },
         ],
       },
     ],
 
-    permissionRegistryDelay: moment.duration(10, 'minutes').asSeconds(),
-
-    contributionReward: {
-      queuedVoteRequiredPercentage: 50,
-      queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-      boostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
-      preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
-      thresholdConst: 2000,
-      quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
-      proposingRepReward: 10,
-      votersReputationLossRatio: 100,
-      minimumDaoBounty: web3.utils.toWei('1'),
-      daoBountyConst: 100,
+    guildRegistry: {
+      address: ZERO_ADDRESS,
+      owner: 'Avatar',
     },
-
-    walletSchemes: [
-      {
-        name: 'RegistrarWalletScheme',
-        doAvatarGenericCalls: true,
-        maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
-        maxRepPercentageChange: 0,
-        controllerPermissions: {
-          canGenericCall: true,
-          canUpgrade: true,
-          canRegisterSchemes: true,
-        },
-        permissions: [],
-        queuedVoteRequiredPercentage: 75,
-        boostedVoteRequiredPercentage: 5 * 100,
-        queuedVotePeriodLimit: moment.duration(15, 'minutes').asSeconds(),
-        boostedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-        preBoostedVotePeriodLimit: moment.duration(2, 'minutes').asSeconds(),
-        thresholdConst: 2000,
-        quietEndingPeriod: moment.duration(1, 'minutes').asSeconds(),
-        proposingRepReward: 0,
-        votersReputationLossRatio: 100,
-        minimumDaoBounty: web3.utils.toWei('10'),
-        daoBountyConst: 100,
-      },
-      {
-        name: 'MasterWalletScheme',
-        doAvatarGenericCalls: true,
-        maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
-        maxRepPercentageChange: 40,
-        controllerPermissions: {
-          canGenericCall: true,
-          canUpgrade: false,
-          canChangeConstraints: false,
-          canRegisterSchemes: false,
-        },
-        permissions: [
-          {
-            asset: '0x0000000000000000000000000000000000000000',
-            to: 'DXDVotingMachine',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-          {
-            asset: '0x0000000000000000000000000000000000000000',
-            to: 'RegistrarWalletScheme',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-          {
-            asset: '0x0000000000000000000000000000000000000000',
-            to: 'ITSELF',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-        ],
-        queuedVoteRequiredPercentage: 50,
-        boostedVoteRequiredPercentage: 2 * 100,
-        queuedVotePeriodLimit: moment.duration(10, 'minutes').asSeconds(),
-        boostedVotePeriodLimit: moment.duration(3, 'minutes').asSeconds(),
-        preBoostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
-        thresholdConst: 1500,
-        quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
-        proposingRepReward: 0,
-        votersReputationLossRatio: 5,
-        minimumDaoBounty: web3.utils.toWei('1'),
-        daoBountyConst: 10,
-      },
-      {
-        name: 'QuickWalletScheme',
-        doAvatarGenericCalls: false,
-        maxSecondsForExecution: moment.duration(31, 'days').asSeconds(),
-        maxRepPercentageChange: 1,
-        controllerPermissions: {
-          canGenericCall: false,
-          canUpgrade: false,
-          canChangeConstraints: false,
-          canRegisterSchemes: false,
-        },
-        permissions: [
-          {
-            asset: '0x0000000000000000000000000000000000000000',
-            to: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-          {
-            asset: 'DXD',
-            to: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
-            functionSignature: '0xaaaaaaaa',
-            value:
-              '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-            allowed: true,
-          },
-        ],
-        queuedVoteRequiredPercentage: 50,
-        boostedVoteRequiredPercentage: 10 * 100,
-        queuedVotePeriodLimit: moment.duration(5, 'minutes').asSeconds(),
-        boostedVotePeriodLimit: moment.duration(1, 'minutes').asSeconds(),
-        preBoostedVotePeriodLimit: moment.duration(0.5, 'minutes').asSeconds(),
-        thresholdConst: 1300,
-        quietEndingPeriod: moment.duration(0.5, 'minutes').asSeconds(),
-        proposingRepReward: 0,
-        votersReputationLossRatio: 10,
-        minimumDaoBounty: web3.utils.toWei('0.1'),
-        daoBountyConst: 10,
-      },
-    ],
 
     guilds: [
       {
@@ -248,7 +262,7 @@ async function main() {
       {
         token: 'SGT',
         contractName: 'SnapshotERC20Guild',
-        name: 'SnapshotGuild',
+        name: 'SnapshotERC20Guild',
         proposalTime: moment.duration(5, 'minutes').asSeconds(),
         timeForExecution: moment.duration(2, 'minutes').asSeconds(),
         votingPowerForProposalExecution: '50',
@@ -260,12 +274,11 @@ async function main() {
       },
     ],
 
-    startTimestampForActions: moment().subtract(26, 'minutes').unix(),
-
     actions: [
       {
+        timestamp: moment().subtract(26, 'minutes').unix(),
         type: 'transfer',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        from: accounts[0],
         data: {
           asset: ZERO_ADDRESS,
           address: 'Avatar',
@@ -274,7 +287,7 @@ async function main() {
       },
       {
         type: 'transfer',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        from: accounts[0],
         data: {
           asset: 'DXD',
           address: 'Avatar',
@@ -284,7 +297,7 @@ async function main() {
 
       {
         type: 'transfer',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        from: accounts[0],
         data: {
           asset: ZERO_ADDRESS,
           address: 'DXDGuild',
@@ -293,7 +306,7 @@ async function main() {
       },
       {
         type: 'transfer',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        from: accounts[0],
         data: {
           asset: 'DXD',
           address: 'DXDGuild',
@@ -303,7 +316,26 @@ async function main() {
 
       {
         type: 'transfer',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        from: accounts[1],
+        data: {
+          asset: ZERO_ADDRESS,
+          address: 'SnapshotERC20Guild',
+          amount: web3.utils.toWei('10'),
+        },
+      },
+      {
+        type: 'transfer',
+        from: accounts[1],
+        data: {
+          asset: 'SGT',
+          address: 'SnapshotERC20Guild',
+          amount: web3.utils.toWei('10'),
+        },
+      },
+
+      {
+        type: 'transfer',
+        from: accounts[0],
         data: {
           asset: ZERO_ADDRESS,
           address: 'REPGuild',
@@ -313,12 +345,12 @@ async function main() {
 
       {
         type: 'proposal',
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        from: accounts[2],
         data: {
           to: ['PermissionRegistry'],
           callData: [
             new web3.eth.Contract(PermissionRegistry.abi).methods
-              .setAdminPermission(
+              .setPermission(
                 ZERO_ADDRESS,
                 '0xE0FC07f3aC4F6AF1463De20eb60Cf1A764E259db',
                 '0x1A0370A6f5b6cE96B1386B208a8519552eb714D9',
@@ -336,8 +368,17 @@ async function main() {
         },
       },
       {
+        type: 'approve',
+        from: accounts[2],
+        data: {
+          asset: 'DXD',
+          address: 'DXDVotingMachine',
+          amount: web3.utils.toWei('101'),
+        },
+      },
+      {
         type: 'stake',
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        from: accounts[2],
         data: {
           proposal: '0',
           decision: '1',
@@ -346,8 +387,8 @@ async function main() {
       },
       {
         type: 'vote',
-        time: moment.duration(1, 'minutes').asSeconds(),
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        increaseTime: moment.duration(1, 'minutes').asSeconds(),
+        from: accounts[2],
         data: {
           proposal: '0',
           decision: '1',
@@ -356,15 +397,15 @@ async function main() {
       },
       {
         type: 'execute',
-        time: moment.duration(3, 'minutes').asSeconds(),
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        increaseTime: moment.duration(3, 'minutes').asSeconds(),
+        from: accounts[2],
         data: {
           proposal: '0',
         },
       },
       {
         type: 'redeem',
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        from: accounts[2],
         data: {
           proposal: '0',
         },
@@ -372,7 +413,7 @@ async function main() {
 
       {
         type: 'proposal',
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        from: accounts[2],
         data: {
           to: ['QuickWalletScheme'],
           callData: ['0x0'],
@@ -384,8 +425,17 @@ async function main() {
         },
       },
       {
+        type: 'approve',
+        from: accounts[2],
+        data: {
+          asset: 'DXD',
+          address: 'DXDVotingMachine',
+          amount: web3.utils.toWei('101'),
+        },
+      },
+      {
         type: 'stake',
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        from: accounts[2],
         data: {
           proposal: '1',
           decision: '1',
@@ -394,8 +444,8 @@ async function main() {
       },
       {
         type: 'vote',
-        time: moment.duration(1, 'minutes').asSeconds(),
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        increaseTime: moment.duration(1, 'minutes').asSeconds(),
+        from: accounts[2],
         data: {
           proposal: '1',
           decision: '1',
@@ -404,7 +454,7 @@ async function main() {
       },
       {
         type: 'vote',
-        from: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
+        from: accounts[1],
         data: {
           proposal: '1',
           decision: '2',
@@ -414,9 +464,9 @@ async function main() {
 
       {
         type: 'proposal',
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        from: accounts[2],
         data: {
-          to: ['0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351'],
+          to: [accounts[2]],
           callData: ['0x0'],
           value: [web3.utils.toWei('1.5')],
           title: 'Proposal Test #2',
@@ -429,7 +479,7 @@ async function main() {
 
       {
         type: 'approve',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        from: accounts[0],
         data: {
           asset: 'DXD',
           address: 'DXDGuild-vault',
@@ -438,7 +488,7 @@ async function main() {
       },
       {
         type: 'guild-lockTokens',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        from: accounts[0],
         data: {
           guildName: 'DXDGuild',
           amount: web3.utils.toWei('100'),
@@ -446,16 +496,16 @@ async function main() {
       },
       {
         type: 'guild-withdrawTokens',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        increaseTime: moment.duration(10, 'minutes').asSeconds() + 1,
+        from: accounts[0],
         data: {
           guildName: 'DXDGuild',
           amount: web3.utils.toWei('10'),
         },
-        time: moment.duration(10, 'minutes').asSeconds() + 1,
       },
       {
         type: 'guild-createProposal',
-        from: '0x79706c8e413cdaee9e63f282507287b9ea9c0928',
+        from: accounts[0],
         data: {
           guildName: 'DXDGuild',
           to: ['DXDGuild'],
@@ -479,7 +529,7 @@ async function main() {
       },
       {
         type: 'guild-voteProposal',
-        from: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
+        from: accounts[1],
         data: {
           guildName: 'DXDGuild',
           proposal: 0,
@@ -488,9 +538,9 @@ async function main() {
         },
       },
       {
-        time: moment.duration(10, 'minutes').asSeconds(),
         type: 'guild-endProposal',
-        from: '0xc73480525e9d1198d448ece4a01daea851f72a9d',
+        increaseTime: moment.duration(10, 'minutes').asSeconds(),
+        from: accounts[1],
         data: {
           guildName: 'DXDGuild',
           proposal: 0,
@@ -498,10 +548,35 @@ async function main() {
       },
 
       {
-        type: 'proposal',
-        from: '0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351',
+        type: 'guild-createProposal',
+        from: accounts[1],
         data: {
-          to: ['0x3f943f38b2fbe1ee5daf0516cecfe4e0f8734351'],
+          guildName: 'SnapshotERC20Guild',
+          to: ['SnapshotERC20Guild'],
+          callData: [
+            new web3.eth.Contract(SnapshotERC20Guild.abi).methods
+              .setPermission(
+                [ZERO_ADDRESS],
+                [ANY_ADDRESS],
+                [ANY_FUNC_SIGNATURE],
+                [web3.utils.toWei('5').toString()],
+                [true]
+              )
+              .encodeABI(),
+          ],
+          value: ['0'],
+          totalActions: '1',
+          title: 'Proposal Test #1 to SnapshotERC20Guild',
+          description:
+            'Allow call any address and function and send a max of 5 ETH per proposal',
+        },
+      },
+
+      {
+        type: 'proposal',
+        from: accounts[2],
+        data: {
+          to: [accounts[2]],
           callData: ['0x0'],
           value: [web3.utils.toWei('1.5')],
           title: 'Proposal Test #3',
@@ -514,7 +589,7 @@ async function main() {
     ],
   };
 
-  const { networkContracts, addresses } = await hre.run('deploy-dxvote', {
+  const networkContracts = await hre.run('deploy-dxdao-contracts', {
     deployconfig: JSON.stringify(deployconfig),
   });
 
@@ -573,7 +648,7 @@ async function main() {
     ],
     tokens: [
       {
-        address: addresses.DXD,
+        address: networkContracts.addresses.DXD,
         name: 'DXdao on Localhost',
         decimals: 18,
         symbol: 'DXD',
@@ -581,14 +656,36 @@ async function main() {
         logoURI:
           'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
       },
+      {
+        address: networkContracts.addresses.RGT,
+        name: 'REP Guild Token on Localhost',
+        decimals: 18,
+        symbol: 'RGT',
+        fetchPrice: true,
+        logoURI:
+          'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
+      },
+      {
+        address: networkContracts.addresses.SGT,
+        name: 'Snapshot Guild Token on Localhost',
+        decimals: 18,
+        symbol: 'SGT',
+        fetchPrice: true,
+        logoURI:
+          'https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png',
+      },
     ],
-    guilds: [addresses.DXDGuild, addresses.REPGuild, addresses.SnapshotGuild],
+    guilds: [
+      networkContracts.addresses.DXDGuild,
+      networkContracts.addresses.REPGuild,
+      networkContracts.addresses.SnapshotGuild,
+    ],
   };
 
   mkdirSync(path.resolve(__dirname, '../src/configs/localhost'), {
     recursive: true,
   });
-  await writeFileSync(
+  writeFileSync(
     path.resolve(__dirname, '../src/configs/localhost/config.json'),
     JSON.stringify(developConfig, null, 2)
   );

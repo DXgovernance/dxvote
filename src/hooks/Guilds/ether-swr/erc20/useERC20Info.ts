@@ -1,11 +1,13 @@
 import useEtherSWR from '../useEtherSWR';
 import ERC20ABI from '../../../../abis/ERC20.json';
 import { useMemo } from 'react';
+import { BigNumber } from 'ethers';
 
 export type ERC20Info = {
   name: string;
   symbol: string;
   decimals: number;
+  totalSupply: BigNumber;
 };
 
 export const useERC20Info = (contractAddress: string) => {
@@ -15,6 +17,7 @@ export const useERC20Info = (contractAddress: string) => {
           [contractAddress, 'name'],
           [contractAddress, 'symbol'],
           [contractAddress, 'decimals'],
+          [contractAddress, 'totalSupply'],
         ]
       : [],
     {
@@ -29,6 +32,7 @@ export const useERC20Info = (contractAddress: string) => {
       name: data[0],
       symbol: data[1],
       decimals: data[2],
+      totalSupply: data[3],
     };
   }, [data]);
 

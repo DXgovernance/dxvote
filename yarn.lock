@@ -1489,6 +1489,45 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@dnd-kit/accessibility@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@dnd-kit/accessibility/-/accessibility-3.0.0.tgz#b56e3750414fd907b7d6972b3116aa8f96d07fde"
+  integrity sha512-QwaQ1IJHQHMMuAGOOYHQSx7h7vMZPfO97aDts8t5N/MY7n2QTDSnW+kF7uRQ1tVBkr6vJ+BqHWG5dlgGvwVjow==
+  dependencies:
+    tslib "^2.0.0"
+
+"@dnd-kit/core@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@dnd-kit/core/-/core-5.0.3.tgz#028d7e543e9fd3756f9cb857b34f818d73020810"
+  integrity sha512-IribcBLsaPqHdYLpc5xG0TqwYIaD+65offdEYxoKh38WDjzRxUjDmrt7hj9oa/ooUKL0epux20u+mBTd92i/zw==
+  dependencies:
+    "@dnd-kit/accessibility" "^3.0.0"
+    "@dnd-kit/utilities" "^3.1.0"
+    tslib "^2.0.0"
+
+"@dnd-kit/modifiers@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@dnd-kit/modifiers/-/modifiers-5.0.0.tgz#c2ba0bfdb6bed994affcfc4c86834795b7a7f029"
+  integrity sha512-ZVOfa5dKmvAPBxjjnI4QTm8fHV4/gMdS6k0zY5Z8p/p9HkL/3QEHn2fYgqM2zVDpxf5maqrZ4MvqXILSPNQPMQ==
+  dependencies:
+    "@dnd-kit/utilities" "^3.1.0"
+    tslib "^2.0.0"
+
+"@dnd-kit/sortable@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@dnd-kit/sortable/-/sortable-6.0.1.tgz#08d046efa85c546fd21979836b007d6fea1001f9"
+  integrity sha512-FGpRHBcflpwWpSP8bMJ4zNcDywDXssZDJBwGYuHd1RqUU/+JX43pEU0u0OHw06LabEZMOLBbyWoIaZJ0abCOEA==
+  dependencies:
+    "@dnd-kit/utilities" "^3.1.0"
+    tslib "^2.0.0"
+
+"@dnd-kit/utilities@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@dnd-kit/utilities/-/utilities-3.1.0.tgz#330ef24303da05f85ff20bb8f74b385c96caee58"
+  integrity sha512-2JBdIgjJ7xjMRpKagdMuYKWJdDoVVw9Wc6lfMrLjrq8t4QlMEjtsab5JVUlzWvHgANn7w3Y3VhalFfbp4dQrKg==
+  dependencies:
+    tslib "^2.0.0"
+
 "@electron/get@^1.13.0":
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/@electron/get/-/get-1.14.1.tgz#16ba75f02dffb74c23965e72d617adc721d27f40"
@@ -3142,15 +3181,15 @@
     find-up "^4.1.0"
     fs-extra "^8.1.0"
 
-"@openzeppelin/contracts-upgradeable@4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.3.2.tgz#92df481362e366c388fc02133cf793029c744cea"
-  integrity sha512-i/pOaOtcqDk4UqsrOv735uYyTbn6dvfiuVu5hstsgV6c4ZKUtu88/31zT2BzkCg+3JfcwOfgg2TtRKVKKZIGkQ==
+"@openzeppelin/contracts-upgradeable@4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.4.0.tgz#85161d87c840c5bce2b6ed0c727b407e774852ae"
+  integrity sha512-hIEyWJHu7bDTv6ckxOaV+K3+7mVzhjtyvp3QSaz56Rk5PscXtPAbkiNTb3yz6UJCWHPWpxVyULVgZ6RubuFEZg==
 
-"@openzeppelin/contracts@4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.3.2.tgz#ff80affd6d352dbe1bbc5b4e1833c41afd6283b6"
-  integrity sha512-AybF1cesONZStg5kWf6ao9OlqTZuPqddvprc0ky7lrUVOjXeKpmQ2Y9FK+6ygxasb+4aic4O5pneFBfwVsRRRg==
+"@openzeppelin/contracts@4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.4.0.tgz#4a1df71f736c31230bbbd634dfb006a756b51e6b"
+  integrity sha512-dlKiZmDvJnGRLHojrDoFZJmsQVeltVeoiRN7RK+cf2FmkhASDEblE0RiaYdxPNsUZa6mRG8393b9bfyp+V5IAw==
 
 "@openzeppelin/test-helpers@^0.5.15":
   version "0.5.15"
@@ -3237,11 +3276,6 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
-
-"@realitio/realitio-contracts@>=0.0.0":
-  version "2.2.9"
-  resolved "https://registry.yarnpkg.com/@realitio/realitio-contracts/-/realitio-contracts-2.2.9.tgz#4274dd0ceca6d1b64a13553fe458312c920680d7"
-  integrity sha512-Ka4oMm6a7+W4kVcDjPa4Ov0pstd4nGk+2/rt8ShL6COwLFIgeybJmoZYBSCqLDrqfYk9N1glCjpBbU0EojTRTg==
 
 "@resolver-engine/core@^0.2.1":
   version "0.2.1"
@@ -9054,15 +9088,14 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-"dxdao-contracts@https://github.com/DXGovernance/dxdao-contracts.git#develop":
-  version "0.0.1"
-  resolved "https://github.com/DXGovernance/dxdao-contracts.git#4361fd7270d275f8d046471b4bbfa3b1062d15ab"
+"dxdao-contracts@https://github.com/DXGovernance/dxdao-contracts.git#12ea7f4e1ea070699d148d8c4ced4aaa88f08627":
+  version "1.0.0"
+  resolved "https://github.com/DXGovernance/dxdao-contracts.git#12ea7f4e1ea070699d148d8c4ced4aaa88f08627"
   dependencies:
     "@maticnetwork/eth-decoder" "^0.0.4"
-    "@openzeppelin/contracts" "4.3.2"
-    "@openzeppelin/contracts-upgradeable" "4.3.2"
+    "@openzeppelin/contracts" "4.4.0"
+    "@openzeppelin/contracts-upgradeable" "4.4.0"
     "@openzeppelin/test-helpers" "^0.5.15"
-    "@realitio/realitio-contracts" ">=0.0.0"
     "@truffle/hdwallet-provider" "^1.4.0"
     arb-ethers-web3-bridge "^0.7.3"
     chai "^4.2.0"

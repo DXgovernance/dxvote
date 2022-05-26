@@ -1,9 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Flex } from '../common/Layout';
-import { ContainerText } from '../common/Layout/Text';
-import { Button } from '../common/Button';
 import { ReactComponent as Vector } from '../../../assets/images/vector.svg';
+import { ReactComponent as Mint } from '../../../assets/images/mint.svg';
 import StyledIcon from '../common/SVG';
 import {
   RegistryContract,
@@ -11,57 +8,16 @@ import {
 } from 'hooks/Guilds/contracts/useContractRegistry';
 import { useWeb3React } from '@web3-react/core';
 import { SupportedAction } from '../ActionsBuilder/types';
-
-const CoreWrapper = styled(Flex)`
-  width: 100%;
-  margin-bottom: 16px;
-`;
-
-const ExternalWrapper = styled(Flex)`
-  width: 100%;
-`;
-
-const Wrapper = styled(Flex)`
-  width: 100%;
-  margin: 24px auto;
-`;
-
-const ActionsButton = styled(Button).attrs(() => ({
-  variant: 'secondary',
-}))`
-  width: 90%;
-  height: 40px;
-  margin: 6px 0;
-  flex-direction: row;
-  justify-content: left;
-  &:active,
-  &:focus {
-    border: 2px solid ${({ theme }) => theme.colors.text};
-  }
-`;
-
-const WrapperText = styled(ContainerText).attrs(() => ({
-  variant: 'bold',
-}))`
-  justify-content: left;
-  flex-direction: row;
-  width: 85%;
-  color: ${({ theme }) => theme.colors.proposalText.grey};
-`;
-
-const ButtonText = styled(ContainerText).attrs(() => ({
-  variant: 'medium',
-}))`
-  justify-content: space-between;
-  flex-direction: row;
-  color: ${({ theme }) => theme.colors.proposalText.grey};
-`;
-
-const ExternalButton = styled(ActionsButton).attrs(() => ({
-  variant: 'secondary',
-}))`
-  justify-content: space-between;
-`;
+import {
+  ActionsButton,
+  ButtonDetail,
+  ButtonLabel,
+  SectionTitle,
+  SectionWrapper,
+  Wrapper,
+} from './styles';
+import useGuildImplementationTypeConfig from 'hooks/Guilds/guild/useGuildImplementationType';
+import { useParams } from 'react-router-dom';
 
 interface ContractsListProps {
   onSelect: (contract: RegistryContract) => void;
@@ -74,32 +30,49 @@ const ContractsList: React.FC<ContractsListProps> = ({
 }) => {
   const { chainId } = useWeb3React();
   const { contracts } = useContractRegistry(chainId);
-
+  const { guild_id: guildAddress } =
+    useParams<{ chain_name?: string; guild_id?: string }>();
+  const { isRepGuild } = useGuildImplementationTypeConfig(guildAddress);
   return (
     <Wrapper>
-      <CoreWrapper>
-        <WrapperText>Core</WrapperText>
+      <SectionWrapper>
+        <SectionTitle>Core</SectionTitle>
         <ActionsButton
           onClick={() =>
             onSupportedActionSelect(SupportedAction.ERC20_TRANSFER)
           }
         >
-          <StyledIcon src={Vector} />
-          Transfer & Mint
+          <ButtonLabel>
+            <StyledIcon src={Vector} />
+            Transfer & Mint
+          </ButtonLabel>
         </ActionsButton>
-      </CoreWrapper>
-      <ExternalWrapper>
-        <WrapperText>External Contracts</WrapperText>
+        {isRepGuild ? (
+          <ActionsButton
+            onClick={() => onSupportedActionSelect(SupportedAction.REP_MINT)}
+          >
+            <ButtonLabel>
+              <StyledIcon src={Mint} />
+              Mint REP
+            </ButtonLabel>
+          </ActionsButton>
+        ) : null}
+      </SectionWrapper>
+      <SectionWrapper>
+        <SectionTitle>External Contracts</SectionTitle>
         {contracts?.map(contract => (
-          <ExternalButton onClick={() => onSelect(contract)}>
-            {contract.title}
-            <ButtonText>
+          <ActionsButton
+            key={contract.title}
+            onClick={() => onSelect(contract)}
+          >
+            <ButtonLabel>{contract.title}</ButtonLabel>
+            <ButtonDetail>
               {contract.functions?.length}{' '}
               {contract.functions?.length > 1 ? 'Actions' : 'Action'}
-            </ButtonText>
-          </ExternalButton>
+            </ButtonDetail>
+          </ActionsButton>
         ))}
-      </ExternalWrapper>
+      </SectionWrapper>
     </Wrapper>
   );
 };

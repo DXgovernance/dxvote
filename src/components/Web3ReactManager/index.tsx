@@ -7,6 +7,11 @@ import { useContext } from 'contexts';
 import { DEFAULT_CHAIN_ID, useInterval, usePrevious } from 'utils';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { NetworkConnector } from '@web3-react/network-connector';
+import ThemeProvider, { GlobalStyle } from 'theme';
+import styled from 'styled-components';
+import LoadingNetworkHeader from '../Header/loadingNetwork';
+import { LoadingBox } from '../../pages/proposals/styles';
+import PulsingIcon from 'components/common/LoadingIcon';
 
 const BLOKCHAIN_FETCH_INTERVAL = 10000;
 
@@ -142,21 +147,40 @@ const Web3ReactManager = ({ children }) => {
     networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10
   );
 
+  const Content = styled.div`
+    margin: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 85%;
+  `;
+
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
     console.debug('[Web3ReactManager] Render: Eager load not tried');
-    return null;
-  }
-  if (networkError) {
+    return (
+      <ThemeProvider>
+        <GlobalStyle />
+        <Content>
+          <LoadingNetworkHeader />
+          <LoadingBox>
+            <div className="loader">
+              <PulsingIcon size={80} inactive={false} />
+            </div>
+          </LoadingBox>
+        </Content>
+      </ThemeProvider>
+    );
+  } else if (networkError) {
     console.debug(
       '[Web3ReactManager] Render: Network error, showing modal error.'
     );
     return null;
   } else {
-    console.debug(
-      '[Web3ReactManager] Render: Active network, render children',
-      { networkActive }
-    );
+    console.debug('[Web3ReactManager] Render: Render children', {
+      networkActive,
+    });
     return children;
   }
 };

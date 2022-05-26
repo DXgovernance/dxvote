@@ -3,6 +3,7 @@ import { utils } from 'ethers';
 
 export enum SupportedAction {
   ERC20_TRANSFER = 'ERC20_TRANSFER',
+  REP_MINT = 'REP_MINT',
   GENERIC_CALL = 'GENERIC_CALL',
 }
 
@@ -23,13 +24,15 @@ export interface DecodedCall {
 }
 
 export interface DecodedAction {
+  id: string;
   decodedCall: DecodedCall;
   contract: utils.Interface;
 }
 
 export interface Option {
-  index: number;
+  id: string;
   label: string;
+  color: string;
   actions?: Call[];
   decodedActions?: DecodedAction[];
 }
