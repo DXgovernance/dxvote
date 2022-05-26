@@ -147,7 +147,7 @@ describe(`Set Permissions editor`, () => {
       });
       fireEvent.change(toAddressElement, { target: { value: toAddressMock } });
 
-      const clearInputIcon = screen.getByLabelText('clear field to address');
+      const clearInputIcon = screen.getByLabelText('clear address');
       fireEvent.click(clearInputIcon);
 
       expect(toAddressElement.value).toBe('');

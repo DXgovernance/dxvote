@@ -271,7 +271,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
       {activeTab === 0 && (
         <AssetTransfer
           validations={validations}
-          destinationAvatarUrl={destinationAvatarUrl}
           parsedData={parsedData}
           tokenInfo={tokenInfo}
           token={token}
@@ -290,7 +289,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
       {activeTab === 1 && (
         <FunctionCall
           validations={validations}
-          destinationAvatarUrl={destinationAvatarUrl}
           parsedData={parsedData}
           handleCustomFunctionSignature={handleCustomFunctionSignature}
           customToAddress={customToAddress}
@@ -301,7 +299,6 @@ const Permissions: React.FC<ActionEditorProps> = ({
           handleTokenAmountInputChange={handleTokenAmountInputChange}
           maxValueToggled={maxValueToggled}
           handleToggleMaxValueChange={handleToggleMaxValueChange}
-          setAsset={setAsset}
           anyAddressToggled={anyAddressToggled}
           handleToggleAnyAddressChange={handleToggleAnyAddressChange}
         />
