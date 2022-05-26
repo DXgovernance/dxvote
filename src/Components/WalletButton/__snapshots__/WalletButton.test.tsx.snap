@@ -24,7 +24,7 @@ exports[`WalletButton Should match snapshot and display connected address 1`] = 
     >
       <img
         alt="Avatar"
-        class="sc-dlfnuX sc-kfzBvY hZGubn klGpPC"
+        class="sc-dlfnuX sc-kfzBvY hZGubn btMxwF"
         data-testid="avatar"
         size="24"
         src="test"
