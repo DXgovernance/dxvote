@@ -9,9 +9,10 @@ export const renderWithRoutes = (ui, options = {}) => {
 };
 
 // we are mokcing testing-library/render with our own render
-export const render = children => {
+export const render = (children, options = {}) => {
   //wrap with Theme
   return renderWithRoutes(
-    <ThemeProvider theme={GuildsDarkTheme}> {children} </ThemeProvider>
+    <ThemeProvider theme={GuildsDarkTheme}> {children} </ThemeProvider>,
+    options
   );
 };

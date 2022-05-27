@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActionsModal Should match snapshot 1 1`] = `
+<body>
+   
+   
+</body>
+`;
+
+exports[`ActionsModal Should match snapshot 2 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-crrszt jBqxuR"
+    />
+    <div
+      class="sc-iqHYmW crryic"
+    >
+      <div
+        class="sc-dQoVA jYXFLB"
+      >
+        
+         
+        <div
+          class="sc-bqyKOL ATKti"
+        >
+          <div
+            class="sc-jrAFXE sc-hHfuMS fguxYT ijBGJk"
+          >
+            <svg
+              class="sc-dmlqKv lcxXPI"
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 512 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M217.9 256L345 129c9.4-9.4 9.4-24.6 0-33.9-9.4-9.4-24.6-9.3-34 0L167 239c-9.1 9.1-9.3 23.7-.7 33.1L310.9 417c4.7 4.7 10.9 7 17 7s12.3-2.3 17-7c9.4-9.4 9.4-24.6 0-33.9L217.9 256z"
+              />
+            </svg>
+            <h2
+              class="sc-iBPTik sc-hBEYId cBZYjx eyJyRi"
+            >
+              Generic Call
+            </h2>
+          </div>
+          <svg
+            class="sc-fodVek jXmmJt"
+            fill="none"
+            height="1em"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="18"
+              x2="6"
+              y1="6"
+              y2="18"
+            />
+            <line
+              x1="6"
+              x2="18"
+              y1="6"
+              y2="18"
+            />
+          </svg>
+        </div>
+        <div
+          class="sc-bkzYnD jrpQyy"
+        >
+          <div
+            class="sc-clsFYl jsljuT"
+            data-testid="actions-modal-editor"
+          >
+            <div>
+              Generic Call Editor
+            </div>
+            <button
+              class="sc-bdfBQB sc-fbkiRW cnzpap hbmANl"
+            >
+              guilds.saveAction
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+   
+</body>
+`;

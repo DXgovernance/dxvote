@@ -1,60 +1,51 @@
+import React from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { BigNumber, utils } from 'ethers';
+import { useTranslation } from 'react-i18next';
+
+import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
+import { RichContractData } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import {
   defaultValues,
   getEditor,
   supportedActions,
-} from '../ActionsBuilder/SupportedActions';
+} from 'old-components/Guilds/ActionsBuilder/SupportedActions';
 import {
   DecodedAction,
   DecodedCall,
   SupportedAction,
-} from '../ActionsBuilder/types';
-import { Button } from '../common/Button';
-import { Modal } from '../common/Modal';
-import ContractActionsList from './ContractActionsList';
-import ApproveSpendTokens from './ApproveSpendTokens';
-import ContractsList from './ContractsList';
-import ParamsForm from './ParamsForm';
-import { useWeb3React } from '@web3-react/core';
-import { useTypedParams } from 'Modules/Guilds/Hooks/useTypedParams';
-import { BigNumber, utils } from 'ethers';
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { RichContractData } from 'hooks/Guilds/contracts/useRichContractRegistry';
-
-export const EditorWrapper = styled.div`
-  margin: 1.25rem;
-`;
-
-export const BlockButton = styled(Button)`
-  margin-top: 1rem;
-  width: 100%;
-`;
-
-interface ActionModalProps {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  onAddAction: (action: DecodedAction) => void;
-}
+} from 'old-components/Guilds/ActionsBuilder/types';
+import { Modal } from 'old-components/Guilds/common/Modal';
+import {
+  ContractActionsList,
+  ApproveSpendTokens,
+  ContractsList,
+  ParamsForm,
+} from './components';
+import { EditorWrapper, BlockButton } from './ActionsModal.styled';
+import { ActionModalProps } from './types';
 
 const ActionModal: React.FC<ActionModalProps> = ({
   isOpen,
   setIsOpen,
   onAddAction,
 }) => {
+  const { t } = useTranslation();
   const { guildId } = useTypedParams();
   const { account: walletAddress } = useWeb3React();
   // Supported Actions
-  const [selectedAction, setSelectedAction] = useState<SupportedAction>(null);
+  const [selectedAction, setSelectedAction] =
+    React.useState<SupportedAction>(null);
   const [selectedActionContract, setSelectedActionContract] =
-    useState<utils.Interface>(null);
+    React.useState<utils.Interface>(null);
 
   // Generic calls
   const [selectedContract, setSelectedContract] =
-    useState<RichContractData>(null);
-  const [selectedFunction, setSelectedFunction] = useState<string>(null);
+    React.useState<RichContractData>(null);
+  const [selectedFunction, setSelectedFunction] = React.useState<string>(null);
 
-  const [data, setData] = useState<DecodedCall>(null);
-  const [payableFnData, updatePayableFnData] = useState<any>(null);
+  const [data, setData] = React.useState<DecodedCall>(null);
+  const [payableFnData, updatePayableFnData] = React.useState<any>(null);
 
   function getHeader() {
     if (selectedFunction) {
@@ -71,7 +62,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
       return supportedActions[selectedAction].title;
     }
 
-    return 'Add action';
+    return t('guilds.addAction');
   }
 
   function getContent() {
@@ -123,9 +114,11 @@ const ActionModal: React.FC<ActionModalProps> = ({
     if (selectedAction) {
       const Editor = getEditor(selectedAction);
       return (
-        <EditorWrapper>
+        <EditorWrapper data-testid="actions-modal-editor">
           <Editor decodedCall={data} updateCall={setData} />
-          <BlockButton onClick={saveSupportedAction}>Save Action</BlockButton>
+          <BlockButton onClick={saveSupportedAction}>
+            {t('guilds.saveAction')}
+          </BlockButton>
         </EditorWrapper>
       );
     }
