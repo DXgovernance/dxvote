@@ -9,7 +9,7 @@ import GlobalStyle from './theme/GlobalTheme';
 import { ProposalTypesConfig } from 'configs/proposalTypes';
 import { GuildsContextProvider, TransactionsProvider } from 'contexts/Guilds';
 import GuildAvailabilityProvider from 'contexts/Guilds/guildAvailability';
-import ProposalTypes from 'old-components/Guilds/ProposalTypes';
+import { ProposalTypes } from 'Components/ProposalTypes';
 import CreateProposalPage from 'pages/Guilds/CreateProposal';
 import LandingPage from 'pages/Guilds/LandingPage';
 import NotFound from 'pages/Guilds/NotFound';

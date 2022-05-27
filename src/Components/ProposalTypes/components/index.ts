@@ -1,0 +1,1 @@
+export { ProposalTypeDescription } from './ProposalTypeDescription';

@@ -27,5 +27,11 @@
   "asset": "Asset",
   "approve": "Approve",
   "unsupportedNetwork": "Unsupported Network",
-  "notConnected": "Not Connected"
+  "notConnected": "Not Connected",
+  "backToOverview": "Back to Overview",
+  "createProposal": "Create Proposal",
+  "chooseProposal": "Choose Proposal",
+  "continue": "Continue",
+  "onchainAction": "On-chain Action",
+  "noOnchainAction": "No on-chain action"
 }
