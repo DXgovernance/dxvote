@@ -14,23 +14,11 @@ import { FiChevronDown, FiX } from 'react-icons/fi';
 import styled from 'styled-components';
 import { MAINNET_ID } from 'utils';
 import { resolveUri } from 'utils/url';
-
-const Control = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  margin: 0.75rem 0;
-  width: 100%;
-`;
-
-const ControlLabel = styled(Box)`
-  margin-bottom: 0.75rem;
-`;
-
-const ControlRow = styled(Box)`
-  display: flex;
-  align-items: stretch;
-  height: 100%;
-`;
+import {
+  Control,
+  ControlLabel,
+  ControlRow,
+} from 'Components/Primitives/Forms/Control';
 
 const Spacer = styled(Box)`
   margin-right: 1rem;

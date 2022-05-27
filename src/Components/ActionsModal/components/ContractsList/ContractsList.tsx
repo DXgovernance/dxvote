@@ -50,6 +50,16 @@ const ContractsList: React.FC<ContractsListProps> = ({
             {t('guilds.createProposal.transferAndMint')}
           </ButtonLabel>
         </ActionsButton>
+        <ActionsButton
+          onClick={() => {
+            onSupportedActionSelect(SupportedAction.SET_PERMISSIONS);
+          }}
+        >
+          <ButtonLabel>
+            <StyledIcon src={Vector} />
+            Set Permissions
+          </ButtonLabel>
+        </ActionsButton>
         {isRepGuild ? (
           <ActionsButton
             onClick={() => onSupportedActionSelect(SupportedAction.REP_MINT)}

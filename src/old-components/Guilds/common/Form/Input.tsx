@@ -26,7 +26,8 @@ const InputWrapper = styled.div<{ isInvalid?: boolean }>`
   background-color: transparent;
 
   input {
-    color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme, isInvalid }) =>
+      isInvalid ? theme.colors.red : theme.colors.text};
     font-family: ${({ theme }) => theme.fonts.body};
     font-size: ${({ theme }) => theme.fontSizes.body};
     font-weight: ${({ theme }) => theme.fontWeights.regular};
