@@ -5,7 +5,7 @@ import { testProps } from './fixtures';
 export default {
   title: 'Components/ProposalTypes',
   component: ProposalTypes,
-  //   argTypes: {},
+  // argTypes: {}, // TODO: complete when storybook is fixed.
 } as ComponentMeta<typeof ProposalTypes>;
 
 const Template: ComponentStory<typeof ProposalTypes> = args => (
