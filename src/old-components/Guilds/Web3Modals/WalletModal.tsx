@@ -222,9 +222,11 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
     }
 
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
-      const recentTransactions = transactions
-        .sort((tx1, tx2) => tx2.addedTime - tx1.addedTime)
-        .slice(0, 5);
+      const recentTransactions =
+        transactions &&
+        transactions
+          .sort((tx1, tx2) => tx2.addedTime - tx1.addedTime)
+          .slice(0, 5);
       return (
         <>
           <WalletInfoBox
@@ -232,7 +234,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
           />
           <Divider />
           <TransactionsList>
-            {recentTransactions.length === 0 ? (
+            {recentTransactions?.length === 0 ? (
               <TransactionsListHeading>
                 Your transactions will appear here...
               </TransactionsListHeading>
@@ -242,10 +244,10 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
                   Recent Transactions
                 </TransactionsListHeading>
                 <Divider />
-                {recentTransactions.map(transaction => (
+                {recentTransactions?.map(transaction => (
                   <Transaction transaction={transaction} />
                 ))}
-                {recentTransactions.length > 0 && (
+                {recentTransactions?.length > 0 && (
                   <ButtonContainer>
                     <Button onClick={clearAllTransactions}>Clear all</Button>
                   </ButtonContainer>

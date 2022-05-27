@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NetworkButton Should match snapshot and display network 1`] = `
+<div>
+   
+  <button
+    class="sc-bdfBQB sc-gsTEea cnzpap hqMJhH"
+  >
+    <img
+      alt="Icon"
+      class="sc-dlfnuX hZGubn"
+      src="ethereum.svg"
+    />
+    Ethereum Mainnet
+  </button>
+   
+</div>
+`;
+
+exports[`NetworkButton Should match snapshot and display not connected status 1`] = `
+<div>
+   
+  <button
+    class="sc-bdfBQB cnzpap"
+  >
+    notConnected
+  </button>
+   
+</div>
+`;

@@ -1,5 +1,5 @@
 import GlobalErrorBoundary from './old-components/Guilds/ErrorBoundary/GlobalErrorBoundary';
-import Header from './old-components/Guilds/Header';
+import { Header } from 'Components';
 import ToastNotificationContainer from './old-components/Guilds/ToastNotifications/ToastNotificationContainer';
 import WalletWeb3Manager from './old-components/Guilds/Web3Manager/WalletWeb3Manager';
 import { Container } from './Components/Primitives/Layout';

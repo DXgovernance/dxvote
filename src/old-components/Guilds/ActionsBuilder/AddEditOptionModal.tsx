@@ -91,7 +91,7 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
         <Box padding="0 0 1rem 0">
           <Input
             value={label}
-            placeholder={t('guilds.optionLabel', {
+            placeholder={t('optionLabel', {
               defaultValue: 'Delete Option',
             })}
             icon={<Dot color={theme?.colors?.votes?.[options.length]} />}
@@ -102,7 +102,7 @@ const AddEditOptionModal: React.FC<AddEditOptionModalProps> = ({
         {!!editableOption && (
           <Box padding="0 0 1rem 0">
             <DeleteButton onClick={deleteOption} fullWidth variant="secondary">
-              {t('guilds.deleteOption', { defaultValue: 'Delete Option' })}
+              {t('deleteOption', { defaultValue: 'Delete Option' })}
             </DeleteButton>
           </Box>
         )}

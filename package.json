@@ -13,7 +13,8 @@
     "cy:run": "./scripts/integration.sh",
     "test:light": "react-app-rewired test --watch --detectOpenHandles",
     "test:e2e": "ETHERNAL_CONTRACTS=false start-server-and-test 'yarn dev --no-browser' 3000 cy:run",
-    "test": "react-app-rewired test --watchAll=false --coverage --verbose --testTimeout=10000 --detectOpenHandles",
+    "test": "react-app-rewired test --watchAll=false --verbose --testTimeout=10000 --detectOpenHandles",
+    "test:coverage": "yarn run test --coverage",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s public",
@@ -197,3 +198,4 @@
     ]
   }
 }
+

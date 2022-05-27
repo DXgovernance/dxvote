@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header Should match snapshot 1`] = `
+<div>
+   
+  <header
+    class="sc-ehSDrC gikDCT"
+  >
+    <div
+      class="sc-eCstlR sc-iBPTik sc-lcuiOb hzVZsK fcperG CzQAR"
+    >
+      <h2
+        class="sc-hKgJUU sc-clsFYl edWXhv ejGdfS"
+        size="2"
+      >
+        <strong>
+          guilds.guilds
+        </strong>
+      </h2>
+    </div>
+  </header>
+   
+</div>
+`;

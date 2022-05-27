@@ -31,7 +31,7 @@ interface ApproveSpendTokensProps {
 const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
   onConfirm,
 }) => {
-  const { t } = useTranslation('guilds');
+  const { t } = useTranslation();
   const { chainId } = useWeb3React();
 
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
@@ -58,7 +58,7 @@ const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
   return (
     <Wrapper>
       <SectionWrapper>
-        <SectionTitle>{t('createProposal.selectTokensToSpend')}</SectionTitle>
+        <SectionTitle>{t('selectTokensToSpend')}</SectionTitle>
         <ControlRow>
           <Control>
             <ControlLabel>{t('amount')}</ControlLabel>
