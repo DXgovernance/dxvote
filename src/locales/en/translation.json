@@ -3,6 +3,7 @@
     "create": "Create Guild",
     "guilds": "Guilds"
   },
+  "proposals_zero": "No proposals",
   "proposals_one": "{{count}} proposal",
   "proposals_other": "{{count}} proposals",
   "actions_one": "Action",

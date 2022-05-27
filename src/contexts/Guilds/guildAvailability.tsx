@@ -4,7 +4,7 @@ import useNetworkSwitching from 'hooks/Guilds/web3/useNetworkSwitching';
 import { ButtonIcon, IconButton } from 'old-components/Guilds/common/Button';
 import { Box } from 'Components/Primitives/Layout';
 import Result, { ResultState } from 'old-components/Guilds/common/Result';
-import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
+import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useRouteMatch } from 'react-router-dom';

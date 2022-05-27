@@ -4,7 +4,7 @@ import { ProposalCardProps } from 'Components/ProposalCard/types';
 import Avatar from 'old-components/Guilds/Avatar';
 import ProposalStatus from 'Components/ProposalStatus/ProposalStatus';
 import { Loading } from 'Components/Primitives/Loading';
-import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
+import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { shortenAddress } from 'utils';
 import {

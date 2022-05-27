@@ -4,7 +4,7 @@ import { DetailRow } from '../SupportedActions/common/summary';
 import { BigNumber } from 'ethers';
 import { Button } from 'old-components/Guilds/common/Button';
 import { Box } from 'Components/Primitives/Layout';
-import UnstyledLink from 'old-components/Guilds/common/UnstyledLink';
+import UnstyledLink from 'Components/Primitives/Links/UnstyledLink';
 import { FiExternalLink } from 'react-icons/fi';
 import styled, { useTheme } from 'styled-components';
 import { Divider } from 'old-components/Guilds/common/Divider';

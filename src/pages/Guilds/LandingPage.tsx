@@ -1,24 +1,18 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { MdOutlinePeopleAlt } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
-import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
-import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
-import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
 import { useGuildRegistry } from 'hooks/Guilds/ether-swr/guild/useGuildRegistry';
-import GuildCard, {
-  GuildCardContent,
-  GuildCardHeader,
-} from 'old-components/Guilds/GuildCard';
+import GuildCard from 'Components/GuildCard/GuildCard';
 import { Button } from 'old-components/Guilds/common/Button';
 import Input from 'old-components/Guilds/common/Form/Input';
-import { Flex, Box } from 'Components/Primitives/Layout';
-import { Heading } from 'old-components/Guilds/common/Typography';
-import { Loading } from 'Components/Primitives/Loading';
-import dxDaoIcon from '../../assets/images/dxdao-icon.svg';
+import { Flex } from 'Components/Primitives/Layout';
+
+import useGuildMemberTotal from 'hooks/Guilds/ether-swr/guild/useGuildMemberTotal';
+import useActiveProposalsNow from 'hooks/Guilds/ether-swr/guild/useGuildActiveProposals';
+import useENSNameFromAddress from 'hooks/Guilds/ether-swr/ens/useENSNameFromAddress';
+import { useGuildConfig } from 'hooks/Guilds/ether-swr/guild/useGuildConfig';
 
 const InputContainer = styled(Flex)`
   flex-direction: row;
@@ -37,41 +31,13 @@ const StyledButton = styled(Button).attrs(() => ({
   color: ${({ theme }) => theme.colors.text};
 `;
 
-const CardContainer = styled(Flex)`
+const CardsContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   margin-top: 1rem;
   flex-wrap: wrap;
   gap: 1.7rem;
-`;
-const MemberWrapper = styled(Flex)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: ${({ theme }) => theme.colors.card.grey};
-`;
-
-const ProposalsInformation = styled(Box)<{ proposals?: string }>`
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0.5rem;
-  border-radius: 15px;
-  border: 1px solid
-    ${({ proposals, theme }) =>
-      proposals === 'active'
-        ? theme.colors.card.green
-        : theme.colors.card.grey};
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ proposals, theme }) =>
-    proposals === 'active' ? theme.colors.card.green : theme.colors.card.grey};
-  padding: 0.25rem 0.4rem;
-`;
-
-const DaoIcon = styled.img`
-  height: 4rem;
-  width: 4rem;
 `;
 
 const StyledLink = styled(Link)`
@@ -85,33 +51,37 @@ const StyledLink = styled(Link)`
     text-decoration: none;
   }
 `;
-const DaoTitle = styled(Heading)`
-  margin-left: 4px;
-  line-height: 24px;
-`;
 
-interface TitleProps {
-  guildAddress: string;
-}
-const Title: React.FC<TitleProps> = ({ guildAddress }) => {
-  const ensName = useENSNameFromAddress(guildAddress)?.split('.')[0];
-  const { data } = useGuildConfig(guildAddress);
-  return <DaoTitle size={2}>{ensName ?? data?.name}</DaoTitle>;
-};
-const Proposals: React.FC<TitleProps> = ({ guildAddress }) => {
-  const { t } = useTranslation();
-  const { data: numberOfActiveProposals } = useActiveProposalsNow(guildAddress);
+const GuildCardLoader = () => {
   return (
-    <ProposalsInformation proposals={'active'}>
-      {t('proposals', {
-        count: parseInt(numberOfActiveProposals),
-      })}
-    </ProposalsInformation>
+    <GuildCard
+      isLoading={true}
+      guildAddress={null}
+      numberOfMembers={null}
+      t={null}
+      numberOfActiveProposals={null}
+      ensName={null}
+      data={null}
+    />
   );
 };
-const Members: React.FC<TitleProps> = ({ guildAddress }) => {
+
+const GuildCardWithContent = ({ guildAddress, t }) => {
   const { data: numberOfMembers } = useGuildMemberTotal(guildAddress);
-  return <div>{numberOfMembers?.toString()}</div>;
+  const { data: numberOfActiveProposals } = useActiveProposalsNow(guildAddress);
+  const ensName = useENSNameFromAddress(guildAddress)?.split('.')[0];
+  const { data } = useGuildConfig(guildAddress);
+
+  return (
+    <GuildCard
+      guildAddress={guildAddress}
+      numberOfMembers={numberOfMembers}
+      t={t}
+      numberOfActiveProposals={numberOfActiveProposals}
+      ensName={ensName}
+      data={data}
+    />
+  );
 };
 
 const LandingPage: React.FC = () => {
@@ -135,70 +105,31 @@ const LandingPage: React.FC = () => {
           </StyledLink>
         </StyledButton>
       </InputContainer>
-      <CardContainer>
+      <CardsContainer>
         {error ? (
           <>{/* Render error state */}</>
         ) : isLoading ? (
           <>
             {/* Render loading state */}
-            <GuildCardWithLoader guildAddress={null} />
-            <GuildCardWithLoader guildAddress={null} />
-            <GuildCardWithLoader guildAddress={null} />
+            <GuildCardLoader />
+            <GuildCardLoader />
+            <GuildCardLoader />
           </>
         ) : !allGuilds.length ? (
           <>{/* Render empty state */}</>
         ) : (
           /* Render success state */
           allGuilds.map(guildAddress => (
-            <GuildCardWithLoader
+            <GuildCardWithContent
               key={guildAddress}
               guildAddress={guildAddress}
+              t={t}
             />
           ))
         )}
-      </CardContainer>
+      </CardsContainer>
     </>
   );
 };
-
-function GuildCardWithLoader({ guildAddress }) {
-  return (
-    <GuildCard key={guildAddress} guildAddress={guildAddress}>
-      <GuildCardHeader>
-        <MemberWrapper>
-          <MdOutlinePeopleAlt size={24} />
-          {guildAddress ? (
-            <Members guildAddress={guildAddress} />
-          ) : (
-            <Loading skeletonProps={{ width: 20 }} text loading />
-          )}
-        </MemberWrapper>
-        {guildAddress ? (
-          <Proposals guildAddress={guildAddress} />
-        ) : (
-          <Loading
-            style={{ height: 43, alignItems: 'center', display: 'flex' }}
-            skeletonProps={{ width: 100, height: 22 }}
-            text
-            loading
-          />
-        )}
-      </GuildCardHeader>
-      <GuildCardContent>
-        <DaoIcon src={dxDaoIcon} />
-        {guildAddress ? (
-          <Title guildAddress={guildAddress} />
-        ) : (
-          <Loading
-            skeletonProps={{ width: 100, height: 20 }}
-            style={{ marginTop: 20 }}
-            text
-            loading
-          />
-        )}
-      </GuildCardContent>
-    </GuildCard>
-  );
-}
 
 export default LandingPage;

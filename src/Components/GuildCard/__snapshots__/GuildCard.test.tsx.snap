@@ -1,0 +1,257 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GuildCard Should render 'No proposals' when there are zero proposals' 1`] = `
+<div>
+   
+  <a
+    class="sc-bdfBQB hcWJCy"
+    data-testid="guildCard"
+    href="//0xa47BbE8Dd6dB29D45FE5eeD838c4f136884AEAF3"
+  >
+    <div
+      class="sc-hKgJUU dUEGLL"
+    >
+      <div
+        class="sc-gsTEea sc-jSgvzq couiEk iwIEDV"
+      >
+        <div
+          class="sc-gsTEea couiEk"
+        >
+          <div
+            class="sc-hKgJUU sc-kEjbQP dUEGLL hpHCuO"
+          >
+            <div
+              class="sc-hKgJUU sc-iqHYmW dUEGLL jYBUCp"
+            >
+              <svg
+                fill="currentColor"
+                height="24"
+                stroke="currentColor"
+                stroke-width="0"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+                <path
+                  d="M16.67 13.13C18.04 14.06 19 15.32 19 17v3h4v-3c0-2.18-3.57-3.47-6.33-3.87zM15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4c-.47 0-.91.1-1.33.24a5.98 5.98 0 010 7.52c.42.14.86.24 1.33.24zM9 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zM9 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6 5H3v-.99C3.2 16.29 6.3 15 9 15s5.8 1.29 6 2v1z"
+                />
+              </svg>
+              <div
+                class="sc-crrszt eKuTZS"
+              >
+                5
+              </div>
+            </div>
+            <div
+              class="sc-gsTEea sc-dQoVA couiEk jaYorM"
+            >
+              proposals
+            </div>
+          </div>
+          <div
+            class="sc-gsTEea sc-kstqJO couiEk iYcgDI"
+          >
+            <img
+              class="sc-bqyKOL RFBtI"
+              src="dxdao-icon.svg"
+            />
+            <h2
+              class="sc-jrAFXE sc-hBEYId dNMen eSVrEG"
+              size="2"
+            >
+              REPGuild
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;
+
+exports[`GuildCard Should render loading state skeleton 1`] = `
+<div>
+   
+  <a
+    class="sc-bdfBQB hcWJCy"
+    data-testid="guildCard"
+    href="//null"
+  >
+    <div
+      class="sc-hKgJUU dUEGLL"
+    >
+      <div
+        class="sc-gsTEea sc-jSgvzq couiEk iwIEDV"
+      >
+        <div
+          class="sc-gsTEea couiEk"
+        >
+          <div
+            class="sc-hKgJUU sc-kEjbQP dUEGLL hpHCuO"
+          >
+            <div
+              class="sc-hKgJUU sc-iqHYmW dUEGLL jYBUCp"
+            >
+              <svg
+                fill="currentColor"
+                height="24"
+                stroke="currentColor"
+                stroke-width="0"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+                <path
+                  d="M16.67 13.13C18.04 14.06 19 15.32 19 17v3h4v-3c0-2.18-3.57-3.47-6.33-3.87zM15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4c-.47 0-.91.1-1.33.24a5.98 5.98 0 010 7.52c.42.14.86.24 1.33.24zM9 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zM9 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6 5H3v-.99C3.2 16.29 6.3 15 9 15s5.8 1.29 6 2v1z"
+                />
+              </svg>
+              <div
+                class="sc-fubCzh"
+              >
+                <span
+                  aria-busy="true"
+                  aria-live="polite"
+                >
+                  <span
+                    class="react-loading-skeleton"
+                    style="width: 20px; --base-color: #333; --highlight-color: #555;"
+                  >
+                    ‌
+                  </span>
+                  <br />
+                </span>
+              </div>
+            </div>
+            <div
+              class="sc-fubCzh"
+              style="height: 43px; align-items: center; display: flex;"
+            >
+              <span
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <span
+                  class="react-loading-skeleton"
+                  style="width: 100px; height: 22px; --base-color: #333; --highlight-color: #555;"
+                >
+                  ‌
+                </span>
+                <br />
+              </span>
+            </div>
+          </div>
+          <div
+            class="sc-gsTEea sc-kstqJO couiEk iYcgDI"
+          >
+            <img
+              class="sc-bqyKOL RFBtI"
+              src="dxdao-icon.svg"
+            />
+            <div
+              class="sc-fubCzh"
+              style="margin-top: 20px;"
+            >
+              <span
+                aria-busy="true"
+                aria-live="polite"
+              >
+                <span
+                  class="react-loading-skeleton"
+                  style="width: 100px; height: 20px; --base-color: #333; --highlight-color: #555;"
+                >
+                  ‌
+                </span>
+                <br />
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;
+
+exports[`GuildCard Should render with full parameters 1`] = `
+<div>
+   
+  <a
+    class="sc-bdfBQB hcWJCy"
+    data-testid="guildCard"
+    href="//0xa47BbE8Dd6dB29D45FE5eeD838c4f136884AEAF3"
+  >
+    <div
+      class="sc-hKgJUU dUEGLL"
+    >
+      <div
+        class="sc-gsTEea sc-jSgvzq couiEk iwIEDV"
+      >
+        <div
+          class="sc-gsTEea couiEk"
+        >
+          <div
+            class="sc-hKgJUU sc-kEjbQP dUEGLL hpHCuO"
+          >
+            <div
+              class="sc-hKgJUU sc-iqHYmW dUEGLL jYBUCp"
+            >
+              <svg
+                fill="currentColor"
+                height="24"
+                stroke="currentColor"
+                stroke-width="0"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+                <path
+                  d="M16.67 13.13C18.04 14.06 19 15.32 19 17v3h4v-3c0-2.18-3.57-3.47-6.33-3.87zM15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4c-.47 0-.91.1-1.33.24a5.98 5.98 0 010 7.52c.42.14.86.24 1.33.24zM9 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zM9 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6 5H3v-.99C3.2 16.29 6.3 15 9 15s5.8 1.29 6 2v1z"
+                />
+              </svg>
+              <div
+                class="sc-crrszt eKuTZS"
+              >
+                5
+              </div>
+            </div>
+            <div
+              class="sc-gsTEea sc-dQoVA couiEk clybEs"
+            >
+              proposals
+            </div>
+          </div>
+          <div
+            class="sc-gsTEea sc-kstqJO couiEk iYcgDI"
+          >
+            <img
+              class="sc-bqyKOL RFBtI"
+              src="dxdao-icon.svg"
+            />
+            <h2
+              class="sc-jrAFXE sc-hBEYId dNMen eSVrEG"
+              size="2"
+            >
+              REPGuild
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+   
+</div>
+`;

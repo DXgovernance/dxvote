@@ -4,7 +4,7 @@ exports[`ProposalCard ProposalCard Renders properly with data 1`] = `
 <div>
    
   <a
-    class="sc-jUEmfL fDlzvt"
+    class="sc-jUEmfL fNZXkC"
     data-testid="proposal-card"
     href="/testUrl"
   >
@@ -170,7 +170,7 @@ exports[`ProposalCard ProposalCard loading 1`] = `
 <div>
    
   <a
-    class="sc-jUEmfL fDlzvt"
+    class="sc-jUEmfL fNZXkC"
     data-testid="proposal-card"
     href="/"
   >
