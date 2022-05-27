@@ -6,7 +6,7 @@ import {
   FormError,
   FormLabel,
   Wrapper,
-} from './styles';
+} from '../../ActionsModal.styled';
 import { RichContractFunction } from 'hooks/Guilds/contracts/useRichContractRegistry';
 import FormElementRenderer, {
   getDefaultValidationsByFormElement,

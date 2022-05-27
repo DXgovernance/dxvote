@@ -1,5 +1,7 @@
 import { BigNumber, utils } from 'ethers';
+import { ANY_ADDRESS, ANY_FUNC_SIGNATURE, ZERO_ADDRESS } from 'utils';
 import { DeepPartial } from 'utils/types';
+
 import {
   DecodedAction,
   DecodedCall,
@@ -8,6 +10,7 @@ import {
 } from '../types';
 import ERC20ABI from '../../../../abis/ERC20.json';
 import ERC20SnapshotRep from '../../../../contracts/ERC20SnapshotRep.json';
+import ERC20Guild from '../../../../contracts/ERC20Guild.json';
 import ERC20TransferEditor from './ERC20Transfer/ERC20TransferEditor';
 import ERC20TransferInfoLine from './ERC20Transfer/ERC20TransferInfoLine';
 import ERC20TransferSummary from './ERC20Transfer/ERC20TransferSummary';
@@ -15,6 +18,9 @@ import GenericCallInfoLine from './GenericCall/GenericCallInfoLine';
 import RepMintEditor from './RepMint/RepMintEditor';
 import RepMintInfoLine from './RepMint/RepMintInfoLine';
 import RepMintSummary from './RepMint/RepMintSummary';
+import SetPermissionsEditor from './SetPermissions/SetPermissionsEditor';
+import SetPermissionsInfoLine from './SetPermissions/SetPermissionsInfoLine';
+// import SetPermissionsSummary from './SetPermissions/SetPermissionsSummary';
 
 export interface SupportedActionMetadata {
   title: string;
@@ -59,9 +65,16 @@ export const supportedActions: Record<
     infoLineView: GenericCallInfoLine,
     editor: () => <div>Generic Call Editor</div>,
   },
+  [SupportedAction.SET_PERMISSIONS]: {
+    title: 'Set permissions',
+    infoLineView: SetPermissionsInfoLine,
+    // summaryView: SetPermissionsSummary,
+    editor: SetPermissionsEditor,
+  },
 };
 const ERC20Contract = new utils.Interface(ERC20ABI);
 const ERC20SnapshotRepContract = new utils.Interface(ERC20SnapshotRep.abi);
+const ERC20GuildContract = new utils.Interface(ERC20Guild.abi);
 export const defaultValues: Record<
   SupportedAction,
   DeepPartial<DecodedAction>
@@ -92,6 +105,23 @@ export const defaultValues: Record<
   },
 
   [SupportedAction.GENERIC_CALL]: {},
+
+  [SupportedAction.SET_PERMISSIONS]: {
+    contract: ERC20GuildContract,
+    decodedCall: {
+      function: ERC20GuildContract.getFunction('setPermission'),
+      to: '0xD899Be87df2076e0Be28486b60dA406Be6757AfC',
+      value: BigNumber.from(0),
+      functionName: '',
+      args: {
+        asset: [ZERO_ADDRESS],
+        to: [ANY_ADDRESS],
+        functionSignature: [ANY_FUNC_SIGNATURE],
+        valueAllowed: [BigNumber.from(0)],
+        allowance: ['true'],
+      },
+    },
+  },
 };
 
 export const getInfoLineView = (actionType: SupportedAction) => {

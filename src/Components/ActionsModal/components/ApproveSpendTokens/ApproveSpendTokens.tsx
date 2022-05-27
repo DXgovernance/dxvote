@@ -1,40 +1,28 @@
 import { useState, useMemo } from 'react';
-import styled from 'styled-components';
 import { FiChevronDown } from 'react-icons/fi';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'ethers';
+import { useTranslation } from 'react-i18next';
 
 import Input from 'old-components/Guilds/common/Form/Input';
 import Avatar from 'old-components/Guilds/Avatar';
 import TokenPicker from 'old-components/Guilds/TokenPicker';
-import { Box } from 'Components/Primitives/Layout';
 import TokenAmountInput from 'old-components/Guilds/common/Form/TokenAmountInput';
 import { useERC20Info } from 'hooks/Guilds/ether-swr/erc20/useERC20Info';
 import { useTokenList } from 'hooks/Guilds/tokens/useTokenList';
 import { resolveUri } from 'utils/url';
-import { SectionTitle, SectionWrapper, Wrapper } from './styles';
-import { BlockButton } from '.';
-
-const ControlRow = styled(Box)`
-  display: flex;
-  align-items: stretch;
-  height: 100%;
-`;
-
-const Control = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  margin: 0.75rem 0;
-  width: 100%;
-`;
-
-const ControlLabel = styled(Box)`
-  margin-bottom: 0.75rem;
-`;
-
-const Spacer = styled(Box)`
-  margin-right: 1rem;
-`;
+import {
+  SectionTitle,
+  SectionWrapper,
+  Wrapper,
+  BlockButton,
+} from '../../ActionsModal.styled';
+import {
+  ControlRow,
+  Control,
+  ControlLabel,
+  Spacer,
+} from './ApproveSpendTokens.styled';
 
 interface ApproveSpendTokensProps {
   onConfirm: (args: { amount: BigNumber; token: string }) => void;
@@ -43,6 +31,7 @@ interface ApproveSpendTokensProps {
 const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
   onConfirm,
 }) => {
+  const { t } = useTranslation('guilds');
   const { chainId } = useWeb3React();
 
   const [isTokenPickerOpen, setIsTokenPickerOpen] = useState(false);
@@ -69,10 +58,10 @@ const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
   return (
     <Wrapper>
       <SectionWrapper>
-        <SectionTitle>Select tokens to spend</SectionTitle>
+        <SectionTitle>{t('createProposal.selectTokensToSpend')}</SectionTitle>
         <ControlRow>
           <Control>
-            <ControlLabel>Amount</ControlLabel>
+            <ControlLabel>{t('amount')}</ControlLabel>
             <ControlRow>
               <TokenAmountInput
                 decimals={tokenInfo?.decimals}
@@ -85,7 +74,7 @@ const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
           <Spacer />
 
           <Control>
-            <ControlLabel>Asset</ControlLabel>
+            <ControlLabel>{t('asset')}</ControlLabel>
             <ControlRow onClick={() => setIsTokenPickerOpen(true)}>
               <Input
                 value={tokenInfo?.symbol || ''}
@@ -116,8 +105,12 @@ const ApproveSpendTokens: React.FC<ApproveSpendTokensProps> = ({
           }}
         />
 
-        <BlockButton onClick={confirm} disabled={!amount || !token}>
-          Approve
+        <BlockButton
+          variant="primary"
+          onClick={confirm}
+          disabled={!amount || !token}
+        >
+          {t('approve')}
         </BlockButton>
       </SectionWrapper>
     </Wrapper>

@@ -65,7 +65,7 @@ exports[`Avatar Should render image when src is given 1`] = `
    
   <img
     alt="Avatar"
-    class="sc-dlfnuX sc-hKgJUU hZGubn hMXzsC"
+    class="sc-dlfnuX sc-hKgJUU hZGubn iOmOTp"
     data-testid="avatar"
     size="24"
     src="/test/image.png"

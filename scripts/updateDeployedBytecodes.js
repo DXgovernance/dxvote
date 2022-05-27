@@ -7,11 +7,14 @@ const GUILD_TYPES = {
   SnapshotERC20Guild: 'SnapshotERC20Guild',
   ERC20Guild: 'ERC20Guild',
   DXDGuild: 'DXDGuild',
+  EnforcedBinaryGuild: 'EnforcedBinaryGuild',
+  EnforcedBinarySnapshotERC20Guild: 'EnforcedBinarySnapshotERC20Guild',
 };
 
 const FEATURES = {
   reputation: 'REP',
   snapshot: 'SNAPSHOT',
+  enforcedBinary: 'ENFORCED_BINARY',
 };
 
 const paths = {
@@ -23,7 +26,10 @@ const paths = {
     '../artifacts/dxdao-contracts/contracts/erc20guild/implementations/SnapshotERC20Guild.sol/SnapshotERC20Guild.json',
   [GUILD_TYPES.DXDGuild]:
     '../artifacts/dxdao-contracts/contracts/erc20guild/implementations/DXDGuild.sol/DXDGuild.json',
-  //TODO: add other contracts here (IERC20Guild)
+  [GUILD_TYPES.EnforcedBinaryGuild]:
+    '../artifacts/dxdao-contracts/contracts/erc20guild/implementations/EnforcedBinaryGuild.sol/EnforcedBinaryGuild.json',
+  [GUILD_TYPES.EnforcedBinarySnapshotERC20Guild]:
+    '../artifacts/dxdao-contracts/contracts/erc20guild/implementations/EnforcedBinarySnapshotERC20Guild.sol/EnforcedBinarySnapshotERC20Guild.json',
 };
 
 const getGuildFeatures = guildType => {
@@ -35,6 +41,10 @@ const getGuildFeatures = guildType => {
     case GUILD_TYPES.DXDGuild:
     case GUILD_TYPES.ERC20Guild:
       return [];
+    case GUILD_TYPES.EnforcedBinaryGuild:
+      return [FEATURES.enforcedBinary];
+    case GUILD_TYPES.EnforcedBinarySnapshotERC20Guild:
+      return [FEATURES.enforcedBinary, FEATURES.snapshot];
     default:
       return [];
   }
