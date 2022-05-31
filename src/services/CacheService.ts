@@ -1223,13 +1223,18 @@ export default class UtilsService {
     );
     const fromBlock = networkCache.blockNumber + 1;
 
-    let schemeEvents = await getRawEvents(
-      web3,
-      schemeAddress,
-      fromBlock,
-      toBlock,
-      schemeTypeData.newProposalTopics
-    );
+    let schemeEvents = [];
+    for (let i = 0; i < schemeTypeData.newProposalTopics.length; i++) {
+      schemeEvents = schemeEvents.concat(
+        await getRawEvents(
+          web3,
+          schemeAddress,
+          fromBlock,
+          toBlock,
+          schemeTypeData.newProposalTopics[i]
+        )
+      );
+    }
 
     await batchPromisesOntarget(
       schemeEvents.map(schemeEvent => {
