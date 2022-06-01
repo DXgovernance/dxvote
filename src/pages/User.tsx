@@ -13,11 +13,7 @@ import {
 import { formatBalance } from '../utils';
 import { useContext } from '../contexts';
 import useExporters from '../hooks/useExporters';
-import {
-  TitleRow,
-  ListRow,
-  VestingContractsSection,
-} from 'components/UserPage';
+import { TitleRow, ListRow } from 'components/UserPage';
 
 const UserPage = observer(() => {
   let history = useHistory();
@@ -141,7 +137,6 @@ const UserPage = observer(() => {
           </ListRow>
         );
       })}
-      <VestingContractsSection userAddress={userAddress} />
     </Box>
   );
 });

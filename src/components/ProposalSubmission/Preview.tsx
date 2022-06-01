@@ -1,7 +1,7 @@
 import { normalizeBalance } from 'utils';
 import MDEditor from '@uiw/react-md-editor';
-import { Question } from '../../common';
-import { useContext } from '../../../contexts';
+import { Question } from '../common';
+import { useContext } from '../../contexts';
 import { ZERO_ADDRESS, NETWORK_ASSET_SYMBOL, isWalletScheme } from 'utils';
 
 export const Preview = ({ descriptionText, schemeToUse }) => {
