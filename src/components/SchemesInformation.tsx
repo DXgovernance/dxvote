@@ -44,7 +44,7 @@ const SchemesInformation = observer(() => {
       </TableHeader>
       <TableBody>
         {schemes.map(scheme => {
-          const schemeProposals = daoStore.getAllProposals({
+          const schemeProposals = daoStore.filterProposals({
             scheme: scheme.address,
           });
           const votingMachineParameters = daoStore.getVotingMachineOfScheme(

@@ -48,6 +48,7 @@ import {
 import { useFilteredProposals } from '../../hooks/useFilteredProposals';
 import ProposalsExporter from '../../components/Proposals/ProposalsExporter';
 import { useRep } from 'hooks/useRep';
+import { useEffect, useState } from 'react';
 
 const ProposalsPage = observer(() => {
   const {
@@ -60,6 +61,11 @@ const ProposalsPage = observer(() => {
   const networkName = configStore.getActiveChainName();
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
+  const [allProposals, setAllProposals] = useState(daoStore.getAllProposals);
+  console.log('All proposals length', allProposals.length);
+  useEffect(() => {
+    setAllProposals(daoStore.getAllProposals);
+  }, [daoStore.getAllProposals]);
 
   const {
     proposals,
@@ -72,7 +78,6 @@ const ProposalsPage = observer(() => {
     setSchemesFilter,
   } = useFilteredProposals();
 
-  const allProposals = daoStore.getAllProposals();
   const activeProposalsCount = allProposals.filter(
     proposal =>
       proposal.stateInVotingMachine > VotingMachineProposalState.Executed

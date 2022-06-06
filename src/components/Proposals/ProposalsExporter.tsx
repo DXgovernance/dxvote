@@ -69,7 +69,7 @@ const ProposalsExporter = () => {
   };
 
   const getFilteredProposalsList = async () => {
-    let filteredProposals = daoStore.getAllProposals();
+    let filteredProposals = daoStore.getAllProposals;
     if (isDateRange) {
       filteredProposals = filteredProposals.filter(
         proposal =>
