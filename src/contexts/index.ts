@@ -12,8 +12,6 @@ import PoktService from '../services/PoktService';
 import AlchemyService from '../services/AlchemyService';
 import CustomRpcService from '../services/CustomRpcService';
 import ENSService from '../services/ENSService';
-import TokenVestingService from '../services/TokenVestingService';
-import SubgraphService from '../services/SubgraphService';
 import OrbitDBService from '../services/OrbitDBService';
 
 import ProviderStore from '../stores/Provider';
@@ -59,8 +57,6 @@ export default class RootContext {
   alchemyService: AlchemyService;
   customRpcService: CustomRpcService;
   ensService: ENSService;
-  tokenVestingService: TokenVestingService;
-  subgraphService: SubgraphService;
   orbitDBService: OrbitDBService;
   cacheService: CacheService;
 
@@ -85,8 +81,6 @@ export default class RootContext {
     this.alchemyService = new AlchemyService(this);
     this.customRpcService = new CustomRpcService(this);
     this.ensService = new ENSService(this);
-    this.tokenVestingService = new TokenVestingService(this);
-    this.subgraphService = new SubgraphService(this);
     this.orbitDBService = new OrbitDBService(this);
     this.cacheService = new CacheService(this);
   }

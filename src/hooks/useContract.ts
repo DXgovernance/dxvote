@@ -2,7 +2,7 @@ import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
 import { useMemo } from 'react';
 import { getContract } from '../utils/contracts';
-import useEtherSWR from './Guilds/ether-swr/useEtherSWR';
+import useEtherSWR from './ether-swr/useEtherSWR';
 import { SWRResponse } from 'swr';
 
 export const useContract = function (address: string, abi: any[]) {

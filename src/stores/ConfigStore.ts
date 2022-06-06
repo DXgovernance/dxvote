@@ -184,10 +184,6 @@ export default class ConfigStore {
     );
   }
 
-  getProposalTemplates() {
-    return this.networkConfig.proposalTemplates;
-  }
-
   getProposalTypes() {
     return this.networkConfig.proposalTypes;
   }

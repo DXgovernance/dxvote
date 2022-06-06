@@ -19,8 +19,8 @@ import {
 } from '../../utils';
 import { LinkedButtons } from 'components/LinkedButtons';
 import DiscourseImporter from '../../components/DiscourseImporter';
-import { Calls } from 'components/ProposalSubmission/Custom/Calls';
-import { Preview } from '../../components/ProposalSubmission/Custom/Preview';
+import { Calls } from 'components/ProposalSubmission/Calls';
+import { Preview } from '../../components/ProposalSubmission/Preview';
 const NewProposalFormWrapper = styled(Box)`
   width: cacl(100% -40px);
   display: flex;
@@ -160,7 +160,6 @@ const NewProposalPage = observer(() => {
   // 5 = Proposal creation tx receipt received
 
   const [errorMessage, setErrorMessage] = useState('');
-  const proposalTemplates = configStore.getProposalTemplates();
 
   const { assetLimits: transferLimits, recommendedCalls } =
     daoStore.getSchemeRecommendedCalls(schemeToUse.address);
@@ -534,33 +533,6 @@ const NewProposalPage = observer(() => {
     setCallsInState(calls);
   }
 
-  function onProposalTemplate(event) {
-    const selectedTemplate = proposalTemplates[event.target.value];
-    if (selectedTemplate.name !== 'Custom') {
-      setTitleText(selectedTemplate.title);
-      setDescriptionText(selectedTemplate.description);
-      calls.splice(0, calls.length);
-      if (selectedTemplate.calls) {
-        selectedTemplate.calls.forEach((call, index) => {
-          addCall();
-          onToSelectChange(index, call.to);
-          const selectedFunction = calls[index].allowedFunctions.find(
-            allowedFunction => {
-              return allowedFunction.functionName === call.functionName;
-            }
-          );
-          onFunctionSelectChange(
-            index,
-            call.functionName,
-            selectedFunction.params
-          );
-          calls[index].dataValues = call.params;
-        });
-      }
-
-      setCallsInState(calls);
-    }
-  }
   return (
     <NewProposalFormWrapper>
       <div
@@ -611,19 +583,6 @@ const NewProposalPage = observer(() => {
                   </option>
                 );
               else return null;
-            })}
-          </select>
-          <select
-            name="proposalTemplate"
-            id="proposalTemplateSelector"
-            onChange={onProposalTemplate}
-          >
-            {proposalTemplates.map((template, i) => {
-              return (
-                <option key={'proposalTemplate' + i} value={i}>
-                  {template.name}
-                </option>
-              );
             })}
           </select>
         </TitleInput>

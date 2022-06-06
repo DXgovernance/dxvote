@@ -25,17 +25,16 @@ import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
 import CachePage from 'pages/Cache';
 import { CreateMetadataPage } from 'pages/Metadata';
-import GuildsApp from './GuildsApp';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MultichainProvider from './contexts/MultichainProvider';
-import useJsonRpcProvider from './hooks/Guilds/web3/useJsonRpcProvider';
+import useJsonRpcProvider from './hooks/useJsonRpcProvider';
 import { useEffect } from 'react';
 import { useContext } from './contexts';
 import { MAINNET_ID } from './utils';
 
-import EtherSWRManager from 'components/Guilds/EtherSWRManager';
+import EtherSWRManager from 'components/EtherSWRManager';
 
 const Content = styled.div`
   margin: auto;
@@ -117,12 +116,7 @@ const Routes = () => {
   );
 };
 
-const SplitApp = () => {
-  // This split between DXvote and Guilds frontends are temporary.
-  // We'll eventually converge changes on the Guilds side to DXvote.
-  const location = useLocation();
-  const isGuilds = location.pathname.startsWith('/guilds');
-
+const App = () => {
   const {
     context: { ensService },
   } = useContext();
@@ -134,20 +128,16 @@ const SplitApp = () => {
 
   return (
     <EtherSWRManager>
-      {!isGuilds ? (
-        <Switch>
-          <Web3ReactManager>
-            <GlobalStyle />
-            <Content>
-              <Header />
-              <Routes />
-              <ToastContainer />
-            </Content>
-          </Web3ReactManager>
-        </Switch>
-      ) : (
-        <GuildsApp />
-      )}
+      <Switch>
+        <Web3ReactManager>
+          <GlobalStyle />
+          <Content>
+            <Header />
+            <Routes />
+            <ToastContainer />
+          </Content>
+        </Web3ReactManager>
+      </Switch>
     </EtherSWRManager>
   );
 };
@@ -159,7 +149,7 @@ const Root = () => {
         <MultichainProvider>
           <ThemeProvider>
             <HashRouter>
-              <SplitApp />
+              <App />
             </HashRouter>
           </ThemeProvider>
         </MultichainProvider>
