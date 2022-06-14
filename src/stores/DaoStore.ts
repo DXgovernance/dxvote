@@ -1,5 +1,5 @@
 import RootContext from '../contexts';
-import { action, makeObservable } from 'mobx';
+import { action, makeObservable, computed } from 'mobx';
 import _ from 'lodash';
 import {
   BigNumber,
@@ -33,6 +33,7 @@ export default class DaoStore {
     this.context = context;
 
     makeObservable(this, {
+      getAllProposals: computed,
       setCache: action,
       reset: action,
     });
@@ -163,7 +164,7 @@ export default class DaoStore {
   }
 
   getAmountOfProposalsPreBoostedInScheme(schemeAddress: string): number {
-    return this.getAllProposals({ scheme: schemeAddress }).filter(proposal => {
+    return this.filterProposals({ scheme: schemeAddress }).filter(proposal => {
       return proposal.stateInVotingMachine === 4;
     }).length;
   }
@@ -383,7 +384,11 @@ export default class DaoStore {
     };
   }
 
-  getAllProposals(filter: any = {}): ProposalsExtended[] {
+  get getAllProposals(): ProposalsExtended[] {
+    return this.filterProposals();
+  }
+
+  filterProposals(filter: any = {}): ProposalsExtended[] {
     const allProposals = Object.keys(this.daoCache.proposals).map(
       proposalId => {
         return this.daoCache.proposals[proposalId];
