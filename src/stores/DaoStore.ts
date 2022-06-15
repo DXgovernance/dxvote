@@ -411,13 +411,12 @@ export default class DaoStore {
     return _.filter(proposals, filter);
   }
 
-  getAllSchemes(onlyRegistered: boolean = true): Scheme[] {
-    return _.flatMap(
-      _.filter(
-        this.daoCache.schemes,
-        onlyRegistered ? { registered: true } : {}
-      )
-    );
+  getSchemes(): Scheme[] {
+    return this.filterSchemes();
+  }
+
+  filterSchemes(filter: any = {}): Scheme[] {
+    return _.flatMap(_.filter(this.daoCache.schemes, filter));
   }
 
   getProposal(proposalId: string): Proposal {

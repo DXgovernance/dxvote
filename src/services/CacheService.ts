@@ -803,8 +803,7 @@ export default class UtilsService {
             networkCache,
             networkContracts,
             web3,
-            toBlock,
-            controllerEvent.event === 'UnregisterScheme'
+            toBlock
           );
         }),
       networkCache,
@@ -971,18 +970,12 @@ export default class UtilsService {
     networkCache: DaoNetworkCache,
     networkContracts: NetworkContracts,
     web3: Web3,
-    toBlock: number,
-    removeScheme: boolean = false
+    toBlock: number
   ): Promise<DaoNetworkCache> {
     const networkWeb3Contracts = await getContracts(networkContracts, web3);
     const isNewScheme = !networkCache.schemes[schemeAddress];
     const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
-    console.debug(
-      'Processing Scheme',
-      schemeAddress,
-      schemeTypeData,
-      removeScheme
-    );
+    console.debug('Processing Scheme', schemeAddress, schemeTypeData);
 
     let controllerAddress = networkWeb3Contracts.controller._address;
     let schemeName = schemeTypeData.name;
@@ -1003,6 +996,12 @@ export default class UtilsService {
         'getSchemeParameters(address,address)',
         [schemeAddress, networkWeb3Contracts.avatar._address],
         ['bytes32'],
+      ],
+      [
+        controllerAddress,
+        'isSchemeRegistered(address,address)',
+        [schemeAddress, networkWeb3Contracts.avatar._address],
+        ['bool'],
       ],
     ];
 
@@ -1063,6 +1062,7 @@ export default class UtilsService {
       callsToExecute
     );
 
+    const registered = callsResponse1.decodedReturnData[2][0];
     const permissions = decodePermission(
       callsResponse1.decodedReturnData[0][0]
     );
@@ -1072,22 +1072,22 @@ export default class UtilsService {
     const votingMachineAddress = !isNewScheme
       ? networkCache.schemes[schemeAddress].votingMachine
       : isWalletScheme
-      ? callsResponse1.decodedReturnData[4][0]
+      ? callsResponse1.decodedReturnData[5][0]
       : schemeTypeData.votingMachine;
 
     if (isWalletScheme) {
-      maxSecondsForExecution = callsResponse1.decodedReturnData[2][0];
-      maxRepPercentageChange = callsResponse1.decodedReturnData[3][0];
+      maxSecondsForExecution = callsResponse1.decodedReturnData[3] || 0;
+      maxRepPercentageChange = callsResponse1.decodedReturnData[4][0];
 
       if (isNewScheme) {
-        schemeName = callsResponse1.decodedReturnData[5][0];
+        schemeName = callsResponse1.decodedReturnData[6][0];
 
         switch (schemeType) {
           case 'Wallet Scheme v1.0':
-            controllerAddress = callsResponse1.decodedReturnData[6][0];
+            controllerAddress = callsResponse1.decodedReturnData[7][0];
             break;
           default:
-            controllerAddress = callsResponse1.decodedReturnData[6][0]
+            controllerAddress = callsResponse1.decodedReturnData[7][0]
               ? networkWeb3Contracts.controller._address
               : ZERO_ADDRESS;
             break;
@@ -1189,7 +1189,7 @@ export default class UtilsService {
     if (isNewScheme) {
       networkCache.schemes[schemeAddress] = {
         address: schemeAddress,
-        registered: true,
+        registered: registered,
         controllerAddress,
         name: schemeName,
         type: schemeType,
@@ -1213,7 +1213,7 @@ export default class UtilsService {
         boostedVoteRequiredPercentage;
       networkCache.schemes[schemeAddress].paramsHash = paramsHash;
       networkCache.schemes[schemeAddress].permissions = permissions;
-      networkCache.schemes[schemeAddress].registered = !removeScheme;
+      networkCache.schemes[schemeAddress].registered = registered;
     }
 
     // Get the new proposals submitted in the scheme and process it

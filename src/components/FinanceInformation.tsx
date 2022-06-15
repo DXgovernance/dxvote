@@ -56,7 +56,7 @@ const FinanceInformation = observer(() => {
   } = useContext();
   const { exportToCSV, triggerDownload } = useExporters();
 
-  const schemes = daoStore.getAllSchemes();
+  const schemes = daoStore.getSchemes();
   const prices = coingeckoService.getPrices();
   const networkAssetSymbol =
     NETWORK_ASSET_SYMBOL[configStore.getActiveChainName()];
