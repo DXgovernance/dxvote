@@ -27,22 +27,22 @@ const SchemesInformation = observer(() => {
   } = useContext();
   const { library } = providerStore.getActiveWeb3React();
 
-  const schemes = daoStore.getAllSchemes();
+  const schemes = daoStore.filterSchemes({ registered: true });
   return (
     <ProposalTable>
-      <TableHeader>
-        <HeaderCell>Name</HeaderCell>
-        <HeaderCell>
-          Configuration <Question question="9" />
-        </HeaderCell>
-        <HeaderCell>
-          Permissions <Question question="9" />
-        </HeaderCell>
-        <HeaderCell>
-          <span>Boosted</span> - <span>Active</span> - <span>Total</span>
-        </HeaderCell>
-      </TableHeader>
       <TableBody>
+        <TableHeader>
+          <HeaderCell>Name</HeaderCell>
+          <HeaderCell>
+            Configuration <Question question="9" />
+          </HeaderCell>
+          <HeaderCell>
+            Permissions <Question question="9" />
+          </HeaderCell>
+          <HeaderCell>
+            <span>Boosted</span> - <span>Active</span> - <span>Total</span>
+          </HeaderCell>
+        </TableHeader>
         {schemes.map(scheme => {
           const schemeProposals = daoStore.filterProposals({
             scheme: scheme.address,

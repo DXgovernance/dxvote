@@ -169,12 +169,12 @@ const FinanceInformation = observer(() => {
           <div>
             <Subtitle centered> {parseCamelCase(assetHolder)} </Subtitle>
             <FinanceTable>
-              <TableHeader>
-                <HeaderCell>Asset</HeaderCell>
-                <HeaderCell align="center">Balance</HeaderCell>
-                <HeaderCell align="center">USD Value</HeaderCell>
-              </TableHeader>
               <TableBody>
+                <TableHeader>
+                  <HeaderCell>Asset</HeaderCell>
+                  <HeaderCell align="center">Balance</HeaderCell>
+                  <HeaderCell align="center">USD Value</HeaderCell>
+                </TableHeader>
                 {assetsOfHolder.map((asset, i) => {
                   if (
                     asset &&

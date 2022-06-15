@@ -5,7 +5,7 @@ export const Table = styled.table`
   border-collapse: collapse;
 `;
 
-export const TableHeader = styled.thead`
+export const TableHeader = styled.tr`
   display: contents;
   color: var(--light-text-gray);
   font-size: 14px;

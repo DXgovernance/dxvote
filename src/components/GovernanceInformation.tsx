@@ -115,15 +115,15 @@ const GovernanceInformation = observer(() => {
       </Row>
 
       <GovernanceTable>
-        <TableHeader>
-          <HeaderCell align="center">#</HeaderCell>
-          <HeaderCell align="center">Address</HeaderCell>
-          <HeaderCell align="center">Proposals Created</HeaderCell>
-          <HeaderCell align="center">Voted</HeaderCell>
-          <HeaderCell align="center">Staked</HeaderCell>
-          <HeaderCell align="center">Score</HeaderCell>
-        </TableHeader>
         <TableBody>
+          <TableHeader>
+            <HeaderCell align="center">#</HeaderCell>
+            <HeaderCell align="center">Address</HeaderCell>
+            <HeaderCell align="center">Proposals Created</HeaderCell>
+            <HeaderCell align="center">Voted</HeaderCell>
+            <HeaderCell align="center">Staked</HeaderCell>
+            <HeaderCell align="center">REP %</HeaderCell>
+          </TableHeader>
           {governanceInfo.ranking.map((user, i) => {
             return (
               <TableRow key={`user${i}`}>
