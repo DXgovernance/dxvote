@@ -126,19 +126,6 @@ export const NETWORKS: ChainConfig[] =
           api: 'https://api.etherscan.io',
         },
         {
-          id: 4,
-          name: 'rinkeby',
-          displayName: 'Rinkeby Testnet',
-          defaultRpc: POKT_NETWORK_URLS['4'],
-          nativeAsset: {
-            name: 'Ethereum',
-            symbol: 'ETH',
-            decimals: 18,
-          },
-          blockExplorer: 'https://rinkeby.etherscan.io/',
-          api: 'https://api-rinkeby.etherscan.io/',
-        },
-        {
           id: 100,
           name: 'xdai',
           displayName: 'Gnosis Chain',
@@ -163,18 +150,6 @@ export const NETWORKS: ChainConfig[] =
           },
           blockExplorer: 'https://arbiscan.io/',
           api: 'https://api.arbiscan.io/',
-        },
-        {
-          id: 421611,
-          name: 'arbitrumTestnet',
-          displayName: 'Arbitrum Testnet',
-          defaultRpc: `https://arb-rinkeby.g.alchemy.com/v2/${defaultAlchemyKey}`,
-          nativeAsset: {
-            name: 'Ethereum',
-            symbol: 'ETH',
-            decimals: 18,
-          },
-          blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
         },
       ];
 
