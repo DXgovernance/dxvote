@@ -33,7 +33,7 @@ const PermissionsInformation = observer(() => {
   } = useContext();
 
   const web3 = providerStore.getActiveWeb3React().library;
-  const schemes = daoStore.getAllSchemes();
+  const schemes = daoStore.getSchemes();
   const rawPermissions = daoStore.daoCache.callPermissions;
   const networkContracts = configStore.getNetworkContracts();
   const tokens = configStore.getTokensOfNetwork();

@@ -87,7 +87,7 @@ const NewProposalPage = observer(() => {
   } = useContext();
 
   const networkName = configStore.getActiveChainName();
-  const schemes = daoStore.getAllSchemes();
+  const schemes = daoStore.filterSchemes({ registered: true });
   const networkContracts = configStore.getNetworkContracts();
   const schemeInLocalStorage = localStorage.getItem(
     'dxvote-newProposal-scheme'

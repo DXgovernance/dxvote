@@ -5,7 +5,7 @@ const SchemeSearch = ({ value, onFilter }) => {
   const {
     context: { daoStore },
   } = useContext();
-  const schemes = daoStore.getAllSchemes();
+  const schemes = daoStore.getSchemes();
 
   return (
     <ProposalsFilter
