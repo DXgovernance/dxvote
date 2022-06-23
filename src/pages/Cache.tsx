@@ -4,7 +4,12 @@ import { observer } from 'mobx-react';
 import { Row, Box, Button } from '../components/common';
 import React from 'react';
 import { FiCheckCircle, FiDownload, FiUpload, FiX } from 'react-icons/fi';
-import { NETWORKS, toCamelCaseString } from 'utils';
+import {
+  getAppConfig,
+  getNetworkByName,
+  NETWORKS,
+  toCamelCaseString,
+} from 'utils';
 import PulsingIcon from 'components/common/LoadingIcon';
 import Copy from '../components/common/Copy';
 import JSZip from 'jszip';
@@ -102,9 +107,21 @@ const CachePage = observer(() => {
     arbitrum: false,
     arbitrumTestnet: false,
   });
-  const [localConfig, setLocalConfig] = React.useState(
-    configStore.getLocalConfig()
-  );
+
+  const defaultAppConfigs = getAppConfig();
+
+  const [localConfig, setLocalConfig] = React.useState({
+    mainnet_toBlock: defaultAppConfigs.mainnet.cache.toBlock,
+    mainnet_rpcURL: getNetworkByName('mainnet').defaultRpc,
+    xdai_toBlock: defaultAppConfigs.xdai.cache.toBlock,
+    xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
+    rinkeby_toBlock: defaultAppConfigs.rinkeby.cache.toBlock,
+    rinkeby_rpcURL: getNetworkByName('rinkeby').defaultRpc,
+    arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
+    arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
+    arbitrumTestnet_toBlock: defaultAppConfigs.arbitrumTestnet.cache.toBlock,
+    arbitrumTestnet_rpcURL: getNetworkByName('arbitrumTestnet').defaultRpc,
+  });
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
   async function resetCacheOptions() {
@@ -141,8 +158,8 @@ const CachePage = observer(() => {
           reset: resetCache.mainnet,
         },
         4: {
-          rpcUrl: localConfig.rinkeby_rpcURL,
-          toBlock: localConfig.rinkeby_toBlock,
+          rpcUrl: '',
+          toBlock: 0,
           reset: resetCache.rinkeby,
         },
         100: {
@@ -156,8 +173,8 @@ const CachePage = observer(() => {
           reset: resetCache.arbitrum,
         },
         421611: {
-          rpcUrl: localConfig.arbitrumTestnet_rpcURL,
-          toBlock: localConfig.arbitrumTestnet_toBlock,
+          rpcUrl: '',
+          toBlock: 0,
           reset: resetCache.arbitrumTestnet,
         },
       },
