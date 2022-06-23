@@ -3,7 +3,6 @@ import RootContext from '../contexts';
 
 import {
   CACHE_METADATA_ENS,
-  getNetworkByName,
   NETWORK_ASSET_SYMBOL,
   NETWORK_NAMES,
   NETWORK_DISPLAY_NAMES,
@@ -101,7 +100,6 @@ export default class ConfigStore {
   }
 
   getLocalConfig() {
-    const defaultAppConfigs = getAppConfig();
     const defaultConfig = {
       etherscan: '',
       pinata: '',
@@ -109,16 +107,6 @@ export default class ConfigStore {
       infura: '',
       alchemy: '',
       pinOnStart: false,
-      mainnet_toBlock: defaultAppConfigs.mainnet.cache.toBlock,
-      mainnet_rpcURL: getNetworkByName('mainnet').defaultRpc,
-      xdai_toBlock: defaultAppConfigs.xdai.cache.toBlock,
-      xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
-      rinkeby_toBlock: defaultAppConfigs.rinkeby.cache.toBlock,
-      rinkeby_rpcURL: getNetworkByName('rinkeby').defaultRpc,
-      arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
-      arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
-      arbitrumTestnet_toBlock: defaultAppConfigs.arbitrumTestnet.cache.toBlock,
-      arbitrumTestnet_rpcURL: getNetworkByName('arbitrumTestnet').defaultRpc,
     };
     const configInLocalStorage = localStorage.getItem('dxvote-config')
       ? JSON.parse(localStorage.getItem('dxvote-config'))
@@ -131,7 +119,6 @@ export default class ConfigStore {
   }
 
   resetLocalConfig() {
-    const defaultAppConfigs = getAppConfig();
     localStorage.setItem(
       'dxvote-config',
       JSON.stringify({
@@ -141,17 +128,6 @@ export default class ConfigStore {
         infura: '',
         alchemy: '',
         pinOnStart: false,
-        mainnet_toBlock: defaultAppConfigs.mainnet.cache.toBlock,
-        mainnet_rpcURL: getNetworkByName('mainnet').defaultRpc,
-        xdai_toBlock: defaultAppConfigs.xdai.cache.toBlock,
-        xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
-        rinkeby_toBlock: defaultAppConfigs.rinkeby.cache.toBlock,
-        rinkeby_rpcURL: getNetworkByName('rinkeby').defaultRpc,
-        arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
-        arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
-        arbitrumTestnet_toBlock:
-          defaultAppConfigs.arbitrumTestnet.cache.toBlock,
-        arbitrumTestnet_rpcURL: getNetworkByName('arbitrumTestnet').defaultRpc,
       })
     );
   }
