@@ -930,7 +930,7 @@ export default class UtilsService {
         proposal.descriptionHash.length > 0 &&
         // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
         proposal.title?.length === 0 &&
-        proposal.creationEvent.blockNumber > networkCache.blockNumber - 10000
+        proposal.creationEvent.blockNumber > networkCache.blockNumber - 100000
       )
         try {
           console.debug(
