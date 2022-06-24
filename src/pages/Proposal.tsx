@@ -18,6 +18,16 @@ import {
   Details,
 } from 'components/Proposal';
 
+const WarningMessage = styled.span`
+  margin: 2px 0px;
+  padding: 2px;
+  background-color: yellow;
+  border: 1px solid black;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 18px;
+`;
+
 const ProposalInformationWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -130,6 +140,16 @@ const ProposalPage = observer(() => {
             </h3>
           )}
           <Calls />
+          {proposal.extraData && proposal.extraData.periodTime && (
+            <WarningMessage>
+              &#9760; Using contribution period time higher than 0 &#9760;
+            </WarningMessage>
+          )}
+          {proposal.extraData && proposal.extraData.totalPeriods && (
+            <WarningMessage>
+              &#9760; Using more than one contribution period on redeem &#9760;
+            </WarningMessage>
+          )}
         </ProposalInfoBox>
 
         <History proposalEvents={proposalEvents}></History>
