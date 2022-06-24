@@ -169,13 +169,14 @@ const ProposalsPage = observer(() => {
                   event => event.proposalId === proposal.id
                 ) > -1;
 
-              const proposerVotedDown =
+              const invalidProposal =
                 daoStore
                   .getVotesOfProposal(proposal.id)
                   .findIndex(
                     vote =>
                       vote.voter === proposal.proposer && isVoteNo(vote.vote)
-                  ) > -1;
+                  ) > -1 ||
+                (proposal.extraData && proposal.extraData.periodTime > 0);
 
               return (
                 <StyledTableRow
@@ -213,7 +214,7 @@ const ProposalsPage = observer(() => {
                         />
                       )}
 
-                      {proposerVotedDown && (
+                      {invalidProposal && (
                         <FiAlertTriangle
                           style={{ minWidth: '15px', margin: '0px 2px' }}
                           title="The proposer downvoted this proposal. It may be incorrect."

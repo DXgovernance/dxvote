@@ -1291,6 +1291,7 @@ export default class UtilsService {
       'address',
       avatarAddress
     );
+    let extraData: {};
 
     // These first calls target mainly the voting machine where most of the proposal information is mutable
     let callsToExecute = [
@@ -1716,6 +1717,16 @@ export default class UtilsService {
             )
           );
         }
+
+        if (
+          creationLogDecoded._rewards[3] > 0 ||
+          creationLogDecoded._rewards[4] > 1
+        ) {
+          extraData = {
+            periodTime: creationLogDecoded._rewards[3],
+            totalPeriods: creationLogDecoded._rewards[4],
+          };
+        }
       } else if (schemeTypeData.type === 'GenericScheme') {
         schemeProposalInfo.to = [networkWeb3Contracts.controller._address];
         schemeProposalInfo.value = [0];
@@ -1864,6 +1875,7 @@ export default class UtilsService {
         negativeVotes: bnum(callsResponse.decodedReturnData[2][0]),
         positiveStakes: bnum(callsResponse.decodedReturnData[3][2]),
         negativeStakes: bnum(callsResponse.decodedReturnData[3][3]),
+        extraData,
       };
 
       networkCache.schemes[schemeAddress].proposalIds.push(proposalId);
