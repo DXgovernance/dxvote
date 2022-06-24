@@ -904,8 +904,12 @@ export default class UtilsService {
         '0x1e6c8f56755897b1aea4f47b009095e9bee23714a87094b48dbb78c8744fd5b2',
         '0x4cbdd4c473e3c2dc6090cd2842b6884770406a43dd96d1abe36167b7437d9bec',
         '0x5016d176a2004ff7dfd1a3bf358f2d73c57d9e4b2e64053888f77a2e3555f101',
-
-        // TODO: Fix this xdai proposal IPFS content
+        '0x53f58ff91d0ef52b4ec7f3f00a03731892bde7dca37a1c3e3aa8e378dbb6220b',
+        '0x6c26beaa8c4263cf71870b2819421ad3d8f0ddacbb1b658985be97b26c0125e7',
+        '0x7cbef442d4c66ca0d4d31122b2565b2b38584e9ea21d3fecca4478c928a44be1',
+        '0x80c518c9ebe0562adc6e2b62b5349286ea3fab0b520fe1800ae97a275b6ac6f8',
+        '0xdef15e241a2dcc52c6ec1970b8e2f6cd13dd9f85f63d9702c78881dacafb6f34',
+        '0xfda75410e3f54bca6828995cce7864fdf5f2961510c0515835b4d06c87f5754e',
         '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
       ];
 
@@ -925,7 +929,8 @@ export default class UtilsService {
         proposal.descriptionHash &&
         proposal.descriptionHash.length > 0 &&
         // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
-        proposal.title?.length === 0
+        proposal.title?.length === 0 &&
+        proposal.creationEvent.blockNumber > networkCache.blockNumber - 10000
       )
         try {
           console.debug(
