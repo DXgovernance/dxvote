@@ -1,7 +1,7 @@
 // Used to make the build reproducible between different machines (IPFS-related)
 module.exports = (config, env) => {
   
-  config.output.publicPath = process.env.GH_PAGES ? "/dxvote" : "/";
+  config.output.publicPath = process.env.GH_PAGES ? "/dxvote/" : "/";
   
   if (env !== 'production') {
     return config;
