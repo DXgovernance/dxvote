@@ -2,7 +2,7 @@
   "cache": {
     "fromBlock": 9234792,
     "ipfsHash": "QmTear8HaHRnNNTAu9RRMpdPdRxqKFmXTkqwGMgu1eKJFj",
-    "toBlock": "10525725"
+    "toBlock": 0
   },
   "contracts": {
     "avatar": "0x1A639b50D807ce7e61Dc9eeB091e6Cea8EcB1595",
