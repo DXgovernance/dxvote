@@ -101,7 +101,12 @@ export default class IPFSService {
     localStorage.setItem('dxvote-newProposal-hash', hash);
 
     if (pinataService.auth) {
-      const pinataPin = await pinataService.pin(hash);
+      const pinataPin = await pinataService.pin(hash, {
+        description,
+        title,
+        tags: [...tags, 'dxvote'],
+        url: '',
+      });
       console.debug('[PINATA PIN]', pinataPin.toString());
     } else {
       console.debug('[PINATA PIN] NOT AUTHENTICATED');
