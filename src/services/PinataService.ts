@@ -43,8 +43,34 @@ export default class PinataService {
     }
   }
 
-  async pin(hashToPin: String) {
+  async pin(hashToPin: String, jsonToPin?: any) {
     const pinataApiKey = this.context.configStore.getLocalConfig().pinata;
+    if (jsonToPin) {
+      console.log('json pin');
+      console.log(
+        await axios({
+          method: 'POST',
+          url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
+          data: {
+            pinataOptions: {
+              cidVersion: 0,
+            },
+            pinataMetadata: {
+              name: `DXdao ${this.context.configStore.getActiveChainName()} DescriptionHash ${contentHash.fromIpfs(
+                hashToPin
+              )}`,
+              keyValues: { type: 'proposal' },
+            },
+            pinataContent: jsonToPin,
+          },
+          headers: {
+            Authorization: `Bearer ${
+              pinataApiKey ? pinataApiKey : this.defaultApiKey
+            }`,
+          },
+        })
+      );
+    }
     return axios({
       method: 'POST',
       url: 'https://api.pinata.cloud/pinning/pinByHash',
