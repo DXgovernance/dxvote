@@ -107,6 +107,7 @@ const CachePage = observer(() => {
     xdai: false,
     arbitrum: false,
     arbitrumTestnet: false,
+    arbitrumNitroTestnet: false,
   });
 
   const defaultAppConfigs = getAppConfig();
@@ -124,6 +125,10 @@ const CachePage = observer(() => {
     arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
     arbitrumTestnet_toBlock: defaultAppConfigs.arbitrumTestnet.cache.toBlock,
     arbitrumTestnet_rpcURL: getNetworkByName('arbitrumTestnet').defaultRpc,
+    arbitrumNitroTestnet_toBlock:
+      defaultAppConfigs.arbitrumNitroTestnet.cache.toBlock,
+    arbitrumNitroTestnet_rpcURL: getNetworkByName('arbitrumNitroTestnet')
+      .defaultRpc,
   });
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
@@ -138,6 +143,7 @@ const CachePage = observer(() => {
       xdai: false,
       arbitrum: false,
       arbitrumTestnet: false,
+      arbitrumNitroTestnet: false,
     });
     setUpdatedCacheHash({
       proposalTitles: {},
@@ -186,6 +192,11 @@ const CachePage = observer(() => {
           toBlock: 0,
           reset: resetCache.arbitrumTestnet,
         },
+        421613: {
+          rpcUrl: '',
+          toBlock: 0,
+          reset: resetCache.arbitrumNitroTestnet,
+        },
       },
       updateProposalTitles
     );
@@ -218,6 +229,8 @@ const CachePage = observer(() => {
           rinkeby: updatedCacheHash.configHashes['rinkeby'],
           goerli: updatedCacheHash.configHashes['goerli'],
           arbitrumTestnet: updatedCacheHash.configHashes['arbitrumTestnet'],
+          arbitrumNitroTestnet:
+            updatedCacheHash.configHashes['arbitrumNitroTestnet'],
         },
         null,
         2
