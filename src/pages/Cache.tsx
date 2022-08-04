@@ -103,6 +103,7 @@ const CachePage = observer(() => {
   const [resetCache, setResetCache] = React.useState({
     mainnet: false,
     rinkeby: false,
+    goerli: false,
     xdai: false,
     arbitrum: false,
     arbitrumTestnet: false,
@@ -117,6 +118,8 @@ const CachePage = observer(() => {
     xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
     rinkeby_toBlock: defaultAppConfigs.rinkeby.cache.toBlock,
     rinkeby_rpcURL: getNetworkByName('rinkeby').defaultRpc,
+    goerli_toBlock: defaultAppConfigs.goerli.cache.toBlock,
+    goerli_rpcURL: getNetworkByName('goerli').defaultRpc,
     arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
     arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
     arbitrumTestnet_toBlock: defaultAppConfigs.arbitrumTestnet.cache.toBlock,
@@ -131,6 +134,7 @@ const CachePage = observer(() => {
     setResetCache({
       mainnet: false,
       rinkeby: false,
+      goerli: false,
       xdai: false,
       arbitrum: false,
       arbitrumTestnet: false,
@@ -161,6 +165,11 @@ const CachePage = observer(() => {
           rpcUrl: '',
           toBlock: 0,
           reset: resetCache.rinkeby,
+        },
+        5: {
+          rpcUrl: '',
+          toBlock: 0,
+          reset: resetCache.goerli,
         },
         100: {
           rpcUrl: localConfig.xdai_rpcURL,
@@ -207,6 +216,7 @@ const CachePage = observer(() => {
           xdai: updatedCacheHash.configHashes['xdai'],
           arbitrum: updatedCacheHash.configHashes['arbitrum'],
           rinkeby: updatedCacheHash.configHashes['rinkeby'],
+          goerli: updatedCacheHash.configHashes['goerli'],
           arbitrumTestnet: updatedCacheHash.configHashes['arbitrumTestnet'],
         },
         null,

@@ -16,9 +16,11 @@ import gnosisIcon from '../../assets/images/gnosis-icon-green.svg';
 const iconsByChain = {
   1: ethereumIcon,
   4: ethereumIcon,
+  5: ethereumIcon,
   100: gnosisIcon,
   42161: arbitrumIcon,
   421611: arbitrumIcon,
+  421613: arbitrumIcon,
   1337: ethereumIcon,
 };
 const Wrapper = styled.div`

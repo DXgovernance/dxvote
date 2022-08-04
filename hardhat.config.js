@@ -136,6 +136,15 @@ module.exports = {
       gasLimit: 9000000,
       gasPrice: 1000000000, // 1 gwei
     },
+    goerli: {
+      url:
+        ALCHEMY_API_KEY.length > 0
+          ? `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`
+          : `https://goerli.infura.io/v3/${INFURA_API_KEY}`,
+      accounts: { mnemonic: MNEMONIC },
+      gasLimit: 9000000,
+      gasPrice: 1000000000, // 1 gwei
+    },
     xdai: {
       url: `https://poa-xdai-archival.gateway.pokt.network/v1/lb/61b4a50ec922b9003a3a93dc`,
       accounts: { mnemonic: MNEMONIC },
@@ -155,6 +164,13 @@ module.exports = {
       chainId: 421611,
       timeout: 60000,
     },
+    arbitrumNitroTestnet: {
+      url: "https://goerli-rollup.arbitrum.io/rpc",
+      accounts: { mnemonic: MNEMONIC },
+      gasPrice: 1000000000, // 1 gwei
+      chainId: 421613,
+      timeout: 600000, // 10 minutes
+    }
   },
   typechain: {
     outDir: 'src/types/contracts',
