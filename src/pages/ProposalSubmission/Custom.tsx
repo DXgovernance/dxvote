@@ -547,7 +547,6 @@ const NewProposalPage = observer(() => {
           <span style={{ minWidth: '150px' }}>
             Scheme <Question question="2" />
           </span>
-          <span style={{ minWidth: '150px' }}>Template</span>
         </PlaceHolders>
       </div>
       <div

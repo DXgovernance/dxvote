@@ -16,7 +16,6 @@ import PageRouter from './PageRouter';
 
 import ProposalsPage from './pages/proposals';
 import { SubmitProposalPage } from './pages/SubmitProposal';
-import { NewProposalTypePage } from './pages/NewProposalType';
 import UserPage from './pages/User';
 import ProposalPage from './pages/Proposal';
 import InfoPage from './pages/Info';
@@ -24,7 +23,6 @@ import ConfigPage from './pages/Configuration';
 import FAQPage from './pages/FAQ';
 import ForumPage from './pages/Forum';
 import CachePage from 'pages/Cache';
-import { CreateMetadataPage } from 'pages/Metadata';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -86,17 +84,9 @@ const Routes = () => {
         {' '}
         <ProposalsPage />{' '}
       </Route>
-      <Route exact path="/:network/create/type">
-        {' '}
-        <NewProposalTypePage />{' '}
-      </Route>
       <Route path="/:network/create/submit">
         {' '}
         <SubmitProposalPage />{' '}
-      </Route>
-      <Route path="/:network/create/metadata/:proposalType">
-        {' '}
-        <CreateMetadataPage />{' '}
       </Route>
       <Route exact path="/:network/info">
         {' '}

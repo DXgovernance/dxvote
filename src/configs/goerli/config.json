@@ -1,28 +1,29 @@
 {
   "cache": {
-    "fromBlock": 9234792,
-    "ipfsHash": "QmTear8HaHRnNNTAu9RRMpdPdRxqKFmXTkqwGMgu1eKJFj",
-    "toBlock": 0
+    "fromBlock": 7307361,
+    "ipfsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "toBlock": "7307361"
   },
   "contracts": {
-    "avatar": "0x1A639b50D807ce7e61Dc9eeB091e6Cea8EcB1595",
-    "controller": "0xb05d148c6A9d9C0eb3fE0A091a68d6DeDac63f3b",
-    "permissionRegistry": "0xB569239B6aCb8810a294d46F5E293Be08d8eB59E",
-    "reputation": "0xE20e1419910fa9cE9B71C48fF913e90D34dF7FDB",
-    "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
+    "avatar": "0x713808BeA3f9667E6eB97Ae99818FC5bDb621779",
+    "reputation": "0x5Cd3674D6bB4212Ceb0Ac369d04ac7BA89a61781",
+    "token": "0x99e4A3D20A8dAc101FD5f40212EeF579437A8Ead",
+    "controller": "0xf0360621C9D3D08bae8d7C9656A7AbdFd4EC3939",
+    "permissionRegistry": "0x9cE7cD768f4Cdea43977F0b9556AbdA0f9C2f0a3",
     "utils": {
-      "dxDaoNFT": "0xF7A2f72E8f6aeb884905a1fE515c1BB5752D342f",
-      "dxdVestingFactory": "0xB5D42c8cA3B04479200E3782C41D99b46Cf8A6E1",
-      "guildRegistry": "0xA938DD7AEeF5F46BD9845882EAbA2ebF18e1b273",
-      "multicall": "0x1FDD273e0B7E0d921Bda044Ebf64811428A79f15"
+      "multicall": "0xf32E8c76A8bFb8ED9B7b15F3BE98BEaaA0B651F0",
+      "dxDaoNFT": "0x7F5a85fC539F4efa3D42270db4aeBc2e8cdbCD1a",
+      "dxdVestingFactory": "0x3B7CBafcAC21DF3e4F10ef85dA777d2D8eDd8a5E",
+      "guildRegistry": "0x0F551a428AE1c6fD3cE2C803544Ee669C7779052"
     },
     "votingMachines": {
-      "0xBa51391385A6bD5ECA0217d7e843B29227E72508": {
-        "token": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
-        "type": "DXDVotingMachine"
+      "0xC284e9F6aBc7c65C277244895CAae401e643E4b6": {
+        "type": "DXDVotingMachine",
+        "token": "0x99e4A3D20A8dAc101FD5f40212EeF579437A8Ead"
       }
     }
   },
+
   "recommendedCalls": [
     {
       "asset": "0x0000000000000000000000000000000000000000",
@@ -342,54 +343,12 @@
   ],
   "tokens": [
     {
-      "address": "0x417A288152A5a13b843135Db5Dc72Ea007a9EB8d",
+      "address": "0x99e4A3D20A8dAc101FD5f40212EeF579437A8Ead",
       "decimals": 18,
       "fetchPrice": true,
       "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png",
       "name": "DXdao",
       "symbol": "DXD"
-    },
-    {
-      "address": "0xaFF4481D10270F50f203E0763e2597776068CBc5",
-      "decimals": 18,
-      "fetchPrice": true,
-      "name": "Weenus",
-      "symbol": "WEENUS"
-    },
-    {
-      "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
-      "decimals": 18,
-      "fetchPrice": true,
-      "name": "Wrapped Ether",
-      "symbol": "WETH"
-    },
-    {
-      "address": "0x022E292b44B5a146F2e8ee36Ff44D3dd863C915c",
-      "decimals": 18,
-      "fetchPrice": true,
-      "name": "Xeenus",
-      "symbol": "XEENUS"
-    },
-    {
-      "address": "0xc6fDe3FD2Cc2b173aEC24cc3f267cb3Cd78a26B7",
-      "decimals": 8,
-      "fetchPrice": true,
-      "name": "Yeenus",
-      "symbol": "YEENUS"
-    },
-    {
-      "address": "0x1f9061B953bBa0E36BF50F21876132DcF276fC6e",
-      "decimals": 0,
-      "fetchPrice": true,
-      "name": "Zeenus",
-      "symbol": "ZEENUS"
-    },
-    {
-      "address": "0x5244b07C38C594b2E080cD591422195069cbCbF6",
-      "decimals": 18,
-      "fetchPrice": true,
-      "name": "Swpr",
-      "symbol": "SWPR"
     }
   ],
   "version": 1

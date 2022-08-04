@@ -103,9 +103,11 @@ const CachePage = observer(() => {
   const [resetCache, setResetCache] = React.useState({
     mainnet: false,
     rinkeby: false,
+    goerli: false,
     xdai: false,
     arbitrum: false,
     arbitrumTestnet: false,
+    arbitrumNitroTestnet: false,
   });
 
   const defaultAppConfigs = getAppConfig();
@@ -117,10 +119,16 @@ const CachePage = observer(() => {
     xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
     rinkeby_toBlock: defaultAppConfigs.rinkeby.cache.toBlock,
     rinkeby_rpcURL: getNetworkByName('rinkeby').defaultRpc,
+    goerli_toBlock: defaultAppConfigs.goerli.cache.toBlock,
+    goerli_rpcURL: getNetworkByName('goerli').defaultRpc,
     arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
     arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
     arbitrumTestnet_toBlock: defaultAppConfigs.arbitrumTestnet.cache.toBlock,
     arbitrumTestnet_rpcURL: getNetworkByName('arbitrumTestnet').defaultRpc,
+    arbitrumNitroTestnet_toBlock:
+      defaultAppConfigs.arbitrumNitroTestnet.cache.toBlock,
+    arbitrumNitroTestnet_rpcURL: getNetworkByName('arbitrumNitroTestnet')
+      .defaultRpc,
   });
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
@@ -131,9 +139,11 @@ const CachePage = observer(() => {
     setResetCache({
       mainnet: false,
       rinkeby: false,
+      goerli: false,
       xdai: false,
       arbitrum: false,
       arbitrumTestnet: false,
+      arbitrumNitroTestnet: false,
     });
     setUpdatedCacheHash({
       proposalTitles: {},
@@ -162,6 +172,11 @@ const CachePage = observer(() => {
           toBlock: 0,
           reset: resetCache.rinkeby,
         },
+        5: {
+          rpcUrl: '',
+          toBlock: 0,
+          reset: resetCache.goerli,
+        },
         100: {
           rpcUrl: localConfig.xdai_rpcURL,
           toBlock: localConfig.xdai_toBlock,
@@ -176,6 +191,11 @@ const CachePage = observer(() => {
           rpcUrl: '',
           toBlock: 0,
           reset: resetCache.arbitrumTestnet,
+        },
+        421613: {
+          rpcUrl: '',
+          toBlock: 0,
+          reset: resetCache.arbitrumNitroTestnet,
         },
       },
       updateProposalTitles
@@ -207,7 +227,10 @@ const CachePage = observer(() => {
           xdai: updatedCacheHash.configHashes['xdai'],
           arbitrum: updatedCacheHash.configHashes['arbitrum'],
           rinkeby: updatedCacheHash.configHashes['rinkeby'],
+          goerli: updatedCacheHash.configHashes['goerli'],
           arbitrumTestnet: updatedCacheHash.configHashes['arbitrumTestnet'],
+          arbitrumNitroTestnet:
+            updatedCacheHash.configHashes['arbitrumNitroTestnet'],
         },
         null,
         2

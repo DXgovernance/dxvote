@@ -160,14 +160,6 @@ export default class ConfigStore {
     );
   }
 
-  getProposalTypes() {
-    return this.networkConfig.proposalTypes;
-  }
-
-  getContributorLevels() {
-    return this.networkConfig.contributionLevels;
-  }
-
   getRecommendedCalls() {
     const networkName = this.getActiveChainName();
     const networkContracts = this.getNetworkContracts();
