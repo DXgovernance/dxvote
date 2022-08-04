@@ -259,23 +259,6 @@ declare global {
       }[];
       decodeText: string;
     }[];
-    proposalTemplates: {
-      name: string;
-      title: string;
-      description: string;
-      calls?: array;
-    }[];
-    contributionLevels: {
-      id: string;
-      dxd: number;
-      stable: number;
-      rep: number;
-    }[];
-    proposalTypes: {
-      id: string;
-      title: string;
-      scheme?: string;
-    }[];
     tokens: {
       address: string;
       name: string;
