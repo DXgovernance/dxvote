@@ -93,6 +93,7 @@ declare global {
     proposer: string;
     paramsHash: string;
     submittedTime: BigNumber;
+    extraData?: any;
 
     // mutable data
     stateInScheme: WalletSchemeProposalState;
