@@ -7,7 +7,15 @@ import walletConnectIcon from 'assets/images/walletconnect.png';
 import { ChainConfig } from '../types/types';
 export const ACTIVE_NETWORK_NAMES =
   process.env.NODE_ENV === 'production'
-    ? ['mainnet', 'xdai', 'arbitrum', 'rinkeby']
+    ? [
+        'mainnet',
+        'xdai',
+        'arbitrum',
+        'rinkeby',
+        'goerli',
+        'arbitrumTestnet',
+        'arbitrumNitroTestnet',
+      ]
     : [
         'mainnet',
         'xdai',
@@ -18,6 +26,7 @@ export const ACTIVE_NETWORK_NAMES =
         'arbitrumNitroTestnet',
         'localhost',
       ];
+
 export const ACTIVE_NETWORKS = NETWORKS.filter(network =>
   ACTIVE_NETWORK_NAMES.includes(network.name)
 );
