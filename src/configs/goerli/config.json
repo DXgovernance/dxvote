@@ -1,29 +1,28 @@
 {
   "cache": {
     "fromBlock": 7307361,
-    "ipfsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "toBlock": "7307361"
+    "ipfsHash": "Qma5MKcNANnTBhpCER8J1JCpqCKq1cfU9uQeAEAmxnLyQe",
+    "toBlock": 0
   },
   "contracts": {
     "avatar": "0x713808BeA3f9667E6eB97Ae99818FC5bDb621779",
-    "reputation": "0x5Cd3674D6bB4212Ceb0Ac369d04ac7BA89a61781",
-    "token": "0x99e4A3D20A8dAc101FD5f40212EeF579437A8Ead",
     "controller": "0xf0360621C9D3D08bae8d7C9656A7AbdFd4EC3939",
     "permissionRegistry": "0x9cE7cD768f4Cdea43977F0b9556AbdA0f9C2f0a3",
+    "reputation": "0x5Cd3674D6bB4212Ceb0Ac369d04ac7BA89a61781",
+    "token": "0x99e4A3D20A8dAc101FD5f40212EeF579437A8Ead",
     "utils": {
-      "multicall": "0xf32E8c76A8bFb8ED9B7b15F3BE98BEaaA0B651F0",
       "dxDaoNFT": "0x7F5a85fC539F4efa3D42270db4aeBc2e8cdbCD1a",
       "dxdVestingFactory": "0x3B7CBafcAC21DF3e4F10ef85dA777d2D8eDd8a5E",
-      "guildRegistry": "0x0F551a428AE1c6fD3cE2C803544Ee669C7779052"
+      "guildRegistry": "0x0F551a428AE1c6fD3cE2C803544Ee669C7779052",
+      "multicall": "0xf32E8c76A8bFb8ED9B7b15F3BE98BEaaA0B651F0"
     },
     "votingMachines": {
       "0xC284e9F6aBc7c65C277244895CAae401e643E4b6": {
-        "type": "DXDVotingMachine",
-        "token": "0x99e4A3D20A8dAc101FD5f40212EeF579437A8Ead"
+        "token": "0x99e4A3D20A8dAc101FD5f40212EeF579437A8Ead",
+        "type": "DXDVotingMachine"
       }
     }
   },
-
   "recommendedCalls": [
     {
       "asset": "0x0000000000000000000000000000000000000000",

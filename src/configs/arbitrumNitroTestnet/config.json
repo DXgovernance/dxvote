@@ -1,34 +1,32 @@
 {
   "cache": {
     "fromBlock": 13211,
-    "ipfsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "toBlock": "13211"
+    "ipfsHash": "Qma2rxXTPDY2CiHrzfCJG6Z9EktimYYgNpvXUQVcNWwyUX",
+    "toBlock": 0
   },
   "contracts": {
     "avatar": "0x6e2d64953d4A263Aac2d36575AF4Ead8f7FF8010",
-    "reputation": "0xAc1125Be1a2ae12D8d0B6a436cae6979E436D2F6",
-    "token": "0xCEf91E326978fEDbb14825E17DAFCa18508E6232",
     "controller": "0xb9fb1Bb9a0F1466E63a949Ce30bA87aDE693Ea6D",
     "permissionRegistry": "0xE901fa2f5D62980aE397dA7Ad8cCa9821a061353",
+    "reputation": "0xAc1125Be1a2ae12D8d0B6a436cae6979E436D2F6",
     "schemes": {
-      "RegistrarWalletScheme": "0xCDB19c2217254f10f42032617736Ff29Cd7639aF",
-      "MasterWalletScheme": "0xD7C405D9421b43B109A58b1B0c74cA28769fa11F"
+      "MasterWalletScheme": "0xD7C405D9421b43B109A58b1B0c74cA28769fa11F",
+      "RegistrarWalletScheme": "0xCDB19c2217254f10f42032617736Ff29Cd7639aF"
     },
+    "token": "0xCEf91E326978fEDbb14825E17DAFCa18508E6232",
     "utils": {
-      "multicall": "0x0969AACc3747e6c1fCc9C2b49165695C115cc6D8",
       "dxDaoNFT": "0x06aD035dC43EAE56FFe1003b780a407F5dA5cbdA",
       "dxdVestingFactory": "0x968827540b3D78895499C7f5ff3324d9ad8Dc962",
-      "guildRegistry": "0x2C88069D19D7ADEeb1EAF236a9b6c5c90b541D6B"
+      "guildRegistry": "0x2C88069D19D7ADEeb1EAF236a9b6c5c90b541D6B",
+      "multicall": "0x0969AACc3747e6c1fCc9C2b49165695C115cc6D8"
     },
     "votingMachines": {
       "0x4376E73971612a7C35cc6f9649B99A5a368af5b2": {
-        "type": "DXDVotingMachine",
-        "token": "0xCEf91E326978fEDbb14825E17DAFCa18508E6232"
+        "token": "0xCEf91E326978fEDbb14825E17DAFCa18508E6232",
+        "type": "DXDVotingMachine"
       }
     }
-
   },
-
   "recommendedCalls": [
     {
       "asset": "0x0000000000000000000000000000000000000000",
