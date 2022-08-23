@@ -155,7 +155,7 @@ export default class UtilsService {
     // Set network cache and config objects
 
     // If network is localhost we use an empty cache to force the complete cache generation in each load
-    if (networkName === 'localhost') {
+    if (networkName === 'localhost' || toBlock === 0) {
       networkCache = emptyCache;
     } else {
       // If the cache is not reset, we load the cache from the local storage
@@ -171,7 +171,7 @@ export default class UtilsService {
           `Getting configuration file from IPFS`
         );
         console.log(
-          `Getting config file from https://ipfs.io/ipfs/${
+          `Getting config file for ${networkName} from https://ipfs.io/ipfs/${
             getDefaultConfigHashes()[networkName]
           }`
         );
@@ -184,7 +184,7 @@ export default class UtilsService {
           `Getting cache file from IPFS`
         );
         console.log(
-          `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
+          `Getting cache file for ${networkName} from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
         );
         const networkCacheFetch = await retryPromise(
           getIPFSFile(networkConfigFileFetch.data.cache.ipfsHash, 60000)

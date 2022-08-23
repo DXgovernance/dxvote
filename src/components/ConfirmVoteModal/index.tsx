@@ -51,7 +51,6 @@ export const ConfirmVoteModal: React.FC<ModalProps> = ({
 
   const [hashToETHMessage, setHashToETHMessage] = useState(true);
   const [shareSignatureOnOrbitDB, setShareSignatureOnOrbitDB] = useState(true);
-  const [shareSignatureOnRinkeby, setShareSignatureOnRinkeby] = useState(false);
 
   const hashedVote = hashVote(
     voteDetails.votingMachine,
@@ -70,7 +69,7 @@ export const ConfirmVoteModal: React.FC<ModalProps> = ({
       onConfirm={() => {
         let voteConfirmed = {
           ...voteDetails,
-          networks: [shareSignatureOnOrbitDB, shareSignatureOnRinkeby],
+          networks: [shareSignatureOnOrbitDB],
           hashToETHMessage,
         };
         onConfirm(voteConfirmed);
@@ -137,16 +136,6 @@ export const ConfirmVoteModal: React.FC<ModalProps> = ({
                 checked={shareSignatureOnOrbitDB}
                 onChange={() =>
                   setShareSignatureOnOrbitDB(!shareSignatureOnOrbitDB)
-                }
-              ></input>
-            </div>
-            <div>
-              Rinkeby (Not recommended, needs an extra signature){' '}
-              <input
-                type="checkbox"
-                checked={shareSignatureOnRinkeby}
-                onChange={() =>
-                  setShareSignatureOnRinkeby(!shareSignatureOnRinkeby)
                 }
               ></input>
             </div>
