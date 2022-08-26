@@ -56,6 +56,11 @@ export default class IPFSService {
         timeout,
       }),
       axios.request({
+        url: 'https://davi.mypinata.cloud/ipfs/' + hash,
+        method: 'GET',
+        timeout,
+      }),
+      axios.request({
         url: 'https://ipfs.io/ipfs/' + hash,
         method: 'GET',
         timeout,
