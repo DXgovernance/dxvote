@@ -59,13 +59,16 @@ export default class IPFSService {
       'https://infura-ipfs.io/ipfs/',
     ];
 
-    return Promise.any(
+    const response = await Promise.any(
       gatewayURLBaseList.map(gatewayURLBase =>
-        axios.get(`${gatewayURLBase}/${hash}`, {
+        axios.request({
+          url: gatewayURLBase + hash,
+          method: 'GET',
           timeout,
         })
       )
     );
+    return response.data;
   }
 
   async uploadProposalMetadata(
