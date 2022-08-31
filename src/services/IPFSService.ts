@@ -49,44 +49,23 @@ export default class IPFSService {
   }
 
   async getContentFromIPFS(hash: string, timeout = 60000) {
-    const response = await Promise.any([
-      axios.request({
-        url: 'https://dxgov.mypinata.cloud/ipfs/' + hash,
-        method: 'GET',
-        timeout,
-      }),
-      axios.request({
-        url: 'https://davi.mypinata.cloud/ipfs/' + hash,
-        method: 'GET',
-        timeout,
-      }),
-      axios.request({
-        url: 'https://ipfs.io/ipfs/' + hash,
-        method: 'GET',
-        timeout,
-      }),
-      axios.request({
-        url: 'https://gateway.ipfs.io/ipfs/' + hash,
-        method: 'GET',
-        timeout,
-      }),
-      axios.request({
-        url: 'https://cloudflare-ipfs.com/ipfs/' + hash,
-        method: 'GET',
-        timeout,
-      }),
-      axios.request({
-        url: 'https://dweb.link/ipfs/' + hash,
-        method: 'GET',
-        timeout,
-      }),
-      axios.request({
-        url: 'https://infura-ipfs.io/ipfs/' + hash,
-        method: 'GET',
-        timeout,
-      }),
-    ]);
-    return response.data;
+    const gatewayURLBaseList = [
+      'https://dxgov.mypinata.cloud/ipfs/',
+      'https://davi.mypinata.cloud/ipfs/',
+      'https://ipfs.io/ipfs/',
+      'https://gateway.ipfs.io/ipfs/',
+      'https://cloudflare-ipfs.com/ipfs/',
+      'https://dweb.link/ipfs/',
+      'https://infura-ipfs.io/ipfs/',
+    ];
+
+    return Promise.any(
+      gatewayURLBaseList.map(gatewayURLBase =>
+        axios.get(`${gatewayURLBase}/${hash}`, {
+          timeout,
+        })
+      )
+    );
   }
 
   async uploadProposalMetadata(
