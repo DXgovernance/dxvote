@@ -3,7 +3,6 @@ import {
   batchPromisesOntarget,
   getAppConfig,
   getDefaultConfigHashes,
-  getIPFSFile,
   getProposalTitles,
   NETWORK_NAMES,
   retryPromise,
@@ -175,21 +174,23 @@ export default class UtilsService {
             getDefaultConfigHashes()[networkName]
           }`
         );
-        const networkConfigFileFetch = await getIPFSFile(
-          getDefaultConfigHashes()[networkName],
-          5000
-        );
+        const networkConfigFileFetch =
+          await this.context.ipfsService.getContentFromIPFS(
+            getDefaultConfigHashes()[networkName]
+          );
         this.context.notificationStore.setGlobalLoading(
           true,
           `Getting cache file from IPFS`
         );
         console.log(
-          `Getting cache file for ${networkName} from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
+          `Getting cache file for ${networkName} from https://ipfs.io/ipfs/${networkConfigFileFetch.cache.ipfsHash}`
         );
         const networkCacheFetch = await retryPromise(
-          getIPFSFile(networkConfigFileFetch.data.cache.ipfsHash, 60000)
+          this.context.ipfsService.getContentFromIPFS(
+            networkConfigFileFetch.cache.ipfsHash
+          )
         );
-        networkCache = networkCacheFetch.data;
+        networkCache = networkCacheFetch;
       }
     }
 
@@ -936,9 +937,11 @@ export default class UtilsService {
           console.debug(
             `Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
           );
-          const response = await getIPFSFile(ipfsHash);
-          if (response && response.data && response.data.title) {
-            proposalTitles[proposal.id] = response.data.title;
+          const ipfsContent = await this.context.ipfsService.getContentFromIPFS(
+            ipfsHash
+          );
+          if (ipfsContent && ipfsContent.title) {
+            proposalTitles[proposal.id] = ipfsContent.title;
           } else {
             console.warn(
               `Couldnt not get title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`

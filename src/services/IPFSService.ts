@@ -50,6 +50,7 @@ export default class IPFSService {
 
   async getContentFromIPFS(hash: string, timeout = 60000) {
     const gatewayURLBaseList = [
+      'https://augustol.mypinata.cloud/ipfs/',
       'https://dxgov.mypinata.cloud/ipfs/',
       'https://davi.mypinata.cloud/ipfs/',
       'https://ipfs.io/ipfs/',
