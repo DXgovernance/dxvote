@@ -1,2 +1,2 @@
-(this.webpackJsonpdxvote=this.webpackJsonpdxvote||[]).push([[407],{1456:function(s,e){var t=Prism.util.clone(Prism.languages.typescript);Prism.languages.tsx=Prism.languages.extend("jsx",t)}}]);
+(this.webpackJsonpdxvote=this.webpackJsonpdxvote||[]).push([[407],{1367:function(s,e){var t=Prism.util.clone(Prism.languages.typescript);Prism.languages.tsx=Prism.languages.extend("jsx",t)}}]);
 //# sourceMappingURL=407.chunk.js.map
