@@ -13,7 +13,7 @@ import LoadingNetworkHeader from '../Header/loadingNetwork';
 import { LoadingBox } from '../../pages/proposals/styles';
 import PulsingIcon from 'components/common/LoadingIcon';
 
-const BLOKCHAIN_FETCH_INTERVAL = 10000;
+const BLOKCHAIN_FETCH_INTERVAL = 60000;
 
 const Web3ReactManager = ({ children }) => {
   const { context } = useContext();

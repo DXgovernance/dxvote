@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import styled from 'styled-components';
-import { hashVote, toEthSignedMessageHash } from 'utils';
 
 import { Modal } from '../Modal';
 
@@ -11,12 +9,6 @@ const Wrapper = styled.div`
   width: 100%;
   background-color: ${({ theme }) => theme.backgroundColor};
   text-align: left;
-`;
-
-const SignedVoteDetails = styled.div`
-  textAlign: center,
-  fontSize: 15px,
-  maxWidth: 100% - 20px
 `;
 
 export interface ModalProps {
@@ -32,7 +24,6 @@ export interface ModalProps {
     voter: string;
     decision: string;
     repAmount: string;
-    signVote: boolean;
   };
 }
 
@@ -40,24 +31,11 @@ export const ConfirmVoteModal: React.FC<ModalProps> = ({
   onCancel,
   onConfirm,
   voteDecision,
-  positive,
-  negative,
   toAdd,
   voteDetails,
 }) => {
   const header = (
     <div>Confirm vote {voteDecision === 1 ? 'for' : 'against'} proposal</div>
-  );
-
-  const [hashToETHMessage, setHashToETHMessage] = useState(true);
-  const [shareSignatureOnOrbitDB, setShareSignatureOnOrbitDB] = useState(true);
-
-  const hashedVote = hashVote(
-    voteDetails.votingMachine,
-    voteDetails.proposalId,
-    voteDetails.voter,
-    voteDetails.decision,
-    voteDetails.repAmount
   );
 
   return (
@@ -69,18 +47,12 @@ export const ConfirmVoteModal: React.FC<ModalProps> = ({
       onConfirm={() => {
         let voteConfirmed = {
           ...voteDetails,
-          networks: [shareSignatureOnOrbitDB],
-          hashToETHMessage,
         };
         onConfirm(voteConfirmed);
       }}
     >
       <Wrapper>
-        {voteDetails.signVote ? (
-          <b>Confirm vote signature</b>
-        ) : (
-          <b>Confirm vote transaction</b>
-        )}
+        <b>Confirm vote transaction</b>
         <div>Vote on voting machine contract: {voteDetails.votingMachine}</div>
         <div>
           Vote in proposal: <small>{voteDetails.proposalId}</small>
@@ -91,56 +63,6 @@ export const ConfirmVoteModal: React.FC<ModalProps> = ({
         <div>Vote with REP amount: {voteDetails.repAmount}</div>
         <div>Vote with REP percentage: {toAdd}%</div>
         <br></br>
-
-        {voteDetails.signVote && (
-          <SignedVoteDetails>
-            <strong>Vote Hash:</strong>
-            <div>
-              <i>
-                keccak256(votingMachine, proposalId, voter, decision, repAmount)
-              </i>
-            </div>
-            <span style={{ fontWeight: !hashToETHMessage ? 'bold' : 'normal' }}>
-              {hashedVote}
-            </span>
-            <div>
-              Hash to ETH message (disable for hardware wallets){' '}
-              <input
-                type="checkbox"
-                checked={hashToETHMessage}
-                onChange={() => setHashToETHMessage(!hashToETHMessage)}
-              ></input>
-            </div>
-            <br></br>
-
-            {hashToETHMessage && (
-              <div>
-                <strong>ETH message to be signed:</strong>
-                <div>
-                  Domain separator appended to the vote hash, more info in{' '}
-                  <a href="https://solidity-by-example.org/signature/">
-                    solidity signature example
-                  </a>
-                </div>
-                <strong>{toEthSignedMessageHash(hashedVote)}</strong>
-                <br></br>
-                <br></br>
-              </div>
-            )}
-
-            <strong>Distribute signature On:</strong>
-            <div>
-              OrbitDB{' '}
-              <input
-                type="checkbox"
-                checked={shareSignatureOnOrbitDB}
-                onChange={() =>
-                  setShareSignatureOnOrbitDB(!shareSignatureOnOrbitDB)
-                }
-              ></input>
-            </div>
-          </SignedVoteDetails>
-        )}
       </Wrapper>
     </Modal>
   );
