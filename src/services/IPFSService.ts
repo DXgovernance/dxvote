@@ -48,39 +48,27 @@ export default class IPFSService {
     return ipfs.pin.add(cid.toString());
   }
 
-  async getContentFromIPFS(hash: string) {
-    const response = await Promise.any([
-      axios.request({
-        url: 'https://dxgov.mypinata.cloud/ipfs/' + hash,
-        method: 'GET',
-        timeout: 60000,
-      }),
-      axios.request({
-        url: 'https://ipfs.io/ipfs/' + hash,
-        method: 'GET',
-        timeout: 60000,
-      }),
-      axios.request({
-        url: 'https://gateway.ipfs.io/ipfs/' + hash,
-        method: 'GET',
-        timeout: 60000,
-      }),
-      axios.request({
-        url: 'https://cloudflare-ipfs.com/ipfs/' + hash,
-        method: 'GET',
-        timeout: 60000,
-      }),
-      axios.request({
-        url: 'https://dweb.link/ipfs/' + hash,
-        method: 'GET',
-        timeout: 60000,
-      }),
-      axios.request({
-        url: 'https://infura-ipfs.io/ipfs/' + hash,
-        method: 'GET',
-        timeout: 60000,
-      }),
-    ]);
+  async getContentFromIPFS(hash: string, timeout = 60000) {
+    const gatewayURLBaseList = [
+      'https://augustol.mypinata.cloud/ipfs/',
+      'https://dxgov.mypinata.cloud/ipfs/',
+      'https://davi.mypinata.cloud/ipfs/',
+      'https://ipfs.io/ipfs/',
+      'https://gateway.ipfs.io/ipfs/',
+      'https://cloudflare-ipfs.com/ipfs/',
+      'https://dweb.link/ipfs/',
+      'https://infura-ipfs.io/ipfs/',
+    ];
+
+    const response = await Promise.any(
+      gatewayURLBaseList.map(gatewayURLBase =>
+        axios.request({
+          url: gatewayURLBase + hash,
+          method: 'GET',
+          timeout,
+        })
+      )
+    );
     return response.data;
   }
 
@@ -101,7 +89,12 @@ export default class IPFSService {
     localStorage.setItem('dxvote-newProposal-hash', hash);
 
     if (pinataService.auth) {
-      const pinataPin = await pinataService.pin(hash);
+      const pinataPin = await pinataService.pin(hash, {
+        description,
+        title,
+        tags: [...tags, 'dxvote'],
+        url: '',
+      });
       console.debug('[PINATA PIN]', pinataPin.toString());
     } else {
       console.debug('[PINATA PIN] NOT AUTHENTICATED');
@@ -112,7 +105,7 @@ export default class IPFSService {
     let uploaded = false;
     while (!uploaded) {
       await sleep(1000);
-      const ipfsContent = await this.getContentFromIPFS(hash);
+      const ipfsContent = await this.getContentFromIPFS(hash, 5000);
       console.debug('[IPFS CONTENT]', ipfsContent);
       if (JSON.stringify(ipfsContent) === bodyTextToUpload) uploaded = true;
     }
@@ -132,7 +125,7 @@ export default class IPFSService {
     let uploaded = false;
     while (!uploaded) {
       await sleep(1000);
-      const ipfsContent = await this.getContentFromIPFS(hash);
+      const ipfsContent = await this.getContentFromIPFS(hash, 5000);
       console.debug('[IPFS CONTENT]', ipfsContent);
       if (content === content) uploaded = true;
     }

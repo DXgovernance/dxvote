@@ -10,7 +10,6 @@ import {
   HeaderCell,
   TableBody,
   DataCell,
-  TableRow,
 } from '../../components/common';
 import PulsingIcon from '../../components/common/LoadingIcon';
 import Footer from '../../components/Footer';
@@ -48,6 +47,7 @@ import {
 import { useFilteredProposals } from '../../hooks/useFilteredProposals';
 import ProposalsExporter from '../../components/Proposals/ProposalsExporter';
 import { useRep } from 'hooks/useRep';
+import { useEffect, useState } from 'react';
 
 const ProposalsPage = observer(() => {
   const {
@@ -60,6 +60,11 @@ const ProposalsPage = observer(() => {
   const networkName = configStore.getActiveChainName();
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
+  const [allProposals, setAllProposals] = useState(daoStore.getAllProposals);
+  console.log('All proposals length', allProposals.length);
+  useEffect(() => {
+    setAllProposals(daoStore.getAllProposals);
+  }, [daoStore.getAllProposals]);
 
   const {
     proposals,
@@ -72,7 +77,6 @@ const ProposalsPage = observer(() => {
     setSchemesFilter,
   } = useFilteredProposals();
 
-  const allProposals = daoStore.getAllProposals();
   const activeProposalsCount = allProposals.filter(
     proposal =>
       proposal.stateInVotingMachine > VotingMachineProposalState.Executed
@@ -84,7 +88,10 @@ const ProposalsPage = observer(() => {
       <SidebarWrapper>
         <ProposalTableHeaderActions>
           <NewProposalButton>
-            <LinkButton route={`/${networkName}/create/type`} width="200px">
+            <LinkButton
+              route={`/${networkName}/create/submit/custom`}
+              width="200px"
+            >
               + New Proposal
             </LinkButton>
           </NewProposalButton>
@@ -112,16 +119,14 @@ const ProposalsPage = observer(() => {
       )}
       {!loading && (
         <TableProposal>
-          <TableHeader>
-            <TableRow>
+          <TableBody>
+            <TableHeader>
               <HeaderCell>Title</HeaderCell>
               <HeaderCell>Scheme</HeaderCell>
               <HeaderCell>Status</HeaderCell>
               <HeaderCell>Stakes</HeaderCell>
               <HeaderCell>Votes</HeaderCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+            </TableHeader>
             {proposals.map((proposal, i) => {
               const positiveStake = formatNumberValue(
                 normalizeBalance(proposal.positiveStakes, 18),
@@ -167,13 +172,14 @@ const ProposalsPage = observer(() => {
                   event => event.proposalId === proposal.id
                 ) > -1;
 
-              const proposerVotedDown =
+              const invalidProposal =
                 daoStore
                   .getVotesOfProposal(proposal.id)
                   .findIndex(
                     vote =>
                       vote.voter === proposal.proposer && isVoteNo(vote.vote)
-                  ) > -1;
+                  ) > -1 ||
+                (proposal.extraData && proposal.extraData.periodTime > 0);
 
               return (
                 <StyledTableRow
@@ -211,7 +217,7 @@ const ProposalsPage = observer(() => {
                         />
                       )}
 
-                      {proposerVotedDown && (
+                      {invalidProposal && (
                         <FiAlertTriangle
                           style={{ minWidth: '15px', margin: '0px 2px' }}
                           title="The proposer downvoted this proposal. It may be incorrect."

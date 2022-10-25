@@ -15,7 +15,6 @@ import {
   Positive,
   Negative,
 } from '../components/common';
-import { FaTrophy, FaMedal } from 'react-icons/fa';
 import { bnum } from '../utils';
 import { Chart } from 'react-google-charts';
 
@@ -43,7 +42,6 @@ const GovernanceInformation = observer(() => {
     context: { daoStore },
   } = useContext();
 
-  const totalRep = daoStore.daoCache.reputation.total;
   const governanceInfo = daoStore.getGovernanceInfo();
 
   function toNumber(weiNumber) {
@@ -55,7 +53,7 @@ const GovernanceInformation = observer(() => {
     <GovernanceInfoWrapper>
       <Title centered>Stats</Title>
       <Row>
-        <InfoBox>{toNumber(totalRep)} REP</InfoBox>
+        <InfoBox>{toNumber(governanceInfo.repTotalSupply)} REP</InfoBox>
         <InfoBox>{governanceInfo.totalPositiveVotes} Positive Votes</InfoBox>
         <InfoBox>{governanceInfo.totalNegativeVotes} Negative Votes</InfoBox>
         <InfoBox>{governanceInfo.totalProposalsCreated} Proposals</InfoBox>
@@ -89,62 +87,24 @@ const GovernanceInformation = observer(() => {
         />
       </Row>
 
-      <Title centered>Governance Ranking</Title>
-
-      <Row>
-        <InfoBox>
-          Create Proposal
-          <br />
-          <strong>1 to 30 Points</strong>
-        </InfoBox>
-        <InfoBox>
-          Vote Winning Option
-          <br />
-          <strong>3 Points</strong>
-        </InfoBox>
-        <InfoBox>
-          Vote Losing Option
-          <br />
-          <strong>1 Point</strong>
-        </InfoBox>
-        <InfoBox>
-          Stake Winning Option
-          <br />
-          <strong>1 Point</strong>
-        </InfoBox>
-      </Row>
+      <Title centered>Governance Members</Title>
 
       <GovernanceTable>
-        <TableHeader>
-          <HeaderCell align="center">#</HeaderCell>
-          <HeaderCell align="center">Address</HeaderCell>
-          <HeaderCell align="center">Proposals Created</HeaderCell>
-          <HeaderCell align="center">Voted</HeaderCell>
-          <HeaderCell align="center">Staked</HeaderCell>
-          <HeaderCell align="center">Score</HeaderCell>
-        </TableHeader>
         <TableBody>
+          <TableHeader>
+            <HeaderCell align="center">#</HeaderCell>
+            <HeaderCell align="center">Address</HeaderCell>
+            <HeaderCell align="center">Proposals Created</HeaderCell>
+            <HeaderCell align="center">Voted</HeaderCell>
+            <HeaderCell align="center">Staked</HeaderCell>
+            <HeaderCell align="center">REP %</HeaderCell>
+          </TableHeader>
           {governanceInfo.ranking.map((user, i) => {
             return (
               <TableRow key={`user${i}`}>
                 <DataCell align="center" weight="500">
                   {' '}
                   {i + 1}
-                  {i === 0 ? (
-                    <FaTrophy color="gold" />
-                  ) : i === 1 ? (
-                    <FaTrophy color="silver" />
-                  ) : i === 2 ? (
-                    <FaTrophy color="#CD7F32" />
-                  ) : i < 6 ? (
-                    <FaMedal color="gold" />
-                  ) : i < 9 ? (
-                    <FaMedal color="silver" />
-                  ) : i < 12 ? (
-                    <FaMedal color="#CD7F32" />
-                  ) : (
-                    <div />
-                  )}
                 </DataCell>
                 <DataCell weight="500">
                   <BlockchainLink
@@ -163,7 +123,7 @@ const GovernanceInformation = observer(() => {
                   <Positive>{user.correctStakes} </Positive>-
                   <Negative> {user.wrongStakes}</Negative>
                 </DataCell>
-                <DataCell align="center">{user.score.toFixed(0)}</DataCell>
+                <DataCell>{user.rep}</DataCell>
               </TableRow>
             );
           })}

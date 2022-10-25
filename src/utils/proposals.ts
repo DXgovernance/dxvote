@@ -297,6 +297,17 @@ export const decodeProposalStatus = function (
           finishTime: submittedTime.plus(queuedVotePeriodLimit),
           pendingAction: PendingAction.Finish,
         };
+      } else if (proposal.shouldBoost) {
+        return {
+          status: 'Pending Boost',
+          boostTime: preBoostedPhaseTime.plus(preBoostedVotePeriodLimit),
+          finishTime: autoBoost
+            ? preBoostedPhaseTime
+                .plus(preBoostedVotePeriodLimit)
+                .plus(boostedVotePeriodLimit)
+            : timeNow.plus(boostedVotePeriodLimit),
+          pendingAction: PendingAction.Boost,
+        };
       } else {
         return {
           status: 'In Queue',

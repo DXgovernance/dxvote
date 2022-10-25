@@ -2,7 +2,6 @@ import React from 'react';
 
 import ABIService from '../services/ABIService';
 import DaoService from '../services/DaoService';
-import EventsService from '../services/EventsService';
 import IPFSService from '../services/IPFSService';
 import PinataService from '../services/PinataService';
 import EtherscanService from '../services/EtherscanService';
@@ -12,9 +11,6 @@ import PoktService from '../services/PoktService';
 import AlchemyService from '../services/AlchemyService';
 import CustomRpcService from '../services/CustomRpcService';
 import ENSService from '../services/ENSService';
-import TokenVestingService from '../services/TokenVestingService';
-import SubgraphService from '../services/SubgraphService';
-import OrbitDBService from '../services/OrbitDBService';
 
 import ProviderStore from '../stores/Provider';
 import TransactionStore from '../stores/Transaction';
@@ -49,7 +45,6 @@ export default class RootContext {
 
   abiService: ABIService;
   daoService: DaoService;
-  eventsService: EventsService;
   ipfsService: IPFSService;
   pinataService: PinataService;
   etherscanService: EtherscanService;
@@ -59,9 +54,6 @@ export default class RootContext {
   alchemyService: AlchemyService;
   customRpcService: CustomRpcService;
   ensService: ENSService;
-  tokenVestingService: TokenVestingService;
-  subgraphService: SubgraphService;
-  orbitDBService: OrbitDBService;
   cacheService: CacheService;
 
   constructor() {
@@ -74,7 +66,6 @@ export default class RootContext {
     this.blockchainStore = new BlockchainStore(this);
 
     this.abiService = new ABIService(this);
-    this.eventsService = new EventsService(this);
     this.daoService = new DaoService(this);
     this.ipfsService = new IPFSService(this);
     this.pinataService = new PinataService(this);
@@ -85,9 +76,6 @@ export default class RootContext {
     this.alchemyService = new AlchemyService(this);
     this.customRpcService = new CustomRpcService(this);
     this.ensService = new ENSService(this);
-    this.tokenVestingService = new TokenVestingService(this);
-    this.subgraphService = new SubgraphService(this);
-    this.orbitDBService = new OrbitDBService(this);
     this.cacheService = new CacheService(this);
   }
 

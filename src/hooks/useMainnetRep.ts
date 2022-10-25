@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useContext } from '../contexts';
 import { bnum, ZERO_ADDRESS } from '../utils';
-import useJsonRpcProvider from './Guilds/web3/useJsonRpcProvider';
+import useJsonRpcProvider from './useJsonRpcProvider';
 
 const AVG_ETH_BLOCKS_PER_DAY = 6500;
 

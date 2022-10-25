@@ -3,7 +3,6 @@ import {
   batchPromisesOntarget,
   getAppConfig,
   getDefaultConfigHashes,
-  getIPFSFile,
   getProposalTitles,
   NETWORK_NAMES,
   retryPromise,
@@ -155,7 +154,7 @@ export default class UtilsService {
     // Set network cache and config objects
 
     // If network is localhost we use an empty cache to force the complete cache generation in each load
-    if (networkName === 'localhost') {
+    if (networkName === 'localhost' || toBlock === 0) {
       networkCache = emptyCache;
     } else {
       // If the cache is not reset, we load the cache from the local storage
@@ -171,25 +170,27 @@ export default class UtilsService {
           `Getting configuration file from IPFS`
         );
         console.log(
-          `Getting config file from https://ipfs.io/ipfs/${
+          `Getting config file for ${networkName} from https://ipfs.io/ipfs/${
             getDefaultConfigHashes()[networkName]
           }`
         );
-        const networkConfigFileFetch = await getIPFSFile(
-          getDefaultConfigHashes()[networkName],
-          5000
-        );
+        const networkConfigFileFetch =
+          await this.context.ipfsService.getContentFromIPFS(
+            getDefaultConfigHashes()[networkName]
+          );
         this.context.notificationStore.setGlobalLoading(
           true,
           `Getting cache file from IPFS`
         );
         console.log(
-          `Getting cache file from https://ipfs.io/ipfs/${networkConfigFileFetch.data.cache.ipfsHash}`
+          `Getting cache file for ${networkName} from https://ipfs.io/ipfs/${networkConfigFileFetch.cache.ipfsHash}`
         );
         const networkCacheFetch = await retryPromise(
-          getIPFSFile(networkConfigFileFetch.data.cache.ipfsHash, 60000)
+          this.context.ipfsService.getContentFromIPFS(
+            networkConfigFileFetch.cache.ipfsHash
+          )
         );
-        networkCache = networkCacheFetch.data;
+        networkCache = networkCacheFetch;
       }
     }
 
@@ -803,8 +804,7 @@ export default class UtilsService {
             networkCache,
             networkContracts,
             web3,
-            toBlock,
-            controllerEvent.event === 'UnregisterScheme'
+            toBlock
           );
         }),
       networkCache,
@@ -905,8 +905,12 @@ export default class UtilsService {
         '0x1e6c8f56755897b1aea4f47b009095e9bee23714a87094b48dbb78c8744fd5b2',
         '0x4cbdd4c473e3c2dc6090cd2842b6884770406a43dd96d1abe36167b7437d9bec',
         '0x5016d176a2004ff7dfd1a3bf358f2d73c57d9e4b2e64053888f77a2e3555f101',
-
-        // TODO: Fix this xdai proposal IPFS content
+        '0x53f58ff91d0ef52b4ec7f3f00a03731892bde7dca37a1c3e3aa8e378dbb6220b',
+        '0x6c26beaa8c4263cf71870b2819421ad3d8f0ddacbb1b658985be97b26c0125e7',
+        '0x7cbef442d4c66ca0d4d31122b2565b2b38584e9ea21d3fecca4478c928a44be1',
+        '0x80c518c9ebe0562adc6e2b62b5349286ea3fab0b520fe1800ae97a275b6ac6f8',
+        '0xdef15e241a2dcc52c6ec1970b8e2f6cd13dd9f85f63d9702c78881dacafb6f34',
+        '0xfda75410e3f54bca6828995cce7864fdf5f2961510c0515835b4d06c87f5754e',
         '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
       ];
 
@@ -926,15 +930,18 @@ export default class UtilsService {
         proposal.descriptionHash &&
         proposal.descriptionHash.length > 0 &&
         // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
-        proposal.title?.length === 0
+        proposal.title?.length === 0 &&
+        proposal.creationEvent.blockNumber > networkCache.blockNumber - 100000
       )
         try {
           console.debug(
             `Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
           );
-          const response = await getIPFSFile(ipfsHash);
-          if (response && response.data && response.data.title) {
-            proposalTitles[proposal.id] = response.data.title;
+          const ipfsContent = await this.context.ipfsService.getContentFromIPFS(
+            ipfsHash
+          );
+          if (ipfsContent && ipfsContent.title) {
+            proposalTitles[proposal.id] = ipfsContent.title;
           } else {
             console.warn(
               `Couldnt not get title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
@@ -971,18 +978,12 @@ export default class UtilsService {
     networkCache: DaoNetworkCache,
     networkContracts: NetworkContracts,
     web3: Web3,
-    toBlock: number,
-    removeScheme: boolean = false
+    toBlock: number
   ): Promise<DaoNetworkCache> {
     const networkWeb3Contracts = await getContracts(networkContracts, web3);
     const isNewScheme = !networkCache.schemes[schemeAddress];
     const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
-    console.debug(
-      'Processing Scheme',
-      schemeAddress,
-      schemeTypeData,
-      removeScheme
-    );
+    console.debug('Processing Scheme', schemeAddress, schemeTypeData);
 
     let controllerAddress = networkWeb3Contracts.controller._address;
     let schemeName = schemeTypeData.name;
@@ -1003,6 +1004,12 @@ export default class UtilsService {
         'getSchemeParameters(address,address)',
         [schemeAddress, networkWeb3Contracts.avatar._address],
         ['bytes32'],
+      ],
+      [
+        controllerAddress,
+        'isSchemeRegistered(address,address)',
+        [schemeAddress, networkWeb3Contracts.avatar._address],
+        ['bool'],
       ],
     ];
 
@@ -1063,6 +1070,7 @@ export default class UtilsService {
       callsToExecute
     );
 
+    const registered = callsResponse1.decodedReturnData[2][0];
     const permissions = decodePermission(
       callsResponse1.decodedReturnData[0][0]
     );
@@ -1072,22 +1080,22 @@ export default class UtilsService {
     const votingMachineAddress = !isNewScheme
       ? networkCache.schemes[schemeAddress].votingMachine
       : isWalletScheme
-      ? callsResponse1.decodedReturnData[4][0]
+      ? callsResponse1.decodedReturnData[5][0]
       : schemeTypeData.votingMachine;
 
     if (isWalletScheme) {
-      maxSecondsForExecution = callsResponse1.decodedReturnData[2][0];
-      maxRepPercentageChange = callsResponse1.decodedReturnData[3][0];
+      maxSecondsForExecution = callsResponse1.decodedReturnData[3] || 0;
+      maxRepPercentageChange = callsResponse1.decodedReturnData[4][0];
 
       if (isNewScheme) {
-        schemeName = callsResponse1.decodedReturnData[5][0];
+        schemeName = callsResponse1.decodedReturnData[6][0];
 
         switch (schemeType) {
           case 'Wallet Scheme v1.0':
-            controllerAddress = callsResponse1.decodedReturnData[6][0];
+            controllerAddress = callsResponse1.decodedReturnData[7][0];
             break;
           default:
-            controllerAddress = callsResponse1.decodedReturnData[6][0]
+            controllerAddress = callsResponse1.decodedReturnData[7][0]
               ? networkWeb3Contracts.controller._address
               : ZERO_ADDRESS;
             break;
@@ -1189,7 +1197,7 @@ export default class UtilsService {
     if (isNewScheme) {
       networkCache.schemes[schemeAddress] = {
         address: schemeAddress,
-        registered: true,
+        registered: registered,
         controllerAddress,
         name: schemeName,
         type: schemeType,
@@ -1213,7 +1221,7 @@ export default class UtilsService {
         boostedVoteRequiredPercentage;
       networkCache.schemes[schemeAddress].paramsHash = paramsHash;
       networkCache.schemes[schemeAddress].permissions = permissions;
-      networkCache.schemes[schemeAddress].registered = !removeScheme;
+      networkCache.schemes[schemeAddress].registered = registered;
     }
 
     // Get the new proposals submitted in the scheme and process it
@@ -1286,6 +1294,7 @@ export default class UtilsService {
       'address',
       avatarAddress
     );
+    let extraData: {};
 
     // These first calls target mainly the voting machine where most of the proposal information is mutable
     let callsToExecute = [
@@ -1711,6 +1720,16 @@ export default class UtilsService {
             )
           );
         }
+
+        if (
+          creationLogDecoded._rewards[3] > 0 ||
+          creationLogDecoded._rewards[4] > 1
+        ) {
+          extraData = {
+            periodTime: creationLogDecoded._rewards[3],
+            totalPeriods: creationLogDecoded._rewards[4],
+          };
+        }
       } else if (schemeTypeData.type === 'GenericScheme') {
         schemeProposalInfo.to = [networkWeb3Contracts.controller._address];
         schemeProposalInfo.value = [0];
@@ -1859,6 +1878,7 @@ export default class UtilsService {
         negativeVotes: bnum(callsResponse.decodedReturnData[2][0]),
         positiveStakes: bnum(callsResponse.decodedReturnData[3][2]),
         negativeStakes: bnum(callsResponse.decodedReturnData[3][3]),
+        extraData,
       };
 
       networkCache.schemes[schemeAddress].proposalIds.push(proposalId);

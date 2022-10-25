@@ -103,6 +103,26 @@ export default class BlockchainStore {
         const newestCacheIpfsHash = networkConfig.cache.ipfsHash;
 
         if (
+          newestCacheIpfsHash ===
+          '0x0000000000000000000000000000000000000000000000000000000000000000'
+        ) {
+          networkCache = {
+            networkId: chainId,
+            version: 1,
+            blockNumber: networkConfig.cache.fromBlock,
+            address: networkConfig.contracts.avatar,
+            reputation: {
+              events: [],
+              total: bnum(0),
+            },
+            schemes: {},
+            proposals: {},
+            callPermissions: {},
+            votingMachines: {},
+            ipfsHashes: [],
+            vestingContracts: [],
+          };
+        } else if (
           networkName !== 'localhost' &&
           (!networkCache ||
             !(newestCacheIpfsHash === networkCache.baseCacheIpfsHash))
@@ -119,7 +139,8 @@ export default class BlockchainStore {
           networkCache.baseCacheIpfsHash = newestCacheIpfsHash;
         }
 
-        const lastCheckedBlockNumber = networkCache.blockNumber;
+        const lastCheckedBlockNumber =
+          networkCache?.blockNumber || Number(networkConfig.cache.toBlock);
 
         if (blockNumber > lastCheckedBlockNumber + 1) {
           console.debug(

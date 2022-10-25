@@ -1,6 +1,6 @@
 {
   "name": "dxvote",
-  "version": "1.0.13",
+  "version": "1.0.17",
   "description": "dxvote application of DXdao.",
   "scripts": {
     "dev": "./scripts/dev.sh",
@@ -12,8 +12,6 @@
     "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\" \"scripts/*.{js,jsx,ts,tsx,json,md}\"",
     "cy:open": "cypress open",
     "cy:run:development": "cypress run --env configFile=development --browser electron",
-    "test:e2e": "start-server-and-test 'yarn dev --no-browser' 3000 cy:run:development",
-    "test": "react-app-rewired test --watchAll=false --coverage --verbose",
     "updateBytecodes": "node scripts/updateDeployedBytecodes.js",
     "prepare": "husky install"
   },

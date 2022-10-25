@@ -93,6 +93,7 @@ declare global {
     proposer: string;
     paramsHash: string;
     submittedTime: BigNumber;
+    extraData?: any;
 
     // mutable data
     stateInScheme: WalletSchemeProposalState;
@@ -258,23 +259,6 @@ declare global {
         decimals?: number;
       }[];
       decodeText: string;
-    }[];
-    proposalTemplates: {
-      name: string;
-      title: string;
-      description: string;
-      calls?: array;
-    }[];
-    contributionLevels: {
-      id: string;
-      dxd: number;
-      stable: number;
-      rep: number;
-    }[];
-    proposalTypes: {
-      id: string;
-      title: string;
-      scheme?: string;
     }[];
     tokens: {
       address: string;

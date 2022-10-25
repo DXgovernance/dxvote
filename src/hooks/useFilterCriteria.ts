@@ -40,7 +40,7 @@ export const useFilterCriteria = (): useFilterCriteriaReturns => {
   const timeNow = bnum(moment().unix());
 
   useEffect(() => {
-    const allProposals = daoStore.getAllProposals();
+    const allProposals = daoStore.getAllProposals;
 
     // Queded && positiveVotes >= 10% (Ordered from time to finish, from lower to higher)
     const stateEarliestAbove10 = allProposals

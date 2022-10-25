@@ -117,10 +117,6 @@ A proposal needs a minimum amount of votes to pass, and that depends on the stat
 
 A proposal can receives a financial stake in DXD to speed up the voting process. If a proposal receives enough positive stakes to boost it will enter pre-boosted state, once the pre-boosted state finish if the proposal still has enough DXD staked to boost it will be boosted in the next voting machine action (vote, stake, or voting machine execution). If a proposal is in Boosted state it will need the boostedVoteRequiredPercentage percentage amount specified in the scheme configuration where the proposal was created of votes in favor to be executed.
 
-# How do I get DXD?
-
-You can get rinkeby DXD buying DXD in dxtrust rinkeby here: https://levelkdev.github.io/dxtrust/
-
 # How are proposals created?
 
 Each proposal has a title, description and calls to be exected by the wallet scheme where it is proposed. The description of the proposal is stored in IPFS, and we save the hash of the IPFS description in the blokchain next to the proposal title and calls. When creating a proposal you first need to submit the description to IPFS and once you get the IPFS hash of the description the proposal can be submited by sending a transaction to the wallet scheme smart contract.
@@ -222,7 +218,6 @@ The downstake for proposal is calculated when the proposal is created, by using 
 
 # Useful Apps
 
-- Unit Converter Etherscan: https://rinkeby.etherscan.io/unitconverter
 - ETH Converter: https://eth-converter.com
 - UNIX Timestamp Converter: https://www.unixtimestamp.com
 - Hashhex ABI Encoder/Decoder: https://abi.hashex.org

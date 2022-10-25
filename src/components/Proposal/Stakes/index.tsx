@@ -99,7 +99,11 @@ const Stakes = () => {
       proposal.negativeStakes
     );
 
-  if (Number(votingMachineTokenApproved) > 0 && stakeAmount === 0) {
+  if (
+    Number(votingMachineTokenApproved) > 0 &&
+    stakeAmount === 0 &&
+    recommendedStakeToBoost.gt(0)
+  ) {
     setStakeAmount(
       Number(formatBalance(recommendedStakeToBoost, 18, 1, false))
     );

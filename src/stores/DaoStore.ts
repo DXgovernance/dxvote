@@ -1,5 +1,5 @@
 import RootContext from '../contexts';
-import { action, makeObservable } from 'mobx';
+import { action, makeObservable, computed } from 'mobx';
 import _ from 'lodash';
 import {
   BigNumber,
@@ -19,9 +19,11 @@ import {
   isWinningVote,
   votedBeforeBoosted,
   isVoteYes,
+  WalletSchemeProposalState,
 } from '../utils';
 import { TokenVesting } from '../types/types';
 import { ProposalsExtended } from '../types/types';
+import moment from 'moment';
 
 const proposalTitles = require('../configs/proposalTitles.json');
 
@@ -33,6 +35,7 @@ export default class DaoStore {
     this.context = context;
 
     makeObservable(this, {
+      getAllProposals: computed,
       setCache: action,
       reset: action,
     });
@@ -163,7 +166,7 @@ export default class DaoStore {
   }
 
   getAmountOfProposalsPreBoostedInScheme(schemeAddress: string): number {
-    return this.getAllProposals({ scheme: schemeAddress }).filter(proposal => {
+    return this.filterProposals({ scheme: schemeAddress }).filter(proposal => {
       return proposal.stateInVotingMachine === 4;
     }).length;
   }
@@ -187,7 +190,9 @@ export default class DaoStore {
     let blockNumber = 0;
     for (let i = 0; i < cache.reputation.events.length; i++) {
       if (cache.reputation.events[i].event === 'Mint') {
-        repTotalSupply = repTotalSupply.plus(cache.reputation.events[i].amount);
+        repTotalSupply = repTotalSupply.plus(
+          cache.reputation.events[i].amount.toString()
+        );
         if (repUsers[cache.reputation.events[i].account]) {
           repUsers[cache.reputation.events[i].account] = repUsers[
             cache.reputation.events[i].account
@@ -198,7 +203,7 @@ export default class DaoStore {
         }
       } else if (cache.reputation.events[i].event === 'Burn') {
         repTotalSupply = repTotalSupply.minus(
-          cache.reputation.events[i].amount
+          cache.reputation.events[i].amount.toString()
         );
         if (repUsers[cache.reputation.events[i].account]) {
           repUsers[cache.reputation.events[i].account] = repUsers[
@@ -234,6 +239,8 @@ export default class DaoStore {
     rep.unshift(['User Address', 'REP %']);
     repEvents.unshift(['Block', 'Total Rep']);
 
+    const totalSupply = this.getRepAt().totalSupply;
+
     Object.keys(cache.votingMachines).map(votingMachineAddress => {
       cache.votingMachines[votingMachineAddress].events.votes.map(vote => {
         if (!users[vote.voter])
@@ -245,13 +252,16 @@ export default class DaoStore {
             proposals: 0,
             totalVoted: bnum(0),
             totalStaked: bnum(0),
-            score: 0,
+            rep: this.getRepAt(vote.voter)
+              .userRep.times(100)
+              .div(totalSupply)
+              .toFixed(4),
           };
 
         if (!cache.proposals[vote.proposalId]) {
           console.debug('MISSING PROPOSAL', vote.proposalId);
         } else {
-          if (vote.vote === 1) {
+          if (vote.vote.toString() === '1') {
             totalPositiveVotes++;
             totalPositiveVotesAmount = totalPositiveVotesAmount.plus(
               bnum(vote.amount)
@@ -267,13 +277,11 @@ export default class DaoStore {
             users[vote.voter].totalVoted = users[vote.voter].totalVoted.plus(
               bnum(vote.amount)
             );
-            users[vote.voter].score += 3;
           } else {
             users[vote.voter].wrongVotes++;
             users[vote.voter].totalVoted = users[vote.voter].totalVoted.plus(
               bnum(vote.amount)
             );
-            users[vote.voter].score += 1;
           }
         }
       });
@@ -287,7 +295,10 @@ export default class DaoStore {
             proposals: 0,
             totalVoted: bnum(0),
             totalStaked: bnum(0),
-            score: 0,
+            rep: this.getRepAt(stake.staker)
+              .userRep.times(100)
+              .div(totalSupply)
+              .toFixed(4),
           };
 
         if (!cache.proposals[stake.proposalId]) {
@@ -310,7 +321,6 @@ export default class DaoStore {
             users[stake.staker].totalStaked = users[
               stake.staker
             ].totalStaked.plus(bnum(stake.amount));
-            users[stake.staker].score += 1;
           } else {
             users[stake.staker].wrongStakes++;
             users[stake.staker].totalStaked = users[
@@ -334,19 +344,12 @@ export default class DaoStore {
             proposals: 0,
             totalVoted: bnum(0),
             totalStaked: bnum(0),
-            score: 0,
+            rep: this.getRepAt(proposalCreator)
+              .userRep.times(100)
+              .div(totalSupply)
+              .toFixed(4),
           };
 
-        const score = cache.proposals[proposalId].positiveVotes
-          .plus(cache.proposals[proposalId].negativeVotes)
-          .div(this.getRepAt().totalSupply)
-          .div('0.20')
-          .times('10')
-          .toFixed(2);
-        users[proposalCreator].score += Math.min(
-          Math.min(Number(score), 1),
-          30
-        );
         users[proposalCreator].proposals++;
       } else {
         console.debug(
@@ -371,19 +374,25 @@ export default class DaoStore {
       totalNegativeStakes,
       totalNegativeStakesAmount,
       totalProposalsCreated,
-      rep,
+      repUsers,
+      repTotalSupply,
       repEvents,
+      rep,
       ranking: _.orderBy(
         Object.keys(users).map(key =>
           Object.assign({ address: key }, users[key])
         ),
-        ['score'],
+        ['rep'],
         ['desc']
       ),
     };
   }
 
-  getAllProposals(filter: any = {}): ProposalsExtended[] {
+  get getAllProposals(): ProposalsExtended[] {
+    return this.filterProposals();
+  }
+
+  filterProposals(filter: any = {}): ProposalsExtended[] {
     const allProposals = Object.keys(this.daoCache.proposals).map(
       proposalId => {
         return this.daoCache.proposals[proposalId];
@@ -406,13 +415,12 @@ export default class DaoStore {
     return _.filter(proposals, filter);
   }
 
-  getAllSchemes(onlyRegistered: boolean = true): Scheme[] {
-    return _.flatMap(
-      _.filter(
-        this.daoCache.schemes,
-        onlyRegistered ? { registered: true } : {}
-      )
-    );
+  getSchemes(): Scheme[] {
+    return this.filterSchemes();
+  }
+
+  filterSchemes(filter: any = {}): Scheme[] {
+    return _.flatMap(_.filter(this.daoCache.schemes, filter));
   }
 
   getProposal(proposalId: string): Proposal {
@@ -960,6 +968,19 @@ export default class DaoStore {
     const autoBoost =
       networkContracts.votingMachines[votingMachineOfProposal.address].type ===
       'DXDVotingMachine';
+
+    if (
+      proposal.stateInVotingMachine == VotingMachineProposalState.Boosted &&
+      proposal.stateInScheme == WalletSchemeProposalState.Submitted &&
+      bnum(moment().unix()).gt(
+        bnum(proposal.boostedPhaseTime)
+          .plus(votingMachineOfProposal.params.boostedVotePeriodLimit)
+          .plus(moment.duration(3, 'days').asSeconds())
+      )
+    ) {
+      proposal.stateInVotingMachine = VotingMachineProposalState.ExpiredInQueue;
+      proposal.stateInScheme = WalletSchemeProposalState.ExecutionTimeout;
+    }
     return decodeProposalStatus(
       proposal,
       proposalStateChangeEvents,

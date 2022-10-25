@@ -40,9 +40,6 @@ const InfoPage = () => {
         <LinkButton route={`/${networkName}/info?view=schemes`}>
           Schemes
         </LinkButton>
-        <LinkButton route={`/${networkName}/info?view=permissions`}>
-          Permissions
-        </LinkButton>
       </InfoNavigation>
       <div>
         {searchPath === `?view=schemes` ? (
