@@ -938,7 +938,8 @@ export default class UtilsService {
             `Getting title from proposal ${proposal.id} with ipfsHash ${ipfsHash}`
           );
           const ipfsContent = await this.context.ipfsService.getContentFromIPFS(
-            ipfsHash
+            ipfsHash,
+            500
           );
           if (ipfsContent && ipfsContent.title) {
             proposalTitles[proposal.id] = ipfsContent.title;
