@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 338923,
-    "ipfsHash": "QmeFyfM7stXRDE3hFrp7mhYG9F6u8sTaPZyngbujG5BUCY",
-    "toBlock": "23609000"
+    "ipfsHash": "QmPRu8NFKHKPAuCXc772ozZbKLpapSUtCEYFEn4xeNccNa",
+    "toBlock": "32228884"
   },
   "contracts": {
     "avatar": "0x2B240b523f69b9aF3adb1C5924F6dB849683A394",
@@ -20,6 +20,57 @@
       }
     }
   },
+  "proposalTemplates": [
+    {
+      "description": "# Background\n \n - If this is your first contributor proposal, state any context for making the proposal, including:\n - What position you will be filling – i.e. developer, marketing, governance, etc.\n - Who you have been in contact with regarding the position (add their DAOtalk usernames)\n - If you are a continuing contributor, state which products and areas you are working on / any other relevant background information\n # Timeframe\n \n - State the date range, typically 2 months (2.5 months for first-time workers)\n # Scope of Contribution\n \n - **Goals** :\n - State the products and /or strategy areas you will be working under. E.g. Omen and Governance. Include both short-term goals that you seek to accomplish during the working period and long-term goals.\n - **Responsibilities:**\n - List the specific deliverables you will be either completing and / or working on during the working period. Try to state which deliverables you intend to complete within the period and which are long-term or ongoing projects.\n \n # Reflection\n \n - If You Are A Returning Contributor, Write a Self-Reflection\n - State what you did well, what you did okay, and what you need to improve on\n # Compensation\n \n - Experience Level : 1-5\n - Time commitment :  Percent (%) of time\n - [ETH/DAI AMT] : For 2 months of work at level [LEVEL], to be sent half on the first payment proposal and half on the second payment proposal\n - [DXD AMT] : Vested for 2 years with a 1 year cliff starting the [DATE WORK PERIOD STARTS]\n - [% AMT REP] : For 2 months of work , to be sent half on the first payment proposal and half on the second payment proposal\n # Work Experience\n \n - Prior DXdao work proposals (if applicable)\n - Past Work for DXdao\n - If a developer, Github links\n - If a non-tech worker, doc links or described deliverables\n - If new, past relevant work experience\n - Developers : Github profile link\n - Non-tech : suggested Linkedin / other references\n",
+      "name": "Contributor Proposal",
+      "title": "[NAME] Contributor Proposal [DATE - DATE]"
+    },
+    {
+      "description": "# Timeframe\n \n - State the contributor proposal date range\n \n # Background\n \n - State the context for making the contributor payment proposal, including:\n - What position you will be filling – i.e. developer, marketing, governance, etc.\n - Proposed Scope of Contribution\n - Self-Reflection on Scope of Contribution\n - Include the URL to the original proposal forum post\n \n # Deliverables\n\n - Include information around deliverables that were completed during your worker period\n \n # Compensation\n\n - Experience Level : 1-5\n - Time commitment : Percent (%) of time\n - [ETH/DAI AMT] : For second half payment proposal\n - [DXD AMT] : Vested for 2 years with a 1 year cliff starting the [DATE WORK PERIOD STARTS]\n - [% AMT REP]: For 2 second half payment proposal\n \n # Work Experience\n \n - Prior DXdao work proposals (if applicable)\n - Past Work for DXdao\n - If a developer, Github links\n - If a non-tech worker, doc links or described\n - If new, past relevant work experience\n - Developers : Github profile link\n - Non-tech : suggested Linkedin / other references\n \n",
+      "name": "Payment Proposal",
+      "title": "[NAME] Payment Proposal [DATE - DATE]"
+    },
+    {
+      "description": "## Description \n\n## Proposition \n\n## Action Plan",
+      "name": "Signal Proposal",
+      "title": "Signal Proposal for [DAO_ACTION]"
+    },
+    {
+      "calls": [
+        {
+          "functionName": "approve(address,uint256)",
+          "params": [
+            "0xecA7F78d59D16812948849663b26FE10E320f80C",
+            ""
+          ],
+          "to": "0xdE903E2712288A1dA82942DDdF2c20529565aC30"
+        },
+        {
+          "functionName": "createDistribution(address[],address,uint256[],uint64,uint64,bool,uint256)",
+          "params": [
+            "[0xdE903E2712288A1dA82942DDdF2c20529565aC30]",
+            "",
+            "[]",
+            "",
+            "",
+            "false",
+            "0"
+          ],
+          "to": "0xecA7F78d59D16812948849663b26FE10E320f80C"
+        }
+      ],
+      "description": "Simple description",
+      "name": "SWPR Farming Campaign",
+      "title": "[PAIR X/Y] Farming Campaign [DATE - DATE]]"
+    }
+  ],
+  "proposalTypes": [
+    {
+      "id": "custom",
+      "title": "Custom"
+    }
+  ],
   "recommendedCalls": [
     {
       "asset": "0x0000000000000000000000000000000000000000",
