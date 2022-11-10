@@ -107,11 +107,9 @@ const Web3ReactManager = ({ children }) => {
       // If currently connected to an injected wallet, keep synced with it
       if (connector instanceof InjectedConnector) {
         history.push(`/${chain.name}/proposals`);
+        window.location.reload();
       } else if (connector instanceof NetworkConnector) {
-        const urlNetworkName = location.pathname.split('/')[1];
-        if (urlNetworkName == chain.name) {
-          tryConnecting();
-        }
+        window.location.reload();
       }
     };
 
