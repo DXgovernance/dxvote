@@ -175,6 +175,7 @@ export const decodeProposalStatus = function (
   const boostedVotePeriodLimit = votingMachineParams.boostedVotePeriodLimit;
   const preBoostedVotePeriodLimit =
     votingMachineParams.preBoostedVotePeriodLimit;
+  const quietEndingPeriod = votingMachineParams.quietEndingPeriod;
   const boostedPhaseTime = bnum(proposal.boostedPhaseTime);
   const submittedTime = bnum(proposal.submittedTime);
   const preBoostedPhaseTime = proposal.preBoostedPhaseTime;
@@ -424,15 +425,20 @@ export const decodeProposalStatus = function (
         return {
           status: 'Boosted',
           boostTime: boostedPhaseTime,
-          finishTime: boostedPhaseTime,
+          finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
           pendingAction: PendingAction.None,
         };
       }
     // VotingMachineProposalState.QuietEndingPeriod
     default:
-      const finishTime = boostedPhaseTime.plus(
-        proposal.currentBoostedVotePeriodLimit
-      );
+      const finishTime =
+        bnum(
+          proposalStateChangeEvents.find(
+            event =>
+              Number(event.state) ===
+              VotingMachineProposalState.QuietEndingPeriod
+          ).timestamp
+        ).plus(quietEndingPeriod) || bnum(0);
       return {
         status: 'Quiet Ending Period',
         boostTime: boostedPhaseTime,
