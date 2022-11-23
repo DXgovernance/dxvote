@@ -424,7 +424,7 @@ export const decodeProposalStatus = function (
         return {
           status: 'Boosted',
           boostTime: boostedPhaseTime,
-          finishTime: boostedPhaseTime,
+          finishTime: boostedPhaseTime.plus(boostedVotePeriodLimit),
           pendingAction: PendingAction.None,
         };
       }
