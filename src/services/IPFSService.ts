@@ -49,15 +49,18 @@ export default class IPFSService {
   }
 
   async getContentFromIPFS(hash: string, timeout = 60000) {
-    const gatewayURLBaseList = [
-      'https://dxgov.mypinata.cloud/ipfs/',
-      'https://davi.mypinata.cloud/ipfs/',
-      'https://ipfs.io/ipfs/',
-      'https://gateway.ipfs.io/ipfs/',
-      'https://cloudflare-ipfs.com/ipfs/',
-      'https://dweb.link/ipfs/',
-      'https://infura-ipfs.io/ipfs/',
-    ];
+    const gatewayURLBaseList =
+      hash.substring(0, 2) == 'Qm'
+        ? [
+            'https://dxgov.mypinata.cloud/ipfs/',
+            'https://davi.mypinata.cloud/ipfs/',
+            'https://ipfs.io/ipfs/',
+            'https://gateway.ipfs.io/ipfs/',
+            'https://cloudflare-ipfs.com/ipfs/',
+            'https://dweb.link/ipfs/',
+            'https://infura-ipfs.io/ipfs/',
+          ]
+        : ['https://w3s.link/ipfs/'];
 
     const response = await Promise.any(
       gatewayURLBaseList.map(gatewayURLBase =>

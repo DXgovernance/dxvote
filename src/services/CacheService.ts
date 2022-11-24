@@ -23,7 +23,6 @@ import {
   executeMulticall,
   sortNetworkCache,
   descriptionHashToIPFSHash,
-  ipfsHashToDescriptionHash,
   getSchemeConfig,
 } from '../utils';
 
@@ -896,7 +895,6 @@ export default class UtilsService {
           Object.keys(networkCache.proposals)[proposalIndex]
         ];
       const ipfsHash = descriptionHashToIPFSHash(proposal.descriptionHash);
-
       // TODO: Move this somewhere else later.
       const invalidTitleProposals = [
         '0xbd5a578170b28eedb9ed05adcd7a904180a18178a7fee5627640bce217601f60',
@@ -912,6 +910,7 @@ export default class UtilsService {
         '0xdef15e241a2dcc52c6ec1970b8e2f6cd13dd9f85f63d9702c78881dacafb6f34',
         '0xfda75410e3f54bca6828995cce7864fdf5f2961510c0515835b4d06c87f5754e',
         '0xfb15b6f9e3bf61099d20bb3b39375d4e2a6f7ac3c72179537ce147ed991d61b4',
+        '0xe2f86b3545a1266c98d57bf828296a5b00b7dc39ec2d33e4b7008edc24c7f00e',
       ];
 
       // If the script is running on the client side and it already tried once, or has the title, continue.
@@ -931,7 +930,7 @@ export default class UtilsService {
         proposal.descriptionHash.length > 0 &&
         // Try to get title if cache is running in node script or if proposal was submitted in last 100000 blocks
         proposal.title?.length === 0 &&
-        proposal.creationEvent.blockNumber > networkCache.blockNumber - 100000
+        proposal.creationEvent.blockNumber > networkCache.blockNumber - 1000000
       )
         try {
           console.debug(
@@ -1543,9 +1542,7 @@ export default class UtilsService {
                   creationLogDecoded._descriptionHash !== ZERO_HASH
                 ) {
                   schemeProposalInfo.descriptionHash =
-                    ipfsHashToDescriptionHash(
-                      creationLogDecoded._descriptionHash
-                    );
+                    creationLogDecoded._descriptionHash;
                 }
               }
             });
