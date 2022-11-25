@@ -1,7 +1,8 @@
 {
-  "mainnet": "QmXCRHdV33r42smpTa5xLwdAoB24MRNEf2XtnS4XUR3eef",
-  "xdai": "QmV48NYpdqB1h8k11oBJtVp9nnGZDDHsQ85Pk3fPaG5C6x",
-  "arbitrum": "QmZVcqeUjx49vKv8pqqEYZfxN86NaSViDNeadJcSg8xc6y",
-  "rinkeby": "QmPLrb3gPwVFqPGSdj8zkpaa7oYwDvQRUr5oEgsjYXdrPo",
-  "arbitrumTestnet": "QmNfPd5uBrNB2uAUauAivCSSZ7QsyvLLW6uNgxbBi3kgKV"
+  "mainnet": "QmPza5XoP2LNP5sGh4xUqcbgt9ES8b6yYnqZM3ZVyzu2Ka",
+  "xdai": "QmRe2qmAtqSGYbK4BbNuUwejVvxbZFcin9eTHg68MuFkfN",
+  "arbitrum": "QmQdisFDRmCorT3my6huJdXcQoyRoHaaeWZ3CFswBizn4D",
+  "goerli": "QmcSksLQivDEa9HpC75BQzP8qZcZqiyfF11SPE8gJmqkoM",
+  "arbitrumTestnet": "QmYgJ27ddnbvDoouyRee3mQrWdqfJzeQuMGVK9rjdeFeYr",
+  "arbitrumNitroTestnet": "QmSSAPrB3WwqkxLqCKm6C2TzvLkfyzJjQzWDJ4wwWF9R7Q"
 }

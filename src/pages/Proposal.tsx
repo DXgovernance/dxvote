@@ -6,7 +6,6 @@ import { useContext } from '../contexts';
 
 import MDEditor from '@uiw/react-md-editor';
 import { useHistory } from 'react-router-dom';
-import contentHash from 'content-hash';
 import { Box, Title } from '../components/common';
 
 import {
@@ -17,6 +16,7 @@ import {
   Stakes,
   Details,
 } from 'components/Proposal';
+import { descriptionHashToIPFSHash } from 'utils';
 
 const WarningMessage = styled.span`
   margin: 2px 0px;
@@ -89,19 +89,19 @@ const ProposalPage = observer(() => {
 
   const proposalEvents = daoStore.getProposalEvents(proposalId);
 
+  const ipfsHash = descriptionHashToIPFSHash(proposal.descriptionHash);
+
   // @ts-ignore
   try {
     if (proposalDescription === '## Getting proposal description from IPFS...')
-      ipfsService
-        .getContentFromIPFS(contentHash.decode(proposal.descriptionHash))
-        .then(data => {
-          try {
-            setProposalTitle(data.title);
-            setProposalDescription(data.description);
-          } catch (error) {
-            setProposalDescription(data);
-          }
-        });
+      ipfsService.getContentFromIPFS(ipfsHash).then(data => {
+        try {
+          setProposalTitle(data.title);
+          setProposalDescription(data.description);
+        } catch (error) {
+          setProposalDescription(data);
+        }
+      });
   } catch (error) {
     console.error('[IPFS ERROR]', error);
     setProposalTitle('Error getting proposal title from ipfs');
@@ -123,18 +123,16 @@ const ProposalPage = observer(() => {
             skipHtml
             escapeHtml
           />
-          {proposal.descriptionHash.length > 0 && (
+          {ipfsHash.length > 0 && (
             <h3 style={{ margin: '0px' }}>
               <small>
                 IPFS Document:{' '}
                 <a
                   target="_blank"
-                  href={`https://ipfs.io/ipfs/${contentHash.decode(
-                    proposal.descriptionHash
-                  )}`}
+                  href={`https://ipfs.io/ipfs/${ipfsHash}`}
                   rel="noreferrer"
                 >
-                  ipfs://{contentHash.decode(proposal.descriptionHash)}
+                  ipfs://{ipfsHash}
                 </a>
               </small>
             </h3>

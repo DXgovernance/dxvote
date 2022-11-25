@@ -4,6 +4,9 @@ import { observer } from 'mobx-react';
 import { useContext } from '../contexts';
 import { FiCheckCircle, FiX } from 'react-icons/fi';
 import { Row, Box, Question, Button } from '../components/common';
+import { useHistory } from 'react-router-dom';
+import { useWeb3React } from '@web3-react/core';
+import { getNetworkById } from 'utils';
 
 const FormLabel = styled.label`
   padding: 10px 0px;
@@ -55,6 +58,9 @@ const ConfigPage = observer(() => {
     },
   } = useContext();
   const networkName = configStore.getActiveChainName();
+
+  const history = useHistory();
+  const web3Context = useWeb3React();
 
   const [etherscanApiStatus, setEtherscanApiStatus] = React.useState(
     etherscanService.auth
@@ -110,6 +116,7 @@ const ConfigPage = observer(() => {
   async function clearCache() {
     localStorage.clear();
     caches.delete(`dxvote-cache`);
+    history.push(`/${getNetworkById(web3Context.chainId).name}/proposals`);
     window.location.reload();
   }
 

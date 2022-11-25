@@ -1,13 +1,52 @@
 {
   "cache": {
     "fromBlock": 13060713,
-    "ipfsHash": "QmT82ZgxjvhU3veR4tX6nMDpbf7zisCHymQg2bC6tN2Xzy",
-    "toBlock": "24720494"
+    "ipfsHash": "QmQgiN1L9xrLnYHEmEjaqj9FZ7rGYLrtibJNq4GHPNVv2E",
+    "toBlock": "25089315"
   },
   "contracts": {
     "avatar": "0xe716EC63C5673B3a4732D22909b38d779fa47c3F",
     "controller": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
     "daostack": {
+      "0x0100F4B3D8A88D5729f0D4D516d436C901C2b4AF": {
+        "contractToCall": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
+        "creationLogEncoding": [
+          [
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_reputationChange",
+              "type": "int256"
+            },
+            {
+              "name": "_rewards",
+              "type": "uint256[5]"
+            },
+            {
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "name": "_beneficiary",
+              "type": "address"
+            }
+          ]
+        ],
+        "name": "ContributionReward",
+        "newProposalTopics": [
+          [
+            "0xcbdcbf9aaeb1e9eff0f75d74e1c1e044bc87110164baec7d18d825b0450d97df",
+            "0x000000000000000000000000e716ec63c5673b3a4732d22909b38d779fa47c3f"
+          ]
+        ],
+        "redeemer": "0xd2cc17817c0d4cfc6819510b2e5288512122d71c",
+        "supported": false,
+        "type": "ContributionReward",
+        "voteParams": "0x1e3e01f4ce01291e53f32570ab772ef6e7301d7223b00c162494e26cc16830df",
+        "votingMachine": "0xDA309aDF1c84242Bb446F7CDBa96B570E901D4CF"
+      },
       "0x016Bf002D361bf5563c76230D19B4DaB4d66Bda4": {
         "contractToCall": "0xfBEcdD3360E2A9040383980AB3863BE9d57256fd",
         "creationLogEncoding": [

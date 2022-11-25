@@ -131,7 +131,7 @@ const SchemesInformation = observer(() => {
                         votingMachineParameters.minimumDaoBounty.toString()
                       )
                     ).toFixed(2)}{' '}
-                    DXD
+                    GEN
                   </small>
                   <br />
                   <small>
