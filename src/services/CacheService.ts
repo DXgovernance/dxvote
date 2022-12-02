@@ -1518,7 +1518,8 @@ export default class UtilsService {
             transactionReceipt.logs.forEach(log => {
               if (
                 log.topics[0] ===
-                '0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c'
+                  '0x75b4ff136cc5de5957574c797de3334eb1c141271922b825eb071e0487ba2c5c' &&
+                log.logIndex === creationEvent.logIndex - 1
               ) {
                 decodedProposer = web3.eth.abi.decodeParameters(
                   [
@@ -1531,7 +1532,8 @@ export default class UtilsService {
               }
               if (
                 !creationLogDecoded &&
-                log.topics[0] === newProposalTopic[0]
+                log.topics[0] === newProposalTopic[0] &&
+                log.logIndex === creationEvent.logIndex
               ) {
                 creationLogDecoded = web3.eth.abi.decodeParameters(
                   schemeTypeData.creationLogEncoding[i],
