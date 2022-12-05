@@ -2,7 +2,6 @@ import { makeObservable, observable, action } from 'mobx';
 import RootContext from '../contexts';
 
 import {
-  CACHE_METADATA_ENS,
   NETWORK_ASSET_SYMBOL,
   NETWORK_NAMES,
   NETWORK_DISPLAY_NAMES,
@@ -36,30 +35,15 @@ export default class ConfigStore {
   }
 
   async loadNetworkConfig() {
-    const { ensService, ipfsService } = this.context;
+    const { ipfsService } = this.context;
 
     this.networkConfig = getAppConfig()[this.getActiveChainName()];
-    const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
     if (this.getActiveChainName() !== 'localhost' && !this.networkConfigLoaded)
       try {
-        const metadataHash = await ensService.resolveContentHash(
-          CACHE_METADATA_ENS
-        );
-        if (!metadataHash)
-          throw new Error('Cannot resolve content metadata hash.');
+        const configContentHash =
+          getDefaultConfigHashes()[this.getActiveChainName()];
 
-        if (!isTestingEnv)
-          console.debug(
-            `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
-            metadataHash
-          );
-
-        const configRefs = isTestingEnv
-          ? getDefaultConfigHashes()
-          : await ipfsService.getContentFromIPFS(metadataHash);
-
-        const configContentHash = configRefs[this.getActiveChainName()];
         if (!configContentHash)
           throw new Error('Cannot resolve config metadata hash.');
 
