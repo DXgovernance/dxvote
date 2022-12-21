@@ -187,15 +187,17 @@ export default class UtilsService {
         const networkCacheFetch = await retryPromise(
           this.context.ipfsService.getContentFromIPFS(
             networkConfigFileFetch.cache.ipfsHash,
-            1000
-          )
+            10000
+          ),
+          1000,
+          100
         );
         networkCache = networkCacheFetch;
       }
     }
 
     // Update the cache only if the toBlock is higher than the current networkCache block
-    if (Number(networkCache.blockNumber) + 1 < toBlock) {
+    if (networkCache && Number(networkCache.blockNumber) + 1 < toBlock) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug(
         'Running cache script from block',
