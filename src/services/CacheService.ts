@@ -1290,10 +1290,6 @@ export default class UtilsService {
     const avatarAddress = networkCache.address;
     const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
     const networkWeb3Contracts = await getContracts(networkContracts, web3);
-    const avatarAddressEncoded = web3.eth.abi.encodeParameter(
-      'address',
-      avatarAddress
-    );
     let extraData: {};
 
     // These first calls target mainly the voting machine where most of the proposal information is mutable
@@ -1381,6 +1377,13 @@ export default class UtilsService {
         [proposalId, avatarAddress, 3],
         ['uint256'],
       ]);
+    } else if (schemeOfProposal.type === 'GenericMulticall') {
+      callsToExecute.push([
+        schemeAddress,
+        'proposals(bytes32)',
+        [proposalId],
+        [],
+      ]);
     } else if (isWalletScheme(schemeOfProposal)) {
       callsToExecute.push([
         schemeAddress,
@@ -1404,6 +1407,7 @@ export default class UtilsService {
     );
 
     const proposalTimes = callsResponse.decodedReturnData[4];
+    const statusInVotingMachine = callsResponse.decodedReturnData[0].state;
 
     let schemeProposalInfo = {
       to: [],
@@ -1432,63 +1436,29 @@ export default class UtilsService {
           callsResponse.decodedReturnData[6].submittedTime;
       }
     } else {
-      // Here we get the events triggered in the GenericMulticall to get their final state
-      // When the proposal is executed by the voting machine we get if the proposal was rejected
-      // If the proposal was executed by teh voting machine and not rejected we get the ProposalEnded
-      // to know if it was executed by the WalletScheme
+      // If the proposal ended in winningVote 2 it means that it was rejected
+      // If it ended in winning vote 1, we wait for the proposal to be deleted in the scheme
+      // To mark it as executedSuccesfully
       if (schemeOfProposal.type === 'GenericMulticall') {
-        // event ProposalExecutedByVotingMachine(address indexed _avatar,bytes32 indexed _proposalId,int256 _param)
-        const votingMachineExecutionEvent =
-          schemeProposalInfo.state === WalletSchemeProposalState.Submitted
-            ? await getRawEvents(
-                web3,
-                schemeAddress,
-                fromBlock,
-                toBlock,
-                [
-                  '0x25d4c89430c1f10c60c292556941e3e624ec1ec04972a5da46cee1b352429cbe',
-                  avatarAddressEncoded,
-                  proposalId,
-                ],
-                10000000
-              )
-            : [];
         if (
-          votingMachineExecutionEvent.length > 0 &&
-          votingMachineExecutionEvent[0].data !==
-            '0x0000000000000000000000000000000000000000000000000000000000000001'
-        )
-          schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
-
-        if (
-          callsResponse.decodedReturnData[0].state ===
-            VotingMachineProposalState.Executed &&
-          schemeProposalInfo.state === WalletSchemeProposalState.Submitted
+          schemeProposalInfo.state === WalletSchemeProposalState.Submitted &&
+          statusInVotingMachine === VotingMachineProposalState.Executed
         ) {
-          // event ProposalDeleted(address indexed _avatar, bytes32 indexed _proposalId)
-          const executionEvent = await getRawEvents(
-            web3,
-            schemeAddress,
-            fromBlock,
-            toBlock,
-            [
-              '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
-              avatarAddressEncoded,
-              proposalId,
-            ],
-            10000000
-          );
-          if (executionEvent.length > 0) {
+          if (callsResponse.decodedReturnData[0].winningVote === '2') {
+            schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
+          } else if (
+            callsResponse.decodedReturnData[6].returnData ===
+            '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+          ) {
             schemeProposalInfo.state =
               WalletSchemeProposalState.ExecutionSucceded;
           }
         }
-
         // If any of the values of the redeemPeriods of the contribution reward is higher than zero it means that it executed the reward
       } else if (schemeOfProposal.type === 'ContributionReward') {
         if (
           callsResponse.decodedReturnData[0].winningVote === '2' &&
-          callsResponse.decodedReturnData[0].state === '2'
+          statusInVotingMachine === '2'
         ) {
           schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
         } else if (
@@ -1840,7 +1810,7 @@ export default class UtilsService {
         callData: schemeProposalInfo.callData,
         values: schemeProposalInfo.value.map(value => bnum(value)),
         stateInScheme: Number(schemeProposalInfo.state),
-        stateInVotingMachine: Number(callsResponse.decodedReturnData[0].state),
+        stateInVotingMachine: Number(statusInVotingMachine),
         descriptionHash: schemeProposalInfo.descriptionHash,
         creationEvent: {
           event: creationEvent.event,
@@ -1908,7 +1878,7 @@ export default class UtilsService {
         schemeProposalInfo.state
       );
       networkCache.proposals[proposalId].stateInVotingMachine = Number(
-        callsResponse.decodedReturnData[0].state
+        statusInVotingMachine
       );
       networkCache.proposals[proposalId].winningVote =
         callsResponse.decodedReturnData[0].winningVote;
