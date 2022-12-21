@@ -186,7 +186,8 @@ export default class UtilsService {
         );
         const networkCacheFetch = await retryPromise(
           this.context.ipfsService.getContentFromIPFS(
-            networkConfigFileFetch.cache.ipfsHash
+            networkConfigFileFetch.cache.ipfsHash,
+            1000
           )
         );
         networkCache = networkCacheFetch;
@@ -272,7 +273,8 @@ export default class UtilsService {
           web3
         ),
       ],
-      networkCache
+      networkCache,
+      1
     );
 
     // The second promise round:
@@ -871,7 +873,7 @@ export default class UtilsService {
           );
         }),
       networkCache,
-      5,
+      1,
       1000,
       500
     );
