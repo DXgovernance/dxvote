@@ -147,7 +147,6 @@ export default class UtilsService {
       callPermissions: {},
       votingMachines: {},
       ipfsHashes: [],
-      vestingContracts: [],
     };
 
     // Set network cache and config objects
@@ -252,7 +251,6 @@ export default class UtilsService {
     // The first promise round:
     // - Reputation Events
     // - Permission Registry
-    // - Vesting Contracts
 
     networkCache = await batchPromisesOntarget(
       [
@@ -263,12 +261,6 @@ export default class UtilsService {
           web3
         ),
         this.updatePermissionRegistry(
-          networkCache,
-          networkContracts,
-          toBlock,
-          web3
-        ),
-        this.updateVestingContracts(
           networkCache,
           networkContracts,
           toBlock,
@@ -662,110 +654,6 @@ export default class UtilsService {
           fromTime: eventValues.fromTime,
         };
       });
-    }
-
-    return networkCache;
-  }
-
-  /**
-   * @function updateVestingContracts
-   * @description Get all "VestingCreated" events from VestingFactory contract and store created TokenVesting contract info into cache.
-   */
-
-  async updateVestingContracts(
-    networkCache: DaoNetworkCache,
-    networkContracts: NetworkContracts,
-    toBlock: number,
-    web3: Web3
-  ): Promise<DaoNetworkCache> {
-    const networkWeb3Contracts = await getContracts(networkContracts, web3);
-    const fromBlock = networkCache.blockNumber + 1;
-
-    if (networkWeb3Contracts.vestingFactory) {
-      try {
-        const vestingFactoryEvents = await getEvents(
-          web3,
-          networkWeb3Contracts.vestingFactory,
-          fromBlock,
-          toBlock,
-          'allEvents'
-        );
-
-        console.debug(
-          'Total VestingFactory "VestingCreated" Events: ',
-          vestingFactoryEvents.length
-        );
-
-        for (let event of vestingFactoryEvents) {
-          const callsToExecute = [
-            [
-              event.returnValues.vestingContractAddress,
-              'beneficiary()',
-              [],
-              ['address'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'cliff()',
-              [],
-              ['uint256'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'duration()',
-              [],
-              ['uint256'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'owner()',
-              [],
-              ['address'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'start()',
-              [],
-              ['uint256'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'isOwner()',
-              [],
-              ['bool'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'revocable()',
-              [],
-              ['bool'],
-            ],
-          ];
-
-          const callsResponse = await executeMulticall(
-            networkWeb3Contracts.multicall,
-            callsToExecute
-          );
-
-          const tokenContractInfo = {
-            address: event.returnValues.vestingContractAddress,
-            beneficiary: callsResponse.decodedReturnData[0][0],
-            cliff: callsResponse.decodedReturnData[1][0],
-            duration: callsResponse.decodedReturnData[2][0],
-            owner: callsResponse.decodedReturnData[3][0],
-            start: callsResponse.decodedReturnData[4][0],
-            isOwner: callsResponse.decodedReturnData[5][0],
-            revocable: callsResponse.decodedReturnData[6][0],
-          };
-
-          networkCache.vestingContracts = [
-            ...(networkCache.vestingContracts ?? []),
-            tokenContractInfo,
-          ];
-        }
-      } catch (error) {
-        console.error('Error in updateVestingContracts', error);
-      }
     }
 
     return networkCache;

@@ -202,7 +202,6 @@ declare global {
     callPermissions: CallPermissions;
     votingMachines: { [address: string]: VotingMachine };
     ipfsHashes: IPFSHash[];
-    vestingContracts: TokenVesting[];
   }
 
   // Application Config
@@ -273,16 +272,6 @@ declare global {
   interface AppConfig {
     [networkName: string]: NetworkConfig;
   }
-}
-
-export interface TokenVesting {
-  address: string;
-  beneficiary: string;
-  cliff: string;
-  duration: string;
-  owner: string;
-  value?: BigNumber;
-  start: string;
 }
 
 export interface ChainConfig {

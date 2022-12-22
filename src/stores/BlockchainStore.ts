@@ -85,7 +85,6 @@ export default class BlockchainStore {
             callPermissions: {},
             votingMachines: {},
             ipfsHashes: [],
-            vestingContracts: [],
           };
         }
 
@@ -120,7 +119,6 @@ export default class BlockchainStore {
             callPermissions: {},
             votingMachines: {},
             ipfsHashes: [],
-            vestingContracts: [],
           };
         } else if (
           networkName !== 'localhost' &&
