@@ -313,14 +313,26 @@ export async function batchPromisesOntarget(
   while (promisesBatchIndex < promisesBatch.length && maxTries > 0) {
     try {
       const batchResults = await Promise.all(promisesBatch[promisesBatchIndex]);
-      targetObject = Object.assign(targetObject, ...batchResults);
+      batchResults.map(result => {
+        targetObject = Object.assign(targetObject, result);
+      });
       promisesBatchIndex++;
     } catch (e) {
       console.error(e);
-      maxTries--;
-      await sleep(sleepTimeBetweenRetries);
-      if (maxTries === 0)
-        console.error('[BATCH PROMISES] (max errors reached)');
+      if (
+        e.message == 'Internal JSON-RPC error.' ||
+        e.message == 'Unexpected end of JSON input'
+      ) {
+        console.log(
+          'Internal error in RPC, waiting 1 second and trying again...'
+        );
+        await sleep(1000);
+      } else {
+        maxTries--;
+        await sleep(sleepTimeBetweenRetries);
+        if (maxTries === 0)
+          console.error('[BATCH PROMISES] (max errors reached)');
+      }
     }
     await sleep(sleepTimeBetweenPromises);
   }

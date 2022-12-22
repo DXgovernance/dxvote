@@ -732,7 +732,7 @@ export default class UtilsService {
     web3: Web3
   ): Promise<DaoNetworkCache> {
     const fromBlock = networkCache.blockNumber + 1;
-
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
     // Update existent active proposals
     await batchPromisesOntarget(
       Object.keys(networkCache.proposals)
@@ -758,8 +758,7 @@ export default class UtilsService {
             networkCache,
             networkContracts,
             web3,
-            fromBlock,
-            toBlock
+            networkWeb3Contracts
           );
         }),
       networkCache,
@@ -1150,8 +1149,7 @@ export default class UtilsService {
           networkCache,
           networkContracts,
           web3,
-          fromBlock,
-          toBlock,
+          networkWeb3Contracts,
           schemeEvent
         );
       }),
@@ -1170,8 +1168,7 @@ export default class UtilsService {
     networkCache: DaoNetworkCache,
     networkContracts: NetworkContracts,
     web3: Web3,
-    fromBlock: number,
-    toBlock: number,
+    networkWeb3Contracts: any,
     creationEvent?: BlockchainEvent
   ): Promise<DaoNetworkCache> {
     const newProposal = !networkCache.proposals[proposalId];
@@ -1181,7 +1178,6 @@ export default class UtilsService {
     const schemeOfProposal = networkCache.schemes[schemeAddress];
     const avatarAddress = networkCache.address;
     const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
-    const networkWeb3Contracts = await getContracts(networkContracts, web3);
     let extraData: {};
 
     // These first calls target mainly the voting machine where most of the proposal information is mutable
@@ -1809,7 +1805,7 @@ export default class UtilsService {
         callsResponse.decodedReturnData[3][3]
       );
     }
-
+    
     return networkCache;
   }
 }
