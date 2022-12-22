@@ -1805,7 +1805,7 @@ export default class UtilsService {
         callsResponse.decodedReturnData[3][3]
       );
     }
-    
+
     return networkCache;
   }
 }
