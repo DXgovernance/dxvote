@@ -128,36 +128,37 @@ export const getRawEvents = async function (
 ) {
   if (web3._provider.host && web3._provider.host.indexOf('arbitrum.io/rpc') > 0)
     maxBlocksPerFetch = 99000;
-  let events = [],
-    to = Math.min(fromBlock + maxBlocksPerFetch, toBlock),
-    from = fromBlock;
-  while (from < to) {
-    console.debug(
-      `Fetching logs of ${contractAddress} from blocks ${from} -> ${to}`,
-      {
-        address: contractAddress,
-        fromBlock: from,
-        toBlock: to,
-        topics: topicsToGet,
-      }
-    );
+
+  let events = [];
+  let currentFrom = fromBlock;
+  let currentTo = fromBlock + maxBlocksPerFetch;
+
+  console.debug(
+    `Fetching logs of ${contractAddress} from blocks ${fromBlock} -> ${toBlock}, topics: ${topicsToGet}`
+  );
+  for (let i = fromBlock; i < toBlock; i += maxBlocksPerFetch) {
+    if (currentTo > toBlock) {
+      currentTo = toBlock;
+    }
+
     try {
       let eventsFetched = await web3.eth.getPastLogs({
         address: contractAddress,
-        fromBlock: from,
-        toBlock: to,
+        fromBlock: currentFrom,
+        toBlock: currentTo,
         topics: topicsToGet,
       });
       eventsFetched = await getTimestampOfEvents(web3, eventsFetched);
       events = events.concat(eventsFetched);
-      from = to;
-      to = Math.min(from + maxBlocksPerFetch, toBlock);
     } catch (error) {
       if ((error as Error).message.indexOf('Relay attempts exhausted') > -1) {
-        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
+        const blocksToLower = Math.max(
+          Math.trunc((currentTo - currentFrom) / 2),
+          10000
+        );
         console.error('Relay attempts exhausted');
         console.debug('Lowering toBlock', blocksToLower, 'blocks');
-        to = to - blocksToLower;
+        currentTo = currentTo - blocksToLower;
         await sleep(5000);
       } else if (
         (error as Error).message.indexOf(
@@ -165,19 +166,11 @@ export const getRawEvents = async function (
         ) > -1
       ) {
         maxBlocksPerFetch = Number((maxBlocksPerFetch / 4).toFixed(0));
-        to = from + 100000;
+        currentTo = currentFrom + 100000;
         console.error(
           'You cannot query logs for more than 100000 blocks at once.'
         );
-        console.debug('Lowering toBlock to', to);
-      } else if (
-        (error as Error).message.indexOf('Relay attempts exhausted') === -1 &&
-        Math.trunc((to - from) / 2) > 10000
-      ) {
-        console.error('Error fetching blocks:', error);
-        const blocksToLower = Math.max(Math.trunc((to - from) / 2), 10000);
-        console.debug('Lowering toBlock', blocksToLower, 'blocks');
-        to = to - blocksToLower;
+        console.debug('Lowering toBlock', currentTo);
       }
     }
   }
@@ -236,7 +229,7 @@ export const executeMulticall = async function (
     decodedReturnData: returnData.map((callResult, i) => {
       return calls[i][3].length > 0
         ? web3.eth.abi.decodeParameters(calls[i][3], callResult)
-        : '';
+        : callResult;
     }),
   };
 };
@@ -306,32 +299,42 @@ export async function tryCacheUpdates(promises, networkCache) {
 export async function batchPromisesOntarget(
   promises,
   targetObject,
-  maxPromisesPerTry = 0,
+  maxPromisesPerTry,
   maxTries = 10,
-  sleepTimeBetweenRetries = 100
+  sleepTimeBetweenRetries = 100,
+  sleepTimeBetweenPromises = 100
 ) {
-  let promisesBatch = maxPromisesPerTry === 0 ? [promises] : [];
+  const promisesBatch =
+    maxPromisesPerTry > 0
+      ? chunkArray(promises, maxPromisesPerTry)
+      : [promises];
   let promisesBatchIndex = 0;
-
-  if (maxPromisesPerTry > 0)
-    for (var i = 0; i < promises.length; i += maxPromisesPerTry)
-      promisesBatch.push(promises.slice(i, i + maxPromisesPerTry));
 
   while (promisesBatchIndex < promisesBatch.length && maxTries > 0) {
     try {
-      (await Promise.all(promisesBatch[promisesBatchIndex])).map(
-        targetObjectUpdated => {
-          targetObject = Object.assign(targetObject, targetObjectUpdated);
-        }
-      );
+      const batchResults = await Promise.all(promisesBatch[promisesBatchIndex]);
+      batchResults.map(result => {
+        targetObject = Object.assign(targetObject, result);
+      });
       promisesBatchIndex++;
     } catch (e) {
       console.error(e);
-      maxTries--;
-      await sleep(sleepTimeBetweenRetries);
-      if (maxTries === 0)
-        console.error('[BATCH PROMISES] (max errors reached)');
+      if (
+        e.message == 'Internal JSON-RPC error.' ||
+        e.message == 'Unexpected end of JSON input'
+      ) {
+        console.log(
+          'Internal error in RPC, waiting 1 second and trying again...'
+        );
+        await sleep(1000);
+      } else {
+        maxTries--;
+        await sleep(sleepTimeBetweenRetries);
+        if (maxTries === 0)
+          console.error('[BATCH PROMISES] (max errors reached)');
+      }
     }
+    await sleep(sleepTimeBetweenPromises);
   }
   return targetObject;
 }
@@ -342,12 +345,11 @@ export async function batchPromises(
   maxTries = 10,
   sleepTimeBetweenRetries = 100
 ) {
-  let promisesBatch = maxPromisesPerTry === 0 ? [promises] : [];
+  const promisesBatch =
+    maxPromisesPerTry > 0
+      ? chunkArray(promises, maxPromisesPerTry)
+      : [promises];
   let promisesBatchIndex = 0;
-
-  if (maxPromisesPerTry > 0)
-    for (var i = 0; i < promises.length; i += maxPromisesPerTry)
-      promisesBatch.push(promises.slice(i, i + maxPromisesPerTry));
 
   while (promisesBatchIndex < promisesBatch.length && maxTries > 0) {
     try {
@@ -361,5 +363,14 @@ export async function batchPromises(
         console.error('[BATCH PROMISES] (max errors reached)');
     }
   }
-  return;
+}
+
+function chunkArray(array, chunkSize) {
+  const chunkedArray = [];
+  let index = 0;
+  while (index < array.length) {
+    chunkedArray.push(array.slice(index, index + chunkSize));
+    index += chunkSize;
+  }
+  return chunkedArray;
 }

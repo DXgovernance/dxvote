@@ -147,7 +147,6 @@ export default class UtilsService {
       callPermissions: {},
       votingMachines: {},
       ipfsHashes: [],
-      vestingContracts: [],
     };
 
     // Set network cache and config objects
@@ -186,15 +185,18 @@ export default class UtilsService {
         );
         const networkCacheFetch = await retryPromise(
           this.context.ipfsService.getContentFromIPFS(
-            networkConfigFileFetch.cache.ipfsHash
-          )
+            networkConfigFileFetch.cache.ipfsHash,
+            10000
+          ),
+          1000,
+          100
         );
         networkCache = networkCacheFetch;
       }
     }
 
     // Update the cache only if the toBlock is higher than the current networkCache block
-    if (Number(networkCache.blockNumber) + 1 < toBlock) {
+    if (networkCache && Number(networkCache.blockNumber) + 1 < toBlock) {
       // The cache file is updated with the data that had before plus new data in the network cache file
       console.debug(
         'Running cache script from block',
@@ -249,7 +251,6 @@ export default class UtilsService {
     // The first promise round:
     // - Reputation Events
     // - Permission Registry
-    // - Vesting Contracts
 
     networkCache = await batchPromisesOntarget(
       [
@@ -265,14 +266,9 @@ export default class UtilsService {
           toBlock,
           web3
         ),
-        this.updateVestingContracts(
-          networkCache,
-          networkContracts,
-          toBlock,
-          web3
-        ),
       ],
-      networkCache
+      networkCache,
+      1
     );
 
     // The second promise round:
@@ -663,110 +659,6 @@ export default class UtilsService {
     return networkCache;
   }
 
-  /**
-   * @function updateVestingContracts
-   * @description Get all "VestingCreated" events from VestingFactory contract and store created TokenVesting contract info into cache.
-   */
-
-  async updateVestingContracts(
-    networkCache: DaoNetworkCache,
-    networkContracts: NetworkContracts,
-    toBlock: number,
-    web3: Web3
-  ): Promise<DaoNetworkCache> {
-    const networkWeb3Contracts = await getContracts(networkContracts, web3);
-    const fromBlock = networkCache.blockNumber + 1;
-
-    if (networkWeb3Contracts.vestingFactory) {
-      try {
-        const vestingFactoryEvents = await getEvents(
-          web3,
-          networkWeb3Contracts.vestingFactory,
-          fromBlock,
-          toBlock,
-          'allEvents'
-        );
-
-        console.debug(
-          'Total VestingFactory "VestingCreated" Events: ',
-          vestingFactoryEvents.length
-        );
-
-        for (let event of vestingFactoryEvents) {
-          const callsToExecute = [
-            [
-              event.returnValues.vestingContractAddress,
-              'beneficiary()',
-              [],
-              ['address'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'cliff()',
-              [],
-              ['uint256'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'duration()',
-              [],
-              ['uint256'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'owner()',
-              [],
-              ['address'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'start()',
-              [],
-              ['uint256'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'isOwner()',
-              [],
-              ['bool'],
-            ],
-            [
-              event.returnValues.vestingContractAddress,
-              'revocable()',
-              [],
-              ['bool'],
-            ],
-          ];
-
-          const callsResponse = await executeMulticall(
-            networkWeb3Contracts.multicall,
-            callsToExecute
-          );
-
-          const tokenContractInfo = {
-            address: event.returnValues.vestingContractAddress,
-            beneficiary: callsResponse.decodedReturnData[0][0],
-            cliff: callsResponse.decodedReturnData[1][0],
-            duration: callsResponse.decodedReturnData[2][0],
-            owner: callsResponse.decodedReturnData[3][0],
-            start: callsResponse.decodedReturnData[4][0],
-            isOwner: callsResponse.decodedReturnData[5][0],
-            revocable: callsResponse.decodedReturnData[6][0],
-          };
-
-          networkCache.vestingContracts = [
-            ...(networkCache.vestingContracts ?? []),
-            tokenContractInfo,
-          ];
-        }
-      } catch (error) {
-        console.error('Error in updateVestingContracts', error);
-      }
-    }
-
-    return networkCache;
-  }
-
   // Update all the schemes information
   async updateSchemes(
     networkCache: DaoNetworkCache,
@@ -840,7 +732,7 @@ export default class UtilsService {
     web3: Web3
   ): Promise<DaoNetworkCache> {
     const fromBlock = networkCache.blockNumber + 1;
-
+    const networkWeb3Contracts = await getContracts(networkContracts, web3);
     // Update existent active proposals
     await batchPromisesOntarget(
       Object.keys(networkCache.proposals)
@@ -866,12 +758,11 @@ export default class UtilsService {
             networkCache,
             networkContracts,
             web3,
-            fromBlock,
-            toBlock
+            networkWeb3Contracts
           );
         }),
       networkCache,
-      5,
+      1,
       1000,
       500
     );
@@ -1258,8 +1149,7 @@ export default class UtilsService {
           networkCache,
           networkContracts,
           web3,
-          fromBlock,
-          toBlock,
+          networkWeb3Contracts,
           schemeEvent
         );
       }),
@@ -1278,8 +1168,7 @@ export default class UtilsService {
     networkCache: DaoNetworkCache,
     networkContracts: NetworkContracts,
     web3: Web3,
-    fromBlock: number,
-    toBlock: number,
+    networkWeb3Contracts: any,
     creationEvent?: BlockchainEvent
   ): Promise<DaoNetworkCache> {
     const newProposal = !networkCache.proposals[proposalId];
@@ -1289,11 +1178,6 @@ export default class UtilsService {
     const schemeOfProposal = networkCache.schemes[schemeAddress];
     const avatarAddress = networkCache.address;
     const schemeTypeData = getSchemeConfig(networkContracts, schemeAddress);
-    const networkWeb3Contracts = await getContracts(networkContracts, web3);
-    const avatarAddressEncoded = web3.eth.abi.encodeParameter(
-      'address',
-      avatarAddress
-    );
     let extraData: {};
 
     // These first calls target mainly the voting machine where most of the proposal information is mutable
@@ -1381,6 +1265,13 @@ export default class UtilsService {
         [proposalId, avatarAddress, 3],
         ['uint256'],
       ]);
+    } else if (schemeOfProposal.type === 'GenericMulticall') {
+      callsToExecute.push([
+        schemeAddress,
+        'proposals(bytes32)',
+        [proposalId],
+        [],
+      ]);
     } else if (isWalletScheme(schemeOfProposal)) {
       callsToExecute.push([
         schemeAddress,
@@ -1404,6 +1295,7 @@ export default class UtilsService {
     );
 
     const proposalTimes = callsResponse.decodedReturnData[4];
+    const statusInVotingMachine = callsResponse.decodedReturnData[0].state;
 
     let schemeProposalInfo = {
       to: [],
@@ -1432,63 +1324,29 @@ export default class UtilsService {
           callsResponse.decodedReturnData[6].submittedTime;
       }
     } else {
-      // Here we get the events triggered in the GenericMulticall to get their final state
-      // When the proposal is executed by the voting machine we get if the proposal was rejected
-      // If the proposal was executed by teh voting machine and not rejected we get the ProposalEnded
-      // to know if it was executed by the WalletScheme
+      // If the proposal ended in winningVote 2 it means that it was rejected
+      // If it ended in winning vote 1, we wait for the proposal to be deleted in the scheme
+      // To mark it as executedSuccesfully
       if (schemeOfProposal.type === 'GenericMulticall') {
-        // event ProposalExecutedByVotingMachine(address indexed _avatar,bytes32 indexed _proposalId,int256 _param)
-        const votingMachineExecutionEvent =
-          schemeProposalInfo.state === WalletSchemeProposalState.Submitted
-            ? await getRawEvents(
-                web3,
-                schemeAddress,
-                fromBlock,
-                toBlock,
-                [
-                  '0x25d4c89430c1f10c60c292556941e3e624ec1ec04972a5da46cee1b352429cbe',
-                  avatarAddressEncoded,
-                  proposalId,
-                ],
-                10000000
-              )
-            : [];
         if (
-          votingMachineExecutionEvent.length > 0 &&
-          votingMachineExecutionEvent[0].data !==
-            '0x0000000000000000000000000000000000000000000000000000000000000001'
-        )
-          schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
-
-        if (
-          callsResponse.decodedReturnData[0].state ===
-            VotingMachineProposalState.Executed &&
-          schemeProposalInfo.state === WalletSchemeProposalState.Submitted
+          schemeProposalInfo.state === WalletSchemeProposalState.Submitted &&
+          statusInVotingMachine === VotingMachineProposalState.Executed
         ) {
-          // event ProposalDeleted(address indexed _avatar, bytes32 indexed _proposalId)
-          const executionEvent = await getRawEvents(
-            web3,
-            schemeAddress,
-            fromBlock,
-            toBlock,
-            [
-              '0x253ad9614c337848bbe7dc3b18b439d139ef5787282b5a517ba7296513d1f533',
-              avatarAddressEncoded,
-              proposalId,
-            ],
-            10000000
-          );
-          if (executionEvent.length > 0) {
+          if (callsResponse.decodedReturnData[0].winningVote === '2') {
+            schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
+          } else if (
+            callsResponse.decodedReturnData[6].returnData ===
+            '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+          ) {
             schemeProposalInfo.state =
               WalletSchemeProposalState.ExecutionSucceded;
           }
         }
-
         // If any of the values of the redeemPeriods of the contribution reward is higher than zero it means that it executed the reward
       } else if (schemeOfProposal.type === 'ContributionReward') {
         if (
           callsResponse.decodedReturnData[0].winningVote === '2' &&
-          callsResponse.decodedReturnData[0].state === '2'
+          statusInVotingMachine === '2'
         ) {
           schemeProposalInfo.state = WalletSchemeProposalState.Rejected;
         } else if (
@@ -1840,7 +1698,7 @@ export default class UtilsService {
         callData: schemeProposalInfo.callData,
         values: schemeProposalInfo.value.map(value => bnum(value)),
         stateInScheme: Number(schemeProposalInfo.state),
-        stateInVotingMachine: Number(callsResponse.decodedReturnData[0].state),
+        stateInVotingMachine: Number(statusInVotingMachine),
         descriptionHash: schemeProposalInfo.descriptionHash,
         creationEvent: {
           event: creationEvent.event,
@@ -1908,7 +1766,7 @@ export default class UtilsService {
         schemeProposalInfo.state
       );
       networkCache.proposals[proposalId].stateInVotingMachine = Number(
-        callsResponse.decodedReturnData[0].state
+        statusInVotingMachine
       );
       networkCache.proposals[proposalId].winningVote =
         callsResponse.decodedReturnData[0].winningVote;

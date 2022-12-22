@@ -67,8 +67,8 @@ export const NETWORKS: ChainConfig[] = [
       symbol: 'xDAI',
       decimals: 18,
     },
-    blockExplorer: 'https://blockscout.com/xdai/mainnet/',
-    api: 'https://blockscout.com/xdai/mainnet/api',
+    blockExplorer: 'https://gnosisscan.io/',
+    api: 'https://gnosisscan.io/api',
   },
   {
     id: 42161,
