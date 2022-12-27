@@ -61,7 +61,7 @@ const ProposalsPage = observer(() => {
   const { account } = providerStore.getActiveWeb3React();
   const userEvents = daoStore.getUserEvents(account);
   const [allProposals, setAllProposals] = useState(daoStore.getAllProposals);
-  console.log('All proposals length', allProposals.length);
+  
   useEffect(() => {
     setAllProposals(daoStore.getAllProposals);
   }, [daoStore.getAllProposals]);

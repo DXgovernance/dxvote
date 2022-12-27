@@ -4,7 +4,7 @@ import { useWeb3React } from '@web3-react/core';
 import { getChains, getNetworkConnector } from 'provider/connectors';
 import { useEagerConnect, useRpcUrls } from 'provider/providerHooks';
 import { useContext } from 'contexts';
-import { DEFAULT_CHAIN_ID, useInterval, usePrevious } from 'utils';
+import { DEFAULT_CHAIN_ID, usePrevious } from 'utils';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { NetworkConnector } from '@web3-react/network-connector';
 import ThemeProvider, { GlobalStyle } from 'theme';
@@ -12,8 +12,6 @@ import styled from 'styled-components';
 import LoadingNetworkHeader from '../Header/loadingNetwork';
 import { LoadingBox } from '../../pages/proposals/styles';
 import PulsingIcon from 'components/common/LoadingIcon';
-
-const BLOKCHAIN_FETCH_INTERVAL = 60000;
 
 const Web3ReactManager = ({ children }) => {
   const { context } = useContext();
@@ -134,16 +132,16 @@ const Web3ReactManager = ({ children }) => {
   }
 
   // Fetch user blockchain data on an interval using current params
-  useInterval(
-    async () => {
-      if (networkActive) {
-        if (location.pathname !== '/cache') {
-          blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
-        }
-      }
-    },
-    networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10
-  );
+  // useInterval(
+  //   async () => {
+  //     if (networkActive) {
+  //       if (location.pathname !== '/cache') {
+  //         blockchainStore.fetchData(providerStore.getActiveWeb3React(), false);
+  //       }
+  //     }
+  //   },
+  //   networkActive ? BLOKCHAIN_FETCH_INTERVAL : 10
+  // );
 
   const Content = styled.div`
     margin: auto;
