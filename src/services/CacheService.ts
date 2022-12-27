@@ -285,8 +285,9 @@ export default class UtilsService {
         this.updateSchemes(networkCache, networkContracts, toBlock, web3),
       ],
       networkCache,
-      0,
-      1000
+      1,
+      1000,
+      100
     );
 
     this.context.notificationStore.setGlobalLoading(
@@ -298,7 +299,7 @@ export default class UtilsService {
     networkCache = await batchPromisesOntarget(
       [this.updateProposals(networkCache, networkContracts, toBlock, web3)],
       networkCache,
-      0,
+      1,
       1000,
       500
     );
