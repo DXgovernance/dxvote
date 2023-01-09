@@ -61,9 +61,10 @@ export default class IPFSService {
 
     const response = await Promise.any(
       gatewayURLBaseList.map(gatewayURLBase =>
-        axios.request({
-          url: gatewayURLBase + hash,
-          method: 'GET',
+        axios.get(gatewayURLBase + hash, {
+          headers: {
+            Accept: 'Accept: text/plain',
+          },
           timeout,
         })
       )
