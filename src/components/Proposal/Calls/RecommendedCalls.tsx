@@ -28,7 +28,7 @@ export const RecommendedCalls = ({
   showMore,
 }: RecomendedCallsProps) => {
   const {
-    context: { daoStore },
+    context: { daoStore, configStore },
   } = useContext();
 
   const proposalId = useLocation().pathname.split('/')[3];
@@ -64,7 +64,25 @@ export const RecommendedCalls = ({
     recommendedCallUsed.decodeText.length > 0
   ) {
     recommendedCallUsed.params.forEach((param, paramIndex) => {
-      const component = getComponentToRender(param, callParameters[paramIndex]);
+      let component = getComponentToRender(param, callParameters[paramIndex]);
+
+      if (
+        recommendedCallUsed.functionName ==
+          'externalTokenTransfer(address,address,uint256,address)' &&
+        paramIndex == 2 &&
+        configStore.getTokenData(callParameters[0])
+      ) {
+        component = getComponentToRender(
+          {
+            type: 'uint256',
+            name: configStore.getTokenData(callParameters[0]).name,
+            defaultValue: '',
+            decimals: configStore.getTokenData(callParameters[0]).decimals,
+            isRep: false,
+          },
+          callParameters[2]
+        );
+      }
 
       decodedCallDetail = reactStringReplace(
         reactStringReplace(
