@@ -64,25 +64,22 @@ export const useABIService = (): UseABIServiceReturns => {
   ) => {
     const { library } = providerStore.getActiveWeb3React();
     const recommendedCalls = configStore.getRecommendedCalls();
-    let functionSignature = data.substring(0, 10);
 
     const controllerCallDecoded = abiService.decodeCall(
       data,
       ContractType.Controller
     );
     const decodedAbi = decodeABI({ data, contractABI });
-
     if (
       controllerCallDecoded &&
       controllerCallDecoded.function.name === 'genericCall'
     ) {
       to = controllerCallDecoded.args[0];
-      data = '0x' + controllerCallDecoded.args[1].substring(10);
+      data = controllerCallDecoded.args[1];
       value = bnum(controllerCallDecoded.args[3]);
-      functionSignature = controllerCallDecoded.args[1].substring(0, 10);
-    } else {
-      data = '0x' + data.substring(10);
     }
+
+    const functionSignature = data.substring(0, 10);
 
     let asset = ZERO_ADDRESS;
     if (
@@ -105,7 +102,7 @@ export const useABIService = (): UseABIServiceReturns => {
     if (recommendedCallUsed) {
       const callParameters = library.eth.abi.decodeParameters(
         recommendedCallUsed.params.map(param => param.type),
-        data
+        data.substring(10)
       );
 
       if (callParameters.__length__) delete callParameters.__length__;

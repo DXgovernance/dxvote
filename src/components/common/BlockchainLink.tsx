@@ -25,11 +25,6 @@ const AddressLink = styled.div`
   }
 `;
 
-const Icon = styled.img`
-  width: 15px;
-  height: 15px;
-`;
-
 export const BlockchainLink = ({
   text,
   size = 'default',
@@ -70,12 +65,12 @@ export const BlockchainLink = ({
   else show formatted address
   */
   const Address = () => (
-    <>
+    <div>
       {ensName}
-      {!ensName && erc20Token && <Icon src={erc20Token.logoURI} />}
+      {!ensName && erc20Token && erc20Token.name}
       {!ensName && dxVoteContract && dxVoteContract?.contract}
       {formatedAddress}
-    </>
+    </div>
   );
 
   return (
