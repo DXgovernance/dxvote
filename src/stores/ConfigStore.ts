@@ -391,6 +391,22 @@ export default class ConfigStore {
       {
         asset: ZERO_ADDRESS,
         from: networkContracts.avatar,
+        to: '0x9008D19f58AAbD9eD0D60971565AA8510560ab41',
+        toName: 'GPv2Settlement',
+        functionName: 'setPreSignature(bytes,bool)',
+        params: [
+          {
+            type: 'bytes',
+            name: 'orderUid',
+            defaultValue: '',
+          },
+          { type: 'bool', name: 'signed', defaultValue: '' },
+        ],
+        decodeText: 'Set pre signature for order ID [PARAM_0] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
         to: networkContracts.permissionRegistry,
         toName: 'Permission Registry',
         functionName: 'setTimeDelay(uint256)',
