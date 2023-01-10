@@ -97,13 +97,6 @@ const Calls = observer(() => {
                   // contractABI={contractABI}
                   showMore={showMore}
                 />
-              ) : contractABI.function ? (
-                <EtherscanCalls
-                  to={to}
-                  from={from}
-                  abi={contractABI}
-                  showMore={showMore}
-                />
               ) : (
                 <BaseCalls
                   to={to}
