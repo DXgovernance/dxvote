@@ -1,7 +1,7 @@
 import reactStringReplace from 'react-string-replace';
 import { useLocation } from 'react-router-dom';
 import { bnum, normalizeBalance } from 'utils';
-import { BlockchainLink } from 'components/common';
+import { BlockchainLink, Row } from 'components/common';
 import { CallParameterDefinition, ProposalCalls } from '../../../types/types';
 import RepDisplay from '../../RepDisplay';
 import { useContext } from '../../../contexts';
@@ -28,7 +28,7 @@ export const RecommendedCalls = ({
   showMore,
 }: RecomendedCallsProps) => {
   const {
-    context: { daoStore },
+    context: { daoStore, configStore },
   } = useContext();
 
   const proposalId = useLocation().pathname.split('/')[3];
@@ -64,7 +64,25 @@ export const RecommendedCalls = ({
     recommendedCallUsed.decodeText.length > 0
   ) {
     recommendedCallUsed.params.forEach((param, paramIndex) => {
-      const component = getComponentToRender(param, callParameters[paramIndex]);
+      let component = getComponentToRender(param, callParameters[paramIndex]);
+
+      if (
+        recommendedCallUsed.functionName ==
+          'externalTokenTransfer(address,address,uint256,address)' &&
+        paramIndex == 2 &&
+        configStore.getTokenData(callParameters[0])
+      ) {
+        component = getComponentToRender(
+          {
+            type: 'uint256',
+            name: configStore.getTokenData(callParameters[0]).name,
+            defaultValue: '',
+            decimals: configStore.getTokenData(callParameters[0]).decimals,
+            isRep: false,
+          },
+          callParameters[2]
+        );
+      }
 
       decodedCallDetail = reactStringReplace(
         reactStringReplace(
@@ -81,36 +99,36 @@ export const RecommendedCalls = ({
   if (showMore) {
     return (
       <div>
-        <p>
+        <Row style={{ justifyContent: 'flex-start' }}>
           <strong>From: </strong>{' '}
           <small>
             <BlockchainLink text={from} toCopy={false} />
           </small>
-        </p>
-        <p>
+        </Row>
+        <Row style={{ justifyContent: 'flex-start' }}>
           <strong>To: </strong>{' '}
           <small>
             <BlockchainLink text={to} toCopy={false} />
           </small>
-        </p>
-        <p>
+        </Row>
+        <Row style={{ justifyContent: 'flex-start' }}>
           <strong>Descriptions: </strong>{' '}
           <small>{recommendedCallUsed.toName}</small>
-        </p>
-        <p>
+        </Row>
+        <Row style={{ justifyContent: 'flex-start' }}>
           <strong>Function: </strong>
           <small>{recommendedCallUsed.functionName}</small>
-        </p>
-        <p>
+        </Row>
+        <Row style={{ justifyContent: 'flex-start' }}>
           <strong>Function Signature: </strong>{' '}
           <small>{encodedFunctionName}</small>
-        </p>
+        </Row>
         <strong>Params: </strong>
         {Object.keys(callParameters).map((paramIndex, i) => {
           return (
-            <p key={i}>
+            <Row key={i} style={{ justifyContent: 'flex-start' }}>
               <small>{callParameters[paramIndex]} </small>
-            </p>
+            </Row>
           );
         })}
         <strong>data: </strong>

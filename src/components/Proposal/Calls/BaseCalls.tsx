@@ -1,5 +1,5 @@
 import { Error } from './Error';
-import { BlockchainLink } from 'components/common';
+import { BlockchainLink, Row } from 'components/common';
 import { ProposalCalls } from '../../../types/types';
 
 type BaseCallsProps = Pick<ProposalCalls, 'to' | 'from' | 'value' | 'data'> & {
@@ -18,27 +18,27 @@ export const BaseCalls = ({
   return (
     <div>
       {error && <Error error={error} />}
-      <p>
+      <Row style={{ justifyContent: 'flex-start' }}>
         <strong>From: </strong>
         <small>
           <BlockchainLink text={from} toCopy={false} />
         </small>
-      </p>
-      <p>
+      </Row>
+      <Row style={{ justifyContent: 'flex-start' }}>
         <strong>To: </strong>
         <small>
           <BlockchainLink text={to} toCopy={false} />
         </small>
-      </p>
-      <p>
+      </Row>
+      <Row style={{ justifyContent: 'flex-start' }}>
         <strong>Value: </strong>
         <small>{value.toString()}</small>
-      </p>
+      </Row>
       {showMore ? (
-        <p>
+        <Row style={{ justifyContent: 'flex-start' }}>
           <strong>data: </strong>
           <small>{data}</small>
-        </p>
+        </Row>
       ) : null}
     </div>
   );

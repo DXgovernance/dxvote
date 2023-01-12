@@ -114,8 +114,10 @@ const ConfigPage = observer(() => {
   }
 
   async function clearCache() {
+    const localConfig = configStore.getLocalConfig();
     localStorage.clear();
     caches.delete(`dxvote-cache`);
+    configStore.setLocalConfig(localConfig);
     history.push(`/${getNetworkById(web3Context.chainId).name}/proposals`);
     window.location.reload();
   }

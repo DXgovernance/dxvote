@@ -179,7 +179,6 @@ export const INFURA_NETWORK_NAMES = {
 export const ALCHEMY_NETWORK_URLS = {
   '1': 'eth-mainnet.alchemyapi.io',
   '42161': 'arb-mainnet.g.alchemy.com',
-  '421611': 'arb-rinkeby.g.alchemy.com',
 };
 
 export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(

@@ -375,6 +375,38 @@ export default class ConfigStore {
       {
         asset: ZERO_ADDRESS,
         from: networkContracts.avatar,
+        to: '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
+        toName: 'ENS Public Resolver',
+        functionName: 'setContenthash(bytes32,bytes)',
+        params: [
+          {
+            type: 'bytes32',
+            name: 'node',
+            defaultValue: '',
+          },
+          { type: 'bytes', name: 'hash', defaultValue: '' },
+        ],
+        decodeText: 'Set content hash for node [PARAM_0] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: '0x9008D19f58AAbD9eD0D60971565AA8510560ab41',
+        toName: 'GPv2Settlement',
+        functionName: 'setPreSignature(bytes,bool)',
+        params: [
+          {
+            type: 'bytes',
+            name: 'orderUid',
+            defaultValue: '',
+          },
+          { type: 'bool', name: 'signed', defaultValue: '' },
+        ],
+        decodeText: 'Set pre signature for order ID [PARAM_0] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
         to: networkContracts.permissionRegistry,
         toName: 'Permission Registry',
         functionName: 'setTimeDelay(uint256)',
