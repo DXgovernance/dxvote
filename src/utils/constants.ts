@@ -13,8 +13,6 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 
 export const MAX_BLOCKS_PER_EVENTS_FETCH: number = 1000000;
 
-export const CACHE_METADATA_ENS = 'cache.dxvote.eth';
-
 const defaultAlchemyKey = '7i7fiiOx1b7bGmgWY_oI9twyQBCsuXKC';
 
 export const DISCOURSE_URL_ROOT = 'https://daotalk.org';
@@ -69,8 +67,8 @@ export const NETWORKS: ChainConfig[] = [
       symbol: 'xDAI',
       decimals: 18,
     },
-    blockExplorer: 'https://blockscout.com/xdai/mainnet/',
-    api: 'https://blockscout.com/xdai/mainnet/api',
+    blockExplorer: 'https://gnosisscan.io/',
+    api: 'https://gnosisscan.io/api',
   },
   {
     id: 42161,
@@ -181,7 +179,6 @@ export const INFURA_NETWORK_NAMES = {
 export const ALCHEMY_NETWORK_URLS = {
   '1': 'eth-mainnet.alchemyapi.io',
   '42161': 'arb-mainnet.g.alchemy.com',
-  '421611': 'arb-rinkeby.g.alchemy.com',
 };
 
 export const NETWORK_APIS: { [name: string]: string } = NETWORKS.reduce(

@@ -21,7 +21,6 @@ import {
   isVoteYes,
   WalletSchemeProposalState,
 } from '../utils';
-import { TokenVesting } from '../types/types';
 import { ProposalsExtended } from '../types/types';
 import moment from 'moment';
 
@@ -1245,17 +1244,5 @@ export default class DaoStore {
       }
     }
     return users;
-  }
-
-  getAllVestingContracts(): TokenVesting[] {
-    return this.daoCache.vestingContracts ?? [];
-  }
-
-  getUserVestingContracts(beneficiaryAddress: string): TokenVesting[] {
-    return (
-      this.daoCache.vestingContracts?.filter(
-        contract => contract.beneficiary === beneficiaryAddress
-      ) ?? []
-    );
   }
 }

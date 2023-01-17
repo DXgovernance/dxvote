@@ -2,7 +2,6 @@ import { makeObservable, observable, action } from 'mobx';
 import RootContext from '../contexts';
 
 import {
-  CACHE_METADATA_ENS,
   NETWORK_ASSET_SYMBOL,
   NETWORK_NAMES,
   NETWORK_DISPLAY_NAMES,
@@ -36,30 +35,15 @@ export default class ConfigStore {
   }
 
   async loadNetworkConfig() {
-    const { ensService, ipfsService } = this.context;
+    const { ipfsService } = this.context;
 
     this.networkConfig = getAppConfig()[this.getActiveChainName()];
-    const isTestingEnv = !window?.location?.href?.includes('dxvote.eth');
 
     if (this.getActiveChainName() !== 'localhost' && !this.networkConfigLoaded)
       try {
-        const metadataHash = await ensService.resolveContentHash(
-          CACHE_METADATA_ENS
-        );
-        if (!metadataHash)
-          throw new Error('Cannot resolve content metadata hash.');
+        const configContentHash =
+          getDefaultConfigHashes()[this.getActiveChainName()];
 
-        if (!isTestingEnv)
-          console.debug(
-            `[ConfigStore] Found metadata content hash from ENS: ${metadataHash}`,
-            metadataHash
-          );
-
-        const configRefs = isTestingEnv
-          ? getDefaultConfigHashes()
-          : await ipfsService.getContentFromIPFS(metadataHash);
-
-        const configContentHash = configRefs[this.getActiveChainName()];
         if (!configContentHash)
           throw new Error('Cannot resolve config metadata hash.');
 
@@ -387,6 +371,38 @@ export default class ConfigStore {
           'Transfer of [PARAM_0] ' +
           NETWORK_ASSET_SYMBOL[networkName] +
           ' to [PARAM_1] ',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
+        toName: 'ENS Public Resolver',
+        functionName: 'setContenthash(bytes32,bytes)',
+        params: [
+          {
+            type: 'bytes32',
+            name: 'node',
+            defaultValue: '',
+          },
+          { type: 'bytes', name: 'hash', defaultValue: '' },
+        ],
+        decodeText: 'Set content hash for node [PARAM_0] to [PARAM_1]',
+      },
+      {
+        asset: ZERO_ADDRESS,
+        from: networkContracts.avatar,
+        to: '0x9008D19f58AAbD9eD0D60971565AA8510560ab41',
+        toName: 'GPv2Settlement',
+        functionName: 'setPreSignature(bytes,bool)',
+        params: [
+          {
+            type: 'bytes',
+            name: 'orderUid',
+            defaultValue: '',
+          },
+          { type: 'bool', name: 'signed', defaultValue: '' },
+        ],
+        decodeText: 'Set pre signature for order ID [PARAM_0] to [PARAM_1]',
       },
       {
         asset: ZERO_ADDRESS,

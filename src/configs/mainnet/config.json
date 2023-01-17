@@ -1,8 +1,8 @@
 {
   "cache": {
     "fromBlock": 7219912,
-    "ipfsHash": "QmNMENgfTzxtdWKcts3HWoLrBEZaWxTFQ9Vzq2sPHy6K59",
-    "toBlock": "16019427"
+    "ipfsHash": "QmTVRERGo6aTHZmC1EVPj4DSV5kfGDKBQN55ev7hGWjfkx",
+    "toBlock": "16376962"
   },
   "contracts": {
     "avatar": "0x519b70055af55a007110b4ff99b0ea33071c720a",
@@ -34,7 +34,7 @@
             }
           ]
         ],
-        "name": "ContributionReward",
+        "name": "Old ContributionReward",
         "newProposalTopics": [
           [
             "0xcbdcbf9aaeb1e9eff0f75d74e1c1e044bc87110164baec7d18d825b0450d97df",
@@ -305,7 +305,37 @@
         "voteParams": "0x0dc1fb4d230debe146613511601e0df83dd5ac323a7add833de82ead5a19db3a",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
       },
-      "0x9d2bc77ad766259721ba3c9033c417b87a3540d0": {
+      "0xB3ec6089556CcA49549Be01fF446cF40fA81c84D": {
+        "contractToCall": "0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
+        "creationLogEncoding": [
+          [
+            {
+              "name": "_data",
+              "type": "bytes"
+            },
+            {
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            }
+          ]
+        ],
+        "name": "EnsPublicResolverScheme",
+        "newProposalTopics": [
+          [
+            "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ]
+        ],
+        "supported": false,
+        "type": "GenericScheme",
+        "voteParams": "0xa81f982cb1c27eb142e5f602e7eb50d125dd6a7e52dac1af5f9decb88278f2fa",
+        "votingMachine": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055"
+      },
+      "0xFAB25c642b3724F3abbef7c61408B37A535F91C8": {
         "contractToCall": "0x9f828ac3baa9003e8a4e0b24bcae7b027b6740b0",
         "creationLogEncoding": [
           [
@@ -343,36 +373,6 @@
         "type": "ContributionReward",
         "voteParams": "0x399141801e9e265d79f1f1759dd67932980664ea28c2ba7e0e4dba8719e47118",
         "votingMachine": "0x332B8C9734b4097dE50f302F7D9F273FFdB45B84"
-      },
-      "0xB3ec6089556CcA49549Be01fF446cF40fA81c84D": {
-        "contractToCall": "0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
-        "creationLogEncoding": [
-          [
-            {
-              "name": "_data",
-              "type": "bytes"
-            },
-            {
-              "name": "_value",
-              "type": "uint256"
-            },
-            {
-              "name": "_descriptionHash",
-              "type": "string"
-            }
-          ]
-        ],
-        "name": "EnsPublicResolverScheme",
-        "newProposalTopics": [
-          [
-            "0x36418f82d814fb021ca04ebdc2c4a3cd69f719851f597c489bca2ed245e8c8ad",
-            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
-          ]
-        ],
-        "supported": false,
-        "type": "GenericScheme",
-        "voteParams": "0xa81f982cb1c27eb142e5f602e7eb50d125dd6a7e52dac1af5f9decb88278f2fa",
-        "votingMachine": "0x1C18bAd5a3ee4e96611275B13a8ed062B4a13055"
       },
       "0xc072171dA83CCe311e37BC1d168f54E6A6536DF4": {
         "contractToCall": "0x93db90445b76329e9ed96ecd74e76d8fbf2590d8",
@@ -995,6 +995,14 @@
       "logoURI": "https://assets.coingecko.com/coins/images/11849/thumb/yfi-192x192.png?1598325330",
       "name": "yearn.finance",
       "symbol": "YFI"
+    },
+    {
+      "address": "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0",
+      "decimals": 18,
+      "fetchPrice": true,
+      "logoURI": "https://etherscan.io/token/images/liquitylusd_32.png",
+      "name": "Liquidity USD",
+      "symbol": "LUSD"
     }
   ],
   "version": 1

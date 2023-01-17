@@ -7,7 +7,6 @@ import { useContext } from 'contexts';
 import { useLocation } from 'react-router-dom';
 
 import PendingCircle from '../../common/PendingCircle';
-import { EtherscanCalls } from './EtherscanCalls';
 import { RecommendedCalls } from './RecommendedCalls';
 import { BaseCalls } from './BaseCalls';
 import { ShowMore } from './ShowMore';
@@ -95,13 +94,6 @@ const Calls = observer(() => {
                   encodedFunctionName={encodedFunctionName}
                   // value={value}
                   // contractABI={contractABI}
-                  showMore={showMore}
-                />
-              ) : contractABI.function ? (
-                <EtherscanCalls
-                  to={to}
-                  from={from}
-                  abi={contractABI}
                   showMore={showMore}
                 />
               ) : (
