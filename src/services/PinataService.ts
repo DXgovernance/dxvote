@@ -41,6 +41,7 @@ export default class PinataService {
           Authorization: `Bearer ${
             pinataApiKey ? pinataApiKey : this.defaultApiKey
           }`,
+          Accept: 'Accept: text/plain',
         },
       });
       this.auth = auth.status === 200;
@@ -73,6 +74,7 @@ export default class PinataService {
             Authorization: `Bearer ${
               pinataApiKey ? pinataApiKey : this.defaultApiKey
             }`,
+            Accept: 'Accept: text/plain',
           },
         })
       );
@@ -93,6 +95,7 @@ export default class PinataService {
         Authorization: `Bearer ${
           pinataApiKey ? pinataApiKey : this.defaultApiKey
         }`,
+        Accept: 'Accept: text/plain',
       },
     });
   }
@@ -106,6 +109,7 @@ export default class PinataService {
         Authorization: `Bearer ${
           pinataApiKey ? pinataApiKey : this.defaultApiKey
         }`,
+        Accept: 'Accept: text/plain',
       },
     });
   }
