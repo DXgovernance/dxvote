@@ -11,17 +11,11 @@ export const ACTIVE_NETWORK_NAMES =
         'mainnet',
         'xdai',
         'arbitrum',
-        'goerli',
-        'arbitrumTestnet',
-        'arbitrumNitroTestnet',
       ]
     : [
         'mainnet',
         'xdai',
         'arbitrum',
-        'goerli',
-        'arbitrumTestnet',
-        'arbitrumNitroTestnet',
         'localhost',
       ];
 

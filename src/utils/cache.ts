@@ -7,11 +7,8 @@ const Web3 = require('web3');
 const web3 = new Web3();
 
 const arbitrum = require('../configs/arbitrum/config.json');
-const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
-const arbitrumNitroTestnet = require('../configs/arbitrumNitroTestnet/config.json');
 const mainnet = require('../configs/mainnet/config.json');
 const xdai = require('../configs/xdai/config.json');
-const goerli = require('../configs/goerli/config.json');
 const localhost = require('../configs/localhost/config.json');
 
 const proposalTitles = require('../configs/proposalTitles.json');
@@ -29,11 +26,8 @@ export const getProposalTitles = (): Record<string, string> => {
 export const getAppConfig = (): AppConfig => {
   return {
     arbitrum,
-    arbitrumTestnet,
-    arbitrumNitroTestnet,
     mainnet,
     xdai,
-    goerli,
     localhost,
   };
 };

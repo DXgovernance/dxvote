@@ -102,11 +102,8 @@ const CachePage = observer(() => {
   });
   const [resetCache, setResetCache] = React.useState({
     mainnet: false,
-    goerli: false,
     xdai: false,
-    arbitrum: false,
-    arbitrumTestnet: false,
-    arbitrumNitroTestnet: false,
+    arbitrum: false
   });
 
   const defaultAppConfigs = getAppConfig();
@@ -116,16 +113,8 @@ const CachePage = observer(() => {
     mainnet_rpcURL: getNetworkByName('mainnet').defaultRpc,
     xdai_toBlock: defaultAppConfigs.xdai.cache.toBlock,
     xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
-    goerli_toBlock: defaultAppConfigs.goerli.cache.toBlock,
-    goerli_rpcURL: getNetworkByName('goerli').defaultRpc,
     arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
-    arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
-    arbitrumTestnet_toBlock: defaultAppConfigs.arbitrumTestnet.cache.toBlock,
-    arbitrumTestnet_rpcURL: getNetworkByName('arbitrumTestnet').defaultRpc,
-    arbitrumNitroTestnet_toBlock:
-      defaultAppConfigs.arbitrumNitroTestnet.cache.toBlock,
-    arbitrumNitroTestnet_rpcURL: getNetworkByName('arbitrumNitroTestnet')
-      .defaultRpc,
+    arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc
   });
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
@@ -135,11 +124,8 @@ const CachePage = observer(() => {
     setBuildingCacheState(0);
     setResetCache({
       mainnet: false,
-      goerli: false,
       xdai: false,
-      arbitrum: false,
-      arbitrumTestnet: false,
-      arbitrumNitroTestnet: false,
+      arbitrum: false
     });
     setUpdatedCacheHash({
       proposalTitles: {},
@@ -163,11 +149,6 @@ const CachePage = observer(() => {
           toBlock: localConfig.mainnet_toBlock,
           reset: resetCache.mainnet,
         },
-        5: {
-          rpcUrl: '',
-          toBlock: 0,
-          reset: resetCache.goerli,
-        },
         100: {
           rpcUrl: localConfig.xdai_rpcURL,
           toBlock: localConfig.xdai_toBlock,
@@ -177,17 +158,7 @@ const CachePage = observer(() => {
           rpcUrl: localConfig.arbitrum_rpcURL,
           toBlock: localConfig.arbitrum_toBlock,
           reset: resetCache.arbitrum,
-        },
-        421611: {
-          rpcUrl: '',
-          toBlock: 0,
-          reset: resetCache.arbitrumTestnet,
-        },
-        421613: {
-          rpcUrl: '',
-          toBlock: 0,
-          reset: resetCache.arbitrumNitroTestnet,
-        },
+        }
       },
       updateProposalTitles
     );
@@ -216,11 +187,7 @@ const CachePage = observer(() => {
         {
           mainnet: updatedCacheHash.configHashes['mainnet'],
           xdai: updatedCacheHash.configHashes['xdai'],
-          arbitrum: updatedCacheHash.configHashes['arbitrum'],
-          goerli: updatedCacheHash.configHashes['goerli'],
-          arbitrumTestnet: updatedCacheHash.configHashes['arbitrumTestnet'],
-          arbitrumNitroTestnet:
-            updatedCacheHash.configHashes['arbitrumNitroTestnet'],
+          arbitrum: updatedCacheHash.configHashes['arbitrum']
         },
         null,
         2
@@ -268,7 +235,7 @@ const CachePage = observer(() => {
     setLocalConfig(localConfig);
     setResetCache(resetCache);
     configStore.setLocalConfig(localConfig);
-    window.location.assign(window.location.origin + '/#cache');
+    // window.location.assign(window.location.origin + '/#/cache');
     forceUpdate();
   }
 
