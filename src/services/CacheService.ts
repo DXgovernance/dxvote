@@ -725,10 +725,7 @@ export default class UtilsService {
       Object.keys(networkCache.proposals)
         .filter(proposalId => {
           const proposal = networkCache.proposals[proposalId];
-          const scheme = networkCache.schemes[proposal.scheme];
           return (
-            // Only update proposals for registered schemes
-            scheme.registered &&
             // This condition check that the proposal already existed in the current block range.
             // If not, it means that the proposal was created in the current block range when processing the scheme,
             // So there is no need to process it again.
