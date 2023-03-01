@@ -103,7 +103,7 @@ const CachePage = observer(() => {
   const [resetCache, setResetCache] = React.useState({
     mainnet: false,
     xdai: false,
-    arbitrum: false
+    arbitrum: false,
   });
 
   const defaultAppConfigs = getAppConfig();
@@ -114,7 +114,7 @@ const CachePage = observer(() => {
     xdai_toBlock: defaultAppConfigs.xdai.cache.toBlock,
     xdai_rpcURL: getNetworkByName('xdai').defaultRpc,
     arbitrum_toBlock: defaultAppConfigs.arbitrum.cache.toBlock,
-    arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc
+    arbitrum_rpcURL: getNetworkByName('arbitrum').defaultRpc,
   });
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
@@ -125,7 +125,7 @@ const CachePage = observer(() => {
     setResetCache({
       mainnet: false,
       xdai: false,
-      arbitrum: false
+      arbitrum: false,
     });
     setUpdatedCacheHash({
       proposalTitles: {},
@@ -158,7 +158,7 @@ const CachePage = observer(() => {
           rpcUrl: localConfig.arbitrum_rpcURL,
           toBlock: localConfig.arbitrum_toBlock,
           reset: resetCache.arbitrum,
-        }
+        },
       },
       updateProposalTitles
     );
@@ -178,34 +178,22 @@ const CachePage = observer(() => {
   function downloadAll() {
     var zip = new JSZip();
 
-    var cache = zip.folder('cache');
+    var cacheFolder = zip.folder('cache');
 
-    var configs = zip.folder('configs');
-    zip.file(
-      'default.json',
-      JSON.stringify(
-        {
-          mainnet: updatedCacheHash.configHashes['mainnet'],
-          xdai: updatedCacheHash.configHashes['xdai'],
-          arbitrum: updatedCacheHash.configHashes['arbitrum']
-        },
-        null,
-        2
-      )
-    );
-    zip.file(
+    var configsFolder = zip.folder('configs');
+
+    configsFolder.file(
       'proposalTitles.json',
       JSON.stringify(updatedCacheHash.proposalTitles, null, 2)
     );
 
     NETWORKS.map((network, i) => {
-      cache.file(
+      cacheFolder.file(
         network.name + '.json',
         JSON.stringify(updatedCacheHash.caches[network.name], null, 2)
       );
-      const configFolder = configs.folder(network.name);
-      configFolder.file(
-        'config.json',
+      configsFolder.file(
+        network.name + '.json',
         JSON.stringify(updatedCacheHash.configs[network.name], null, 2)
       );
     });

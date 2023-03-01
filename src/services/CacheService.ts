@@ -2,7 +2,6 @@ import RootContext from '../contexts';
 import {
   batchPromisesOntarget,
   getAppConfig,
-  getDefaultConfigHashes,
   getProposalTitles,
   NETWORK_NAMES,
   retryPromise,
@@ -165,27 +164,14 @@ export default class UtilsService {
       } else {
         this.context.notificationStore.setGlobalLoading(
           true,
-          `Getting configuration file from IPFS`
-        );
-        console.log(
-          `Getting config file for ${networkName} from https://ipfs.io/ipfs/${
-            getDefaultConfigHashes()[networkName]
-          }`
-        );
-        const networkConfigFileFetch =
-          await this.context.ipfsService.getContentFromIPFS(
-            getDefaultConfigHashes()[networkName]
-          );
-        this.context.notificationStore.setGlobalLoading(
-          true,
           `Getting cache file from IPFS`
         );
         console.log(
-          `Getting cache file for ${networkName} from https://ipfs.io/ipfs/${networkConfigFileFetch.cache.ipfsHash}`
+          `Getting cache file for ${networkName} from https://ipfs.io/ipfs/${networkConfig.cache.ipfsHash}`
         );
         const networkCacheFetch = await retryPromise(
           this.context.ipfsService.getContentFromIPFS(
-            networkConfigFileFetch.cache.ipfsHash,
+            networkConfig.cache.ipfsHash,
             10000
           ),
           1000,

@@ -68,7 +68,7 @@ export const NETWORKS: ChainConfig[] = [
     },
     blockExplorer: 'https://arbiscan.io/',
     api: 'https://api.arbiscan.io/',
-  }
+  },
 ];
 
 if (process.env.NODE_ENV === 'development')

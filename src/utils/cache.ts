@@ -6,18 +6,12 @@ import { sleep } from './helpers';
 const Web3 = require('web3');
 const web3 = new Web3();
 
-const arbitrum = require('../configs/arbitrum/config.json');
-const mainnet = require('../configs/mainnet/config.json');
-const xdai = require('../configs/xdai/config.json');
-const localhost = require('../configs/localhost/config.json');
+const arbitrum = require('../configs/arbitrum.json');
+const mainnet = require('../configs/mainnet.json');
+const xdai = require('../configs/xdai.json');
+const localhost = require('../configs/localhost.json');
 
 const proposalTitles = require('../configs/proposalTitles.json');
-
-const defaultConfigHashes = require('../configs/default.json');
-
-export const getDefaultConfigHashes = (): Record<string, string> => {
-  return defaultConfigHashes;
-};
 
 export const getProposalTitles = (): Record<string, string> => {
   return proposalTitles;
