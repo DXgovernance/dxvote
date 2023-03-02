@@ -223,7 +223,9 @@ const CachePage = observer(() => {
     setLocalConfig(localConfig);
     setResetCache(resetCache);
     configStore.setLocalConfig(localConfig);
-    // window.location.assign(window.location.origin + '/#/cache');
+    window.location.assign(
+      window.location.href.replace(window.location.hash.substring(7), '')
+    );
     forceUpdate();
   }
 
