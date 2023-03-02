@@ -69,7 +69,8 @@ export default class IPFSService {
         })
       )
     );
-    return response.data;
+    if (!response.data) throw new Error('No data found in IPFS');
+    else return response.data;
   }
 
   async uploadProposalMetadata(

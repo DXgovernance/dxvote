@@ -25,7 +25,6 @@ export const DEFAULT_CHAIN_ID =
 
 export const POKT_NETWORK_URLS = {
   '1': 'https://eth-archival.gateway.pokt.network/v1/lb/61f86d630d66d80038fb8c38',
-  '5': 'https://eth-goerli.gateway.pokt.network/v1/lb/61116c81a585a20035149067',
   '100':
     'https://poa-xdai-archival.gateway.pokt.network/v1/lb/61d897d4a065f5003a113d9a',
 };
@@ -43,19 +42,6 @@ export const NETWORKS: ChainConfig[] = [
     },
     blockExplorer: 'https://etherscan.io',
     api: 'https://api.etherscan.io',
-  },
-  {
-    id: 5,
-    name: 'goerli',
-    displayName: 'Goerli Testnet',
-    defaultRpc: POKT_NETWORK_URLS['5'],
-    nativeAsset: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    blockExplorer: 'https://goerli.etherscan.io/',
-    api: 'https://api-goerli.etherscan.io/',
   },
   {
     id: 100,
@@ -82,30 +68,6 @@ export const NETWORKS: ChainConfig[] = [
     },
     blockExplorer: 'https://arbiscan.io/',
     api: 'https://api.arbiscan.io/',
-  },
-  {
-    id: 421611,
-    name: 'arbitrumTestnet',
-    displayName: 'Arbitrum Testnet',
-    defaultRpc: `https://arb-rinkeby.g.alchemy.com/v2/${defaultAlchemyKey}`,
-    nativeAsset: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    blockExplorer: 'https://rinkeby-explorer.arbitrum.io/',
-  },
-  {
-    id: 421613,
-    name: 'arbitrumNitroTestnet',
-    displayName: 'Arbitrum Nitro Testnet',
-    defaultRpc: `https://goerli-rollup.arbitrum.io/rpc`,
-    nativeAsset: {
-      name: 'Ethereum',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    blockExplorer: 'https://goerli-rollup-explorer.arbitrum.io/',
   },
 ];
 
@@ -173,7 +135,6 @@ export const NETWORK_ASSET_SYMBOL: Record<
 export const INFURA_NETWORK_NAMES = {
   '1': 'mainnet',
   '42161': 'arbitrum-mainnet',
-  '421611': 'arbitrum-rinkeby',
 };
 
 export const ALCHEMY_NETWORK_URLS = {

@@ -8,7 +8,7 @@ import {
   DEFAULT_CHAIN_ID,
 } from '../utils';
 import { ZERO_ADDRESS, ANY_ADDRESS, ANY_FUNC_SIGNATURE } from '../utils';
-import { getDefaultConfigHashes, getAppConfig } from '../utils/cache';
+import { getAppConfig } from '../utils/cache';
 
 export default class ConfigStore {
   darkMode: boolean;
@@ -35,37 +35,7 @@ export default class ConfigStore {
   }
 
   async loadNetworkConfig() {
-    const { ipfsService } = this.context;
-
     this.networkConfig = getAppConfig()[this.getActiveChainName()];
-
-    if (this.getActiveChainName() !== 'localhost' && !this.networkConfigLoaded)
-      try {
-        const configContentHash =
-          getDefaultConfigHashes()[this.getActiveChainName()];
-
-        if (!configContentHash)
-          throw new Error('Cannot resolve config metadata hash.');
-
-        console.info(`[ConfigStore] IPFS config hash: ${configContentHash}`);
-
-        const ipfsConfig = await ipfsService.getContentFromIPFS(
-          configContentHash
-        );
-        console.debug('[ConfigStore] IPFS config content:', ipfsConfig);
-        console.debug('[ConfigStore] Default config:', this.networkConfig);
-
-        // Override defaultConfig to ipfsConfig
-        if (ipfsConfig?.version >= this.networkConfig.version)
-          this.networkConfig = ipfsConfig;
-        this.networkConfigLoaded = true;
-      } catch (e) {
-        console.warn(
-          '[ConfigStore] Could not get the config from ENS. Falling back to configs in the build.',
-          this.networkConfig,
-          e
-        );
-      }
     return this.networkConfig;
   }
 

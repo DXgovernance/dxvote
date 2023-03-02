@@ -1,0 +1,173 @@
+{
+  "cache": {
+    "fromBlock": 0,
+    "toBlock": 1,
+    "ipfsHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "contracts": {
+    "fromBlock": 28,
+    "avatar": "0x169027Ca344aC1C77c02110e738B393d2368f4b4",
+    "reputation": "0x8f24764024D505c020488d0dE721575e0507E168",
+    "token": "0xfFb1cd0F95368DDd06D556161c5D3d9f0f4Fe6d2",
+    "controller": "0x51B711265680A65cC7bF2696A7E9b6F0a7CCf5C1",
+    "permissionRegistry": "0x881C745d0E181656b8D8415D805f1e8104336127",
+    "schemes": {
+      "RegistrarWalletScheme": "0xe84182e1B7DE1ddBE43D7047299aC27Be062EA4F",
+      "MasterWalletScheme": "0xB5367d9a8e263550052ba87271EB29c89B0FF832",
+      "QuickWalletScheme": "0x1Aa39474D6a47dEef880F1B541E212FDd3CBD790"
+    },
+    "utils": {
+      "multicall": "0x4501228B8796a81f7326322A848D4834EA0C2B58",
+      "dxDaoNFT": "0x8031D109f451DF832353F05a67c61E96DD7eF26A",
+      "dxdVestingFactory": "0xF397c82694D3abbc0434f50a75127749cB0De793"
+    },
+    "votingMachines": {
+      "0xCff6c246629Fe49E1064BF389aC79E14903761c8": {
+        "type": "DXDVotingMachine",
+        "token": "0xfFb1cd0F95368DDd06D556161c5D3d9f0f4Fe6d2"
+      }
+    },
+    "addresses": {
+      "DXD": "0xfFb1cd0F95368DDd06D556161c5D3d9f0f4Fe6d2",
+      "RGT": "0x7BC0DEDaFd60611D430c89353CC30e1a11b90AC7",
+      "SGT": "0xB58b358Be2B16Cb8992fc7340F92127083de33cE",
+      "Reputation": "0x8f24764024D505c020488d0dE721575e0507E168",
+      "Avatar": "0x169027Ca344aC1C77c02110e738B393d2368f4b4",
+      "Controller": "0x51B711265680A65cC7bF2696A7E9b6F0a7CCf5C1",
+      "DXDVotingMachine": "0xCff6c246629Fe49E1064BF389aC79E14903761c8",
+      "PermissionRegistry": "0x881C745d0E181656b8D8415D805f1e8104336127",
+      "PermissionRegstry": "0x881C745d0E181656b8D8415D805f1e8104336127",
+      "ContributionReward": "0xCa74e19861792d26DBdCf6747bDF440f311742d4",
+      "RegistrarWalletScheme": "0xe84182e1B7DE1ddBE43D7047299aC27Be062EA4F",
+      "MasterWalletScheme": "0xB5367d9a8e263550052ba87271EB29c89B0FF832",
+      "QuickWalletScheme": "0x1Aa39474D6a47dEef880F1B541E212FDd3CBD790",
+      "ERC721Factory": "0x8031D109f451DF832353F05a67c61E96DD7eF26A",
+      "ERC20VestingFactory": "0xF397c82694D3abbc0434f50a75127749cB0De793",
+      "GuildRegistry": "0xEb579C2E9bd3AC6Fd17de7bB55ab344f83735356",
+      "SnapshotERC20Guild": "0x4031eBEf80Fccad2b20fafCE9Cdb28587121aD61",
+      "DXDGuild": "0x140d68e4E3f80cdCf7036De007b3bCEC54D38b1f",
+      "SnapshotERC20Guild-vault": "0x8a99E2B2917dDF1a33c6aEd9adC44F7b4D0F6Afd",
+      "DXDGuild-vault": "0xf621aA96a02Aa6595B1Fa5DC4AAda92C5B1304c7",
+      "REPGuild": "0x5778817a78BF1e89f5Ff0a0dFe976C56c78175d3",
+      "REPGuild-vault": "0x2D306f89c2bdfB89bC798cb84D3B9f44656572D2"
+    },
+    "daostack": {
+      "0xCa74e19861792d26DBdCf6747bDF440f311742d4": {
+        "contractToCall": "0x51B711265680A65cC7bF2696A7E9b6F0a7CCf5C1",
+        "creationLogEncoding": [
+          [
+            {
+              "name": "_descriptionHash",
+              "type": "string"
+            },
+            {
+              "name": "_reputationChange",
+              "type": "int256"
+            },
+            {
+              "name": "_rewards",
+              "type": "uint256[5]"
+            },
+            {
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "name": "_beneficiary",
+              "type": "address"
+            }
+          ]
+        ],
+        "name": "ContributionReward",
+        "newProposalTopics": [
+          [
+            "0xcbdcbf9aaeb1e9eff0f75d74e1c1e044bc87110164baec7d18d825b0450d97df",
+            "0x000000000000000000000000519b70055af55a007110b4ff99b0ea33071c720a"
+          ]
+        ],
+        "redeemer": "0x363e3e752034E2137B4e321A6E4d1dF7EAf64851",
+        "supported": true,
+        "type": "ContributionReward",
+        "voteParams": "0x0cff53cd2db0fdf3e75a42627eeec185139326bc448e307afa5636f34c1cf1fc",
+        "votingMachine": "0xCff6c246629Fe49E1064BF389aC79E14903761c8"
+      }
+    },
+    "guildRegistry": "0xEb579C2E9bd3AC6Fd17de7bB55ab344f83735356"
+  },
+  "recommendedCalls": [],
+  "proposalTemplates": [],
+  "proposalTypes": [
+    {
+      "id": "contributor",
+      "title": "Contributor",
+      "scheme": "QuickWalletScheme"
+    },
+    {
+      "id": "custom",
+      "title": "Custom"
+    }
+  ],
+  "contributionLevels": [
+    {
+      "id": "1",
+      "dxd": 2000,
+      "stable": 4000,
+      "rep": 0.1667
+    },
+    {
+      "id": "2",
+      "dxd": 3000,
+      "stable": 5000,
+      "rep": 0.1667
+    },
+    {
+      "id": "3",
+      "dxd": 4000,
+      "stable": 6000,
+      "rep": 0.1667
+    },
+    {
+      "id": "4",
+      "dxd": 5000,
+      "stable": 7000,
+      "rep": 0.1667
+    },
+    {
+      "id": "5",
+      "dxd": 6000,
+      "stable": 8000,
+      "rep": 0.1667
+    }
+  ],
+  "tokens": [
+    {
+      "address": "0xfFb1cd0F95368DDd06D556161c5D3d9f0f4Fe6d2",
+      "name": "DXdao on Localhost",
+      "decimals": 18,
+      "symbol": "DXD",
+      "fetchPrice": true,
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
+    },
+    {
+      "address": "0x7BC0DEDaFd60611D430c89353CC30e1a11b90AC7",
+      "name": "REP Guild Token on Localhost",
+      "decimals": 18,
+      "symbol": "RGT",
+      "fetchPrice": true,
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
+    },
+    {
+      "address": "0xB58b358Be2B16Cb8992fc7340F92127083de33cE",
+      "name": "Snapshot Guild Token on Localhost",
+      "decimals": 18,
+      "symbol": "SGT",
+      "fetchPrice": true,
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/200x200/5589.png"
+    }
+  ],
+  "guilds": [
+    "0x140d68e4E3f80cdCf7036De007b3bCEC54D38b1f",
+    "0x5778817a78BF1e89f5Ff0a0dFe976C56c78175d3",
+    null
+  ]
+}
