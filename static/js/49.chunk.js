@@ -1,2 +1,2 @@
-(this.webpackJsonpdxvote=this.webpackJsonpdxvote||[]).push([[49],{1009:function(e,t){Prism.languages.brainfuck={pointer:{pattern:/<|>/,alias:"keyword"},increment:{pattern:/\+/,alias:"inserted"},decrement:{pattern:/-/,alias:"deleted"},branching:{pattern:/\[|\]/,alias:"important"},operator:/[.,]/,comment:/\S+/}}}]);
+(this.webpackJsonpdxvote=this.webpackJsonpdxvote||[]).push([[49],{1004:function(e,t){Prism.languages.brainfuck={pointer:{pattern:/<|>/,alias:"keyword"},increment:{pattern:/\+/,alias:"inserted"},decrement:{pattern:/-/,alias:"deleted"},branching:{pattern:/\[|\]/,alias:"important"},operator:/[.,]/,comment:/\S+/}}}]);
 //# sourceMappingURL=49.chunk.js.map
