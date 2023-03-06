@@ -97,7 +97,8 @@ export default class BlockchainStore {
           networkCache = null;
         }
 
-        const blockNumber = (await library.eth.getBlockNumber()) - 5;
+        const blockNumber = await library.eth.getBlockNumber();
+        const blockNumberToCompare = blockNumber - (chainId == 100 ? 100 : 5);
 
         const newestCacheIpfsHash = networkConfig.cache.ipfsHash;
 
@@ -140,7 +141,7 @@ export default class BlockchainStore {
         const lastCheckedBlockNumber =
           networkCache?.blockNumber || Number(networkConfig.cache.toBlock);
 
-        if (blockNumber > lastCheckedBlockNumber + 1) {
+        if (blockNumberToCompare > lastCheckedBlockNumber + 1) {
           console.debug(
             '[Fetch Loop] Fetch Blockchain Data',
             blockNumber,
