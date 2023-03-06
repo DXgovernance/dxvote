@@ -62,6 +62,10 @@ const ProposalsPage = observer(() => {
   const userEvents = daoStore.getUserEvents(account);
   const [allProposals, setAllProposals] = useState(daoStore.getAllProposals);
 
+  const proposalsToNotShow = [
+    '0x8ec7d23b51bc4479adf1d27967236f57277eca61cf7e59d5c36c0b21a75226ac',
+    '0x08e78c6aa36633cbf48e2fa5d00332980da6886e3833d69fb5f3840a91d6b6aa',
+  ];
   useEffect(() => {
     setAllProposals(daoStore.getAllProposals);
   }, [daoStore.getAllProposals]);
@@ -127,149 +131,153 @@ const ProposalsPage = observer(() => {
               <HeaderCell>Stakes</HeaderCell>
               <HeaderCell>Votes</HeaderCell>
             </TableHeader>
-            {proposals.map((proposal, i) => {
-              const positiveStake = formatNumberValue(
-                normalizeBalance(proposal.positiveStakes, 18),
-                1
-              );
-              const negativeStake = formatNumberValue(
-                normalizeBalance(proposal.negativeStakes, 18),
-                1
-              );
+            {proposals
+              .filter(proposal => !proposalsToNotShow.includes(proposal.id))
+              .map((proposal, i) => {
+                const positiveStake = formatNumberValue(
+                  normalizeBalance(proposal.positiveStakes, 18),
+                  1
+                );
+                const negativeStake = formatNumberValue(
+                  normalizeBalance(proposal.negativeStakes, 18),
+                  1
+                );
 
-              const repAtCreation = getRep(
-                proposal.creationEvent.blockNumber
-              ).totalSupply;
+                const repAtCreation = getRep(
+                  proposal.creationEvent.blockNumber
+                ).totalSupply;
 
-              const positiveVotesPercentage = formatPercentage(
-                proposal.positiveVotes.div(repAtCreation),
-                2
-              );
-              const negativeVotesPercentage = formatPercentage(
-                proposal.negativeVotes.div(repAtCreation),
-                2
-              );
-              const timeToBoost = timeToTimestamp(proposal.boostTime);
-              const timeToFinish = timeToTimestamp(proposal.finishTime);
+                const positiveVotesPercentage = formatPercentage(
+                  proposal.positiveVotes.div(repAtCreation),
+                  2
+                );
+                const negativeVotesPercentage = formatPercentage(
+                  proposal.negativeVotes.div(repAtCreation),
+                  2
+                );
+                const timeToBoost = timeToTimestamp(proposal.boostTime);
+                const timeToFinish = timeToTimestamp(proposal.finishTime);
 
-              const votingMachineTokenName =
-                votingMachines[
-                  daoStore.getVotingMachineOfProposal(proposal.id).address
-                ].type == 'DXDVotingMachine'
-                  ? 'DXD'
-                  : 'GEN';
+                const votingMachineTokenName =
+                  votingMachines[
+                    daoStore.getVotingMachineOfProposal(proposal.id).address
+                  ].type == 'DXDVotingMachine'
+                    ? 'DXD'
+                    : 'GEN';
 
-              const voted =
-                userEvents.votes.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              const staked =
-                userEvents.stakes.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
-              const created =
-                userEvents.newProposal.findIndex(
-                  event => event.proposalId === proposal.id
-                ) > -1;
+                const voted =
+                  userEvents.votes.findIndex(
+                    event => event.proposalId === proposal.id
+                  ) > -1;
+                const staked =
+                  userEvents.stakes.findIndex(
+                    event => event.proposalId === proposal.id
+                  ) > -1;
+                const created =
+                  userEvents.newProposal.findIndex(
+                    event => event.proposalId === proposal.id
+                  ) > -1;
 
-              const invalidProposal =
-                daoStore
-                  .getVotesOfProposal(proposal.id)
-                  .findIndex(
-                    vote =>
-                      vote.voter === proposal.proposer && isVoteNo(vote.vote)
-                  ) > -1 ||
-                (proposal.extraData && proposal.extraData.periodTime > 0);
+                const invalidProposal =
+                  daoStore
+                    .getVotesOfProposal(proposal.id)
+                    .findIndex(
+                      vote =>
+                        vote.voter === proposal.proposer && isVoteNo(vote.vote)
+                    ) > -1 ||
+                  (proposal.extraData && proposal.extraData.periodTime > 0);
 
-              return (
-                <StyledTableRow
-                  onClick={() =>
-                    history.push(`/${networkName}/proposal/${proposal.id}`)
-                  }
-                  key={`row-${i}`}
-                >
-                  <DataCell
-                    weight="800"
-                    wrapText="true"
-                    fontSize="inherit"
-                    align="left"
+                return (
+                  <StyledTableRow
+                    onClick={() =>
+                      history.push(`/${networkName}/proposal/${proposal.id}`)
+                    }
+                    key={`row-${i}`}
                   >
-                    <Link
-                      to={`/${networkName}/proposal/${proposal.id}`}
-                      component={UnstyledAnchor}
+                    <DataCell
+                      weight="800"
+                      wrapText="true"
+                      fontSize="inherit"
+                      align="left"
                     >
-                      {created && (
-                        <FiFeather
-                          style={{ minWidth: '15px', margin: '0px 2px' }}
-                          title="You created"
-                        />
-                      )}
-                      {voted && (
-                        <FiCheckCircle
-                          style={{ minWidth: '15px', margin: '0px 2px' }}
-                          title="You voted"
-                        />
-                      )}
-                      {staked && (
-                        <FiCheckSquare
-                          style={{ minWidth: '15px', margin: '0px 2px' }}
-                          title="You staked"
-                        />
-                      )}
+                      <Link
+                        to={`/${networkName}/proposal/${proposal.id}`}
+                        component={UnstyledAnchor}
+                      >
+                        {created && (
+                          <FiFeather
+                            style={{ minWidth: '15px', margin: '0px 2px' }}
+                            title="You created"
+                          />
+                        )}
+                        {voted && (
+                          <FiCheckCircle
+                            style={{ minWidth: '15px', margin: '0px 2px' }}
+                            title="You voted"
+                          />
+                        )}
+                        {staked && (
+                          <FiCheckSquare
+                            style={{ minWidth: '15px', margin: '0px 2px' }}
+                            title="You staked"
+                          />
+                        )}
 
-                      {invalidProposal && (
-                        <FiAlertTriangle
-                          style={{ minWidth: '15px', margin: '0px 2px' }}
-                          title="The proposer downvoted this proposal. It may be incorrect."
-                        />
-                      )}
+                        {invalidProposal && (
+                          <FiAlertTriangle
+                            style={{ minWidth: '15px', margin: '0px 2px' }}
+                            title="The proposer downvoted this proposal. It may be incorrect."
+                          />
+                        )}
 
-                      {proposal.title.length > 0 ? proposal.title : proposal.id}
-                    </Link>
-                  </DataCell>
-                  <DataCell>
-                    {daoStore.daoCache.schemes[proposal.scheme].name}
-                  </DataCell>
-                  <DataCell>
-                    <span>
-                      {proposal.status} <br />
-                      {timeToBoost !== '' ? (
-                        <small>
-                          Boost {timeToBoost} <br />
-                        </small>
-                      ) : (
-                        <span></span>
-                      )}
-                      {timeToFinish !== '' ? (
-                        <small>Finish {timeToFinish} </small>
-                      ) : (
-                        <span></span>
-                      )}
-                      {proposal.pendingAction === PendingAction.Execute ||
-                      proposal.pendingAction === PendingAction.Finish ? (
-                        <small> Pending Finish Execution </small>
-                      ) : (
-                        <span></span>
-                      )}
-                    </span>
-                  </DataCell>
-                  <DataCell>
-                    <Positive>
-                      {positiveStake.toString()} {votingMachineTokenName}{' '}
-                    </Positive>
-                    <Separator>|</Separator>
-                    <Negative>
-                      {negativeStake.toString()} {votingMachineTokenName}
-                    </Negative>
-                  </DataCell>
-                  <DataCell>
-                    <Positive>{positiveVotesPercentage} </Positive>
-                    <Separator>|</Separator>
-                    <Negative>{negativeVotesPercentage}</Negative>
-                  </DataCell>
-                </StyledTableRow>
-              );
-            })}
+                        {proposal.title.length > 0
+                          ? proposal.title
+                          : proposal.id}
+                      </Link>
+                    </DataCell>
+                    <DataCell>
+                      {daoStore.daoCache.schemes[proposal.scheme].name}
+                    </DataCell>
+                    <DataCell>
+                      <span>
+                        {proposal.status} <br />
+                        {timeToBoost !== '' ? (
+                          <small>
+                            Boost {timeToBoost} <br />
+                          </small>
+                        ) : (
+                          <span></span>
+                        )}
+                        {timeToFinish !== '' ? (
+                          <small>Finish {timeToFinish} </small>
+                        ) : (
+                          <span></span>
+                        )}
+                        {proposal.pendingAction === PendingAction.Execute ||
+                        proposal.pendingAction === PendingAction.Finish ? (
+                          <small> Pending Finish Execution </small>
+                        ) : (
+                          <span></span>
+                        )}
+                      </span>
+                    </DataCell>
+                    <DataCell>
+                      <Positive>
+                        {positiveStake.toString()} {votingMachineTokenName}{' '}
+                      </Positive>
+                      <Separator>|</Separator>
+                      <Negative>
+                        {negativeStake.toString()} {votingMachineTokenName}
+                      </Negative>
+                    </DataCell>
+                    <DataCell>
+                      <Positive>{positiveVotesPercentage} </Positive>
+                      <Separator>|</Separator>
+                      <Negative>{negativeVotesPercentage}</Negative>
+                    </DataCell>
+                  </StyledTableRow>
+                );
+              })}
           </TableBody>
         </TableProposal>
       )}

@@ -10,7 +10,7 @@
 /artifacts
 /cache
 .temp
-src/configs/localhost.json
+/src/configs/localhost.json
 
 # production
 /build
