@@ -1,19 +1,6 @@
 import { ethers, utils } from 'ethers';
 import { NETWORK_EXPLORERS } from './index';
-
-const arbitrum = require('../configs/arbitrum/config.json');
-const arbitrumTestnet = require('../configs/arbitrumTestnet/config.json');
-const mainnet = require('../configs/mainnet/config.json');
-const xdai = require('../configs/xdai/config.json');
-const localhost = require('../configs/localhost/config.json');
-
-const appConfig: AppConfig = {
-  arbitrum,
-  arbitrumTestnet,
-  mainnet,
-  xdai,
-  localhost,
-};
+import { getAppConfig } from './cache';
 
 export function shortenAddress(address, digits = 4) {
   if (!isAddress(address)) {
@@ -67,7 +54,7 @@ export function getBlockchainLink(
 
 export function getERC20Token(address) {
   let tokenObject;
-  Object.entries(appConfig).forEach(([_, value]) => {
+  Object.entries(getAppConfig()).forEach(([_, value]) => {
     if (!tokenObject)
       tokenObject = value?.tokens?.find(token => token.address === address);
   });
@@ -76,7 +63,7 @@ export function getERC20Token(address) {
 
 export function getDxVoteContract(address) {
   let contract;
-  Object.entries(appConfig).forEach(([_, value]) => {
+  Object.entries(getAppConfig()).forEach(([_, value]) => {
     Object.entries(value?.contracts).forEach(([name, value]) => {
       if (!contract && value === address)
         contract = { contract: name, address: value };

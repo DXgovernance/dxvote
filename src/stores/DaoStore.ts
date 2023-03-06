@@ -19,10 +19,8 @@ import {
   isWinningVote,
   votedBeforeBoosted,
   isVoteYes,
-  WalletSchemeProposalState,
 } from '../utils';
 import { ProposalsExtended } from '../types/types';
-import moment from 'moment';
 
 const proposalTitles = require('../configs/proposalTitles.json');
 
@@ -968,18 +966,6 @@ export default class DaoStore {
       networkContracts.votingMachines[votingMachineOfProposal.address].type ===
       'DXDVotingMachine';
 
-    if (
-      proposal.stateInVotingMachine == VotingMachineProposalState.Boosted &&
-      proposal.stateInScheme == WalletSchemeProposalState.Submitted &&
-      bnum(moment().unix()).gt(
-        bnum(proposal.boostedPhaseTime)
-          .plus(votingMachineOfProposal.params.boostedVotePeriodLimit)
-          .plus(moment.duration(3, 'days').asSeconds())
-      )
-    ) {
-      proposal.stateInVotingMachine = VotingMachineProposalState.ExpiredInQueue;
-      proposal.stateInScheme = WalletSchemeProposalState.ExecutionTimeout;
-    }
     return decodeProposalStatus(
       proposal,
       proposalStateChangeEvents,

@@ -64,14 +64,13 @@ export default class IPFSService {
 
     const response = await Promise.any(
       gatewayURLBaseList.map(gatewayURLBase =>
-        axios.request({
-          url: gatewayURLBase + hash,
-          method: 'GET',
+        axios.get(gatewayURLBase + hash, {
           timeout,
         })
       )
     );
-    return response.data;
+    if (!response.data) throw new Error('No data found in IPFS');
+    else return response.data;
   }
 
   async uploadProposalMetadata(

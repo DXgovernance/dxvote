@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import path from 'path';
 import {
   ANY_FUNC_SIGNATURE,
@@ -682,11 +682,8 @@ async function main() {
     ],
   };
 
-  mkdirSync(path.resolve(__dirname, '../src/configs/localhost'), {
-    recursive: true,
-  });
   writeFileSync(
-    path.resolve(__dirname, '../src/configs/localhost/config.json'),
+    path.resolve(__dirname, '../src/configs/localhost.json'),
     JSON.stringify(developConfig, null, 2)
   );
 }
